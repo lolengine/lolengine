@@ -137,16 +137,16 @@ struct polynomial
 
             if (delta < T(0))
             {
-                 return array<T> {};
+                return array<T> {};
             }
             else if (delta > T(0))
             {
-                 T const sqrt_delta = sqrt(delta);
-                 return array<T> { -k - sqrt_delta, -k + sqrt_delta };
+                T const sqrt_delta = sqrt(delta);
+                return array<T> { -k - sqrt_delta, -k + sqrt_delta };
             }
             else
             {
-                 return array<T> { -k };
+                return array<T> { -k };
             }
         }
         else if (degree() == 3)
@@ -159,25 +159,33 @@ struct polynomial
             T const &c = m_coefficients[1];
             T const &d = m_coefficients[0];
 
-            /* Find k, m and n such that:
-             * q(x) = p(x - k) / a = x³ + amx + n */
+            /* Find k, m, and n such that  p(x - k) / a = x³ + mx + n
+             * q(x) = p(x - k) / a
+             *      = x³ + (b/a-3k) x² + ((c-2bk)/a+3k²) x + (d-ck+bk²)/a-k³
+             *
+             * So we want k = b/3a and thus:
+             * q(x) = x³ + (c-bk)/a x + (d-ck+2bk²/3)/a
+             *
+             *  k = b / 3a
+             *  m = (c - bk) / a
+             *  n = (d - ck + 2bk²/3) / a  */
             T const k = b / (T(3) * a);
-            T const m = c - b * k;
+            T const m = (c - b * k) / a;
             T const n = ((T(2) / T(3) * b * k - c) * k + d) / a;
 
-            /* Assuming x = u + v and 3uv = -m, then
-             * q(u + v) = a(u + v) + n
+            /* Let x = u + v, such that 3uv = -m, then:
+             * q(u + v) = u³ + v³ + n
              *
              * We then need to solve the following system:
              *    u³v³ = -m³/27
              * u³ + v³ = -n
              *
              * which gives :
-             * u³ - v³ = √(n² + 4m³/27)
+             *       Δ = n² + 4m³/27
+             * u³ - v³ = √Δ
              * u³ + v³ = -n
              *
-             * u³ = (-n + √(n² + 4m³/27)) / 2
-             * v³ = (-n - √(n² + 4m³/27)) / 2
+             * u³,v³ = (-n ± √Δ) / 2
              */
             T const delta = n * n + T(4) / T(27) * m * m * m;
 
@@ -186,26 +194,25 @@ struct polynomial
              *
              * This is why we compute u³ and v³ by norm and angle separately
              * instead of using a std::complex class */
-            T u3_norm, u3_angle;
-            T v3_norm, v3_angle;
+            T u_norm, u3_angle;
+            T v_norm, v3_angle;
 
             if (delta < 0)
             {
-                v3_norm = u3_norm = sqrt(n * n + abs(delta)) / T(2);
+                v_norm = u_norm = sqrt(m / T(-3));
 
-                u3_angle = atan2(sqrt(abs(delta)), -n);
+                u3_angle = atan2(sqrt(-delta), -n);
                 v3_angle = -u3_angle;
             }
             else
             {
-                u3_norm = (-n + sqrt(delta)) / T(2);
-                v3_norm = (-n - sqrt(delta)) / T(2);
+                T const sqrt_delta = sqrt(delta);
 
-                u3_angle = u3_norm >= 0 ? 0 :  pi;
-                v3_angle = v3_norm >= 0 ? 0 : -pi;
+                u_norm = cbrt(abs(n - sqrt_delta) / T(2));
+                v_norm = cbrt(abs(n + sqrt_delta) / T(2));
 
-                u3_norm = abs(u3_norm);
-                v3_norm = abs(v3_norm);
+                u3_angle = (n >=  sqrt_delta) ? pi : 0;
+                v3_angle = (n <= -sqrt_delta) ? 0 : -pi;
             }
 
             T solutions[3];
@@ -215,8 +222,7 @@ struct polynomial
                 T u_angle = (u3_angle + T(2 * i) * pi) / T(3);
                 T v_angle = (v3_angle - T(2 * i) * pi) / T(3);
 
-                solutions[i] = pow(u3_norm, T(1) / T(3)) * cos(u_angle)
-                             + pow(v3_norm, T(1) / T(3)) * cos(v_angle);
+                solutions[i] = u_norm * cos(u_angle) + v_norm * cos(v_angle);
             }
 
             if (delta < 0) // 3 real solutions
@@ -227,7 +233,7 @@ struct polynomial
             if (delta > 0) // 1 real solution
                 return array<T> { solutions[0] - k };
 
-            if (u3_norm > 0) // 2 real solutions
+            if (u_norm > 0) // 2 real solutions
                 return array<T> { solutions[0] - k,
                                   solutions[1] - k };
 
