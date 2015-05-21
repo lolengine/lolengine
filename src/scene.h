@@ -92,7 +92,7 @@ class SceneData;
 class Scene
 {
     friend class Video;
-    
+
 private:
     static array<Scene*> g_scenes;
 
