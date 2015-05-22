@@ -1,9 +1,11 @@
 //
-// Orbital
+//  Orbital
 //
-// Copyright: (c) 2009-2013 C�dric Lecacheur <jordx@free.fr>
-//            (c) 2009-2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//            (c) 2012 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2009—2013 Cédric Lecacheur <jordx@free.fr>
+//            © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//            © 2012—2015 Sam Hocevar <sam@hocevar.net>
+//
+//  No licensing terms yet. All rights reserved.
 //
 
 #pragma once
@@ -355,7 +357,7 @@ public:
         m_physics->AddToSimulation(new_sim);
     }
 
-    void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation=lol::quat(lol::mat4(1.0f)))
+    void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation = lol::quat(lol::mat3(1.0f)))
     {
         if (m_is_character)
             m_character->SetTransform(base_location, base_rotation);

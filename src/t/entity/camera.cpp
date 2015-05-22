@@ -2,7 +2,7 @@
 //  Lol Engine — Unit tests
 //
 //  Copyright © 2010—2014 Sam Hocevar <sam@hocevar.net>
-//            © 2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
+//            © 2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  This program is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -40,7 +40,7 @@ lolunit_declare_fixture(CameraTest)
         target = vec3::zero;
         up = vec3::axis_y;
         m_lookat = mat4::lookat(eye, target, up);
-        q_lookat = quat(m_lookat);
+        q_lookat = quat(mat3(m_lookat));
         v_lookat = vec3::toeuler_zyx(q_lookat);
         fov = 90.f;
         screen_size = 800.f;

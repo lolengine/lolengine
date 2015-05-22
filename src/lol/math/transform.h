@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//
+//  This library is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
@@ -97,8 +99,37 @@ struct quat_t : public linear_ops::base<T>
     explicit inline constexpr quat_t(T W)
       : w(W), x(0), y(0), z(0) {}
 
-    explicit quat_t(mat_t<T,3,3> const &m);
-    explicit quat_t(mat_t<T,4,4> const &m);
+    /* Construct a unit quaternion from a pure rotation matrix */
+    explicit quat_t(mat_t<T,3,3> const &m)
+    {
+        T tr = m[0][0] + m[1][1] + m[2][2];
+
+        if (tr > T(0))
+        {
+            T const p = T(0.5) * std::sqrt(T(1) + tr);
+            T const q = T(0.25) / p;
+
+            w = p;
+            x = q * (m[1][2] - m[2][1]);
+            y = q * (m[2][0] - m[0][2]);
+            z = q * (m[0][1] - m[1][0]);
+        }
+        else
+        {
+            int i = (m[0][0] > m[1][1] && m[0][0] > m[2][2]) ? 0
+                  : (m[1][1] > m[2][2]) ? 1
+                  : 2;
+            int j = (i + 1) % 3, k = (i + 2) % 3;
+
+            T const p = T(0.5) * lol::sqrt(T(1) - tr + m[i][i] + m[i][i]);
+            T const q = T(0.25) / p;
+
+            w              = q * (m[j][k] - m[k][j]);
+            (*this)[1 + i] = p;
+            (*this)[1 + j] = q * (m[i][j] + m[j][i]);
+            (*this)[1 + k] = q * (m[k][i] + m[i][k]);
+        }
+    }
 
     LOL_COMMON_MEMBER_OPS(w)
 

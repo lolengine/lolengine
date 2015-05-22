@@ -1,8 +1,14 @@
 //
-// BtPhysTest
+//  BtPhysTest
 //
-// Copyright: (c) 2009-2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//            (c) 2012-2013 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//            © 2012—2015 Sam Hocevar <sam@hocevar.net>
+//
+//  This program is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #if HAVE_CONFIG_H
@@ -558,7 +564,7 @@ void BtPhysTest::TickGame(float seconds)
             GroundMat = CenterMx *
                         mat4(quat::fromeuler_xyz(vec3(.0f, 20.f, 20.0f) * seconds))
                         * GroundMat;
-            PhysObj->SetTransform(GroundMat[3].xyz, quat(GroundMat));
+            PhysObj->SetTransform(GroundMat[3].xyz, quat(mat3(GroundMat)));
         }
     }
 #endif //USE_ROTATION
@@ -573,14 +579,14 @@ void BtPhysTest::TickGame(float seconds)
             if (i == 0)
             {
                 GroundMat = GroundMat * mat4(quat::fromeuler_xyz(vec3(20.f, .0f, .0f) * seconds));
-                PhysObj->SetTransform(GroundMat[3].xyz, quat(GroundMat));
+                PhysObj->SetTransform(GroundMat[3].xyz, quat(mat3(GroundMat)));
             }
             else if (i == 1)
             {
                 GroundMat =
                     mat4::translate(vec3(-15.0f, 5.0f, lol::cos(m_loop_value) * 8.f)) *
                     mat4(quat::fromeuler_xyz(vec3(.0f, lol::cos(m_loop_value) * 20.f, .0f)));
-                PhysObj->SetTransform(GroundMat[3].xyz, quat(GroundMat));
+                PhysObj->SetTransform(GroundMat[3].xyz, quat(mat3(GroundMat)));
             }
         }
     }
