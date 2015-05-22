@@ -13,52 +13,45 @@
 namespace lol
 {
 
-static inline void MatrixToQuat(quat &that, mat3 const &m)
+static inline void mat_to_quat(quat &that, mat3 const &m)
 {
-    /* See http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/christian.htm for a version with no branches */
-    float t = m[0][0] + m[1][1] + m[2][2];
-    if (t > 0)
+    float tr = m[0][0] + m[1][1] + m[2][2];
+
+    if (tr > 0)
     {
-        that.w = 0.5f * std::sqrt(1.0f + t);
-        float s = 0.25f / that.w;
-        that.x = s * (m[1][2] - m[2][1]);
-        that.y = s * (m[2][0] - m[0][2]);
-        that.z = s * (m[0][1] - m[1][0]);
-    }
-    else if (m[0][0] > m[1][1] && m[0][0] > m[2][2])
-    {
-        that.x = 0.5f * std::sqrt(1.0f + m[0][0] - m[1][1] - m[2][2]);
-        float s = 0.25f / that.x;
-        that.y = s * (m[0][1] + m[1][0]);
-        that.z = s * (m[2][0] + m[0][2]);
-        that.w = s * (m[1][2] - m[2][1]);
-    }
-    else if (m[1][1] > m[2][2])
-    {
-        that.y = 0.5f * std::sqrt(1.0f - m[0][0] + m[1][1] - m[2][2]);
-        float s = 0.25f / that.y;
-        that.x = s * (m[0][1] + m[1][0]);
-        that.z = s * (m[1][2] + m[2][1]);
-        that.w = s * (m[2][0] - m[0][2]);
+        float const p = 0.5f * std::sqrt(1.0f + tr);
+        float const q = 0.25f / p;
+
+        that.w = p;
+        that.x = q * (m[1][2] - m[2][1]);
+        that.y = q * (m[2][0] - m[0][2]);
+        that.z = q * (m[0][1] - m[1][0]);
     }
     else
     {
-        that.z = 0.5f * std::sqrt(1.0f - m[0][0] - m[1][1] + m[2][2]);
-        float s = 0.25f / that.z;
-        that.x = s * (m[2][0] + m[0][2]);
-        that.y = s * (m[1][2] + m[2][1]);
-        that.w = s * (m[0][1] - m[1][0]);
+        int i = (m[0][0] > m[1][1] && m[0][0] > m[2][2]) ? 0
+              : (m[1][1] > m[2][2]) ? 1
+              : 2;
+        int j = (i + 1) % 3, k = (i + 2) % 3;
+
+        float const p = 0.5f * std::sqrt(1.0f - tr + 2.f * m[i][i]);
+        float const q = 0.25f / p;
+
+        that.w      = q * (m[j][k] - m[k][j]);
+        that[1 + i] = p;
+        that[1 + j] = q * (m[i][j] + m[j][i]);
+        that[1 + k] = q * (m[k][i] + m[i][k]);
     }
 }
 
 template<> quat::quat_t(mat3 const &m)
 {
-    MatrixToQuat(*this, m);
+    mat_to_quat(*this, m);
 }
 
 template<> quat::quat_t(mat4 const &m)
 {
-    MatrixToQuat(*this, mat3(m));
+    mat_to_quat(*this, mat3(m));
 }
 
 template<> quat quat::rotate(float degrees, vec3 const &v)
