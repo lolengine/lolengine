@@ -1,13 +1,15 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//            (c) 2009-2013 C�dric Lecacheur <jordx@free.fr>
-//            (c) 2009-2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//            © 2009—2013 Cédric Lecacheur <jordx@free.fr>
+//            © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//
+//  This library is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #if HAVE_CONFIG_H
@@ -158,15 +160,15 @@ void EasyPhysic::SetTransform(const lol::vec3& base_location, const lol::quat& b
 void EasyPhysic::BaseTransformChanged(const lol::mat4& PreviousMatrix, const lol::mat4& NewMatrix)
 {
     mat4 PreviousMatrixLoc = ((m_base_lock_location)?(PreviousMatrix):(lol::mat4::translate(PreviousMatrix[3].xyz)));
-    mat4 PreviousMatrixRot = ((m_base_lock_rotation)?(lol::mat4(lol::quat(PreviousMatrix))):(lol::mat4(1.f)));
+    mat4 PreviousMatrixRot = ((m_base_lock_rotation)?(lol::mat4(lol::quat(lol::mat3(PreviousMatrix)))):(lol::mat4(1.f)));
     mat4 NewMatrixLoc = ((m_base_lock_location)?(NewMatrix):(lol::mat4::translate(NewMatrix[3].xyz)));
-    mat4 NewMatrixRot = ((m_base_lock_rotation)?(lol::mat4(lol::quat(NewMatrix))):(lol::mat4(1.f)));
+    mat4 NewMatrixRot = ((m_base_lock_rotation)?(lol::mat4(lol::quat(lol::mat3(NewMatrix)))):(lol::mat4(1.f)));
 
     if (m_ghost_object || (m_rigid_body->getCollisionFlags() & btCollisionObject::CF_KINEMATIC_OBJECT))
     {
         mat4 ThisMatrixLoc = NewMatrixLoc * inverse(PreviousMatrixLoc) * lol::mat4::translate(m_local_to_world[3].xyz);
-        mat4 ThisMatrixRot = NewMatrixRot * inverse(PreviousMatrixRot) * lol::mat4(lol::quat(m_local_to_world));
-        SetTransform(ThisMatrixLoc[3].xyz, lol::quat(ThisMatrixRot));
+        mat4 ThisMatrixRot = NewMatrixRot * inverse(PreviousMatrixRot) * lol::mat4(lol::quat(lol::mat3(m_local_to_world)));
+        SetTransform(ThisMatrixLoc[3].xyz, lol::quat(lol::mat3(ThisMatrixRot)));
     }
 }
 
@@ -247,7 +249,7 @@ void EasyPhysic::InitBodyToGhost()
     m_collision_object = m_ghost_object;
     m_collision_object->setUserPointer(this);
 
-    SetTransform(m_local_to_world[3].xyz, lol::quat(m_local_to_world));
+    SetTransform(m_local_to_world[3].xyz, lol::quat(lol::mat3(m_local_to_world)));
 
     m_ghost_object->setCollisionFlags(m_ghost_object->getCollisionFlags());
 }

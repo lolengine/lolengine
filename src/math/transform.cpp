@@ -1,58 +1,19 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//
+//  This library is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
 
 namespace lol
 {
-
-static inline void mat_to_quat(quat &that, mat3 const &m)
-{
-    float tr = m[0][0] + m[1][1] + m[2][2];
-
-    if (tr > 0)
-    {
-        float const p = 0.5f * std::sqrt(1.0f + tr);
-        float const q = 0.25f / p;
-
-        that.w = p;
-        that.x = q * (m[1][2] - m[2][1]);
-        that.y = q * (m[2][0] - m[0][2]);
-        that.z = q * (m[0][1] - m[1][0]);
-    }
-    else
-    {
-        int i = (m[0][0] > m[1][1] && m[0][0] > m[2][2]) ? 0
-              : (m[1][1] > m[2][2]) ? 1
-              : 2;
-        int j = (i + 1) % 3, k = (i + 2) % 3;
-
-        float const p = 0.5f * std::sqrt(1.0f - tr + 2.f * m[i][i]);
-        float const q = 0.25f / p;
-
-        that.w      = q * (m[j][k] - m[k][j]);
-        that[1 + i] = p;
-        that[1 + j] = q * (m[i][j] + m[j][i]);
-        that[1 + k] = q * (m[k][i] + m[i][k]);
-    }
-}
-
-template<> quat::quat_t(mat3 const &m)
-{
-    mat_to_quat(*this, m);
-}
-
-template<> quat::quat_t(mat4 const &m)
-{
-    mat_to_quat(*this, mat3(m));
-}
 
 template<> quat quat::rotate(float degrees, vec3 const &v)
 {
