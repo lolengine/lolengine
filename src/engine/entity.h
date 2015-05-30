@@ -1,18 +1,20 @@
+﻿//
+//  Lol Engine
 //
-// Lol Engine
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
 
 //
 // The Entity class
-// ---------------
+// ----------------
 // Entities are objects that can be ticked by the game loop and/or the render
 // loop. Entities are implemented as one or several linked lists. See the
 // Ticker class for the ticking logic and the linked list implementation.
@@ -65,27 +67,27 @@ protected:
 
     enum
     {
-        GAMEGROUP_BEGIN = 0, //Must be the first element
+        GAMEGROUP_BEGIN = 0, // must be the first element
 
-        GAMEGROUP_INPUT,    //Input should be polled before everything else
-        GAMEGROUP_IMGUI,    //Debug update needs to be called before the rest for init purposes
-        GAMEGROUP_APP,      //Main application update
-        GAMEGROUP_ENTITY,   //Default entity update
-        //------------------//Split entity update:
-        GAMEGROUP_PLAYER,   //Player updates before AI to ensure player actions is prevalent
-        GAMEGROUP_AI,       //AI update
-        GAMEGROUP_OTHER_0,  //Other misc updates here
-        GAMEGROUP_OTHER_1,  //Same ------------------
-        GAMEGROUP_OTHER_2,  //Same ------------------
-        GAMEGROUP_OTHER_3,  //Same ------------------
-        //------------------//Primitives updates
-        GAMEGROUP_MESH,     //Update Mesh/Animation to ensure correct sync with PLY/AI
-        GAMEGROUP_FX,       //Update FX/other to ensure correct sync with WorldPos and Meshes
-        GAMEGROUP_LIGHT,    //Update after FX because it could some
-        GAMEGROUP_CAMERA,   //Update camera at the end of the frame, once everything is settled
-        GAMEGROUP_STATS,    //Stats updates
+        GAMEGROUP_INPUT,     // input should be polled before everything else
+        GAMEGROUP_IMGUI,     // debug update needs to be called before the rest for init purposes
+        GAMEGROUP_APP,       // main application update
+        GAMEGROUP_ENTITY,    // default entity update
+        // ----------------- // split entity update:
+        GAMEGROUP_PLAYER,    // player updates before AI to ensure player actions is prevalent
+        GAMEGROUP_AI,        // AI update
+        GAMEGROUP_OTHER_0,   // other misc updates here
+        GAMEGROUP_OTHER_1,   //  (same)
+        GAMEGROUP_OTHER_2,   //  (same)
+        GAMEGROUP_OTHER_3,   //  (same)
+        // ----------------- // primitives updates
+        GAMEGROUP_MESH,      // update Mesh/Animation to ensure correct sync with PLY/AI
+        GAMEGROUP_FX,        // update FX/other to ensure correct sync with WorldPos and Meshes
+        GAMEGROUP_LIGHT,     // update after FX because it could some
+        GAMEGROUP_CAMERA,    // update camera at the end of the frame, once everything is settled
+        GAMEGROUP_STATS,     // stats update
 
-        GAMEGROUP_END       //Must be the last element
+        GAMEGROUP_END        // must be the last element
     }
     m_gamegroup;
 
@@ -93,28 +95,26 @@ protected:
     {
         DRAWGROUP_BEGIN = GAMEGROUP_END,
 
-        DRAWGROUP_CAMERA,   //Update camera first for rendering
-        DRAWGROUP_TEXTURE,  //Texture
+        DRAWGROUP_CAMERA,   // update camera first for rendering
+        DRAWGROUP_TEXTURE,  // texture
         DRAWGROUP_LIGHT,    //
-        DRAWGROUP_WORLD,    //Other misc updates here
+        DRAWGROUP_WORLD,    // other misc updates here
         DRAWGROUP_ENTITY,   //
         DRAWGROUP_FX,       //
-        DRAWGROUP_OTHER_0,  //Other misc updates here
-        DRAWGROUP_OTHER_1,  //Same ------------------
-        DRAWGROUP_OTHER_2,  //Same ------------------
-        DRAWGROUP_OTHER_3,  //Same ------------------
-        DRAWGROUP_APP,      //Main application Draw
+        DRAWGROUP_OTHER_0,  // other misc updates here
+        DRAWGROUP_OTHER_1,  //  (same)
+        DRAWGROUP_OTHER_2,  //  (same)
+        DRAWGROUP_OTHER_3,  //  (same)
+        DRAWGROUP_APP,      // main application Draw
         DRAWGROUP_HUD,
         DRAWGROUP_IMGUI,
         DRAWGROUP_CAPTURE,
 
-        DRAWGROUP_END,      //Must be the next-to-last element
-        DRAWGROUP_NONE      //This group is for non draw-ticked
+        DRAWGROUP_END,      // must be the next-to-last element
+        DRAWGROUP_NONE,     // this group is for non draw-ticked
     }
     m_drawgroup;
 
-    //static int const GAMEGROUP_BEGIN = 0;
-    //static int const DRAWGROUP_BEGIN = GAMEGROUP_END;
     static int const ALLGROUP_END = DRAWGROUP_END;
 
     /* The initialisation state */
