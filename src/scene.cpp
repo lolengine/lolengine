@@ -1,11 +1,14 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//            © 2014—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//
+//  This library is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -50,8 +53,9 @@ struct Tile
 static array<SceneDisplay*> m_scene_displays;
 
 /*
-* Public SceneDisplay class
-*/
+ * Public SceneDisplay class
+ */
+
 void SceneDisplay::Add(SceneDisplay* display)
 {
     m_scene_displays << display;
@@ -61,11 +65,14 @@ int SceneDisplay::GetCount()
 {
     return m_scene_displays.count();
 }
+
 SceneDisplay* SceneDisplay::GetDisplay(int index)
 {
-    ASSERT(0 <= index && index < m_scene_displays.count());
+    ASSERT(0 <= index && index < m_scene_displays.count(),
+           "invalid display index %d", index);
     return m_scene_displays[index];
 }
+
 void SceneDisplay::DestroyAll()
 {
     for (SceneDisplay* display : m_scene_displays)
@@ -76,28 +83,30 @@ void SceneDisplay::DestroyAll()
 /* ------------------------------------------------ */
 void SceneDisplay::Enable()
 {
-    //TODO: PROFILER STUFF
-}
-void SceneDisplay::Disable()
-{
-    //TODO: PROFILER STUFF
+    // TODO: PROFILER STUFF
 }
 
-//-----------------------------------------------------------------------------
+void SceneDisplay::Disable()
+{
+    // TODO: PROFILER STUFF
+}
+
 /*
-* Primitive implementation class
-*/
+ * Primitive implementation class
+ */
+
 void PrimitiveSource::Render(Scene& scene) { UNUSED(scene); }
+
 void PrimitiveRenderer::Render(Scene& scene, PrimitiveSource* primitive)
 {
     UNUSED(scene);
     UNUSED(primitive);
 }
 
-//-----------------------------------------------------------------------------
 /*
  * Scene implementation class
  */
+
 class SceneData
 {
     friend class Scene;
@@ -121,13 +130,14 @@ private:
     SceneDisplay* m_display = nullptr;
 
     /* Sources are shared by all scenes.
-     * Renderers are scene-dependent. They get the primitive in the identical slot to render with the given scene
+     * Renderers are scene-dependent. They get the primitive in the identical
+     * slot to render with the given scene.
      * Primitives and renderers will be kept until:
      * - Updated by entity
      * - Marked Fire&Forget
      * - Scene is destroyed */
-    map<uintptr_t, array<PrimitiveRenderer*> > m_prim_renderers;
-    static map<uintptr_t, array<PrimitiveSource*> > m_prim_sources;
+    map<uintptr_t, array<PrimitiveRenderer*>> m_prim_renderers;
+    static map<uintptr_t, array<PrimitiveSource*>> m_prim_sources;
     static mutex m_prim_mutex;
 
     /* Old API <P0, P1, COLOR, TIME, MASK> */
@@ -154,7 +164,7 @@ private:
     array<Camera *> m_camera_stack;
 };
 uint64_t SceneData::m_used_id = 1;
-map<uintptr_t, array<PrimitiveSource*> > SceneData::m_prim_sources;
+map<uintptr_t, array<PrimitiveSource*>> SceneData::m_prim_sources;
 mutex SceneData::m_prim_mutex;
 
 /*
@@ -234,7 +244,8 @@ bool Scene::IsReady(int index)
 //-----------------------------------------------------------------------------
 Scene& Scene::GetScene(int index)
 {
-    ASSERT(0 <= index && index < g_scenes.count() && !!g_scenes[index], "Trying to get a non-existent scene");
+    ASSERT(0 <= index && index < g_scenes.count() && !!g_scenes[index],
+           "Trying to get a non-existent scene %d", index);
     return *g_scenes[index];
 }
 
@@ -330,6 +341,7 @@ int Scene::HasPrimitiveSource(uintptr_t key)
     SceneData::m_prim_mutex.unlock();
     return count;
 }
+
 int Scene::AddPrimitiveSource(uintptr_t key, PrimitiveSource* source)
 {
     int count;
@@ -341,10 +353,12 @@ int Scene::AddPrimitiveSource(uintptr_t key, PrimitiveSource* source)
     SceneData::m_prim_mutex.unlock();
     return count;
 }
+
 void Scene::SetPrimitiveSource(int index, uintptr_t key, PrimitiveSource* source)
 {
     ASSERT(source);
-    ASSERT(index < 0);
+    ASSERT(index >= 0);
+
     PrimitiveSource* old = nullptr;
     SceneData::m_prim_mutex.lock();
     {
@@ -356,9 +370,10 @@ void Scene::SetPrimitiveSource(int index, uintptr_t key, PrimitiveSource* source
     }
     SceneData::m_prim_mutex.unlock();
 
-    //Delete old AFTER having released the lock
-    if (old) delete old;
+    // Delete old AFTER having released the lock
+    delete old;
 }
+
 void Scene::ReleasePrimitiveSource(int index, uintptr_t key)
 {
     PrimitiveSource* old = nullptr;
@@ -370,10 +385,11 @@ void Scene::ReleasePrimitiveSource(int index, uintptr_t key)
     }
     SceneData::m_prim_mutex.unlock();
 
-    //Delete old AFTER having released the lock
-    if (old) delete old;
+    // Delete old AFTER having released the lock
+    delete old;
 }
-void Scene::ReleaseAllPrimitiveSource(uintptr_t key)
+
+void Scene::ReleaseAllPrimitiveSources(uintptr_t key)
 {
     array<PrimitiveSource*> oldies;
     SceneData::m_prim_mutex.lock();
@@ -385,9 +401,9 @@ void Scene::ReleaseAllPrimitiveSource(uintptr_t key)
     }
     SceneData::m_prim_mutex.unlock();
 
-    //Delete oldies AFTER having released the lock
+    // Delete oldies AFTER having released the lock
     for (PrimitiveSource* old : oldies)
-        if (old) delete old;
+        delete old;
 }
 
 //---- Primitive renderer stuff -----------------------------------------------
@@ -395,15 +411,18 @@ int Scene::HasPrimitiveRenderer(uintptr_t key)
 {
     return data->m_prim_renderers[key].count();
 }
+
 void Scene::AddPrimitiveRenderer(uintptr_t key, PrimitiveRenderer* renderer)
 {
     renderer->m_fire_and_forget = true;
     data->m_prim_renderers[key].push(renderer);
 }
+
 void Scene::SetPrimitiveRenderer(int index, uintptr_t key, PrimitiveRenderer* renderer)
 {
     ASSERT(renderer);
-    ASSERT(index < 0);
+    ASSERT(index >= 0);
+
     if (index < data->m_prim_renderers[key].count())
     {
         ASSERT(data->m_prim_renderers[key][index]);
@@ -413,19 +432,21 @@ void Scene::SetPrimitiveRenderer(int index, uintptr_t key, PrimitiveRenderer* re
         data->m_prim_renderers[key].resize(index + 1);
     data->m_prim_renderers[key][index] = renderer;
 }
+
 void Scene::ReleasePrimitiveRenderer(int index, uintptr_t key)
 {
     ASSERT(0 <= index && index < data->m_prim_renderers[key].count());
-    ASSERT(data->m_prim_renderers[key][index]);
+
     delete data->m_prim_renderers[key][index];
     data->m_prim_renderers[key].remove(index);
 }
-void Scene::ReleaseAllPrimitiveRenderer(uintptr_t key)
+
+void Scene::ReleaseAllPrimitiveRenderers(uintptr_t key)
 {
-    for (PrimitiveRenderer* renderer : data->m_prim_renderers[key])
+    for (PrimitiveRenderer*& renderer : data->m_prim_renderers[key])
     {
-        ASSERT(renderer);
         delete renderer;
+        renderer = nullptr;
     }
 }
 
@@ -457,18 +478,21 @@ void Scene::SetLineTime(float new_time)
 
     data->m_new_line_time = new_time;
 }
+
 void Scene::SetLineMask(int new_mask)
 {
     ASSERT(!!data, "Trying to access a non-ready scene");
 
     data->m_new_line_mask = new_mask;
 }
+
 void Scene::SetLineSegmentSize(float new_segment_size)
 {
     ASSERT(!!data, "Trying to access a non-ready scene");
 
     data->m_new_line_segment_size = new_segment_size;
 }
+
 void Scene::SetLineColor(vec4 new_color)
 {
     ASSERT(!!data, "Trying to access a non-ready scene");
@@ -483,6 +507,7 @@ float Scene::GetLineSegmentSize()
 
     return data->m_new_line_segment_size;
 }
+
 vec4 Scene::GetLineColor()
 {
     ASSERT(!!data, "Trying to access a non-ready scene");
@@ -524,11 +549,12 @@ void Scene::SetDisplay(SceneDisplay* display)
 //-----------------------------------------------------------------------------
 void Scene::EnableDisplay()
 {
-    //If no display has been set, use the default one
+    // If no display has been set, use the default one
     if (!data->m_display)
         SetDisplay(SceneDisplay::GetDisplay());
     data->m_display->Enable();
 }
+
 void Scene::DisableDisplay()
 {
     ASSERT(data->m_display);

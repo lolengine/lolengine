@@ -131,7 +131,7 @@ private:
     int AddPrimitiveSource(uintptr_t key, class PrimitiveSource* source);
     void SetPrimitiveSource(int index, uintptr_t key, class PrimitiveSource* source);
     void ReleasePrimitiveSource(int index, uintptr_t key);
-    void ReleaseAllPrimitiveSource(uintptr_t key);
+    void ReleaseAllPrimitiveSources(uintptr_t key);
 public:
     /* === Primitive source stuff === */
     /* Returns the number of primitive source set to the given entity */
@@ -167,10 +167,10 @@ public:
     }
     /* Remove all primitive source set to the given entity */
     template <typename T>
-    void ReleaseAllPrimitiveSource(T* key)
+    void ReleaseAllPrimitiveSources(T* key)
     {
         ASSERT(key);
-        ReleaseAllPrimitiveSource(_KEY_IDX);
+        ReleaseAllPrimitiveSources(_KEY_IDX);
     }
 
 private:
@@ -178,7 +178,7 @@ private:
     void AddPrimitiveRenderer(uintptr_t key, class PrimitiveRenderer* renderer);
     void SetPrimitiveRenderer(int index, uintptr_t key, class PrimitiveRenderer* renderer);
     void ReleasePrimitiveRenderer(int index, uintptr_t key);
-    void ReleaseAllPrimitiveRenderer(uintptr_t key);
+    void ReleaseAllPrimitiveRenderers(uintptr_t key);
 public:
     /* === Primitive renderer stuff === */
     /* Returns the number of primitive renderer set to the given entity */
@@ -215,10 +215,10 @@ public:
     }
     /* Remove all primitive renderer set to the given entity */
     template <typename T>
-    void ReleaseAllPrimitiveRenderer(T* key)
+    void ReleaseAllPrimitiveRenderers(T* key)
     {
         ASSERT(key);
-        ReleaseAllPrimitiveRenderer(_KEY_IDX);
+        ReleaseAllPrimitiveRenderers(_KEY_IDX);
     }
     /* ============================== */
 #   undef _KEY_IDX /* (uintptr_t)key *//* TOUKY: I don't like that. hash should be fixed to handle these custom stuff */
