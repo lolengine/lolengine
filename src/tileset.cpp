@@ -1,11 +1,13 @@
+﻿//
+//  Lol Engine
 //
-// Lol Engine
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -55,7 +57,7 @@ TileSet::TileSet(char const *path)
     array<ivec2, ivec2> tiles;
     if (m_data->m_image->RetrieveTiles(tiles))
         for (int i = 0; i < tiles.count(); i++)
-            AddTile(ibox2(tiles[0].m1, tiles[0].m1 + tiles[0].m2));
+            define_tile(ibox2(tiles[0].m1, tiles[0].m1 + tiles[0].m2));
 }
 
 TileSet::TileSet(char const *path, Image* image)
@@ -66,7 +68,7 @@ TileSet::TileSet(char const *path, Image* image)
     array<ivec2, ivec2> tiles;
     if (m_data->m_image->RetrieveTiles(tiles))
         for (int i = 0; i < tiles.count(); i++)
-            AddTile(ibox2(tiles[0].m1, tiles[0].m1 + tiles[0].m2));
+            define_tile(ibox2(tiles[0].m1, tiles[0].m1 + tiles[0].m2));
 }
 
 TileSet::TileSet(char const *path, ivec2 size, ivec2 count)
@@ -87,8 +89,8 @@ TileSet::TileSet(char const *path, ivec2 size, ivec2 count)
     for (int j = 0; j < count.y; ++j)
     for (int i = 0; i < count.x; ++i)
     {
-        AddTile(ibox2(size * ivec2(i, j),
-                      size * ivec2(i + 1, j + 1)));
+        define_tile(ibox2(size * ivec2(i, j),
+                          size * ivec2(i + 1, j + 1)));
     }
 }
 
@@ -110,8 +112,8 @@ TileSet::TileSet(char const *path, Image* image, ivec2 size, ivec2 count)
     for (int j = 0; j < count.y; ++j)
     for (int i = 0; i < count.x; ++i)
     {
-        AddTile(ibox2(size * ivec2(i, j),
-                      size * ivec2(i + 1, j + 1)));
+        define_tile(ibox2(size * ivec2(i, j),
+                          size * ivec2(i + 1, j + 1)));
     }
 }
 
@@ -134,7 +136,7 @@ char const *TileSet::GetName()
 }
 
 //New methods -----------------------------------------------------------------
-int TileSet::AddTile(ibox2 rect)
+int TileSet::define_tile(ibox2 rect)
 {
     m_tileset_data->m_tiles.push(rect,
              box2((vec2)rect.aa / (vec2)m_data->m_texture_size,
@@ -142,15 +144,15 @@ int TileSet::AddTile(ibox2 rect)
     return m_tileset_data->m_tiles.count() - 1;
 }
 
-void TileSet::AddTile(ivec2 count)
+void TileSet::define_tile(ivec2 count)
 {
     ivec2 size = m_data->m_image_size / count;
 
     for (int j = 0; j < count.y; ++j)
     for (int i = 0; i < count.x; ++i)
     {
-        AddTile(ibox2(size * ivec2(i, j),
-                      size * ivec2(i + 1, j + 1)));
+        define_tile(ibox2(size * ivec2(i, j),
+                          size * ivec2(i + 1, j + 1)));
     }
 }
 
