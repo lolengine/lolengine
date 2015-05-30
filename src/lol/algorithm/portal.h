@@ -252,7 +252,7 @@ class PortalRoom
     friend class PortalDoor<TE>;
 
 public:
-    PortalRoom(TE* element=nullptr)
+    PortalRoom(TE* element = nullptr)
     {
         m_element = element;
     }
