@@ -64,8 +64,7 @@ public:
     void SetPalette(TileSet* palette);
     TileSet* GetPalette();
     TileSet const * GetPalette() const;
-    void BlitTile(uint32_t id, vec3 pos, int o, vec2 scale, float angle,
-                  vec3 *vertex, vec2 *texture);
+    void BlitTile(uint32_t id, mat4 model, vec3 *vertex, vec2 *texture);
 
 protected:
     TileSetData *m_tileset_data;
