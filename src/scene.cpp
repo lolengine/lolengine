@@ -1,10 +1,10 @@
-//
+﻿//
 //  Lol Engine
 //
 //  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //            © 2014—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
-//  This library is free software. It comes without any warranty, to
+//  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
 //  and/or modify it under the terms of the Do What the Fuck You Want
 //  to Public License, Version 2, as published by the WTFPL Task Force.
@@ -453,12 +453,11 @@ void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale, float
     ASSERT(id < tileset->GetTileCount());
 
     ivec2 size = tileset->GetTileSize(id);
-    vec2 flip(scale.x > 0.f ? 1.f : -1.f,
-              scale.y > 0.f ? 1.f : -1.f);
     mat4 model = mat4::translate(pos)
                * mat4::scale(scale.x, scale.y, 1.f)
                * mat4::translate(size.x * 0.5f, size.y * 0.5f, 0.f)
-               * mat4::rotate(angle * flip.x * flip.y, vec3::axis_z);
+               * mat4::rotate(scale.x * scale.y < 0 ? angle : -angle,
+                              vec3::axis_z);
 
     AddTile(tileset, id, model);
 }
