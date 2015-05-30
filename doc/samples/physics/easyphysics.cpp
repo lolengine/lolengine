@@ -1,4 +1,4 @@
-//
+﻿//
 //  Lol Engine
 //
 //  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
@@ -30,26 +30,26 @@ namespace phys
 //--
 
 EasyPhysic::EasyPhysic(WorldEntity* NewOwnerEntity) :
-    m_collision_object(NULL),
-    m_ghost_object(NULL),
-    m_rigid_body(NULL),
+    m_collision_object(nullptr),
+    m_ghost_object(nullptr),
+    m_rigid_body(nullptr),
     m_local_inertia(btVector3(.0f, .0f, .0f)),
-    m_collision_shape(NULL),
-    m_convex_shape(NULL),
-    m_motion_state(NULL),
+    m_collision_shape(nullptr),
+    m_convex_shape(nullptr),
+    m_motion_state(nullptr),
     m_mass(.0f),
     m_hit_restitution(.0f),
     m_collision_group(1),
     m_collision_mask(1),
     m_owner_entity(NewOwnerEntity),
-    m_owner_simulation(NULL),
-    m_base_physic(NULL)
+    m_owner_simulation(nullptr),
+    m_base_physic(nullptr)
 {
 }
 
 EasyPhysic::~EasyPhysic()
 {
-    m_rigid_body = NULL;
+    m_rigid_body = nullptr;
     delete m_collision_object;
     delete m_collision_shape;
     delete m_motion_state;

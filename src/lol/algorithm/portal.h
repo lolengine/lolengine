@@ -1,4 +1,4 @@
-//
+﻿//
 //  Lol Engine
 //
 //  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
@@ -252,7 +252,7 @@ class PortalRoom
     friend class PortalDoor<TE>;
 
 public:
-    PortalRoom(TE* element=nullptr)
+    PortalRoom(TE* element = nullptr)
     {
         m_element = element;
     }

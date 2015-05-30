@@ -1,4 +1,4 @@
-//
+﻿//
 //  Lol Engine
 //
 //  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
@@ -46,7 +46,7 @@ public:
     virtual void SetShapeToCylinder(lol::vec3& cyl_size);
     virtual void SetShapeToCapsule(float radius, float height);
 
-    virtual bool CanChangeCollisionChannel() { return (m_rigid_body == NULL); }
+    virtual bool CanChangeCollisionChannel() { return (m_rigid_body == nullptr); }
     virtual mat4 GetTransform();
     virtual void SetTransform(const vec3& base_location, const quat& base_rotation = quat(mat3(1.0f)));
 protected:
@@ -130,7 +130,7 @@ public:
             for (int i = 0; i < m_base_physic->m_based_physic_list.count(); ++i)
                 if (m_base_physic->m_based_physic_list[i] == this)
                     m_base_physic->m_based_physic_list.remove(i--);
-            m_base_physic = NULL;
+            m_base_physic = nullptr;
         }
     }
 

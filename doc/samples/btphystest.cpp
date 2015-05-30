@@ -1,4 +1,4 @@
-//
+﻿//
 //  BtPhysTest
 //
 //  Copyright © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
@@ -206,7 +206,7 @@ void BtPhysTest::InitApp()
     }
 #endif //USE_WALL
 
-    PhysicsObject* BasePhyobj = NULL;
+    PhysicsObject* BasePhyobj = nullptr;
 #if USE_PLATFORM
     {
         quat NewRotation = quat::fromeuler_xyz(0.f, 0.f, 0.f);
@@ -617,7 +617,7 @@ void BtPhysTest::TickGame(float seconds)
             if (m_simulation->RayHits(HitResult, ERT_Closest, Character->GetTransform()[3].xyz, (Character->GetTransform()[3].xyz + vec3(.0f, -1.f, .0f)), Character))
                 Character->AttachTo(HitResult.m_collider_list[0], true, true);
             else
-                Character->AttachTo(NULL);
+                Character->AttachTo(nullptr);
         }
     }
 #endif //USE_CHARACTER
@@ -690,7 +690,7 @@ void BtPhysTest::TickDraw(float seconds, Scene &scene)
             m_cat_sdata->m_tex_uniform = m_cat_texture->GetTexture()->GetTextureUniform();
             m_cat_sdata->m_sprite_flip = ((rand(2) == 1)?(1.f):(0.f)) / (float)(NB_SPRITE * PARTICLE_SIZE);
             PhysObj->SetCustomShaderData(m_cat_sdata);
-            m_cat_sdata = NULL;
+            m_cat_sdata = nullptr;
         }
 #endif //USE_BODIES
 #endif //CAT_MODE

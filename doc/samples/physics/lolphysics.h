@@ -1,8 +1,14 @@
+﻿//
+//  Lol Engine
 //
-// LolPhysics
+//  Copyright © 2012—2015 Sam Hocevar <sam@hocevar.net>
+//            © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
-// Copyright: (c) 2009-2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//            (c) 2012 Sam Hocevar <sam@hocevar.net>
+//  This library is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
@@ -154,11 +160,11 @@ public:
     };
 
     //Returns true when hitting something. If SourceCaster is set, it will be ignored by Raycast.
-    bool RayHits(RayCastResult& HitResult, eRaycastType RaycastType, const vec3& RayFrom, const vec3& RayTo, EasyPhysic* SourceCaster=NULL)
+    bool RayHits(RayCastResult& HitResult, eRaycastType RaycastType, const vec3& RayFrom, const vec3& RayTo, EasyPhysic* SourceCaster = nullptr)
     {
         bool bResult = false;
 
-        btCollisionWorld::RayResultCallback* BtRayResult = NULL;
+        btCollisionWorld::RayResultCallback* BtRayResult = nullptr;
         btCollisionWorld::ClosestRayResultCallback* BtRayResult_Closest;
         btCollisionWorld::AllHitsRayResultCallback* BtRayResult_AllHits;
 
@@ -334,7 +340,7 @@ private:
     //Adds the given EasyPhysic to the correct list.
     void ObjectRegistration(bool AddObject, EasyPhysic* NewEP, eEasyPhysicType CurType)
     {
-        array<EasyPhysic*>* SearchList = NULL;
+        array<EasyPhysic*>* SearchList = nullptr;
         switch(CurType)
         {
             case EEPT_Dynamic:
@@ -375,13 +381,13 @@ private:
         }
         else
         {
-            NewEP->m_owner_simulation = NULL;
+            NewEP->m_owner_simulation = nullptr;
             SearchList->remove_item(NewEP);
         }
     }
     void ObjectRegistration(bool AddObject, EasyConstraint* NewEC)
     {
-        array<EasyConstraint*>* SearchList = NULL;
+        array<EasyConstraint*>* SearchList = nullptr;
         SearchList = &m_constraint_list;
 
         if (AddObject)
@@ -391,7 +397,7 @@ private:
         }
         else
         {
-            NewEC->m_owner_simulation = NULL;
+            NewEC->m_owner_simulation = nullptr;
             SearchList->remove_item(NewEC);
         }
     }

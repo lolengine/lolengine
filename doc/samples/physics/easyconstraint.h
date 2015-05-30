@@ -1,4 +1,4 @@
-//
+﻿//
 //  Lol Engine
 //
 //  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
@@ -36,15 +36,15 @@ class EasyConstraint
 
 public:
     EasyConstraint() :
-        m_typed_constraint(NULL),
-        m_p2p_constraint(NULL),
-        m_hinge_constraint(NULL),
-        m_slider_constraint(NULL),
-        m_cone_twist_constraint(NULL),
-        m_6dof_constraint(NULL),
-        m_owner_simulation(NULL),
-        m_a_physobj(NULL),
-        m_b_physobj(NULL),
+        m_typed_constraint(nullptr),
+        m_p2p_constraint(nullptr),
+        m_hinge_constraint(nullptr),
+        m_slider_constraint(nullptr),
+        m_cone_twist_constraint(nullptr),
+        m_6dof_constraint(nullptr),
+        m_owner_simulation(nullptr),
+        m_a_physobj(nullptr),
+        m_b_physobj(nullptr),
         m_a_transform(lol::mat4(1.f)),
         m_b_transform(lol::mat4(1.f)),
         m_using_ref_a(false),
@@ -55,11 +55,11 @@ public:
     ~EasyConstraint()
     {
         delete m_typed_constraint;
-        m_p2p_constraint = NULL;
-        m_hinge_constraint = NULL;
-        m_slider_constraint = NULL;
-        m_cone_twist_constraint = NULL;
-        m_6dof_constraint = NULL;
+        m_p2p_constraint = nullptr;
+        m_hinge_constraint = nullptr;
+        m_slider_constraint = nullptr;
+        m_cone_twist_constraint = nullptr;
+        m_6dof_constraint = nullptr;
     }
 
     void AddToSimulation(class Simulation* current_simulation);
