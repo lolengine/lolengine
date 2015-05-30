@@ -180,8 +180,7 @@ TileSet const* TileSet::GetPalette() const
     return m_palette;
 }
 
-void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale, float angle,
-                       vec3 *vertex, vec2 *texture)
+void TileSet::BlitTile(uint32_t id, mat4 model, vec3 *vertex, vec2 *texture)
 {
     ibox2 pixels = m_tileset_data->m_tiles[id].m1;
     box2 texels = m_tileset_data->m_tiles[id].m2;
@@ -189,20 +188,6 @@ void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale, float angle,
     float dty = texels.extent().y;
     float tx = texels.aa.x;
     float ty = texels.aa.y;
-
-    int dx =         (int)(pixels.extent().x * scale.x);
-    int dy = o ? 0 : (int)(pixels.extent().y * scale.y);
-    int dz = o ?     (int)(pixels.extent().y * scale.y) : 0;
-
-    /* If scaling is negative, switch triangle winding */
-    if (scale.x * scale.y < 0.0f)
-    {
-        pos.x += dx;
-        dx = -dx;
-
-        tx += dtx;
-        dtx = -dtx;
-    }
 
 #if 1
     /* HACK: tweak UV values */
@@ -212,20 +197,18 @@ void TileSet::BlitTile(uint32_t id, vec3 pos, int o, vec2 scale, float angle,
     dty *= 126.f / 128.f;
 #endif
 
-    vec3 extent_x = 0.5f * vec3((float)dx, 0.f, 0.f);
-    vec3 extent_y = 0.5f * vec3(0.f, (float)dy, (float)dz);
-    vec3 center = pos + extent_x + extent_y;
-    extent_x = mat3::rotate(angle, vec3::axis_z) * extent_x;
-    extent_y = mat3::rotate(angle, vec3::axis_z) * extent_y;
+    vec3 pos = (model * vec4(0.f, 0.f, 0.f, 1.f)).xyz;
+    vec3 extent_x = 0.5f * pixels.extent().x * (model * vec4::axis_x).xyz;
+    vec3 extent_y = 0.5f * pixels.extent().y * (model * vec4::axis_y).xyz;
 
     if (!m_data->m_image && m_data->m_texture)
     {
-        *vertex++ = center + extent_x + extent_y;
-        *vertex++ = center - extent_x + extent_y;
-        *vertex++ = center + extent_x - extent_y;
-        *vertex++ = center + extent_x - extent_y;
-        *vertex++ = center - extent_x + extent_y;
-        *vertex++ = center - extent_x - extent_y;
+        *vertex++ = pos + extent_x + extent_y;
+        *vertex++ = pos - extent_x + extent_y;
+        *vertex++ = pos + extent_x - extent_y;
+        *vertex++ = pos + extent_x - extent_y;
+        *vertex++ = pos - extent_x + extent_y;
+        *vertex++ = pos - extent_x - extent_y;
 
         *texture++ = vec2(tx + dtx, ty);
         *texture++ = vec2(tx,       ty);

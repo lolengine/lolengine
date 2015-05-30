@@ -41,12 +41,9 @@ array<Scene*> Scene::g_scenes;
 
 struct Tile
 {
-    TileSet *tileset;
-    uint32_t prio;
-    vec3 pos;
-    vec2 scale;
-    float angle;
-    int id, o;
+    mat4 m_model;
+    TileSet *m_tileset;
+    int m_id;
 };
 
 //-----------------------------------------------------------------------------
@@ -455,15 +452,25 @@ void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale, float
 {
     ASSERT(id < tileset->GetTileCount());
 
+    ivec2 size = tileset->GetTileSize(id);
+    vec2 flip(scale.x > 0.f ? 1.f : -1.f,
+              scale.y > 0.f ? 1.f : -1.f);
+    mat4 model = mat4::translate(pos)
+               * mat4::scale(scale.x, scale.y, 1.f)
+               * mat4::translate(size.x * 0.5f, size.y * 0.5f, 0.f)
+               * mat4::rotate(angle * flip.x * flip.y, vec3::axis_z);
+
+    AddTile(tileset, id, model);
+}
+
+void Scene::AddTile(TileSet *tileset, int id, mat4 model)
+{
+    ASSERT(id < tileset->GetTileCount());
+
     Tile t;
-    /* FIXME: this sorting only works for a 45-degree camera */
-    t.prio = (uint32_t)(-pos.y - (int)(2 * 32 * pos.z) + ((float)o ? 0 : 32));
-    t.tileset = tileset;
-    t.id = id;
-    t.pos = pos;
-    t.o = o;
-    t.scale = scale;
-    t.angle = angle;
+    t.m_model = model;
+    t.m_tileset = tileset;
+    t.m_id = id;
 
     if (tileset->GetPalette())
         data->m_palettes.push(t);
@@ -594,6 +601,10 @@ void Scene::RenderTiles() // XXX: rename to Blit()
     if (!data->m_tiles.count() && !data->m_palettes.count())
         return;
 
+    /* FIXME: we disable culling for now because we don’t have a reliable
+     * way to know which side is facing the camera. */
+    rc.SetCullMode(CullMode::Disabled);
+
     rc.SetDepthFunc(DepthFunc::LessOrEqual);
     rc.SetBlendFunc(BlendFunc::SrcAlpha, BlendFunc::OneMinusSrcAlpha);
     rc.SetBlendEquation(BlendEquation::Add, BlendEquation::Max);
@@ -640,7 +651,7 @@ void Scene::RenderTiles() // XXX: rename to Blit()
         {
             /* Count how many quads will be needed */
             for (n = i + 1; n < tiles.count(); n++)
-                if (tiles[i].tileset != tiles[n].tileset)
+                if (tiles[i].m_tileset != tiles[n].m_tileset)
                     break;
 
             /* Create a vertex array object */
@@ -654,9 +665,7 @@ void Scene::RenderTiles() // XXX: rename to Blit()
 
             for (int j = i; j < n; j++)
             {
-                tiles[i].tileset->BlitTile(tiles[j].id,
-                                tiles[j].pos, tiles[j].o,
-                                tiles[j].scale, tiles[j].angle,
+                tiles[i].m_tileset->BlitTile(tiles[j].m_id, tiles[j].m_model,
                                 vertex + 6 * (j - i), texture + 6 * (j - i));
             }
 
@@ -664,22 +673,22 @@ void Scene::RenderTiles() // XXX: rename to Blit()
             vb2->Unlock();
 
             /* Bind texture */
-            if (tiles[i].tileset->GetPalette())
+            if (tiles[i].m_tileset->GetPalette())
             {
-                if (tiles[i].tileset->GetTexture())
-                    shader->SetUniform(uni_tex, tiles[i].tileset->GetTexture()->GetTextureUniform(), 0);
-                if (tiles[i].tileset->GetPalette()->GetTexture())
-                    shader->SetUniform(uni_pal, tiles[i].tileset->GetPalette()->GetTexture()->GetTextureUniform(), 1);
+                if (tiles[i].m_tileset->GetTexture())
+                    shader->SetUniform(uni_tex, tiles[i].m_tileset->GetTexture()->GetTextureUniform(), 0);
+                if (tiles[i].m_tileset->GetPalette()->GetTexture())
+                    shader->SetUniform(uni_pal, tiles[i].m_tileset->GetPalette()->GetTexture()->GetTextureUniform(), 1);
             }
             else
             {
                 shader->SetUniform(uni_tex, 0);
-                if (tiles[i].tileset->GetTexture())
-                    shader->SetUniform(uni_tex, tiles[i].tileset->GetTexture()->GetTextureUniform(), 0);
-                tiles[i].tileset->Bind();
+                if (tiles[i].m_tileset->GetTexture())
+                    shader->SetUniform(uni_tex, tiles[i].m_tileset->GetTexture()->GetTextureUniform(), 0);
+                tiles[i].m_tileset->Bind();
             }
             shader->SetUniform(uni_texsize,
-                           (vec2)tiles[i].tileset->GetTextureSize());
+                           (vec2)tiles[i].m_tileset->GetTextureSize());
 
             /* Bind vertex and texture coordinate buffers */
             data->m_tile_vdecl->Bind();
@@ -689,7 +698,7 @@ void Scene::RenderTiles() // XXX: rename to Blit()
             /* Draw arrays */
             data->m_tile_vdecl->DrawElements(MeshPrimitive::Triangles, 0, (n - i) * 6);
             data->m_tile_vdecl->Unbind();
-            tiles[i].tileset->Unbind();
+            tiles[i].m_tileset->Unbind();
         }
 
         tiles.empty();
