@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010-2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
 //  This library is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it

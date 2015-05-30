@@ -1,7 +1,7 @@
 ﻿//
-//  Lol Engine — Graphing tutorial
+//  Lol Engine — Lua tutorial
 //
-//  Copyright © 2005—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2014—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  This program is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it

@@ -1,5 +1,5 @@
 //
-//  Lol Engine - Fractal tutorial
+//  Lol Engine — Fractal tutorial
 //
 //  Copyright © 2011—2015 Sam Hocevar <sam@hocevar.net>
 //
