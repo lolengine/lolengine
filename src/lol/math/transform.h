@@ -197,6 +197,7 @@ struct quat_t : public linear_ops::base<T>
         return quat_t(w, -x, -y, -z);
     }
 
+    /* Transform vectors or points */
     inline vec_t<T,3> transform(vec_t<T,3> const &v) const
     {
         quat_t p = quat_t(0, v.x, v.y, v.z);
@@ -268,11 +269,21 @@ struct sqt_t
       : q(other.q), t(other.t), s(other.s) {}
 
     /* Various explicit constructors */
-    inline constexpr sqt_t(T const &s_,
-                           quat_t<T> const &q_,
-                           vec_t<T,3> const &t_)
-      : s(s_), q(q_), t(t_) {}
+    explicit inline constexpr sqt_t(T const &s_,
+                                    quat_t<T> const &q_,
+                                    vec_t<T,3> const &t_)
+      : q(q_), t(t_), s(s_) {}
 
+    explicit inline constexpr sqt_t(T const &s_)
+      : q(1.f), t(0.f), s(s_) {}
+
+    explicit inline constexpr sqt_t(quat_t<T> const &q_)
+      : q(q_), t(0.f), s(1.f) {}
+
+    explicit inline constexpr sqt_t(vec_t<T,3> const &t_)
+      : q(1.f), t(t_), s(1.f) {}
+
+    /* Transform vectors or points */
     inline vec_t<T,3> transform(vec_t<T,3> const &v) const
     {
         return t + q.transform(s * v);
@@ -280,7 +291,7 @@ struct sqt_t
 
     inline vec_t<T,4> transform(vec_t<T,4> const &v) const
     {
-        // XXX: needs serious testing
+        // XXX: needs serious testing for w != 1
         vec_t<T,4> tmp = q.transform(vec_t<T,4>(s * v.xyz, v.w));
         return vec_t<T,4>(tmp.xyz, 0.f) + vec_t<T,4>(t, 1.f) * tmp.w;
     }
@@ -293,6 +304,14 @@ struct sqt_t
     inline vec_t<T,4> operator *(vec_t<T,4> const &v) const
     {
         return transform(v);
+    }
+
+    /* Compose two SQTs together */
+    inline sqt_t<T> operator *(sqt_t<T> const &other) const
+    {
+        return sqt_t<T>(s * other.s,
+                        q * other.q,
+                        transform(other.t));
     }
 
     quat_t<T> q;
