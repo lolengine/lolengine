@@ -51,6 +51,7 @@
     <ClCompile Include="math\rand.cpp" />
     <ClCompile Include="math\real.cpp" />
     <ClCompile Include="math\rotation.cpp" />
+    <ClCompile Include="math\sqt.cpp" />
     <ClCompile Include="math\trig.cpp" />
     <ClCompile Include="math\vector.cpp" />
   </ItemGroup>
