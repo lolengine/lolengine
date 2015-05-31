@@ -38,12 +38,12 @@ lolunit_declare_fixture(real_test)
         lolunit_assert_equal(b1, 1.0);
         lolunit_assert_equal(b2, 1.0);
 
-        double c1 = exp(re(real::R_LOG2E()));
+        double c1 = exp(inverse(real::R_LOG2E()));
         double c2 = log(exp2(real::R_LOG2E()));
         lolunit_assert_equal(c1, 2.0);
         lolunit_assert_equal(c2, 1.0);
 
-        double d1 = exp(re(real::R_LOG10E()));
+        double d1 = exp(inverse(real::R_LOG10E()));
         lolunit_assert_equal(d1, 10.0);
 
         double e1 = exp(real::R_LN2());

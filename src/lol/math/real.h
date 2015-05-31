@@ -111,7 +111,7 @@ public:
     template<int K> friend Real<K> nextafter(Real<K> const &x, Real<K> const &y);
 
     /* Power functions */
-    template<int K> friend Real<K> re(Real<K> const &x);
+    template<int K> friend Real<K> inverse(Real<K> const &x);
     template<int K> friend Real<K> sqrt(Real<K> const &x);
     template<int K> friend Real<K> cbrt(Real<K> const &x);
     template<int K> friend Real<K> pow(Real<K> const &x, Real<K> const &y);
@@ -270,7 +270,7 @@ template<int K> Real<K> ldexp(Real<K> const &x, int exp);
 template<int K> Real<K> modf(Real<K> const &x, Real<K> *iptr);
 template<int K> Real<K> ulp(Real<K> const &x);
 template<int K> Real<K> nextafter(Real<K> const &x, Real<K> const &y);
-template<int K> Real<K> re(Real<K> const &x);
+template<int K> Real<K> inverse(Real<K> const &x);
 template<int K> Real<K> sqrt(Real<K> const &x);
 template<int K> Real<K> cbrt(Real<K> const &x);
 template<int K> Real<K> pow(Real<K> const &x, Real<K> const &y);
@@ -310,7 +310,7 @@ template<> real ldexp(real const &x, int exp);
 template<> real modf(real const &x, real *iptr);
 template<> real ulp(real const &x);
 template<> real nextafter(real const &x, real const &y);
-template<> real re(real const &x);
+template<> real inverse(real const &x);
 template<> real sqrt(real const &x);
 template<> real cbrt(real const &x);
 template<> real pow(real const &x, real const &y);
