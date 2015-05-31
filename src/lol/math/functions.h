@@ -1,12 +1,14 @@
+﻿//
+//  Lol Engine
 //
-// Lol Engine
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//            © 2012—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-// Copyright: (c) 2012-2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
@@ -104,15 +106,6 @@ static inline ldouble degrees(ldouble radians)
     return radians * (180.0L / LD_PI);
 }
 
-static inline int8_t degrees(int8_t x)      { return (int8_t)  degrees((float)x); }
-static inline uint8_t degrees(uint8_t x)    { return (uint8_t) degrees((float)x); }
-static inline int16_t degrees(int16_t x)    { return (int16_t) degrees((float)x); }
-static inline uint16_t degrees(uint16_t x)  { return (uint16_t)degrees((float)x); }
-static inline int32_t degrees(int32_t x)    { return (int32_t) degrees((double)x); }
-static inline uint32_t degrees(uint32_t x)  { return (uint32_t)degrees((double)x); }
-static inline int64_t degrees(int64_t x)    { return (int64_t) degrees((ldouble)x); }
-static inline uint64_t degrees(uint64_t x)  { return (uint64_t)degrees((ldouble)x); }
-
 static inline float radians(float degrees)
 {
     return degrees * (F_PI / 180.0f);
@@ -128,14 +121,25 @@ static inline ldouble radians(ldouble degrees)
     return degrees * (LD_PI / 180.0L);
 }
 
-static inline int8_t radians(int8_t x)      { return (int8_t)  radians((float)x); }
-static inline uint8_t radians(uint8_t x)    { return (uint8_t) radians((float)x); }
-static inline int16_t radians(int16_t x)    { return (int16_t) radians((float)x); }
-static inline uint16_t radians(uint16_t x)  { return (uint16_t)radians((float)x); }
-static inline int32_t radians(int32_t x)    { return (int32_t) radians((double)x); }
-static inline uint32_t radians(uint32_t x)  { return (uint32_t)radians((double)x); }
-static inline int64_t radians(int64_t x)    { return (int64_t) radians((ldouble)x); }
-static inline uint64_t radians(uint64_t x)  { return (uint64_t)radians((ldouble)x); }
+/* The integer versions return floating point values. This avoids nasty
+ * surprises when calling radians(180) instead of radians(180.0). */
+static inline float   degrees(int8_t x)   { return degrees(float(x)); }
+static inline float   degrees(uint8_t x)  { return degrees(float(x)); }
+static inline float   degrees(int16_t x)  { return degrees(float(x)); }
+static inline float   degrees(uint16_t x) { return degrees(float(x)); }
+static inline double  degrees(int32_t x)  { return degrees(double(x)); }
+static inline double  degrees(uint32_t x) { return degrees(double(x)); }
+static inline ldouble degrees(int64_t x)  { return degrees(ldouble(x)); }
+static inline ldouble degrees(uint64_t x) { return degrees(ldouble(x)); }
+
+static inline float   radians(int8_t x)   { return radians(float(x)); }
+static inline float   radians(uint8_t x)  { return radians(float(x)); }
+static inline float   radians(int16_t x)  { return radians(float(x)); }
+static inline float   radians(uint16_t x) { return radians(float(x)); }
+static inline double  radians(int32_t x)  { return radians(double(x)); }
+static inline double  radians(uint32_t x) { return radians(double(x)); }
+static inline ldouble radians(int64_t x)  { return radians(ldouble(x)); }
+static inline ldouble radians(uint64_t x) { return radians(ldouble(x)); }
 
 static inline float mix(float const &a, float const &b, float const &x)
 {
