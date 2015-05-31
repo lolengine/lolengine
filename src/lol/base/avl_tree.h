@@ -505,9 +505,9 @@ public:
 
     struct output_value
     {
-        output_value(K const & _key, V & _value) :
-            key(_key),
-            value(_value)
+        output_value(K const & key_, V & value_) :
+            key(key_),
+            value(value_)
         {
         }
 
@@ -571,9 +571,9 @@ public:
 
     struct const_output_value
     {
-        const_output_value(K const & _key, V const & _value) :
-            key(_key),
-            value(_value)
+        const_output_value(K const & key_, V const & value_) :
+            key(key_),
+            value(value_)
         {
         }
 
