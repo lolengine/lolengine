@@ -460,6 +460,24 @@ static inline quat_t<T> operator /(quat_t<T> const &x, quat_t<T> const &y)
 template<typename T>
 extern quat_t<T> slerp(quat_t<T> const &qa, quat_t<T> const &qb, T f);
 
+/*
+ * SQTs only
+ */
+
+template<typename T>
+static inline sqt_t<T> inverse(sqt_t<T> const &tr)
+{
+    auto inv_s = T(1) / tr.s;
+    auto inv_q = re(tr.q);
+    return sqt_t<T>(inv_s, inv_q, inv_q * tr.t * -inv_s);
+}
+
+template<typename T>
+static inline sqt_t<T> operator /(sqt_t<T> const &x, sqt_t<T> const &y)
+{
+    return x * inverse(y);
+}
+
 #if !LOL_FEATURE_CXX11_CONSTEXPR
 #undef constexpr
 #endif
