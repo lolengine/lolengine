@@ -32,7 +32,7 @@ Camera::Camera()
 
     //Arbitrary values when g_renderer is not ready.
     ivec2 screen_size = (Renderer::GetCount()) ? (Video::GetSize()) : (ivec2(800, 600));
-    m_fov = 45.f;
+    m_fov = radians(45.f);
     m_near = -1000.f;
     m_far = 1000.f;
     m_screen_size = (float)screen_size.x;
@@ -106,7 +106,7 @@ void Camera::SetProjection(float fov, float near, float far, float screen_size, 
     m_screen_size = screen_size;
     m_screen_ratio = screen_ratio;
     mat4 screen_scale = mat4::scale(vec3(m_screen_scale.xy, 1.f));
-    if (m_fov > .001f)
+    if (m_fov > .00001f)
     {
         if (m_is_shifted)
             SetProjection(screen_scale * mat4::shifted_perspective(m_fov, screen_size, screen_ratio, m_near, m_far));
@@ -223,13 +223,13 @@ quat Camera::GetRotation() const
 // Calculate the frustum height at a given distance from the camera.
 float Camera::GetFrustumHeightAtDistance(float distance, float fov) const
 {
-    return 2.f * distance * lol::tan(radians(fov * .5f));
+    return 2.f * distance * lol::tan(fov * .5f);
 }
 
 // Calculate the FOV needed to get a given frustum height at a given distance.
 float Camera::GetFOVForHeightAndDistance(float distance, float height) const
 {
-    return 2.f * radians(lol::atan(height * .5f / distance));
+    return 2.f * lol::atan(height * .5f / distance);
 }
 
 void Camera::TickGame(float seconds)

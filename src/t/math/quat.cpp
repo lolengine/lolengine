@@ -1,5 +1,5 @@
 ﻿//
-//  Lol Engine — Unit tests
+//  Lol Engine — Unit tests for quaternions
 //
 //  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
@@ -166,9 +166,9 @@ lolunit_declare_fixture(quaternion_test)
 
     lolunit_declare_test(rotation)
     {
-        /* Check that rotating 10 degrees twice means rotating 20 degrees */
-        quat a = quat::rotate(10.f, vec3::axis_x);
-        quat b = quat::rotate(20.f, vec3::axis_x);
+        /* Check that rotating 1 radian twice means rotating 2 radians */
+        quat a = quat::rotate(1.f, vec3::axis_x);
+        quat b = quat::rotate(2.f, vec3::axis_x);
         quat c = a * a;
 
         lolunit_assert_doubles_equal(c.w, b.w, 1e-5);
@@ -176,7 +176,7 @@ lolunit_declare_fixture(quaternion_test)
         lolunit_assert_doubles_equal(c.y, b.y, 1e-5);
         lolunit_assert_doubles_equal(c.z, b.z, 1e-5);
 
-        /* Check that rotating 10 degrees then 20 is the same as 20 then 10 */
+        /* Check that rotating 1 radian then 2 is the same as 2 then 1 */
         quat d = a * b;
         quat e = b * a;
 
@@ -188,7 +188,7 @@ lolunit_declare_fixture(quaternion_test)
 
     lolunit_declare_test(to_axis_angle)
     {
-        quat q = quat::rotate(10.f, vec3::axis_x);
+        quat q = quat::rotate(0.3f, vec3::axis_x);
         vec3 axis = q.axis();
         float angle = q.angle();
 
@@ -196,7 +196,7 @@ lolunit_declare_fixture(quaternion_test)
         lolunit_assert_doubles_equal(0.0, axis.y, 1e-6);
         lolunit_assert_doubles_equal(0.0, axis.z, 1e-6);
 
-        lolunit_assert_doubles_equal(10.0, (double)degrees(angle), 1e-6);
+        lolunit_assert_doubles_equal(0.3f, (double)angle, 1e-6);
     }
 
     lolunit_declare_test(from_two_vectors)
@@ -248,7 +248,7 @@ lolunit_declare_fixture(quaternion_test)
     {
         for (int i = 0; i < 100; ++i)
         {
-            vec3 angles(rand(360.f), rand(360.f), rand(360.f));
+            vec3 angles(rand(100.f), rand(100.f), rand(100.f));
 
             /* Tait-Bryan */
             quat q1 = quat::fromeuler_xyz(angles);
@@ -296,7 +296,7 @@ lolunit_declare_fixture(quaternion_test)
         {
             /* We check that fromeuler_xyx and fromeuler_xyz give the
              * same result if the 3rd angle is zero. */
-            vec3 angles(rand(360.f), rand(360.f), 0.f);
+            vec3 angles(rand(radians(360.f)), rand(radians(360.f)), 0.f);
             quat q1, q2;
 
             q1 = quat::fromeuler_xyz(angles);
@@ -355,7 +355,7 @@ lolunit_declare_fixture(quaternion_test)
         {
             /* We check that fromeuler_zyz and fromeuler_xyz give the
              * same result if the 1st angle is zero. */
-            vec3 angles(0.f, rand(360.f), rand(360.f));
+            vec3 angles(0.f, rand(radians(360.f)), rand(radians(360.f)));
             quat q1, q2;
 
             q1 = quat::fromeuler_xyz(angles);

@@ -1,5 +1,5 @@
 ﻿//
-//  Lol Engine — Unit tests
+//  Lol Engine — Unit tests for the camera object
 //
 //  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //            © 2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
@@ -36,7 +36,7 @@ lolunit_declare_fixture(camera_test)
         m_lookat = mat4::lookat(eye, target, up);
         q_lookat = quat(mat3(m_lookat));
         v_lookat = vec3::toeuler_zyx(q_lookat);
-        fov = 90.f;
+        fov = radians(90.f);
         screen_size = 800.f;
         screen_ratio = 1.0f;
         near = 1.f;

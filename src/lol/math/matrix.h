@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine
 //
-//  Copyright © 2010-2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -120,10 +120,10 @@ struct mat_t<T, 2, 2>
 #endif
 
     /* Helpers for transformation matrices */
-    static mat_t<T,2,2> rotate(T degrees);
-    static inline mat_t<T,2,2> rotate(mat_t<T,2,2> m, T degrees)
+    static mat_t<T,2,2> rotate(T radians);
+    static inline mat_t<T,2,2> rotate(mat_t<T,2,2> m, T radians)
     {
-        return rotate(degrees) * m;
+        return rotate(radians) * m;
     }
 
     void printf() const;
@@ -222,8 +222,8 @@ struct mat_t<T, 3, 3>
     static mat_t<T,3,3> scale(T x);
     static mat_t<T,3,3> scale(T x, T y, T z);
     static mat_t<T,3,3> scale(vec_t<T,3> v);
-    static mat_t<T,3,3> rotate(T degrees, T x, T y, T z);
-    static mat_t<T,3,3> rotate(T degrees, vec_t<T,3> v);
+    static mat_t<T,3,3> rotate(T radians, T x, T y, T z);
+    static mat_t<T,3,3> rotate(T radians, vec_t<T,3> v);
 
     static mat_t<T,3,3> fromeuler_xyz(vec_t<T,3> const &v);
     static mat_t<T,3,3> fromeuler_xzy(vec_t<T,3> const &v);
@@ -251,9 +251,9 @@ struct mat_t<T, 3, 3>
     static mat_t<T,3,3> fromeuler_zxz(T phi, T theta, T psi);
     static mat_t<T,3,3> fromeuler_zyz(T phi, T theta, T psi);
 
-    static inline mat_t<T,3,3> rotate(mat_t<T,3,3> m, T degrees, vec_t<T,3> v)
+    static inline mat_t<T,3,3> rotate(mat_t<T,3,3> m, T radians, vec_t<T,3> v)
     {
-        return rotate(degrees, v) * m;
+        return rotate(radians, v) * m;
     }
 
     void printf() const;
@@ -384,19 +384,19 @@ struct mat_t<T, 4, 4>
         return translate(v) * m;
     }
 
-    static inline mat_t<T,4,4> rotate(T degrees, T x, T y, T z)
+    static inline mat_t<T,4,4> rotate(T radians, T x, T y, T z)
     {
-        return mat_t<T,4,4>(mat_t<T,3,3>::rotate(degrees, x, y, z), (T)1);
+        return mat_t<T,4,4>(mat_t<T,3,3>::rotate(radians, x, y, z), (T)1);
     }
 
-    static inline mat_t<T,4,4> rotate(T degrees, vec_t<T,3> v)
+    static inline mat_t<T,4,4> rotate(T radians, vec_t<T,3> v)
     {
-        return mat_t<T,4,4>(mat_t<T,3,3>::rotate(degrees, v), (T)1);
+        return mat_t<T,4,4>(mat_t<T,3,3>::rotate(radians, v), (T)1);
     }
 
-    static inline mat_t<T,4,4> rotate(mat_t<T,4,4> &m, T degrees, vec_t<T,3> v)
+    static inline mat_t<T,4,4> rotate(mat_t<T,4,4> &m, T radians, vec_t<T,3> v)
     {
-        return rotate(degrees, v) * m;
+        return rotate(radians, v) * m;
     }
 
     static mat_t<T,4,4> fromeuler_xyz(vec_t<T,3> const &v);
@@ -428,7 +428,7 @@ struct mat_t<T, 4, 4>
     /* Helpers for view matrices */
     static mat_t<T,4,4> lookat(vec_t<T,3> eye, vec_t<T,3> center, vec_t<T,3> up);
 
-    /* Helpers for projection matrices */
+    /* Helpers for projection matrices; FOV values are in radians */
     static mat_t<T,4,4> ortho(T left, T right, T bottom, T top, T near, T far);
     static mat_t<T,4,4> ortho(T width, T height, T near, T far);
     static mat_t<T,4,4> frustum(T left, T right, T bottom, T top, T near, T far);

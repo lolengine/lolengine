@@ -18,7 +18,7 @@ namespace lol
 {
 
 static sqt const test_sqt_1(1.5f,
-                            quat::rotate(radians(20.f),
+                            quat::rotate(1.1f,
                                          normalize(vec3(1.f, 2.f, 3.f))),
                             vec3(1.f, -1.f, 0.5f));
 

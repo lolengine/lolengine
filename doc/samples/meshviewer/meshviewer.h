@@ -1,7 +1,9 @@
+﻿//
+//  Lol Engine — EasyMesh tutorial
 //
-//  Copyright � 2009-2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
+//  Copyright © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
-//  This program is free software. It comes without any warranty, to
+//  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
 //  and/or modify it under the terms of the Do What the Fuck You Want
 //  to Public License, Version 2, as published by the WTFPL Task Force.
@@ -255,7 +257,7 @@ private:
 
     //ImGui stuff
     bool                    m_menu_cam_useage = true;
-    float                   m_menu_cam_fov = 40.f;
+    float                   m_menu_cam_fov = radians(40.f);
     vec3                    m_menu_cam_pos = vec3(20.f, 45.f, 45.f);
     int                     m_menu_mesh_idx = 0;
     array<char*>            m_menu_mesh_names_char;

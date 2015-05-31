@@ -1,11 +1,13 @@
+﻿//
+//  Lol Engine
 //
-// Lol Engine
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -48,10 +50,10 @@ template<> mat4 mat4::translate(vec3 v)
     return translate(v.x, v.y, v.z);
 }
 
-template<> mat2 mat2::rotate(float degrees)
+template<> mat2 mat2::rotate(float radians)
 {
-    float st = sin(radians(degrees));
-    float ct = cos(radians(degrees));
+    float st = sin(radians);
+    float ct = cos(radians);
 
     mat2 ret;
 
@@ -64,10 +66,10 @@ template<> mat2 mat2::rotate(float degrees)
     return ret;
 }
 
-template<> mat3 mat3::rotate(float degrees, float x, float y, float z)
+template<> mat3 mat3::rotate(float radians, float x, float y, float z)
 {
-    float st = sin(radians(degrees));
-    float ct = cos(radians(degrees));
+    float st = sin(radians);
+    float ct = cos(radians);
 
     float len = std::sqrt(x * x + y * y + z * z);
     float invlen = len ? 1.0f / len : 0.0f;
@@ -96,9 +98,9 @@ template<> mat3 mat3::rotate(float degrees, float x, float y, float z)
     return ret;
 }
 
-template<> mat3 mat3::rotate(float degrees, vec3 v)
+template<> mat3 mat3::rotate(float radians, vec3 v)
 {
-    return rotate(degrees, v.x, v.y, v.z);
+    return rotate(radians, v.x, v.y, v.z);
 }
 
 template<> mat3::mat_t(quat const &q)
@@ -195,7 +197,7 @@ template<> mat4 mat4::frustum(float left, float right, float bottom,
 template<> mat4 mat4::perspective(float fov_y, float width,
                                   float height, float near, float far)
 {
-    float t2 = lol::tan(radians(fov_y) * 0.5f);
+    float t2 = lol::tan(fov_y * 0.5f);
     float t1 = t2 * width / height;
 
     return frustum(-near * t1, near * t1, -near * t2, near * t2, near, far);
@@ -210,7 +212,7 @@ template<> mat4 mat4::shifted_perspective(float fov_y, float screen_size,
                                           float screen_ratio_yx,
                                           float near, float far)
 {
-    float tan_y = tanf(radians(fov_y) * .5f);
+    float tan_y = tanf(fov_y * .5f);
     ASSERT(tan_y > 0.000001f);
     float dist_scr = (screen_size * screen_ratio_yx * .5f) / tan_y;
 

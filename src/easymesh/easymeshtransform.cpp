@@ -1,16 +1,20 @@
+﻿//
+//  Lol Engine
 //
-// EasyMesh-Transform: The code belonging to transform operations
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//            © 2009—2015 Cédric Lecacheur <jordx@free.fr>
+//            © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
-// Copyright: (c) 2010-2015 Sam Hocevar <sam@hocevar.net>
-//            (c) 2009-2015 Cédric Lecacheur <jordx@free.fr>
-//            (c) 2009-2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
+
+// EasyMesh-Transform — The code belonging to transform operations
 
 namespace lol
 {
@@ -49,7 +53,7 @@ void EasyMesh::Rotate(float degrees, vec3 const &axis)
         return;
     }
 
-    mat3 m = mat3::rotate(degrees, axis);
+    mat3 m = mat3::rotate(radians(degrees), axis);
     for (int i = m_cursors.last().m1; i < m_vert.count(); i++)
     {
         m_vert[i].m_coord  = m * m_vert[i].m_coord;
@@ -159,7 +163,7 @@ void EasyMesh::DoMeshTransform(MeshTransform ct, Axis axis0, Axis axis1, float n
             case MeshTransform::Twist:
             {
                 vec3 rotaxis = vec3(1.f); rotaxis[(axis0.ToScalar() + 1) % 3] = .0f; rotaxis[(axis0.ToScalar() + 2) % 3] = .0f;
-                m_vert[i].m_coord = mat3::rotate(m_vert[i].m_coord[axis0.ToScalar()] * n0 + noff, rotaxis) * m_vert[i].m_coord;
+                m_vert[i].m_coord = mat3::rotate(radians(m_vert[i].m_coord[axis0.ToScalar()] * n0 + noff), rotaxis) * m_vert[i].m_coord;
                 break;
             }
             case MeshTransform::Shear:
@@ -180,7 +184,7 @@ void EasyMesh::DoMeshTransform(MeshTransform ct, Axis axis0, Axis axis1, float n
             case MeshTransform::Bend:
             {
                 vec3 rotaxis = vec3(1.f); rotaxis[(axis1.ToScalar() + 1) % 3] = .0f; rotaxis[(axis1.ToScalar() + 2) % 3] = .0f;
-                m_vert[i].m_coord = mat3::rotate(m_vert[i].m_coord[axis0.ToScalar()] * n0 + noff, rotaxis) * m_vert[i].m_coord;
+                m_vert[i].m_coord = mat3::rotate(radians(m_vert[i].m_coord[axis0.ToScalar()] * n0 + noff), rotaxis) * m_vert[i].m_coord;
                 break;
             }
         }

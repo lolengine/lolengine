@@ -60,7 +60,7 @@ public:
         m_angle = 0;
 
         m_camera = new Camera();
-        m_camera->SetProjection(mat4::perspective(30.f, 960.f, 600.f, .1f, 1000.f));
+        m_camera->SetProjection(mat4::perspective(radians(30.f), 960.f, 600.f, .1f, 1000.f));
         m_camera->SetView(mat4::lookat(vec3(-15.f, 5.f, 0.f),
                                        vec3(0.f, -1.f, 0.f),
                                        vec3(0.f, 1.f, 0.f)));
@@ -96,16 +96,16 @@ public:
     {
         WorldEntity::TickGame(seconds);
 
-        m_angle += seconds * 70.0f;
-        m_mat = mat4::rotate(10.0f, vec3(0, 0, 1))
-                * mat4::rotate(100, vec3(0, 1, 0));
+        m_angle += seconds * radians(70.0f);
+        m_mat = mat4::rotate(radians(10.0f), vec3(0, 0, 1))
+                * mat4::rotate(radians(100.f), vec3(0, 1, 0));
         //      * mat4::rotate(m_angle, vec3(0, 1, 0));
 
-        m_gears[0].m3 += seconds * 20.0f;
-        m_gears[1].m3 += seconds * 20.0f * -2 / 9;
-        m_gears[2].m3 += seconds * 20.0f * -2 / 3;
-        m_gears[3].m3 += seconds * 20.0f * -2 / 3;
-        m_gears[4].m3 += seconds * 20.0f * -2 / 3;
+        m_gears[0].m3 += seconds * radians(20.0f);
+        m_gears[1].m3 += seconds * radians(20.0f) * -2 / 9;
+        m_gears[2].m3 += seconds * radians(20.0f) * -2 / 3;
+        m_gears[3].m3 += seconds * radians(20.0f) * -2 / 3;
+        m_gears[4].m3 += seconds * radians(20.0f) * -2 / 3;
 
         m_gears[0].m2 = mat4::translate(vec3(0, -1, 0))
                       * mat4::rotate(m_gears[0].m3 - 130.0f, vec3(0, 1, 0))

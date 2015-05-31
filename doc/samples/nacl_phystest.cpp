@@ -1,8 +1,14 @@
+﻿//
+//  Lol Engine — BtPhys tutorial
 //
-// BtPhysTest
+//  Copyright © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//            © 2012—2015 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2009-2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//            (c) 2012-2013 Sam Hocevar <sam@hocevar.net>
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #if HAVE_CONFIG_H
@@ -41,7 +47,7 @@ Nacl_PhysTest::Nacl_PhysTest(bool editor)
     m_camera->SetView(vec3(50.f, 50.f, 0.f),
                       vec3(0.f, 0.f, 0.f),
                       vec3(0, 1, 0));
-    m_camera->SetProjection(45.f, .1f, 1000.f, (float)Video::GetSize().x, (float)Video::GetSize().y / (float)Video::GetSize().x);
+    m_camera->SetProjection(radians(45.f), .1f, 1000.f, (float)Video::GetSize().x, (float)Video::GetSize().y / (float)Video::GetSize().x);
     Scene::GetScene().PushCamera(m_camera);
 
     m_ready = false;

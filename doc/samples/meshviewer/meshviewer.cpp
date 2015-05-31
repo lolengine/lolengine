@@ -1,13 +1,14 @@
-
+﻿//
+//  Lol Engine — EasyMesh tutorial
 //
-// Lol Engine - EasyMesh tutorial
+//  Copyright © 2011—2015 Sam Hocevar <sam@hocevar.net>
+//            © 2012—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
-// Copyright: (c) 2011-2014 Sam Hocevar <sam@hocevar.net>
-//            (c) 2012-2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #if HAVE_CONFIG_H
@@ -44,12 +45,12 @@ static int const TEXTURE_WIDTH = 256;
 #define     SCREEN_LIMIT        1.4f
 
 #define     RESET_TIMER         .2f
-#define     ROT_SPEED           vec2(50.f)
-#define     ROT_CLAMP           89.f
+#define     ROT_SPEED           vec2(radians(50.f))
+#define     ROT_CLAMP           radians(89.f)
 #define     POS_SPEED           vec2(1.2f)
 #define     POS_CLAMP           1.f
-#define     FOV_SPEED           20.f
-#define     FOV_CLAMP           120.f
+#define     FOV_SPEED           radians(20.f)
+#define     FOV_CLAMP           radians(120.f)
 #define     ZOM_SPEED           3.f
 #define     ZOM_CLAMP           20.f
 #define     HST_SPEED           .5f
@@ -172,8 +173,8 @@ void MeshViewer::Start()
     //Camera setup
     m_camera = new Camera();
     m_camera->SetView(vec3(10.f, 10.f, 10.f), vec3::zero, vec3::axis_y);
-    m_camera->SetProjection(40.f, .0001f, 200.f);
-    //m_camera->SetProjection(90.f, .0001f, 2000.f, WIDTH * SCREEN_W, RATIO_HW);
+    m_camera->SetProjection(radians(40.f), .0001f, 200.f);
+    //m_camera->SetProjection(radians(90.f), .0001f, 2000.f, WIDTH * SCREEN_W, RATIO_HW);
     //m_camera->UseShift(true);
     Scene& scene = Scene::GetScene();
     scene.PushCamera(m_camera);
@@ -294,7 +295,7 @@ void MeshViewer::TickGame(float seconds)
 #endif //HAS_INPUT
 
     static bool default_open = true;
-    //static float fov = 40.f;
+    //static float fov = radians(40.f);
     //static vec3 sphere_pos = vec3(20.f, 45.f, 45.f);
     //static bool use_custom_cam = true;
     //static float f;
@@ -335,7 +336,7 @@ void MeshViewer::TickGame(float seconds)
         vec3 sphere_pos_rad = m_menu_cam_pos;
         sphere_pos_rad.z = (sphere_pos_rad.z > 0.f) ? (90.f - sphere_pos_rad.z) : (sphere_pos_rad.z - 90.f);
         sphere_pos_rad = vec3(sphere_pos_rad.x, radians(sphere_pos_rad.y), radians(sphere_pos_rad.z));
-        m_camera->SetFov(m_menu_cam_fov);
+        m_camera->SetFov(radians(m_menu_cam_fov));
         m_camera->SetPosition(cartesian(sphere_pos_rad));
         m_camera->SetTarget(vec3::zero, vec3::axis_y);
     }
@@ -449,7 +450,7 @@ void MeshViewer::Prepare()
 
     //Camera Setup
     m_reset_timer = -1.f;
-    m_fov = -100.f;
+    m_fov = radians(-100.f);
     m_fov_mesh = 0.f;
     m_fov_speed = 0.f;
     m_zoom = 0.f;

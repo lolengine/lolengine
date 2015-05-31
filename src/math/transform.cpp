@@ -15,18 +15,18 @@
 namespace lol
 {
 
-template<> quat quat::rotate(float degrees, vec3 const &v)
+template<> quat quat::rotate(float radians, vec3 const &v)
 {
-    float half_angle = radians(degrees) * 0.5f;
+    float half_angle = radians * 0.5f;
 
     vec3 tmp = normalize(v) * sin(half_angle);
 
     return quat(cos(half_angle), tmp.x, tmp.y, tmp.z);
 }
 
-template<> quat quat::rotate(float degrees, float x, float y, float z)
+template<> quat quat::rotate(float radians, float x, float y, float z)
 {
-    return quat::rotate(degrees, vec3(x, y, z));
+    return quat::rotate(radians, vec3(x, y, z));
 }
 
 template<> quat quat::rotate(vec3 const &src, vec3 const &dst)
@@ -110,17 +110,16 @@ static inline vec3 quat_toeuler_generic(quat const &q, int i, int j, int k)
                        1.f - 2.f * (sq(q[1 + k]) + sq(q[1 + j])));
     }
 
-    return degrees(ret / n);
+    return ret / n;
 }
 
 static inline mat3 mat3_fromeuler_generic(vec3 const &v, int i, int j, int k)
 {
     mat3 ret;
 
-    vec3 const w = radians(v);
-    float const s0 = sin(w[0]), c0 = cos(w[0]);
-    float const s1 = sin(w[1]), c1 = cos(w[1]);
-    float const s2 = sin(w[2]), c2 = cos(w[2]);
+    float const s0 = sin(v[0]), c0 = cos(v[0]);
+    float const s1 = sin(v[1]), c1 = cos(v[1]);
+    float const s2 = sin(v[2]), c2 = cos(v[2]);
 
     /* (2 + i - j) % 3 means x-y-z direct order; otherwise indirect */
     float const sign = ((2 + i - j) % 3) ? 1.f : -1.f;
@@ -163,7 +162,7 @@ static inline mat3 mat3_fromeuler_generic(vec3 const &v, int i, int j, int k)
 
 static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
 {
-    vec3 const half_angles = radians(v * 0.5f);
+    vec3 const half_angles = v * 0.5f;
     float const s0 = sin(half_angles[0]), c0 = cos(half_angles[0]);
     float const s1 = sin(half_angles[1]), c1 = cos(half_angles[1]);
     float const s2 = sin(half_angles[2]), c2 = cos(half_angles[2]);

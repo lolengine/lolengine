@@ -1,10 +1,10 @@
 ﻿//
-//  BtPhysTest
+//  Lol Engine — BtPhys tutorial
 //
 //  Copyright © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //            © 2012—2015 Sam Hocevar <sam@hocevar.net>
 //
-//  This program is free software. It comes without any warranty, to
+//  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
 //  and/or modify it under the terms of the Do What the Fuck You Want
 //  to Public License, Version 2, as published by the WTFPL Task Force.
@@ -105,14 +105,14 @@ void BtPhysTest::InitApp()
     m_camera->SetView(vec3(70.f, 50.f, 0.f),
                       vec3(0.f, 0.f, 0.f),
                       vec3(0, 1, 0));
-    m_camera->SetProjection(60.f, .1f, 1000.f, (float)Video::GetSize().x, (float)Video::GetSize().y / (float)Video::GetSize().x);
+    m_camera->SetProjection(radians(60.f), .1f, 1000.f, (float)Video::GetSize().x, (float)Video::GetSize().y / (float)Video::GetSize().x);
     m_target_timer = TARGET_TIMER;
     m_cam_target = -1;
 #else
     m_camera->SetView(vec3(50.f, 50.f, 0.f),
                       vec3(0.f, 0.f, 0.f),
                       vec3(0, 1, 0));
-    m_camera->SetProjection(45.f, .1f, 1000.f, (float)Video::GetSize().x, (float)Video::GetSize().y / (float)Video::GetSize().x);
+    m_camera->SetProjection(radians(45.f), .1f, 1000.f, (float)Video::GetSize().x, (float)Video::GetSize().y / (float)Video::GetSize().x);
 #endif
     Scene& scene = Scene::GetScene();
     scene.PushCamera(m_camera);
@@ -150,7 +150,7 @@ void BtPhysTest::InitApp()
         quat NewRotation = quat::fromeuler_xyz(0.f, 0.f, 0.f);
         vec3 NewPosition = pos_offset + vec3(5.0f, -29.f, 15.0f);
         {
-            NewRotation = quat::fromeuler_xyz(0.f, 0.f, 30.f);
+            NewRotation = quat::fromeuler_xyz(0.f, 0.f, radians(30.f));
             NewPosition += vec3(4.0f, .0f, -4.0f);
 
             PhysicsObject* NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 3);
@@ -158,7 +158,7 @@ void BtPhysTest::InitApp()
             m_stairs_list << NewPhyobj;
         }
         {
-            NewRotation = quat::fromeuler_xyz(0.f, 0.f, 40.f);
+            NewRotation = quat::fromeuler_xyz(0.f, 0.f, radians(40.f));
             NewPosition += vec3(4.0f, .0f, -4.0f);
 
             PhysicsObject* NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 3);
@@ -196,7 +196,7 @@ void BtPhysTest::InitApp()
             {
                 vec3 NewAxis = vec3(.0f);
                 NewAxis[2 - idx] = 1;
-                NewRotation = quat::rotate(90.f, NewAxis);
+                NewRotation = quat::rotate(radians(90.f), NewAxis);
             }
 
             NewPhyobj->SetTransform(NewPosition, NewRotation);
@@ -225,7 +225,7 @@ void BtPhysTest::InitApp()
         m_platform_list << NewPhyobj;
         Ticker::Ref(NewPhyobj);
 
-        NewRotation = quat::fromeuler_xyz(0.f, 0.f, 90.f);
+        NewRotation = quat::fromeuler_xyz(0.f, 0.f, radians(90.f));
         NewPosition = pos_offset + vec3(-20.0f, -25.0f, 5.0f);
 
         NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 1);
@@ -517,7 +517,7 @@ void BtPhysTest::TickGame(float seconds)
     m_loc_dp = damp(m_loc_dp, loc_dp, 0.08f, seconds);
     m_camera->SetFov(damp(m_camera->GetFov(), m_camera->GetFov() * fov_ratio * 1.1f, m_fov_dp, seconds));
     vec3 tmp = damp(m_camera->GetTarget(), new_target, m_loc_dp, seconds);
-    m_camera->SetView((mat4::rotate(10.f * seconds, vec3(.0f, 1.f, .0f)) * vec4(m_camera->GetPosition(), 1.0f)).xyz,
+    m_camera->SetView((mat4::rotate(radians(10.f) * seconds, vec3(.0f, 1.f, .0f)) * vec4(m_camera->GetPosition(), 1.0f)).xyz,
                       tmp, vec3(0, 1, 0));
 #endif //USE_BODIES
 #endif //CAT_MODE
@@ -562,7 +562,7 @@ void BtPhysTest::TickGame(float seconds)
             mat4 CenterMx = mat4::translate(GroundBarycenter);
             GroundMat = inverse(CenterMx) * GroundMat;
             GroundMat = CenterMx *
-                        mat4(quat::fromeuler_xyz(vec3(.0f, 20.f, 20.0f) * seconds))
+                        mat4(quat::fromeuler_xyz(vec3(.0f, radians(20.f), radians(20.0f)) * seconds))
                         * GroundMat;
             PhysObj->SetTransform(GroundMat[3].xyz, quat(mat3(GroundMat)));
         }
@@ -578,14 +578,14 @@ void BtPhysTest::TickGame(float seconds)
             mat4 GroundMat = PhysObj->GetTransform();
             if (i == 0)
             {
-                GroundMat = GroundMat * mat4(quat::fromeuler_xyz(vec3(20.f, .0f, .0f) * seconds));
+                GroundMat = GroundMat * mat4(quat::fromeuler_xyz(vec3(radians(20.f), .0f, .0f) * seconds));
                 PhysObj->SetTransform(GroundMat[3].xyz, quat(mat3(GroundMat)));
             }
             else if (i == 1)
             {
                 GroundMat =
                     mat4::translate(vec3(-15.0f, 5.0f, lol::cos(m_loop_value) * 8.f)) *
-                    mat4(quat::fromeuler_xyz(vec3(.0f, lol::cos(m_loop_value) * 20.f, .0f)));
+                    mat4(quat::fromeuler_xyz(vec3(.0f, lol::cos(m_loop_value) * radians(20.f), .0f)));
                 PhysObj->SetTransform(GroundMat[3].xyz, quat(mat3(GroundMat)));
             }
         }

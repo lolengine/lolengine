@@ -1,16 +1,20 @@
+﻿//
+//  Lol Engine
 //
-// EasyMesh-Primitive: The code belonging to primitive operations
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//            © 2009—2015 Cédric Lecacheur <jordx@free.fr>
+//            © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
-// Copyright: (c) 2010-2015 Sam Hocevar <sam@hocevar.net>
-//            (c) 2009-2015 Cédric Lecacheur <jordx@free.fr>
-//            (c) 2009-2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
+
+// EasyMesh-Primitive — The code belonging to primitive operations
 
 namespace lol
 {
@@ -38,7 +42,7 @@ void EasyMesh::AppendCylinder(int nsides, float h, float d1, float d2,
 
     int vbase = m_vert.count();
 
-    mat3 rotmat = mat3::rotate(360.0f / (float)nsides, 0.f, 1.f, 0.f);
+    mat3 rotmat = mat3::rotate(radians(360.0f) / (float)nsides, 0.f, 1.f, 0.f);
     vec3 p1(r1, -h * .5f, 0.f), p2(r2, h * .5f, 0.f), n;
     vec2 uv1(.0f, .0f), uv2(.0f, 1.0f), uvadd(1.0f / (float)nsides, .0f);
     if (close)
@@ -51,7 +55,7 @@ void EasyMesh::AppendCylinder(int nsides, float h, float d1, float d2,
         n = vec3(r1, h * .5f, 0.f);
     n.y = r1 * (r1 - r2) / h;
     if (!smooth)
-        n = mat3::rotate(180.0f / nsides, 0.f, 1.f, 0.f) * n;
+        n = mat3::rotate(radians(180.0f) / nsides, 0.f, 1.f, 0.f) * n;
     n = normalize(n);
 
     //Two passes necessary to ensure "weighted quad" compatibility
@@ -154,7 +158,7 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float d)
     /* Fill in the icosahedron vertices, rotating them so that there
      * is a vertex at [0 1 0] and [0 -1 0] after normalisation. */
     float phi = 0.5f + 0.5f * sqrt(5.f);
-    mat3 m = mat3::rotate(degrees(asin(1.f / sqrt(2.f + phi))),
+    mat3 m = mat3::rotate(asin(1.f / sqrt(2.f + phi)),
                           vec3(0.f, 0.f, 1.f));
     for (int i = 0; i < 4; i++)
     {
@@ -548,7 +552,7 @@ void EasyMesh::AppendStar(int nbranches, float d1, float d2,
 
     AddVertex(vec3(0.f, 0.f, 0.f)); SetCurVertTexCoord(vec2(.5f, .5f)); SetCurVertTexCoord2(vec2(.5f, .5f));
 
-    mat3 rotmat = mat3::rotate(180.0f / nbranches, 0.f, 1.f, 0.f);
+    mat3 rotmat = mat3::rotate(radians(180.0f) / nbranches, 0.f, 1.f, 0.f);
     vec3 p1(r1, 0.f, 0.f), p2(r2, 0.f, 0.f);
     vec3 uv1(0.f, 0.f, -.5f * ((float)r1 / maxr)),
          uv2(0.f, 0.f, -.5f * ((float)r2 / maxr));
@@ -600,7 +604,7 @@ void EasyMesh::AppendExpandedStar(int nbranches, float d1, float d2, float extra
 
     AddVertex(vec3(0.f, 0.f, 0.f)); SetCurVertTexCoord(vec2(.5f, .5f)); SetCurVertTexCoord2(vec2(.5f, .5f));
 
-    mat3 rotmat = mat3::rotate(180.0f / nbranches, 0.f, 1.f, 0.f);
+    mat3 rotmat = mat3::rotate(radians(180.0f) / nbranches, 0.f, 1.f, 0.f);
     vec3 p1(r1, 0.f, 0.f), p2(r2, 0.f, 0.f),
          p3(r1 + extrar, 0.f, 0.f), p4(r2 + extrar, 0.f, 0.f);;
     vec3 uv1(0.f, 0.f, -.5f * ((float)r1 / maxr)),
@@ -652,7 +656,7 @@ void EasyMesh::AppendDisc(int nsides, float d, bool fade)
 
     AddVertex(vec3(0.f, 0.f, 0.f)); SetCurVertTexCoord(vec2(.5f, .5f)); SetCurVertTexCoord2(vec2(.5f, .5f));
 
-    mat3 rotmat = mat3::rotate(360.0f / nsides, 0.f, 1.f, 0.f);
+    mat3 rotmat = mat3::rotate(radians(360.0f) / nsides, 0.f, 1.f, 0.f);
     vec3 p1(r, 0.f, 0.f);
     vec3 uv(.5f, .0f, .0f);
 
@@ -680,7 +684,7 @@ void EasyMesh::AppendSimpleTriangle(float d, bool fade)
     //XXX : This operation is done to convert radius to diameter without changing all the code.
     float size = d * .5f;
 
-    mat3 m = mat3::rotate(120.f, 0.f, 1.f, 0.f);
+    mat3 m = mat3::rotate(radians(120.f), 0.f, 1.f, 0.f);
     vec3 p(0.f, 0.f, size);
 
     AddVertex(p); SetCurVertTexCoord(vec2(.5f, 0.133975f)); SetCurVertTexCoord2(vec2(.5f, 0.133975f));
@@ -773,9 +777,9 @@ void EasyMesh::AppendCog(int nbsides, float h, float d10, float d20,
     if (r12 < 0)
         h = -h;
 
-    mat3 rotmat = mat3::rotate(180.0f / nbsides, 0.f, 1.f, 0.f);
-    mat3 smat1 = mat3::rotate(sidemul * 180.0f / nbsides, 0.f, 1.f, 0.f);
-    mat3 smat2 = mat3::rotate(sidemul * -360.0f / nbsides, 0.f, 1.f, 0.f);
+    mat3 rotmat = mat3::rotate(radians(180.0f) / nbsides, 0.f, 1.f, 0.f);
+    mat3 smat1 = mat3::rotate(sidemul * radians(180.0f) / nbsides, 0.f, 1.f, 0.f);
+    mat3 smat2 = mat3::rotate(sidemul * radians(-360.0f) / nbsides, 0.f, 1.f, 0.f);
 
     vec3 p[12];
 

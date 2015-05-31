@@ -1,5 +1,5 @@
 ﻿//
-//  Lol Engine — Unit tests
+//  Lol Engine — Unit tests for rotations (matrices and quaternions)
 //
 //  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
@@ -26,7 +26,7 @@ lolunit_declare_fixture(rotation_test)
     lolunit_declare_test(rotate_2d)
     {
         /* Rotations must be CCW */
-        mat2 m90 = mat2::rotate(90.f);
+        mat2 m90 = mat2::rotate(radians(90.f));
 
         vec2 a(2.f, 3.f);
         vec2 b = m90 * a;
@@ -41,24 +41,24 @@ lolunit_declare_fixture(rotation_test)
 
     lolunit_declare_test(compose_2d)
     {
-        /* Rotating 20 degrees twice must equal rotating 40 degrees */
-        mat2 m20 = mat2::rotate(20.f);
-        mat2 m40 = mat2::rotate(40.f);
-        mat2 m20x20 = m20 * m20;
+        /* Rotating 1 radian twice must equal rotating 2 radians */
+        mat2 m1 = mat2::rotate(1.f);
+        mat2 m2 = mat2::rotate(2.f);
+        mat2 m1x1 = m1 * m1;
 
-        lolunit_assert_doubles_equal(m20x20[0][0], m40[0][0], 1e-5);
-        lolunit_assert_doubles_equal(m20x20[1][0], m40[1][0], 1e-5);
+        lolunit_assert_doubles_equal(m1x1[0][0], m2[0][0], 1e-5);
+        lolunit_assert_doubles_equal(m1x1[1][0], m2[1][0], 1e-5);
 
-        lolunit_assert_doubles_equal(m20x20[0][1], m40[0][1], 1e-5);
-        lolunit_assert_doubles_equal(m20x20[1][1], m40[1][1], 1e-5);
+        lolunit_assert_doubles_equal(m1x1[0][1], m2[0][1], 1e-5);
+        lolunit_assert_doubles_equal(m1x1[1][1], m2[1][1], 1e-5);
     }
 
     lolunit_declare_test(rotate_3d)
     {
         /* Rotations must be CCW along each axis */
-        mat3 m90x = mat3::rotate(90.f, 1.f, 0.f, 0.f);
-        mat3 m90y = mat3::rotate(90.f, 0.f, 1.f, 0.f);
-        mat3 m90z = mat3::rotate(90.f, 0.f, 0.f, 1.f);
+        mat3 m90x = mat3::rotate(radians(90.f), 1.f, 0.f, 0.f);
+        mat3 m90y = mat3::rotate(radians(90.f), 0.f, 1.f, 0.f);
+        mat3 m90z = mat3::rotate(radians(90.f), 0.f, 0.f, 1.f);
 
         vec3 a(2.f, 3.f, 4.f);
         vec3 b = m90x * a;
@@ -88,39 +88,39 @@ lolunit_declare_fixture(rotation_test)
 
     lolunit_declare_test(compose_3d)
     {
-        /* Rotating 20 degrees twice must equal rotating 40 degrees */
-        mat3 m20 = mat3::rotate(20.f, 1.f, 2.f, 3.f);
-        mat3 m40 = mat3::rotate(40.f, 1.f, 2.f, 3.f);
-        mat3 m20x20 = m20 * m20;
+        /* Rotating 1 radian twice must equal rotating 2 radians */
+        mat3 m1 = mat3::rotate(1.f, 1.f, 2.f, 3.f);
+        mat3 m2 = mat3::rotate(2.f, 1.f, 2.f, 3.f);
+        mat3 m1x1 = m1 * m1;
 
-        lolunit_assert_doubles_equal(m20x20[0][0], m40[0][0], 1e-5);
-        lolunit_assert_doubles_equal(m20x20[1][0], m40[1][0], 1e-5);
-        lolunit_assert_doubles_equal(m20x20[2][0], m40[2][0], 1e-5);
+        lolunit_assert_doubles_equal(m1x1[0][0], m2[0][0], 1e-5);
+        lolunit_assert_doubles_equal(m1x1[1][0], m2[1][0], 1e-5);
+        lolunit_assert_doubles_equal(m1x1[2][0], m2[2][0], 1e-5);
 
-        lolunit_assert_doubles_equal(m20x20[0][1], m40[0][1], 1e-5);
-        lolunit_assert_doubles_equal(m20x20[1][1], m40[1][1], 1e-5);
-        lolunit_assert_doubles_equal(m20x20[2][1], m40[2][1], 1e-5);
+        lolunit_assert_doubles_equal(m1x1[0][1], m2[0][1], 1e-5);
+        lolunit_assert_doubles_equal(m1x1[1][1], m2[1][1], 1e-5);
+        lolunit_assert_doubles_equal(m1x1[2][1], m2[2][1], 1e-5);
 
-        lolunit_assert_doubles_equal(m20x20[0][2], m40[0][2], 1e-5);
-        lolunit_assert_doubles_equal(m20x20[1][2], m40[1][2], 1e-5);
-        lolunit_assert_doubles_equal(m20x20[2][2], m40[2][2], 1e-5);
+        lolunit_assert_doubles_equal(m1x1[0][2], m2[0][2], 1e-5);
+        lolunit_assert_doubles_equal(m1x1[1][2], m2[1][2], 1e-5);
+        lolunit_assert_doubles_equal(m1x1[2][2], m2[2][2], 1e-5);
     }
 
     lolunit_declare_test(quaternion_transform)
     {
         /* Rotating using a quaternion must equal rotating using a matrix */
-        mat3 m20 = mat3::rotate(20.f, 1.f, 2.f, 3.f);
-        quat q20 = quat::rotate(20.f, 1.f, 2.f, 3.f);
+        mat3 m1 = mat3::rotate(1.f, 1.f, 2.f, 3.f);
+        quat q1 = quat::rotate(1.f, 1.f, 2.f, 3.f);
         vec3 a(-2.f, 4.f, 3.f);
 
-        vec3 b = m20 * a;
-        vec3 c = q20.transform(a);
+        vec3 b = m1 * a;
+        vec3 c = q1.transform(a);
 
         lolunit_assert_doubles_equal(c.x, b.x, 1e-5);
         lolunit_assert_doubles_equal(c.y, b.y, 1e-5);
         lolunit_assert_doubles_equal(c.z, b.z, 1e-5);
 
-        float n = norm(q20);
+        float n = norm(q1);
 
         lolunit_assert_doubles_equal(n, 1.0, 1e-5);
     }
@@ -129,8 +129,8 @@ lolunit_declare_fixture(rotation_test)
     {
         /* A rotation matrix converted to a quaternion should match the
          * quaternion built with the same parameters */
-        quat q1 = quat::rotate(20.f, 1.f, 2.f, 3.f);
-        quat q2 = quat(mat3::rotate(20.f, 1.f, 2.f, 3.f));
+        quat q1 = quat::rotate(1.f, 1.f, 2.f, 3.f);
+        quat q2 = quat(mat3::rotate(1.f, 1.f, 2.f, 3.f));
 
         lolunit_assert_doubles_equal(q2.w, q1.w, 1e-5);
         lolunit_assert_doubles_equal(q2.x, q1.x, 1e-5);
@@ -148,8 +148,8 @@ lolunit_declare_fixture(rotation_test)
     {
         /* A quaternion converted to a rotation matrix should match the
          * rotation matrix built with the same parameters */
-        mat3 m1 = mat3::rotate(60.f, 1.f, -2.f, 3.f);
-        mat3 m2 = mat3(quat::rotate(60.f, 1.f, -2.f, 3.f));
+        mat3 m1 = mat3::rotate(3.f, 1.f, -2.f, 3.f);
+        mat3 m2 = mat3(quat::rotate(3.f, 1.f, -2.f, 3.f));
 
         lolunit_assert_doubles_equal(m2[0][0], m1[0][0], 1e-5);
         lolunit_assert_doubles_equal(m2[1][0], m1[1][0], 1e-5);
@@ -174,8 +174,8 @@ lolunit_declare_fixture(rotation_test)
     {
         /* Combining two rotation matrices should match the matrix created
          * from the combination of the two equivalent quaternions */
-        mat3 m1 = mat3::rotate(60.f, 1.f, -2.f, 3.f);
-        mat3 m2 = mat3::rotate(20.f, -3.f, 1.f, -3.f);
+        mat3 m1 = mat3::rotate(3.f, 1.f, -2.f, 3.f);
+        mat3 m2 = mat3::rotate(1.f, -3.f, 1.f, -3.f);
 
         mat3 m3 = m2 * m1;
         mat3 m4(quat(m2) * quat(m1));
@@ -197,8 +197,8 @@ lolunit_declare_fixture(rotation_test)
     {
         /* Combining two quaternions should match the quaternion created
          * from the combination of the two equivalent rotation matrices */
-        quat q1 = quat::rotate(60.f, 1.f, -2.f, 3.f);
-        quat q2 = quat::rotate(20.f, -3.f, 1.f, -2.f);
+        quat q1 = quat::rotate(3.f, 1.f, -2.f, 3.f);
+        quat q2 = quat::rotate(1.f, -3.f, 1.f, -2.f);
 
         quat q3 = q2 * q1;
         quat q4(mat3(q2) * mat3(q1));
