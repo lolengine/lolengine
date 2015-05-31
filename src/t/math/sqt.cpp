@@ -72,6 +72,19 @@ lolunit_declare_fixture(sqt_test)
         }
     }
 
+    lolunit_declare_test(sqt_inverse)
+    {
+        for (vec4 v0 : test_vec4s)
+        {
+            vec4 v1 = inverse(test_sqt_1) * (test_sqt_1 * v0);
+
+            lolunit_assert_doubles_equal(v0.x, v1.x, 1e-5f);
+            lolunit_assert_doubles_equal(v0.y, v1.y, 1e-5f);
+            lolunit_assert_doubles_equal(v0.z, v1.z, 1e-5f);
+            lolunit_assert_doubles_equal(v0.w, v1.w, 1e-5f);
+        }
+    }
+
     lolunit_declare_test(sqt_composition_vec4)
     {
         /* We check that transforming a vec4 with an SQT and a
