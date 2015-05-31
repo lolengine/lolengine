@@ -137,28 +137,36 @@ private:
     static map<uintptr_t, array<PrimitiveSource*>> m_prim_sources;
     static mutex m_prim_mutex;
 
-    /* Old API <P0, P1, COLOR, TIME, MASK> */
-    float   m_new_line_time;
-    int     m_new_line_mask;
-    float   m_new_line_segment_size;
-    vec4    m_new_line_color;
-    array<vec3, vec3, vec4, float, int, bool, bool> m_lines;
-    int m_debug_mask;
-    Shader *m_line_shader;
-    VertexDeclaration *m_line_vdecl;
-
-    int m_tile_cam;
-    array<Tile> m_tiles;
-    array<Tile> m_palettes;
-    array<Light *> m_lights;
-
-    Shader *m_tile_shader;
-    Shader *m_palette_shader;
-    VertexDeclaration *m_tile_vdecl;
-    array<VertexBuffer *> m_tile_bufs;
-
     Camera *m_default_cam;
     array<Camera *> m_camera_stack;
+
+    /* Old line API <P0, P1, COLOR, TIME, MASK> */
+    struct line_api
+    {
+        float m_time, m_segment_size;
+        vec4 m_color;
+        array<vec3, vec3, vec4, float, int, bool, bool> m_lines;
+        int m_mask, m_debug_mask;
+        Shader *m_shader;
+        VertexDeclaration *m_vdecl;
+    }
+    m_line_api;
+
+    /* The old tiles API */
+    struct tile_api
+    {
+        int m_cam;
+        array<Tile> m_tiles;
+        array<Tile> m_palettes;
+        array<Light *> m_lights;
+
+        Shader *m_shader;
+        Shader *m_palette_shader;
+
+        VertexDeclaration *m_vdecl;
+        array<VertexBuffer *> m_bufs;
+    }
+    m_tile_api;
 };
 uint64_t SceneData::m_used_id = 1;
 map<uintptr_t, array<PrimitiveSource*>> SceneData::m_prim_sources;
@@ -176,16 +184,16 @@ Scene::Scene(ivec2 size)
     data->m_default_cam->SetProjection(proj);
     PushCamera(data->m_default_cam);
 
-    data->m_tile_cam = -1;
-    data->m_tile_shader = 0;
-    data->m_palette_shader = 0;
-    data->m_tile_vdecl = new VertexDeclaration(VertexStream<vec3>(VertexUsage::Position),
+    data->m_tile_api.m_cam = -1;
+    data->m_tile_api.m_shader = 0;
+    data->m_tile_api.m_palette_shader = 0;
+    data->m_tile_api.m_vdecl = new VertexDeclaration(VertexStream<vec3>(VertexUsage::Position),
                                                VertexStream<vec2>(VertexUsage::TexCoord));
 
-    data->m_line_shader = 0;
-    data->m_line_vdecl = new VertexDeclaration(VertexStream<vec4,vec4>(VertexUsage::Position, VertexUsage::Color));
+    data->m_line_api.m_shader = 0;
+    data->m_line_api.m_vdecl = new VertexDeclaration(VertexStream<vec4,vec4>(VertexUsage::Position, VertexUsage::Color));
 
-    data->m_debug_mask = 1;
+    data->m_line_api.m_debug_mask = 1;
 
     SetLineTime();
     SetLineMask();
@@ -204,8 +212,8 @@ Scene::~Scene()
      * reallocate stuff */
     Reset();
 
-    delete data->m_line_vdecl;
-    delete data->m_tile_vdecl;
+    delete data->m_line_api.m_vdecl;
+    delete data->m_tile_api.m_vdecl;
     delete data;
 }
 
@@ -303,7 +311,7 @@ void Scene::SetTileCam(int cam_idx)
 {
     ASSERT(!!data, "Trying to access a non-ready scene");
 
-    data->m_tile_cam = cam_idx;
+    data->m_tile_api.m_cam = cam_idx;
 }
 
 //-----------------------------------------------------------------------------
@@ -320,11 +328,11 @@ void Scene::Reset()
                 ReleasePrimitiveRenderer(idx--, key);
     }
 
-    for (int i = 0; i < data->m_tile_bufs.count(); i++)
-        delete data->m_tile_bufs[i];
-    data->m_tile_bufs.empty();
+    for (int i = 0; i < data->m_tile_api.m_bufs.count(); i++)
+        delete data->m_tile_api.m_bufs[i];
+    data->m_tile_api.m_bufs.empty();
 
-    data->m_lights.empty();
+    data->m_tile_api.m_lights.empty();
 }
 
 //---- Primitive source stuff -------------------------------------------------
@@ -472,9 +480,9 @@ void Scene::AddTile(TileSet *tileset, int id, mat4 model)
     t.m_id = id;
 
     if (tileset->GetPalette())
-        data->m_palettes.push(t);
+        data->m_tile_api.m_palettes.push(t);
     else
-        data->m_tiles.push(t);
+        data->m_tile_api.m_tiles.push(t);
 }
 
 //-----------------------------------------------------------------------------
@@ -482,28 +490,28 @@ void Scene::SetLineTime(float new_time)
 {
     ASSERT(!!data, "Trying to access a non-ready scene");
 
-    data->m_new_line_time = new_time;
+    data->m_line_api.m_time = new_time;
 }
 
 void Scene::SetLineMask(int new_mask)
 {
     ASSERT(!!data, "Trying to access a non-ready scene");
 
-    data->m_new_line_mask = new_mask;
+    data->m_line_api.m_mask = new_mask;
 }
 
 void Scene::SetLineSegmentSize(float new_segment_size)
 {
     ASSERT(!!data, "Trying to access a non-ready scene");
 
-    data->m_new_line_segment_size = new_segment_size;
+    data->m_line_api.m_segment_size = new_segment_size;
 }
 
 void Scene::SetLineColor(vec4 new_color)
 {
     ASSERT(!!data, "Trying to access a non-ready scene");
 
-    data->m_new_line_color = new_color;
+    data->m_line_api.m_color = new_color;
 }
 
 //-----------------------------------------------------------------------------
@@ -511,14 +519,14 @@ float Scene::GetLineSegmentSize()
 {
     ASSERT(!!data, "Trying to access a non-ready scene");
 
-    return data->m_new_line_segment_size;
+    return data->m_line_api.m_segment_size;
 }
 
 vec4 Scene::GetLineColor()
 {
     ASSERT(!!data, "Trying to access a non-ready scene");
 
-    return data->m_new_line_color;
+    return data->m_line_api.m_color;
 }
 
 //-----------------------------------------------------------------------------
@@ -526,8 +534,8 @@ void Scene::AddLine(vec3 a, vec3 b, vec4 color)
 {
     ASSERT(!!data, "Trying to access a non-ready scene");
 
-    data->m_lines.push(a, b, color,
-                        data->m_new_line_time, data->m_new_line_mask, false, false);
+    data->m_line_api.m_lines.push(a, b, color,
+                        data->m_line_api.m_time, data->m_line_api.m_mask, false, false);
 }
 
 //-----------------------------------------------------------------------------
@@ -535,7 +543,7 @@ void Scene::AddLight(Light *l)
 {
     ASSERT(!!data, "Trying to access a non-ready scene");
 
-    data->m_lights.push(l);
+    data->m_tile_api.m_lights.push(l);
 }
 
 //-----------------------------------------------------------------------------
@@ -543,7 +551,7 @@ array<Light *> const &Scene::GetLights()
 {
     ASSERT(!!data, "Trying to access a non-ready scene");
 
-    return data->m_lights;
+    return data->m_tile_api.m_lights;
 }
 
 //-----------------------------------------------------------------------------
@@ -597,7 +605,7 @@ void Scene::RenderTiles() // XXX: rename to Blit()
     RenderContext rc;
 
     /* Early test if nothing needs to be rendered */
-    if (!data->m_tiles.count() && !data->m_palettes.count())
+    if (!data->m_tile_api.m_tiles.count() && !data->m_tile_api.m_palettes.count())
         return;
 
     /* FIXME: we disable culling for now because we don’t have a reliable
@@ -615,15 +623,15 @@ void Scene::RenderTiles() // XXX: rename to Blit()
     glEnable(GL_TEXTURE_2D);
 #endif
 
-    if (!data->m_tile_shader)
-        data->m_tile_shader = Shader::Create(LOLFX_RESOURCE_NAME(tile));
-    if (!data->m_palette_shader)
-        data->m_palette_shader = Shader::Create(LOLFX_RESOURCE_NAME(palette));
+    if (!data->m_tile_api.m_shader)
+        data->m_tile_api.m_shader = Shader::Create(LOLFX_RESOURCE_NAME(tile));
+    if (!data->m_tile_api.m_palette_shader)
+        data->m_tile_api.m_palette_shader = Shader::Create(LOLFX_RESOURCE_NAME(palette));
 
     for (int p = 0; p < 2; p++)
     {
-        Shader *shader      = (p == 0) ? data->m_tile_shader : data->m_palette_shader;
-        array<Tile>& tiles  = (p == 0) ? data->m_tiles : data->m_palettes;
+        Shader *shader      = (p == 0) ? data->m_tile_api.m_shader : data->m_tile_api.m_palette_shader;
+        array<Tile>& tiles  = (p == 0) ? data->m_tile_api.m_tiles : data->m_tile_api.m_palettes;
 
         if (tiles.count() == 0)
             continue;
@@ -636,14 +644,14 @@ void Scene::RenderTiles() // XXX: rename to Blit()
         shader->Bind();
 
         uni_mat = shader->GetUniformLocation("u_projection");
-        shader->SetUniform(uni_mat, GetCamera(data->m_tile_cam)->GetProjection());
+        shader->SetUniform(uni_mat, GetCamera(data->m_tile_api.m_cam)->GetProjection());
         uni_mat = shader->GetUniformLocation("u_view");
-        shader->SetUniform(uni_mat, GetCamera(data->m_tile_cam)->GetView());
+        shader->SetUniform(uni_mat, GetCamera(data->m_tile_api.m_cam)->GetView());
         uni_mat = shader->GetUniformLocation("u_model");
         shader->SetUniform(uni_mat, mat4(1.f));
 
         uni_tex = shader->GetUniformLocation("u_texture");
-        uni_pal = data->m_palette_shader->GetUniformLocation("u_palette");
+        uni_pal = data->m_tile_api.m_palette_shader->GetUniformLocation("u_palette");
         uni_texsize = shader->GetUniformLocation("u_texsize");
 
         for (int buf = 0, i = 0, n; i < tiles.count(); i = n, buf += 2)
@@ -659,8 +667,8 @@ void Scene::RenderTiles() // XXX: rename to Blit()
             VertexBuffer *vb2 = new VertexBuffer(6 * (n - i) * sizeof(vec2));
             vec2 *texture = (vec2 *)vb2->Lock(0, 0);
 
-            data->m_tile_bufs.push(vb1);
-            data->m_tile_bufs.push(vb2);
+            data->m_tile_api.m_bufs.push(vb1);
+            data->m_tile_api.m_bufs.push(vb2);
 
             for (int j = i; j < n; j++)
             {
@@ -690,13 +698,13 @@ void Scene::RenderTiles() // XXX: rename to Blit()
                            (vec2)tiles[i].m_tileset->GetTextureSize());
 
             /* Bind vertex and texture coordinate buffers */
-            data->m_tile_vdecl->Bind();
-            data->m_tile_vdecl->SetStream(vb1, attr_pos);
-            data->m_tile_vdecl->SetStream(vb2, attr_tex);
+            data->m_tile_api.m_vdecl->Bind();
+            data->m_tile_api.m_vdecl->SetStream(vb1, attr_pos);
+            data->m_tile_api.m_vdecl->SetStream(vb2, attr_tex);
 
             /* Draw arrays */
-            data->m_tile_vdecl->DrawElements(MeshPrimitive::Triangles, 0, (n - i) * 6);
-            data->m_tile_vdecl->Unbind();
+            data->m_tile_api.m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, (n - i) * 6);
+            data->m_tile_api.m_vdecl->Unbind();
             tiles[i].m_tileset->Unbind();
         }
 
@@ -720,7 +728,7 @@ void Scene::RenderLines(float seconds) // XXX: rename to Blit()
 
     RenderContext rc;
 
-    if (!data->m_lines.count())
+    if (!data->m_line_api.m_lines.count())
         return;
 
     rc.SetDepthFunc(DepthFunc::LessOrEqual);
@@ -728,10 +736,10 @@ void Scene::RenderLines(float seconds) // XXX: rename to Blit()
     rc.SetBlendEquation(BlendEquation::Add, BlendEquation::Max);
     rc.SetAlphaFunc(AlphaFunc::GreaterOrEqual, 0.01f);
 
-    int linecount = (int)data->m_lines.count();
+    int linecount = (int)data->m_line_api.m_lines.count();
 
-    if (!data->m_line_shader)
-        data->m_line_shader = Shader::Create(LOLFX_RESOURCE_NAME(line));
+    if (!data->m_line_api.m_shader)
+        data->m_line_api.m_shader = Shader::Create(LOLFX_RESOURCE_NAME(line));
 
     array<vec4, vec4, vec4, vec4> buff;
     buff.resize(linecount);
@@ -739,18 +747,18 @@ void Scene::RenderLines(float seconds) // XXX: rename to Blit()
     mat4 const inv_view_proj = inverse(GetCamera()->GetProjection() * GetCamera()->GetView());
     for (int i = 0; i < linecount; i++)
     {
-        if (data->m_lines[i].m5 & data->m_debug_mask)
+        if (data->m_line_api.m_lines[i].m5 & data->m_line_api.m_debug_mask)
         {
-            buff[real_linecount].m1 = vec4(data->m_lines[i].m1, (float)data->m_lines[i].m6);
-            buff[real_linecount].m2 = data->m_lines[i].m3;
-            buff[real_linecount].m3 = vec4(data->m_lines[i].m2, (float)data->m_lines[i].m7);
-            buff[real_linecount].m4 = data->m_lines[i].m3;
+            buff[real_linecount].m1 = vec4(data->m_line_api.m_lines[i].m1, (float)data->m_line_api.m_lines[i].m6);
+            buff[real_linecount].m2 = data->m_line_api.m_lines[i].m3;
+            buff[real_linecount].m3 = vec4(data->m_line_api.m_lines[i].m2, (float)data->m_line_api.m_lines[i].m7);
+            buff[real_linecount].m4 = data->m_line_api.m_lines[i].m3;
             real_linecount++;
         }
-        data->m_lines[i].m4 -= seconds;
-        if (data->m_lines[i].m4 < 0.f)
+        data->m_line_api.m_lines[i].m4 -= seconds;
+        if (data->m_line_api.m_lines[i].m4 < 0.f)
         {
-            data->m_lines.remove_swap(i--);
+            data->m_line_api.m_lines.remove_swap(i--);
             linecount--;
         }
     }
@@ -759,27 +767,27 @@ void Scene::RenderLines(float seconds) // XXX: rename to Blit()
     memcpy(vertex, buff.data(), buff.bytes());
     vb->Unlock();
 
-    data->m_line_shader->Bind();
+    data->m_line_api.m_shader->Bind();
 
     ShaderUniform uni_mat, uni_tex;
     ShaderAttrib attr_pos, attr_col;
-    attr_pos = data->m_line_shader->GetAttribLocation(VertexUsage::Position, 0);
-    attr_col = data->m_line_shader->GetAttribLocation(VertexUsage::Color, 0);
+    attr_pos = data->m_line_api.m_shader->GetAttribLocation(VertexUsage::Position, 0);
+    attr_col = data->m_line_api.m_shader->GetAttribLocation(VertexUsage::Color, 0);
 
-    data->m_line_shader->Bind();
+    data->m_line_api.m_shader->Bind();
 
-    uni_mat = data->m_line_shader->GetUniformLocation("u_projection");
-    data->m_line_shader->SetUniform(uni_mat, GetCamera()->GetProjection());
-    uni_mat = data->m_line_shader->GetUniformLocation("u_view");
-    data->m_line_shader->SetUniform(uni_mat, GetCamera()->GetView());
+    uni_mat = data->m_line_api.m_shader->GetUniformLocation("u_projection");
+    data->m_line_api.m_shader->SetUniform(uni_mat, GetCamera()->GetProjection());
+    uni_mat = data->m_line_api.m_shader->GetUniformLocation("u_view");
+    data->m_line_api.m_shader->SetUniform(uni_mat, GetCamera()->GetView());
 
-    data->m_line_vdecl->Bind();
-    data->m_line_vdecl->SetStream(vb, attr_pos, attr_col);
-    data->m_line_vdecl->DrawElements(MeshPrimitive::Lines, 0, 2 * real_linecount);
-    data->m_line_vdecl->Unbind();
-    data->m_line_shader->Unbind();
+    data->m_line_api.m_vdecl->Bind();
+    data->m_line_api.m_vdecl->SetStream(vb, attr_pos, attr_col);
+    data->m_line_api.m_vdecl->DrawElements(MeshPrimitive::Lines, 0, 2 * real_linecount);
+    data->m_line_api.m_vdecl->Unbind();
+    data->m_line_api.m_shader->Unbind();
 
-    //data->m_lines.empty();
+    //data->m_line_api.m_lines.empty();
     delete vb;
 }
 
