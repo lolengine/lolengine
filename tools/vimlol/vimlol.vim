@@ -23,7 +23,7 @@ au Syntax cpp
 " GLSL types and the Lol Engine extensions
 au Syntax cpp
    \ syn match cType
-   \ "\<\(f16\|\|f64\|f128\|r\|[iu]\(8\|16\|\|64\)\)\(vec\([23456789]\|1[012]\)\|cmplx\|quat\|dualquat\|mat\([234]\|2x3\|3x2\|3x4\|4x3\|2x4\|4x2\)\)\>"
+   \ "\<\(f16\|\|f64\|f128\|r\|[iu]\(8\|16\|\|64\)\)\(vec\([23456789]\|1[012]\)\|cmplx\|quat\|dualquat\|sqt\|mat\([234]\|2x3\|3x2\|3x4\|4x3\|2x4\|4x2\)\)\>"
 
 " HLSL types and the Lol Engine extensions
 au Syntax cpp

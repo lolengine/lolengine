@@ -251,6 +251,56 @@ static_assert(sizeof(quat) == 16, "sizeof(quat) == 16");
 static_assert(sizeof(dquat) == 32, "sizeof(dquat) == 32");
 
 /*
+ * SQT transforms: scale / rotation / translation
+ */
+
+template<typename T>
+struct sqt_t
+{
+    /* Default constructor and copy constructor */
+    inline constexpr sqt_t() : s(), q(), t() {}
+    inline constexpr sqt_t(sqt_t<T> const &other)
+      : q(other.q), t(other.t), s(other.s) {}
+
+    /* Explicit constructor for type conversion */
+    template<typename U>
+    explicit inline constexpr sqt_t(sqt_t<U> const &other)
+      : q(other.q), t(other.t), s(other.s) {}
+
+    /* Various explicit constructors */
+    inline constexpr sqt_t(T const &s_,
+                           quat_t<T> const &q_,
+                           vec_t<T,3> const &t_)
+      : s(s_), q(q_), t(t_) {}
+
+    inline vec_t<T,3> transform(vec_t<T,3> const &v) const
+    {
+        return t + q.transform(s * v);
+    }
+
+    inline vec_t<T,4> transform(vec_t<T,4> const &v) const
+    {
+        // XXX: needs serious testing
+        vec_t<T,4> tmp = q.transform(vec_t<T,4>(s * v.xyz, v.w));
+        return vec_t<T,4>(tmp.xyz, 0.f) + vec_t<T,4>(t, 1.f) * tmp.w;
+    }
+
+    inline vec_t<T,3> operator *(vec_t<T,3> const &v) const
+    {
+        return transform(v);
+    }
+
+    inline vec_t<T,4> operator *(vec_t<T,4> const &v) const
+    {
+        return transform(v);
+    }
+
+    quat_t<T> q;
+    vec_t<T,3> t;
+    T s;
+};
+
+/*
  * Common operations on transforms
  */
 

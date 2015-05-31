@@ -40,6 +40,7 @@ template<typename T, int COLS, int ROWS> struct mat_t;
 template<typename T> struct cmplx_t;
 template<typename T> struct quat_t;
 template<typename T> struct dualquat_t;
+template<typename T> struct sqt_t;
 
 /*
  * Generic GLSL-like type names
@@ -89,6 +90,7 @@ _T(mat_t<, _C 4 _C 3>, mat4x3)
 _T(cmplx_t<, >, cmplx)
 _T(quat_t<, >, quat)
 _T(dualquat_t<, >, dualquat)
+_T(sqt_t<, >, sqt)
 
 #undef _C
 #undef _T

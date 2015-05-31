@@ -21,7 +21,7 @@ test_math_SOURCES = test-common.cpp \
     math/cmplx.cpp math/half.cpp math/interp.cpp math/matrix.cpp \
     math/quat.cpp math/rand.cpp math/real.cpp math/rotation.cpp \
     math/trig.cpp math/vector.cpp math/polynomial.cpp math/noise/simplex.cpp \
-    math/bigint.cpp
+    math/bigint.cpp math/sqt.cpp
 test_math_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/tools/lolunit
 test_math_DEPENDENCIES = @LOL_DEPS@
 
