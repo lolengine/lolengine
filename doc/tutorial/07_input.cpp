@@ -151,7 +151,7 @@ public:
         mat4 anim = mat4::fromeuler_yxz(m_yaw_angle, m_pitch_angle, 0.f);
         mat4 model = mat4::translate(vec3(0, 0, -4.5));
         mat4 view = mat4::lookat(vec3(0, 2, 0), vec3(0, 0, -4), vec3(0, 1, 0));
-        mat4 proj = mat4::perspective(45.0f, 640.0f, 480.0f, 0.1f, 10.0f);
+        mat4 proj = mat4::perspective(radians(45.0f), 640.0f, 480.0f, 0.1f, 10.0f);
 
         m_matrix = proj * view * model * anim;
     }

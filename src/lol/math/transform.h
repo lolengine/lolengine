@@ -147,8 +147,8 @@ struct quat_t : public linear_ops::base<T>
     }
 
     /* Create a unit quaternion representing a rotation around an axis. */
-    static quat_t rotate(T degrees, T x, T y, T z);
-    static quat_t rotate(T degrees, vec_t<T,3> const &v);
+    static quat_t rotate(T radians, T x, T y, T z);
+    static quat_t rotate(T radians, vec_t<T,3> const &v);
 
     /* Create a unit quaternion representing a rotation between two vectors.
      * Input vectors need not be normalised. */
@@ -157,7 +157,7 @@ struct quat_t : public linear_ops::base<T>
     /* Convert from Euler angles. The axes in fromeuler_xyx are
      * x, then y', then x", ie. the axes are attached to the model.
      * If you want to rotate around static axes, just reverse the order
-     * of the arguments. Angle values are in degrees. */
+     * of the arguments. Angle values are in radians. */
     static quat_t fromeuler_xyx(vec_t<T,3> const &v);
     static quat_t fromeuler_xzx(vec_t<T,3> const &v);
     static quat_t fromeuler_yxy(vec_t<T,3> const &v);
@@ -175,7 +175,7 @@ struct quat_t : public linear_ops::base<T>
      * but since everyone does it…). The axes in fromeuler_xyz are
      * x, then y', then z", ie. the axes are attached to the model.
      * If you want to apply yaw around x, pitch around y, and roll
-     * around z, use fromeuler_xyz. Angle values are in degrees.
+     * around z, use fromeuler_xyz. Angle values are in radians.
      * If you want to rotate around static axes, reverse the order in
      * the function name (_zyx instead of _xyz) AND reverse the order
      * of the arguments. */
