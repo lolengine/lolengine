@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2014 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -19,9 +19,9 @@
 namespace lol
 {
 
-lolunit_declare_fixture(RealTest)
+lolunit_declare_fixture(real_test)
 {
-    lolunit_declare_test(Constants)
+    lolunit_declare_test(constants)
     {
         double a0 = real::R_0();
         double a1 = real::R_1();
@@ -68,7 +68,7 @@ lolunit_declare_fixture(RealTest)
         lolunit_assert_equal(i2, 0.5);
     }
 
-    lolunit_declare_test(FloatToReal)
+    lolunit_declare_test(float_to_real)
     {
         float a1 = real(0.0f);
         float a2 = real(-0.0f);
@@ -85,7 +85,7 @@ lolunit_declare_fixture(RealTest)
         lolunit_assert_equal(a6, 12345678.0f);
     }
 
-    lolunit_declare_test(DoubleToReal)
+    lolunit_declare_test(double_to_real)
     {
         double a1 = real(0.0);
         double a2 = real(-0.0);
@@ -102,7 +102,7 @@ lolunit_declare_fixture(RealTest)
         lolunit_assert_doubles_equal(a6, 1234567876543210.0, 0.0);
     }
 
-    lolunit_declare_test(Init)
+    lolunit_declare_test(init)
     {
         real r;
         float f1 = (float)r;
@@ -117,7 +117,7 @@ lolunit_declare_fixture(RealTest)
         lolunit_assert_equal(f3, 0.0f);
     }
 
-    lolunit_declare_test(StringToReal)
+    lolunit_declare_test(string_to_real)
     {
         float a1 = real("0");
         float a2 = real("1");
@@ -134,7 +134,7 @@ lolunit_declare_fixture(RealTest)
         lolunit_assert_equal(a4, 1.0f);
     }
 
-    lolunit_declare_test(UnaryMinus)
+    lolunit_declare_test(unary_minus)
     {
         float a1 = - real(1.0f);
         float a2 = - real(-1.0f);
@@ -147,7 +147,7 @@ lolunit_declare_fixture(RealTest)
         lolunit_assert_equal(a4, 0.0f);
     }
 
-    lolunit_declare_test(Comparison)
+    lolunit_declare_test(comparison)
     {
         lolunit_assert(real(1.0f) > real(0.5f));
         lolunit_assert(real(1.0f) >= real(0.5f));
@@ -168,7 +168,7 @@ lolunit_declare_fixture(RealTest)
         lolunit_assert(real(0.5f) >= real(-1.0f));
     }
 
-    lolunit_declare_test(Addition)
+    lolunit_declare_test(addition)
     {
         float a1 = real(1.0f) + real(0.0f);
         float a2 = real(0.0f) + real(1.0f);
@@ -190,14 +190,14 @@ lolunit_declare_fixture(RealTest)
         lolunit_assert_doubles_equal(a8, 0.1, 1.0e-13);
     }
 
-    lolunit_declare_test(Subtraction)
+    lolunit_declare_test(subtraction)
     {
         float a1 = real(1.0f) + real(1e20f) - real(1e20f);
 
         lolunit_assert_equal(a1, 1.0f);
     }
 
-    lolunit_declare_test(Multiplication)
+    lolunit_declare_test(multiplication)
     {
         real x(1.25f);
         real y(1.5f);
@@ -215,7 +215,7 @@ lolunit_declare_fixture(RealTest)
         lolunit_assert_equal(m4, -1.5f * -1.5f);
     }
 
-    lolunit_declare_test(ExactDivision)
+    lolunit_declare_test(exact_division)
     {
         float m1 = real::R_1() / real::R_1();
         float m2 = real::R_2() / real::R_1();
@@ -230,7 +230,7 @@ lolunit_declare_fixture(RealTest)
         lolunit_assert_equal(m5, -0.5f);
     }
 
-    lolunit_declare_test(InexactDivision)
+    lolunit_declare_test(inexact_division)
     {
         /* 1 / 3 * 3 should be close to 1... check that it does not differ
          * by more than 2^-k where k is the number of bits in the mantissa. */
@@ -240,7 +240,7 @@ lolunit_declare_fixture(RealTest)
         lolunit_assert_lequal((double)fabs(b), 1.0);
     }
 
-    lolunit_declare_test(LoadExp)
+    lolunit_declare_test(real_ldexp)
     {
         real a1(1.5);
         real a2(-1.5);
@@ -256,15 +256,15 @@ lolunit_declare_fixture(RealTest)
         lolunit_assert_equal((double)ldexp(a3, -7), 0.0);
     }
 
-    lolunit_declare_test(Ulp)
+    lolunit_declare_test(real_ulp)
     {
         real a1 = real::R_PI();
 
-        lolunit_assert_not_equal((double)(a1 + ulp(a1) - a1), 0.0);
+        lolunit_refute_equal((double)(a1 + ulp(a1) - a1), 0.0);
         lolunit_assert_equal((double)(a1 + ulp(a1) / 2 - a1), 0.0);
     }
 
-    lolunit_declare_test(Bool)
+    lolunit_declare_test(real_bool)
     {
         real a = 0.0;
         lolunit_assert(!a);
@@ -281,7 +281,7 @@ lolunit_declare_fixture(RealTest)
         lolunit_assert(!!a);
     }
 
-    lolunit_declare_test(AsinAcos)
+    lolunit_declare_test(real_asin_acos)
     {
         double tests[] =
         {
@@ -301,7 +301,7 @@ lolunit_declare_fixture(RealTest)
         }
     }
 
-    lolunit_declare_test(FloorCeilEtc)
+    lolunit_declare_test(floor_ceil_etc)
     {
         double tests[] =
         {
@@ -343,7 +343,7 @@ lolunit_declare_fixture(RealTest)
         }
     }
 
-    lolunit_declare_test(Pow)
+    lolunit_declare_test(real_pow)
     {
         double a1 = pow(-real::R_2(), real::R_2());
         double b1 = 4.0;

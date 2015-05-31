@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2014 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -17,25 +17,21 @@
 namespace lol
 {
 
-struct TrackedObj
+struct tracked_object
 {
     static int m_ctor, m_dtor;
 
-    TrackedObj() { m_ctor++; }
-    TrackedObj(TrackedObj const &) { m_ctor++; }
-    ~TrackedObj() { m_dtor++; }
+    tracked_object() { m_ctor++; }
+    tracked_object(tracked_object const &) { m_ctor++; }
+    ~tracked_object() { m_dtor++; }
 };
 
-int TrackedObj::m_ctor = 0;
-int TrackedObj::m_dtor = 0;
+int tracked_object::m_ctor = 0;
+int tracked_object::m_dtor = 0;
 
-lolunit_declare_fixture(ArrayTest)
+lolunit_declare_fixture(array_test)
 {
-    void SetUp() {}
-
-    void TearDown() {}
-
-    lolunit_declare_test(ArrayPush)
+    lolunit_declare_test(array_push)
     {
         array<int> a;
         a.push(0);
@@ -49,7 +45,7 @@ lolunit_declare_fixture(ArrayTest)
         lolunit_assert_equal(a[3], 3);
     }
 
-    lolunit_declare_test(ArrayInitializer)
+    lolunit_declare_test(array_initializer)
     {
         array<int> a({ 2, 4, 6 });
 
@@ -75,7 +71,7 @@ lolunit_declare_fixture(ArrayTest)
         lolunit_assert_equal(c[2].m2, 7.0f);
     }
 
-    lolunit_declare_test(ArrayPushWithShift)
+    lolunit_declare_test(array_push_with_shift)
     {
         array<int> a;
         a << 0 << 1 << 2 << 3;
@@ -86,7 +82,7 @@ lolunit_declare_fixture(ArrayTest)
         lolunit_assert_equal(a[3], 3);
     }
 
-    lolunit_declare_test(ArrayCopy)
+    lolunit_declare_test(array_copy)
     {
         array<int> a;
         a << 0 << 1 << 2 << 3;
@@ -99,7 +95,7 @@ lolunit_declare_fixture(ArrayTest)
         lolunit_assert_equal(b[3], 3);
     }
 
-    lolunit_declare_test(ArrayRemove)
+    lolunit_declare_test(array_remove)
     {
         array<int> a;
         a << 0 << 1 << 2 << 3;
@@ -120,7 +116,7 @@ lolunit_declare_fixture(ArrayTest)
         lolunit_assert_equal(b[2], 3);
     }
 
-    lolunit_declare_test(ArrayRemoveSwap)
+    lolunit_declare_test(array_remove_swap)
     {
         array<int> a;
         a << 0 << 1 << 2 << 3;
@@ -140,7 +136,7 @@ lolunit_declare_fixture(ArrayTest)
         lolunit_assert_equal(b[1], 3);
     }
 
-    lolunit_declare_test(EightElements)
+    lolunit_declare_test(eight_element_arrays)
     {
         array<int, long, float, double, unsigned, char, bool, void *> a;
         a.push(1, 2, 3.f, 4.0, 5, 'a', true, 0);
@@ -155,7 +151,7 @@ lolunit_declare_fixture(ArrayTest)
         lolunit_assert_equal(a[0].m8, 0);
     }
 
-    lolunit_declare_test(ArraySwap)
+    lolunit_declare_test(array_swap)
     {
         array<int, int> a;
         a.push(10, 20);
@@ -169,7 +165,7 @@ lolunit_declare_fixture(ArrayTest)
         lolunit_assert_equal(20, a[1].m2);
     }
 
-    lolunit_declare_test(ArrayInsert)
+    lolunit_declare_test(array_insert)
     {
         array<int> a;
         a << 1 << 2;
@@ -193,7 +189,7 @@ lolunit_declare_fixture(ArrayTest)
         lolunit_assert_equal(6, a[4]);
     }
 
-    lolunit_declare_test(ArrayInsertTuple)
+    lolunit_declare_test(array_insert_tuple)
     {
         array<int, float, String> b;
         b.insert(0, 5, 6.f, "lol");
@@ -215,7 +211,7 @@ lolunit_declare_fixture(ArrayTest)
         lolunit_assert_equal(9.f, b[2].m2);
     }
 
-    lolunit_declare_test(ArrayConcat)
+    lolunit_declare_test(array_concat)
     {
         array<int> a, b;
         a << 0 << 1;
@@ -228,7 +224,7 @@ lolunit_declare_fixture(ArrayTest)
         lolunit_assert_equal(c[3], 3);
     }
 
-    lolunit_declare_test(ArrayAppend)
+    lolunit_declare_test(array_append)
     {
         array<int> a, b;
         a << 0 << 1;
@@ -247,29 +243,29 @@ lolunit_declare_fixture(ArrayTest)
         lolunit_assert_equal(b[3], 3);
     }
 
-    lolunit_declare_test(ElementCtorDtor)
+    lolunit_declare_test(element_ctor_dtor)
     {
         /* Ensure array elements get created and destroyed the proper
          * number of times. */
-        TrackedObj::m_ctor = 0;
-        TrackedObj::m_dtor = 0;
+        tracked_object::m_ctor = 0;
+        tracked_object::m_dtor = 0;
         {
-            array<TrackedObj> a;
+            array<tracked_object> a;
 
-            a.push(TrackedObj());
+            a.push(tracked_object());
         }
-        lolunit_assert_equal(TrackedObj::m_ctor, TrackedObj::m_dtor);
+        lolunit_assert_equal(tracked_object::m_ctor, tracked_object::m_dtor);
 
-        TrackedObj::m_ctor = 0;
-        TrackedObj::m_dtor = 0;
+        tracked_object::m_ctor = 0;
+        tracked_object::m_dtor = 0;
         {
-            array<TrackedObj> a;
+            array<tracked_object> a;
 
             a.resize(2);
             a.resize(4);
             a.resize(1);
         }
-        lolunit_assert_equal(TrackedObj::m_ctor, TrackedObj::m_dtor);
+        lolunit_assert_equal(tracked_object::m_ctor, tracked_object::m_dtor);
     }
 };
 

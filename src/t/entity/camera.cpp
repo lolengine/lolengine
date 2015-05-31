@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2014 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //            © 2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -18,23 +18,17 @@
 namespace lol
 {
 
-lolunit_declare_fixture(CameraTest)
+lolunit_declare_fixture(camera_test)
 {
-    Camera  tc;
-    vec3    eye;
-    vec3    target;
-    vec3    up;
-    mat4    m_lookat;
-    quat    q_lookat;
-    vec3    v_lookat;
-    float   fov;
-    float   screen_size;
-    float   screen_ratio;
-    float   near;
-    float   far;
-    bool    is_shifted;
+    Camera tc;
+    vec3 eye, target, up;
+    mat4 m_lookat;
+    quat q_lookat;
+    vec3 v_lookat;
+    float fov, screen_size, screen_ratio, near, far;
+    bool is_shifted;
 
-    void SetUp()
+    void setup()
     {
         eye = vec3(0.f, 0.f, 50.f);
         target = vec3::zero;
@@ -50,14 +44,12 @@ lolunit_declare_fixture(CameraTest)
         is_shifted = false;
     }
 
-    void TearDown() {}
-
 #define TEST_VECTOR(v0, v1) \
         lolunit_assert_doubles_equal(v0.x, v1.x, 1.e-5f); \
         lolunit_assert_doubles_equal(v0.y, v1.y, 1.e-5f); \
         lolunit_assert_doubles_equal(v0.z, v1.z, 1.e-5f);
 
-    lolunit_declare_test(SetViewTest)
+    lolunit_declare_test(set_view_test)
     {
         tc.SetView(eye, target, up);
         TEST_VECTOR(eye, tc.GetPosition());
@@ -105,7 +97,7 @@ lolunit_declare_fixture(CameraTest)
         lolunit_assert_doubles_equal(m0[3][3], m1[3][3], 1.e-5f);
 
 
-    lolunit_declare_test(SetProjectionTest)
+    lolunit_declare_test(set_projection_test)
     {
         mat4 refmx = mat4::perspective(fov, screen_size, screen_size * screen_ratio, near, far);
 

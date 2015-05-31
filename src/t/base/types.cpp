@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2014 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -17,9 +17,9 @@
 namespace lol
 {
 
-lolunit_declare_fixture(BuildTest)
+lolunit_declare_fixture(build_features)
 {
-    lolunit_declare_test(TypeSizeHalf)
+    lolunit_declare_test(half_type_sizes)
     {
         lolunit_assert_equal(sizeof(half), 2);
 
@@ -34,7 +34,7 @@ lolunit_declare_fixture(BuildTest)
 #endif
     }
 
-    lolunit_declare_test(TypeSizeFloat)
+    lolunit_declare_test(float_type_sizes)
     {
         lolunit_assert_equal(sizeof(float), 4);
 
@@ -47,7 +47,7 @@ lolunit_declare_fixture(BuildTest)
         lolunit_assert_equal(sizeof(mat4), 64);
     }
 
-    lolunit_declare_test(TypeSizeDouble)
+    lolunit_declare_test(double_type_sizes)
     {
         lolunit_assert_equal(sizeof(double), 8);
 
@@ -60,7 +60,7 @@ lolunit_declare_fixture(BuildTest)
         lolunit_assert_equal(sizeof(dmat4), 128);
     }
 
-    lolunit_declare_test(TypeSizeInt8)
+    lolunit_declare_test(int8_type_sizes)
     {
         lolunit_assert_equal(sizeof(i8vec2), 2);
         lolunit_assert_equal(sizeof(u8vec2), 2);
@@ -70,7 +70,7 @@ lolunit_declare_fixture(BuildTest)
         lolunit_assert_equal(sizeof(u8vec4), 4);
     }
 
-    lolunit_declare_test(TypeSizeInt16)
+    lolunit_declare_test(int16_type_sizes)
     {
         lolunit_assert_equal(sizeof(i16vec2), 4);
         lolunit_assert_equal(sizeof(u16vec2), 4);
@@ -80,7 +80,7 @@ lolunit_declare_fixture(BuildTest)
         lolunit_assert_equal(sizeof(u16vec4), 8);
     }
 
-    lolunit_declare_test(TypeSizeInt32)
+    lolunit_declare_test(int32_type_sizes)
     {
         lolunit_assert_equal(sizeof(ivec2), 8);
         lolunit_assert_equal(sizeof(uvec2), 8);
@@ -90,7 +90,7 @@ lolunit_declare_fixture(BuildTest)
         lolunit_assert_equal(sizeof(uvec4), 16);
     }
 
-    lolunit_declare_test(TypeSizeInt64)
+    lolunit_declare_test(int64_type_sizes)
     {
         lolunit_assert_equal(sizeof(i64vec2), 16);
         lolunit_assert_equal(sizeof(u64vec2), 16);
@@ -101,7 +101,7 @@ lolunit_declare_fixture(BuildTest)
     }
 
 #if !defined LOL_BUILD_DEBUG
-    lolunit_declare_test(FastMath)
+    lolunit_declare_test(fast_math)
     {
         double x, y;
 

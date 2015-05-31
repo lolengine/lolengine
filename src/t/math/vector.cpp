@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2014 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -17,25 +17,21 @@
 namespace lol
 {
 
-lolunit_declare_fixture(VectorTest)
+lolunit_declare_fixture(vector_test)
 {
-    void SetUp() {}
-
-    void TearDown() {}
-
-    lolunit_declare_test(VectorEquality)
+    lolunit_declare_test(vector_equality)
     {
         vec2 a2(1.0f, 2.0f);
         vec2 b2(0.0f, 2.0f);
         vec2 c2(1.0f, 0.0f);
 
         lolunit_assert_equal(a2, a2);
-        lolunit_assert_not_different(a2, a2);
+        lolunit_refute_different(a2, a2);
 
         lolunit_assert_different(a2, b2);
-        lolunit_assert_not_equal(a2, b2);
+        lolunit_refute_equal(a2, b2);
         lolunit_assert_different(a2, c2);
-        lolunit_assert_not_equal(a2, c2);
+        lolunit_refute_equal(a2, c2);
 
         vec3 a3(1.0f, 2.0f, 3.0f);
         vec3 b3(0.0f, 2.0f, 3.0f);
@@ -43,14 +39,14 @@ lolunit_declare_fixture(VectorTest)
         vec3 d3(1.0f, 2.0f, 0.0f);
 
         lolunit_assert_equal(a3, a3);
-        lolunit_assert_not_different(a3, a3);
+        lolunit_refute_different(a3, a3);
 
         lolunit_assert_different(a3, b3);
-        lolunit_assert_not_equal(a3, b3);
+        lolunit_refute_equal(a3, b3);
         lolunit_assert_different(a3, c3);
-        lolunit_assert_not_equal(a3, c3);
+        lolunit_refute_equal(a3, c3);
         lolunit_assert_different(a3, d3);
-        lolunit_assert_not_equal(a3, d3);
+        lolunit_refute_equal(a3, d3);
 
         vec4 a4(1.0f, 2.0f, 3.0f, 4.0f);
         vec4 b4(0.0f, 2.0f, 3.0f, 4.0f);
@@ -59,19 +55,19 @@ lolunit_declare_fixture(VectorTest)
         vec4 e4(1.0f, 2.0f, 3.0f, 0.0f);
 
         lolunit_assert_equal(a4, a4);
-        lolunit_assert_not_different(a4, a4);
+        lolunit_refute_different(a4, a4);
 
         lolunit_assert_different(a4, b4);
-        lolunit_assert_not_equal(a4, b4);
+        lolunit_refute_equal(a4, b4);
         lolunit_assert_different(a4, c4);
-        lolunit_assert_not_equal(a4, c4);
+        lolunit_refute_equal(a4, c4);
         lolunit_assert_different(a4, d4);
-        lolunit_assert_not_equal(a4, d4);
+        lolunit_refute_equal(a4, d4);
         lolunit_assert_different(a4, e4);
-        lolunit_assert_not_equal(a4, e4);
+        lolunit_refute_equal(a4, e4);
     }
 
-    lolunit_declare_test(VectorInequality)
+    lolunit_declare_test(vector_inequality)
     {
         vec2 a2(1.0f, 3.0f);
         vec2 b2(0.0f, 0.0f);
@@ -81,21 +77,21 @@ lolunit_declare_fixture(VectorTest)
         vec2 f2(4.0f, 4.0f);
 
         lolunit_assert_lequal(a2, a2);
-        lolunit_assert_not_less(a2, a2);
+        lolunit_refute_less(a2, a2);
 
-        lolunit_assert_not_lequal(a2, b2);
-        lolunit_assert_not_less(a2, b2);
-        lolunit_assert_not_lequal(a2, c2);
-        lolunit_assert_not_less(a2, c2);
-        lolunit_assert_not_lequal(a2, d2);
-        lolunit_assert_not_less(a2, d2);
+        lolunit_refute_lequal(a2, b2);
+        lolunit_refute_less(a2, b2);
+        lolunit_refute_lequal(a2, c2);
+        lolunit_refute_less(a2, c2);
+        lolunit_refute_lequal(a2, d2);
+        lolunit_refute_less(a2, d2);
         lolunit_assert_lequal(a2, e2);
-        lolunit_assert_not_less(a2, e2);
+        lolunit_refute_less(a2, e2);
         lolunit_assert_lequal(a2, f2);
         lolunit_assert_less(a2, f2);
     }
 
-    lolunit_declare_test(VectorInit)
+    lolunit_declare_test(vector_init)
     {
         vec2 a { 1.f, 2.f };
         lolunit_assert_equal(1.f, a.x);
@@ -125,7 +121,7 @@ lolunit_declare_fixture(VectorTest)
         lolunit_assert_equal(0.f, d[9]);
     }
 
-    lolunit_declare_test(VectorSwizzle)
+    lolunit_declare_test(vector_swizzle)
     {
         vec3 a(1.0f, 2.0f, 3.0f);
         vec3 b(4.0f, 5.0f, 6.0f);
@@ -175,7 +171,7 @@ lolunit_declare_fixture(VectorTest)
 #endif
     }
 
-    lolunit_declare_test(VectorSwizzleMul)
+    lolunit_declare_test(vector_swizzle_mul)
     {
         ivec3 a(1, 2, 3);
 
@@ -205,7 +201,7 @@ lolunit_declare_fixture(VectorTest)
         lolunit_assert_equal(f.z, 2);
     }
 
-    lolunit_declare_test(VectorUnaryMinus)
+    lolunit_declare_test(vector_unary_minus)
     {
         vec2 a(1.0f, 3.0f);
         vec2 b(-1.0f, -3.0f);
@@ -214,7 +210,7 @@ lolunit_declare_fixture(VectorTest)
         lolunit_assert_equal(-a, b);
     }
 
-    lolunit_declare_test(CastVector)
+    lolunit_declare_test(cast_vector)
     {
         vec2 a1(1.0f, 3.0f);
 
@@ -234,7 +230,7 @@ lolunit_declare_fixture(VectorTest)
         lolunit_assert_equal(a3, a1);
     }
 
-    lolunit_declare_test(Orthogonal)
+    lolunit_declare_test(vector_orthogonal)
     {
         vec3 a(1.f, 0.f, 0.f);
         vec3 b(0.f, 1.f, 0.f);
@@ -260,7 +256,7 @@ lolunit_declare_fixture(VectorTest)
         lolunit_assert_doubles_equal(length(orthonormal(c)), 1.f, 1e-6f);
     }
 
-    lolunit_declare_test(LargeVectors)
+    lolunit_declare_test(large_vectors)
     {
         vec_t<int, 50> v0(0);
         vec_t<int, 50> v1(1);
@@ -273,7 +269,7 @@ lolunit_declare_fixture(VectorTest)
     }
 
 #if !LOL_FEATURE_VISUAL_STUDIO_THAT_FUCKING_PIECE_OF_SHIT_COMPILER
-    lolunit_declare_test(VectorIterator)
+    lolunit_declare_test(vector_iterator)
     {
         vec4 v4(1.125f, 1.25f, 1.375f, 1.25f);
 

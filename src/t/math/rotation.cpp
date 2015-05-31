@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2014 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -17,13 +17,13 @@
 namespace lol
 {
 
-lolunit_declare_fixture(RotationTest)
+lolunit_declare_fixture(rotation_test)
 {
-    void SetUp() {}
+    void setup() {}
 
-    void TearDown() {}
+    void teardown() {}
 
-    lolunit_declare_test(Rotate2D)
+    lolunit_declare_test(rotate_2d)
     {
         /* Rotations must be CCW */
         mat2 m90 = mat2::rotate(90.f);
@@ -39,7 +39,7 @@ lolunit_declare_fixture(RotationTest)
         lolunit_assert_doubles_equal(d, 1.0, 1e-5);
     }
 
-    lolunit_declare_test(Compose2D)
+    lolunit_declare_test(compose_2d)
     {
         /* Rotating 20 degrees twice must equal rotating 40 degrees */
         mat2 m20 = mat2::rotate(20.f);
@@ -53,7 +53,7 @@ lolunit_declare_fixture(RotationTest)
         lolunit_assert_doubles_equal(m20x20[1][1], m40[1][1], 1e-5);
     }
 
-    lolunit_declare_test(Rotate3D)
+    lolunit_declare_test(rotate_3d)
     {
         /* Rotations must be CCW along each axis */
         mat3 m90x = mat3::rotate(90.f, 1.f, 0.f, 0.f);
@@ -86,7 +86,7 @@ lolunit_declare_fixture(RotationTest)
         lolunit_assert_doubles_equal(dz, 1.0, 1e-5);
     }
 
-    lolunit_declare_test(Compose3D)
+    lolunit_declare_test(compose_3d)
     {
         /* Rotating 20 degrees twice must equal rotating 40 degrees */
         mat3 m20 = mat3::rotate(20.f, 1.f, 2.f, 3.f);
@@ -106,7 +106,7 @@ lolunit_declare_fixture(RotationTest)
         lolunit_assert_doubles_equal(m20x20[2][2], m40[2][2], 1e-5);
     }
 
-    lolunit_declare_test(QuaternionTransform)
+    lolunit_declare_test(quaternion_transform)
     {
         /* Rotating using a quaternion must equal rotating using a matrix */
         mat3 m20 = mat3::rotate(20.f, 1.f, 2.f, 3.f);
@@ -125,7 +125,7 @@ lolunit_declare_fixture(RotationTest)
         lolunit_assert_doubles_equal(n, 1.0, 1e-5);
     }
 
-    lolunit_declare_test(QuaternionFromMatrix)
+    lolunit_declare_test(quaternion_from_matrix)
     {
         /* A rotation matrix converted to a quaternion should match the
          * quaternion built with the same parameters */
@@ -144,7 +144,7 @@ lolunit_declare_fixture(RotationTest)
         lolunit_assert_doubles_equal(n2, 1.0, 1e-5);
     }
 
-    lolunit_declare_test(MatrixFromQuaternion)
+    lolunit_declare_test(matrix_from_quaternion)
     {
         /* A quaternion converted to a rotation matrix should match the
          * rotation matrix built with the same parameters */
@@ -170,7 +170,7 @@ lolunit_declare_fixture(RotationTest)
         lolunit_assert_doubles_equal(d2, 1.0, 1e-5);
     }
 
-    lolunit_declare_test(MatrixCompositionThroughQuaternions)
+    lolunit_declare_test(matrix_composition_through_quaternions)
     {
         /* Combining two rotation matrices should match the matrix created
          * from the combination of the two equivalent quaternions */
@@ -193,7 +193,7 @@ lolunit_declare_fixture(RotationTest)
         lolunit_assert_doubles_equal(m4[2][2], m3[2][2], 1e-5);
     }
 
-    lolunit_declare_test(QuaternionCompositionThroughMatrices)
+    lolunit_declare_test(quaternion_composition_through_matrices)
     {
         /* Combining two quaternions should match the quaternion created
          * from the combination of the two equivalent rotation matrices */

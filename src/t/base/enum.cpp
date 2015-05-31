@@ -17,46 +17,43 @@
 namespace lol
 {
 
-lolunit_declare_fixture(EnumTest)
+lolunit_declare_fixture(enum_test)
 {
-    void SetUp() {}
-
-    void TearDown() {}
-
-    lolunit_declare_test(EnumToString)
+    lolunit_declare_test(enum_to_string)
     {
-        struct MyEnumBase : public StructSafeEnum
+        struct my_enum_base : public StructSafeEnum
         {
             enum Type
             {
-                First = -10,
-                Second,
-                Third = 5,
+                first = -10,
+                second,
+                third = 5,
             };
+
         protected:
             virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
             {
-                enum_map[First] = "First";
-                enum_map[Second] = "Second";
-                enum_map[Third] = "Third";
+                enum_map[first] = "first";
+                enum_map[second] = "second";
+                enum_map[third] = "third";
                 return true;
             }
         };
-        typedef SafeEnum<MyEnumBase> MyEnum;
+        typedef SafeEnum<my_enum_base> my_enum;
 
-        MyEnum e = MyEnum::First;
-        lolunit_assert(e.ToString() == "First");
+        my_enum e = my_enum::first;
+        lolunit_assert(e.ToString() == "first");
 
-        e = MyEnum::Second;
-        lolunit_assert(e.ToString() == "Second");
+        e = my_enum::second;
+        lolunit_assert(e.ToString() == "second");
 
-        e = MyEnum::Third;
-        lolunit_assert(e.ToString() == "Third");
+        e = my_enum::third;
+        lolunit_assert(e.ToString() == "third");
 
-        e = MyEnum(42);
-        lolunit_assert(e.ToString() != "First");
-        lolunit_assert(e.ToString() != "Second");
-        lolunit_assert(e.ToString() != "Third");
+        e = my_enum(42);
+        lolunit_assert(e.ToString() != "first");
+        lolunit_assert(e.ToString() != "second");
+        lolunit_assert(e.ToString() != "third");
     }
 };
 

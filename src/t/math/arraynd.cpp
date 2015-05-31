@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2014 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -17,13 +17,9 @@
 namespace lol
 {
 
-lolunit_declare_fixture(ArrayNDTest)
+lolunit_declare_fixture(arraynd_test)
 {
-    void SetUp() {}
-
-    void TearDown() {}
-
-    lolunit_declare_test(Array2D)
+    lolunit_declare_test(array2d_accessors)
     {
         arraynd<2, int> a;
         a.resize(vec_t<int, 2>(2, 2));
@@ -46,7 +42,7 @@ lolunit_declare_fixture(ArrayNDTest)
         lolunit_assert_equal(b[1][1], 4);
     }
 
-    lolunit_declare_test(ArrayNDCreate)
+    lolunit_declare_test(arraynd_create)
     {
         arraynd<10, int> a;
         arraynd<20, float> b;
@@ -92,7 +88,7 @@ lolunit_declare_fixture(ArrayNDTest)
         lolunit_assert_equal(f[3][1][1], 0);
     }
 
-    lolunit_declare_test(ArrayNDInit)
+    lolunit_declare_test(arraynd_init)
     {
         int const NDIM = 8;
         vec_t<int, NDIM> size;

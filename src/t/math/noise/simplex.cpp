@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2014 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //            © 2013—2014 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //            © 2013—2014 Guillaume Bittoun <guillaume.bittoun@gmail.com>
 //
@@ -19,11 +19,8 @@
 namespace lol
 {
 
-lolunit_declare_fixture(SimplexNoise)
+lolunit_declare_fixture(simplex_noise_test)
 {
-    void SetUp() {}
-
-    void TearDown() {}
 };
 
 }

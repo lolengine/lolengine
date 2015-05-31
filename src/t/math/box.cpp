@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2014 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -17,13 +17,9 @@
 namespace lol
 {
 
-lolunit_declare_fixture(BoxTest)
+lolunit_declare_fixture(box_test)
 {
-    void SetUp() {}
-
-    void TearDown() {}
-
-    lolunit_declare_test(Box2DIsect)
+    lolunit_declare_test(box2d_intersection)
     {
         box2 b1(vec2(0.f, 0.f), vec2(10.f, 10.f));
         box2 b2(vec2(5.f, 8.f), vec2(8.f, 12.f));
@@ -38,7 +34,7 @@ lolunit_declare_fixture(BoxTest)
         lolunit_assert_equal(false, TestAABBVsAABB(b4, b5));
     }
 
-    lolunit_declare_test(Box2DMove)
+    lolunit_declare_test(box2d_move)
     {
         box2 b1(vec2(0.f, 0.f), vec2(1.f, 1.f));
         box2 b2(vec2(2.f, 2.f), vec2(3.f, 3.f));

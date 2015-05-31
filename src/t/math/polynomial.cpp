@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2014 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -17,15 +17,15 @@
 namespace lol
 {
 
-lolunit_declare_fixture(PolynomialTest)
+lolunit_declare_fixture(polynomial_test)
 {
-    lolunit_declare_test(Declaration)
+    lolunit_declare_test(declaration)
     {
         polynomial<float> p;
         polynomial<real> q;
     }
 
-    lolunit_declare_test(Init)
+    lolunit_declare_test(init)
     {
         polynomial<float> p { };
         lolunit_assert_equal(p[0], 0.f);
@@ -52,7 +52,7 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_equal(s.degree(), -1);
     }
 
-    lolunit_declare_test(Derive)
+    lolunit_declare_test(derive)
     {
         polynomial<float> p {};
         p = p.derive();
@@ -75,7 +75,7 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_equal(s[2], 12.f);
     }
 
-    lolunit_declare_test(Eval)
+    lolunit_declare_test(eval)
     {
         /* Special null polynomial */
         polynomial<float> p;
@@ -84,7 +84,7 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_equal(a, 0.f);
     }
 
-    lolunit_declare_test(Eval0)
+    lolunit_declare_test(eval_degree_0)
     {
         /* Constant polynomial p(x) = 1 */
         polynomial<float> p { 1.f };
@@ -93,7 +93,7 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_equal(a, 1.f);
     }
 
-    lolunit_declare_test(Eval1)
+    lolunit_declare_test(eval_degree_1)
     {
         /* p(x) = 1 + 2x */
         polynomial<float> p { 1.f, 2.f };
@@ -108,7 +108,7 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_equal(c, 5.f);
     }
 
-    lolunit_declare_test(Eval2)
+    lolunit_declare_test(eval_degree_2)
     {
         /* p(x) = 1 + 2x + 3x² */
         polynomial<float> p { 1.f, 2.f, 3.f };
@@ -123,7 +123,7 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_equal(c, 17.f);
     }
 
-    lolunit_declare_test(UnaryPlusMinus)
+    lolunit_declare_test(unary_plus_and_minus)
     {
         /* p(x) = 1 + 2x + 3x² */
         polynomial<float> p { 1.f, 2.f, 3.f };
@@ -139,7 +139,7 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_equal(r[2], -3.f);
     }
 
-    lolunit_declare_test(Addition)
+    lolunit_declare_test(addition)
     {
         /* p(x) = 1 + 2x + 3x² */
         /* q(x) = 4 + 5x */
@@ -154,7 +154,7 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_equal(r[2], 3.f);
     }
 
-    lolunit_declare_test(Subtraction)
+    lolunit_declare_test(subtraction)
     {
         /* p(x) = 1 + 2x + 3x² */
         /* q(x) = 4 + 5x */
@@ -169,7 +169,7 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_equal(r[2], 3.f);
     }
 
-    lolunit_declare_test(Multiplication)
+    lolunit_declare_test(multiplication)
     {
         /* p(x) = 1 + 2x + 3x² */
         /* q(x) = 4 + 5x */
@@ -185,7 +185,7 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_equal(r[3], 15.f);
     }
 
-    lolunit_declare_test(Division)
+    lolunit_declare_test(division)
     {
         /* p(x) = -4 - 2x² + x³ */
         /* q(x) = -3 + x */
@@ -204,7 +204,7 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_doubles_equal(r.m2[0], 5.f, 1e-5f);
     }
 
-    lolunit_declare_test(Composition1)
+    lolunit_declare_test(composition_degree_2_2)
     {
         /* p(x) = 1 + x² */
         polynomial<float> p({ 1, 0, 1 });
@@ -219,7 +219,7 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_equal(q[4], 1.f);
     }
 
-    lolunit_declare_test(Composition2)
+    lolunit_declare_test(composition_degree_2_3)
     {
         /* p(x) = 1 + x */
         polynomial<float> p({ 1, 1 });
@@ -235,7 +235,7 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_equal(r[2], 1.f);
     }
 
-    lolunit_declare_test(RootsDegree0)
+    lolunit_declare_test(degree_0_root)
     {
         /* p(x) = 42 */
         polynomial<float> p { 42.f };
@@ -244,7 +244,7 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_equal(roots.count(), 0);
     }
 
-    lolunit_declare_test(RootsDegree1)
+    lolunit_declare_test(degree_1_root)
     {
         /* p(x) = -6 + 2x */
         polynomial<float> p { -6.f, 2.f };
@@ -254,7 +254,7 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_equal(roots[0], 3.f);
     }
 
-    lolunit_declare_test(RootsDegree2)
+    lolunit_declare_test(degree_2_root)
     {
         /* p(x) = 81 - 18x + x² */
         polynomial<float> p { 81.f, -18.f, 1.f };
@@ -272,7 +272,7 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_equal(roots2[1], 7.f);
     }
 
-    lolunit_declare_test(RootsDegree3TripleSolution)
+    lolunit_declare_test(degree_3_triple_root)
     {
         polynomial<float> p { 1.f, 3.f, 3.f, 1.f };
         auto roots1 = p.roots();
@@ -281,7 +281,7 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_doubles_equal(roots1[0], -1, 0);
     }
 
-    lolunit_declare_test(RootsDegree3DoubleSolution)
+    lolunit_declare_test(degree_3_double_root)
     {
         polynomial<float> p { 2.f, 5.f, 4.f, 1.f };
         auto roots1 = p.roots();
@@ -293,7 +293,7 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_doubles_equal(roots1[2], -1, 1e-3);
     }
 
-    lolunit_declare_test(RootsDegree3SingleSolutions)
+    lolunit_declare_test(degree_3_three_roots)
     {
         polynomial<float> p { 6.f, 11.f, 6.f, 1.f };
         auto roots1 = p.roots();
@@ -304,7 +304,7 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_doubles_equal(roots1[2], -2, 1e-8);
     }
 
-    lolunit_declare_test(RootsDegree3BiggerSolutions)
+    lolunit_declare_test(degree_3_three_large_roots)
     {
         polynomial<float> p { -12000.f, 1000.f - 1200.f - 120.f, 100.f + 10.0f - 12.f, 1.f };
         auto roots1 = p.roots();
@@ -316,7 +316,7 @@ lolunit_declare_fixture(PolynomialTest)
         lolunit_assert_doubles_equal(roots1[2], -10, 1e-5);
     }
 
-    lolunit_declare_test(Chebyshev)
+    lolunit_declare_test(chebyshev)
     {
         polynomial<float> t0 = polynomial<float>::chebyshev(0);
         polynomial<float> t1 = polynomial<float>::chebyshev(1);

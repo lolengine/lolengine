@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2014 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -17,9 +17,9 @@
 namespace lol
 {
 
-lolunit_declare_fixture(MatrixTest)
+lolunit_declare_fixture(matrix_test)
 {
-    void SetUp()
+    void setup()
     {
         tri2 = mat2(vec2(1.0f, 0.0f),
                     vec2(7.0f, 2.0f));
@@ -43,9 +43,7 @@ lolunit_declare_fixture(MatrixTest)
                     vec4( 5.0f, -3.0f, -7.0f, -6.0f));
     }
 
-    void TearDown() {}
-
-    lolunit_declare_test(Determinant)
+    lolunit_declare_test(matrix_determinant)
     {
         float d1, d2;
 

@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2014 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -19,9 +19,9 @@
 namespace lol
 {
 
-lolunit_declare_fixture(TrigTest)
+lolunit_declare_fixture(trig_test)
 {
-    lolunit_declare_test(AngleConversions)
+    lolunit_declare_test(angle_conversions)
     {
         lolunit_assert_doubles_equal(D_PI, radians(180.0), 1e-5);
         lolunit_assert_doubles_equal(D_PI_2, radians(90.0), 1e-5);
@@ -36,7 +36,7 @@ lolunit_declare_fixture(TrigTest)
         lolunit_assert_doubles_equal(90.0f, degrees(F_PI_2), 1e-5f);
     }
 
-    lolunit_declare_test(Sin)
+    lolunit_declare_test(sin)
     {
         using std::fabs;
 
@@ -67,7 +67,7 @@ lolunit_declare_fixture(TrigTest)
         }
     }
 
-    lolunit_declare_test(Cos)
+    lolunit_declare_test(cos)
     {
         using std::fabs;
 
@@ -98,7 +98,7 @@ lolunit_declare_fixture(TrigTest)
         }
     }
 
-    lolunit_declare_test(SinCos)
+    lolunit_declare_test(sin_cos)
     {
         using std::fabs;
 
@@ -137,7 +137,7 @@ lolunit_declare_fixture(TrigTest)
         }
     }
 
-    lolunit_declare_test(Tan)
+    lolunit_declare_test(tan)
     {
         using std::fabs;
 

@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2014 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -17,9 +17,9 @@
 namespace lol
 {
 
-lolunit_declare_fixture(QuaternionTest)
+lolunit_declare_fixture(quaternion_test)
 {
-    void SetUp()
+    void setup()
     {
         /* Generate identity quaternions */
         m_vectorpairs.push(vec3::axis_x, vec3::axis_x);
@@ -44,9 +44,7 @@ lolunit_declare_fixture(QuaternionTest)
         }
     }
 
-    void TearDown() {}
-
-    lolunit_declare_test(Equality)
+    lolunit_declare_test(equality)
     {
         quat a4(1.f, 2.f, 3.f, 4.f);
         quat b4(0.f, 2.f, 3.f, 4.f);
@@ -55,19 +53,19 @@ lolunit_declare_fixture(QuaternionTest)
         quat e4(1.f, 2.f, 3.f, 0.f);
 
         lolunit_assert_equal(a4, a4);
-        lolunit_assert_not_different(a4, a4);
+        lolunit_refute_different(a4, a4);
 
         lolunit_assert_different(a4, b4);
-        lolunit_assert_not_equal(a4, b4);
+        lolunit_refute_equal(a4, b4);
         lolunit_assert_different(a4, c4);
-        lolunit_assert_not_equal(a4, c4);
+        lolunit_refute_equal(a4, c4);
         lolunit_assert_different(a4, d4);
-        lolunit_assert_not_equal(a4, d4);
+        lolunit_refute_equal(a4, d4);
         lolunit_assert_different(a4, e4);
-        lolunit_assert_not_equal(a4, e4);
+        lolunit_refute_equal(a4, e4);
     }
 
-    lolunit_declare_test(UnaryMinus)
+    lolunit_declare_test(unary_minus)
     {
         quat a(1.f, 3.f, 2.f, 4.f);
         quat b(-1.f, -3.f, -2.f, -4.f);
@@ -76,7 +74,7 @@ lolunit_declare_fixture(QuaternionTest)
         lolunit_assert_equal(-a, b);
     }
 
-    lolunit_declare_test(Conjugate)
+    lolunit_declare_test(conjugate)
     {
         quat a(1.f, 3.f, 2.f, 4.f);
         quat b(1.f, -3.f, -2.f, -4.f);
@@ -85,7 +83,7 @@ lolunit_declare_fixture(QuaternionTest)
         lolunit_assert_equal(~a, b);
     }
 
-    lolunit_declare_test(Norm)
+    lolunit_declare_test(quaternion_norm)
     {
         quat a(2.f, -2.f, -8.f, 3.f);
 
@@ -101,7 +99,7 @@ lolunit_declare_fixture(QuaternionTest)
         lolunit_assert_equal(norm(a * d), norm(a) * norm(d));
     }
 
-    lolunit_declare_test(Dot)
+    lolunit_declare_test(quaternion_dot)
     {
         quat a(-1.f, 2.f, -3.f, 4.f);
         quat b(8.f, 7.f, 6.f, 5.f);
@@ -109,7 +107,7 @@ lolunit_declare_fixture(QuaternionTest)
         lolunit_assert_equal(dot(a, b), 8.f);
     }
 
-    lolunit_declare_test(Base)
+    lolunit_declare_test(base)
     {
         quat one(1.f, 0.f, 0.f, 0.f);
         quat i(0.f, 1.f, 0.f, 0.f);
@@ -134,7 +132,7 @@ lolunit_declare_fixture(QuaternionTest)
         lolunit_assert_equal(i * k, -j);
     }
 
-    lolunit_declare_test(Normalize)
+    lolunit_declare_test(quaternion_normalize)
     {
         quat a(2.f, -2.f, -8.f, 3.f);
         quat b = normalize(a);
@@ -142,7 +140,7 @@ lolunit_declare_fixture(QuaternionTest)
         lolunit_assert_doubles_equal(norm(b), 1.0, 1e-5);
     }
 
-    lolunit_declare_test(Reciprocal)
+    lolunit_declare_test(reciprocal)
     {
         quat a(2.f, -2.f, -8.f, 3.f);
         quat b = re(a);
@@ -166,7 +164,7 @@ lolunit_declare_fixture(QuaternionTest)
         lolunit_assert_doubles_equal(m1.z, 0.0, 1e-5);
     }
 
-    lolunit_declare_test(Rotation)
+    lolunit_declare_test(rotation)
     {
         /* Check that rotating 10 degrees twice means rotating 20 degrees */
         quat a = quat::rotate(10.f, vec3::axis_x);
@@ -188,7 +186,7 @@ lolunit_declare_fixture(QuaternionTest)
         lolunit_assert_doubles_equal(e.z, d.z, 1e-5);
     }
 
-    lolunit_declare_test(ToAxisAngle)
+    lolunit_declare_test(to_axis_angle)
     {
         quat q = quat::rotate(10.f, vec3::axis_x);
         vec3 axis = q.axis();
@@ -201,7 +199,7 @@ lolunit_declare_fixture(QuaternionTest)
         lolunit_assert_doubles_equal(10.0, (double)degrees(angle), 1e-6);
     }
 
-    lolunit_declare_test(FromTwoVectors)
+    lolunit_declare_test(from_two_vectors)
     {
         for (auto pair : m_vectorpairs)
         {
@@ -246,7 +244,7 @@ lolunit_declare_fixture(QuaternionTest)
         }
     }
 
-    lolunit_declare_test(FromEulerNorm)
+    lolunit_declare_test(from_euler_norm)
     {
         for (int i = 0; i < 100; ++i)
         {
@@ -292,7 +290,7 @@ lolunit_declare_fixture(QuaternionTest)
         }
     }
 
-    lolunit_declare_test(FirstTwoEulerAngles)
+    lolunit_declare_test(first_two_euler_angles)
     {
         for (int i = 0; i < 100; ++i)
         {
@@ -351,7 +349,7 @@ lolunit_declare_fixture(QuaternionTest)
         }
     }
 
-    lolunit_declare_test(LastTwoEulerAngles)
+    lolunit_declare_test(last_two_euler_angles)
     {
         for (int i = 0; i < 100; ++i)
         {
@@ -410,7 +408,7 @@ lolunit_declare_fixture(QuaternionTest)
         }
     }
 
-    lolunit_declare_test(TaitBryanAngles)
+    lolunit_declare_test(tait_bryan_angles)
     {
         for (int i = 0; i < 100; ++i)
         {
@@ -472,7 +470,7 @@ lolunit_declare_fixture(QuaternionTest)
         }
     }
 
-    lolunit_declare_test(EulerAngles)
+    lolunit_declare_test(euler_angles)
     {
         for (int i = 0; i < 100; ++i)
         {

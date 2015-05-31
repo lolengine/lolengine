@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2014 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -19,9 +19,9 @@
 namespace lol
 {
 
-lolunit_declare_fixture(ImageTest)
+lolunit_declare_fixture(image_test)
 {
-    lolunit_declare_test(OpenImage)
+    lolunit_declare_test(open_image)
     {
         Image image("data/gradient.png");
 

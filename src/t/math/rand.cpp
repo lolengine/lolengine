@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2014 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -17,13 +17,9 @@
 namespace lol
 {
 
-lolunit_declare_fixture(RandTest)
+lolunit_declare_fixture(rand_test)
 {
-    void SetUp() {}
-
-    void TearDown() {}
-
-    lolunit_declare_test(Int32Bits)
+    lolunit_declare_test(int32_bits)
     {
         int const rolls = 2000;
 
@@ -52,7 +48,7 @@ lolunit_declare_fixture(RandTest)
         }
     }
 
-    lolunit_declare_test(Int16Bits)
+    lolunit_declare_test(int16_bits)
     {
         int const rolls = 2000;
 
@@ -81,7 +77,7 @@ lolunit_declare_fixture(RandTest)
         }
     }
 
-    lolunit_declare_test(Int8Bits)
+    lolunit_declare_test(int8_bits)
     {
         int const rolls = 2000;
 

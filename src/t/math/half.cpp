@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2014 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -19,9 +19,9 @@
 namespace lol
 {
 
-lolunit_declare_fixture(HalfTest)
+lolunit_declare_fixture(half_test)
 {
-    lolunit_declare_test(FloatToHalf)
+    lolunit_declare_test(float_to_half)
     {
         for (size_t i = 0; i < sizeof(pairs) / sizeof(*pairs); i++)
         {
@@ -32,7 +32,7 @@ lolunit_declare_fixture(HalfTest)
         }
     }
 
-    lolunit_declare_test(FloatToHalfAccurate)
+    lolunit_declare_test(float_to_half_accurate)
     {
         for (size_t i = 0; i < sizeof(pairs) / sizeof(*pairs); i++)
         {
@@ -43,7 +43,7 @@ lolunit_declare_fixture(HalfTest)
         }
     }
 
-    lolunit_declare_test(BitsToHalf)
+    lolunit_declare_test(bits_to_half)
     {
         for (unsigned int i = 0; i < 0x10000; i++)
         {
@@ -54,7 +54,7 @@ lolunit_declare_fixture(HalfTest)
         }
     }
 
-    lolunit_declare_test(HalfIsNaN)
+    lolunit_declare_test(half_is_nan)
     {
         lolunit_assert(half::makebits(0x7c01).is_nan());
         lolunit_assert(half::makebits(0xfc01).is_nan());
@@ -70,7 +70,7 @@ lolunit_declare_fixture(HalfTest)
         lolunit_assert(!half(-2.0f).is_nan());
     }
 
-    lolunit_declare_test(HalfIsInf)
+    lolunit_declare_test(half_is_inf)
     {
         lolunit_assert(half(65536.0f).is_inf());
         lolunit_assert(half(-65536.0f).is_inf());
@@ -87,7 +87,7 @@ lolunit_declare_fixture(HalfTest)
         lolunit_assert(!half::makebits(0xfe00).is_inf());
     }
 
-    lolunit_declare_test(HalfIsFinite)
+    lolunit_declare_test(half_is_finite)
     {
         lolunit_assert(half(0.0f).is_finite());
         lolunit_assert(half(-0.0f).is_finite());
@@ -104,7 +104,7 @@ lolunit_declare_fixture(HalfTest)
         lolunit_assert(!half::makebits(0xfe00).is_finite());
     }
 
-    lolunit_declare_test(HalfIsNormal)
+    lolunit_declare_test(half_is_normal)
     {
         lolunit_assert(half(0.0f).is_normal());
         lolunit_assert(half(-0.0f).is_normal());
@@ -121,7 +121,7 @@ lolunit_declare_fixture(HalfTest)
         lolunit_assert(!half::makebits(0xfe00).is_normal());
     }
 
-    lolunit_declare_test(HalfClassify)
+    lolunit_declare_test(half_classify)
     {
         for (uint32_t i = 0; i < 0x10000; i++)
         {
@@ -145,7 +145,7 @@ lolunit_declare_fixture(HalfTest)
         }
     }
 
-    lolunit_declare_test(HalfToFloat)
+    lolunit_declare_test(half_to_float)
     {
         for (size_t i = 0; i < sizeof(pairs) / sizeof(*pairs); i++)
         {
@@ -168,7 +168,7 @@ lolunit_declare_fixture(HalfTest)
         }
     }
 
-    lolunit_declare_test(HalfToInt)
+    lolunit_declare_test(half_to_int)
     {
         lolunit_assert_equal((int)(half)(0.0f), 0);
         lolunit_assert_equal((int)(half)(-0.0f), 0);
@@ -182,7 +182,7 @@ lolunit_declare_fixture(HalfTest)
         lolunit_assert_equal((int)(half)(-65504.0f), -65504);
     }
 
-    lolunit_declare_test(FloatOpHalf)
+    lolunit_declare_test(float_op_half)
     {
         half zero = 0;
         half one = 1;
@@ -223,7 +223,7 @@ lolunit_declare_fixture(HalfTest)
         lolunit_assert_equal(2.0f, f);
     }
 
-    lolunit_declare_test(HalfOpFloat)
+    lolunit_declare_test(half_op_float)
     {
         half zero = 0;
         half one = 1;
@@ -265,12 +265,12 @@ lolunit_declare_fixture(HalfTest)
         lolunit_assert_equal(two.bits, f.bits);
     }
 
-    struct TestPair { float f; uint16_t x; };
+    struct test_pair { float f; uint16_t x; };
 
-    static TestPair const pairs[11];
+    static test_pair const pairs[11];
 };
 
-HalfTest::TestPair const HalfTest::pairs[] =
+half_test::test_pair const half_test::pairs[] =
 {
     /* All these values have exact half representations */
     { 0.0f,      0x0000 },

@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2014 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -17,13 +17,9 @@
 namespace lol
 {
 
-lolunit_declare_fixture(Array3DTest)
+lolunit_declare_fixture(array3d_test)
 {
-    void SetUp() {}
-
-    void TearDown() {}
-
-    lolunit_declare_test(Array3DCreate)
+    lolunit_declare_test(array3d_create)
     {
         array3d<int> a(ivec3(10, 10, 10));
 
@@ -45,7 +41,7 @@ lolunit_declare_fixture(Array3DTest)
         lolunit_assert_equal(b[9][9][9], 8);
     }
 
-    lolunit_declare_test(Array3DInit)
+    lolunit_declare_test(array3d_init)
     {
         array3d<int> a = { { {  1,  2,  3,  4 },
                              {  5,  6,  7,  8 },

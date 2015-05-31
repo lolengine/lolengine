@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2014 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -59,13 +59,9 @@ static float const ciede2k[] =
      2.0776f,   0.0795f,  -1.1350f,  0.9033f,  -0.0636f,  -0.5514f,  0.9082f,
 };
 
-lolunit_declare_fixture(ColorTest)
+lolunit_declare_fixture(color_test)
 {
-    void SetUp() {}
-
-    void TearDown() {}
-
-    lolunit_declare_test(CIEDE2000)
+    lolunit_declare_test(ciede2000)
     {
         size_t count = sizeof(ciede2k) / sizeof(*ciede2k);
 
@@ -87,7 +83,7 @@ lolunit_declare_fixture(ColorTest)
         }
     }
 
-    lolunit_declare_test(RGBToHSV)
+    lolunit_declare_test(rgb_to_hsv)
     {
         for (int r = 0; r < 20; r++)
         for (int g = 0; g < 20; g++)
@@ -109,7 +105,7 @@ lolunit_declare_fixture(ColorTest)
         }
     }
 
-    lolunit_declare_test(RGBToHSL)
+    lolunit_declare_test(rgb_to_hsl)
     {
         for (int r = 0; r < 20; r++)
         for (int g = 0; g < 20; g++)

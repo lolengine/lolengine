@@ -1,9 +1,9 @@
+﻿//
+//  Lol Engine — Unit test implementation
 //
-//  Lol Engine
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
 //
-//  Copyright © 2010-2015 Sam Hocevar <sam@hocevar.net>
-//
-//  This library is free software. It comes without any warranty, to
+//  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
 //  and/or modify it under the terms of the Do What the Fuck You Want
 //  to Public License, Version 2, as published by the WTFPL Task Force.
@@ -45,11 +45,11 @@ namespace lol
  */
 class FixtureBase
 {
-    friend class TextTestRunner;
+    friend class text_runner;
 
 public:
-    virtual void SetUp(void) {};
-    virtual void TearDown(void) {};
+    virtual void setup(void) {};
+    virtual void teardown(void) {};
 
 protected:
     FixtureBase() : m_next(NULL), m_testcases(0), m_failcases(0) {}
@@ -199,7 +199,7 @@ private:
  * This simple class runs all automatically registered tests and reports
  * on error and success in the standard output.
  */
-class TextTestRunner
+class text_runner
 {
 public:
     bool Run()
@@ -210,9 +210,9 @@ public:
 
         for (FixtureBase *f = FixtureBase::FixtureList(); f; f = f->m_next)
         {
-            f->SetUp();
+            f->setup();
             f->RunFixture();
-            f->TearDown();
+            f->teardown();
 
             errors << f->m_errorlog.str();
             testcases += f->m_testcases;
@@ -418,29 +418,29 @@ public:
     lolunit_assert_op(>=, (bool), "greater than or equal", make_msg(m), a, b)
 
 
-#define lolunit_assert_not_equal(a, b) \
+#define lolunit_refute_equal(a, b) \
     lolunit_assert_op(==, !, "not equality", "", a, b)
-#define lolunit_assert_not_equal_message(m, a, b) \
+#define lolunit_refute_equal_message(m, a, b) \
     lolunit_assert_op(==, !, "not equality", make_msg(m), a, b)
-#define lolunit_assert_not_different(a, b) \
+#define lolunit_refute_different(a, b) \
     lolunit_assert_op(!=, !, "not inequality", "", a, b)
-#define lolunit_assert_not_different_message(m, a, b) \
+#define lolunit_refute_different_message(m, a, b) \
     lolunit_assert_op(!=, !, "not inequality", make_msg(m), a, b)
-#define lolunit_assert_not_less(a, b) \
+#define lolunit_refute_less(a, b) \
     lolunit_assert_op(<, !, "not less than", "", a, b)
-#define lolunit_assert_not_less_message(m, a, b) \
+#define lolunit_refute_less_message(m, a, b) \
     lolunit_assert_op(<, !, "not less than", make_msg(m), a, b)
-#define lolunit_assert_not_lequal(a, b) \
+#define lolunit_refute_lequal(a, b) \
     lolunit_assert_op(<=, !, "not less than or equal", "", a, b)
-#define lolunit_assert_not_lequal_message(m, a, b) \
+#define lolunit_refute_lequal_message(m, a, b) \
     lolunit_assert_op(<=, !, "not less than or equal", make_msg(m), a, b)
-#define lolunit_assert_not_greater(a, b) \
+#define lolunit_refute_greater(a, b) \
     lolunit_assert_op(>, !, "not greater than", "", a, b)
-#define lolunit_assert_not_greater_message(m, a, b) \
+#define lolunit_refute_greater_message(m, a, b) \
     lolunit_assert_op(>, !, "not greater than", make_msg(m), a, b)
-#define lolunit_assert_not_gequal(a, b) \
+#define lolunit_refute_gequal(a, b) \
     lolunit_assert_op(>=, !, "not greater than or equal", "", a, b)
-#define lolunit_assert_not_gequal_message(m, a, b) \
+#define lolunit_refute_gequal_message(m, a, b) \
     lolunit_assert_op(>=, !, "not greater than or equal", make_msg(m), a, b)
 
 #define lolunit_assert_doubles_equal(a, b, t) \

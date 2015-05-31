@@ -32,10 +32,6 @@ public:
 
 lolunit_declare_fixture(avl_tree_test)
 {
-    void SetUp() {}
-
-    void TearDown() {}
-
     lolunit_declare_test(insert)
     {
         test_tree tree;
@@ -118,7 +114,7 @@ lolunit_declare_fixture(avl_tree_test)
         }
     }
 
-    lolunit_declare_test(AvlTreeExistence)
+    lolunit_declare_test(avl_tree_existence)
     {
         test_tree tree;
 
@@ -150,7 +146,7 @@ lolunit_declare_fixture(avl_tree_test)
     }
 
 
-    lolunit_declare_test(AvlTreeGetValue)
+    lolunit_declare_test(avl_tree_get_value)
     {
         test_tree tree;
 
@@ -196,7 +192,7 @@ lolunit_declare_fixture(avl_tree_test)
         lolunit_assert_equal(*value_ptr, 3);
     }
 
-    lolunit_declare_test(AvlTreeTestIteratorRead)
+    lolunit_declare_test(avl_tree_test_iterator_read)
     {
         test_tree tree;
 
@@ -215,7 +211,7 @@ lolunit_declare_fixture(avl_tree_test)
         lolunit_assert_equal(tree.count(), 99);
     }
 
-    lolunit_declare_test(AvlTreeTestIteratorCopy)
+    lolunit_declare_test(avl_tree_test_iterator_copy)
     {
         test_tree tree;
 
@@ -236,7 +232,7 @@ lolunit_declare_fixture(avl_tree_test)
         lolunit_assert_equal(other.count(), 99);
     }
 
-    lolunit_declare_test(AvlTreeTestCopy)
+    lolunit_declare_test(avl_tree_test_copy)
     {
         avl_tree<int, int> test1, test2;
 
