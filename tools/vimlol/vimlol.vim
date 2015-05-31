@@ -1,4 +1,4 @@
-"""
+﻿"""
 """ Experimental Lol Engine Vim plugin
 """
 """ More info here:
@@ -49,7 +49,7 @@ au Syntax cpp
 " Unit testing
 au Syntax cpp
    \ syn match cOperator
-   \ "\<lolunit_\(fail\|assert\)[a-z_]*\>"
+   \ "\<lolunit_\(fail\|assert\|refute\)[a-z_]*\>"
 
 " Global keywords
 au Syntax cpp

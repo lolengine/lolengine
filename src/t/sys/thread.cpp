@@ -141,11 +141,11 @@ lolunit_declare_fixture(thread_test)
     };
     UnitTestThreadManager m_manager;
 
-    void SetUp()
+    void setup()
     {
     }
 
-    void TearDown()
+    void teardown()
     {
     }
 

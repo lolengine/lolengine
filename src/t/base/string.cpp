@@ -20,10 +20,6 @@ namespace lol
 
 lolunit_declare_fixture(string_test)
 {
-    void SetUp() {}
-
-    void TearDown() {}
-
     lolunit_declare_test(string_build)
     {
         String s1;
