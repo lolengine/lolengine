@@ -88,10 +88,10 @@ lolunit_declare_fixture(complex_test)
         lolunit_assert_doubles_equal(norm(b), 1.0, 1e-8);
     }
 
-    lolunit_declare_test(reciprocal)
+    lolunit_declare_test(complex_inverse)
     {
         cmplx a(3.0f, -4.0f);
-        cmplx b = re(a);
+        cmplx b = inverse(a);
 
         lolunit_assert_equal(a * b, b * a);
 

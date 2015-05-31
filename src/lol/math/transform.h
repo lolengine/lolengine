@@ -400,7 +400,7 @@ static inline quat_t<T> normalize(quat_t<T> const &z)
  */
 
 template<typename T>
-static inline cmplx_t<T> re(cmplx_t<T> const &z)
+static inline cmplx_t<T> inverse(cmplx_t<T> const &z)
 {
     return ~z / sqlength(z);
 }
@@ -408,13 +408,13 @@ static inline cmplx_t<T> re(cmplx_t<T> const &z)
 template<typename T>
 static inline cmplx_t<T> operator /(T a, cmplx_t<T> const &b)
 {
-    return a * re(b);
+    return a * inverse(b);
 }
 
 template<typename T>
 static inline cmplx_t<T> operator /(cmplx_t<T> a, cmplx_t<T> const &b)
 {
-    return a * re(b);
+    return a * inverse(b);
 }
 
 template<typename T>
@@ -440,7 +440,7 @@ static inline bool operator !=(T a, cmplx_t<T> const &b) { return b != a; }
  */
 
 template<typename T>
-static inline quat_t<T> re(quat_t<T> const &q)
+static inline quat_t<T> inverse(quat_t<T> const &q)
 {
     return ~q / sqlength(q);
 }
@@ -448,13 +448,13 @@ static inline quat_t<T> re(quat_t<T> const &q)
 template<typename T>
 static inline quat_t<T> operator /(T x, quat_t<T> const &y)
 {
-    return x * re(y);
+    return x * inverse(y);
 }
 
 template<typename T>
 static inline quat_t<T> operator /(quat_t<T> const &x, quat_t<T> const &y)
 {
-    return x * re(y);
+    return x * inverse(y);
 }
 
 template<typename T>
@@ -468,7 +468,7 @@ template<typename T>
 static inline sqt_t<T> inverse(sqt_t<T> const &tr)
 {
     auto inv_s = T(1) / tr.s;
-    auto inv_q = re(tr.q);
+    auto inv_q = inverse(tr.q);
     return sqt_t<T>(inv_s, inv_q, inv_q * tr.t * -inv_s);
 }
 

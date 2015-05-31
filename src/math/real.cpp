@@ -25,7 +25,7 @@ namespace lol
  * done on demand, but here is the dependency list anyway:
  *  - fast_log() requires R_1
  *  - log() requires R_LN2
- *  - re() require R_2
+ *  - inverse() require R_2
  *  - exp() requires R_0, R_1, R_LN2
  *  - sqrt() requires R_3
  */
@@ -48,16 +48,16 @@ LOL_CONSTANT_GETTER(R_10,       (real)10.0);
 
 LOL_CONSTANT_GETTER(R_LN2,      fast_log(R_2()));
 LOL_CONSTANT_GETTER(R_LN10,     log(R_10()));
-LOL_CONSTANT_GETTER(R_LOG2E,    re(R_LN2()));
-LOL_CONSTANT_GETTER(R_LOG10E,   re(R_LN10()));
+LOL_CONSTANT_GETTER(R_LOG2E,    inverse(R_LN2()));
+LOL_CONSTANT_GETTER(R_LOG10E,   inverse(R_LN10()));
 LOL_CONSTANT_GETTER(R_E,        exp(R_1()));
 LOL_CONSTANT_GETTER(R_PI,       fast_pi());
 LOL_CONSTANT_GETTER(R_PI_2,     R_PI() / 2);
 LOL_CONSTANT_GETTER(R_PI_3,     R_PI() / R_3());
 LOL_CONSTANT_GETTER(R_PI_4,     R_PI() / 4);
-LOL_CONSTANT_GETTER(R_1_PI,     re(R_PI()));
+LOL_CONSTANT_GETTER(R_1_PI,     inverse(R_PI()));
 LOL_CONSTANT_GETTER(R_2_PI,     R_1_PI() * 2);
-LOL_CONSTANT_GETTER(R_2_SQRTPI, re(sqrt(R_PI())) * 2);
+LOL_CONSTANT_GETTER(R_2_SQRTPI, inverse(sqrt(R_PI())) * 2);
 LOL_CONSTANT_GETTER(R_SQRT2,    sqrt(R_2()));
 LOL_CONSTANT_GETTER(R_SQRT3,    sqrt(R_3()));
 LOL_CONSTANT_GETTER(R_SQRT1_2,  R_SQRT2() / 2);
@@ -487,7 +487,7 @@ template<> real real::operator *(real const &x) const
 
 template<> real real::operator /(real const &x) const
 {
-    return *this * re(x);
+    return *this * inverse(x);
 }
 
 template<> real const &real::operator +=(real const &x)
@@ -608,7 +608,7 @@ template<> real clamp(real const &x, real const &a, real const &b)
     return (x < a) ? a : (x > b) ? b : x;
 }
 
-template<> real re(real const &x)
+template<> real inverse(real const &x)
 {
     if (!(x.m_signexp << 1))
     {
@@ -718,7 +718,7 @@ template<> real cbrt(real const &x)
      * convergence, but this hasn't been checked seriously. */
     for (int i = 1; i <= real::BIGITS; i *= 2)
     {
-        static real third = re(real::R_3());
+        static real third = inverse(real::R_3());
         ret = third * (x / (ret * ret) + (ret / 2));
     }
 
@@ -1311,7 +1311,7 @@ template<> real atan(real const &x)
     }
     else
     {
-        real y = re(absx);
+        real y = inverse(absx);
         real yn = y, my2 = -y * y;
         ret = y;
         for (int i = 3; ; i += 2)

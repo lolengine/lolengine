@@ -140,10 +140,10 @@ lolunit_declare_fixture(quaternion_test)
         lolunit_assert_doubles_equal(norm(b), 1.0, 1e-5);
     }
 
-    lolunit_declare_test(reciprocal)
+    lolunit_declare_test(quaternion_inverse)
     {
         quat a(2.f, -2.f, -8.f, 3.f);
-        quat b = re(a);
+        quat b = inverse(a);
         quat c = 1.f / a;
 
         lolunit_assert_doubles_equal(b.w, c.w, 1e-5);
