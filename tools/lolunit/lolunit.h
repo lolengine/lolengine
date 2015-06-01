@@ -291,7 +291,7 @@ public:
     do { \
         m_asserts++; \
         using std::fabs; \
-        if (True() && fabs((a) - (b)) > fabs((t))) \
+        if (True() && fabs(double(a) - double(b)) > fabs(double(t))) \
         { \
             m_errorlog << "\n\n"; \
             m_errorlog << ++m_failcases << ") test: " \
