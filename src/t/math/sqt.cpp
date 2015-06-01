@@ -44,9 +44,9 @@ lolunit_declare_fixture(sqt_test)
             vec4 v1 = test_sqt_1.transform(v0);
             vec3 v2 = test_sqt_1.transform(v0.xyz);
 
-            lolunit_assert_doubles_equal(v1.x, v2.x, 1e-5f);
-            lolunit_assert_doubles_equal(v1.y, v2.y, 1e-5f);
-            lolunit_assert_doubles_equal(v1.z, v2.z, 1e-5f);
+            lolunit_assert_doubles_equal(v1.x, v2.x, length(v0.xyz) * 1e-5f);
+            lolunit_assert_doubles_equal(v1.y, v2.y, length(v0.xyz) * 1e-5f);
+            lolunit_assert_doubles_equal(v1.z, v2.z, length(v0.xyz) * 1e-5f);
             lolunit_assert_doubles_equal(v1.w, 1.0f, 1e-5f);
         }
     }
@@ -65,9 +65,9 @@ lolunit_declare_fixture(sqt_test)
             vec4 v1 = test_sqt_1 * v0;
             vec4 v2 = m * v0;
 
-            lolunit_assert_doubles_equal(v1.x, v2.x, 1e-5f);
-            lolunit_assert_doubles_equal(v1.y, v2.y, 1e-5f);
-            lolunit_assert_doubles_equal(v1.z, v2.z, 1e-5f);
+            lolunit_assert_doubles_equal(v1.x, v2.x, length(v0.xyz) * 1e-5f);
+            lolunit_assert_doubles_equal(v1.y, v2.y, length(v0.xyz) * 1e-5f);
+            lolunit_assert_doubles_equal(v1.z, v2.z, length(v0.xyz) * 1e-5f);
             lolunit_assert_doubles_equal(v1.w, v2.w, 1e-5f);
         }
     }
@@ -78,9 +78,9 @@ lolunit_declare_fixture(sqt_test)
         {
             vec4 v1 = inverse(test_sqt_1) * (test_sqt_1 * v0);
 
-            lolunit_assert_doubles_equal(v0.x, v1.x, 1e-5f);
-            lolunit_assert_doubles_equal(v0.y, v1.y, 1e-5f);
-            lolunit_assert_doubles_equal(v0.z, v1.z, 1e-5f);
+            lolunit_assert_doubles_equal(v0.x, v1.x, length(v0.xyz) * 1e-5f);
+            lolunit_assert_doubles_equal(v0.y, v1.y, length(v0.xyz) * 1e-5f);
+            lolunit_assert_doubles_equal(v0.z, v1.z, length(v0.xyz) * 1e-5f);
             lolunit_assert_doubles_equal(v0.w, v1.w, 1e-5f);
         }
     }
@@ -95,9 +95,9 @@ lolunit_declare_fixture(sqt_test)
             vec4 v1 = (test_sqt_1 * test_sqt_1) * v0;
             vec4 v2 = test_sqt_1 * (test_sqt_1 * v0);
 
-            lolunit_assert_doubles_equal(v1.x, v2.x, 1e-5f);
-            lolunit_assert_doubles_equal(v1.y, v2.y, 1e-5f);
-            lolunit_assert_doubles_equal(v1.z, v2.z, 1e-5f);
+            lolunit_assert_doubles_equal(v1.x, v2.x, length(v0.xyz) * 1e-5f);
+            lolunit_assert_doubles_equal(v1.y, v2.y, length(v0.xyz) * 1e-5f);
+            lolunit_assert_doubles_equal(v1.z, v2.z, length(v0.xyz) * 1e-5f);
             lolunit_assert_doubles_equal(v1.w, v2.w, 1e-5f);
         }
     }
