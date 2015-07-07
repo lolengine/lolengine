@@ -287,10 +287,9 @@ lolunit_declare_fixture(polynomial_test)
         auto roots1 = p.roots();
 
         // Should have 2 solutions only, but precision leads to 3 solutions
-        lolunit_assert_equal(roots1.count(), 3);
+        lolunit_assert_equal(roots1.count(), 2);
         lolunit_assert_doubles_equal(roots1[0], -1, 1e-3);
         lolunit_assert_doubles_equal(roots1[1], -2, 1e-6);
-        lolunit_assert_doubles_equal(roots1[2], -1, 1e-3);
     }
 
     lolunit_declare_test(degree_3_three_roots)

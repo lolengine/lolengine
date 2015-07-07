@@ -225,20 +225,22 @@ struct polynomial
                 solutions[i] = u_norm * cos(u_angle) + v_norm * cos(v_angle);
             }
 
-            if (delta < 0) // 3 real solutions
+            if (a == d && b == c && b == T(3)*a) // triple solution
+                return array<T> { solutions[0] - k };
+
+            // if root of the derivative is also root of the current polynomial, we have a double root.
+            for (auto root : polynomial<T>{c, T(2)*b, T(3)*a}.roots())
+                if (eval(root) == T(0))
+                    return array<T> { solutions[0] - k,
+                                      solutions[1] - k };
+
+            // we have 3 or 1 root depending on delta sign
+            if (delta > 0)
+                return array<T> { solutions[0] - k };
+            else // if (delta < 0) 3 real solutions
                 return array<T> { solutions[0] - k,
                                   solutions[1] - k,
                                   solutions[2] - k };
-
-            if (delta > 0) // 1 real solution
-                return array<T> { solutions[0] - k };
-
-            if (u_norm > 0) // 2 real solutions
-                return array<T> { solutions[0] - k,
-                                  solutions[1] - k };
-
-            // one triple solution
-            return array<T> { solutions[0] - k };
         }
 
         /* It is an error to reach this point. */
