@@ -55,7 +55,8 @@ if test "x${ac_cv_my_have_sdl}" = xno; then
   save_LIBS="${LIBS}"
   CPPFLAGS="${CPPFLAGS} ${SDL_CFLAGS}"
   LIBS="${LIBS} ${SDL_LIBS}"
-  AC_CHECK_HEADERS(SDL.h SDL/SDL.h SDL2/SDL.h, [ac_cv_my_have_sdl="yes"])
+  AC_CHECK_HEADERS(SDL.h SDL/SDL.h SDL2/SDL.h,
+   [ac_cv_my_have_sdl="yes"])
   if test "x${ac_cv_my_have_sdl}" != xno; then
     AC_CHECK_HEADERS(SDL_mixer.h SDL/SDL_mixer.h SDL2/SDL_mixer.h,
      [ac_cv_my_have_sdl_mixer="yes"])
@@ -72,9 +73,9 @@ if test "x${ac_cv_my_have_sdl}" = xno; then
     AC_CHECK_LIB(SDL2_image, main,
      [SDLIMAGE_LIBS="${SDLIMAGE_LIBS} -lSDL2_image"],
      [ac_cv_my_have_sdl_image="no"])
+    SDL_CFLAGS="${SDL_CFLAGS} ${SDLMIXER_CFLAGS} ${SDLIMAGE_CFLAGS}"
+    SDL_LIBS="${SDL_LIBS} ${SDLMIXER_LIBS} ${SDLIMAGE_LIBS}"
   fi
-  SDL_CFLAGS="${SDL_CFLAGS} ${SDLMIXER_CFLAGS} ${SDLIMAGE_CFLAGS}"
-  SDL_LIBS="${SDL_LIBS} ${SDLMIXER_LIBS} ${SDLIMAGE_LIBS}"
   CPPFLAGS="${save_CPPFLAGS}"
   LIBS="${save_LIBS}"
 fi
