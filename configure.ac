@@ -500,6 +500,7 @@ AC_CONFIG_FILES(
   games/singlshot/Makefile
   games/thonik/Makefile
   games/sot3000/Makefile
+  games/grunx/Makefile
 ])
 AC_CONFIG_FILES(
  [games/deushax/Makefile
@@ -549,7 +550,6 @@ AC_CONFIG_FILES(
   people/jylam/private/oric_convert/Makefile
   people/sam/Makefile
   people/sam/kanagawa/Makefile
-  people/sam/ld33/Makefile
   people/sam/sapp/Makefile
 ])
 
