@@ -162,9 +162,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Size-o-Tron 3000", "Size-o-
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "sot3000", "..\games\sot3000\sot3000.vcxproj", "{B9A255A0-2B92-4801-AF6C-354535A6E105}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LD33", "LD33", "{CE356481-3D75-425A-9970-766340FB88FC}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Grunx", "Grunx", "{CE356481-3D75-425A-9970-766340FB88FC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ld33", "..\people\sam\ld33\ld33.vcxproj", "{775B46F7-03C4-4351-B78D-76088E028D14}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ld33", "..\games\grunx\grunx.vcxproj", "{775B46F7-03C4-4351-B78D-76088E028D14}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
