@@ -71,7 +71,7 @@
 
     <!-- OpenGL & GLEW -->
     <GlewDir>$(ExternalDir)\glew-1.9.0</GlewDir>
-    <GlIncludes>$(GlewDir)\include\GL</GlIncludes>
+    <GlIncludes>$(GlewDir)\include</GlIncludes>
     <GlLibs Condition="'$(Platform)'=='Win32'">$(GlewDir)\lib\i686-w64-mingw32</GlLibs>
     <GlLibs Condition="'$(Platform)'=='x64'">$(GlewDir)\lib\x86_64-w64-mingw32</GlLibs>
     <GlDeps Condition="'$(Platform)'=='Win32'">opengl32.lib;glew32s.lib</GlDeps>
