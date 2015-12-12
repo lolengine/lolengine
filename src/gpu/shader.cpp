@@ -16,8 +16,9 @@
 #include <cstdio>
 
 #if defined _WIN32
-#   define WIN32_LEAN_AND_MEAN
+#   define WIN32_LEAN_AND_MEAN 1
 #   include <windows.h>
+#   undef WIN32_LEAN_AND_MEAN
 #   if defined USE_D3D9
 #       include <algorithm>
         using std::min;
