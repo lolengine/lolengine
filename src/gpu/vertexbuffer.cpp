@@ -18,10 +18,6 @@
 #   define FAR
 #   define NEAR
 #   include <d3d9.h>
-#elif defined _XBOX
-#   include <xtl.h>
-#   undef near /* Fuck Microsoft */
-#   undef far /* Fuck Microsoft again */
 #endif
 
 namespace lol
@@ -42,9 +38,6 @@ class VertexBufferData
 #if defined USE_D3D9
     IDirect3DDevice9 *m_dev;
     IDirect3DVertexBuffer9 *m_vbo;
-#elif defined _XBOX
-    D3DDevice *m_dev;
-    D3DVertexBuffer *m_vbo;
 #else
     GLuint m_vbo;
     uint8_t *m_memory;
@@ -64,9 +57,6 @@ class VertexDeclarationData
 #if defined USE_D3D9
     IDirect3DDevice9 *m_dev;
     IDirect3DVertexDeclaration9 *m_vdecl;
-#elif defined _XBOX
-    D3DDevice *m_dev;
-    D3DVertexDeclaration *m_vdecl;
 #else
 #endif
 };
@@ -110,7 +100,7 @@ VertexDeclaration::VertexDeclaration(VertexStreamBase const &s1,
 
 VertexDeclaration::~VertexDeclaration()
 {
-#if defined _XBOX || defined USE_D3D9
+#if defined USE_D3D9
     if (FAILED(m_data->m_vdecl->Release()))
         Abort();
 #else
@@ -122,7 +112,7 @@ VertexDeclaration::~VertexDeclaration()
 
 void VertexDeclaration::Bind()
 {
-#if defined _XBOX || defined USE_D3D9
+#if defined USE_D3D9
     if (FAILED(m_data->m_dev->SetVertexDeclaration(m_data->m_vdecl)))
         Abort();
 #else
@@ -135,7 +125,7 @@ void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
     if (count <= 0)
         return;
 
-#if defined _XBOX || defined USE_D3D9
+#if defined USE_D3D9
     switch (type.ToScalar())
     {
     case MeshPrimitive::Triangles:
@@ -194,7 +184,7 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
     if (count <= 0)
         return;
 
-#if defined _XBOX || defined USE_D3D9
+#if defined USE_D3D9
     switch (type.ToScalar())
     {
     case MeshPrimitive::Triangles:
@@ -261,7 +251,7 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
 
 void VertexDeclaration::Unbind()
 {
-#if defined _XBOX || defined USE_D3D9
+#if defined USE_D3D9
     int stream = -1;
     for (int i = 0; i < m_count; i++)
         if (m_streams[i].index != stream)
@@ -301,7 +291,7 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
                                                     ShaderAttrib attr11,
                                                     ShaderAttrib attr12)
 {
-#if defined _XBOX || defined USE_D3D9
+#if defined USE_D3D9
     // Don't bother in DirectX world, shader attributes are not used
     SetStream(vb, nullptr);
 #else
@@ -317,7 +307,7 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attribs[])
     if (!vb->m_data->m_size)
         return;
 
-#if defined _XBOX || defined USE_D3D9
+#if defined USE_D3D9
     /* Only the first item is required to know which stream this
      * is about; the rest of the information is stored in the
      * vertex declaration already. */
@@ -458,7 +448,7 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attribs[])
 
 void VertexDeclaration::Initialize()
 {
-#if defined _XBOX || defined USE_D3D9
+#if defined USE_D3D9
     static D3DVERTEXELEMENT9 const end_element[] = { D3DDECL_END() };
     static D3DDECLTYPE const X = D3DDECLTYPE_UNUSED;
     static D3DDECLTYPE const tlut[] =
@@ -488,11 +478,7 @@ void VertexDeclaration::Initialize()
         D3DDECLUSAGE_TANGENT,
         D3DDECLUSAGE_BINORMAL,
         D3DDECLUSAGE_TESSFACTOR,
-#if defined _XBOX
-        D3DDECLUSAGE_TEXCOORD, /* FIXME: nonexistent */
-#else
         D3DDECLUSAGE_POSITIONT,
-#endif
         D3DDECLUSAGE_COLOR,
         D3DDECLUSAGE_FOG,
         D3DDECLUSAGE_DEPTH,
@@ -530,11 +516,7 @@ void VertexDeclaration::Initialize()
     }
     elements[m_count] = end_element[0];
 
-#   if defined USE_D3D9
     m_data->m_dev = (IDirect3DDevice9 *)Renderer::Get()->GetDevice();
-#   elif defined _XBOX
-    m_data->m_dev = (D3DDevice *)Renderer::Get()->GetDevice();
-#   endif
 
     if (FAILED(m_data->m_dev->CreateVertexDeclaration(elements,
                                                       &m_data->m_vdecl)))
@@ -614,13 +596,8 @@ VertexBuffer::VertexBuffer(size_t size)
     m_data->m_size = size;
     if (!size)
         return;
-#if defined USE_D3D9 || defined _XBOX
-#   if defined USE_D3D9
+#if defined USE_D3D9
     m_data->m_dev = (IDirect3DDevice9 *)Renderer::Get()->GetDevice();
-#   elif defined _XBOX
-    m_data->m_dev = (D3DDevice *)Renderer::Get()->GetDevice();
-#   endif
-
     if (FAILED(m_data->m_dev->CreateVertexBuffer(size, D3DUSAGE_WRITEONLY, nullptr,
                                                D3DPOOL_MANAGED, &m_data->m_vbo, nullptr)))
         Abort();
@@ -634,7 +611,7 @@ VertexBuffer::~VertexBuffer()
 {
     if (m_data->m_size)
     {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
         if (FAILED(m_data->m_vbo->Release()))
             Abort();
 #else
@@ -654,7 +631,7 @@ void *VertexBuffer::Lock(size_t offset, size_t size)
 {
     if (!m_data->m_size)
         return nullptr;
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     void *ret;
     if (FAILED(m_data->m_vbo->Lock(offset, size, (void **)&ret, 0)))
         Abort();
@@ -670,7 +647,7 @@ void VertexBuffer::Unlock()
 {
     if (!m_data->m_size)
         return;
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     if (FAILED(m_data->m_vbo->Unlock()))
         Abort();
 #else

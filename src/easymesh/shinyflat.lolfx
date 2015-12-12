@@ -153,11 +153,7 @@ void main(float3 in_Vertex : POSITION,
 
     pass_Vertex = eye;
     pass_TNormal = tnorm;
-#ifdef _XBOX
-    pass_Color = in_Color.abgr;
-#else
     pass_Color = in_Color;
-#endif
 
     out_Position = mul(u_projection, eye);
 }

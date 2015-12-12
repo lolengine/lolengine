@@ -39,12 +39,6 @@ class TextureData
     D3DTEXTUREFILTERTYPE m_mag_filter;
     D3DTEXTUREFILTERTYPE m_min_filter;
     D3DTEXTUREFILTERTYPE m_mip_filter;
-#elif defined _XBOX
-    D3DDevice *m_dev;
-    D3DTexture *m_texture;
-    D3DTEXTUREFILTERTYPE m_mag_filter;
-    D3DTEXTUREFILTERTYPE m_min_filter;
-    D3DTEXTUREFILTERTYPE m_mip_filter;
 #else
     GLuint m_texture;
     GLint m_internal_format;
@@ -68,12 +62,8 @@ Texture::Texture(ivec2 size, PixelFormat format)
     m_data->m_size = size;
     m_data->m_format = format;
 
-#if defined USE_D3D9 || defined _XBOX
-#   if defined USE_D3D9
+#if defined USE_D3D9
     m_data->m_dev = (IDirect3DDevice9 *)Renderer::Get()->GetDevice();
-#   elif defined _XBOX
-    m_data->m_dev = (D3DDevice *)Renderer::Get()->GetDevice();
-#   endif
 
     static struct
     {
@@ -162,7 +152,7 @@ Texture::Texture(ivec2 size, PixelFormat format)
 TextureUniform Texture::GetTextureUniform() const
 {
     TextureUniform ret;
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     ret.m_flags = (uint64_t)(uintptr_t)m_data->m_texture;
     ret.m_attrib = m_data->m_mag_filter;
     ret.m_attrib |= m_data->m_min_filter << 8;
@@ -175,7 +165,7 @@ TextureUniform Texture::GetTextureUniform() const
 
 void Texture::Bind()
 {
-#if defined _XBOX || defined USE_D3D9
+#if defined USE_D3D9
     m_data->m_dev->SetTexture(0, m_data->m_texture);
 #else
 #   if !defined HAVE_GLES_2X
@@ -187,7 +177,7 @@ void Texture::Bind()
 
 void Texture::SetData(void *data)
 {
-#if defined _XBOX || defined USE_D3D9
+#if defined USE_D3D9
     D3DLOCKED_RECT rect;
 #   if defined USE_D3D9
     m_data->m_texture->LockRect(0, &rect, nullptr, D3DLOCK_DISCARD);
@@ -208,7 +198,7 @@ void Texture::SetData(void *data)
 
 void Texture::SetSubData(ivec2 origin, ivec2 size, void *data)
 {
-#if defined _XBOX || defined USE_D3D9
+#if defined USE_D3D9
     D3DLOCKED_RECT rect;
     m_data->m_texture->LockRect(0, &rect, nullptr, 0);
 
@@ -230,7 +220,7 @@ void Texture::SetSubData(ivec2 origin, ivec2 size, void *data)
 
 void Texture::SetMagFiltering(TextureMagFilter filter)
 {
-#if defined _XBOX || defined USE_D3D9
+#if defined USE_D3D9
     // In DirectX, texture filtering is a per-texture-unit state
     switch (filter)
     {
@@ -261,7 +251,7 @@ void Texture::SetMagFiltering(TextureMagFilter filter)
 
 void Texture::SetMinFiltering(TextureMinFilter filter)
 {
-#if defined _XBOX || defined USE_D3D9
+#if defined USE_D3D9
     // In DirectX, texture filtering is a per-texture-unit state
 #define F(x, y) \
     m_data->m_min_filter = x; m_data->m_mip_filter = y;
@@ -322,8 +312,6 @@ void Texture::GenerateMipmaps()
 {
 #if defined USE_D3D9
     m_data->m_texture->->GenerateMipSubLevels();
-#elif defined _XBOX
-    /* FIXME: No direct mipmap generation support on X360 */
 #else
     glBindTexture(GL_TEXTURE_2D, m_data->m_texture);
     glGenerateMipmap(GL_TEXTURE_2D);
@@ -332,7 +320,7 @@ void Texture::GenerateMipmaps()
 
 Texture::~Texture()
 {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     m_data->m_texture->Release();
 #else
     glDeleteTextures(1, &m_data->m_texture);

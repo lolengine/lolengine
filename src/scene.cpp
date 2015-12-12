@@ -617,7 +617,7 @@ void Scene::RenderTiles() // XXX: rename to Blit()
     rc.SetBlendEquation(BlendEquation::Add, BlendEquation::Max);
     rc.SetAlphaFunc(AlphaFunc::GreaterOrEqual, 0.01f);
 
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     /* TODO */
 #elif (defined USE_GLEW || defined HAVE_GL_2X) && !defined HAVE_GLES_2X
     glEnable(GL_TEXTURE_2D);
@@ -714,7 +714,7 @@ void Scene::RenderTiles() // XXX: rename to Blit()
     }
 
 
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     /* TODO */
 #elif (defined USE_GLEW || defined HAVE_GL_2X) && !defined HAVE_GLES_2X
     glDisable(GL_TEXTURE_2D);

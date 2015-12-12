@@ -16,7 +16,7 @@
 #include <cstring>
 #include <cstdlib>
 
-#if defined _WIN32 || defined _XBOX
+#if defined _WIN32
 #   define strcasecmp _stricmp
 #   undef near
 #   undef far

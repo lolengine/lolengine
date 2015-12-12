@@ -16,10 +16,6 @@
 #   define FAR
 #   define NEAR
 #   include <d3d9.h>
-#elif defined _XBOX
-#   include <xtl.h>
-#   undef near /* Fuck Microsoft */
-#   undef far /* Fuck Microsoft again */
 #endif
 
 namespace lol
@@ -42,10 +38,6 @@ class FramebufferData
     IDirect3DDevice9 *m_dev;
     IDirect3DTexture9 *m_texture;
     IDirect3DSurface9 *m_surface, *m_back_surface;
-#elif defined _XBOX
-    D3DDevice *m_dev;
-    D3DTexture *m_texture;
-    D3DSurface *m_surface, *m_back_surface;
 #else
     GLuint m_fbo, m_texture, m_depth;
 #endif
@@ -71,25 +63,6 @@ uint32_t FramebufferFormat::GetFormat()
     case RGB_8:
     case RGB_8_I:
     case RGB_8_UI:      return D3DFMT_R8G8B8;
-    case RGBA_8:
-    case RGBA_8_I:
-    case RGBA_8_UI:     return D3DFMT_A8R8G8B8;
-    case RGBA_16:
-    case RGBA_16_I:
-    case RGBA_16_UI:    return D3DFMT_A16B16G16R16;
-    case RGBA_16_F:     return D3DFMT_A16B16G16R16F;
-    case RGBA_32_F:     return D3DFMT_A32B32G32R32F;
-#elif defined _XBOX
-    case R_16_F:        return D3DFMT_R16F;
-    case R_32_F:        return D3DFMT_R32F;
-    case RG_16:
-    case RG_16_I:
-    case RG_16_UI:      return D3DFMT_G16R16;
-    case RG_16_F:       return D3DFMT_G16R16F;
-    case RG_32_F:       return D3DFMT_G32R32F;
-    case RGB_8:
-    case RGB_8_I:
-    case RGB_8_UI:      return D3DFMT_X8R8G8B8;
     case RGBA_8:
     case RGBA_8_I:
     case RGBA_8_UI:     return D3DFMT_A8R8G8B8;
@@ -230,7 +203,7 @@ uint32_t FramebufferFormat::GetFormatOrder()
 {
     switch (m_format)
     {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     /* FIXME: not implemented at all */
 #elif defined HAVE_GLES_2X
     /* FIXME: incomplete */
@@ -314,19 +287,6 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
         Abort();
     if (FAILED(m_data->m_texture->GetSurfaceLevel(0, &m_data->m_surface)))
         Abort();
-#elif defined _XBOX
-    m_data->m_dev = (D3DDevice *)Renderer::Get()->GetDevice();
-
-    if (FAILED(m_data->m_dev->CreateTexture(size.x, size.y, 1, 0,
-                                            (D3DFORMAT)fbo_format.GetFormat(),
-                                            D3DPOOL_DEFAULT,
-                                            &m_data->m_texture, nullptr)))
-        Abort();
-    if (FAILED(m_data->m_dev->CreateRenderTarget(size.x, size.y,
-                                                 (D3DFORMAT)fbo_format.GetFormat(),
-                                                 D3DMULTISAMPLE_NONE, 0, 0,
-                                                 &m_data->m_surface, nullptr)))
-        Abort();
 #else
 #   if GL_VERSION_1_1
     GLenum internal_format = fbo_format.GetFormat();
@@ -404,7 +364,7 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
 
 Framebuffer::~Framebuffer()
 {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     m_data->m_surface->Release();
     m_data->m_texture->Release();
 #else
@@ -425,7 +385,7 @@ Framebuffer::~Framebuffer()
 TextureUniform Framebuffer::GetTextureUniform() const
 {
     TextureUniform ret;
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     ret.m_flags = (uint64_t)(uintptr_t)m_data->m_texture;
 #else
     ret.m_flags = m_data->m_texture;
@@ -442,7 +402,7 @@ Image Framebuffer::GetImage() const
 {
     Image ret(m_data->m_size);
 
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     /* TODO: implement D3D Framebuffer::GetImage() */
 #else
     u8vec4 *buffer = ret.Lock<PixelFormat::RGBA_8>();
@@ -458,7 +418,7 @@ void Framebuffer::Bind()
 {
     ASSERT(!m_data->m_bound, "trying to bind an already bound framebuffer");
 
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     if (FAILED(m_data->m_dev->GetRenderTarget(0, &m_data->m_back_surface)))
         Abort();
     if (FAILED(m_data->m_dev->SetRenderTarget(0, m_data->m_surface)))
@@ -483,13 +443,7 @@ void Framebuffer::Unbind()
 {
     ASSERT(m_data->m_bound, "trying to unbind an unbound framebuffer");
 
-#if defined USE_D3D9 || defined _XBOX
-#   if defined _XBOX
-    if (FAILED(m_data->m_dev->Resolve(D3DRESOLVE_RENDERTARGET0, nullptr,
-                                    m_data->m_texture, nullptr, 0, 0, nullptr,
-                                    0, 0, nullptr)))
-        Abort();
-#   endif
+#if defined USE_D3D9
     if (FAILED(m_data->m_dev->SetRenderTarget(0, m_data->m_back_surface)))
         Abort();
     m_data->m_back_surface->Release();

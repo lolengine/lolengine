@@ -16,10 +16,6 @@
 #   define FAR
 #   define NEAR
 #   include <d3d9.h>
-#elif defined _XBOX
-#   include <xtl.h>
-#   undef near /* Fuck Microsoft */
-#   undef far /* Fuck Microsoft again */
 #endif
 
 namespace lol
@@ -39,9 +35,6 @@ class IndexBufferData
 #if defined USE_D3D9
     IDirect3DDevice9 *m_dev;
     IDirect3DIndexBuffer9 *m_ibo;
-#elif defined _XBOX
-    D3DDevice *m_dev;
-    D3DIndexBuffer *m_ibo;
 #else
     GLuint m_ibo;
     uint8_t *m_memory;
@@ -59,13 +52,8 @@ IndexBuffer::IndexBuffer(size_t size)
     m_data->m_size = size;
     if (!size)
         return;
-#if defined USE_D3D9 || defined _XBOX
-#   if defined USE_D3D9
+#if defined USE_D3D9
     m_data->m_dev = (IDirect3DDevice9 *)Renderer::Get()->GetDevice();
-#   elif defined _XBOX
-    m_data->m_dev = (D3DDevice *)Renderer::Get()->GetDevice();
-#   endif
-
     if (FAILED(m_data->m_dev->CreateIndexBuffer(size, D3DUSAGE_WRITEONLY,
                                               D3DFMT_INDEX16, D3DPOOL_MANAGED,
                                               &m_data->m_ibo, nullptr)))
@@ -80,7 +68,7 @@ IndexBuffer::~IndexBuffer()
 {
     if (m_data->m_size)
     {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
         if (FAILED(m_data->m_ibo->Release()))
             Abort();
 #else
@@ -101,7 +89,7 @@ void *IndexBuffer::Lock(size_t offset, size_t size)
     if (!m_data->m_size)
         return nullptr;
 
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     void *ret;
     if (FAILED(m_data->m_ibo->Lock(offset, size, (void **)&ret, 0)))
         Abort();
@@ -117,7 +105,7 @@ void IndexBuffer::Unlock()
     if (!m_data->m_size)
         return;
 
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     if (FAILED(m_data->m_ibo->Unlock()))
         Abort();
 #else
@@ -132,7 +120,7 @@ void IndexBuffer::Bind()
     if (!m_data->m_size)
         return;
 
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     if (FAILED(m_data->m_dev->SetIndices(m_data->m_ibo)))
         Abort();
 #else
@@ -148,7 +136,7 @@ void IndexBuffer::Unbind()
     if (!m_data->m_size)
         return;
 
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     if (FAILED(m_data->m_dev->SetIndices(nullptr)))
         Abort();
 #else

@@ -16,7 +16,7 @@
 #include <cstdio>
 #include <cstring>
 
-#if defined(_WIN32) && !defined(_XBOX)
+#if defined _WIN32
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
 #   if defined USE_D3D9

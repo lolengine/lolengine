@@ -61,7 +61,7 @@ void Init(int argc, char *argv[],
 
 #   if HAVE_GETCWD
     cwd = getcwd(nullptr, 0);
-#   elif HAVE__GETCWD || (_WIN32 && !_XBOX)
+#   elif HAVE__GETCWD || _WIN32
     cwd = _getcwd(nullptr, 0);
 #   endif
 

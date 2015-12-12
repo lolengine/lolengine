@@ -14,11 +14,7 @@
 
 #include <cstdlib>
 
-#if defined _XBOX
-#   include <xtl.h>
-#   undef near /* Fuck Microsoft */
-#   undef far /* Fuck Microsoft again */
-#elif defined _WIN32
+#if defined _WIN32
 #   if defined USE_D3D9
 #      include <d3d9.h>
 #   endif
@@ -33,8 +29,6 @@
 /* FIXME: find a way to pass g_hwnd from the windowing system */
 #if defined USE_D3D9
 extern HWND g_hwnd;
-#elif defined _XBOX
-HWND g_hwnd = 0;
 #endif
 
 namespace lol
@@ -72,9 +66,6 @@ private:
 #if defined USE_D3D9
     IDirect3D9 *m_d3d_ctx;
     IDirect3DDevice9 *m_d3d_dev;
-#elif defined _XBOX
-    Direct3D *m_d3d_ctx;
-    D3DDevice *m_d3d_dev;
 #endif
 };
 
@@ -85,7 +76,7 @@ private:
 Renderer::Renderer(ivec2 size)
   : m_data(new RendererData())
 {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     /* Create Direct3D context */
     m_data->m_d3d_ctx = Direct3DCreate9(D3D_SDK_VERSION);
     if (!m_data->m_d3d_ctx)
@@ -95,12 +86,6 @@ Renderer::Renderer(ivec2 size)
     }
 
     /* Create Direct3D device */
-#   if defined _XBOX
-    XVIDEO_MODE VideoMode;
-    XGetVideoMode(&VideoMode);
-    size = lol::min(size, ivec2(VideoMode.dwDisplayWidth,
-                                VideoMode.dwDisplayHeight));
-#   endif
     D3DPRESENT_PARAMETERS d3dpp;
     memset(&d3dpp, 0, sizeof(d3dpp));
     d3dpp.BackBufferWidth = size.x;
@@ -172,7 +157,7 @@ Renderer::Renderer(ivec2 size)
     SetPolygonMode(PolygonMode::Fill);
 
     /* Add some rendering states that we don't export to the user */
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     /* TODO */
 #else
 #   if defined HAVE_GL_2X && !defined __APPLE__
@@ -188,7 +173,7 @@ Renderer::~Renderer()
 
 void *Renderer::GetDevice()
 {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     return m_data->m_d3d_dev;
 #else
     return nullptr;
@@ -201,7 +186,7 @@ void *Renderer::GetDevice()
 
 void Renderer::Clear(ClearMask mask)
 {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     int m = 0;
     if (mask & ClearMask::Color)
         m |= D3DCLEAR_TARGET;
@@ -263,7 +248,7 @@ void Renderer::SetViewport(ibox2 viewport)
     if (m_data->m_viewport == viewport)
         return;
 
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     D3DVIEWPORT9 vp = { viewport.aa.x, viewport.aa.y,
                         viewport.bb.x, viewport.bb.y,
                         0.0f, 1.0f };
@@ -301,7 +286,7 @@ void Renderer::SetClearColor(vec4 color)
     if (m_data->m_clear_color == color)
         return;
 
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     /* Nothing to do */
 #else
     glClearColor(color.r, color.g, color.b, color.a);
@@ -324,7 +309,7 @@ void Renderer::SetClearDepth(float depth)
     if (m_data->m_clear_depth == depth)
         return;
 
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     /* Nothing to do */
 #elif defined HAVE_GLES_2X
     glClearDepthf(depth);
@@ -349,7 +334,7 @@ void Renderer::SetAlphaFunc(AlphaFunc func, float alpha)
     if (m_data->m_alpha_func == func && m_data->m_alpha_value == alpha)
         return;
 
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     switch (func)
     {
         case AlphaFunc::Disabled:
@@ -444,7 +429,7 @@ void Renderer::SetBlendEquation(BlendEquation rgb, BlendEquation alpha)
     if (m_data->m_blend_rgb == rgb && m_data->m_blend_alpha == alpha)
         return;
 
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     D3DBLEND s1[2] = { D3DBLENDOP_ADD, D3DBLENDOP_ADD };
     BlendEquation s2[2] = { rgb, alpha };
 
@@ -521,7 +506,7 @@ void Renderer::SetBlendFunc(BlendFunc src, BlendFunc dst)
     if (m_data->m_blend_src == src && m_data->m_blend_dst == dst)
         return;
 
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     D3DBLEND s1[2] = { D3DBLEND_ONE, D3DBLEND_ZERO };
     BlendFunc s2[2] = { src, dst };
 
@@ -652,7 +637,7 @@ void Renderer::SetDepthFunc(DepthFunc func)
     if (m_data->m_depth_func == func)
         return;
 
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     switch (func)
     {
         case DepthFunc::Disabled:
@@ -733,7 +718,7 @@ void Renderer::SetDepthMask(DepthMask mask)
     if (m_data->m_depth_mask == mask)
         return;
 
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     if (mask == DepthMask::Disabled)
         m_data->m_d3d_dev->SetRenderState(D3DRS_ZWRITEENABLE, D3DZB_FALSE);
     else
@@ -762,7 +747,7 @@ void Renderer::SetCullMode(CullMode mode)
     if (m_data->m_cull_mode == mode)
         return;
 
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     switch (mode)
     {
     case CullMode::Disabled:
@@ -811,7 +796,7 @@ void Renderer::SetPolygonMode(PolygonMode mode)
     if (m_data->m_polygon_mode == mode)
         return;
 
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     switch (mode)
     {
     case PolygonMode::Point:

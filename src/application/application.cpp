@@ -16,9 +16,7 @@
 
 #include "lolgl.h"
 
-#if _XBOX
-#   include "platform/xbox/xboxapp.h"
-#elif __native_client__
+#if __native_client__
 #   include "platform/nacl/nacl-app.h"
 #elif __ANDROID__
 #   include "platform/android/androidapp.h"
@@ -59,9 +57,7 @@ protected:
         display.Disable();
     }
 
-#if _XBOX
-    //NOT HANDLED YET
-#elif __native_client__
+#if __native_client__
     //NOT HANDLED YET
 #elif __ANDROID__
     //NOT HANDLED YET
@@ -121,9 +117,7 @@ class ApplicationData
         : app(name, resolution, framerate)
     { }
 
-#if _XBOX
-    XboxApp app;
-#elif __native_client__
+#if __native_client__
     NaClApp app;
 #elif __ANDROID__
     AndroidApp app;

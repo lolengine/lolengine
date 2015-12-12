@@ -15,10 +15,7 @@
 /*
 ** if needed, includes windows header before everything else
 */
-// LOL BEGIN
-//#if defined(_WIN32)
-#if defined(_WIN32) && !defined(_XBOX)
-// LOL END
+#if defined(_WIN32)
 #include <windows.h>
 #endif
 

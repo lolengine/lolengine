@@ -15,7 +15,7 @@
 #include <cstring>
 #include <cstdio>
 
-#if defined(_WIN32) && !defined(_XBOX)
+#if defined _WIN32
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
 #   if defined USE_D3D9
@@ -25,10 +25,6 @@
 #       include <d3d9.h>
 #       include <d3dx9shader.h>
 #   endif
-#elif defined _XBOX
-#   include <xtl.h>
-#   undef near /* Fuck Microsoft */
-#   undef far /* Fuck Microsoft again */
 #endif
 
 #include "pegtl.hh"
@@ -89,11 +85,6 @@ private:
     IDirect3DDevice9 *m_dev;
     IDirect3DVertexShader9 *vert_shader;
     IDirect3DPixelShader9 *frag_shader;
-    ID3DXConstantTable *vert_table, *frag_table;
-#elif defined _XBOX
-    D3DDevice *m_dev;
-    D3DVertexShader *vert_shader;
-    D3DPixelShader *frag_shader;
     ID3DXConstantTable *vert_table, *frag_table;
 #else
     GLuint prog_id, vert_id, frag_id;
@@ -237,14 +228,12 @@ Shader::Shader(String const &name,
 {
     data->m_name = name;
 
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     ID3DXBuffer *shader_code, *error_msg;
     HRESULT hr;
     D3DXMACRO macros[] =
     {
-#if defined _XBOX
-        { "_XBOX", "1" },
-#endif
+        { "LOL_TEST_MACRO", "1" },
         { nullptr, nullptr }
     };
 #else
@@ -257,13 +246,8 @@ Shader::Shader(String const &name,
 
     /* Compile vertex shader */
     data->vert_crc = ShaderData::Hash(vert);
-#if defined USE_D3D9 || defined _XBOX
-#   if defined USE_D3D9
+#if defined USE_D3D9
     data->m_dev = (IDirect3DDevice9 *)Renderer::Get()->GetDevice();
-#   elif defined _XBOX
-    data->m_dev = (D3DDevice *)Renderer::Get()->GetDevice();
-#   endif
-
     hr = D3DXCompileShader(vert, (UINT)strlen(vert), macros, nullptr, "main",
                            "vs_3_0", 0, &shader_code, &error_msg,
                            &data->vert_table);
@@ -300,7 +284,7 @@ Shader::Shader(String const &name,
 
     /* Compile fragment shader */
     data->frag_crc = ShaderData::Hash(frag);
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     hr = D3DXCompileShader(frag, (UINT)strlen(frag), macros, nullptr, "main",
                            "ps_3_0", 0, &shader_code, &error_msg,
                            &data->frag_table);
@@ -336,7 +320,7 @@ Shader::Shader(String const &name,
     }
 #endif
 
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     /* FIXME: this is only debug code, we don't need it. */
     D3DXCONSTANTTABLE_DESC desc;
     data->frag_table->GetDesc(&desc);
@@ -450,7 +434,7 @@ ShaderAttrib Shader::GetAttribLocation(VertexUsage usage, int index) const
     ShaderAttrib ret;
     ret.m_flags = (uint64_t)(uint16_t)usage.ToScalar() << 16;
     ret.m_flags |= (uint64_t)(uint16_t)index;
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
 #else
     GLint l = -1;
 
@@ -476,7 +460,7 @@ ShaderUniform Shader::GetUniformLocation(String const& uni) const
 ShaderUniform Shader::GetUniformLocation(char const *uni) const
 {
     ShaderUniform ret;
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     /* Global variables are prefixed with "$" */
     String tmpname = String("$") + uni;
     D3DXCONSTANT_DESC cdesc;
@@ -515,7 +499,7 @@ ShaderUniform Shader::GetUniformLocation(char const *uni) const
 
 void Shader::SetUniform(ShaderUniform const &uni, int i)
 {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     SetUniform(uni, ivec4(i, 0, 0, 0));
 #else
     glUniform1i((GLint)uni.frag, i);
@@ -524,7 +508,7 @@ void Shader::SetUniform(ShaderUniform const &uni, int i)
 
 void Shader::SetUniform(ShaderUniform const &uni, ivec2 const &v)
 {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     SetUniform(uni, ivec4(v, 0, 0));
 #else
     glUniform2i((GLint)uni.frag, v.x, v.y);
@@ -533,7 +517,7 @@ void Shader::SetUniform(ShaderUniform const &uni, ivec2 const &v)
 
 void Shader::SetUniform(ShaderUniform const &uni, ivec3 const &v)
 {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     SetUniform(uni, ivec4(v, 0));
 #else
     glUniform3i((GLint)uni.frag, v.x, v.y, v.z);
@@ -542,7 +526,7 @@ void Shader::SetUniform(ShaderUniform const &uni, ivec3 const &v)
 
 void Shader::SetUniform(ShaderUniform const &uni, ivec4 const &v)
 {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     if (uni.flags & 1)
         data->m_dev->SetPixelShaderConstantI((UINT)uni.frag, &v[0], 1);
     if (uni.flags & 2)
@@ -554,7 +538,7 @@ void Shader::SetUniform(ShaderUniform const &uni, ivec4 const &v)
 
 void Shader::SetUniform(ShaderUniform const &uni, float f)
 {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     SetUniform(uni, vec4(f, 0, 0, 0));
 #else
     glUniform1f((GLint)uni.frag, f);
@@ -563,7 +547,7 @@ void Shader::SetUniform(ShaderUniform const &uni, float f)
 
 void Shader::SetUniform(ShaderUniform const &uni, vec2 const &v)
 {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     SetUniform(uni, vec4(v, 0, 0));
 #else
     glUniform2fv((GLint)uni.frag, 1, &v[0]);
@@ -572,7 +556,7 @@ void Shader::SetUniform(ShaderUniform const &uni, vec2 const &v)
 
 void Shader::SetUniform(ShaderUniform const &uni, vec3 const &v)
 {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     SetUniform(uni, vec4(v, 0));
 #else
     glUniform3fv((GLint)uni.frag, 1, &v[0]);
@@ -581,7 +565,7 @@ void Shader::SetUniform(ShaderUniform const &uni, vec3 const &v)
 
 void Shader::SetUniform(ShaderUniform const &uni, vec4 const &v)
 {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     if (uni.flags & 1)
         data->m_dev->SetPixelShaderConstantF((UINT)uni.frag, &v[0], 1);
     if (uni.flags & 2)
@@ -593,7 +577,7 @@ void Shader::SetUniform(ShaderUniform const &uni, vec4 const &v)
 
 void Shader::SetUniform(ShaderUniform const &uni, mat2 const &m)
 {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     /* FIXME: do we need padding here like for the mat3 version? */
     if (uni.flags & 1)
         data->m_dev->SetPixelShaderConstantF((UINT)uni.frag, &m[0][0], 1);
@@ -606,7 +590,7 @@ void Shader::SetUniform(ShaderUniform const &uni, mat2 const &m)
 
 void Shader::SetUniform(ShaderUniform const &uni, mat3 const &m)
 {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     /* Padding matrix columns is necessary on DirectX. We need to create
      * a new data structure; a 4×4 matrix will do. */
     mat4 tmp(m, 1.0f);
@@ -621,7 +605,7 @@ void Shader::SetUniform(ShaderUniform const &uni, mat3 const &m)
 
 void Shader::SetUniform(ShaderUniform const &uni, mat4 const &m)
 {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     if (uni.flags & 1)
         data->m_dev->SetPixelShaderConstantF((UINT)uni.frag, &m[0][0], 4);
     if (uni.flags & 2)
@@ -633,7 +617,7 @@ void Shader::SetUniform(ShaderUniform const &uni, mat4 const &m)
 
 void Shader::SetUniform(ShaderUniform const &uni, TextureUniform tex, int index)
 {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     data->m_dev->SetTexture(index, (LPDIRECT3DTEXTURE9)tex.m_flags);
     data->m_dev->SetSamplerState(index, D3DSAMP_MAGFILTER, tex.m_attrib & 0xff);
     data->m_dev->SetSamplerState(index, D3DSAMP_MINFILTER, (tex.m_attrib >> 8) & 0xff);
@@ -652,7 +636,7 @@ void Shader::SetUniform(ShaderUniform const &uni, TextureUniform tex, int index)
 
 void Shader::SetUniform(ShaderUniform const &uni, array<float> const &v)
 {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     /* FIXME: this will not work properly because we don't know how tell DX9
      * it's a bunch of floats instead of vec4. */
     if (uni.flags & 1)
@@ -668,7 +652,7 @@ void Shader::SetUniform(ShaderUniform const &uni, array<float> const &v)
 
 void Shader::SetUniform(ShaderUniform const &uni, array<vec2> const &v)
 {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     /* FIXME: this will not work properly because we don't know how tell DX9
      * it's a bunch of vec2 instead of vec4. */
     if (uni.flags & 1)
@@ -684,7 +668,7 @@ void Shader::SetUniform(ShaderUniform const &uni, array<vec2> const &v)
 
 void Shader::SetUniform(ShaderUniform const &uni, array<vec3> const &v)
 {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     /* FIXME: this will not work properly because we don't know how tell DX9
      * it's a bunch of vec3 instead of vec4. */
     if (uni.flags & 1)
@@ -700,7 +684,7 @@ void Shader::SetUniform(ShaderUniform const &uni, array<vec3> const &v)
 
 void Shader::SetUniform(ShaderUniform const &uni, array<vec4> const &v)
 {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     if (uni.flags & 1)
         data->m_dev->SetPixelShaderConstantF((UINT)uni.frag,
                                              &v[0][0], v.count());
@@ -714,7 +698,7 @@ void Shader::SetUniform(ShaderUniform const &uni, array<vec4> const &v)
 
 void Shader::Bind() const
 {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     HRESULT hr;
     hr = data->m_dev->SetVertexShader(data->vert_shader);
     hr = data->m_dev->SetPixelShader(data->frag_shader);
@@ -725,7 +709,7 @@ void Shader::Bind() const
 
 void Shader::Unbind() const
 {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     HRESULT hr;
     hr = data->m_dev->SetVertexShader(nullptr);
     hr = data->m_dev->SetPixelShader(nullptr);
@@ -737,7 +721,7 @@ void Shader::Unbind() const
 
 Shader::~Shader()
 {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     data->vert_shader->Release();
     data->vert_table->Release();
     data->frag_shader->Release();
@@ -757,7 +741,7 @@ int ShaderData::GetVersion()
 {
     static int version = 0;
 
-#if !defined USE_D3D9 && !defined _XBOX
+#if !defined USE_D3D9
     if (!version)
     {
 #if defined HAVE_GLES_2X

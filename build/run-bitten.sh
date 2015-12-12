@@ -151,17 +151,6 @@ fi
 append ""
 
 #
-# Xbox development kit
-#
-
-append "[xdk]"
-if [ -n "$XEDK" ]; then
-    # FIXME: we don't know how to check the version
-    append "version = 2.0.20675.0"
-fi
-append ""
-
-#
 # mingw32 / mingw-w64
 #
 
