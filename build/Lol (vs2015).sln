@@ -53,7 +53,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "orbital", "..\games\orbital
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "- Engine -", "- Engine -", "{1AFD580B-98B8-4689-B661-38C41132C60E}"
 	ProjectSection(SolutionItems) = preProject
-		config-build.xml = config-build.xml
+		msbuild\config-build.xml = msbuild\config-build.xml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tools", "Tools", "{3D341D8A-E400-4B1D-BC05-B5C35487D9B5}"
