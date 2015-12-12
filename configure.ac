@@ -501,6 +501,7 @@ AC_CONFIG_FILES(
   games/thonik/Makefile
   games/sot3000/Makefile
   games/grunx/Makefile
+  games/weshgrow/Makefile
 ])
 AC_CONFIG_FILES(
  [games/deushax/Makefile
