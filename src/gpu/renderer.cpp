@@ -18,8 +18,9 @@
 #   if defined USE_D3D9
 #      include <d3d9.h>
 #   endif
-#   define WIN32_LEAN_AND_MEAN
+#   define WIN32_LEAN_AND_MEAN 1
 #   include <windows.h>
+#   undef WIN32_LEAN_AND_MEAN
 #   undef near /* Fuck Microsoft */
 #   undef far /* Fuck Microsoft again */
 #endif

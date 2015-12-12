@@ -21,6 +21,7 @@
 #if _WIN32
 #   define WIN32_LEAN_AND_MEAN
 #   include <direct.h>
+#   undef WIN32_LEAN_AND_MEAN
 #endif
 
 namespace lol

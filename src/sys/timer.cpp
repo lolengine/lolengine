@@ -20,6 +20,7 @@
 #elif _WIN32
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
+#   undef WIN32_LEAN_AND_MEAN
 #elif HAVE_SDL_SDL_H
 #   include <SDL/SDL.h>
 #else
