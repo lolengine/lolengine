@@ -73,21 +73,21 @@ typedef SafeEnum<DirectionBase> Direction;
  * Generic box type names
  */
 
-#define _T(tleft, tright, suffix) \
+#define T_(tleft, tright, suffix) \
     typedef tleft float tright suffix; \
     typedef tleft double tright d##suffix; \
     typedef tleft int32_t tright i##suffix; \
     typedef tleft uint32_t tright u##suffix;
 
 /* Idiotic hack to put "," inside a macro argument */
-#define _C ,
+#define C_ ,
 
-_T(box_t<, _C 2>, box2)
-_T(box_t<, _C 3>, box3)
-_T(box_t<, _C 4>, box4)
+T_(box_t<, C_ 2>, box2)
+T_(box_t<, C_ 3>, box3)
+T_(box_t<, C_ 4>, box4)
 
-#undef _C
-#undef _T
+#undef C_
+#undef T_
 
 template<typename T, int N>
 struct box_t

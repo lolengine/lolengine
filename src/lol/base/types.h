@@ -46,7 +46,7 @@ template<typename T> struct sqt_t;
  * Generic GLSL-like type names
  */
 
-#define _T(tleft, tright, suffix) \
+#define T_(tleft, tright, suffix) \
     typedef tleft half tright f16##suffix; \
     typedef tleft float tright suffix; \
     typedef tleft double tright d##suffix; \
@@ -62,38 +62,38 @@ template<typename T> struct sqt_t;
     typedef tleft real tright r##suffix;
 
 /* Idiotic hack to put "," inside a macro argument */
-#define _C ,
+#define C_ ,
 
-_T(vec_t<, _C 2>, vec2)
-_T(vec_t<, _C 3>, vec3)
-_T(vec_t<, _C 4>, vec4)
-_T(vec_t<, _C 5>, vec5)
-_T(vec_t<, _C 6>, vec6)
-_T(vec_t<, _C 7>, vec7)
-_T(vec_t<, _C 8>, vec8)
-_T(vec_t<, _C 9>, vec9)
-_T(vec_t<, _C 10>, vec10)
-_T(vec_t<, _C 11>, vec11)
-_T(vec_t<, _C 12>, vec12)
+T_(vec_t<, C_ 2>, vec2)
+T_(vec_t<, C_ 3>, vec3)
+T_(vec_t<, C_ 4>, vec4)
+T_(vec_t<, C_ 5>, vec5)
+T_(vec_t<, C_ 6>, vec6)
+T_(vec_t<, C_ 7>, vec7)
+T_(vec_t<, C_ 8>, vec8)
+T_(vec_t<, C_ 9>, vec9)
+T_(vec_t<, C_ 10>, vec10)
+T_(vec_t<, C_ 11>, vec11)
+T_(vec_t<, C_ 12>, vec12)
 
-_T(mat_t<, _C 2 _C 2>, mat2)
-_T(mat_t<, _C 3 _C 3>, mat3)
-_T(mat_t<, _C 4 _C 4>, mat4)
+T_(mat_t<, C_ 2 C_ 2>, mat2)
+T_(mat_t<, C_ 3 C_ 3>, mat3)
+T_(mat_t<, C_ 4 C_ 4>, mat4)
 
-_T(mat_t<, _C 2 _C 3>, mat2x3)
-_T(mat_t<, _C 2 _C 4>, mat2x4)
-_T(mat_t<, _C 3 _C 2>, mat3x2)
-_T(mat_t<, _C 3 _C 4>, mat3x4)
-_T(mat_t<, _C 4 _C 2>, mat4x2)
-_T(mat_t<, _C 4 _C 3>, mat4x3)
+T_(mat_t<, C_ 2 C_ 3>, mat2x3)
+T_(mat_t<, C_ 2 C_ 4>, mat2x4)
+T_(mat_t<, C_ 3 C_ 2>, mat3x2)
+T_(mat_t<, C_ 3 C_ 4>, mat3x4)
+T_(mat_t<, C_ 4 C_ 2>, mat4x2)
+T_(mat_t<, C_ 4 C_ 3>, mat4x3)
 
-_T(cmplx_t<, >, cmplx)
-_T(quat_t<, >, quat)
-_T(dualquat_t<, >, dualquat)
-_T(sqt_t<, >, sqt)
+T_(cmplx_t<, >, cmplx)
+T_(quat_t<, >, quat)
+T_(dualquat_t<, >, dualquat)
+T_(sqt_t<, >, sqt)
 
-#undef _C
-#undef _T
+#undef C_
+#undef T_
 
 /*
  * HLSL/Cg-compliant type names
