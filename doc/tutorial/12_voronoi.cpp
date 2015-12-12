@@ -339,19 +339,6 @@ public:
                 Renderer::Get()->Clear(ClearMask::Depth);
                 shader->Bind();
 
-                //08_FBO ??
-    #if _XBOX
-                /* FIXME: the Xbox enforces full EDRAM clears on each frame, so
-                * we cannot expect the render target contents to be preserved.
-                * This code snippet should be moved inside the Framebuffer class. */
-                //m_fbos[m_cur_fbo].m2->SetUniform(m_uni_flag, 1.f);
-                //m_fbos[m_cur_fbo].m2->SetUniform(m_uni_texture, m_fbo->GetTextureUniform(), 0);
-                //m_vdecl->SetStream(m_vbo, m_fbos[m_cur_fbo].m4.last());
-                //m_vdecl->Bind();
-                //m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
-                //m_vdecl->Unbind();
-    #endif
-
                 int i = 0;
                 if (curres == ivec2::zero)
                     m_screen_shader->SetUniform(m_screen_texture, src_buf->GetTextureUniform(), 0);

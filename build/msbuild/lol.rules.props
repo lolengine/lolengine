@@ -29,15 +29,12 @@
 
       <PreprocessorDefinitions Condition="'$(Platform)'=='Win32'">WIN32;$(Win32Defines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Platform)'=='x64'">WIN32;$(Win32Defines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Platform)'=='Xbox 360'">_XBOX;$(XboxDefines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Platform)'=='Orbis'">$(OrbisDefines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <BufferSecurityCheck Condition="'$(Platform)'=='Xbox 360'">false</BufferSecurityCheck>
     </ClCompile>
     <ClCompile Condition="'$(Configuration)'=='Debug'">
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">MultiThreadedDebugDLL</RuntimeLibrary>
-      <RuntimeLibrary Condition="'$(Platform)'=='Xbox 360'">MultiThreadedDebug</RuntimeLibrary>
       <PreprocessorDefinitions>_DEBUG;LOL_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Condition="'$(Configuration)'=='Release'">
@@ -48,7 +45,6 @@
       <OptimizationLevel>Level2</OptimizationLevel>
 
       <RuntimeLibrary Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">MultiThreadedDLL</RuntimeLibrary>
-      <RuntimeLibrary Condition="'$(Platform)'=='Xbox 360'">MultiThreaded</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
@@ -69,8 +65,6 @@
       <AdditionalLibraryDirectories Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">$(D3d9Libs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalLibraryDirectories Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">$(XinputLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">xapilibd.lib;d3d9d.lib;d3dx9d.lib;xgraphicsd.lib;xboxkrnl.lib;xnetd.lib;xaudiod2.lib;xactd3.lib;x3daudiod.lib;xmcored.lib;xbdm.lib;vcompd.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalDependencies Condition="'$(Configuration)|$(Platform)'=='Release|Xbox 360'">xapilib.lib;d3d9.lib;d3dx9.lib;xgraphics.lib;xboxkrnl.lib;xnet.lib;xaudio2.lib;xact3.lib;x3daudio.lib;xmcore.lib;vcomp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories Condition="'$(Platform)'=='Orbis'">$(OrbisLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies Condition="'$(Platform)'=='Orbis'">$(OrbisDeps);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
@@ -99,11 +93,6 @@
         )
       </Command>
     </PostBuildEvent>
-
-    <!-- FIXME: not for the static library! -->
-    <Deploy Condition="'$(Platform)'=='Xbox 360'">
-      <DeploymentType>CopyToHardDrive</DeploymentType>
-    </Deploy>
 
   </ItemDefinitionGroup>
 </Project>

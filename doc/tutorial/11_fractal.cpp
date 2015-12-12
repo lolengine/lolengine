@@ -63,15 +63,8 @@ public:
             m_deltascale[i] = real("1");
             m_dirty[i] = 2;
         }
-#if defined _XBOX
-        //m_center = rcmplx(-.22815528839841, -1.11514249704382);
-        //m_center = rcmplx(0.001643721971153, 0.822467633298876);
-        m_center = rcmplx("-0.65823419062254", "0.50221777363480");
-        m_zoom_speed = -0.025;
-#else
         m_center = rcmplx(-0.75, 0.0);
         m_zoom_speed = 0.0;
-#endif
         m_translate = rcmplx(0.0, 0.0);
         m_radius = 5.0;
         m_ready = false;
@@ -96,9 +89,7 @@ public:
             uint8_t red   = (uint8_t)r * 256;
             uint8_t green = (uint8_t)g * 256;
             uint8_t blue  = (uint8_t)b * 256;
-#if defined _XBOX
-            m_palette.push(u8vec4(255, red, green, blue));
-#elif defined __native_client__
+#if defined __native_client__
             m_palette.push(u8vec4(red, green, blue, 255));
 #else
             m_palette.push(u8vec4(blue, green, red, 255));
@@ -182,7 +173,6 @@ public:
 
         uint32_t buttons = 0;
         //uint32_t buttons = Input::GetMouseButtons();
-#if !defined _XBOX
         if (buttons & 0x2)
         {
             if (!m_drag)
@@ -224,7 +214,6 @@ public:
             if (lol::abs(m_zoom_speed) < 1e-5 || m_drag)
                 m_zoom_speed = 0.0;
         }
-#endif
 
         if (m_zoom_speed || m_translate != rcmplx(0.0, 0.0))
         {
@@ -242,12 +231,10 @@ public:
                 zoom = 1e-14 / m_radius;
             }
             m_radius *= zoom;
-#if !defined _XBOX
             m_center += m_translate;
             m_center = (m_center - worldmouse) * real(zoom) + worldmouse;
             worldmouse = m_center
                        + rcmplx(ScreenToWorldOffset((vec2)mousepos));
-#endif
 
             /* Store the transformation properties to go from m_frame - 1
              * to m_frame. */
@@ -421,11 +408,7 @@ public:
             }
             else
             {
-#if defined _XBOX
-                *m_pixelstart++ = u8vec4(255, 0, 0, 0);
-#else
                 *m_pixelstart++ = u8vec4(0, 0, 0, 255);
-#endif
             }
         }
     }

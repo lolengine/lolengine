@@ -10,11 +10,7 @@
 
 #include <lol/engine-internal.h>
 
-#if defined _XBOX
-#   include <xtl.h>
-#   undef near /* Fuck Microsoft */
-#   undef far /* Fuck Microsoft again */
-#elif defined _WIN32
+#if defined _WIN32
 #   if defined USE_D3D9
 #      include <d3d9.h>
 #   endif
@@ -64,7 +60,7 @@ void Video::SetDebugRenderMode(DebugRenderMode d)
         case DebugRenderMode::Normal:
         case DebugRenderMode::UV:
         {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
 #elif defined HAVE_GLES_2X
 #elif defined USE_GLEW || defined HAVE_GL_2X
             glEnable(GL_CULL_FACE);
@@ -74,7 +70,7 @@ void Video::SetDebugRenderMode(DebugRenderMode d)
         }
         case DebugRenderMode::Wireframe:
         {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
 #elif defined HAVE_GLES_2X
 #elif defined USE_GLEW || defined HAVE_GL_2X
             glDisable(GL_CULL_FACE);
@@ -104,7 +100,7 @@ void Video::Destroy()
 
 void Video::Capture(uint32_t *buffer)
 {
-#if defined USE_D3D9 || defined _XBOX
+#if defined USE_D3D9
     /* TODO */
 #elif defined USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLEX_2X
     GLint v[4];

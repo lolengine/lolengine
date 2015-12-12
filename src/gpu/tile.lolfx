@@ -48,11 +48,7 @@ void main(float4 in_Position : POSITION,
           out float2 out_TexCoord : TEXCOORD0,
           out float4 out_Position : POSITION)
 {
-#if _XBOX
-    float2 delta = float2(-0.5, -0.5) / u_texsize;
-#else
     float2 delta = float2(0.0, 0.0);
-#endif
     out_Position = mul(u_projection, mul(u_view, mul(u_model, in_Position)));
     out_TexCoord = in_TexCoord + delta;
 }

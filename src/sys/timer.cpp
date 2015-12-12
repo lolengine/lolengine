@@ -17,11 +17,6 @@
  || (HAVE_GETTIMEOFDAY && HAVE_USLEEP && HAVE_SYS_TIME_H && HAVE_UNISTD_H)
 #   include <sys/time.h>
 #   include <unistd.h>
-#elif _XBOX
-#   include <xtl.h>
-#   undef near /* Fuck Microsoft */
-#   undef far /* Fuck Microsoft again */
-#   include <xbox.h>
 #elif _WIN32
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
