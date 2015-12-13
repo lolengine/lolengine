@@ -1,18 +1,20 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
 
 //
 // Various maths constants
-// -----------------------
+// ———————————————————————
 //
 
 #include <lol/base/types.h>
@@ -26,6 +28,8 @@ namespace lol
     static float const F_##name = (float)LD_##name;
 
 /* These values are truncated, not rounded, because I don’t care. */
+
+LOL_MATH_CONSTANT(TAU,  6.28318530717958647692528676655900576839433879875L)
 
 LOL_MATH_CONSTANT(PI,   3.14159265358979323846264338327950288419716939937L)
 LOL_MATH_CONSTANT(PI_2, 1.57079632679489661923132169163975144209858469968L)
