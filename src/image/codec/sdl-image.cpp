@@ -12,16 +12,16 @@
 
 #include <lol/engine-internal.h>
 
-#if defined USE_SDL_IMAGE
+#if USE_SDL_IMAGE
 
-#if defined HAVE_SDL_SDL_H
+#if HAVE_SDL_SDL_H
 #   include <SDL/SDL.h>
+#   include <SDL/SDL_image.h>
+#elif HAVE_SDL2_SDL_H
+#   include <SDL2/SDL.h>
+#   include <SDL2/SDL_image.h>
 #else
 #   include <SDL.h>
-#endif
-#if defined HAVE_SDL_SDL_IMAGE_H
-#   include <SDL/SDL_image.h>
-#else
 #   include <SDL_image.h>
 #endif
 
@@ -121,5 +121,5 @@ SDL_Surface *SdlImageCodec::Create32BppSurface(ivec2 size)
 
 } /* namespace lol */
 
-#endif /* defined USE_SDL_IMAGE */
+#endif /* USE_SDL_IMAGE */
 
