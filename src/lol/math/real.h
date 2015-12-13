@@ -189,6 +189,7 @@ public:
     static Real<N> const& R_PI_2();
     static Real<N> const& R_PI_3();
     static Real<N> const& R_PI_4();
+    static Real<N> const& R_TAU();
     static Real<N> const& R_1_PI();
     static Real<N> const& R_2_PI();
     static Real<N> const& R_2_SQRTPI();
