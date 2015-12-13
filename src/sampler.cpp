@@ -47,25 +47,35 @@ int Sampler::Register(char const *path)
 
 void Sampler::Deregister(int id)
 {
-    data->samples.RemoveSlot(id - 1); /* ID 0 is for the empty sample */
+    if (id > 0)
+        data->samples.RemoveSlot(id - 1); /* ID 0 is for the empty sample */
 }
 
 void Sampler::PlaySample(int id)
 {
-    Sample *sample = (Sample *)data->samples.GetEntity(id - 1);
-    sample->Play();
+    if (id > 0)
+    {
+        Sample *sample = (Sample *)data->samples.GetEntity(id - 1);
+        sample->Play();
+    }
 }
 
 void Sampler::LoopSample(int id)
 {
-    Sample *sample = (Sample *)data->samples.GetEntity(id - 1);
-    sample->Loop();
+    if (id > 0)
+    {
+        Sample *sample = (Sample *)data->samples.GetEntity(id - 1);
+        sample->Loop();
+    }
 }
 
 void Sampler::StopSample(int id)
 {
-    Sample *sample = (Sample *)data->samples.GetEntity(id - 1);
-    sample->Stop();
+    if (id > 0)
+    {
+        Sample *sample = (Sample *)data->samples.GetEntity(id - 1);
+        sample->Stop();
+    }
 }
 
 } /* namespace lol */
