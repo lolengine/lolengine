@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -55,6 +57,7 @@ LOL_CONSTANT_GETTER(R_PI,       fast_pi());
 LOL_CONSTANT_GETTER(R_PI_2,     R_PI() / 2);
 LOL_CONSTANT_GETTER(R_PI_3,     R_PI() / R_3());
 LOL_CONSTANT_GETTER(R_PI_4,     R_PI() / 4);
+LOL_CONSTANT_GETTER(R_TAU,      R_PI() + R_PI());
 LOL_CONSTANT_GETTER(R_1_PI,     inverse(R_PI()));
 LOL_CONSTANT_GETTER(R_2_PI,     R_1_PI() * 2);
 LOL_CONSTANT_GETTER(R_2_SQRTPI, inverse(sqrt(R_PI())) * 2);
