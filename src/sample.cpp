@@ -19,7 +19,7 @@
 #if USE_SDL_MIXER
 #   if HAVE_SDL_SDL_H
 #       include <SDL/SDL.h>
-#        include <SDL/SDL_mixer.h>
+#       include <SDL/SDL_mixer.h>
 #   elif HAVE_SDL2_SDL_H
 #       include <SDL2/SDL.h>
 #       include <SDL2/SDL_mixer.h>
