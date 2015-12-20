@@ -2,7 +2,10 @@
  Large projects
 ----------------
 
-  - Add scripting support (lua?).
+  - Scripting support.
+	  - Lua is supported, check if CPP -> LUA ticking/updating is supported
+	  - Lua needs more than one-shot-script
+	  - Lua classes may still be a little bit obfuscated, a class renaming/revamping may be needed
   - Tiler and Forge are almost the same, try to refactor them.
 
  Engine classes
@@ -18,3 +21,18 @@ Image:
   - Add gamma handling in pixels.cpp
   - Port remaining libpipi files from src/image/todo/:
 
+Thread:
+  - Solidify "Threaded-update" objects support
+  - AsyncImageLoader: "File modified update" is supported by OS, it should use that instead of doing it by hand
+  - Thread usage may still be a little bit awkward
+
+Debug:
+  - Add history support. And layer-like sub-section ? (with imGUI support ?)
+  - ::DrawSetup* is fricking awkward, even I (Touky) get confused by it
+  
+Shaders:
+  - Creation/Setup is still a bit complicated, should look into making it more readable (compatibility with lua ?)
+  
+Frame Buffer Object:
+  - They were working at some point , check if it's still the case, but are still very awkward to use
+  
