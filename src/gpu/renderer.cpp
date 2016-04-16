@@ -376,6 +376,8 @@ void Renderer::SetAlphaFunc(AlphaFunc func, float alpha)
         m_data->m_d3d_dev->SetRenderState(D3DRS_ALPHAREF,
                                           (DWORD)(alpha * 255.999f));
     }
+#elif defined HAVE_GLES_2X
+    /* not supported */
 #elif defined GL_VERSION_1_1
     switch (func)
     {
@@ -810,6 +812,8 @@ void Renderer::SetPolygonMode(PolygonMode mode)
         m_data->m_d3d_dev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
         break;
     }
+#elif defined HAVE_GLES_2X
+    /* not supported */
 #elif defined GL_VERSION_1_1
     switch (mode)
     {
