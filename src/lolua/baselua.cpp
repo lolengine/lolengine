@@ -101,17 +101,19 @@ Loader::Loader()
 Loader::~Loader()
 {
     //Release this instance
-    Loader::Store(m_lua_state, this);
+    Loader::Release(m_lua_state, this);
 
     lua_close(m_lua_state);
 }
 
 //Store loader ------------------------------------------------------------
 static array<LuaState*, Lolua::Loader*> g_loaders;
+
 void Loader::Store(LuaState* l, Lolua::Loader* loader)
 {
     g_loaders.push(l, loader);
 }
+
 void Loader::Release(LuaState* l, Lolua::Loader* loader)
 {
     for (int i = 0; i < g_loaders.count(); ++i)
