@@ -457,7 +457,7 @@ void Scene::ReleaseAllPrimitiveRenderers(uintptr_t key)
 }
 
 //-----------------------------------------------------------------------------
-void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale, float degrees)
+void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale, float radians)
 {
     ASSERT(id < tileset->GetTileCount());
 
@@ -465,7 +465,7 @@ void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale, float
     mat4 model = mat4::translate(pos)
                * mat4::scale(scale.x, scale.y, 1.f)
                * mat4::translate(size.x * 0.5f, size.y * 0.5f, 0.f)
-               * mat4::rotate(radians(scale.x * scale.y < 0 ? degrees : -degrees),
+               * mat4::rotate(scale.x * scale.y < 0 ? radians : -radians,
                               vec3::axis_z);
 
     AddTile(tileset, id, model);
