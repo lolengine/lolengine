@@ -502,6 +502,7 @@ AC_CONFIG_FILES(
   games/sot3000/Makefile
   games/grunx/Makefile
   games/weshgrow/Makefile
+  games/allturdbeast/Makefile
 ])
 AC_CONFIG_FILES(
  [games/deushax/Makefile
@@ -551,7 +552,6 @@ AC_CONFIG_FILES(
   people/jylam/private/oric_convert/Makefile
   people/sam/Makefile
   people/sam/kanagawa/Makefile
-  people/sam/ld35/Makefile
   people/sam/sapp/Makefile
 ])
 
