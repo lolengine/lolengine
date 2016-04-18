@@ -166,13 +166,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LD33 — Grunx", "LD33 — 
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "grunx", "..\games\grunx\grunx.vcxproj", "{775B46F7-03C4-4351-B78D-76088E028D14}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LD34 — WeshGrow", "LD34 — WeshGrow", "{3961536A-EF8C-4CC2-9E9C-1E5AF91288E3}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LD34 — Wesh Grow", "LD34 — Wesh Grow", "{3961536A-EF8C-4CC2-9E9C-1E5AF91288E3}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "weshgrow", "..\games\weshgrow\weshgrow.vcxproj", "{010BF56B-2D3A-4EBE-839C-0B734EB368CA}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LD35", "LD35", "{248073F0-AEF0-4776-88E2-50F1D09D9E87}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "LD35 — All Turd Beast", "LD35 — All Turd Beast", "{248073F0-AEF0-4776-88E2-50F1D09D9E87}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ld35", "..\people\sam\ld35\ld35.vcxproj", "{6CDB0A27-FE32-49E1-A079-5C9ACFF08420}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "allturdbeast", "..\games\allturdbeast\allturdbeast.vcxproj", "{6CDB0A27-FE32-49E1-A079-5C9ACFF08420}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
