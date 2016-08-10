@@ -37,7 +37,14 @@ class LuaBaseData
     //Exec lua code -----------------------------------------------------------
     static int LuaDoCode(LuaState *l, String const& s)
     {
-        return luaL_dostring(l, s.C());
+        int status = luaL_dostring(l, s.C());
+        if (status == 1)
+        {
+            LuaString error; error.Get(l, -1);
+            msg::error("Lua error %s\n", error().C());
+            lua_pop(l, 1);
+        }
+        return status;
     }
 
     //Open a file and exec lua code -------------------------------------------
