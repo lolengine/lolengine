@@ -528,6 +528,7 @@ AC_CONFIG_FILES(
   tools/lolunit/Makefile
   tools/neercs/Makefile
   tools/pimp/Makefile
+  tools/zepto8/Makefile
 ])
 AC_CONFIG_FILES(
  [people/jnat/Makefile
