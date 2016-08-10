@@ -8,6 +8,7 @@ SUBDIRS += neercs
 SUBDIRS += pimp
 SUBDIRS += vimlol
 SUBDIRS += vslol
+SUBDIRS += zepto8
 
 noinst_PROGRAMS = $(make_font)
 
