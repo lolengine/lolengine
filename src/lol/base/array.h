@@ -486,7 +486,7 @@ public:
         {
             tuple<T...> tmp = { args... };
             this->grow();
-            new (&this->m_data[this->m_count].m1) tuple<T...>(tmp);
+            new (&this->m_data[this->m_count]) tuple<T...>(tmp);
         }
         else
         {
