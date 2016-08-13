@@ -118,41 +118,21 @@ using namespace pegtl;
 struct lolfx_parser
 {
 public:
-    lolfx_parser(String const &code)
-      : m_section("header")
-    {
-        basic_parse_string<struct lolfx>(std::string(code.C()), this);
-    }
-
-public:
     String m_section;
     map<String, String> m_programs;
 
 private:
-    struct do_title : action_base<do_title>
-    {
-        static void apply(std::string const &ctx, lolfx_parser *that)
-        {
-            that->m_section = ctx.c_str();
-        }
-    };
-
-    struct do_code : action_base<do_code>
-    {
-        static void apply(std::string const &ctx, lolfx_parser *that)
-        {
-            that->m_programs[that->m_section] = ctx.c_str();
-        }
-    };
-
     // title <- '[' (!']')+ ']' .{eol}
+    struct do_title
+      : plus<not_one<']'>> {};
+
     struct title
       : seq<one<'['>,
-            ifapply<plus<not_one<']'>>, do_title>,
+            do_title,
             one<']'>,
             until<eol, any>> {};
 
-    // FIXME: I’m using this rule because the ifapply<> above also
+    // FIXME: I’m using this rule because the do_title above also
     // gets triggered when using at<> which is non-consuming.
     struct title_ignore
       : seq<one<'['>,
@@ -166,7 +146,7 @@ private:
 
     // code_section < code_line{&(title / eof)}
     struct code_section
-      : ifapply<until<at<sor<title_ignore, pegtl::eof>>, code_line>, do_code> {};
+      : until<at<sor<title_ignore, pegtl::eof>>, code_line> {};
 
     // shader < title code_section
     struct shader
@@ -179,6 +159,35 @@ private:
     // lolfx < header code_section*
     struct lolfx
       : seq<header, star<shader>> {};
+
+    // default action: nothing
+    template<typename RULE>
+    struct action : nothing<RULE> {};
+
+public:
+    lolfx_parser(String const &code)
+      : m_section("header")
+    {
+        pegtl::parse<lolfx, action>(code.C(), "shader", this);
+    }
+};
+
+template<>
+struct lolfx_parser::action<lolfx_parser::do_title>
+{
+    static void apply(input const &in, lolfx_parser *that)
+    {
+        that->m_section = in.string().c_str();
+    }
+};
+
+template<>
+struct lolfx_parser::action<lolfx_parser::code_section>
+{
+    static void apply(input const &in, lolfx_parser *that)
+    {
+        that->m_programs[that->m_section] = in.string().c_str();
+    }
 };
 
 /*
