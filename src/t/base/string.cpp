@@ -240,6 +240,37 @@ lolunit_declare_fixture(string_test)
         lolunit_assert(s1 < s4);
         lolunit_assert(!(s4 < s1));
     }
+
+    lolunit_declare_test(string_split)
+    {
+        auto l1 = String("abc").split();
+        lolunit_assert(l1.count() == 1);
+        lolunit_assert(l1[0] == "abc");
+
+        auto l2 = String("\nabc").split();
+        lolunit_assert(l2.count() == 2);
+        lolunit_assert(l2[0] == "");
+        lolunit_assert(l2[1] == "abc");
+
+        auto l3 = String("abc\n").split();
+        lolunit_assert(l3.count() == 2);
+        lolunit_assert(l3[0] == "abc");
+        lolunit_assert(l3[1] == "");
+
+        auto l4 = String("\n\n").split();
+        lolunit_assert(l4.count() == 3);
+        lolunit_assert(l4[0] == "");
+        lolunit_assert(l4[1] == "");
+        lolunit_assert(l4[2] == "");
+
+        auto l5 = String("abc\nde\n\nf\n").split();
+        lolunit_assert(l5.count() == 5);
+        lolunit_assert(l5[0] == "abc");
+        lolunit_assert(l5[1] == "de");
+        lolunit_assert(l5[2] == "");
+        lolunit_assert(l5[3] == "f");
+        lolunit_assert(l5[4] == "");
+    }
 };
 
 } /* namespace lol */

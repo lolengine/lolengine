@@ -228,6 +228,24 @@ public:
                 && memcmp(C() + count() - s.count(), s.C(), s.count()) == 0;
     }
 
+    array<String> split(char c = '\n') const
+    {
+        array<String> ret;
+        for (int start = 0; start < m_count; )
+        {
+            char const *tmp = strchr(C() + start, c);
+            if (!tmp)
+            {
+                ret.push(String(C() + start));
+                break;
+            }
+            int size = tmp - C() - start;
+            ret.push(String(C() + start, size));
+            start += size + 1;
+        }
+        return ret;
+    }
+
     bool is_alpha() const
     {
         for (int i = 0; i < m_count; i++)
@@ -311,6 +329,11 @@ public:
 #undef LOL_FMT_ATTR
     static String vformat(char const *format, va_list ap);
 };
+
+inline String operator +(char const *sz, String const &s)
+{
+    return String(sz) + s;
+}
 
 inline bool operator ==(char const* sz, String const &s)
 {
