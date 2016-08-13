@@ -296,7 +296,7 @@ fi
 
 dnl  Use pegtl? Yes, always
 if true; then
-  LOL_CFLAGS="$LOL_CFLAGS -I\$(top_srcdir)/external/pegtl-1.3.1/include"
+  LOL_CFLAGS="$LOL_CFLAGS -I\$(top_srcdir)/external/pegtl-1.3.1-e7752e81/include"
 fi
 
 

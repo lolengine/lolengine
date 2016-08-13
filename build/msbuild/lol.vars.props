@@ -5,7 +5,7 @@
     <ExternalDir>$(SolutionDir)\..\external</ExternalDir>
 
     <!-- PEGTL -->
-    <PegtlDir>$(ExternalDir)\pegtl-1.3.1</PegtlDir>
+    <PegtlDir>$(ExternalDir)\pegtl-1.3.1-e7752e81</PegtlDir>
     <PegtlIncludes>$(PegtlDir)\include</PegtlIncludes>
 
     <!-- imgui -->
