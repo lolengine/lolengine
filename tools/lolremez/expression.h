@@ -235,7 +235,7 @@ private:
     template<id OP>
     struct generic_action
     {
-        static void apply(input const &in, expression *that)
+        static void apply(action_input const &in, expression *that)
         {
             UNUSED(in);
             that->m_ops.push(OP, -1);
@@ -251,7 +251,7 @@ public:
         m_ops.empty();
         m_constants.empty();
 
-        pegtl::parse<r_stmt, action>(str, "expression", this);
+        pegtl::parse_string<r_stmt, action>(str, "expression", this);
     }
 };
 
@@ -274,9 +274,9 @@ template<> struct expression::action<expression::r_minus> : generic_action<id::m
 template<>
 struct expression::action<expression::r_binary_call>
 {
-    static void apply(input const &in, expression *that)
+    static void apply(action_input const &in, expression *that)
     {
-        struct { id id; char const *name; } lut[] =
+        struct { id ret; char const *name; } lut[] =
         {
             { id::atan2, "atan2" },
             { id::pow,   "pow" },
@@ -289,7 +289,7 @@ struct expression::action<expression::r_binary_call>
             if (strncmp(in.string().c_str(), pair.name, strlen(pair.name)) != 0)
                 continue;
 
-            that->m_ops.push(pair.id, -1);
+            that->m_ops.push(pair.ret, -1);
             return;
         }
     }
@@ -298,9 +298,9 @@ struct expression::action<expression::r_binary_call>
 template<>
 struct expression::action<expression::r_unary_call>
 {
-    static void apply(input const &in, expression *that)
+    static void apply(action_input const &in, expression *that)
     {
-        struct { id id; char const *name; } lut[] =
+        struct { id ret; char const *name; } lut[] =
         {
             { id::abs,   "abs" },
             { id::sqrt,  "sqrt" },
@@ -326,7 +326,7 @@ struct expression::action<expression::r_unary_call>
             if (strncmp(in.string().c_str(), pair.name, strlen(pair.name)) != 0)
                 continue;
 
-            that->m_ops.push(pair.id, -1);
+            that->m_ops.push(pair.ret, -1);
             return;
         }
     }
@@ -335,7 +335,7 @@ struct expression::action<expression::r_unary_call>
 template<>
 struct expression::action<expression::r_constant>
 {
-    static void apply(input const &in, expression *that)
+    static void apply(action_input const &in, expression *that)
     {
         /* FIXME: check if the constant is already in the list */
         that->m_ops.push(id::constant, that->m_constants.count());
