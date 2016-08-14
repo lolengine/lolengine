@@ -56,7 +56,7 @@ public:
 
 private:
     /* Entity management */
-    array<Entity *> m_todolist, m_autolist;
+    array<Entity *> m_todolist, m_todolist_delayed, m_autolist;
     array<Entity *> m_list[Entity::ALLGROUP_END];
     array<int> m_scenes[Entity::ALLGROUP_END];
     int nentities;
@@ -99,7 +99,7 @@ void Ticker::Register(Entity *entity)
     /* If we are called from its constructor, the object's vtable is not
      * ready yet, so we do not know which group this entity belongs to. Wait
      * until the first tick. */
-    data->m_todolist.push(entity);
+    data->m_todolist_delayed.push(entity);
 
     /* Objects are autoreleased by default. Put them in a list. */
     data->m_autolist.push(entity);
@@ -387,6 +387,9 @@ void TickerData::GameThreadTick()
         e->InitGame();
     }
 
+    data->m_todolist = data->m_todolist_delayed;
+    data->m_todolist_delayed.empty();
+
     /* Tick objects for the game loop */
     for (int g = Entity::GAMEGROUP_BEGIN; g < Entity::GAMEGROUP_END && !data->quit /* Stop as soon as required */; ++g)
     {
@@ -420,57 +423,49 @@ void TickerData::DrawThreadTick()
 {
     Profiler::Start(Profiler::STAT_TICK_DRAW);
 
-    /* Tick objects for the draw loop */
-    for (int g = Entity::DRAWGROUP_BEGIN; g < Entity::DRAWGROUP_END && !data->quit /* Stop as soon as required */; ++g)
-    {
-        switch (g)
-        {
-        case Entity::DRAWGROUP_BEGIN:
-            for (int i = 0; i < Scene::GetCount(); i++)
-                Scene::GetScene(i).Reset();
-            break;
-        default:
-            break;
-        }
-
-        int scene_idx = 0;
-        for (int i = 0; i < data->m_list[g].count() && !data->quit /* Stop as soon as required */; ++i)
-        {
-            //We're outside of the range of the current scene, on to the next
-            if (i >= data->m_scenes[g][scene_idx])
-                ++scene_idx;
-
-            Entity *e = data->m_list[g][i];
-
-            if (!e->m_destroy)
-            {
-#if !LOL_BUILD_RELEASE
-                if (e->m_tickstate != Entity::STATE_IDLE)
-                    msg::error("entity %s [%p] not idle for draw tick\n",
-                               e->GetName(), e);
-                e->m_tickstate = Entity::STATE_PRETICK_DRAW;
-#endif
-                e->TickDraw(data->deltatime, Scene::GetScene(scene_idx));
-#if !LOL_BUILD_RELEASE
-                if (e->m_tickstate != Entity::STATE_POSTTICK_DRAW)
-                    msg::error("entity %s [%p] missed super draw tick\n",
-                               e->GetName(), e);
-                e->m_tickstate = Entity::STATE_IDLE;
-#endif
-            }
-        }
-
-    }
-
-    //Do the scene render loop
+    /* Render each scene one after the other */
     for (int idx = 0; idx < Scene::GetCount() && !data->quit /* Stop as soon as required */; ++idx)
     {
         Scene& scene = Scene::GetScene(idx);
 
         /* Enable display */
         scene.EnableDisplay();
-
         Renderer::Get(idx)->Clear(ClearMask::All);
+
+        /* Tick objects for the draw loop */
+        for (int g = Entity::DRAWGROUP_BEGIN; g < Entity::DRAWGROUP_END && !data->quit /* Stop as soon as required */; ++g)
+        {
+            switch (g)
+            {
+            case Entity::DRAWGROUP_BEGIN:
+                scene.Reset();
+                break;
+            default:
+                break;
+            }
+
+            for (int i = 0; i < data->m_list[g].count() && !data->quit /* Stop as soon as required */; ++i)
+            {
+                Entity *e = data->m_list[g][i];
+
+                if (!e->m_destroy)
+                {
+#if !LOL_BUILD_RELEASE
+                    if (e->m_tickstate != Entity::STATE_IDLE)
+                        msg::error("entity %s [%p] not idle for draw tick\n",
+                                   e->GetName(), e);
+                    e->m_tickstate = Entity::STATE_PRETICK_DRAW;
+#endif
+                    e->TickDraw(data->deltatime, scene);
+#if !LOL_BUILD_RELEASE
+                    if (e->m_tickstate != Entity::STATE_POSTTICK_DRAW)
+                        msg::error("entity %s [%p] missed super draw tick\n",
+                                   e->GetName(), e);
+                    e->m_tickstate = Entity::STATE_IDLE;
+#endif
+                }
+            }
+        }
 
         /* Do the render step */
         scene.RenderPrimitives();
@@ -479,8 +474,6 @@ void TickerData::DrawThreadTick()
 
         /* Disable display */
         scene.DisableDisplay();
-
-        //break;
     }
 
     Profiler::Stop(Profiler::STAT_TICK_DRAW);
