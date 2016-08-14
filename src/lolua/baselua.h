@@ -995,6 +995,7 @@ public:
 protected:
     LuaState* GetLuaState();
     static void Store(LuaState* l, Loader* loader);
+    static Loader *Find(LuaState* l);
     static void Release(LuaState* l, Loader* loader);
     static void StoreObject(LuaState* l, Object* obj);
     //Virtual Store lua object ------------------------------------------------
