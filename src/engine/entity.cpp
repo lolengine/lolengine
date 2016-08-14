@@ -31,6 +31,8 @@ Entity::Entity() :
 #endif
     m_gamegroup = GAMEGROUP_ENTITY;
     m_drawgroup = DRAWGROUP_ENTITY;
+    /* FIXME: is this a problem? because the object can
+     * be ticked before the constructor is finished! */
     Ticker::Register(this);
 }
 
