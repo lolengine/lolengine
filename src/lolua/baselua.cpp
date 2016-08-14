@@ -133,6 +133,15 @@ void Loader::Release(LuaState* l, Lolua::Loader* loader)
     }
 }
 
+Lolua::Loader *LuaLoader::Find(LuaState* l)
+{
+    for (int i = 0; i < g_loaders.count(); ++i)
+        if (g_loaders[i].m1 == l)
+            return g_loaders[i].m2;
+
+    return nullptr;
+}
+
 //Store lua object --------------------------------------------------------
 void Loader::StoreObject(LuaState* l, Object* obj)
 {
