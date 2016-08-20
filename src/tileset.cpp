@@ -192,14 +192,6 @@ void TileSet::BlitTile(uint32_t id, mat4 model, vec3 *vertex, vec2 *texture)
     float tx = texels.aa.x;
     float ty = texels.aa.y;
 
-#if 1
-    /* HACK: tweak UV values */
-    tx += (1.f / 128.f) * dtx;
-    ty += (1.f / 128.f) * dty;
-    dtx *= 126.f / 128.f;
-    dty *= 126.f / 128.f;
-#endif
-
     vec3 pos = (model * vec4(0.f, 0.f, 0.f, 1.f)).xyz;
     vec3 extent_x = 0.5f * pixels.extent().x * (model * vec4::axis_x).xyz;
     vec3 extent_y = 0.5f * pixels.extent().y * (model * vec4::axis_y).xyz;
