@@ -238,6 +238,18 @@ static inline float ceil(float x) { return std::ceil(x); }
 static inline double ceil(double x) { return std::ceil(x); }
 static inline ldouble ceil(ldouble x) { return std::ceil(x); }
 
+static inline uint8_t round(uint8_t x) { return x; }
+static inline int8_t round(int8_t x) { return x; }
+static inline uint16_t round(uint16_t x) { return x; }
+static inline int16_t round(int16_t x) { return x; }
+static inline uint32_t round(uint32_t x) { return x; }
+static inline int32_t round(int32_t x) { return x; }
+static inline uint64_t round(uint64_t x) { return x; }
+static inline int64_t round(int64_t x) { return x; }
+static inline float round(float x) { return std::round(x); }
+static inline double round(double x) { return std::round(x); }
+static inline ldouble round(ldouble x) { return std::round(x); }
+
 #define LOL_GENERIC_FUNC(T) \
     static inline T sq(T x) { return x * x; } \
     static inline T fract(T x) { return x - lol::floor(x); } \
