@@ -160,8 +160,12 @@ array<String> GetPathList(String const &file)
 {
     array<String> ret;
 
-    for (int i = 0; i < data_dir.count(); ++i)
-        ret << data_dir[i] + file;
+    /* If not an absolute path, look through known data directories */
+    if (file[0] != '/')
+    {
+        for (int i = 0; i < data_dir.count(); ++i)
+            ret << data_dir[i] + file;
+    }
 
     if (ret.count() == 0)
         ret << file;
