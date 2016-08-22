@@ -29,7 +29,7 @@ template<typename T> static inline T rand(T a, T b);
 /* One-value random number generators */
 template<typename T> static inline T rand(T a)
 {
-    return rand<T>() % a;
+    return a ? rand<T>() % a : T(0);
 }
 
 template<> inline half rand<half>(half a)
