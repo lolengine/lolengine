@@ -553,11 +553,11 @@ template<> inline bool Var<uint32_t>::InnerIsValid(LuaState* l, int index)
 }
 template<> inline void Var<uint32_t>::InnerGet(LuaState* l, int& index)
 {
-    m_value = lua_tounsigned(l, index++);
+    m_value = (lua_Unsigned)lua_tointeger(l, index++);
 }
 template<> inline int Var<uint32_t>::InnerPush(LuaState* l)
 {
-    lua_pushunsigned(l, m_value);
+    lua_pushinteger(l, (lua_Integer)m_value);
     return 1;
 }
 

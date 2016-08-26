@@ -91,6 +91,9 @@
     <ClCompile Include="lundump.c">
       <Filter>upstream</Filter>
     </ClCompile>
+    <ClCompile Include="lutf8lib.c">
+      <Filter>upstream</Filter>
+    </ClCompile>
     <ClCompile Include="lvm.c">
       <Filter>upstream</Filter>
     </ClCompile>
@@ -144,6 +147,9 @@
     <ClInclude Include="lparser.h">
       <Filter>upstream</Filter>
     </ClInclude>
+    <ClInclude Include="lprefix.h">
+      <Filter>upstream</Filter>
+    </ClInclude>
     <ClInclude Include="lstate.h">
       <Filter>upstream</Filter>
     </ClInclude>
@@ -154,6 +160,9 @@
       <Filter>upstream</Filter>
     </ClInclude>
     <ClInclude Include="ltm.h">
+      <Filter>upstream</Filter>
+    </ClInclude>
+    <ClInclude Include="lutf8lib.h">
       <Filter>upstream</Filter>
     </ClInclude>
     <ClInclude Include="lua.h">
