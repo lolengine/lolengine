@@ -26,6 +26,7 @@
 LOLFX_RESOURCE_DECLARE(tile);
 LOLFX_RESOURCE_DECLARE(palette);
 LOLFX_RESOURCE_DECLARE(line);
+LOLFX_RESOURCE_DECLARE(postprocess);
 
 namespace lol
 {
@@ -127,6 +128,14 @@ private:
      * the default one created by the app will be used */
     SceneDisplay* m_display = nullptr;
 
+    /** Back buffer: where to render to. */
+    Framebuffer *m_backbuffer = nullptr;
+    Shader *m_pp_shader = nullptr;
+    VertexDeclaration *m_pp_vdecl;
+    ShaderUniform m_pp_texture;
+    ShaderAttrib m_pp_coord;
+    VertexBuffer *m_pp_vbo;
+
     /* Sources are shared by all scenes.
      * Renderers are scene-dependent. They get the primitive in the identical
      * slot to render with the given scene.
@@ -179,6 +188,20 @@ mutex SceneData::m_prim_mutex;
 Scene::Scene(ivec2 size)
   : data(new SceneData())
 {
+    data->m_backbuffer = new Framebuffer(size);
+    data->m_pp_shader = Shader::Create(LOLFX_RESOURCE_NAME(postprocess));
+    data->m_pp_coord = data->m_pp_shader->GetAttribLocation(VertexUsage::Position, 0);
+    data->m_pp_vdecl = new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position));
+    data->m_pp_texture = data->m_pp_shader->GetUniformLocation("u_texture");
+
+    array<vec2> quad { vec2( 1.0,  1.0), vec2(-1.0, -1.0), vec2( 1.0, -1.0),
+                       vec2(-1.0, -1.0), vec2( 1.0,  1.0), vec2(-1.0,  1.0), };
+
+    data->m_pp_vbo = new VertexBuffer(quad.bytes());
+    void *vertices = data->m_pp_vbo->Lock(0, 0);
+    memcpy(vertices, &quad[0], quad.bytes());
+    data->m_pp_vbo->Unlock();
+
     /* Create a default orthographic camera, in case the user doesn’t. */
     data->m_default_cam = new Camera();
     mat4 proj = mat4::ortho(0.f, (float)size.x, 0.f, (float)size.y, -1000.f, 1000.f);
@@ -576,8 +599,36 @@ void Scene::DisableDisplay()
     data->m_display->Disable();
 }
 
+/* Render everything that the scene contains */
+void Scene::render(float seconds)
+{
+    /* First render into the offline buffer */
+    data->m_backbuffer->Bind();
+    {
+        RenderContext rc;
+        rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
+        rc.SetClearDepth(1.f);
+        Renderer::Get()->Clear(ClearMask::Color | ClearMask::Depth);
+
+        // FIXME: get rid of the delta time argument
+        render_primitives();
+        render_tiles();
+        render_lines(seconds);
+    }
+    data->m_backbuffer->Unbind();
+
+    /* Now blit the offline buffer */
+    data->m_pp_shader->Bind();
+    data->m_pp_shader->SetUniform(data->m_pp_texture, data->m_backbuffer->GetTextureUniform(), 0);
+    data->m_pp_vdecl->SetStream(data->m_pp_vbo, data->m_pp_coord);
+    data->m_pp_vdecl->Bind();
+    data->m_pp_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
+    data->m_pp_vdecl->Unbind();
+    data->m_pp_shader->Unbind();
+}
+
 //-----------------------------------------------------------------------------
-void Scene::RenderPrimitives()
+void Scene::render_primitives()
 {
     ASSERT(!!data, "Trying to access a non-ready scene");
 
@@ -599,7 +650,7 @@ void Scene::RenderPrimitives()
 }
 
 //-----------------------------------------------------------------------------
-void Scene::RenderTiles() // XXX: rename to Blit()
+void Scene::render_tiles() // XXX: rename to Blit()
 {
     ASSERT(!!data, "Trying to access a non-ready scene");
 
@@ -723,7 +774,9 @@ void Scene::RenderTiles() // XXX: rename to Blit()
 }
 
 //-----------------------------------------------------------------------------
-void Scene::RenderLines(float seconds) // XXX: rename to Blit()
+// FIXME: get rid of the delta time argument
+// XXX: rename to Blit()
+void Scene::render_lines(float seconds)
 {
     ASSERT(!!data, "Trying to access a non-ready scene");
 
