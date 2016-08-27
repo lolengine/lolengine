@@ -38,6 +38,7 @@ struct mat_t
   : public linear_ops::base<vec_t<T,ROWS>>
 {
     static int const count = COLS;
+    typedef T scalar_element;
     typedef vec_t<T,ROWS> element;
     typedef mat_t<T,COLS,ROWS> type;
 
@@ -75,6 +76,7 @@ struct mat_t<T, 2, 2>
   : public linear_ops::base<vec_t<T,2>>
 {
     static int const count = 2;
+    typedef T scalar_element;
     typedef vec_t<T,2> element;
     typedef mat_t<T,2,2> type;
 
@@ -159,6 +161,7 @@ struct mat_t<T, 3, 3>
   : public linear_ops::base<vec_t<T,3>>
 {
     static int const count = 3;
+    typedef T scalar_element;
     typedef vec_t<T,3> element;
     typedef mat_t<T,3,3> type;
 
@@ -289,6 +292,7 @@ struct mat_t<T, 4, 4>
   : public linear_ops::base<vec_t<T,4>>
 {
     static int const count = 4;
+    typedef T scalar_element;
     typedef vec_t<T,4> element;
     typedef mat_t<T,4,4> type;
 

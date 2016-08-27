@@ -219,8 +219,8 @@ static inline typename std::enable_if<std::is_base_of<base<typename V::element>,
  */
 
 template<typename V>
-static inline typename std::enable_if<std::is_base_of<base<typename V::element>, V>::value, typename V::type>::type
-operator *(typename V::element const &val, V const &a)
+static inline typename std::enable_if<std::is_base_of<base<typename V::scalar_element>, V>::value, typename V::type>::type
+operator *(typename V::scalar_element const &val, V const &a)
 {
     typename V::type ret;
     for (int i = 0; i < V::count; ++i)
@@ -233,8 +233,8 @@ operator *(typename V::element const &val, V const &a)
  */
 
 template<typename V>
-static inline typename std::enable_if<std::is_base_of<base<typename V::element>, V>::value, typename V::type>::type
-operator *(V const &a, typename V::element const &val)
+static inline typename std::enable_if<std::is_base_of<base<typename V::scalar_element>, V>::value, typename V::type>::type
+operator *(V const &a, typename V::scalar_element const &val)
 {
     typename V::type ret;
     for (int i = 0; i < V::count; ++i)
@@ -243,15 +243,15 @@ operator *(V const &a, typename V::element const &val)
 }
 
 template<typename V>
-static inline typename std::enable_if<std::is_base_of<base<typename V::element>, V>::value, typename V::type>::type &
-operator *=(V &a, typename V::element const &val)
+static inline typename std::enable_if<std::is_base_of<base<typename V::scalar_element>, V>::value, typename V::type>::type &
+operator *=(V &a, typename V::scalar_element const &val)
 {
     return a = a * val;
 }
 
 template<typename V>
-static inline typename std::enable_if<std::is_base_of<base<typename V::element>, V>::value, typename V::type>::type
-operator /(V const &a, typename V::element const &val)
+static inline typename std::enable_if<std::is_base_of<base<typename V::scalar_element>, V>::value, typename V::type>::type
+operator /(V const &a, typename V::scalar_element const &val)
 {
     typename V::type ret;
     for (int i = 0; i < V::count; ++i)
@@ -260,8 +260,8 @@ operator /(V const &a, typename V::element const &val)
 }
 
 template<typename V>
-static inline typename std::enable_if<std::is_base_of<base<typename V::element>, V>::value, typename V::type>::type &
-operator /=(V &a, typename V::element const &val)
+static inline typename std::enable_if<std::is_base_of<base<typename V::scalar_element>, V>::value, typename V::type>::type &
+operator /=(V &a, typename V::scalar_element const &val)
 {
     return a = a / val;
 }
