@@ -178,6 +178,7 @@ public:
 
 private:
     int HasPrimitiveRenderer(uintptr_t key);
+
     void AddPrimitiveRenderer(uintptr_t key, class PrimitiveRenderer* renderer);
     void SetPrimitiveRenderer(int index, uintptr_t key, class PrimitiveRenderer* renderer);
     void ReleasePrimitiveRenderer(int index, uintptr_t key);
@@ -250,11 +251,13 @@ public:
     void EnableDisplay();
     void DisableDisplay();
 
-    void RenderPrimitives();
-    void RenderTiles();
-    void RenderLines(float seconds);
+    void render(float seconds);
 
 private:
+    void render_primitives();
+    void render_tiles();
+    void render_lines(float seconds);
+
     SceneData *data;
 };
 

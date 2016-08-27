@@ -303,7 +303,7 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
     GLenum format = fbo_format.GetFormat();
 #   endif
     GLenum wrapmode = GL_CLAMP_TO_EDGE;
-    GLenum filtering = GL_NEAREST;
+    GLenum filtering = GL_LINEAR;
 
 #   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     glGenFramebuffers(1, &m_data->m_fbo);

@@ -24,15 +24,15 @@ class FBO : public WorldEntity
 {
 public:
     FBO()
-      : m_time(0.f),
+      : m_vertices { vec2( 1.0,  1.0),
+                     vec2(-1.0, -1.0),
+                     vec2( 1.0, -1.0),
+                     vec2(-1.0, -1.0),
+                     vec2( 1.0,  1.0),
+                     vec2(-1.0,  1.0), },
+        m_time(0.f),
         m_ready(false)
     {
-        m_vertices << vec2( 1.0,  1.0);
-        m_vertices << vec2(-1.0, -1.0);
-        m_vertices << vec2( 1.0, -1.0);
-        m_vertices << vec2(-1.0, -1.0);
-        m_vertices << vec2( 1.0,  1.0);
-        m_vertices << vec2(-1.0,  1.0);
     }
 
     virtual void TickGame(float seconds)

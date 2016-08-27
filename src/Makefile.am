@@ -101,6 +101,7 @@ liblolcore_sources = \
     gpu/tile.lolfx gpu/palette.lolfx gpu/line.lolfx \
     gpu/emptymaterial.lolfx \
     gpu/testmaterial.lolfx \
+    gpu/postprocess.lolfx \
     \
     gpu/lolfx.cpp \
     \

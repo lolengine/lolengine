@@ -468,9 +468,7 @@ void TickerData::DrawThreadTick()
         }
 
         /* Do the render step */
-        scene.RenderPrimitives();
-        scene.RenderTiles();
-        scene.RenderLines(data->deltatime);
+        scene.render(data->deltatime);
 
         /* Disable display */
         scene.DisableDisplay();
