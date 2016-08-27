@@ -64,6 +64,7 @@ struct vec_t
   : public swizzle_ops::base<T, SWIZZLE>
 {
     static int const count = N;
+    typedef T scalar_element;
     typedef T element;
     typedef vec_t<T,N> type;
 
@@ -111,6 +112,7 @@ struct vec_t<T, N, FULL_SWIZZLE>
   : public componentwise_ops::base<T>
 {
     static int const count = N;
+    typedef T scalar_element;
     typedef T element;
     typedef vec_t<T,N> type;
 
@@ -223,6 +225,7 @@ struct vec_t<T,2>
   : public swizzle_ops::base<T>
 {
     static int const count = 2;
+    typedef T scalar_element;
     typedef T element;
     typedef vec_t<T,2> type;
 
@@ -338,6 +341,7 @@ struct vec_t<T,3>
   : public swizzle_ops::base<T>
 {
     static int const count = 3;
+    typedef T scalar_element;
     typedef T element;
     typedef vec_t<T,3> type;
 
@@ -583,6 +587,7 @@ struct vec_t<T,4>
   : public swizzle_ops::base<T>
 {
     static int const count = 4;
+    typedef T scalar_element;
     typedef T element;
     typedef vec_t<T,4> type;
 

@@ -239,7 +239,7 @@ public:
                 ret.push(String(C() + start));
                 break;
             }
-            int size = tmp - C() - start;
+            int size = int(tmp - C()) - start;
             ret.push(String(C() + start, size));
             start += size + 1;
         }
