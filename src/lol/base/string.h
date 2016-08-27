@@ -67,16 +67,17 @@ public:
     inline char &operator [](int n)
     {
         /* Allow n == count() because we might have reasonable reasons
-         * to access that hidden null character. */
+         * to access that hidden null character. We cast to unsigned so
+         * as to avoid a harmless message from the GCC optimiser. */
         ASSERT(n >= 0);
-        ASSERT(n <= count());
+        ASSERT((unsigned)n <= (unsigned)count());
         return ((super &)*this)[n];
     }
 
     inline char const &operator [](int n) const
     {
         ASSERT(n >= 0);
-        ASSERT(n <= count());
+        ASSERT((unsigned)n <= (unsigned)count());
         return ((super const &)*this)[n];
     }
 
