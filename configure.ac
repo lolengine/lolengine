@@ -554,6 +554,7 @@ AC_CONFIG_FILES(
   people/jylam/private/oric_convert/Makefile
   people/sam/Makefile
   people/sam/kanagawa/Makefile
+  people/sam/ld36/Makefile
   people/sam/sapp/Makefile
 ])
 
