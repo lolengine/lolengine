@@ -57,6 +57,8 @@ perf.data*
 binaries/*Debug
 binaries/*Release
 build/.vs
+build/*.VC.VC.opendb
+build/*.VC.db
 build/*.sdf
 build/*.suo
 build/*.opensdf
