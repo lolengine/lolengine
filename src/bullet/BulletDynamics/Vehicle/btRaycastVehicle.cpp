@@ -296,8 +296,9 @@ void btRaycastVehicle::updateVehicle( btScalar step )
 	int i=0;
 	for (i=0;i<m_wheelInfo.size();i++)
 	{
-		btScalar depth; 
-		depth = rayCast( m_wheelInfo[i]);
+		//btScalar depth; 
+		//depth = 
+		rayCast( m_wheelInfo[i]);
 	}
 
 	updateSuspension(step);
@@ -756,14 +757,14 @@ void* btDefaultVehicleRaycaster::castRay(const btVector3& from,const btVector3& 
 	if (rayCallback.hasHit())
 	{
 		
-		btRigidBody* body = btRigidBody::upcast(rayCallback.m_collisionObject);
+		const btRigidBody* body = btRigidBody::upcast(rayCallback.m_collisionObject);
         if (body && body->hasContactResponse())
 		{
 			result.m_hitPointInWorld = rayCallback.m_hitPointWorld;
 			result.m_hitNormalInWorld = rayCallback.m_hitNormalWorld;
 			result.m_hitNormalInWorld.normalize();
 			result.m_distFraction = rayCallback.m_closestHitFraction;
-			return body;
+			return (void*)body;
 		}
 	}
 	return 0;

@@ -18,7 +18,7 @@ subject to the following restrictions:
 #include "BulletCollision/BroadphaseCollision/btDbvt.h"
 #include "LinearMath/btSerializer.h"
 
-btCompoundShape::btCompoundShape(bool enableDynamicAabbTree)
+btCompoundShape::btCompoundShape(bool enableDynamicAabbTree, const int initialChildCapacity)
 : m_localAabbMin(btScalar(BT_LARGE_FLOAT),btScalar(BT_LARGE_FLOAT),btScalar(BT_LARGE_FLOAT)),
 m_localAabbMax(btScalar(-BT_LARGE_FLOAT),btScalar(-BT_LARGE_FLOAT),btScalar(-BT_LARGE_FLOAT)),
 m_dynamicAabbTree(0),
@@ -34,6 +34,8 @@ m_localScaling(btScalar(1.),btScalar(1.),btScalar(1.))
 		m_dynamicAabbTree = new(mem) btDbvt();
 		btAssert(mem==m_dynamicAabbTree);
 	}
+
+	m_children.reserve(initialChildCapacity);
 }
 
 
@@ -77,8 +79,8 @@ void	btCompoundShape::addChildShape(const btTransform& localTransform,btCollisio
 	if (m_dynamicAabbTree)
 	{
 		const btDbvtVolume	bounds=btDbvtVolume::FromMM(localAabbMin,localAabbMax);
-		int index = m_children.size();
-		child.m_node = m_dynamicAabbTree->insert(bounds,(void*)index);
+		size_t index = m_children.size();
+		child.m_node = m_dynamicAabbTree->insert(bounds,reinterpret_cast<void*>(index) );
 	}
 
 	m_children.push_back(child);
@@ -182,9 +184,7 @@ void btCompoundShape::getAabb(const btTransform& trans,btVector3& aabbMin,btVect
 
 	btVector3 center = trans(localCenter);
 
-	btVector3 extent = btVector3(abs_b[0].dot(localHalfExtents),
-		abs_b[1].dot(localHalfExtents),
-		abs_b[2].dot(localHalfExtents));
+    btVector3 extent = localHalfExtents.dot3(abs_b[0], abs_b[1], abs_b[2]);
 	aabbMin = center-extent;
 	aabbMax = center+extent;
 	
@@ -275,6 +275,8 @@ void btCompoundShape::calculatePrincipalAxisTransform(btScalar* masses, btTransf
 
 
 
+
+
 void btCompoundShape::setLocalScaling(const btVector3& scaling)
 {
 
@@ -285,7 +287,7 @@ void btCompoundShape::setLocalScaling(const btVector3& scaling)
 //		childScale = childScale * (childTrans.getBasis() * scaling);
 		childScale = childScale * scaling / m_localScaling;
 		m_children[i].m_childShape->setLocalScaling(childScale);
-		childTrans.setOrigin((childTrans.getOrigin())*scaling);
+		childTrans.setOrigin((childTrans.getOrigin()) * scaling / m_localScaling);
 		updateChildTransform(i, childTrans,false);
 	}
 	
@@ -312,7 +314,8 @@ void btCompoundShape::createAabbTreeFromChildren()
             child.m_childShape->getAabb(child.m_transform,localAabbMin,localAabbMax);
 
             const btDbvtVolume  bounds=btDbvtVolume::FromMM(localAabbMin,localAabbMax);
-            child.m_node = m_dynamicAabbTree->insert(bounds,(void*)index);
+			size_t index2 = index;
+            child.m_node = m_dynamicAabbTree->insert(bounds, reinterpret_cast<void*>(index2) );
         }
     }
 }

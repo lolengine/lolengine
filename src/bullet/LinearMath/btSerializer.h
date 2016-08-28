@@ -4,8 +4,8 @@ Copyright (c) 2003-2009 Erwin Coumans  http://bulletphysics.org
 
 This software is provided 'as-is', without any express or implied warranty.
 In no event will the authors be held liable for any damages arising from the use of this software.
-Permission is granted to anyone to use this software for any purpose, 
-including commercial applications, and to alter it and redistribute it freely, 
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it freely,
 subject to the following restrictions:
 
 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
@@ -17,12 +17,9 @@ subject to the following restrictions:
 #define BT_SERIALIZER_H
 
 #include "btScalar.h" // has definitions like SIMD_FORCE_INLINE
-#include "btStackAlloc.h"
 #include "btHashMap.h"
 
-// LOL BEGIN
-#if !defined( __CELLOS_LV2__) && !defined(__MWERKS__) && !defined(__native_client__)
-// LOL END
+#if !defined( __CELLOS_LV2__) && !defined(__MWERKS__)
 #include <memory.h>
 #endif
 #include <string.h>
@@ -35,12 +32,12 @@ extern int sBulletDNAlen;
 extern char sBulletDNAstr64[];
 extern int sBulletDNAlen64;
 
-SIMD_FORCE_INLINE	int btStrLen(const char* str) 
+SIMD_FORCE_INLINE	int btStrLen(const char* str)
 {
-    if (!str) 
+    if (!str)
 		return(0);
 	int len = 0;
-    
+
 	while (*str != 0)
 	{
         str++;
@@ -88,7 +85,7 @@ public:
 	virtual	void*	getUniquePointer(void*oldPtr) = 0;
 
 	virtual	void	startSerialization() = 0;
-	
+
 	virtual	void	finishSerialization() = 0;
 
 	virtual	const char*	findNameForPointer(const void* ptr) const = 0;
@@ -101,6 +98,9 @@ public:
 
 	virtual void	setSerializationFlags(int flags) = 0;
 
+	virtual int getNumChunks() const = 0;
+
+	virtual const btChunk* getChunk(int chunkIndex) const = 0;
 
 };
 
@@ -108,23 +108,26 @@ public:
 
 #define BT_HEADER_LENGTH 12
 #if defined(__sgi) || defined (__sparc) || defined (__sparc__) || defined (__PPC__) || defined (__ppc__) || defined (__BIG_ENDIAN__)
-#	define MAKE_ID(a,b,c,d) ( (int)(a)<<24 | (int)(b)<<16 | (c)<<8 | (d) )
+#	define BT_MAKE_ID(a,b,c,d) ( (int)(a)<<24 | (int)(b)<<16 | (c)<<8 | (d) )
 #else
-#	define MAKE_ID(a,b,c,d) ( (int)(d)<<24 | (int)(c)<<16 | (b)<<8 | (a) )
+#	define BT_MAKE_ID(a,b,c,d) ( (int)(d)<<24 | (int)(c)<<16 | (b)<<8 | (a) )
 #endif
 
-#define BT_SOFTBODY_CODE		MAKE_ID('S','B','D','Y')
-#define BT_COLLISIONOBJECT_CODE MAKE_ID('C','O','B','J')
-#define BT_RIGIDBODY_CODE		MAKE_ID('R','B','D','Y')
-#define BT_CONSTRAINT_CODE		MAKE_ID('C','O','N','S')
-#define BT_BOXSHAPE_CODE		MAKE_ID('B','O','X','S')
-#define BT_QUANTIZED_BVH_CODE	MAKE_ID('Q','B','V','H')
-#define BT_TRIANLGE_INFO_MAP	MAKE_ID('T','M','A','P')
-#define BT_SHAPE_CODE			MAKE_ID('S','H','A','P')
-#define BT_ARRAY_CODE			MAKE_ID('A','R','A','Y')
-#define BT_SBMATERIAL_CODE		MAKE_ID('S','B','M','T')
-#define BT_SBNODE_CODE			MAKE_ID('S','B','N','D')
-#define BT_DNA_CODE				MAKE_ID('D','N','A','1')
+
+#define BT_MULTIBODY_CODE       BT_MAKE_ID('M','B','D','Y')
+#define BT_SOFTBODY_CODE		BT_MAKE_ID('S','B','D','Y')
+#define BT_COLLISIONOBJECT_CODE BT_MAKE_ID('C','O','B','J')
+#define BT_RIGIDBODY_CODE		BT_MAKE_ID('R','B','D','Y')
+#define BT_CONSTRAINT_CODE		BT_MAKE_ID('C','O','N','S')
+#define BT_BOXSHAPE_CODE		BT_MAKE_ID('B','O','X','S')
+#define BT_QUANTIZED_BVH_CODE	BT_MAKE_ID('Q','B','V','H')
+#define BT_TRIANLGE_INFO_MAP	BT_MAKE_ID('T','M','A','P')
+#define BT_SHAPE_CODE			BT_MAKE_ID('S','H','A','P')
+#define BT_ARRAY_CODE			BT_MAKE_ID('A','R','A','Y')
+#define BT_SBMATERIAL_CODE		BT_MAKE_ID('S','B','M','T')
+#define BT_SBNODE_CODE			BT_MAKE_ID('S','B','N','D')
+#define BT_DYNAMICSWORLD_CODE	BT_MAKE_ID('D','W','L','D')
+#define BT_DNA_CODE				BT_MAKE_ID('D','N','A','1')
 
 
 struct	btPointerUid
@@ -136,21 +139,46 @@ struct	btPointerUid
 	};
 };
 
+struct btBulletSerializedArrays
+{
+	btBulletSerializedArrays()
+	{
+	}
+	btAlignedObjectArray<struct btQuantizedBvhDoubleData*>	m_bvhsDouble;
+	btAlignedObjectArray<struct btQuantizedBvhFloatData*>	m_bvhsFloat;
+	btAlignedObjectArray<struct btCollisionShapeData*> m_colShapeData;
+	btAlignedObjectArray<struct btDynamicsWorldDoubleData*> m_dynamicWorldInfoDataDouble;
+	btAlignedObjectArray<struct btDynamicsWorldFloatData*> m_dynamicWorldInfoDataFloat;
+	btAlignedObjectArray<struct btRigidBodyDoubleData*> m_rigidBodyDataDouble;
+	btAlignedObjectArray<struct btRigidBodyFloatData*> m_rigidBodyDataFloat;
+	btAlignedObjectArray<struct btCollisionObjectDoubleData*> m_collisionObjectDataDouble;
+	btAlignedObjectArray<struct btCollisionObjectFloatData*> m_collisionObjectDataFloat;
+	btAlignedObjectArray<struct btTypedConstraintFloatData*> m_constraintDataFloat;
+	btAlignedObjectArray<struct btTypedConstraintDoubleData*> m_constraintDataDouble;
+	btAlignedObjectArray<struct btTypedConstraintData*> m_constraintData;//for backwards compatibility
+	btAlignedObjectArray<struct btSoftBodyFloatData*> m_softBodyFloatData;
+	btAlignedObjectArray<struct btSoftBodyDoubleData*> m_softBodyDoubleData;
+
+};
+
+
 ///The btDefaultSerializer is the main Bullet serialization class.
 ///The constructor takes an optional argument for backwards compatibility, it is recommended to leave this empty/zero.
 class btDefaultSerializer	:	public btSerializer
 {
 
+protected:
 
 	btAlignedObjectArray<char*>			mTypes;
 	btAlignedObjectArray<short*>			mStructs;
 	btAlignedObjectArray<short>			mTlens;
 	btHashMap<btHashInt, int>			mStructReverse;
 	btHashMap<btHashString,int>	mTypeLookup;
+	
 
-	
+
 	btHashMap<btHashPtr,void*>	m_chunkP;
-	
+
 	btHashMap<btHashPtr,const char*>	m_nameMap;
 
 	btHashMap<btHashPtr,btPointerUid>	m_uniquePointers;
@@ -158,6 +186,7 @@ class btDefaultSerializer	:	public btSerializer
 
 	int					m_totalSize;
 	unsigned char*		m_buffer;
+	bool                m_ownsBuffer;
 	int					m_currentSize;
 	void*				m_dna;
 	int					m_dnaLength;
@@ -166,10 +195,11 @@ class btDefaultSerializer	:	public btSerializer
 
 
 	btAlignedObjectArray<btChunk*>	m_chunkPtrs;
-	
+
 protected:
 
-	virtual	void*	findPointer(void* oldPtr) 
+	
+	virtual	void*	findPointer(void* oldPtr)
 	{
 		void** ptr = m_chunkP.find(oldPtr);
 		if (ptr && *ptr)
@@ -177,11 +207,11 @@ protected:
 		return 0;
 	}
 
-	
 
 
 
-		void	writeDNA()
+
+		virtual void	writeDNA()
 		{
 			btChunk* dnaChunk = allocate(m_dnaLength,1);
 			memcpy(dnaChunk->m_oldPtr,m_dna,m_dnaLength);
@@ -195,7 +225,7 @@ protected:
 			const int* valuePtr = mTypeLookup.find(key);
 			if (valuePtr)
 				return *valuePtr;
-			
+
 			return -1;
 		}
 
@@ -207,7 +237,7 @@ protected:
 
 			int littleEndian= 1;
 			littleEndian= ((char*)&littleEndian)[0];
-			
+
 
 			m_dna = btAlignedAlloc(dnalen,16);
 			memcpy(m_dna,bdnaOrg,dnalen);
@@ -235,16 +265,16 @@ protected:
 			// Parse names
 			if (!littleEndian)
 				*intPtr = btSwapEndian(*intPtr);
-				
+
 			dataLen = *intPtr;
-			
+
 			intPtr++;
 
 			cp = (char*)intPtr;
 			int i;
 			for ( i=0; i<dataLen; i++)
 			{
-				
+
 				while (*cp)cp++;
 				cp++;
 			}
@@ -258,15 +288,15 @@ protected:
 			*/
 
 			intPtr = (int*)cp;
-			assert(strncmp(cp, "TYPE", 4)==0); intPtr++;
+			btAssert(strncmp(cp, "TYPE", 4)==0); intPtr++;
 
 			if (!littleEndian)
 				*intPtr =  btSwapEndian(*intPtr);
-			
+
 			dataLen = *intPtr;
 			intPtr++;
 
-			
+
 			cp = (char*)intPtr;
 			for (i=0; i<dataLen; i++)
 			{
@@ -286,7 +316,7 @@ protected:
 
 			// Parse type lens
 			intPtr = (int*)cp;
-			assert(strncmp(cp, "TLEN", 4)==0); intPtr++;
+			btAssert(strncmp(cp, "TLEN", 4)==0); intPtr++;
 
 			dataLen = (int)mTypes.size();
 
@@ -313,11 +343,11 @@ protected:
 
 			intPtr = (int*)shtPtr;
 			cp = (char*)intPtr;
-			assert(strncmp(cp, "STRC", 4)==0); intPtr++;
+			btAssert(strncmp(cp, "STRC", 4)==0); intPtr++;
 
 			if (!littleEndian)
 				*intPtr = btSwapEndian(*intPtr);
-			dataLen = *intPtr ; 
+			dataLen = *intPtr ;
 			intPtr++;
 
 
@@ -325,7 +355,7 @@ protected:
 			for (i=0; i<dataLen; i++)
 			{
 				mStructs.push_back (shtPtr);
-				
+
 				if (!littleEndian)
 				{
 					shtPtr[0]= btSwapEndian(shtPtr[0]);
@@ -355,20 +385,28 @@ protected:
 			}
 		}
 
-public:	
-	
+public:
 
-	
+	btHashMap<btHashPtr,void*> m_skipPointers;
 
-		btDefaultSerializer(int totalSize=0)
+
+		btDefaultSerializer(int totalSize=0, unsigned char*	buffer=0)
 			:m_totalSize(totalSize),
 			m_currentSize(0),
 			m_dna(0),
 			m_dnaLength(0),
 			m_serializationFlags(0)
 		{
-			m_buffer = m_totalSize?(unsigned char*)btAlignedAlloc(totalSize,16):0;
-			
+		    if (buffer==0)
+            {
+                m_buffer = m_totalSize?(unsigned char*)btAlignedAlloc(totalSize,16):0;
+                m_ownsBuffer = true;
+            } else
+            {
+                m_buffer = buffer;
+                m_ownsBuffer = false;
+            }
+
 			const bool VOID_IS_8 = ((sizeof(void*)==8));
 
 #ifdef BT_INTERNAL_UPDATE_SERIALIZATION_STRUCTURES
@@ -387,7 +425,7 @@ public:
 				btAssert(0);
 #endif
 			}
-	
+
 #else //BT_INTERNAL_UPDATE_SERIALIZATION_STRUCTURES
 			if (VOID_IS_8)
 			{
@@ -397,27 +435,33 @@ public:
 				initDNA((const char*)sBulletDNAstr,sBulletDNAlen);
 			}
 #endif //BT_INTERNAL_UPDATE_SERIALIZATION_STRUCTURES
-	
+
 		}
 
-		virtual ~btDefaultSerializer() 
+		virtual ~btDefaultSerializer()
 		{
-			if (m_buffer)
+			if (m_buffer && m_ownsBuffer)
 				btAlignedFree(m_buffer);
 			if (m_dna)
 				btAlignedFree(m_dna);
 		}
 
+		void	insertHeader()
+		{
+			writeHeader(m_buffer);
+			m_currentSize += BT_HEADER_LENGTH;
+		}
+
 		void	writeHeader(unsigned char* buffer) const
 		{
-			
+
 
 #ifdef  BT_USE_DOUBLE_PRECISION
 			memcpy(buffer, "BULLETd", 7);
 #else
 			memcpy(buffer, "BULLETf", 7);
 #endif //BT_USE_DOUBLE_PRECISION
-	
+
 			int littleEndian= 1;
 			littleEndian= ((char*)&littleEndian)[0];
 
@@ -431,7 +475,7 @@ public:
 
 			if (littleEndian)
 			{
-				buffer[8]='v';				
+				buffer[8]='v';
 			} else
 			{
 				buffer[8]='V';
@@ -440,7 +484,7 @@ public:
 
 			buffer[9] = '2';
 			buffer[10] = '8';
-			buffer[11] = '0';
+			buffer[11] = '5';
 
 		}
 
@@ -452,7 +496,7 @@ public:
 				unsigned char* buffer = internalAlloc(BT_HEADER_LENGTH);
 				writeHeader(buffer);
 			}
-			
+
 		}
 
 		virtual	void	finishSerialization()
@@ -488,6 +532,7 @@ public:
 			mTlens.clear();
 			mStructReverse.clear();
 			mTypeLookup.clear();
+			m_skipPointers.clear();
 			m_chunkP.clear();
 			m_nameMap.clear();
 			m_uniquePointers.clear();
@@ -504,8 +549,15 @@ public:
 			{
 				return uptr->m_ptr;
 			}
+
+			void** ptr2 = m_skipPointers[oldPtr];
+            if (ptr2)
+			{
+				return 0;
+			}
+
 			m_uniqueIdGenerator++;
-			
+
 			btPointerUid uid;
 			uid.m_uniqueIds[0] = m_uniqueIdGenerator;
 			uid.m_uniqueIds[1] = m_uniqueIdGenerator;
@@ -532,17 +584,17 @@ public:
 			}
 
 			chunk->m_dna_nr = getReverseType(structType);
-			
+
 			chunk->m_chunkCode = chunkCode;
-			
+
 			void* uniquePtr = getUniquePointer(oldPtr);
-			
+
 			m_chunkP.insert(oldPtr,uniquePtr);//chunk->m_oldPtr);
 			chunk->m_oldPtr = uniquePtr;//oldPtr;
-			
+
 		}
 
-		
+
 		virtual unsigned char* internalAlloc(size_t size)
 		{
 			unsigned char* ptr = 0;
@@ -560,7 +612,7 @@ public:
 			return ptr;
 		}
 
-		
+
 
 		virtual	btChunk*	allocate(size_t size, int numElements)
 		{
@@ -568,15 +620,15 @@ public:
 			unsigned char* ptr = internalAlloc(int(size)*numElements+sizeof(btChunk));
 
 			unsigned char* data = ptr + sizeof(btChunk);
-			
+
 			btChunk* chunk = (btChunk*)ptr;
 			chunk->m_chunkCode = 0;
 			chunk->m_oldPtr = data;
 			chunk->m_length = int(size)*numElements;
 			chunk->m_number = numElements;
-			
+
 			m_chunkPtrs.push_back(chunk);
-			
+
 
 			return chunk;
 		}
@@ -633,9 +685,202 @@ public:
 		{
 			m_serializationFlags = flags;
 		}
+		int getNumChunks() const
+		{
+			return m_chunkPtrs.size();
+		}
 
+		const btChunk* getChunk(int chunkIndex) const
+		{
+			return m_chunkPtrs[chunkIndex];
+		}
 };
 
+
+///In general it is best to use btDefaultSerializer,
+///in particular when writing the data to disk or sending it over the network.
+///The btInMemorySerializer is experimental and only suitable in a few cases.
+///The btInMemorySerializer takes a shortcut and can be useful to create a deep-copy
+///of objects. There will be a demo on how to use the btInMemorySerializer.
+#ifdef ENABLE_INMEMORY_SERIALIZER
+
+struct btInMemorySerializer : public btDefaultSerializer
+{
+    btHashMap<btHashPtr,btChunk*> m_uid2ChunkPtr;
+    btHashMap<btHashPtr,void*> m_orgPtr2UniqueDataPtr;
+    btHashMap<btHashString,const void*> m_names2Ptr;
+    
+
+    btBulletSerializedArrays    m_arrays;
+
+    btInMemorySerializer(int totalSize=0, unsigned char*	buffer=0)
+    :btDefaultSerializer(totalSize,buffer)
+    {
+        
+    }
+
+    virtual void startSerialization()
+    {
+        m_uid2ChunkPtr.clear();
+        //todo: m_arrays.clear();
+        btDefaultSerializer::startSerialization();
+    }
+
+    
+
+    btChunk* findChunkFromUniquePointer(void* uniquePointer)
+    {
+        btChunk** chkPtr = m_uid2ChunkPtr[uniquePointer];
+        if (chkPtr)
+        {
+            return *chkPtr;
+        }
+        return 0;
+    }
+
+	virtual	void	registerNameForPointer(const void* ptr, const char* name)
+    {
+       btDefaultSerializer::registerNameForPointer(ptr,name);
+       m_names2Ptr.insert(name,ptr);
+    }
+
+    virtual void finishSerialization()
+    {
+    }
+
+    virtual void* getUniquePointer(void*oldPtr)
+    {
+        if (oldPtr==0)
+            return 0;
+
+        // void* uniquePtr = getUniquePointer(oldPtr);
+        btChunk* chunk = findChunkFromUniquePointer(oldPtr);
+        if (chunk)
+        {
+            return chunk->m_oldPtr;
+        } else
+        {
+            const char* n = (const char*) oldPtr;
+            const void** ptr = m_names2Ptr[n];
+            if (ptr)
+            {
+                return oldPtr;
+            } else
+            {
+            		void** ptr2 = m_skipPointers[oldPtr];
+            		if (ptr2)
+								{
+									return 0;
+								} else
+								{
+									//If this assert hit, serialization happened in the wrong order
+									// 'getUniquePointer'
+									btAssert(0);
+								}
+
+            }
+            return 0;
+        }
+				return oldPtr;
+    }
+
+    virtual void finalizeChunk(btChunk* chunk, const char* structType, int chunkCode,void* oldPtr)
+    {
+        if (!(m_serializationFlags&BT_SERIALIZE_NO_DUPLICATE_ASSERT))
+        {
+            btAssert(!findPointer(oldPtr));
+        }
+
+        chunk->m_dna_nr = getReverseType(structType);
+        chunk->m_chunkCode = chunkCode;
+        //void* uniquePtr = getUniquePointer(oldPtr);
+        m_chunkP.insert(oldPtr,oldPtr);//chunk->m_oldPtr);
+        // chunk->m_oldPtr = uniquePtr;//oldPtr;
+
+        void* uid = findPointer(oldPtr);
+        m_uid2ChunkPtr.insert(uid,chunk);
+
+        switch (chunk->m_chunkCode)
+			{
+			case BT_SOFTBODY_CODE:
+			{
+	#ifdef BT_USE_DOUBLE_PRECISION
+					m_arrays.m_softBodyDoubleData.push_back((btSoftBodyDoubleData*) chunk->m_oldPtr);
+	#else
+					m_arrays.m_softBodyFloatData.push_back((btSoftBodyFloatData*) chunk->m_oldPtr);
+	#endif
+					break;
+				}
+			case BT_COLLISIONOBJECT_CODE:
+				{
+	#ifdef BT_USE_DOUBLE_PRECISION
+					m_arrays.m_collisionObjectDataDouble.push_back((btCollisionObjectDoubleData*)chunk->m_oldPtr);
+	#else//BT_USE_DOUBLE_PRECISION
+					m_arrays.m_collisionObjectDataFloat.push_back((btCollisionObjectFloatData*)chunk->m_oldPtr);
+	#endif //BT_USE_DOUBLE_PRECISION
+					break;
+				}
+			case BT_RIGIDBODY_CODE:
+				{
+	#ifdef BT_USE_DOUBLE_PRECISION
+					m_arrays.m_rigidBodyDataDouble.push_back((btRigidBodyDoubleData*)chunk->m_oldPtr);
+	#else
+					m_arrays.m_rigidBodyDataFloat.push_back((btRigidBodyFloatData*)chunk->m_oldPtr);
+	#endif//BT_USE_DOUBLE_PRECISION
+					break;
+				};
+			case BT_CONSTRAINT_CODE:
+				{
+	#ifdef BT_USE_DOUBLE_PRECISION
+					m_arrays.m_constraintDataDouble.push_back((btTypedConstraintDoubleData*)chunk->m_oldPtr);
+	#else
+					m_arrays.m_constraintDataFloat.push_back((btTypedConstraintFloatData*)chunk->m_oldPtr);
+	#endif
+					break;
+				}
+			case BT_QUANTIZED_BVH_CODE:
+				{
+	#ifdef BT_USE_DOUBLE_PRECISION
+					m_arrays.m_bvhsDouble.push_back((btQuantizedBvhDoubleData*) chunk->m_oldPtr);
+	#else
+					m_arrays.m_bvhsFloat.push_back((btQuantizedBvhFloatData*) chunk->m_oldPtr);
+	#endif
+					break;
+				}
+
+			case BT_SHAPE_CODE:
+				{
+					btCollisionShapeData* shapeData = (btCollisionShapeData*) chunk->m_oldPtr;
+					m_arrays.m_colShapeData.push_back(shapeData);
+					break;
+				}
+			case BT_TRIANLGE_INFO_MAP:
+			case BT_ARRAY_CODE:
+			case BT_SBMATERIAL_CODE:
+			case BT_SBNODE_CODE:
+			case BT_DYNAMICSWORLD_CODE:
+			case BT_DNA_CODE:
+				{
+					break;
+				}
+			default:
+				{
+				}
+			};
+    }
+
+    int getNumChunks() const
+    {
+        return m_uid2ChunkPtr.size();
+    }
+
+    const btChunk* getChunk(int chunkIndex) const
+    {
+        return *m_uid2ChunkPtr.getAtIndex(chunkIndex);
+    }
+
+};
+#endif //ENABLE_INMEMORY_SERIALIZER
 
 #endif //BT_SERIALIZER_H
 

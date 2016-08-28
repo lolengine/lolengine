@@ -34,7 +34,6 @@ int gFindPairs =0;
 
 btHashedOverlappingPairCache::btHashedOverlappingPairCache():
 	m_overlapFilterCallback(0),
-	m_blockedForChanges(false),
 	m_ghostPairCallback(0)
 {
 	int initialAllocatedSize= 2;
@@ -53,7 +52,7 @@ btHashedOverlappingPairCache::~btHashedOverlappingPairCache()
 
 void	btHashedOverlappingPairCache::cleanOverlappingPair(btBroadphasePair& pair,btDispatcher* dispatcher)
 {
-	if (pair.m_algorithm)
+	if (pair.m_algorithm && dispatcher)
 	{
 		{
 			pair.m_algorithm->~btCollisionAlgorithm();

@@ -76,7 +76,7 @@ void	btSoftRigidDynamicsWorld::predictUnconstraintMotion(btScalar timeStep)
 	btDiscreteDynamicsWorld::predictUnconstraintMotion( timeStep );
 	{
 		BT_PROFILE("predictUnconstraintMotionSoftBody");
-		m_softBodySolver->predictMotion( timeStep );
+		m_softBodySolver->predictMotion( float(timeStep) );
 	}
 }
 
@@ -352,6 +352,8 @@ void	btSoftRigidDynamicsWorld::serialize(btSerializer* serializer)
 {
 
 	serializer->startSerialization();
+
+	serializeDynamicsWorldInfo( serializer);
 
 	serializeSoftBodies(serializer);
 
