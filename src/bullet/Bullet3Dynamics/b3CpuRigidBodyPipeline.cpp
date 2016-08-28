@@ -254,9 +254,9 @@ struct b3SolveTask// : public ThreadPool::Task
 				int maxNumBatches,
 				b3AlignedObjectArray<int>* wgUsedBodies, int curWgidx
 				)
-		: m_bodies( bodies ), m_shapes( shapes ), m_constraints( constraints ), m_start( start ), m_nConstraints( nConstraints ),
-		m_solveFriction( true ),m_maxNumBatches(maxNumBatches),
-		m_wgUsedBodies(wgUsedBodies),m_curWgidx(curWgidx)
+		: m_bodies( bodies ), m_shapes( shapes ), m_constraints( constraints ),
+		m_wgUsedBodies(wgUsedBodies), m_curWgidx(curWgidx), m_start( start ),
+		m_nConstraints( nConstraints ), m_solveFriction( true ), m_maxNumBatches(maxNumBatches)
 	{}
 
 	unsigned short int getType(){ return 0; }

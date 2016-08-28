@@ -87,11 +87,11 @@ public:
 
 
 b3Solver::b3Solver(cl_context ctx, cl_device_id device, cl_command_queue queue, int pairCapacity)
-			:m_nIterations(4),
-			m_context(ctx),
+			:m_context(ctx),
 			m_device(device),
 			m_queue(queue),
-			m_batchSizes(ctx,queue)
+			m_batchSizes(ctx,queue),
+			m_nIterations(4)
 {
 	m_sort32 = new b3RadixSort32CL(ctx,device,queue);
 	m_scan = new b3PrefixScanCL(ctx,device,queue,B3_SOLVER_N_CELLS);
@@ -362,11 +362,15 @@ struct SolveTask// : public ThreadPool::Task
 {
 	SolveTask(b3AlignedObjectArray<b3RigidBodyData>& bodies,  b3AlignedObjectArray<b3InertiaData>& shapes, b3AlignedObjectArray<b3GpuConstraint4>& constraints,
 		int start, int nConstraints,int maxNumBatches,b3AlignedObjectArray<int>* wgUsedBodies, int curWgidx, b3AlignedObjectArray<int>* batchSizes, int cellIndex)
-		: m_bodies( bodies ), m_shapes( shapes ), m_constraints( constraints ), m_start( start ), m_nConstraints( nConstraints ),
-		m_solveFriction( true ),m_maxNumBatches(maxNumBatches),
-		m_curWgidx(curWgidx),
+		: m_bodies( bodies ), m_shapes( shapes ),
+		m_constraints( constraints ),
 		m_batchSizes(batchSizes),
-		m_cellIndex(cellIndex)
+		m_cellIndex(cellIndex),
+		m_curWgidx(curWgidx),
+		m_start( start ),
+		m_nConstraints( nConstraints ),
+		m_solveFriction( true ),
+		m_maxNumBatches(maxNumBatches)
 	{}
 
 	unsigned short int getType(){ return 0; }

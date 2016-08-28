@@ -38,8 +38,8 @@ m_largeAabbsMappingGPU(ctx,q),
 m_gpuPairs(ctx,q),
 
 m_hashGpu(ctx,q),
-m_paramsGPU(ctx,q),
-m_cellStartGpu(ctx,q)
+m_cellStartGpu(ctx,q),
+m_paramsGPU(ctx,q)
 {
 
 	
@@ -279,7 +279,7 @@ void  b3GpuGridBroadphase::calculateOverlappingPairs(int maxPairs)
 
 				int sz = m_gpuPairs.size();
 				printf("m_gpuPairs.size()=%d\n",sz);
-				for (int i=0;i<m_gpuPairs.size();i++)
+				for (unsigned int i=0;i<m_gpuPairs.size();i++)
 				{
 					printf("pair %d = %d,%d\n",i,pairsCpu[i].x,pairsCpu[i].y);
 				}

@@ -142,8 +142,9 @@ int	getNumContacts(b3Contact4* contact)
 }
 
 b3PgsJacobiSolver::b3PgsJacobiSolver(bool usePgs)
-:m_btSeed2(0),m_usePgs(usePgs),
-m_numSplitImpulseRecoveries(0)
+	: m_usePgs(usePgs),
+	m_numSplitImpulseRecoveries(0),
+	m_btSeed2(0)
 {
 
 }
