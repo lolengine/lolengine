@@ -437,9 +437,9 @@ AC_SUBST(UTIL_LIBS)
 dnl  How to use the Lol Engine outside this tree
 LOL_CFLAGS="$LOL_CFLAGS $SDL_CFLAGS $GL_CFLAGS $EGL_CFLAGS $LIBPNG_CFLAGS"
 LOL_LIBS="$LOL_LIBS $SDL_LIBS $GL_LIBS $EGL_LIBS $LIBPNG_LIBS $D3D_LIBS"
-LOL_DEPS="${LOL_DEPS} \$(top_builddir)/src/liblolcore.a"
-LOL_DEPS="${LOL_DEPS} \$(top_builddir)/src/bullet/liblolbullet.a"
-LOL_DEPS="${LOL_DEPS} \$(top_builddir)/src/lua/liblollua.a"
+LOL_DEPS="${LOL_DEPS} \$(top_builddir)/src/liblol-core.a"
+LOL_DEPS="${LOL_DEPS} \$(top_builddir)/src/bullet/liblol-bullet.a"
+LOL_DEPS="${LOL_DEPS} \$(top_builddir)/src/lua/liblol-lua.a"
 
 dnl  How to use the Lol Engine inside this tree
 AM_CPPFLAGS="${AM_CPPFLAGS} -I\$(top_srcdir)/src"

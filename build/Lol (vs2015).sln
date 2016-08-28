@@ -13,11 +13,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Deus Hax", "Deus Hax", "{08
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Monsterz", "Monsterz", "{2F87CEAB-4818-443C-A5E3-6C34E7D967EC}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lolcore", "..\src\lolcore.vcxproj", "{9E62F2FE-3408-4EAE-8238-FD84238CEEDA}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lol-core", "..\src\lol-core.vcxproj", "{9E62F2FE-3408-4EAE-8238-FD84238CEEDA}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lolbullet", "..\src\bullet\lolbullet.vcxproj", "{83D3B207-C601-4025-8F41-01DEDC354661}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lol-bullet", "..\src\bullet\lol-bullet.vcxproj", "{83D3B207-C601-4025-8F41-01DEDC354661}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lollua", "..\src\lua\lollua.vcxproj", "{D84021CA-B233-4E0F-8A52-071B83BBCCC4}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lol-lua", "..\src\lua\lol-lua.vcxproj", "{D84021CA-B233-4E0F-8A52-071B83BBCCC4}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "test-base", "..\src\t\test-base.vcxproj", "{8F59A635-0240-4D7F-A80D-050C3F1670C2}"
 EndProject
