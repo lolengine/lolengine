@@ -14,12 +14,6 @@
 
 #include "lolgl.h"
 
-#if defined _WIN32 && defined USE_D3D9
-#   define FAR
-#   define NEAR
-#   include <d3d9.h>
-#endif
-
 namespace lol
 {
 
@@ -35,30 +29,8 @@ class VertexBufferData
 
     size_t m_size;
 
-#if defined USE_D3D9
-    IDirect3DDevice9 *m_dev;
-    IDirect3DVertexBuffer9 *m_vbo;
-#else
     GLuint m_vbo;
     uint8_t *m_memory;
-#endif
-};
-
-//
-// The VertexDeclarationData class
-// -------------------------------
-//
-
-class VertexDeclarationData
-{
-    friend class VertexBuffer;
-    friend class VertexDeclaration;
-
-#if defined USE_D3D9
-    IDirect3DDevice9 *m_dev;
-    IDirect3DVertexDeclaration9 *m_vdecl;
-#else
-#endif
 };
 
 //
@@ -80,8 +52,7 @@ VertexDeclaration::VertexDeclaration(VertexStreamBase const &s1,
                                      VertexStreamBase const &s10,
                                      VertexStreamBase const &s11,
                                      VertexStreamBase const &s12)
-  : m_count(0),
-    m_data(new VertexDeclarationData())
+  : m_count(0)
 {
     if (&s1 != &VertexStreamBase::Empty) AddStream(s1);
     if (&s2 != &VertexStreamBase::Empty) AddStream(s2);
@@ -95,29 +66,15 @@ VertexDeclaration::VertexDeclaration(VertexStreamBase const &s1,
     if (&s10 != &VertexStreamBase::Empty) AddStream(s10);
     if (&s11 != &VertexStreamBase::Empty) AddStream(s11);
     if (&s12 != &VertexStreamBase::Empty) AddStream(s12);
-    Initialize();
 }
 
 VertexDeclaration::~VertexDeclaration()
 {
-#if defined USE_D3D9
-    if (FAILED(m_data->m_vdecl->Release()))
-        Abort();
-#else
-
-#endif
-
-    delete m_data;
 }
 
 void VertexDeclaration::Bind()
 {
-#if defined USE_D3D9
-    if (FAILED(m_data->m_dev->SetVertexDeclaration(m_data->m_vdecl)))
-        Abort();
-#else
     /* FIXME: Nothing to do? */
-#endif
 }
 
 void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
@@ -125,36 +82,6 @@ void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
     if (count <= 0)
         return;
 
-#if defined USE_D3D9
-    switch (type.ToScalar())
-    {
-    case MeshPrimitive::Triangles:
-        if (FAILED(m_data->m_dev->DrawPrimitive(D3DPT_TRIANGLELIST,
-                                                skip, count)))
-            Abort();
-        break;
-    case MeshPrimitive::TriangleStrips:
-        if (FAILED(m_data->m_dev->DrawPrimitive(D3DPT_TRIANGLESTRIP,
-                                                skip, count)))
-            Abort();
-        break;
-    case MeshPrimitive::TriangleFans:
-        if (FAILED(m_data->m_dev->DrawPrimitive(D3DPT_TRIANGLEFAN,
-                                                skip, count)))
-            Abort();
-        break;
-    case MeshPrimitive::Points:
-        if (FAILED(m_data->m_dev->DrawPrimitive(D3DPT_POINTLIST,
-                                                skip, count)))
-            Abort();
-        break;
-    case MeshPrimitive::Lines:
-        if (FAILED(m_data->m_dev->DrawPrimitive(D3DPT_LINELIST,
-                                                skip, count)))
-            Abort();
-        break;
-    }
-#else
     /* FIXME: this has nothing to do here! */
     switch (type.ToScalar())
     {
@@ -174,7 +101,6 @@ void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
         glDrawArrays(GL_LINES, skip, count);
         break;
     }
-#endif
 }
 
 void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
@@ -184,39 +110,6 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
     if (count <= 0)
         return;
 
-#if defined USE_D3D9
-    switch (type.ToScalar())
-    {
-    case MeshPrimitive::Triangles:
-        count = count / 3;
-        if (FAILED(m_data->m_dev->DrawIndexedPrimitive(D3DPT_TRIANGLELIST,
-                                           vbase, vskip, vcount, skip, count)))
-            Abort();
-        break;
-    case MeshPrimitive::TriangleStrips:
-        count = count - 2;
-        if (FAILED(m_data->m_dev->DrawIndexedPrimitive(D3DPT_TRIANGLESTRIP,
-                                           vbase, vskip, vcount, skip, count)))
-            Abort();
-        break;
-    case MeshPrimitive::TriangleFans:
-        count = count - 2;
-        if (FAILED(m_data->m_dev->DrawIndexedPrimitive(D3DPT_TRIANGLEFAN,
-                                           vbase, vskip, vcount, skip, count)))
-            Abort();
-        break;
-    case MeshPrimitive::Points:
-        if (FAILED(m_data->m_dev->DrawIndexedPrimitive(D3DPT_POINTLIST,
-                                           vbase, vskip, vcount, skip, count)))
-            Abort();
-        break;
-    case MeshPrimitive::Lines:
-        if (FAILED(m_data->m_dev->DrawIndexedPrimitive(D3DPT_LINELIST,
-                                           vbase, vskip, vcount, skip, count)))
-            Abort();
-        break;
-    }
-#else
     /* FIXME: this has nothing to do here! */
     switch (type.ToScalar())
     {
@@ -246,23 +139,10 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
         glDrawElements(GL_LINES, count, GL_UNSIGNED_SHORT, 0);
         break;
     }
-#endif
 }
 
 void VertexDeclaration::Unbind()
 {
-#if defined USE_D3D9
-    int stream = -1;
-    for (int i = 0; i < m_count; i++)
-        if (m_streams[i].index != stream)
-        {
-            stream = m_streams[i].index;
-            if (FAILED(m_data->m_dev->SetStreamSource(stream, 0, 0, 0)))
-                Abort();
-        }
-    /* "NULL is an invalid input to SetVertexDeclaration" (DX9 guide), so
-     * we just don't touch the current vertex declaration. */
-#else
     for (int i = 0; i < m_count; i++)
     {
         if (m_streams[i].reg >= 0)
@@ -275,7 +155,6 @@ void VertexDeclaration::Unbind()
         }
     }
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-#endif
 }
 
 void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
@@ -291,15 +170,10 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
                                                     ShaderAttrib attr11,
                                                     ShaderAttrib attr12)
 {
-#if defined USE_D3D9
-    // Don't bother in DirectX world, shader attributes are not used
-    SetStream(vb, nullptr);
-#else
     ShaderAttrib attribs[12] = { attr1, attr2, attr3, attr4, attr5, attr6,
                            attr7, attr8, attr9, attr10, attr11, attr12 };
 
     SetStream(vb, attribs);
-#endif
 }
 
 void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attribs[])
@@ -307,39 +181,6 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attribs[])
     if (!vb->m_data->m_size)
         return;
 
-#if defined USE_D3D9
-    /* Only the first item is required to know which stream this
-     * is about; the rest of the information is stored in the
-     * vertex declaration already. */
-    VertexUsage usage = VertexUsage((attr1.m_flags >> 16) & 0xffff);
-    uint32_t index = attr1.m_flags & 0xffff;
-
-    /* Find the stream number */
-    uint32_t usage_index = 0;
-    int stream = -1;
-    for (int i = 0; i < m_count; i++)
-        if (m_streams[i].usage == usage)
-            if (usage_index++ == index)
-            {
-                stream = m_streams[i].index;
-                break;
-            }
-
-    /* Compute this stream's stride */
-    int stride = 0;
-    for (int i = 0; i < m_count; i++)
-        if (stream == m_streams[i].index)
-            stride += m_streams[i].size;
-
-    /* Now we know the stream index and the element stride */
-    /* FIXME: precompute most of the crap above! */
-    if (stream >= 0)
-    {
-        if (FAILED(m_data->m_dev->SetStreamSource(stream, vb->m_data->m_vbo,
-                                                  0, stride)))
-            Abort();
-    }
-#else
     glBindBuffer(GL_ARRAY_BUFFER, vb->m_data->m_vbo);
     for (int n = 0; n < 12 && attribs[n].m_flags != (uint64_t)0 - 1; n++)
     {
@@ -381,9 +222,9 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attribs[])
             }
 
         /* Finally, we need to retrieve the type of the data */
-#   if !defined GL_DOUBLE
-#       define GL_DOUBLE 0
-#   endif
+#if !defined GL_DOUBLE
+#   define GL_DOUBLE 0
+#endif
         static struct { GLint size; GLenum type; } const tlut[] =
         {
             { 0, 0 },
@@ -419,10 +260,10 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attribs[])
                  || tlut[type_index].type == GL_DOUBLE
                  || tlut[type_index].type == GL_BYTE
                  || tlut[type_index].type == GL_UNSIGNED_BYTE
-#       if defined USE_GLEW && !defined __APPLE__
+#if defined USE_GLEW && !defined __APPLE__
                  /* If this is not available, don't use it */
                  || !glVertexAttribIPointer
-#       endif
+#endif
                  || false)
             {
                 /* Normalize unsigned bytes by default, because it's usually
@@ -433,97 +274,16 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attribs[])
                                       tlut[type_index].type, normalize,
                                       stride, (GLvoid const *)(uintptr_t)offset);
             }
-#       if defined GL_VERSION_3_0
+#if defined GL_VERSION_3_0
             else
             {
                 glVertexAttribIPointer((GLint)reg, tlut[type_index].size,
                                        tlut[type_index].type,
                                        stride, (GLvoid const *)(uintptr_t)offset);
             }
-#       endif
+#endif
         }
     }
-#endif
-}
-
-void VertexDeclaration::Initialize()
-{
-#if defined USE_D3D9
-    static D3DVERTEXELEMENT9 const end_element[] = { D3DDECL_END() };
-    static D3DDECLTYPE const X = D3DDECLTYPE_UNUSED;
-    static D3DDECLTYPE const tlut[] =
-    {
-        D3DDECLTYPE_UNUSED,
-#if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
-        X, D3DDECLTYPE_FLOAT16_2, X, D3DDECLTYPE_FLOAT16_4, /* half */
-#endif
-        D3DDECLTYPE_FLOAT1, D3DDECLTYPE_FLOAT2, D3DDECLTYPE_FLOAT3,
-            D3DDECLTYPE_FLOAT4, /* float */
-        X, X, X, X, /* double */
-        X, X, X, X, /* int8_t */
-        X, X, X, D3DDECLTYPE_UBYTE4N, /* uint8_t */
-        X, D3DDECLTYPE_SHORT2N, X, D3DDECLTYPE_SHORT4N, /* int16_t */
-        X, D3DDECLTYPE_USHORT2N, X, D3DDECLTYPE_USHORT4N, /* uint16_t */
-        X, X, X, X, /* int32_t */
-        X, X, X, X, /* uint32_t */
-    };
-    static D3DDECLUSAGE const ulut[] =
-    {
-        D3DDECLUSAGE_POSITION,
-        D3DDECLUSAGE_BLENDWEIGHT,
-        D3DDECLUSAGE_BLENDINDICES,
-        D3DDECLUSAGE_NORMAL,
-        D3DDECLUSAGE_PSIZE,
-        D3DDECLUSAGE_TEXCOORD,
-        D3DDECLUSAGE_TANGENT,
-        D3DDECLUSAGE_BINORMAL,
-        D3DDECLUSAGE_TESSFACTOR,
-        D3DDECLUSAGE_POSITIONT,
-        D3DDECLUSAGE_COLOR,
-        D3DDECLUSAGE_FOG,
-        D3DDECLUSAGE_DEPTH,
-        D3DDECLUSAGE_SAMPLE,
-    };
-
-    D3DVERTEXELEMENT9 elements[12 + 1];
-    for (int n = 0; n < m_count; n++)
-    {
-        elements[n].Stream = m_streams[n].index;
-        elements[n].Offset = 0;
-        for (int i = 0; i < n; i++)
-            if (m_streams[i].index == m_streams[n].index)
-                elements[n].Offset += m_streams[i].size;
-
-        if (m_streams[n].stream_type >= 0
-             && m_streams[n].stream_type < sizeof(tlut) / sizeof(*tlut))
-            elements[n].Type = tlut[m_streams[n].stream_type];
-        else
-            elements[n].Type = D3DDECLTYPE_UNUSED;
-
-        elements[n].Method = D3DDECLMETHOD_DEFAULT;
-
-        if (m_streams[n].usage >= 0
-             && m_streams[n].usage < sizeof(ulut) / sizeof(*ulut))
-            elements[n].Usage = ulut[m_streams[n].usage];
-        else
-            elements[n].Usage = D3DDECLUSAGE_POSITION;
-
-        elements[n].UsageIndex = 0;
-        for (int i = 0; i < n; i++)
-            if (elements[i].Stream == elements[n].Stream
-                 && elements[i].Usage == elements[n].Usage)
-                elements[n].UsageIndex++;
-    }
-    elements[m_count] = end_element[0];
-
-    m_data->m_dev = (IDirect3DDevice9 *)Renderer::Get()->GetDevice();
-
-    if (FAILED(m_data->m_dev->CreateVertexDeclaration(elements,
-                                                      &m_data->m_vdecl)))
-        Abort();
-#else
-
-#endif
 }
 
 void VertexDeclaration::AddStream(VertexStreamBase const &s)
@@ -596,28 +356,17 @@ VertexBuffer::VertexBuffer(size_t size)
     m_data->m_size = size;
     if (!size)
         return;
-#if defined USE_D3D9
-    m_data->m_dev = (IDirect3DDevice9 *)Renderer::Get()->GetDevice();
-    if (FAILED(m_data->m_dev->CreateVertexBuffer(size, D3DUSAGE_WRITEONLY, nullptr,
-                                               D3DPOOL_MANAGED, &m_data->m_vbo, nullptr)))
-        Abort();
-#else
+
     glGenBuffers(1, &m_data->m_vbo);
     m_data->m_memory = new uint8_t[size];
-#endif
 }
 
 VertexBuffer::~VertexBuffer()
 {
     if (m_data->m_size)
     {
-#if defined USE_D3D9
-        if (FAILED(m_data->m_vbo->Release()))
-            Abort();
-#else
         glDeleteBuffers(1, &m_data->m_vbo);
         delete[] m_data->m_memory;
-#endif
     }
     delete m_data;
 }
@@ -631,31 +380,21 @@ void *VertexBuffer::Lock(size_t offset, size_t size)
 {
     if (!m_data->m_size)
         return nullptr;
-#if defined USE_D3D9
-    void *ret;
-    if (FAILED(m_data->m_vbo->Lock(offset, size, (void **)&ret, 0)))
-        Abort();
-    return ret;
-#else
+
     /* FIXME: is there a way to use "size"? */
     UNUSED(size);
     return m_data->m_memory + offset;
-#endif
 }
 
 void VertexBuffer::Unlock()
 {
     if (!m_data->m_size)
         return;
-#if defined USE_D3D9
-    if (FAILED(m_data->m_vbo->Unlock()))
-        Abort();
-#else
+
     glBindBuffer(GL_ARRAY_BUFFER, m_data->m_vbo);
     glBufferData(GL_ARRAY_BUFFER, m_data->m_size, m_data->m_memory,
                  GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
-#endif
 }
 
 } /* namespace lol */

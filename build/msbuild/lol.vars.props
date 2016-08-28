@@ -76,15 +76,7 @@
     <GlLibs Condition="'$(Platform)'=='x64'">$(GlewDir)\lib\x86_64-w64-mingw32</GlLibs>
     <GlDeps Condition="'$(Platform)'=='Win32'">opengl32.lib;glew32s.lib</GlDeps>
     <GlDeps Condition="'$(Platform)'=='x64'">opengl32.lib;glew32s.lib</GlDeps>
-    <Win32Defines Condition="'$(UseOpenGL)'=='true'">HAVE_GL_2X;USE_GLEW;GLEW_STATIC;$(Win32Defines)</Win32Defines>
-
-    <!-- Direct3D 9 -->
-    <D3d9Includes>$(DXSDK_DIR)\Include</D3d9Includes>
-    <D3d9Libs Condition="'$(Platform)'=='Win32'">$(DXSDK_DIR)\Lib\x86</D3d9Libs>
-    <D3d9Libs Condition="'$(Platform)'=='x64'">$(DXSDK_DIR)\Lib\x64</D3d9Libs>
-    <D3d9Deps Condition="'$(Configuration)'=='Release'">d3d9.lib;d3dx9.lib</D3d9Deps>
-    <D3d9Deps Condition="'$(Configuration)'=='Debug'">d3d9.lib;d3dx9d.lib</D3d9Deps>
-    <Win32Defines Condition="'$(UseOpenGL)'=='false'">USE_D3D9;$(Win32Defines)</Win32Defines>
+    <Win32Defines>HAVE_GL_2X;USE_GLEW;GLEW_STATIC;$(Win32Defines)</Win32Defines>
 
     <!-- Xinput -->
     <XinputIncludes>$(DXSDK_DIR)\Include</XinputIncludes>
@@ -144,9 +136,6 @@
     <BuildMacro Include="GlIncludes"><Value>$(GlIncludes)</Value></BuildMacro>
     <BuildMacro Include="GlLibs"><Value>$(GlLibs)</Value></BuildMacro>
     <BuildMacro Include="GlDeps"><Value>$(GlDeps)</Value></BuildMacro>
-    <BuildMacro Include="D3d9Includes"><Value>$(D3d9Includes)</Value></BuildMacro>
-    <BuildMacro Include="D3d9Libs"><Value>$(D3d9Libs)</Value></BuildMacro>
-    <BuildMacro Include="D3d9Deps"><Value>$(D3d9Deps)</Value></BuildMacro>
     <BuildMacro Include="XinputIncludes"><Value>$(XinputIncludes)</Value></BuildMacro>
     <BuildMacro Include="XinputLibs"><Value>$(XinputLibs)</Value></BuildMacro>
     <BuildMacro Include="XinputDeps"><Value>$(XinputDeps)</Value></BuildMacro>

@@ -236,7 +236,6 @@ public:
     VertexStreamBase GetStream(int index) const;
 
 private:
-    void Initialize();
     void AddStream(VertexStreamBase const &);
 
     struct
@@ -247,9 +246,6 @@ private:
     } m_streams[12 + 1];
 
     int m_count;
-
-private:
-    class VertexDeclarationData *m_data;
 };
 
 } /* namespace lol */

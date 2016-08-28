@@ -304,9 +304,6 @@ public:
 
 private:
     uint64_t m_flags;
-#if defined USE_D3D9
-    uint32_t m_attrib;
-#endif
 };
 
 class ShaderData;

@@ -20,10 +20,6 @@
 #   else
 #      include <SDL.h>
 #   endif
-#   if USE_D3D9
-#       include <d3d9.h>
-#       include <SDL_syswm.h>
-#   endif
 #endif
 
 #include "lolgl.h"
@@ -31,10 +27,6 @@
 #include "platform/sdl/sdlinput.h"
 #if USE_XINPUT
 #   include "platform/d3d9/d3d9input.h"
-#endif
-
-#if (USE_SDL || USE_OLD_SDL) && USE_D3D9
-HWND g_hwnd = nullptr;
 #endif
 
 namespace lol
@@ -100,13 +92,6 @@ SdlAppDisplay::SdlAppDisplay(char const *title, ivec2 res)
 
     SDL_WM_SetCaption(title, nullptr);
 
-#   if USE_D3D9
-    SDL_Surface *video = SDL_SetVideoMode(res.x, res.y, 16, 0);
-    SDL_SysWMinfo wminfo;
-    SDL_VERSION(&wminfo.version);
-    SDL_GetWMInfo(&wminfo);
-    g_hwnd = wminfo.window;
-#   else
     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
     SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
 
@@ -114,7 +99,6 @@ SdlAppDisplay::SdlAppDisplay(char const *title, ivec2 res)
     // and screen_h with the value of vidinfo after the call to
     // SDL_SetVideoMode.
     data->m_window = SDL_SetVideoMode(res.x, res.y, 0, SDL_OPENGL);
-#   endif
 
     if (!data->m_window)
     {
@@ -151,8 +135,6 @@ void SdlAppDisplay::SetResolution(ivec2 resolution)
 {
 #if USE_SDL
     SDL_SetWindowSize(data->m_window, resolution.x, resolution.y);
-#elif USE_OLD_SDL && USE_D3D9
-    //Not implemented
 #elif USE_OLD_SDL
     //Not implemented
 #endif
@@ -161,8 +143,6 @@ void SdlAppDisplay::SetPosition(ivec2 position)
 {
 #if USE_SDL
     SDL_SetWindowPosition(data->m_window, position.x, position.y);
-#elif USE_OLD_SDL && USE_D3D9
-    //Not implemented
 #elif USE_OLD_SDL
     //Not implemented
 #endif
@@ -174,29 +154,15 @@ void SdlAppDisplay::Enable()
     //TODO: Should we do that: ?
     SDL_GL_MakeCurrent(data->m_window, data->m_glcontext);
 #endif
-#if (USE_SDL || USE_OLD_SDL) && defined USE_D3D9
-    IDirect3DDevice9 *d3d_dev = (IDirect3DDevice9 *)Renderer::Get()->GetDevice();
-    HRESULT hr;
-    hr = d3d_dev->BeginScene();
-    if (FAILED(hr))
-        Abort();
-#endif
 }
 
 void SdlAppDisplay::Disable()
 {
-    #if USE_SDL
+#if USE_SDL
         SDL_GL_SwapWindow(data->m_window);
-    #elif USE_OLD_SDL && USE_D3D9
-        hr = d3d_dev->EndScene();
-        if (FAILED(hr))
-            Abort();
-        hr = d3d_dev->Present(nullptr, nullptr, nullptr, nullptr);
-        if (FAILED(hr))
-            Abort();
-    #elif USE_OLD_SDL
+#elif USE_OLD_SDL
         SDL_GL_SwapBuffers();
-    #endif
+#endif
 }
 
 #if USE_SDL
@@ -209,8 +175,6 @@ const char* SceneDisplay::GetPhysicalName(int index)
 {
     return SDL_GetDisplayName(index);
 }
-#elif USE_OLD_SDL && USE_D3D9
-//  Not implemented
 #elif USE_OLD_SDL
 //  Not implemented
 #endif

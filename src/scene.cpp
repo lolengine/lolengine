@@ -130,11 +130,16 @@ private:
 
     /** Back buffer: where to render to. */
     Framebuffer *m_backbuffer = nullptr;
-    Shader *m_pp_shader = nullptr;
-    VertexDeclaration *m_pp_vdecl;
-    ShaderUniform m_pp_texture;
-    ShaderAttrib m_pp_coord;
-    VertexBuffer *m_pp_vbo;
+
+    struct postprocess
+    {
+        Shader *m_shader = nullptr;
+        VertexBuffer *m_vbo = nullptr;
+        VertexDeclaration *m_vdecl = nullptr;
+        ShaderUniform m_texture;
+        ShaderAttrib m_coord;
+    }
+    m_pp;
 
     /* Sources are shared by all scenes.
      * Renderers are scene-dependent. They get the primitive in the identical
@@ -189,18 +194,18 @@ Scene::Scene(ivec2 size)
   : data(new SceneData())
 {
     data->m_backbuffer = new Framebuffer(size);
-    data->m_pp_shader = Shader::Create(LOLFX_RESOURCE_NAME(postprocess));
-    data->m_pp_coord = data->m_pp_shader->GetAttribLocation(VertexUsage::Position, 0);
-    data->m_pp_vdecl = new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position));
-    data->m_pp_texture = data->m_pp_shader->GetUniformLocation("u_texture");
+    data->m_pp.m_shader = Shader::Create(LOLFX_RESOURCE_NAME(postprocess));
+    data->m_pp.m_coord = data->m_pp.m_shader->GetAttribLocation(VertexUsage::Position, 0);
+    data->m_pp.m_vdecl = new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position));
+    data->m_pp.m_texture = data->m_pp.m_shader->GetUniformLocation("u_texture");
 
     array<vec2> quad { vec2( 1.0,  1.0), vec2(-1.0, -1.0), vec2( 1.0, -1.0),
                        vec2(-1.0, -1.0), vec2( 1.0,  1.0), vec2(-1.0,  1.0), };
 
-    data->m_pp_vbo = new VertexBuffer(quad.bytes());
-    void *vertices = data->m_pp_vbo->Lock(0, 0);
-    memcpy(vertices, &quad[0], quad.bytes());
-    data->m_pp_vbo->Unlock();
+    data->m_pp.m_vbo = new VertexBuffer(quad.bytes());
+    void *vertices = data->m_pp.m_vbo->Lock(0, 0);
+    memcpy(vertices, quad.data(), quad.bytes());
+    data->m_pp.m_vbo->Unlock();
 
     /* Create a default orthographic camera, in case the user doesn’t. */
     data->m_default_cam = new Camera();
@@ -212,7 +217,7 @@ Scene::Scene(ivec2 size)
     data->m_tile_api.m_shader = 0;
     data->m_tile_api.m_palette_shader = 0;
     data->m_tile_api.m_vdecl = new VertexDeclaration(VertexStream<vec3>(VertexUsage::Position),
-                                               VertexStream<vec2>(VertexUsage::TexCoord));
+                                                     VertexStream<vec2>(VertexUsage::TexCoord)); 
 
     data->m_line_api.m_shader = 0;
     data->m_line_api.m_vdecl = new VertexDeclaration(VertexStream<vec4,vec4>(VertexUsage::Position, VertexUsage::Color));
@@ -618,13 +623,13 @@ void Scene::render(float seconds)
     data->m_backbuffer->Unbind();
 
     /* Now blit the offline buffer */
-    data->m_pp_shader->Bind();
-    data->m_pp_shader->SetUniform(data->m_pp_texture, data->m_backbuffer->GetTextureUniform(), 0);
-    data->m_pp_vdecl->SetStream(data->m_pp_vbo, data->m_pp_coord);
-    data->m_pp_vdecl->Bind();
-    data->m_pp_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
-    data->m_pp_vdecl->Unbind();
-    data->m_pp_shader->Unbind();
+    data->m_pp.m_shader->Bind();
+    data->m_pp.m_shader->SetUniform(data->m_pp.m_texture, data->m_backbuffer->GetTextureUniform(), 0);
+    data->m_pp.m_vdecl->SetStream(data->m_pp.m_vbo, data->m_pp.m_coord);
+    data->m_pp.m_vdecl->Bind();
+    data->m_pp.m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
+    data->m_pp.m_vdecl->Unbind();
+    data->m_pp.m_shader->Unbind();
 }
 
 //-----------------------------------------------------------------------------
@@ -669,9 +674,7 @@ void Scene::render_tiles() // XXX: rename to Blit()
     rc.SetBlendEquation(BlendEquation::Add, BlendEquation::Max);
     rc.SetAlphaFunc(AlphaFunc::GreaterOrEqual, 0.01f);
 
-#if defined USE_D3D9
-    /* TODO */
-#elif (defined USE_GLEW || defined HAVE_GL_2X) && !defined HAVE_GLES_2X
+#if (defined USE_GLEW || defined HAVE_GL_2X) && !defined HAVE_GLES_2X
     glEnable(GL_TEXTURE_2D);
 #endif
 
@@ -766,9 +769,7 @@ void Scene::render_tiles() // XXX: rename to Blit()
     }
 
 
-#if defined USE_D3D9
-    /* TODO */
-#elif (defined USE_GLEW || defined HAVE_GL_2X) && !defined HAVE_GLES_2X
+#if (defined USE_GLEW || defined HAVE_GL_2X) && !defined HAVE_GLES_2X
     glDisable(GL_TEXTURE_2D);
 #endif
 }

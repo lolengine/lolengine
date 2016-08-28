@@ -20,11 +20,6 @@
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
 #   undef WIN32_LEAN_AND_MEAN
-#   if defined USE_D3D9
-#       define FAR
-#       define NEAR
-#       include <d3d9.h>
-#   endif
 #endif
 
 #include "textureimage-private.h"
