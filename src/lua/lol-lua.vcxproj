@@ -108,7 +108,6 @@
     <ClInclude Include="lstring.h" />
     <ClInclude Include="ltable.h" />
     <ClInclude Include="ltm.h" />
-    <ClInclude Include="lutf8lib.h" />
     <ClInclude Include="luaconf.h" />
     <ClInclude Include="lua.h" />
     <ClInclude Include="lua.hpp" />

@@ -277,8 +277,7 @@
     <ClInclude Include="lol\image\movie.h" />
     <ClInclude Include="lol\image\pixel.h" />
     <ClInclude Include="lol\math\all.h" />
-    <ClInclude Include="lol\math\array2d.h" />
-    <ClInclude Include="lol\math\array3d.h" />
+    <ClInclude Include="lol\math\arraynd.h" />
     <ClInclude Include="lol\math\bigint.h" />
     <ClInclude Include="lol\math\constants.h" />
     <ClInclude Include="lol\math\functions.h" />
@@ -293,7 +292,6 @@
     <ClInclude Include="lol\math\polynomial.h" />
     <ClInclude Include="lol\math\rand.h" />
     <ClInclude Include="lol\math\real.h" />
-    <ClInclude Include="lol\math\remez.h" />
     <ClInclude Include="lol\math\transform.h" />
     <ClInclude Include="lol\math\vector.h" />
     <ClInclude Include="lol\public.h" />
@@ -303,7 +301,6 @@
     <ClInclude Include="lol\sys\thread.h" />
     <ClInclude Include="lol\sys\threadtypes.h" />
     <ClInclude Include="lol\sys\timer.h" />
-    <ClInclude Include="lol\unit.h" />
     <ClInclude Include="mesh\mesh.h" />
     <ClInclude Include="mesh\primitivemesh.h" />
     <ClInclude Include="messageservice.h" />
@@ -348,7 +345,6 @@
     <ClInclude Include="sample.h" />
     <ClInclude Include="sampler.h" />
     <ClInclude Include="scene.h" />
-    <ClInclude Include="simd.h" />
     <ClInclude Include="sprite.h" />
     <ClInclude Include="text.h" />
     <ClInclude Include="textureimage-private.h" />
