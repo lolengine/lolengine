@@ -19,17 +19,6 @@ b3GpuSapBroadphase::b3GpuSapBroadphase(cl_context ctx,cl_device_id device, cl_co
 :m_context(ctx),
 m_device(device),
 m_queue(q),
-m_allAabbsGPU(ctx,q),
-m_smallAabbsMappingGPU(ctx,q),
-m_largeAabbsMappingGPU(ctx,q),
-m_pairCount(ctx,q),
-m_overlappingPairs(ctx,q),
-m_gpuSmallSortData(ctx,q),
-m_gpuSmallSortedAabbs(ctx,q),
-m_sum(ctx,q),
-m_sum2(ctx,q),
-m_dst(ctx,q),
-m_currentBuffer(-1),
 m_objectMinMaxIndexGPUaxis0(ctx,q),
 m_objectMinMaxIndexGPUaxis1(ctx,q),
 m_objectMinMaxIndexGPUaxis2(ctx,q),
@@ -45,7 +34,18 @@ m_sortedAxisGPU2prev(ctx,q),
 m_addedHostPairsGPU(ctx,q),
 m_removedHostPairsGPU(ctx,q),
 m_addedCountGPU(ctx,q),
-m_removedCountGPU(ctx,q)
+m_removedCountGPU(ctx,q),
+m_currentBuffer(-1),
+m_pairCount(ctx,q),
+m_allAabbsGPU(ctx,q),
+m_sum(ctx,q),
+m_sum2(ctx,q),
+m_dst(ctx,q),
+m_smallAabbsMappingGPU(ctx,q),
+m_largeAabbsMappingGPU(ctx,q),
+m_overlappingPairs(ctx,q),
+m_gpuSmallSortData(ctx,q),
+m_gpuSmallSortedAabbs(ctx,q)
 {
 	const char* sapSrc = sapCL;
     
@@ -565,7 +565,7 @@ void  b3GpuSapBroadphase::calculateOverlappingPairsHostIncremental3Sap()
 					if (dmin!=0)
 					{
 						int stepMin = dmin<0 ? -1 : 1;
-						for (int j=prevMinIndex;j!=curMinIndex;j+=stepMin)
+						for (unsigned int j=prevMinIndex;j!=curMinIndex;j+=stepMin)
 						{
 							int otherIndex2 = m_sortedAxisCPU[axis][otherbuffer][j].y;
 							int otherIndex = otherIndex2/2;
@@ -648,7 +648,7 @@ void  b3GpuSapBroadphase::calculateOverlappingPairsHostIncremental3Sap()
 					if (dmax!=0)
 					{
 						int stepMax = dmax<0 ? -1 : 1;
-						for (int j=prevMaxIndex;j!=curMaxIndex;j+=stepMax)
+						for (unsigned int j=prevMaxIndex;j!=curMaxIndex;j+=stepMax)
 						{
 							int otherIndex2 = m_sortedAxisCPU[axis][otherbuffer][j].y;
 							int otherIndex = otherIndex2/2;
@@ -1024,7 +1024,7 @@ void  b3GpuSapBroadphase::calculateOverlappingPairs(int maxPairs)
 
 	bool syncOnHost = false;
 
-	int numSmallAabbs = m_smallAabbsMappingCPU.size();
+	unsigned int numSmallAabbs = m_smallAabbsMappingCPU.size();
 	if (m_prefixScanFloat4 && numSmallAabbs)
 	{
 		B3_PROFILE("GPU compute best variance axis");

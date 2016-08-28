@@ -22,7 +22,7 @@ public:
 	vec3(const btVector3& btv) { *this = btv; }
 	idScalar& operator()(int i) { return (*this)[i]; }
 	const idScalar& operator()(int i) const { return (*this)[i]; }
-	const int size() const { return 3; }
+	int size() const { return 3; }
 	const vec3& operator=(const btVector3& rhs) {
 		*static_cast<btVector3*>(this) = rhs;
 		return *this;
@@ -113,7 +113,7 @@ inline vecx operator/(const vecx& a, const idScalar& s) {
 class mat3x : public matxx {
 public:
     mat3x(){}
-    mat3x(const mat3x&rhs) {
+    mat3x(const mat3x&rhs): matxx() {
         matxx::resize(rhs.rows(), rhs.cols());
         *this = rhs;
     }

@@ -168,11 +168,10 @@ cl_platform_id b3OpenCLUtils_getPlatform(int platformIndex0, cl_int* pErrNum)
 #endif
 
 	cl_platform_id platform = 0;
-	unsigned int platformIndex = (unsigned int )platformIndex0;
 	cl_uint numPlatforms;
 	cl_int ciErrNum = clGetPlatformIDs(0, NULL, &numPlatforms);
 
-	if (platformIndex>=0 && platformIndex<numPlatforms)
+	if (platformIndex0>=0 && (cl_uint)platformIndex0<numPlatforms)
 	{
 		cl_platform_id* platforms = (cl_platform_id*) malloc (sizeof(cl_platform_id)*numPlatforms);
 		ciErrNum = clGetPlatformIDs(numPlatforms, platforms, NULL);
@@ -183,7 +182,7 @@ cl_platform_id b3OpenCLUtils_getPlatform(int platformIndex0, cl_int* pErrNum)
 			return platform;
 		}
 
-		platform = platforms[platformIndex];
+		platform = platforms[platformIndex0];
 
 		free (platforms);
 	}
@@ -310,7 +309,6 @@ cl_context b3OpenCLUtils_createContextFromType(cl_device_type deviceType, cl_int
 
 	cl_uint numPlatforms;
 	cl_context retContext = 0;
-	unsigned int i;
 
 	cl_int ciErrNum = clGetPlatformIDs(0, NULL, &numPlatforms);
 	if(ciErrNum != CL_SUCCESS)
@@ -332,7 +330,7 @@ cl_context b3OpenCLUtils_createContextFromType(cl_device_type deviceType, cl_int
 
 
 
-		for ( i = 0; i < numPlatforms; ++i)
+		for (int i = 0; (cl_uint)i < numPlatforms; ++i)
 		{
 			char pbuf[128];
 			ciErrNum = clGetPlatformInfo(	platforms[i],
@@ -346,7 +344,7 @@ cl_context b3OpenCLUtils_createContextFromType(cl_device_type deviceType, cl_int
 				return NULL;
 			}
 
-			if (preferredPlatformIndex>=0 && i==preferredPlatformIndex)
+			if (i==preferredPlatformIndex)
 			{
 				cl_platform_id tmpPlatform = platforms[0];
 				platforms[0] = platforms[i];
@@ -363,7 +361,7 @@ cl_context b3OpenCLUtils_createContextFromType(cl_device_type deviceType, cl_int
 			}
 		}
 
-		for (i = 0; i < numPlatforms; ++i)
+		for (int i = 0; (cl_uint)i < numPlatforms; ++i)
 		{
 			cl_platform_id platform = platforms[i];
 			assert(platform);
@@ -583,7 +581,7 @@ static const char* strip2(const char* name, const char* pattern)
 	  const char * oriptr;
 	  const char * patloc;
 		// find how many times the pattern occurs in the original string
-	  for (oriptr = name; patloc = strstr(oriptr, pattern); oriptr = patloc + patlen)
+	  for (oriptr = name; (patloc = strstr(oriptr, pattern)); oriptr = patloc + patlen)
 	  {
 		patcnt++;
 	  }
