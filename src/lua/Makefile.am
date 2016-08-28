@@ -1,10 +1,10 @@
 
 include $(top_srcdir)/build/autotools/common.am
 
-noinst_LIBRARIES = liblollua.a
+noinst_LIBRARIES = liblol-lua.a
 
-liblollua_a_SOURCES = $(lua_sources)
-liblollua_a_CPPFLAGS = $(AM_CPPFLAGS) -DLUA_ANSI
+liblol_lua_a_SOURCES = $(lua_sources)
+liblol_lua_a_CPPFLAGS = $(AM_CPPFLAGS) -DLUA_ANSI
 
 lua_sources = \
     lapi.c lapi.h lauxlib.c lauxlib.h lbaselib.c lbitlib.c \

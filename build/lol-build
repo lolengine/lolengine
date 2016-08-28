@@ -293,7 +293,7 @@ build()
             # build the static libraries in parallel.
             make -j$LOL_PARALLEL -C src/bullet
             make -j$LOL_PARALLEL -C src/lua
-            make -j$LOL_PARALLEL -C src/ liblolcore.a
+            make -j$LOL_PARALLEL -C src/ liblol-core.a
             make
             ;;
         *)
