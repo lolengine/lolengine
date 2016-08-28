@@ -2,9 +2,9 @@
 
 #version 130
 
-attribute vec4 in_Position;
-attribute vec4 in_Color;
-varying vec4 pass_Color;
+in vec4 in_Position;
+in vec4 in_Color;
+out vec4 pass_color;
 
 uniform mat4 u_projection;
 uniform mat4 u_view;
@@ -16,7 +16,7 @@ void main()
     else
         gl_Position = u_projection * u_view
                       * vec4(in_Position.xyz, 1.0);
-    pass_Color = in_Color;
+    pass_color = in_Color;
 }
 
 [frag.glsl]
@@ -27,31 +27,11 @@ void main()
 precision mediump float;
 #endif
 
-varying vec4 pass_Color;
+in vec4 pass_color;
+out vec4 out_color;
 
 void main()
 {
-    gl_FragColor = pass_Color;
-}
-
-[vert.hlsl]
-
-void main(float4 in_Position : POSITION,
-          float4 in_Color : COLOR,
-          uniform float4x4 u_projection,
-          uniform float4x4 u_view,
-          out float4 out_Color : COLOR,
-          out float4 out_Position : POSITION)
-{
-    out_Position = mul(u_projection, mul(u_view, in_Position));
-    out_Color = in_Color;
-}
-
-[frag.hlsl]
-
-void main(float4 in_Color : COLOR,
-          out float4 out_FragColor : COLOR)
-{
-    out_FragColor = in_Color;
+    out_color = pass_color;
 }
 

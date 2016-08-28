@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
 //            © 2014—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -50,6 +50,14 @@ struct Tile
 
 //-----------------------------------------------------------------------------
 static array<SceneDisplay*> m_scene_displays;
+
+static inline void gpu_marker(char const *message)
+{
+#if USE_GLEW
+    if (GLEW_GREMEDY_string_marker)
+        glStringMarkerGREMEDY(0, message);
+#endif
+}
 
 /*
  * Public SceneDisplay class
@@ -607,12 +615,22 @@ void Scene::DisableDisplay()
 /* Render everything that the scene contains */
 void Scene::render(float seconds)
 {
+    bool do_pp = true;
+
+    gpu_marker("Start Render");
+
     /* First render into the offline buffer */
-    data->m_backbuffer->Bind();
+    if (do_pp)
+        data->m_backbuffer->Bind();
+
     {
         RenderContext rc;
-        rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
-        rc.SetClearDepth(1.f);
+        if (do_pp)
+        {
+            rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
+            rc.SetClearDepth(1.f);
+        }
+
         Renderer::Get()->Clear(ClearMask::Color | ClearMask::Depth);
 
         // FIXME: get rid of the delta time argument
@@ -620,16 +638,24 @@ void Scene::render(float seconds)
         render_tiles();
         render_lines(seconds);
     }
-    data->m_backbuffer->Unbind();
 
-    /* Now blit the offline buffer */
-    data->m_pp.m_shader->Bind();
-    data->m_pp.m_shader->SetUniform(data->m_pp.m_texture, data->m_backbuffer->GetTextureUniform(), 0);
-    data->m_pp.m_vdecl->SetStream(data->m_pp.m_vbo, data->m_pp.m_coord);
-    data->m_pp.m_vdecl->Bind();
-    data->m_pp.m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
-    data->m_pp.m_vdecl->Unbind();
-    data->m_pp.m_shader->Unbind();
+    if (do_pp)
+    {
+        data->m_backbuffer->Unbind();
+
+        gpu_marker("PostProcess");
+
+        /* Now blit the offline buffer */
+        data->m_pp.m_shader->Bind();
+        data->m_pp.m_shader->SetUniform(data->m_pp.m_texture, data->m_backbuffer->GetTextureUniform(), 0);
+        data->m_pp.m_vdecl->SetStream(data->m_pp.m_vbo, data->m_pp.m_coord);
+        data->m_pp.m_vdecl->Bind();
+        data->m_pp.m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
+        data->m_pp.m_vdecl->Unbind();
+        data->m_pp.m_shader->Unbind();
+    }
+
+    gpu_marker("End Render");
 }
 
 //-----------------------------------------------------------------------------
