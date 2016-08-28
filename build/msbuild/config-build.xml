@@ -6,9 +6,6 @@
     <!-- Global Lol Engine Configuration Settings -->
     <!-- ======================================== -->
 
-    <!-- Use OpenGL instead of Direct3D? -->
-    <UseOpenGL>true</UseOpenGL>
-
     <!-- Use Bullet for our physics solver? -->
     <UseBullet>true</UseBullet>
 

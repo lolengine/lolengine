@@ -12,12 +12,6 @@
 
 #include "lolgl.h"
 
-#if defined _WIN32 && defined USE_D3D9
-#   define FAR
-#   define NEAR
-#   include <d3d9.h>
-#endif
-
 namespace lol
 {
 
@@ -34,13 +28,7 @@ class FramebufferData
     ivec2 m_size;
     bool m_bound;
 
-#if defined USE_D3D9
-    IDirect3DDevice9 *m_dev;
-    IDirect3DTexture9 *m_texture;
-    IDirect3DSurface9 *m_surface, *m_back_surface;
-#else
     GLuint m_fbo, m_texture, m_depth;
-#endif
 };
 
 //
@@ -52,26 +40,7 @@ uint32_t FramebufferFormat::GetFormat()
 {
     switch (m_format)
     {
-#if defined USE_D3D9
-    case R_16_F:        return D3DFMT_R16F;
-    case R_32_F:        return D3DFMT_R32F;
-    case RG_16:
-    case RG_16_I:
-    case RG_16_UI:      return D3DFMT_G16R16;
-    case RG_16_F:       return D3DFMT_G16R16F;
-    case RG_32_F:       return D3DFMT_G32R32F;
-    case RGB_8:
-    case RGB_8_I:
-    case RGB_8_UI:      return D3DFMT_R8G8B8;
-    case RGBA_8:
-    case RGBA_8_I:
-    case RGBA_8_UI:     return D3DFMT_A8R8G8B8;
-    case RGBA_16:
-    case RGBA_16_I:
-    case RGBA_16_UI:    return D3DFMT_A16B16G16R16;
-    case RGBA_16_F:     return D3DFMT_A16B16G16R16F;
-    case RGBA_32_F:     return D3DFMT_A32B32G32R32F;
-#elif defined HAVE_GLES_2X
+#if defined HAVE_GLES_2X
     /* FIXME: incomplete */
     case RGBA_8:
     case RGBA_8_I:
@@ -203,9 +172,7 @@ uint32_t FramebufferFormat::GetFormatOrder()
 {
     switch (m_format)
     {
-#if defined USE_D3D9
-    /* FIXME: not implemented at all */
-#elif defined HAVE_GLES_2X
+#if defined HAVE_GLES_2X
     /* FIXME: incomplete */
     case R_8:   case RG_8:   case RGB_8:   case RGBA_8:
     case R_8_I: case RG_8_I: case RGB_8_I: case RGBA_8_I:
@@ -276,42 +243,30 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
 {
     m_data->m_size = size;
     m_data->m_bound = false;
-#if defined USE_D3D9
-    m_data->m_dev = (IDirect3DDevice9 *)Renderer::Get()->GetDevice();
-
-    if (FAILED(m_data->m_dev->CreateTexture(size.x, size.y, 1,
-                                            D3DUSAGE_RENDERTARGET,
-                                            (D3DFORMAT)fbo_format.GetFormat(),
-                                            D3DPOOL_DEFAULT,
-                                            &m_data->m_texture, nullptr)))
-        Abort();
-    if (FAILED(m_data->m_texture->GetSurfaceLevel(0, &m_data->m_surface)))
-        Abort();
-#else
-#   if GL_VERSION_1_1
+#if GL_VERSION_1_1
     GLenum internal_format = fbo_format.GetFormat();
     GLenum format = fbo_format.GetFormatOrder();
     GLenum depth = GL_DEPTH_COMPONENT;
-#   elif GL_ES_VERSION_2_0
+#elif GL_ES_VERSION_2_0
     /* In OpenGL ES, internal format and format must match. */
     GLenum internal_format = fbo_format.GetFormat();
     GLenum format = fbo_format.GetFormat();
     GLenum depth = GL_DEPTH_COMPONENT16; /* for WebGL */
-#   else
+#else
     /* In OpenGL ES, internal format and format must match. */
     GLenum internal_format = fbo_format.GetFormat();
     GLenum format = fbo_format.GetFormat();
-#   endif
+#endif
     GLenum wrapmode = GL_CLAMP_TO_EDGE;
     GLenum filtering = GL_LINEAR;
 
-#   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
+#if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     glGenFramebuffers(1, &m_data->m_fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, m_data->m_fbo);
-#   else
+#else
     glGenFramebuffersOES(1, &m_data->m_fbo);
     glBindFramebufferOES(GL_FRAMEBUFFER_OES, m_data->m_fbo);
-#   endif
+#endif
 
     glGenTextures(1, &m_data->m_texture);
     glActiveTexture(GL_TEXTURE0);
@@ -323,16 +278,16 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
     glTexImage2D(GL_TEXTURE_2D, 0, internal_format, size.x, size.y, 0,
                  format, GL_UNSIGNED_BYTE, nullptr);
 
-#   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
+#if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
                            GL_TEXTURE_2D, m_data->m_texture, 0);
-#   else
+#else
     glFramebufferTexture2DOES(GL_FRAMEBUFFER_OES, GL_COLOR_ATTACHMENT0_EXT,
                               GL_TEXTURE_2D, m_data->m_texture, 0);
-#   endif
+#endif
 
     m_data->m_depth = GL_INVALID_ENUM;
-#   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
+#if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     if (depth != GL_INVALID_ENUM)
     {
         /* XXX: might not work on GL ES, see
@@ -344,40 +299,34 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
         glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,
                                   GL_RENDERBUFFER, m_data->m_depth);
     }
-#   endif
+#endif
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
-#   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
+#if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     ASSERT(status == GL_FRAMEBUFFER_COMPLETE,
            "invalid framebuffer status 0x%x", status);
-#   endif
+#endif
 
-#   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
+#if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-#   else
+#else
     glBindFramebufferOES(GL_FRAMEBUFFER_OES, 0);
-#   endif
 #endif
 }
 
 Framebuffer::~Framebuffer()
 {
-#if defined USE_D3D9
-    m_data->m_surface->Release();
-    m_data->m_texture->Release();
-#else
-#   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
+#if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     glDeleteFramebuffers(1, &m_data->m_fbo);
-#   else
+#else
     glDeleteFramebuffersOES(1, &m_data->m_fbo);
-#   endif
+#endif
     glDeleteTextures(1, &m_data->m_texture);
-#   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
+#if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     if (m_data->m_depth != GL_INVALID_ENUM)
         glDeleteRenderbuffers(1, &m_data->m_depth);
-#   endif
 #endif
     delete m_data;
 }
@@ -385,11 +334,7 @@ Framebuffer::~Framebuffer()
 TextureUniform Framebuffer::GetTextureUniform() const
 {
     TextureUniform ret;
-#if defined USE_D3D9
-    ret.m_flags = (uint64_t)(uintptr_t)m_data->m_texture;
-#else
     ret.m_flags = m_data->m_texture;
-#endif
     return ret;
 }
 
@@ -402,14 +347,10 @@ Image Framebuffer::GetImage() const
 {
     Image ret(m_data->m_size);
 
-#if defined USE_D3D9
-    /* TODO: implement D3D Framebuffer::GetImage() */
-#else
     u8vec4 *buffer = ret.Lock<PixelFormat::RGBA_8>();
     glReadPixels(0, 0, m_data->m_size.x, m_data->m_size.y,
                  GL_RGBA, GL_UNSIGNED_BYTE, buffer);
     ret.Unlock(buffer);
-#endif
 
     return ret;
 }
@@ -418,17 +359,10 @@ void Framebuffer::Bind()
 {
     ASSERT(!m_data->m_bound, "trying to bind an already bound framebuffer");
 
-#if defined USE_D3D9
-    if (FAILED(m_data->m_dev->GetRenderTarget(0, &m_data->m_back_surface)))
-        Abort();
-    if (FAILED(m_data->m_dev->SetRenderTarget(0, m_data->m_surface)))
-        Abort();
-#else
-#   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
+#if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     glBindFramebuffer(GL_FRAMEBUFFER, m_data->m_fbo);
-#   else
+#else
     glBindFramebufferOES(GL_FRAMEBUFFER_OES, m_data->m_fbo);
-#   endif
 #endif
 
     /* FIXME: this should be done in the RenderContext object
@@ -443,16 +377,10 @@ void Framebuffer::Unbind()
 {
     ASSERT(m_data->m_bound, "trying to unbind an unbound framebuffer");
 
-#if defined USE_D3D9
-    if (FAILED(m_data->m_dev->SetRenderTarget(0, m_data->m_back_surface)))
-        Abort();
-    m_data->m_back_surface->Release();
-#else
-#   if GL_VERSION_1_1 || GL_ES_VERSION_2_0
+#if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-#   else
+#else
     glBindFramebufferOES(GL_FRAMEBUFFER_OES, 0);
-#   endif
 #endif
 
     Renderer::Get()->SetViewport(m_data->m_saved_viewport);

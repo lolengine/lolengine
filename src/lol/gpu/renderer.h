@@ -135,8 +135,6 @@ private:
 public:
     void Clear(ClearMask mask);
 
-    void *GetDevice();
-
     static void AddNew(ivec2 size);
     static int GetCount();
     static Renderer* Get(int index = 0);

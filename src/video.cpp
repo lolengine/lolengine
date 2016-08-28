@@ -11,9 +11,6 @@
 #include <lol/engine-internal.h>
 
 #if defined _WIN32
-#   if defined USE_D3D9
-#      include <d3d9.h>
-#   endif
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
 #   undef WIN32_LEAN_AND_MEAN
@@ -61,8 +58,7 @@ void Video::SetDebugRenderMode(DebugRenderMode d)
         case DebugRenderMode::Normal:
         case DebugRenderMode::UV:
         {
-#if defined USE_D3D9
-#elif defined HAVE_GLES_2X
+#if defined HAVE_GLES_2X
 #elif defined USE_GLEW || defined HAVE_GL_2X
             glEnable(GL_CULL_FACE);
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
@@ -71,8 +67,7 @@ void Video::SetDebugRenderMode(DebugRenderMode d)
         }
         case DebugRenderMode::Wireframe:
         {
-#if defined USE_D3D9
-#elif defined HAVE_GLES_2X
+#if defined HAVE_GLES_2X
 #elif defined USE_GLEW || defined HAVE_GL_2X
             glDisable(GL_CULL_FACE);
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
@@ -101,9 +96,7 @@ void Video::Destroy()
 
 void Video::Capture(uint32_t *buffer)
 {
-#if defined USE_D3D9
-    /* TODO */
-#elif defined USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLEX_2X
+#if defined USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLEX_2X
     GLint v[4];
     glGetIntegerv(GL_VIEWPORT, v);
     int width = v[2], height = v[3];

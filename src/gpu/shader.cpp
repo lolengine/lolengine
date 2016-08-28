@@ -19,13 +19,6 @@
 #   define WIN32_LEAN_AND_MEAN 1
 #   include <windows.h>
 #   undef WIN32_LEAN_AND_MEAN
-#   if defined USE_D3D9
-#       include <algorithm>
-        using std::min;
-        using std::max;
-#       include <d3d9.h>
-#       include <d3dx9shader.h>
-#   endif
 #endif
 
 #include "pegtl.hh"
@@ -82,17 +75,10 @@ class ShaderData
 private:
     String m_name;
 
-#if defined USE_D3D9
-    IDirect3DDevice9 *m_dev;
-    IDirect3DVertexShader9 *vert_shader;
-    IDirect3DPixelShader9 *frag_shader;
-    ID3DXConstantTable *vert_table, *frag_table;
-#else
     GLuint prog_id, vert_id, frag_id;
     // Benlitz: using a simple array could be faster since there is never more than a few attribute locations to store
     map<uint64_t, GLint> attrib_locations;
     map<uint64_t, bool> attrib_errors;
-#endif
     uint32_t vert_crc, frag_crc;
 
     /* Shader patcher */
@@ -238,39 +224,15 @@ Shader::Shader(String const &name,
 {
     data->m_name = name;
 
-#if defined USE_D3D9
-    ID3DXBuffer *shader_code, *error_msg;
-    HRESULT hr;
-    D3DXMACRO macros[] =
-    {
-        { "LOL_TEST_MACRO", "1" },
-        { nullptr, nullptr }
-    };
-#else
     char errbuf[4096];
     String shader_code;
     GLchar const *gl_code;
     GLint status;
     GLsizei len;
-#endif
 
     /* Compile vertex shader */
     data->vert_crc = ShaderData::Hash(vert);
-#if defined USE_D3D9
-    data->m_dev = (IDirect3DDevice9 *)Renderer::Get()->GetDevice();
-    hr = D3DXCompileShader(vert, (UINT)strlen(vert), macros, nullptr, "main",
-                           "vs_3_0", 0, &shader_code, &error_msg,
-                           &data->vert_table);
-    if (FAILED(hr))
-    {
-        msg::error("failed to compile vertex shader %s: %s\n", name.C(),
-                   error_msg ? error_msg->GetBufferPointer() : "error");
-        msg::error("shader source:\n%s\n", vert);
-    }
-    data->m_dev->CreateVertexShader((DWORD *)shader_code->GetBufferPointer(),
-                                    &data->vert_shader);
-    shader_code->Release();
-#else
+
     shader_code = ShaderData::Patch(vert, ShaderType::Vertex);
     data->vert_id = glCreateShader(GL_VERTEX_SHADER);
     gl_code = shader_code.C();
@@ -290,24 +252,10 @@ Shader::Shader(String const &name,
         msg::debug("compile log for vertex shader %s: %s\n", name.C(), errbuf);
         msg::debug("shader source:\n%s\n", shader_code.C());
     }
-#endif
 
     /* Compile fragment shader */
     data->frag_crc = ShaderData::Hash(frag);
-#if defined USE_D3D9
-    hr = D3DXCompileShader(frag, (UINT)strlen(frag), macros, nullptr, "main",
-                           "ps_3_0", 0, &shader_code, &error_msg,
-                           &data->frag_table);
-    if (FAILED(hr))
-    {
-        msg::error("failed to compile fragment shader %s: %s\n", name.C(),
-                   error_msg ? error_msg->GetBufferPointer() : "error");
-        msg::error("shader source:\n%s\n", frag);
-    }
-    data->m_dev->CreatePixelShader((DWORD *)shader_code->GetBufferPointer(),
-                                   &data->frag_shader);
-    shader_code->Release();
-#else
+
     shader_code = ShaderData::Patch(frag, ShaderType::Fragment);
     data->frag_id = glCreateShader(GL_FRAGMENT_SHADER);
     gl_code = shader_code.C();
@@ -328,28 +276,7 @@ Shader::Shader(String const &name,
                    name.C(), errbuf);
         msg::debug("shader source:\n%s\n", shader_code.C());
     }
-#endif
 
-#if defined USE_D3D9
-    /* FIXME: this is only debug code, we don't need it. */
-    D3DXCONSTANTTABLE_DESC desc;
-    data->frag_table->GetDesc(&desc);
-    for (int i = 0; i < desc.Constants; i++)
-    {
-        D3DXCONSTANT_DESC cdesc;
-        UINT count = 1;
-        D3DXHANDLE h = data->frag_table->GetConstant(nullptr, i);
-        data->frag_table->GetConstantDesc(h, &cdesc, &count);
-    }
-    data->vert_table->GetDesc(&desc);
-    for (int i = 0; i < desc.Constants; i++)
-    {
-        D3DXCONSTANT_DESC cdesc;
-        UINT count = 1;
-        D3DXHANDLE h = data->vert_table->GetConstant(nullptr, i);
-        data->frag_table->GetConstantDesc(h, &cdesc, &count);
-    }
-#else
     /* Create program */
     data->prog_id = glCreateProgram();
     glAttachShader(data->prog_id, data->vert_id);
@@ -431,7 +358,6 @@ Shader::Shader(String const &name,
     }
 
     delete[] name_buffer;
-#endif
 }
 
 int Shader::GetAttribCount() const
@@ -444,8 +370,7 @@ ShaderAttrib Shader::GetAttribLocation(VertexUsage usage, int index) const
     ShaderAttrib ret;
     ret.m_flags = (uint64_t)(uint16_t)usage.ToScalar() << 16;
     ret.m_flags |= (uint64_t)(uint16_t)index;
-#if defined USE_D3D9
-#else
+
     GLint l = -1;
 
     if (!data->attrib_locations.try_get(ret.m_flags, l))
@@ -459,7 +384,6 @@ ShaderAttrib Shader::GetAttribLocation(VertexUsage usage, int index) const
         }
     }
     ret.m_flags |= (uint64_t)(uint32_t)l << 32;
-#endif
     return ret;
 }
 
@@ -470,36 +394,8 @@ ShaderUniform Shader::GetUniformLocation(String const& uni) const
 ShaderUniform Shader::GetUniformLocation(char const *uni) const
 {
     ShaderUniform ret;
-#if defined USE_D3D9
-    /* Global variables are prefixed with "$" */
-    String tmpname = String("$") + uni;
-    D3DXCONSTANT_DESC cdesc;
-    D3DXHANDLE hr;
-    UINT count;
-
-    count = 0;
-    hr = data->frag_table->GetConstantByName(nullptr, tmpname.C());
-    if (hr)
-        data->frag_table->GetConstantDesc(hr, &cdesc, &count);
-    if (count)
-    {
-        ret.frag = cdesc.RegisterIndex;
-        ret.flags |= 1;
-    }
-
-    count = 0;
-    hr = data->vert_table->GetConstantByName(nullptr, tmpname.C());
-    if (hr)
-        data->vert_table->GetConstantDesc(hr, &cdesc, &count);
-    if (count)
-    {
-        ret.vert = cdesc.RegisterIndex;
-        ret.flags |= 2;
-    }
-#else
     ret.frag = (uintptr_t)glGetUniformLocation(data->prog_id, uni);
     ret.vert = 0;
-#endif
     return ret;
 }
 
@@ -509,135 +405,65 @@ ShaderUniform Shader::GetUniformLocation(char const *uni) const
 
 void Shader::SetUniform(ShaderUniform const &uni, int i)
 {
-#if defined USE_D3D9
-    SetUniform(uni, ivec4(i, 0, 0, 0));
-#else
     glUniform1i((GLint)uni.frag, i);
-#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, ivec2 const &v)
 {
-#if defined USE_D3D9
-    SetUniform(uni, ivec4(v, 0, 0));
-#else
     glUniform2i((GLint)uni.frag, v.x, v.y);
-#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, ivec3 const &v)
 {
-#if defined USE_D3D9
-    SetUniform(uni, ivec4(v, 0));
-#else
     glUniform3i((GLint)uni.frag, v.x, v.y, v.z);
-#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, ivec4 const &v)
 {
-#if defined USE_D3D9
-    if (uni.flags & 1)
-        data->m_dev->SetPixelShaderConstantI((UINT)uni.frag, &v[0], 1);
-    if (uni.flags & 2)
-        data->m_dev->SetVertexShaderConstantI((UINT)uni.vert, &v[0], 1);
-#else
     glUniform4i((GLint)uni.frag, v.x, v.y, v.z, v.w);
-#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, float f)
 {
-#if defined USE_D3D9
-    SetUniform(uni, vec4(f, 0, 0, 0));
-#else
     glUniform1f((GLint)uni.frag, f);
-#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, vec2 const &v)
 {
-#if defined USE_D3D9
-    SetUniform(uni, vec4(v, 0, 0));
-#else
     glUniform2fv((GLint)uni.frag, 1, &v[0]);
-#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, vec3 const &v)
 {
-#if defined USE_D3D9
-    SetUniform(uni, vec4(v, 0));
-#else
     glUniform3fv((GLint)uni.frag, 1, &v[0]);
-#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, vec4 const &v)
 {
-#if defined USE_D3D9
-    if (uni.flags & 1)
-        data->m_dev->SetPixelShaderConstantF((UINT)uni.frag, &v[0], 1);
-    if (uni.flags & 2)
-        data->m_dev->SetVertexShaderConstantF((UINT)uni.vert, &v[0], 1);
-#else
     glUniform4fv((GLint)uni.frag, 1, &v[0]);
-#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, mat2 const &m)
 {
-#if defined USE_D3D9
-    /* FIXME: do we need padding here like for the mat3 version? */
-    if (uni.flags & 1)
-        data->m_dev->SetPixelShaderConstantF((UINT)uni.frag, &m[0][0], 1);
-    if (uni.flags & 2)
-        data->m_dev->SetVertexShaderConstantF((UINT)uni.vert, &m[0][0], 1);
-#else
     glUniformMatrix2fv((GLint)uni.frag, 1, GL_FALSE, &m[0][0]);
-#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, mat3 const &m)
 {
-#if defined USE_D3D9
-    /* Padding matrix columns is necessary on DirectX. We need to create
-     * a new data structure; a 4×4 matrix will do. */
-    mat4 tmp(m, 1.0f);
-    if (uni.flags & 1)
-        data->m_dev->SetPixelShaderConstantF((UINT)uni.frag, &tmp[0][0], 3);
-    if (uni.flags & 2)
-        data->m_dev->SetVertexShaderConstantF((UINT)uni.vert, &tmp[0][0], 3);
-#else
     glUniformMatrix3fv((GLint)uni.frag, 1, GL_FALSE, &m[0][0]);
-#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, mat4 const &m)
 {
-#if defined USE_D3D9
-    if (uni.flags & 1)
-        data->m_dev->SetPixelShaderConstantF((UINT)uni.frag, &m[0][0], 4);
-    if (uni.flags & 2)
-        data->m_dev->SetVertexShaderConstantF((UINT)uni.vert, &m[0][0], 4);
-#else
     glUniformMatrix4fv((GLint)uni.frag, 1, GL_FALSE, &m[0][0]);
-#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, TextureUniform tex, int index)
 {
-#if defined USE_D3D9
-    data->m_dev->SetTexture(index, (LPDIRECT3DTEXTURE9)tex.m_flags);
-    data->m_dev->SetSamplerState(index, D3DSAMP_MAGFILTER, tex.m_attrib & 0xff);
-    data->m_dev->SetSamplerState(index, D3DSAMP_MINFILTER, (tex.m_attrib >> 8) & 0xff);
-    data->m_dev->SetSamplerState(index, D3DSAMP_MIPFILTER, (tex.m_attrib >> 16) & 0xff);
-#else
     glActiveTexture(GL_TEXTURE0 + index);
     //glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, (int)tex.m_flags);
     SetUniform(uni, index);
-#endif
 }
 
 /*
@@ -646,103 +472,43 @@ void Shader::SetUniform(ShaderUniform const &uni, TextureUniform tex, int index)
 
 void Shader::SetUniform(ShaderUniform const &uni, array<float> const &v)
 {
-#if defined USE_D3D9
-    /* FIXME: this will not work properly because we don't know how tell DX9
-     * it's a bunch of floats instead of vec4. */
-    if (uni.flags & 1)
-        data->m_dev->SetPixelShaderConstantF((UINT)uni.frag,
-                                             &v[0], v.count() / 4);
-    if (uni.flags & 2)
-        data->m_dev->SetVertexShaderConstantF((UINT)uni.vert,
-                                              &v[0], v.count() / 4);
-#else
     glUniform1fv((GLint)uni.frag, (GLsizei)v.count(), &v[0]);
-#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, array<vec2> const &v)
 {
-#if defined USE_D3D9
-    /* FIXME: this will not work properly because we don't know how tell DX9
-     * it's a bunch of vec2 instead of vec4. */
-    if (uni.flags & 1)
-        data->m_dev->SetPixelShaderConstantF((UINT)uni.frag,
-                                             &v[0][0], v.count() / 2);
-    if (uni.flags & 2)
-        data->m_dev->SetVertexShaderConstantF((UINT)uni.vert,
-                                              &v[0][0], v.count() / 2);
-#else
     glUniform2fv((GLint)uni.frag, (GLsizei)v.count(), &v[0][0]);
-#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, array<vec3> const &v)
 {
-#if defined USE_D3D9
-    /* FIXME: this will not work properly because we don't know how tell DX9
-     * it's a bunch of vec3 instead of vec4. */
-    if (uni.flags & 1)
-        data->m_dev->SetPixelShaderConstantF((UINT)uni.frag,
-                                             &v[0][0], v.count());
-    if (uni.flags & 2)
-        data->m_dev->SetVertexShaderConstantF((UINT)uni.vert,
-                                              &v[0][0], v.count());
-#else
     glUniform3fv((GLint)uni.frag, (GLsizei)v.count(), &v[0][0]);
-#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, array<vec4> const &v)
 {
-#if defined USE_D3D9
-    if (uni.flags & 1)
-        data->m_dev->SetPixelShaderConstantF((UINT)uni.frag,
-                                             &v[0][0], v.count());
-    if (uni.flags & 2)
-        data->m_dev->SetVertexShaderConstantF((UINT)uni.vert,
-                                              &v[0][0], v.count());
-#else
     glUniform4fv((GLint)uni.frag, (GLsizei)v.count(), &v[0][0]);
-#endif
 }
 
 void Shader::Bind() const
 {
-#if defined USE_D3D9
-    HRESULT hr;
-    hr = data->m_dev->SetVertexShader(data->vert_shader);
-    hr = data->m_dev->SetPixelShader(data->frag_shader);
-#else
     glUseProgram(data->prog_id);
-#endif
 }
 
 void Shader::Unbind() const
 {
-#if defined USE_D3D9
-    HRESULT hr;
-    hr = data->m_dev->SetVertexShader(nullptr);
-    hr = data->m_dev->SetPixelShader(nullptr);
-#else
     /* FIXME: untested */
     glUseProgram(0);
-#endif
 }
 
 Shader::~Shader()
 {
-#if defined USE_D3D9
-    data->vert_shader->Release();
-    data->vert_table->Release();
-    data->frag_shader->Release();
-    data->frag_table->Release();
-#else
     glDetachShader(data->prog_id, data->vert_id);
     glDetachShader(data->prog_id, data->frag_id);
     glDeleteShader(data->vert_id);
     glDeleteShader(data->frag_id);
     glDeleteProgram(data->prog_id);
-#endif
+
     delete data;
 }
 
@@ -751,7 +517,6 @@ int ShaderData::GetVersion()
 {
     static int version = 0;
 
-#if !defined USE_D3D9
     if (!version)
     {
 #if defined HAVE_GLES_2X
@@ -793,7 +558,6 @@ int ShaderData::GetVersion()
         glDeleteShader(id);
 #endif
     }
-#endif
 
     return version;
 }
