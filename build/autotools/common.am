@@ -6,6 +6,7 @@
 CLEANFILES =
 SUFFIXES =
 EXTRA_DIST =
+NULL =
 
 
 #

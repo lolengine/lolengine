@@ -70,7 +70,7 @@ void	btContactConstraint::buildJacobian()
 
 
 
-//response  between two dynamic objects without friction, assuming 0 penetration depth
+//response  between two dynamic objects without friction and no restitution, assuming 0 penetration depth
 btScalar resolveSingleCollision(
         btRigidBody* body1,
         btCollisionObject* colObj2,
@@ -93,7 +93,7 @@ btScalar resolveSingleCollision(
     btScalar rel_vel;
     rel_vel = normal.dot(vel);
     
-    btScalar combinedRestitution = body1->getRestitution() * colObj2->getRestitution();
+    btScalar combinedRestitution = 0.f;
     btScalar restitution = combinedRestitution* -rel_vel;
 
     btScalar positionalError = solverInfo.m_erp *-distance /solverInfo.m_timeStep ;
@@ -155,8 +155,7 @@ void resolveSingleBilateral(btRigidBody& body1, const btVector3& pos1,
 		body1.getCenterOfMassTransform().getBasis().transpose() * body1.getAngularVelocity(),
 		body2.getLinearVelocity(),
 		body2.getCenterOfMassTransform().getBasis().transpose() * body2.getAngularVelocity()); 
-	btScalar a;
-	a=jacDiagABInv;
+
 
 
 	rel_vel = normal.dot(vel);

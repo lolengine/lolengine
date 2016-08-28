@@ -22,13 +22,6 @@ subject to the following restrictions:
 
 
 
-template <class T>
-void Swap(T &a,T &b)
-{
-	T tmp = a;
-	a=b;
-	b=tmp;
-}
 
 
 //----------------------------------
@@ -275,11 +268,9 @@ int maxdirsterid(const T *p,int count,const T &dir,btAlignedObjectArray<int> &al
 				int mc = ma;
 				for(btScalar xx = x-btScalar(40.0) ; xx <= x ; xx+= btScalar(5.0))
 				{
-// LOL BEGIN
-					btScalar ss = btSin(SIMD_RADS_PER_DEG*(xx));
-					btScalar cc = btCos(SIMD_RADS_PER_DEG*(xx));
-					int md = maxdirfiltered(p,count,dir+(u*ss+v*cc)*btScalar(0.025),allow);
-// LOL END
+					btScalar s = btSin(SIMD_RADS_PER_DEG*(xx));
+					btScalar c = btCos(SIMD_RADS_PER_DEG*(xx));
+					int md = maxdirfiltered(p,count,dir+(u*s+v*c)*btScalar(0.025),allow);
 					if(mc==m && md==m)
 					{
 						allow[m]=3;
@@ -311,10 +302,8 @@ int operator ==(const int3 &a,const int3 &b)
 }
 
 
-// LOL BEGIN
-int above(btVector3 const* vertices,const int3& t, const btVector3 &p, btScalar epsilon);
-int above(btVector3 const* vertices,const int3& t, const btVector3 &p, btScalar epsilon) 
-// LOL END
+int above(btVector3* vertices,const int3& t, const btVector3 &p, btScalar epsilon);
+int above(btVector3* vertices,const int3& t, const btVector3 &p, btScalar epsilon) 
 {
 	btVector3 n=TriNormal(vertices[t[0]],vertices[t[1]],vertices[t[2]]);
 	return (btDot(n,p-vertices[t[0]]) > epsilon); // EPSILON???
@@ -490,9 +479,7 @@ btHullTriangle* HullLibrary::extrudable(btScalar epsilon)
 
 
 
-// LOL BEGIN
-int4 HullLibrary::FindSimplex(btVector3 const *verts,int verts_count,btAlignedObjectArray<int> &allow)
-// LOL END
+int4 HullLibrary::FindSimplex(btVector3 *verts,int verts_count,btAlignedObjectArray<int> &allow)
 {
 	btVector3 basis[3];
 	basis[0] = btVector3( btScalar(0.01), btScalar(0.02), btScalar(1.0) );      
@@ -524,13 +511,11 @@ int4 HullLibrary::FindSimplex(btVector3 const *verts,int verts_count,btAlignedOb
 	if(p3==p0||p3==p1||p3==p2) 
 		return int4(-1,-1,-1,-1);
 	btAssert(!(p0==p1||p0==p2||p0==p3||p1==p2||p1==p3||p2==p3));
-	if(btDot(verts[p3]-verts[p0],btCross(verts[p1]-verts[p0],verts[p2]-verts[p0])) <0) {Swap(p2,p3);}
+	if(btDot(verts[p3]-verts[p0],btCross(verts[p1]-verts[p0],verts[p2]-verts[p0])) <0) {btSwap(p2,p3);}
 	return int4(p0,p1,p2,p3);
 }
 
-// LOL BEGIN
-int HullLibrary::calchullgen(btVector3 const *verts,int verts_count, int vlimit)
-// LOL END
+int HullLibrary::calchullgen(btVector3 *verts,int verts_count, int vlimit)
 {
 	if(verts_count <4) return 0;
 	if(vlimit==0) vlimit=1000000000;
@@ -578,9 +563,7 @@ int HullLibrary::calchullgen(btVector3 const *verts,int verts_count, int vlimit)
 	vlimit-=4;
 	while(vlimit >0 && ((te=extrudable(epsilon)) != 0))
 	{
-// LOL BEGIN
 		//int3 ti=*te;
-// LOL END
 		int v=te->vmax;
 		btAssert(v != -1);
 		btAssert(!isextreme[v]);  // wtf we've already done this vertex
@@ -632,9 +615,7 @@ int HullLibrary::calchullgen(btVector3 const *verts,int verts_count, int vlimit)
 	return 1;
 }
 
-// LOL BEGIN
-int HullLibrary::calchull(btVector3 const *verts,int verts_count, TUIntArray& tris_out, int &tris_count,int vlimit) 
-// LOL END
+int HullLibrary::calchull(btVector3 *verts,int verts_count, TUIntArray& tris_out, int &tris_count,int vlimit) 
 {
 	int rc=calchullgen(verts,verts_count,  vlimit) ;
 	if(!rc) return 0;
@@ -670,9 +651,7 @@ bool HullLibrary::ComputeHull(unsigned int vcount,const btVector3 *vertices,PHul
 {
 	
 	int    tris_count;
-// LOL BEGIN
-	int ret = calchull( vertices, (int) vcount, result.m_Indices, tris_count, static_cast<int>(vlimit) );
-// LOL END
+	int ret = calchull( (btVector3 *) vertices, (int) vcount, result.m_Indices, tris_count, static_cast<int>(vlimit) );
 	if(!ret) return false;
 	result.mIndexCount = (unsigned int) (tris_count*3);
 	result.mFaceCount  = (unsigned int) tris_count;

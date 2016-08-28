@@ -40,7 +40,14 @@ extern bool gDisableDeactivation;
 
 enum	btRigidBodyFlags
 {
-	BT_DISABLE_WORLD_GRAVITY = 1
+	BT_DISABLE_WORLD_GRAVITY = 1,
+	///BT_ENABLE_GYROPSCOPIC_FORCE flags is enabled by default in Bullet 2.83 and onwards.
+	///and it BT_ENABLE_GYROPSCOPIC_FORCE becomes equivalent to BT_ENABLE_GYROSCOPIC_FORCE_IMPLICIT_BODY
+	///See Demos/GyroscopicDemo and computeGyroscopicImpulseImplicit
+	BT_ENABLE_GYROSCOPIC_FORCE_EXPLICIT = 2,
+	BT_ENABLE_GYROSCOPIC_FORCE_IMPLICIT_WORLD=4,
+	BT_ENABLE_GYROSCOPIC_FORCE_IMPLICIT_BODY=8,
+	BT_ENABLE_GYROPSCOPIC_FORCE = BT_ENABLE_GYROSCOPIC_FORCE_IMPLICIT_BODY,
 };
 
 
@@ -83,7 +90,7 @@ class btRigidBody  : public btCollisionObject
 	//m_optionalMotionState allows to automatic synchronize the world transform for active objects
 	btMotionState*	m_optionalMotionState;
 
-	//keep track of typed constraints referencing this rigid body
+	//keep track of typed constraints referencing this rigid body, to disable collision between linked bodies
 	btAlignedObjectArray<btTypedConstraint*> m_constraintRefs;
 
 	int				m_rigidbodyFlags;
@@ -93,7 +100,7 @@ class btRigidBody  : public btCollisionObject
 
 protected:
 
-	ATTRIBUTE_ALIGNED64(btVector3		m_deltaLinearVelocity);
+	ATTRIBUTE_ALIGNED16(btVector3		m_deltaLinearVelocity);
 	btVector3		m_deltaAngularVelocity;
 	btVector3		m_angularFactor;
 	btVector3		m_invMass;
@@ -125,6 +132,9 @@ public:
 
 		///best simulation results when friction is non-zero
 		btScalar			m_friction;
+		///the m_rollingFriction prevents rounded shapes, such as spheres, cylinders and capsules from rolling forever.
+		///See Bullet/Demos/RollingFrictionDemo for usage
+		btScalar			m_rollingFriction;
 		///best simulation results using zero restitution.
 		btScalar			m_restitution;
 
@@ -147,6 +157,7 @@ public:
 			m_linearDamping(btScalar(0.)),
 			m_angularDamping(btScalar(0.)),
 			m_friction(btScalar(0.5)),
+			m_rollingFriction(btScalar(0)),
 			m_restitution(btScalar(0.)),
 			m_linearSleepingThreshold(btScalar(0.8)),
 			m_angularSleepingThreshold(btScalar(1.f)),
@@ -355,11 +366,13 @@ public:
 
 	inline void setLinearVelocity(const btVector3& lin_vel)
 	{ 
+		m_updateRevision++;
 		m_linearVelocity = lin_vel; 
 	}
 
 	inline void setAngularVelocity(const btVector3& ang_vel) 
 	{ 
+		m_updateRevision++;
 		m_angularVelocity = ang_vel; 
 	}
 
@@ -476,11 +489,13 @@ public:
 
 	void	setAngularFactor(const btVector3& angFac)
 	{
+		m_updateRevision++;
 		m_angularFactor = angFac;
 	}
 
 	void	setAngularFactor(btScalar angFac)
 	{
+		m_updateRevision++;
 		m_angularFactor.setValue(angFac,angFac,angFac);
 	}
 	const btVector3&	getAngularFactor() const
@@ -493,8 +508,6 @@ public:
 	{
 		return (getBroadphaseProxy() != 0);
 	}
-
-	virtual bool checkCollideWithOverride(btCollisionObject* co);
 
 	void addConstraintRef(btTypedConstraint* c);
 	void removeConstraintRef(btTypedConstraint* c);
@@ -519,106 +532,18 @@ public:
 		return m_rigidbodyFlags;
 	}
 
-	const btVector3& getDeltaLinearVelocity() const
-	{
-		return m_deltaLinearVelocity;
-	}
-
-	const btVector3& getDeltaAngularVelocity() const
-	{
-		return m_deltaAngularVelocity;
-	}
-
-	const btVector3& getPushVelocity() const 
-	{
-		return m_pushVelocity;
-	}
-
-	const btVector3& getTurnVelocity() const 
-	{
-		return m_turnVelocity;
-	}
-
-
-	////////////////////////////////////////////////
-	///some internal methods, don't use them
-		
-	btVector3& internalGetDeltaLinearVelocity()
-	{
-		return m_deltaLinearVelocity;
-	}
-
-	btVector3& internalGetDeltaAngularVelocity()
-	{
-		return m_deltaAngularVelocity;
-	}
-
-	const btVector3& internalGetAngularFactor() const
-	{
-		return m_angularFactor;
-	}
-
-	const btVector3& internalGetInvMass() const
-	{
-		return m_invMass;
-	}
-	
-	btVector3& internalGetPushVelocity()
-	{
-		return m_pushVelocity;
-	}
-
-	btVector3& internalGetTurnVelocity()
-	{
-		return m_turnVelocity;
-	}
-
-	SIMD_FORCE_INLINE void	internalGetVelocityInLocalPointObsolete(const btVector3& rel_pos, btVector3& velocity ) const
-	{
-		velocity = getLinearVelocity()+m_deltaLinearVelocity + (getAngularVelocity()+m_deltaAngularVelocity).cross(rel_pos);
-	}
-
-	SIMD_FORCE_INLINE void	internalGetAngularVelocity(btVector3& angVel) const
-	{
-		angVel = getAngularVelocity()+m_deltaAngularVelocity;
-	}
-
-
-	//Optimization for the iterative solver: avoid calculating constant terms involving inertia, normal, relative position
-	SIMD_FORCE_INLINE void internalApplyImpulse(const btVector3& linearComponent, const btVector3& angularComponent,const btScalar impulseMagnitude)
-	{
-		if (m_inverseMass)
-		{
-			m_deltaLinearVelocity += linearComponent*impulseMagnitude;
-			m_deltaAngularVelocity += angularComponent*(impulseMagnitude*m_angularFactor);
-		}
-	}
-
-	SIMD_FORCE_INLINE void internalApplyPushImpulse(const btVector3& linearComponent, const btVector3& angularComponent,btScalar impulseMagnitude)
-	{
-		if (m_inverseMass)
-		{
-			m_pushVelocity += linearComponent*impulseMagnitude;
-			m_turnVelocity += angularComponent*(impulseMagnitude*m_angularFactor);
-		}
-	}
-	
-	void	internalWritebackVelocity()
-	{
-		if (m_inverseMass)
-		{
-			setLinearVelocity(getLinearVelocity()+ m_deltaLinearVelocity);
-			setAngularVelocity(getAngularVelocity()+m_deltaAngularVelocity);
-			//m_deltaLinearVelocity.setZero();
-			//m_deltaAngularVelocity .setZero();
-			//m_originalBody->setCompanionId(-1);
-		}
-	}
-
-
-	void	internalWritebackVelocity(btScalar timeStep);
 
 	
+
+	///perform implicit force computation in world space
+	btVector3 computeGyroscopicImpulseImplicit_World(btScalar dt) const;
+	
+	///perform implicit force computation in body space (inertial frame)
+	btVector3 computeGyroscopicImpulseImplicit_Body(btScalar step) const;
+
+	///explicit version is best avoided, it gains energy
+	btVector3 computeGyroscopicForceExplicit(btScalar maxGyroscopicForce) const;
+	btVector3 getLocalInertia() const;
 
 	///////////////////////////////////////////////
 

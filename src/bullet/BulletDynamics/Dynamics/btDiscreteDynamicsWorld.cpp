@@ -4,8 +4,8 @@ Copyright (c) 2003-2009 Erwin Coumans  http://bulletphysics.org
 
 This software is provided 'as-is', without any express or implied warranty.
 In no event will the authors be held liable for any damages arising from the use of this software.
-Permission is granted to anyone to use this software for any purpose, 
-including commercial applications, and to alter it and redistribute it freely, 
+Permission is granted to anyone to use this software for any purpose,
+including commercial applications, and to alter it and redistribute it freely,
 subject to the following restrictions:
 
 1. The origin of this software must not be misrepresented; you must not claim that you wrote the original software. If you use this software in a product, an acknowledgment in the product documentation would be appreciated but is not required.
@@ -34,6 +34,7 @@ subject to the following restrictions:
 #include "BulletDynamics/ConstraintSolver/btHingeConstraint.h"
 #include "BulletDynamics/ConstraintSolver/btConeTwistConstraint.h"
 #include "BulletDynamics/ConstraintSolver/btGeneric6DofConstraint.h"
+#include "BulletDynamics/ConstraintSolver/btGeneric6DofSpring2Constraint.h"
 #include "BulletDynamics/ConstraintSolver/btSliderConstraint.h"
 #include "BulletDynamics/ConstraintSolver/btContactConstraint.h"
 
@@ -58,7 +59,7 @@ int firstHit=startHit;
 SIMD_FORCE_INLINE	int	btGetConstraintIslandId(const btTypedConstraint* lhs)
 {
 	int islandId;
-	
+
 	const btCollisionObject& rcolObj0 = lhs->getRigidBodyA();
 	const btCollisionObject& rcolObj1 = lhs->getRigidBodyB();
 	islandId= rcolObj0.getIslandTag()>=0?rcolObj0.getIslandTag():rcolObj1.getIslandTag();
@@ -87,9 +88,8 @@ struct InplaceSolverIslandCallback : public btSimulationIslandManager::IslandCal
 	btTypedConstraint**		m_sortedConstraints;
 	int						m_numConstraints;
 	btIDebugDraw*			m_debugDrawer;
-	btStackAlloc*			m_stackAlloc;
 	btDispatcher*			m_dispatcher;
-	
+
 	btAlignedObjectArray<btCollisionObject*> m_bodies;
 	btAlignedObjectArray<btPersistentManifold*> m_manifolds;
 	btAlignedObjectArray<btTypedConstraint*> m_constraints;
@@ -104,7 +104,6 @@ struct InplaceSolverIslandCallback : public btSimulationIslandManager::IslandCal
 		m_sortedConstraints(NULL),
 		m_numConstraints(0),
 		m_debugDrawer(NULL),
-		m_stackAlloc(stackAlloc),
 		m_dispatcher(dispatcher)
 	{
 
@@ -129,23 +128,20 @@ struct InplaceSolverIslandCallback : public btSimulationIslandManager::IslandCal
 		m_constraints.resize (0);
 	}
 
-	
+
 	virtual	void	processIsland(btCollisionObject** bodies,int numBodies,btPersistentManifold**	manifolds,int numManifolds, int islandId)
 	{
 		if (islandId<0)
 		{
-			if (numManifolds + m_numConstraints)
-			{
-				///we don't split islands, so all constraints/contact manifolds/bodies are passed into the solver regardless the island id
-				m_solver->solveGroup( bodies,numBodies,manifolds, numManifolds,&m_sortedConstraints[0],m_numConstraints,*m_solverInfo,m_debugDrawer,m_stackAlloc,m_dispatcher);
-			}
+			///we don't split islands, so all constraints/contact manifolds/bodies are passed into the solver regardless the island id
+			m_solver->solveGroup( bodies,numBodies,manifolds, numManifolds,&m_sortedConstraints[0],m_numConstraints,*m_solverInfo,m_debugDrawer,m_dispatcher);
 		} else
 		{
 				//also add all non-contact constraints/joints for this island
 			btTypedConstraint** startConstraint = 0;
 			int numCurConstraints = 0;
 			int i;
-			
+
 			//find the first constraint for this island
 			for (i=0;i<m_numConstraints;i++)
 			{
@@ -166,14 +162,10 @@ struct InplaceSolverIslandCallback : public btSimulationIslandManager::IslandCal
 
 			if (m_solverInfo->m_minimumSolverBatchSize<=1)
 			{
-				///only call solveGroup if there is some work: avoid virtual function call, its overhead can be excessive
-				if (numManifolds + numCurConstraints)
-				{
-					m_solver->solveGroup( bodies,numBodies,manifolds, numManifolds,startConstraint,numCurConstraints,*m_solverInfo,m_debugDrawer,m_stackAlloc,m_dispatcher);
-				}
+				m_solver->solveGroup( bodies,numBodies,manifolds, numManifolds,startConstraint,numCurConstraints,*m_solverInfo,m_debugDrawer,m_dispatcher);
 			} else
 			{
-				
+
 				for (i=0;i<numBodies;i++)
 					m_bodies.push_back(bodies[i]);
 				for (i=0;i<numManifolds;i++)
@@ -192,15 +184,12 @@ struct InplaceSolverIslandCallback : public btSimulationIslandManager::IslandCal
 	}
 	void	processConstraints()
 	{
-		if (m_manifolds.size() + m_constraints.size()>0)
-		{
 
-			btCollisionObject** bodies = m_bodies.size()? &m_bodies[0]:0;
-			btPersistentManifold** manifold = m_manifolds.size()?&m_manifolds[0]:0;
-			btTypedConstraint** constraints = m_constraints.size()?&m_constraints[0]:0;
-			
-			m_solver->solveGroup( bodies,m_bodies.size(),manifold, m_manifolds.size(),constraints, m_constraints.size() ,*m_solverInfo,m_debugDrawer,m_stackAlloc,m_dispatcher);
-		}
+		btCollisionObject** bodies = m_bodies.size()? &m_bodies[0]:0;
+		btPersistentManifold** manifold = m_manifolds.size()?&m_manifolds[0]:0;
+		btTypedConstraint** constraints = m_constraints.size()?&m_constraints[0]:0;
+
+		m_solver->solveGroup( bodies,m_bodies.size(),manifold, m_manifolds.size(),constraints, m_constraints.size() ,*m_solverInfo,m_debugDrawer,m_dispatcher);
 		m_bodies.resize(0);
 		m_manifolds.resize(0);
 		m_constraints.resize(0);
@@ -213,13 +202,17 @@ struct InplaceSolverIslandCallback : public btSimulationIslandManager::IslandCal
 
 btDiscreteDynamicsWorld::btDiscreteDynamicsWorld(btDispatcher* dispatcher,btBroadphaseInterface* pairCache,btConstraintSolver* constraintSolver, btCollisionConfiguration* collisionConfiguration)
 :btDynamicsWorld(dispatcher,pairCache,collisionConfiguration),
+m_sortedConstraints	(),
+m_solverIslandCallback ( NULL ),
 m_constraintSolver(constraintSolver),
 m_gravity(0,-10,0),
 m_localTime(0),
+m_fixedTimeStep(0),
 m_synchronizeAllMotionStates(false),
+m_applySpeculativeContactRestitution(false),
 m_profileTimings(0),
-m_sortedConstraints	(),
-m_solverIslandCallback ( NULL )
+m_latencyMotionStateInterpolation(true)
+
 {
 	if (!m_constraintSolver)
 	{
@@ -240,7 +233,7 @@ m_solverIslandCallback ( NULL )
 
 	{
 		void* mem = btAlignedAlloc(sizeof(InplaceSolverIslandCallback),16);
-		m_solverIslandCallback = new (mem) InplaceSolverIslandCallback (constraintSolver, m_stackAlloc, dispatcher);
+		m_solverIslandCallback = new (mem) InplaceSolverIslandCallback (m_constraintSolver, 0, dispatcher);
 	}
 }
 
@@ -325,6 +318,9 @@ void	btDiscreteDynamicsWorld::debugDrawWorld()
 			}
 		}
 	}
+    if (getDebugDrawer())
+        getDebugDrawer()->flushLines();
+
 }
 
 void	btDiscreteDynamicsWorld::clearForces()
@@ -337,7 +333,7 @@ void	btDiscreteDynamicsWorld::clearForces()
 		//it might break backward compatibility (people applying forces on sleeping objects get never cleared and accumulate on wake-up
 		body->clearForces();
 	}
-}	
+}
 
 ///apply gravity, call this once per timestep
 void	btDiscreteDynamicsWorld::applyGravity()
@@ -367,7 +363,9 @@ void	btDiscreteDynamicsWorld::synchronizeSingleMotionState(btRigidBody* body)
 		{
 			btTransform interpolatedTransform;
 			btTransformUtil::integrateTransform(body->getInterpolationWorldTransform(),
-				body->getInterpolationLinearVelocity(),body->getInterpolationAngularVelocity(),m_localTime*body->getHitFraction(),interpolatedTransform);
+				body->getInterpolationLinearVelocity(),body->getInterpolationAngularVelocity(),
+				(m_latencyMotionStateInterpolation && m_fixedTimeStep) ? m_localTime - m_fixedTimeStep : m_localTime*body->getHitFraction(),
+				interpolatedTransform);
 			body->getMotionState()->setWorldTransform(interpolatedTransform);
 		}
 	}
@@ -411,6 +409,7 @@ int	btDiscreteDynamicsWorld::stepSimulation( btScalar timeStep,int maxSubSteps, 
 	if (maxSubSteps)
 	{
 		//fixed timestep with interpolation
+		m_fixedTimeStep = fixedTimeStep;
 		m_localTime += timeStep;
 		if (m_localTime >= fixedTimeStep)
 		{
@@ -421,7 +420,8 @@ int	btDiscreteDynamicsWorld::stepSimulation( btScalar timeStep,int maxSubSteps, 
 	{
 		//variable timestep
 		fixedTimeStep = timeStep;
-		m_localTime = timeStep;
+		m_localTime = m_latencyMotionStateInterpolation ? 0 : timeStep;
+		m_fixedTimeStep = 0;
 		if (btFuzzyZero(timeStep))
 		{
 			numSimulationSubSteps = 0;
@@ -449,7 +449,7 @@ int	btDiscreteDynamicsWorld::stepSimulation( btScalar timeStep,int maxSubSteps, 
 
 		applyGravity();
 
-		
+
 
 		for (int i=0;i<clampedSimulationSteps;i++)
 		{
@@ -467,18 +467,18 @@ int	btDiscreteDynamicsWorld::stepSimulation( btScalar timeStep,int maxSubSteps, 
 #ifndef BT_NO_PROFILE
 	CProfileManager::Increment_Frame_Counter();
 #endif //BT_NO_PROFILE
-	
+
 	return numSimulationSubSteps;
 }
 
 void	btDiscreteDynamicsWorld::internalSingleStepSimulation(btScalar timeStep)
 {
-	
+
 	BT_PROFILE("internalSingleStepSimulation");
 
 	if(0 != m_internalPreTickCallback) {
 		(*m_internalPreTickCallback)(this, timeStep);
-	}	
+	}
 
 	///apply gravity, predict motion
 	predictUnconstraintMotion(timeStep);
@@ -490,33 +490,35 @@ void	btDiscreteDynamicsWorld::internalSingleStepSimulation(btScalar timeStep)
 	dispatchInfo.m_debugDraw = getDebugDrawer();
 
 
+    createPredictiveContacts(timeStep);
+
 	///perform collision detection
 	performDiscreteCollisionDetection();
 
-
 	calculateSimulationIslands();
 
-	
+
 	getSolverInfo().m_timeStep = timeStep;
-	
+
 
 
 	///solve contact and other joint constraints
 	solveConstraints(getSolverInfo());
-	
+
 	///CallbackTriggers();
 
 	///integrate transforms
+
 	integrateTransforms(timeStep);
 
 	///update vehicle simulation
 	updateActions(timeStep);
-	
+
 	updateActivationState( timeStep );
 
 	if(0 != m_internalTickCallback) {
 		(*m_internalTickCallback)(this, timeStep);
-	}	
+	}
 }
 
 void	btDiscreteDynamicsWorld::setGravity(const btVector3& gravity)
@@ -608,14 +610,14 @@ void	btDiscreteDynamicsWorld::addRigidBody(btRigidBody* body, short group, short
 void	btDiscreteDynamicsWorld::updateActions(btScalar timeStep)
 {
 	BT_PROFILE("updateActions");
-	
+
 	for ( int i=0;i<m_actions.size();i++)
 	{
 		m_actions[i]->updateAction( this, timeStep);
 	}
 }
-	
-	
+
+
 void	btDiscreteDynamicsWorld::updateActivationState(btScalar timeStep)
 {
 	BT_PROFILE("updateActivationState");
@@ -636,7 +638,7 @@ void	btDiscreteDynamicsWorld::updateActivationState(btScalar timeStep)
 				{
 					if (body->getActivationState() == ACTIVE_TAG)
 						body->setActivationState( WANTS_DEACTIVATION );
-					if (body->getActivationState() == ISLAND_SLEEPING) 
+					if (body->getActivationState() == ISLAND_SLEEPING)
 					{
 						body->setAngularVelocity(btVector3(0,0,0));
 						body->setLinearVelocity(btVector3(0,0,0));
@@ -655,6 +657,9 @@ void	btDiscreteDynamicsWorld::updateActivationState(btScalar timeStep)
 void	btDiscreteDynamicsWorld::addConstraint(btTypedConstraint* constraint,bool disableCollisionsBetweenLinkedBodies)
 {
 	m_constraints.push_back(constraint);
+    //Make sure the two bodies of a type constraint are different (possibly add this to the btTypedConstraint constructor?)
+    btAssert(&constraint->getRigidBodyA()!=&constraint->getRigidBodyB());
+    
 	if (disableCollisionsBetweenLinkedBodies)
 	{
 		constraint->getRigidBodyA().addConstraintRef(constraint);
@@ -706,31 +711,31 @@ void	btDiscreteDynamicsWorld::removeCharacter(btActionInterface* character)
 void	btDiscreteDynamicsWorld::solveConstraints(btContactSolverInfo& solverInfo)
 {
 	BT_PROFILE("solveConstraints");
-	
+
 	m_sortedConstraints.resize( m_constraints.size());
-	int i; 
+	int i;
 	for (i=0;i<getNumConstraints();i++)
 	{
 		m_sortedConstraints[i] = m_constraints[i];
 	}
 
 //	btAssert(0);
-		
-	
+
+
 
 	m_sortedConstraints.quickSort(btSortConstraintOnIslandPredicate());
-	
+
 	btTypedConstraint** constraintsPtr = getNumConstraints() ? &m_sortedConstraints[0] : 0;
-	
+
 	m_solverIslandCallback->setup(&solverInfo,constraintsPtr,m_sortedConstraints.size(),getDebugDrawer());
 	m_constraintSolver->prepareSolve(getCollisionWorld()->getNumCollisionObjects(), getCollisionWorld()->getDispatcher()->getNumManifolds());
-	
+
 	/// solve all the constraints for this island
 	m_islandManager->buildAndProcessIslands(getCollisionWorld()->getDispatcher(),getCollisionWorld(),m_solverIslandCallback);
 
 	m_solverIslandCallback->processConstraints();
 
-	m_constraintSolver->allSolved(solverInfo, m_debugDrawer, m_stackAlloc);
+	m_constraintSolver->allSolved(solverInfo, m_debugDrawer);
 }
 
 
@@ -739,6 +744,23 @@ void	btDiscreteDynamicsWorld::calculateSimulationIslands()
 	BT_PROFILE("calculateSimulationIslands");
 
 	getSimulationIslandManager()->updateActivationState(getCollisionWorld(),getCollisionWorld()->getDispatcher());
+
+    {
+        //merge islands based on speculative contact manifolds too
+        for (int i=0;i<this->m_predictiveManifolds.size();i++)
+        {
+            btPersistentManifold* manifold = m_predictiveManifolds[i];
+
+            const btCollisionObject* colObj0 = manifold->getBody0();
+            const btCollisionObject* colObj1 = manifold->getBody1();
+
+            if (((colObj0) && (!(colObj0)->isStaticOrKinematicObject())) &&
+                ((colObj1) && (!(colObj1)->isStaticOrKinematicObject())))
+            {
+				getSimulationIslandManager()->getUnionFind().unite((colObj0)->getIslandTag(),(colObj1)->getIslandTag());
+            }
+        }
+    }
 
 	{
 		int i;
@@ -754,12 +776,7 @@ void	btDiscreteDynamicsWorld::calculateSimulationIslands()
 				if (((colObj0) && (!(colObj0)->isStaticOrKinematicObject())) &&
 					((colObj1) && (!(colObj1)->isStaticOrKinematicObject())))
 				{
-					if (colObj0->isActive() || colObj1->isActive())
-					{
-
-						getSimulationIslandManager()->getUnionFind().unite((colObj0)->getIslandTag(),
-							(colObj1)->getIslandTag());
-					}
+					getSimulationIslandManager()->getUnionFind().unite((colObj0)->getIslandTag(),(colObj1)->getIslandTag());
 				}
 			}
 		}
@@ -768,7 +785,7 @@ void	btDiscreteDynamicsWorld::calculateSimulationIslands()
 	//Store the island id in each body
 	getSimulationIslandManager()->storeIslandActivationState(getCollisionWorld());
 
-	
+
 }
 
 
@@ -784,7 +801,7 @@ public:
 	btDispatcher* m_dispatcher;
 
 public:
-	btClosestNotMeConvexResultCallback (btCollisionObject* me,const btVector3& fromA,const btVector3& toA,btOverlappingPairCache* pairCache,btDispatcher* dispatcher) : 
+	btClosestNotMeConvexResultCallback (btCollisionObject* me,const btVector3& fromA,const btVector3& toA,btOverlappingPairCache* pairCache,btDispatcher* dispatcher) :
 	  btCollisionWorld::ClosestConvexResultCallback(fromA,toA),
 		m_me(me),
 		m_allowedPenetration(0.0f),
@@ -860,9 +877,22 @@ public:
 ///internal debugging variable. this value shouldn't be too high
 int gNumClampedCcdMotions=0;
 
-void	btDiscreteDynamicsWorld::integrateTransforms(btScalar timeStep)
+
+void	btDiscreteDynamicsWorld::createPredictiveContacts(btScalar timeStep)
 {
-	BT_PROFILE("integrateTransforms");
+	BT_PROFILE("createPredictiveContacts");
+
+	{
+		BT_PROFILE("release predictive contact manifolds");
+
+		for (int i=0;i<m_predictiveManifolds.size();i++)
+		{
+			btPersistentManifold* manifold = m_predictiveManifolds[i];
+			this->m_dispatcher1->releaseManifold(manifold);
+		}
+		m_predictiveManifolds.clear();
+	}
+
 	btTransform predictedTrans;
 	for ( int i=0;i<m_nonStaticRigidBodies.size();i++)
 	{
@@ -873,23 +903,21 @@ void	btDiscreteDynamicsWorld::integrateTransforms(btScalar timeStep)
 		{
 
 			body->predictIntegratedTransform(timeStep, predictedTrans);
-			
-			btScalar squareMotion = (predictedTrans.getOrigin()-body->getWorldTransform().getOrigin()).length2();
 
-			
+			btScalar squareMotion = (predictedTrans.getOrigin()-body->getWorldTransform().getOrigin()).length2();
 
 			if (getDispatchInfo().m_useContinuous && body->getCcdSquareMotionThreshold() && body->getCcdSquareMotionThreshold() < squareMotion)
 			{
-				BT_PROFILE("CCD motion clamping");
+				BT_PROFILE("predictive convexSweepTest");
 				if (body->getCollisionShape()->isConvex())
 				{
 					gNumClampedCcdMotions++;
-#ifdef USE_STATIC_ONLY
+#ifdef PREDICTIVE_CONTACT_USE_STATIC_ONLY
 					class StaticOnlyCallback : public btClosestNotMeConvexResultCallback
 					{
 					public:
 
-						StaticOnlyCallback (btCollisionObject* me,const btVector3& fromA,const btVector3& toA,btOverlappingPairCache* pairCache,btDispatcher* dispatcher) : 
+						StaticOnlyCallback (btCollisionObject* me,const btVector3& fromA,const btVector3& toA,btOverlappingPairCache* pairCache,btDispatcher* dispatcher) :
 						  btClosestNotMeConvexResultCallback(me,fromA,toA,pairCache,dispatcher)
 						{
 						}
@@ -919,7 +947,93 @@ void	btDiscreteDynamicsWorld::integrateTransforms(btScalar timeStep)
 					convexSweepTest(&tmpSphere,body->getWorldTransform(),modifiedPredictedTrans,sweepResults);
 					if (sweepResults.hasHit() && (sweepResults.m_closestHitFraction < 1.f))
 					{
-						
+
+						btVector3 distVec = (predictedTrans.getOrigin()-body->getWorldTransform().getOrigin())*sweepResults.m_closestHitFraction;
+						btScalar distance = distVec.dot(-sweepResults.m_hitNormalWorld);
+
+
+						btPersistentManifold* manifold = m_dispatcher1->getNewManifold(body,sweepResults.m_hitCollisionObject);
+						m_predictiveManifolds.push_back(manifold);
+
+						btVector3 worldPointB = body->getWorldTransform().getOrigin()+distVec;
+						btVector3 localPointB = sweepResults.m_hitCollisionObject->getWorldTransform().inverse()*worldPointB;
+
+						btManifoldPoint newPoint(btVector3(0,0,0), localPointB,sweepResults.m_hitNormalWorld,distance);
+
+						bool isPredictive = true;
+						int index = manifold->addManifoldPoint(newPoint, isPredictive);
+						btManifoldPoint& pt = manifold->getContactPoint(index);
+						pt.m_combinedRestitution = 0;
+						pt.m_combinedFriction = btManifoldResult::calculateCombinedFriction(body,sweepResults.m_hitCollisionObject);
+						pt.m_positionWorldOnA = body->getWorldTransform().getOrigin();
+						pt.m_positionWorldOnB = worldPointB;
+
+					}
+				}
+			}
+		}
+	}
+}
+void	btDiscreteDynamicsWorld::integrateTransforms(btScalar timeStep)
+{
+	BT_PROFILE("integrateTransforms");
+	btTransform predictedTrans;
+	for ( int i=0;i<m_nonStaticRigidBodies.size();i++)
+	{
+		btRigidBody* body = m_nonStaticRigidBodies[i];
+		body->setHitFraction(1.f);
+
+		if (body->isActive() && (!body->isStaticOrKinematicObject()))
+		{
+
+			body->predictIntegratedTransform(timeStep, predictedTrans);
+
+			btScalar squareMotion = (predictedTrans.getOrigin()-body->getWorldTransform().getOrigin()).length2();
+
+
+
+			if (getDispatchInfo().m_useContinuous && body->getCcdSquareMotionThreshold() && body->getCcdSquareMotionThreshold() < squareMotion)
+			{
+				BT_PROFILE("CCD motion clamping");
+				if (body->getCollisionShape()->isConvex())
+				{
+					gNumClampedCcdMotions++;
+#ifdef USE_STATIC_ONLY
+					class StaticOnlyCallback : public btClosestNotMeConvexResultCallback
+					{
+					public:
+
+						StaticOnlyCallback (btCollisionObject* me,const btVector3& fromA,const btVector3& toA,btOverlappingPairCache* pairCache,btDispatcher* dispatcher) :
+						  btClosestNotMeConvexResultCallback(me,fromA,toA,pairCache,dispatcher)
+						{
+						}
+
+					  	virtual bool needsCollision(btBroadphaseProxy* proxy0) const
+						{
+							btCollisionObject* otherObj = (btCollisionObject*) proxy0->m_clientObject;
+							if (!otherObj->isStaticOrKinematicObject())
+								return false;
+							return btClosestNotMeConvexResultCallback::needsCollision(proxy0);
+						}
+					};
+
+					StaticOnlyCallback sweepResults(body,body->getWorldTransform().getOrigin(),predictedTrans.getOrigin(),getBroadphase()->getOverlappingPairCache(),getDispatcher());
+#else
+					btClosestNotMeConvexResultCallback sweepResults(body,body->getWorldTransform().getOrigin(),predictedTrans.getOrigin(),getBroadphase()->getOverlappingPairCache(),getDispatcher());
+#endif
+					//btConvexShape* convexShape = static_cast<btConvexShape*>(body->getCollisionShape());
+					btSphereShape tmpSphere(body->getCcdSweptSphereRadius());//btConvexShape* convexShape = static_cast<btConvexShape*>(body->getCollisionShape());
+					sweepResults.m_allowedPenetration=getDispatchInfo().m_allowedCcdPenetration;
+
+					sweepResults.m_collisionFilterGroup = body->getBroadphaseProxy()->m_collisionFilterGroup;
+					sweepResults.m_collisionFilterMask  = body->getBroadphaseProxy()->m_collisionFilterMask;
+					btTransform modifiedPredictedTrans = predictedTrans;
+					modifiedPredictedTrans.setBasis(body->getWorldTransform().getBasis());
+
+					convexSweepTest(&tmpSphere,body->getWorldTransform(),modifiedPredictedTrans,sweepResults);
+					if (sweepResults.hasHit() && (sweepResults.m_closestHitFraction < 1.f))
+					{
+
 						//printf("clamped integration to hit fraction = %f\n",fraction);
 						body->setHitFraction(sweepResults.m_closestHitFraction);
 						body->predictIntegratedTransform(timeStep*body->getHitFraction(), predictedTrans);
@@ -944,11 +1058,13 @@ void	btDiscreteDynamicsWorld::integrateTransforms(btScalar timeStep)
 							printf("sm2=%f\n",sm2);
 						}
 #else
-						//response  between two dynamic objects without friction, assuming 0 penetration depth
-						btScalar appliedImpulse = 0.f;
-						btScalar depth = 0.f;
-						appliedImpulse = resolveSingleCollision(body,sweepResults.m_hitCollisionObject,sweepResults.m_hitPointWorld,sweepResults.m_hitNormalWorld,getSolverInfo(), depth);
-						
+
+						//don't apply the collision response right now, it will happen next frame
+						//if you really need to, you can uncomment next 3 lines. Note that is uses zero restitution.
+						//btScalar appliedImpulse = 0.f;
+						//btScalar depth = 0.f;
+						//appliedImpulse = resolveSingleCollision(body,(btCollisionObject*)sweepResults.m_hitCollisionObject,sweepResults.m_hitPointWorld,sweepResults.m_hitNormalWorld,getSolverInfo(), depth);
+
 
 #endif
 
@@ -956,11 +1072,49 @@ void	btDiscreteDynamicsWorld::integrateTransforms(btScalar timeStep)
 					}
 				}
 			}
-			
+
 
 			body->proceedToTransform( predictedTrans);
+
+		}
+
+	}
+
+	///this should probably be switched on by default, but it is not well tested yet
+	if (m_applySpeculativeContactRestitution)
+	{
+		BT_PROFILE("apply speculative contact restitution");
+		for (int i=0;i<m_predictiveManifolds.size();i++)
+		{
+			btPersistentManifold* manifold = m_predictiveManifolds[i];
+			btRigidBody* body0 = btRigidBody::upcast((btCollisionObject*)manifold->getBody0());
+			btRigidBody* body1 = btRigidBody::upcast((btCollisionObject*)manifold->getBody1());
+
+			for (int p=0;p<manifold->getNumContacts();p++)
+			{
+				const btManifoldPoint& pt = manifold->getContactPoint(p);
+				btScalar combinedRestitution = btManifoldResult::calculateCombinedRestitution(body0, body1);
+
+				if (combinedRestitution>0 && pt.m_appliedImpulse != 0.f)
+				//if (pt.getDistance()>0 && combinedRestitution>0 && pt.m_appliedImpulse != 0.f)
+				{
+					btVector3 imp = -pt.m_normalWorldOnB * pt.m_appliedImpulse* combinedRestitution;
+
+					const btVector3& pos1 = pt.getPositionWorldOnA();
+					const btVector3& pos2 = pt.getPositionWorldOnB();
+
+					btVector3 rel_pos0 = pos1 - body0->getWorldTransform().getOrigin();
+					btVector3 rel_pos1 = pos2 - body1->getWorldTransform().getOrigin();
+
+					if (body0)
+						body0->applyImpulse(imp,rel_pos0);
+					if (body1)
+						body1->applyImpulse(-imp,rel_pos1);
+				}
+			}
 		}
 	}
+
 }
 
 
@@ -976,8 +1130,8 @@ void	btDiscreteDynamicsWorld::predictUnconstraintMotion(btScalar timeStep)
 		btRigidBody* body = m_nonStaticRigidBodies[i];
 		if (!body->isStaticOrKinematicObject())
 		{
-			body->integrateVelocities( timeStep);
-			//damping
+			//don't integrate/update velocities here, it happens in the constraint solver
+
 			body->applyDamping(timeStep);
 
 			body->predictIntegratedTransform(timeStep,body->getInterpolationWorldTransform());
@@ -999,7 +1153,7 @@ void	btDiscreteDynamicsWorld::startProfiling(btScalar timeStep)
 
 
 
-	
+
 
 void btDiscreteDynamicsWorld::debugDrawConstraint(btTypedConstraint* constraint)
 {
@@ -1019,12 +1173,12 @@ void btDiscreteDynamicsWorld::debugDrawConstraint(btTypedConstraint* constraint)
 				btTransform tr;
 				tr.setIdentity();
 				btVector3 pivot = p2pC->getPivotInA();
-				pivot = p2pC->getRigidBodyA().getCenterOfMassTransform() * pivot; 
+				pivot = p2pC->getRigidBodyA().getCenterOfMassTransform() * pivot;
 				tr.setOrigin(pivot);
 				getDebugDrawer()->drawTransform(tr, dbgDrawSize);
-				// that ideally should draw the same frame	
+				// that ideally should draw the same frame
 				pivot = p2pC->getPivotInB();
-				pivot = p2pC->getRigidBodyB().getCenterOfMassTransform() * pivot; 
+				pivot = p2pC->getRigidBodyB().getCenterOfMassTransform() * pivot;
 				tr.setOrigin(pivot);
 				if(drawFrames) getDebugDrawer()->drawTransform(tr, dbgDrawSize);
 			}
@@ -1043,13 +1197,13 @@ void btDiscreteDynamicsWorld::debugDrawConstraint(btTypedConstraint* constraint)
 					break;
 				}
 				bool drawSect = true;
-				if(minAng > maxAng)
+				if(!pHinge->hasLimit())
 				{
 					minAng = btScalar(0.f);
 					maxAng = SIMD_2_PI;
 					drawSect = false;
 				}
-				if(drawLimits) 
+				if(drawLimits)
 				{
 					btVector3& center = tr.getOrigin();
 					btVector3 normal = tr.getBasis().getColumn(2);
@@ -1084,7 +1238,7 @@ void btDiscreteDynamicsWorld::debugDrawConstraint(btTypedConstraint* constraint)
 							getDebugDrawer()->drawLine(tr.getOrigin(), pCur, btVector3(0,0,0));
 
 						pPrev = pCur;
-					}						
+					}
 					btScalar tws = pCT->getTwistSpan();
 					btScalar twa = pCT->getTwistAngle();
 					bool useFrameB = (pCT->getRigidBodyB().getInvMass() > btScalar(0.f));
@@ -1112,7 +1266,7 @@ void btDiscreteDynamicsWorld::debugDrawConstraint(btTypedConstraint* constraint)
 				if(drawFrames) getDebugDrawer()->drawTransform(tr, dbgDrawSize);
 				tr = p6DOF->getCalculatedTransformB();
 				if(drawFrames) getDebugDrawer()->drawTransform(tr, dbgDrawSize);
-				if(drawLimits) 
+				if(drawLimits)
 				{
 					tr = p6DOF->getCalculatedTransformA();
 					const btVector3& center = p6DOF->getCalculatedTransformB().getOrigin();
@@ -1153,6 +1307,57 @@ void btDiscreteDynamicsWorld::debugDrawConstraint(btTypedConstraint* constraint)
 				}
 			}
 			break;
+		///note: the code for D6_SPRING_2_CONSTRAINT_TYPE is identical to D6_CONSTRAINT_TYPE, the D6_CONSTRAINT_TYPE+D6_SPRING_CONSTRAINT_TYPE will likely become obsolete/deprecated at some stage
+		case D6_SPRING_2_CONSTRAINT_TYPE:
+		{
+			{
+				btGeneric6DofSpring2Constraint* p6DOF = (btGeneric6DofSpring2Constraint*)constraint;
+				btTransform tr = p6DOF->getCalculatedTransformA();
+				if (drawFrames) getDebugDrawer()->drawTransform(tr, dbgDrawSize);
+				tr = p6DOF->getCalculatedTransformB();
+				if (drawFrames) getDebugDrawer()->drawTransform(tr, dbgDrawSize);
+				if (drawLimits)
+				{
+					tr = p6DOF->getCalculatedTransformA();
+					const btVector3& center = p6DOF->getCalculatedTransformB().getOrigin();
+					btVector3 up = tr.getBasis().getColumn(2);
+					btVector3 axis = tr.getBasis().getColumn(0);
+					btScalar minTh = p6DOF->getRotationalLimitMotor(1)->m_loLimit;
+					btScalar maxTh = p6DOF->getRotationalLimitMotor(1)->m_hiLimit;
+					btScalar minPs = p6DOF->getRotationalLimitMotor(2)->m_loLimit;
+					btScalar maxPs = p6DOF->getRotationalLimitMotor(2)->m_hiLimit;
+					getDebugDrawer()->drawSpherePatch(center, up, axis, dbgDrawSize * btScalar(.9f), minTh, maxTh, minPs, maxPs, btVector3(0, 0, 0));
+					axis = tr.getBasis().getColumn(1);
+					btScalar ay = p6DOF->getAngle(1);
+					btScalar az = p6DOF->getAngle(2);
+					btScalar cy = btCos(ay);
+					btScalar sy = btSin(ay);
+					btScalar cz = btCos(az);
+					btScalar sz = btSin(az);
+					btVector3 ref;
+					ref[0] = cy*cz*axis[0] + cy*sz*axis[1] - sy*axis[2];
+					ref[1] = -sz*axis[0] + cz*axis[1];
+					ref[2] = cz*sy*axis[0] + sz*sy*axis[1] + cy*axis[2];
+					tr = p6DOF->getCalculatedTransformB();
+					btVector3 normal = -tr.getBasis().getColumn(0);
+					btScalar minFi = p6DOF->getRotationalLimitMotor(0)->m_loLimit;
+					btScalar maxFi = p6DOF->getRotationalLimitMotor(0)->m_hiLimit;
+					if (minFi > maxFi)
+					{
+						getDebugDrawer()->drawArc(center, normal, ref, dbgDrawSize, dbgDrawSize, -SIMD_PI, SIMD_PI, btVector3(0, 0, 0), false);
+					}
+					else if (minFi < maxFi)
+					{
+						getDebugDrawer()->drawArc(center, normal, ref, dbgDrawSize, dbgDrawSize, minFi, maxFi, btVector3(0, 0, 0), true);
+					}
+					tr = p6DOF->getCalculatedTransformA();
+					btVector3 bbMin = p6DOF->getTranslationalLimitMotor()->m_lowerLimit;
+					btVector3 bbMax = p6DOF->getTranslationalLimitMotor()->m_upperLimit;
+					getDebugDrawer()->drawBox(bbMin, bbMax, tr, btVector3(0, 0, 0));
+				}
+			}
+			break;
+		}
 		case SLIDER_CONSTRAINT_TYPE:
 			{
 				btSliderConstraint* pSlider = (btSliderConstraint*)constraint;
@@ -1175,7 +1380,7 @@ void btDiscreteDynamicsWorld::debugDrawConstraint(btTypedConstraint* constraint)
 				}
 			}
 			break;
-		default : 
+		default :
 			break;
 	}
 	return;
@@ -1193,6 +1398,7 @@ void	btDiscreteDynamicsWorld::setConstraintSolver(btConstraintSolver* solver)
 	}
 	m_ownsConstraintSolver = false;
 	m_constraintSolver = solver;
+	m_solverIslandCallback->m_solver = solver;
 }
 
 btConstraintSolver* btDiscreteDynamicsWorld::getConstraintSolver()
@@ -1243,14 +1449,68 @@ void	btDiscreteDynamicsWorld::serializeRigidBodies(btSerializer* serializer)
 }
 
 
+
+
+void	btDiscreteDynamicsWorld::serializeDynamicsWorldInfo(btSerializer* serializer)
+{
+#ifdef BT_USE_DOUBLE_PRECISION
+		int len = sizeof(btDynamicsWorldDoubleData);
+		btChunk* chunk = serializer->allocate(len,1);
+		btDynamicsWorldDoubleData* worldInfo = (btDynamicsWorldDoubleData*)chunk->m_oldPtr;
+#else//BT_USE_DOUBLE_PRECISION
+		int len = sizeof(btDynamicsWorldFloatData);
+		btChunk* chunk = serializer->allocate(len,1);
+		btDynamicsWorldFloatData* worldInfo = (btDynamicsWorldFloatData*)chunk->m_oldPtr;
+#endif//BT_USE_DOUBLE_PRECISION
+
+		memset(worldInfo ,0x00,len);
+
+		m_gravity.serialize(worldInfo->m_gravity);
+		worldInfo->m_solverInfo.m_tau = getSolverInfo().m_tau;
+		worldInfo->m_solverInfo.m_damping = getSolverInfo().m_damping;
+		worldInfo->m_solverInfo.m_friction = getSolverInfo().m_friction;
+		worldInfo->m_solverInfo.m_timeStep = getSolverInfo().m_timeStep;
+
+		worldInfo->m_solverInfo.m_restitution = getSolverInfo().m_restitution;
+		worldInfo->m_solverInfo.m_maxErrorReduction = getSolverInfo().m_maxErrorReduction;
+		worldInfo->m_solverInfo.m_sor = getSolverInfo().m_sor;
+		worldInfo->m_solverInfo.m_erp = getSolverInfo().m_erp;
+
+		worldInfo->m_solverInfo.m_erp2 = getSolverInfo().m_erp2;
+		worldInfo->m_solverInfo.m_globalCfm = getSolverInfo().m_globalCfm;
+		worldInfo->m_solverInfo.m_splitImpulsePenetrationThreshold = getSolverInfo().m_splitImpulsePenetrationThreshold;
+		worldInfo->m_solverInfo.m_splitImpulseTurnErp = getSolverInfo().m_splitImpulseTurnErp;
+
+		worldInfo->m_solverInfo.m_linearSlop = getSolverInfo().m_linearSlop;
+		worldInfo->m_solverInfo.m_warmstartingFactor = getSolverInfo().m_warmstartingFactor;
+		worldInfo->m_solverInfo.m_maxGyroscopicForce = getSolverInfo().m_maxGyroscopicForce;
+		worldInfo->m_solverInfo.m_singleAxisRollingFrictionThreshold = getSolverInfo().m_singleAxisRollingFrictionThreshold;
+
+		worldInfo->m_solverInfo.m_numIterations = getSolverInfo().m_numIterations;
+		worldInfo->m_solverInfo.m_solverMode = getSolverInfo().m_solverMode;
+		worldInfo->m_solverInfo.m_restingContactRestitutionThreshold = getSolverInfo().m_restingContactRestitutionThreshold;
+		worldInfo->m_solverInfo.m_minimumSolverBatchSize = getSolverInfo().m_minimumSolverBatchSize;
+
+		worldInfo->m_solverInfo.m_splitImpulse = getSolverInfo().m_splitImpulse;
+
+#ifdef BT_USE_DOUBLE_PRECISION
+		const char* structType = "btDynamicsWorldDoubleData";
+#else//BT_USE_DOUBLE_PRECISION
+		const char* structType = "btDynamicsWorldFloatData";
+#endif//BT_USE_DOUBLE_PRECISION
+		serializer->finalizeChunk(chunk,structType,BT_DYNAMICSWORLD_CODE,worldInfo);
+}
+
 void	btDiscreteDynamicsWorld::serialize(btSerializer* serializer)
 {
 
 	serializer->startSerialization();
 
-	serializeRigidBodies(serializer);
+	serializeDynamicsWorldInfo(serializer);
 
 	serializeCollisionObjects(serializer);
+
+	serializeRigidBodies(serializer);
 
 	serializer->finishSerialization();
 }
