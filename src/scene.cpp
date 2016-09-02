@@ -225,7 +225,7 @@ Scene::Scene(ivec2 size)
     data->m_tile_api.m_shader = 0;
     data->m_tile_api.m_palette_shader = 0;
     data->m_tile_api.m_vdecl = new VertexDeclaration(VertexStream<vec3>(VertexUsage::Position),
-                                                     VertexStream<vec2>(VertexUsage::TexCoord)); 
+                                                     VertexStream<vec2>(VertexUsage::TexCoord));
 
     data->m_line_api.m_shader = 0;
     data->m_line_api.m_vdecl = new VertexDeclaration(VertexStream<vec4,vec4>(VertexUsage::Position, VertexUsage::Color));
