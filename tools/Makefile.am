@@ -4,11 +4,8 @@ include $(top_srcdir)/build/autotools/common.am
 SUBDIRS =
 SUBDIRS += lolremez
 SUBDIRS += lolunit
-SUBDIRS += neercs
-SUBDIRS += pimp
 SUBDIRS += vimlol
 SUBDIRS += vslol
-SUBDIRS += zepto8
 
 noinst_PROGRAMS = $(make_font)
 

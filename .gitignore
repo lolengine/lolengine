@@ -98,6 +98,7 @@ doc/tutorial/08_fbo
 doc/tutorial/11_fractal
 doc/tutorial/12_voronoi
 doc/tutorial/13_shader_builder
+doc/tutorial/14_lol_lua
 tools/make-font
 # Our data
 doc/doxygen.cfg

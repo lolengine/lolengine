@@ -470,12 +470,6 @@ AC_CONFIG_FILES(
   src/t/Makefile
   build/Makefile
   binaries/Makefile
-  people/Makefile
-  games/Makefile
-  demos/Makefile
-  tools/Makefile
-  tools/vimlol/Makefile
-  tools/vslol/Makefile
   doc/Makefile
   doc/doxygen.cfg
   doc/samples/Makefile
@@ -483,69 +477,11 @@ AC_CONFIG_FILES(
   doc/samples/meshviewer/Makefile
   doc/samples/sandbox/Makefile
   doc/tutorial/Makefile
-])
-AC_CONFIG_FILES(
- [games/monsterz/Makefile
-  games/mrpigeon/Makefile
-  games/orbital/Makefile
-  games/singlshot/Makefile
-  games/thonik/Makefile
-  games/sot3000/Makefile
-  games/grunx/Makefile
-  games/weshgrow/Makefile
-  games/allturdbeast/Makefile
-])
-AC_CONFIG_FILES(
- [games/deushax/Makefile
-  games/deushax/art/Makefile
-  games/deushax/art/test/Makefile
-  games/deushax/gfx/Makefile
-  games/deushax/maps/Makefile
-])
-AC_CONFIG_FILES(
- [games/abuse/Makefile
-  games/abuse/src/Makefile
-  games/abuse/data/Makefile
-  games/abuse/doc/Makefile
-  games/abuse/doc/abuse.6
-  games/abuse/doc/abuse-tool.6
-])
-AC_CONFIG_FILES(
- [demos/lol.js/Makefile
-])
-AC_CONFIG_FILES(
- [tools/lolremez/Makefile
+  tools/Makefile
+  tools/lolremez/Makefile
   tools/lolunit/Makefile
-  tools/neercs/Makefile
-  tools/pimp/Makefile
-  tools/zepto8/Makefile
-])
-AC_CONFIG_FILES(
- [people/jnat/Makefile
-  people/jnat/TestProject/Makefile
-  people/peeweek/Makefile
-  people/benlitz/Makefile
-  people/benlitz/test1/Makefile
-  people/benlitz/voxel/Makefile
-  people/benlitz/lolui/Makefile
-  people/touky/Makefile
-  people/touky/shared/Makefile
-  people/touky/sprite_sorter/Makefile
-  people/touky/squad_shooter/Makefile
-  people/touky/top_shooter/Makefile
-  people/touky/touky_demo/Makefile
-  people/touky/tactics/Makefile
-  people/touky/the_unfortunate_voronoid/Makefile
-  people/touky/workbench/Makefile
-  people/jylam/Makefile
-  people/jylam/private/Makefile
-  people/jylam/private/chat/Makefile
-  people/jylam/private/lander/Makefile
-  people/jylam/private/oric_convert/Makefile
-  people/sam/Makefile
-  people/sam/kanagawa/Makefile
-  people/sam/ld36/Makefile
-  people/sam/sapp/Makefile
+  tools/vimlol/Makefile
+  tools/vslol/Makefile
 ])
 
 AC_OUTPUT
