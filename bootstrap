@@ -20,6 +20,9 @@ set -e
 sed -ne '/AC_CONFIG_FILES/,$p' configure.ac \
   | sed -ne 's@[^a-z]*\(.*/.*\)[^a-z]*@\1@p' | while read p; do
     case "$p" in
+        "")
+            continue
+            ;;
         *Makefile)
             required="${p}.am"
             ;;
