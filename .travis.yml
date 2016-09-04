@@ -1,0 +1,29 @@
+sudo: false
+language: c++
+env: VERBOSE=1
+
+addons:
+  apt:
+    packages:
+      - build-essential
+      - automake
+      - autoconf
+      - libtool
+      - pkg-config
+      - libsdl2-dev
+      - libsdl2-image-dev
+      - libsdl2-mixer-dev
+      - libglew-dev
+
+before_install:
+#  - .travis/before_install.sh
+  - ./bootstrap
+
+os:
+  - linux
+#  - osx
+
+compiler:
+  - gcc
+  - clang
+
