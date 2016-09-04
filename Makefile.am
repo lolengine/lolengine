@@ -9,6 +9,7 @@ EXTRA_DIST += bootstrap COPYING TODO
 AUTOMAKE_OPTIONS = dist-bzip2
 ACLOCAL_AMFLAGS = -I build/autotools/m4
 
+test: lolcheck
 check: lolcheck
 
 dist: lolunit-$(LOLUNIT_VERSION).tar.gz
