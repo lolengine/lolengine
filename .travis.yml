@@ -15,6 +15,8 @@ addons:
       - libsdl2-image-dev
       - libsdl2-mixer-dev
       - libglew-dev
+      # maybe this can fix clang compilation
+      - libc++-dev
 
 before_install:
 #  - .travis/before_install.sh
