@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -12,7 +12,7 @@
 
 #include <lol/engine-internal.h>
 
-#if defined USE_IMLIB2
+#if defined LOL_USE_IMLIB2
 
 #include <Imlib2.h>
 
@@ -121,5 +121,5 @@ bool Imlib2ImageCodec::Save(Image *image, char const *path)
 
 } /* namespace lol */
 
-#endif /* defined USE_IMLIB2 */
+#endif /* defined LOL_USE_IMLIB2 */
 

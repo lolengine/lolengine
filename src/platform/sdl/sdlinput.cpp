@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -12,7 +12,7 @@
 
 #include <lol/engine-internal.h>
 
-#if USE_SDL || USE_OLD_SDL
+#if LOL_USE_SDL || LOL_USE_OLD_SDL
 #   if HAVE_SDL2_SDL_H
 #      include <SDL2/SDL.h>
 #   elif HAVE_SDL_SDL_H
@@ -39,7 +39,7 @@
 namespace lol
 {
 
-#if USE_OLD_SDL
+#if LOL_USE_OLD_SDL
 /* Quick and dirty for now... This is deprecated anyway. */
 static int sdl12_to_scancode(int ch, int sc)
 {
@@ -119,11 +119,11 @@ private:
         m_tick_in_draw_thread(false)
     { }
 
-#if USE_SDL || USE_OLD_SDL
+#if LOL_USE_SDL || LOL_USE_OLD_SDL
     array<SDL_Joystick *, InputDeviceInternal *> m_joysticks;
     InputDeviceInternal *m_mouse;
     InputDeviceInternal *m_keyboard;
-#endif // USE_SDL
+#endif // LOL_USE_SDL
 
     ivec2 m_prevmouse;
     vec2 m_app;
@@ -144,19 +144,19 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
     m_data->m_tick_in_draw_thread = true;
 #endif
 
-#if USE_OLD_SDL
+#if LOL_USE_OLD_SDL
     /* Enable Unicode translation of keyboard events */
     SDL_EnableUNICODE(1);
 #endif
 
-#if USE_SDL || USE_OLD_SDL
+#if LOL_USE_SDL || LOL_USE_OLD_SDL
     SDL_Init(SDL_INIT_TIMER | SDL_INIT_JOYSTICK);
 #endif
 
     m_data->m_keyboard = InputDeviceInternal::CreateStandardKeyboard();
     m_data->m_mouse = InputDeviceInternal::CreateStandardMouse();
 
-#if USE_SDL || USE_OLD_SDL
+#if LOL_USE_SDL || LOL_USE_OLD_SDL
 #   if !EMSCRIPTEN
 #       if SDL_FORCE_POLL_JOYSTICK
     SDL_JoystickEventState(SDL_QUERY);
@@ -174,15 +174,15 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
          *  - HDAPS, it's not a real joystick.
          *  - X360 controllers, Xinput handles them better since
          *    it won't think there is only one trigger axis. */
-#       if USE_SDL
+#       if LOL_USE_SDL
         char const *name = SDL_JoystickName(sdlstick);
-#       elif USE_OLD_SDL
+#       elif LOL_USE_OLD_SDL
         char const *name = SDL_JoystickName(i);
 #       endif
         if (strstr(name, "HDAPS")
-#       if USE_XINPUT
+#       if LOL_USE_XINPUT
              || strstr(name, "XBOX 360 For Windows")
-#       endif //USE_XINPUT
+#       endif //LOL_USE_XINPUT
              || false)
         {
             SDL_JoystickClose(sdlstick);
@@ -206,7 +206,7 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
 
 SdlInput::~SdlInput()
 {
-#if (USE_SDL || USE_OLD_SDL) && !EMSCRIPTEN
+#if (LOL_USE_SDL || LOL_USE_OLD_SDL) && !EMSCRIPTEN
     /* Unregister all the joysticks we added */
     while (m_data->m_joysticks.count())
     {
@@ -236,7 +236,7 @@ void SdlInput::TickDraw(float seconds, Scene &scene)
 
 void SdlInputData::Tick(float seconds)
 {
-#if USE_SDL || USE_OLD_SDL
+#if LOL_USE_SDL || LOL_USE_OLD_SDL
     /* Pump all joystick events because no event is coming to us. */
 #   if SDL_FORCE_POLL_JOYSTICK && !EMSCRIPTEN
     SDL_JoystickUpdate();
@@ -263,7 +263,7 @@ void SdlInputData::Tick(float seconds)
 
         case SDL_KEYDOWN:
         case SDL_KEYUP:
-#   if USE_OLD_SDL
+#   if LOL_USE_OLD_SDL
             switch (int sc = sdl12_to_scancode(event.key.keysym.sym,
                                                event.key.keysym.scancode))
 #   else
@@ -300,7 +300,7 @@ void SdlInputData::Tick(float seconds)
                 }
 #   endif
             default:
-#   if USE_OLD_SDL
+#   if LOL_USE_OLD_SDL
                 m_keyboard->SetKey(sc ? sc : event.key.keysym.scancode,
                                    event.type == SDL_KEYDOWN);
 #   else
@@ -334,7 +334,7 @@ void SdlInputData::Tick(float seconds)
             }
             break;
 
-#   if USE_OLD_SDL
+#   if LOL_USE_OLD_SDL
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP:
             if (event.button.button != SDL_BUTTON_WHEELUP && event.button.button != SDL_BUTTON_WHEELDOWN)
@@ -386,9 +386,9 @@ void SdlInputData::Tick(float seconds)
     if (InputDeviceInternal::GetMouseCapture() != m_mousecapture)
     {
         m_mousecapture = InputDeviceInternal::GetMouseCapture();
-#   if USE_SDL
+#   if LOL_USE_SDL
         SDL_SetRelativeMouseMode(m_mousecapture ? SDL_TRUE : SDL_FALSE);
-#   elif USE_OLD_SDL
+#   elif LOL_USE_OLD_SDL
         SDL_WM_GrabInput(m_mousecapture ? SDL_GRAB_ON : SDL_GRAB_OFF);
 #   endif
         mouse = (ivec2)m_app / 2;
@@ -414,7 +414,7 @@ void SdlInputData::Tick(float seconds)
 
     //Mouse is focused, Validate the InScreen Key
     //Hardcoded 3, not very nice.
-#   if !EMSCRIPTEN && USE_OLD_SDL
+#   if !EMSCRIPTEN && LOL_USE_OLD_SDL
     m_mouse->SetKey(3, !!(SDL_GetAppState() & SDL_APPMOUSEFOCUS));
 #   else
     //Handled in PollEvent
@@ -430,7 +430,7 @@ void SdlInputData::Tick(float seconds)
 
 #else
     UNUSED(seconds);
-#endif //USE_SDL
+#endif //LOL_USE_SDL
 }
 
 // NOTE: these two functions are pointless now and could be inlined directly
@@ -438,8 +438,8 @@ ivec2 SdlInputData::GetMousePos()
 {
     ivec2 ret(-1, -1);
 
-#if USE_SDL || USE_OLD_SDL
-#   if !EMSCRIPTEN && USE_OLD_SDL
+#if LOL_USE_SDL || LOL_USE_OLD_SDL
+#   if !EMSCRIPTEN && LOL_USE_OLD_SDL
     if (SDL_GetAppState() & SDL_APPMOUSEFOCUS)
 #   endif
     {
@@ -452,9 +452,9 @@ ivec2 SdlInputData::GetMousePos()
 
 void SdlInputData::SetMousePos(ivec2 position)
 {
-#if USE_SDL
+#if LOL_USE_SDL
     // FIXME: how do I warped mouse?
-#elif USE_OLD_SDL
+#elif LOL_USE_OLD_SDL
     SDL_WarpMouse((uint16_t)position.x, (uint16_t)position.y);
 #else
     UNUSED(position);

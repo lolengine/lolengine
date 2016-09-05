@@ -1,23 +1,35 @@
+dnl
+dnl  Lol Engine
+dnl
+dnl  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
+dnl
+dnl  Lol Engine is free software. It comes without any warranty, to
+dnl  the extent permitted by applicable law. You can redistribute it
+dnl  and/or modify it under the terms of the Do What the Fuck You Want
+dnl  to Public License, Version 2, as published by the WTFPL Task Force.
+dnl  See http://www.wtfpl.net/ for more details.
+dnl
 
-# LOL_CHECK_SDL()
-# ---------------
-AC_DEFUN([LOL_CHECK_SDL],
+
+# LOL_AC_CHECK_SDL()
+# ------------------
+AC_DEFUN([LOL_AC_CHECK_SDL],
 [
 dnl  Find which version of SDL to use (always required on Linux or Win32)
 dnl
 dnl  Defined C/C++ macros:
-dnl    USE_SDL         -- whether SDL v2 was found
-dnl    USE_OLD_SDL     -- whether SDL v1 was found
-dnl    USE_SDL_IMAGE   -- whether SDL_image (v1 or v2) was found
-dnl    USE_SDL_MIXER   -- whether SDL_mixer (v1 or v2) was found
+dnl    LOL_USE_SDL         -- whether SDL v2 was found
+dnl    LOL_USE_OLD_SDL     -- whether SDL v1 was found
+dnl    LOL_USE_SDL_IMAGE   -- whether SDL_image (v1 or v2) was found
+dnl    LOL_USE_SDL_MIXER   -- whether SDL_mixer (v1 or v2) was found
 dnl    HAVE_SDL_H      -- whether to include <SDL.h>
 dnl    HAVE_SDL_SDL_H  -- whether to include <SDL/SDL.h>
 dnl    HAVE_SDL2_SDL_H -- whether to include <SDL2/SDL.h>
 dnl  Generated automake conditionals:
-dnl    USE_SDL         -- whether SDL v2 was found
-dnl    USE_OLD_SDL     -- whether SDL v1 was found
-dnl    USE_SDL_IMAGE   -- whether SDL_image was found
-dnl    USE_SDL_MIXER   -- whether SDL_mixer was found
+dnl    LOL_USE_SDL         -- whether SDL v2 was found
+dnl    LOL_USE_OLD_SDL     -- whether SDL v1 was found
+dnl    LOL_USE_SDL_IMAGE   -- whether SDL_image was found
+dnl    LOL_USE_SDL_MIXER   -- whether SDL_mixer was found
 dnl  Generated shell variables:
 dnl    SDL_CFLAGS      -- flags for SDL compilation
 dnl    SDL_LIBS        -- flags for SDL linking
@@ -155,29 +167,29 @@ dnl  Convert all this into conditionals
 if test "x${ac_cv_my_have_sdl}" = xno; then
   AC_MSG_WARN([SDL v2 not found])
 else
-  AC_DEFINE(USE_SDL, 1, Define to 1 to use SDL)
+  AC_DEFINE(LOL_USE_SDL, 1, Define to 1 to use SDL)
 fi
-AM_CONDITIONAL(USE_SDL, test "x${ac_cv_my_have_sdl}" = xyes)
+AM_CONDITIONAL(LOL_USE_SDL, test "x${ac_cv_my_have_sdl}" = xyes)
 
 if test "x${ac_cv_my_have_sdl_mixer}" = xno; then
   AC_MSG_WARN([SDL_mixer not found])
 else
-  AC_DEFINE(USE_SDL_MIXER, 1, Define to 1 to use SDL_mixer)
+  AC_DEFINE(LOL_USE_SDL_MIXER, 1, Define to 1 to use SDL_mixer)
 fi
-AM_CONDITIONAL(USE_SDL_MIXER, test "x${ac_cv_my_have_sdl_mixer}" = xyes)
+AM_CONDITIONAL(LOL_USE_SDL_MIXER, test "x${ac_cv_my_have_sdl_mixer}" = xyes)
 
 if test "x${ac_cv_my_have_sdl_image}" = xno; then
   AC_MSG_WARN([SDL_image not found])
 else
-  AC_DEFINE(USE_SDL_IMAGE, 1, Define to 1 to use SDL_image)
+  AC_DEFINE(LOL_USE_SDL_IMAGE, 1, Define to 1 to use SDL_image)
 fi
-AM_CONDITIONAL(USE_SDL_IMAGE, test "x${ac_cv_my_have_sdl_image}" = xyes)
+AM_CONDITIONAL(LOL_USE_SDL_IMAGE, test "x${ac_cv_my_have_sdl_image}" = xyes)
 
 if test "x${ac_cv_my_have_old_sdl}" != xno; then
-  AC_DEFINE(USE_OLD_SDL, 1, Define to 1 to use SDL)
+  AC_DEFINE(LOL_USE_OLD_SDL, 1, Define to 1 to use SDL)
 fi
-AM_CONDITIONAL(USE_OLD_SDL, test "x${ac_cv_my_have_old_sdl}" = xyes)
+AM_CONDITIONAL(LOL_USE_OLD_SDL, test "x${ac_cv_my_have_old_sdl}" = xyes)
 
-])# LOL_CHECK_SDL
+]) # LOL_AC_CHECK_SDL
 
 

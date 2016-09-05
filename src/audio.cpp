@@ -1,16 +1,18 @@
+﻿//
+//  Lol Engine
 //
-// Lol Engine
+//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
 
-#if USE_SDL_MIXER
+#if LOL_USE_SDL_MIXER
 #   if HAVE_SDL_SDL_H
 #       include <SDL/SDL.h>
 #       include <SDL/SDL_mixer.h>
@@ -32,7 +34,7 @@ namespace lol
 
 void Audio::Setup(int channels)
 {
-#if defined USE_SDL_MIXER
+#if defined LOL_USE_SDL_MIXER
     Mix_OpenAudio(22050, AUDIO_S16, channels, 1024);
 #else
     UNUSED(channels);
@@ -41,7 +43,7 @@ void Audio::Setup(int channels)
 
 void Audio::SetVolume(int channel, int volume)
 {
-#if defined USE_SDL_MIXER
+#if defined LOL_USE_SDL_MIXER
     Mix_Volume(channel,volume);
 #else
     UNUSED(channel);
@@ -50,7 +52,7 @@ void Audio::SetVolume(int channel, int volume)
 
 void Audio::MuteAll()
 {
-#if defined USE_SDL_MIXER
+#if defined LOL_USE_SDL_MIXER
     Mix_Volume(-1,0);
 #else
     UNUSED(false);
@@ -59,7 +61,7 @@ void Audio::MuteAll()
 
 void Audio::UnmuteAll()
 {
-#if defined USE_SDL_MIXER
+#if defined LOL_USE_SDL_MIXER
     Mix_Volume(-1,MIX_MAX_VOLUME);
 #else
     UNUSED(false);

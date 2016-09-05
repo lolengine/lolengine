@@ -3,7 +3,7 @@ include $(top_srcdir)/build/autotools/common.am
 
 EXTRA_DIST += ascii.png
 
-if USE_CACA
+if LOL_USE_CACA
 all: ascii.png
 
 ascii.png:

@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -12,7 +12,7 @@
 
 #include <lol/engine-internal.h>
 
-#if USE_SDL || USE_OLD_SDL
+#if LOL_USE_SDL || LOL_USE_OLD_SDL
 #   if HAVE_SDL2_SDL_H
 #      include <SDL2/SDL.h>
 #   elif HAVE_SDL_SDL_H
@@ -25,7 +25,7 @@
 #include "lolgl.h"
 #include "platform/sdl/sdlapp.h"
 #include "platform/sdl/sdlinput.h"
-#if USE_XINPUT
+#if LOL_USE_XINPUT
 #   include "platform/d3d9/d3d9input.h"
 #endif
 
@@ -40,10 +40,10 @@ class SdlAppDisplayData
     friend class SdlAppDisplay;
 
 private:
-#if USE_SDL
+#if LOL_USE_SDL
     SDL_Window *m_window;
     SDL_GLContext m_glcontext;
-#elif USE_OLD_SDL
+#elif LOL_USE_OLD_SDL
     SDL_Surface *m_window;
 #endif
 };
@@ -54,7 +54,7 @@ private:
 SdlAppDisplay::SdlAppDisplay(char const *title, ivec2 res)
     : data(new SdlAppDisplayData())
 {
-#if USE_SDL || USE_OLD_SDL
+#if LOL_USE_SDL || LOL_USE_OLD_SDL
     ivec2 window_size = res;
     ivec2 screen_size = res;
 
@@ -68,7 +68,7 @@ SdlAppDisplay::SdlAppDisplay(char const *title, ivec2 res)
         }
     }
 
-#if USE_SDL
+#if LOL_USE_SDL
     /* This seems to fix the swap context bug.
      * However, perfs warning have been may occur. */
     SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
@@ -117,13 +117,13 @@ SdlAppDisplay::SdlAppDisplay(char const *title, ivec2 res)
 
 SdlAppDisplay::~SdlAppDisplay()
 {
-#if USE_SDL
+#if LOL_USE_SDL
     if (data->m_window)
     {
         SDL_GL_DeleteContext(data->m_glcontext);
         SDL_DestroyWindow(data->m_window);
     }
-#elif USE_OLD_SDL
+#elif LOL_USE_OLD_SDL
     if (data->m_window)
         SDL_FreeSurface(data->m_window);
 #endif
@@ -133,24 +133,24 @@ SdlAppDisplay::~SdlAppDisplay()
 
 void SdlAppDisplay::SetResolution(ivec2 resolution)
 {
-#if USE_SDL
+#if LOL_USE_SDL
     SDL_SetWindowSize(data->m_window, resolution.x, resolution.y);
-#elif USE_OLD_SDL
+#elif LOL_USE_OLD_SDL
     //Not implemented
 #endif
 }
 void SdlAppDisplay::SetPosition(ivec2 position)
 {
-#if USE_SDL
+#if LOL_USE_SDL
     SDL_SetWindowPosition(data->m_window, position.x, position.y);
-#elif USE_OLD_SDL
+#elif LOL_USE_OLD_SDL
     //Not implemented
 #endif
 }
 
 void SdlAppDisplay::Enable()
 {
-#if USE_SDL
+#if LOL_USE_SDL
     //TODO: Should we do that: ?
     SDL_GL_MakeCurrent(data->m_window, data->m_glcontext);
 #endif
@@ -158,14 +158,14 @@ void SdlAppDisplay::Enable()
 
 void SdlAppDisplay::Disable()
 {
-#if USE_SDL
+#if LOL_USE_SDL
         SDL_GL_SwapWindow(data->m_window);
-#elif USE_OLD_SDL
+#elif LOL_USE_OLD_SDL
         SDL_GL_SwapBuffers();
 #endif
 }
 
-#if USE_SDL
+#if LOL_USE_SDL
 int SceneDisplay::GetPhysicalCount()
 {
     return SDL_GetNumVideoDisplays();
@@ -175,7 +175,7 @@ const char* SceneDisplay::GetPhysicalName(int index)
 {
     return SDL_GetDisplayName(index);
 }
-#elif USE_OLD_SDL
+#elif LOL_USE_OLD_SDL
 //  Not implemented
 #endif
 
@@ -187,10 +187,10 @@ class SdlAppData
     friend class SdlApp;
 
 private:
-#if USE_SDL
+#if LOL_USE_SDL
     SDL_Window *m_window;
     SDL_GLContext m_glcontext;
-#elif USE_OLD_SDL
+#elif LOL_USE_OLD_SDL
     SDL_Surface *m_window;
 #endif
 };
@@ -201,7 +201,7 @@ private:
 SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
     data(new SdlAppData())
 {
-#if USE_SDL || USE_OLD_SDL
+#if LOL_USE_SDL || LOL_USE_OLD_SDL
     ivec2 window_size = res;
     ivec2 screen_size = res;
 
@@ -210,7 +210,7 @@ SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
     Audio::Setup(2);
 
     /* Autoreleased objects */
-#if defined USE_XINPUT
+#if defined LOL_USE_XINPUT
     /* Prefer D3d9 for joysticks on Windows, because the X360 pads are not
      * advertised with the proper number of axes. */
     new D3d9Input();
@@ -222,7 +222,7 @@ SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
 
 void SdlApp::ShowPointer(bool show)
 {
-#if USE_SDL || USE_OLD_SDL
+#if LOL_USE_SDL || LOL_USE_OLD_SDL
     SDL_ShowCursor(show ? 1 : 0);
 #endif
 }
@@ -235,9 +235,9 @@ void SdlApp::Tick()
 
 SdlApp::~SdlApp()
 {
-#if USE_SDL
+#if LOL_USE_SDL
     SDL_Quit();
-#elif USE_OLD_SDL
+#elif LOL_USE_OLD_SDL
     SDL_Quit();
 #endif
     delete data;

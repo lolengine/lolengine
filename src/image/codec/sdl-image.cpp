@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -12,7 +12,7 @@
 
 #include <lol/engine-internal.h>
 
-#if USE_SDL_IMAGE
+#if LOL_USE_SDL_IMAGE
 
 #if HAVE_SDL_SDL_H
 #   include <SDL/SDL.h>
@@ -121,5 +121,5 @@ SDL_Surface *SdlImageCodec::Create32BppSurface(ivec2 size)
 
 } /* namespace lol */
 
-#endif /* USE_SDL_IMAGE */
+#endif /* LOL_USE_SDL_IMAGE */
 

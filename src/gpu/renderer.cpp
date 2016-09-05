@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -63,7 +63,7 @@ private:
 Renderer::Renderer(ivec2 size)
   : m_data(new RendererData())
 {
-#if defined USE_GLEW && !defined __APPLE__
+#if defined LOL_USE_GLEW && !defined __APPLE__
     /* Initialise GLEW if necessary */
     GLenum glerr = glewInit();
     if (glerr != GLEW_OK)

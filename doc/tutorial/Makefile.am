@@ -29,7 +29,7 @@ noinst_PROGRAMS = 01_triangle 02_cube 03_noise 04_texture 05_easymesh \
 06_sprite_CPPFLAGS = $(AM_CPPFLAGS)
 06_sprite_DEPENDENCIES = @LOL_DEPS@
 06_sprite_LDFLAGS = $(AM_LDFLAGS)
-if USE_EMSCRIPTEN
+if LOL_USE_EMSCRIPTEN
 06_sprite_LDFLAGS += --preload-file 06_sprite.png
 endif
 

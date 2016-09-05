@@ -6,7 +6,7 @@ noinst_PROGRAMS = $(testsuite)
 TESTS = $(testsuite)
 
 # Conditionally built for now because of STLport issues
-if !USE_ANDROID
+if !LOL_USE_ANDROID
 testsuite = test-base test-math test-sys test-image test-entity
 endif
 
