@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -16,7 +16,7 @@
 #include <cstdio>
 #include <cstring>
 
-#if USE_SDL_MIXER
+#if LOL_USE_SDL_MIXER
 #   if HAVE_SDL_SDL_H
 #       include <SDL/SDL.h>
 #       include <SDL/SDL_mixer.h>
@@ -42,7 +42,7 @@ class SampleData
 
 private:
     String m_name;
-#if defined USE_SDL_MIXER
+#if defined LOL_USE_SDL_MIXER
     Mix_Chunk *m_chunk;
     int m_channel;
 #endif
@@ -57,7 +57,7 @@ Sample::Sample(char const *path)
 {
     data->m_name = String("<sample> ") + path;
 
-#if defined USE_SDL_MIXER
+#if defined LOL_USE_SDL_MIXER
     for (auto candidate : System::GetPathList(path))
     {
         data->m_chunk = Mix_LoadWAV(candidate.C());
@@ -74,7 +74,7 @@ Sample::Sample(char const *path)
 
 Sample::~Sample()
 {
-#if defined USE_SDL_MIXER
+#if defined LOL_USE_SDL_MIXER
     if (data->m_chunk)
         Mix_FreeChunk(data->m_chunk);
 #endif
@@ -93,7 +93,7 @@ char const *Sample::GetName()
 
 void Sample::Play()
 {
-#if defined USE_SDL_MIXER
+#if defined LOL_USE_SDL_MIXER
     if (data->m_chunk)
         data->m_channel = Mix_PlayChannel(-1, data->m_chunk, 0);
 #endif
@@ -101,7 +101,7 @@ void Sample::Play()
 
 void Sample::Loop()
 {
-#if defined USE_SDL_MIXER
+#if defined LOL_USE_SDL_MIXER
     if (data->m_chunk)
         data->m_channel = Mix_PlayChannel(-1, data->m_chunk, -1);
 #endif
@@ -109,7 +109,7 @@ void Sample::Loop()
 
 void Sample::Stop()
 {
-#if defined USE_SDL_MIXER
+#if defined LOL_USE_SDL_MIXER
     if (data->m_channel >= 0)
         Mix_HaltChannel(data->m_channel);
     data->m_channel = -1;

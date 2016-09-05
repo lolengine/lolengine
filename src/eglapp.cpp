@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -12,7 +12,7 @@
 
 #include <lol/engine-internal.h>
 
-#if defined USE_EGL && !defined __ANDROID__
+#if defined LOL_USE_EGL && !defined __ANDROID__
 #   if defined HAVE_BCM_HOST_H
 #       include <bcm_host.h>
 #   else
@@ -24,7 +24,7 @@
 #   include <EGL/eglext.h>
 #endif
 
-#if USE_SDL || USE_OLD_SDL
+#if LOL_USE_SDL || LOL_USE_OLD_SDL
 #   if HAVE_SDL2_SDL_H
 #      include <SDL2/SDL.h>
 #   elif HAVE_SDL_SDL_H
@@ -36,7 +36,7 @@
 
 #include "lolgl.h"
 #include "eglapp.h"
-#if USE_SDL || USE_OLD_SDL
+#if LOL_USE_SDL || LOL_USE_OLD_SDL
 #   include "platform/sdl/sdlinput.h"
 #endif
 
@@ -52,7 +52,7 @@ class EglAppData
     friend class EglApp;
 
 private:
-#if defined USE_EGL && !defined __ANDROID__
+#if defined LOL_USE_EGL && !defined __ANDROID__
     EGLDisplay egl_dpy;
     EGLContext egl_ctx;
     EGLSurface egl_surf;
@@ -73,7 +73,7 @@ private:
 EglApp::EglApp(char const *title, ivec2 res, float fps) :
     data(new EglAppData())
 {
-#if defined USE_EGL && !defined __ANDROID__
+#if defined LOL_USE_EGL && !defined __ANDROID__
 #   if defined HAVE_BCM_HOST_H
     bcm_host_init();
 
@@ -251,7 +251,7 @@ EglApp::EglApp(char const *title, ivec2 res, float fps) :
     data->screen_size = uvec2(gwa.width, gwa.height);
 #   endif
 
-#   if USE_SDL || USE_OLD_SDL
+#   if LOL_USE_SDL || LOL_USE_OLD_SDL
     new SdlInput(res.x, res.y, data->screen_size.x, data->screen_size.y);
 #   endif
 
@@ -272,14 +272,14 @@ void EglApp::Tick()
 {
     /* Tick the renderer, show the frame and clamp to desired framerate. */
     Ticker::TickDraw();
-#if defined USE_EGL && !defined __ANDROID__
+#if defined LOL_USE_EGL && !defined __ANDROID__
     eglSwapBuffers(data->egl_dpy, data->egl_surf);
 #endif
 }
 
 EglApp::~EglApp()
 {
-#if defined USE_EGL && !defined __ANDROID__
+#if defined LOL_USE_EGL && !defined __ANDROID__
     eglDestroyContext(data->egl_dpy, data->egl_ctx);
     eglDestroySurface(data->egl_dpy, data->egl_surf);
     eglTerminate(data->egl_dpy);

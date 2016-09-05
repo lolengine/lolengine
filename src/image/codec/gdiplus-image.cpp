@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -13,7 +13,7 @@
 #if HAVE_CONFIG_H
 #   include "config.h"
 #endif
-#if USE_GDIPLUS
+#if LOL_USE_GDIPLUS
 #   include <algorithm>
 using std::min;
 using std::max;
@@ -24,7 +24,7 @@ using std::max;
 
 #include <lol/engine-internal.h>
 
-#if USE_GDIPLUS
+#if LOL_USE_GDIPLUS
 
 #include "../../image/image-private.h"
 
@@ -221,5 +221,5 @@ bool GdiPlusImageCodec::Save(Image *image, char const *path)
 
 } /* namespace lol */
 
-#endif /* defined USE_GDIPLUS */
+#endif /* defined LOL_USE_GDIPLUS */
 

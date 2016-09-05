@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -34,16 +34,16 @@ static bool RegisterAllCodecs(array<ImageCodec *> &codeclist)
 #if defined __ANDROID__
     REGISTER_IMAGE_CODEC(AndroidImageCodec)
 #endif
-#if defined USE_GDIPLUS
+#if defined LOL_USE_GDIPLUS
     REGISTER_IMAGE_CODEC(GdiPlusImageCodec)
 #endif
 #if defined __APPLE__ && defined __MACH__ && defined __arm__
     REGISTER_IMAGE_CODEC(IosImageCodec)
 #endif
-#if defined USE_SDL_IMAGE
+#if defined LOL_USE_SDL_IMAGE
     REGISTER_IMAGE_CODEC(SdlImageCodec)
 #endif
-#if defined USE_IMLIB2
+#if defined LOL_USE_IMLIB2
     REGISTER_IMAGE_CODEC(Imlib2ImageCodec)
 #endif
     REGISTER_IMAGE_CODEC(DummyImageCodec)

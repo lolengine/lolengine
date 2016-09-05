@@ -27,8 +27,8 @@
     <SdlLibs Condition="'$(Platform)'=='x64'">$(SdlDir)\lib\x86_64-msvc;$(SdlImageDir)\lib\x86_64-msvc;$(SdlMixerDir)\lib\x86_64-msvc</SdlLibs>
     <SdlDeps Condition="'$(Platform)'=='Win32'">SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib</SdlDeps>
     <SdlDeps Condition="'$(Platform)'=='x64'">SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib</SdlDeps>
-    <Win32Defines>HAVE_SDL_H;USE_SDL;$(Win32Defines)</Win32Defines>
-    <Win32Defines>USE_SDL_MIXER;USE_SDL_IMAGE;$(Win32Defines)</Win32Defines>
+    <Win32Defines>HAVE_SDL_H;LOL_USE_SDL;$(Win32Defines)</Win32Defines>
+    <Win32Defines>LOL_USE_SDL_MIXER;LOL_USE_SDL_IMAGE;$(Win32Defines)</Win32Defines>
 
     <!-- GTK+ & GtkGl -->
     <GtkDir>$(ExternalDir)\gtk-2.22.1</GtkDir>
@@ -44,7 +44,7 @@
     <FfmpegLibs Condition="'$(Platform)'=='Win32'">$(FfmpegDir)\lib\i686-w64-mingw32</FfmpegLibs>
     <FfmpegLibs Condition="'$(Platform)'=='x64'">$(FfmpegDir)\lib\x86_64-w64-mingw32</FfmpegLibs>
     <FfmpegDeps>swscale.lib;avformat.lib;avcodec.lib;swresample.lib;avutil.lib;ws2_32.lib</FfmpegDeps>
-    <Win32Defines>USE_FFMPEG;$(Win32Defines)</Win32Defines>
+    <Win32Defines>LOL_USE_FFMPEG;$(Win32Defines)</Win32Defines>
 -->
 
     <!-- Assimp -->
@@ -55,7 +55,7 @@
     <!-- <AssimpDeps>zlibstatic.lib;assimp.lib</AssimpDeps> -->
     <AssimpDeps Condition="'$(Configuration)'=='Release'">zlibstatic.lib;assimp.lib</AssimpDeps>
     <AssimpDeps Condition="'$(Configuration)'=='Debug'">zlibstatic.lib;assimp.lib</AssimpDeps>
-    <Win32Defines>USE_ASSIMP;$(Win32Defines)</Win32Defines>
+    <Win32Defines>LOL_USE_ASSIMP;$(Win32Defines)</Win32Defines>
 
     <!-- libcaca -->
     <CacaDir>$(ExternalDir)\libcaca-0.99.beta18</CacaDir>
@@ -67,7 +67,7 @@
 
     <!-- GDI+ -->
     <GdiDeps>Gdiplus.lib</GdiDeps>
-    <Win32Defines>USE_GDIPLUS;$(Win32Defines)</Win32Defines>
+    <Win32Defines>LOL_USE_GDIPLUS;$(Win32Defines)</Win32Defines>
 
     <!-- OpenGL & GLEW -->
     <GlewDir>$(ExternalDir)\glew-1.9.0</GlewDir>
@@ -76,14 +76,14 @@
     <GlLibs Condition="'$(Platform)'=='x64'">$(GlewDir)\lib\x86_64-w64-mingw32</GlLibs>
     <GlDeps Condition="'$(Platform)'=='Win32'">opengl32.lib;glew32s.lib</GlDeps>
     <GlDeps Condition="'$(Platform)'=='x64'">opengl32.lib;glew32s.lib</GlDeps>
-    <Win32Defines>HAVE_GL_2X;USE_GLEW;GLEW_STATIC;$(Win32Defines)</Win32Defines>
+    <Win32Defines>HAVE_GL_2X;LOL_USE_GLEW;GLEW_STATIC;$(Win32Defines)</Win32Defines>
 
     <!-- Xinput -->
     <XinputIncludes>$(DXSDK_DIR)\Include</XinputIncludes>
     <XinputLibs Condition="'$(Platform)'=='Win32'">$(DXSDK_DIR)\Lib\x86</XinputLibs>
     <XinputLibs Condition="'$(Platform)'=='x64'">$(DXSDK_DIR)\Lib\x64</XinputLibs>
     <XinputDeps>xinput.lib</XinputDeps>
-    <Win32Defines>USE_XINPUT;$(Win32Defines)</Win32Defines>
+    <Win32Defines>LOL_USE_XINPUT;$(Win32Defines)</Win32Defines>
 
     <!-- Windows-specific -->
     <Win32Defines>HAVE_STDIO_H;$(Win32Defines)</Win32Defines>

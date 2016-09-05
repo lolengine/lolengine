@@ -53,7 +53,7 @@ static array<SceneDisplay*> m_scene_displays;
 
 static inline void gpu_marker(char const *message)
 {
-#if USE_GLEW
+#if LOL_USE_GLEW
     if (GLEW_GREMEDY_string_marker)
         glStringMarkerGREMEDY(0, message);
 #endif
@@ -700,7 +700,7 @@ void Scene::render_tiles() // XXX: rename to Blit()
     rc.SetBlendEquation(BlendEquation::Add, BlendEquation::Max);
     rc.SetAlphaFunc(AlphaFunc::GreaterOrEqual, 0.01f);
 
-#if (defined USE_GLEW || defined HAVE_GL_2X) && !defined HAVE_GLES_2X
+#if (defined LOL_USE_GLEW || defined HAVE_GL_2X) && !defined HAVE_GLES_2X
     glEnable(GL_TEXTURE_2D);
 #endif
 
@@ -795,7 +795,7 @@ void Scene::render_tiles() // XXX: rename to Blit()
     }
 
 
-#if (defined USE_GLEW || defined HAVE_GL_2X) && !defined HAVE_GLES_2X
+#if (defined LOL_USE_GLEW || defined HAVE_GL_2X) && !defined HAVE_GLES_2X
     glDisable(GL_TEXTURE_2D);
 #endif
 }

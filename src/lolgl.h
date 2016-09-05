@@ -1,11 +1,13 @@
+﻿//
+//  Lol Engine
 //
-// Lol Engine
+//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
@@ -30,7 +32,7 @@
 /* Include GL development headers.
  * Do not include glew.h on OS X, because the version shipped with Fink
  * links with X11 whereas we want the system’s Cocoa-friendly GL libs. */
-#if defined USE_GLEW && !defined __APPLE__
+#if defined LOL_USE_GLEW && !defined __APPLE__
 #   include <GL/glew.h>
 #elif defined HAVE_GL_2X
 #   if defined __APPLE__ && defined __MACH__ && defined __arm__

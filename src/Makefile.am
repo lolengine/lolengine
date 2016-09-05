@@ -20,7 +20,6 @@ liblol_core_a_SOURCES = \
     $(liblol_core_headers) \
     $(liblol_core_sources) \
     \
-    $(xbox_sources) \
     $(nacl_sources) \
     $(sdl_sources) \
     $(d3d9_sources) \
@@ -140,19 +139,13 @@ sdl_sources = \
 d3d9_sources = \
     platform/d3d9/d3d9input.cpp platform/d3d9/d3d9input.h
 
-if USE_NACL
+if LOL_USE_NACL
 nacl_sources = \
     platform/nacl/nacl-app.cpp platform/nacl/nacl-app.h \
     platform/nacl/nacl-instance.cpp platform/nacl/nacl-instance.h \
     platform/nacl/nacl-module.cpp \
     platform/nacl/opengl_context.cpp platform/nacl/opengl_context.h \
     platform/nacl/opengl_context_ptrs.h
-endif
-
-if USE_X360
-xbox_sources = \
-    platform/xbox/xboxapp.cpp platform/xbox/xboxapp.h \
-    platform/xbox/xboxinput.cpp platform/xbox/xboxinput.h
 endif
 
 android_sources = \

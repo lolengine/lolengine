@@ -1,11 +1,13 @@
+﻿//
+//  Lol Engine
 //
-// Lol Engine
+//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -59,7 +61,7 @@ void Video::SetDebugRenderMode(DebugRenderMode d)
         case DebugRenderMode::UV:
         {
 #if defined HAVE_GLES_2X
-#elif defined USE_GLEW || defined HAVE_GL_2X
+#elif defined LOL_USE_GLEW || defined HAVE_GL_2X
             glEnable(GL_CULL_FACE);
             glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 #endif
@@ -68,7 +70,7 @@ void Video::SetDebugRenderMode(DebugRenderMode d)
         case DebugRenderMode::Wireframe:
         {
 #if defined HAVE_GLES_2X
-#elif defined USE_GLEW || defined HAVE_GL_2X
+#elif defined LOL_USE_GLEW || defined HAVE_GL_2X
             glDisable(GL_CULL_FACE);
             glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 #endif
@@ -96,7 +98,7 @@ void Video::Destroy()
 
 void Video::Capture(uint32_t *buffer)
 {
-#if defined USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLEX_2X
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLEX_2X
     GLint v[4];
     glGetIntegerv(GL_VIEWPORT, v);
     int width = v[2], height = v[3];

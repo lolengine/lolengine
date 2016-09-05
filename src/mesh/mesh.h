@@ -1,11 +1,13 @@
+﻿//
+//  Lol Engine
 //
-// Lol Engine
+//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
@@ -19,7 +21,7 @@
 #include <lol/gpu/indexbuffer.h>
 
 //Assimp supports http://assimp.sourceforge.net/main_features_formats.html
-#if USE_ASSIMP
+#if LOL_USE_ASSIMP
 //Cause build has a problem with function choice.
 #if _WIN32 || _WIN64
 #define sin  lol::sin
@@ -35,8 +37,8 @@
 #undef asin
 #undef cos
 #undef acos
-#endif //_WIN32 || _WIN64
-#endif //USE_ASSIMP
+#endif // _WIN32 || _WIN64
+#endif // LOL_USE_ASSIMP
 
 namespace lol
 {

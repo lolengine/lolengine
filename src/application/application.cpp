@@ -1,11 +1,13 @@
+﻿//
+//  Lol Engine
 //
-// Lol Engine
+//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -20,7 +22,7 @@
 #   include "platform/nacl/nacl-app.h"
 #elif __ANDROID__
 #   include "platform/android/androidapp.h"
-#elif USE_SDL || USE_OLD_SDL
+#elif LOL_USE_SDL || LOL_USE_OLD_SDL
 #   include "platform/sdl/sdlapp.h"
 #   include "platform/sdl/sdlinput.h"
 #elif HAVE_GLES_2X
@@ -61,7 +63,7 @@ protected:
     //NOT HANDLED YET
 #elif __ANDROID__
     //NOT HANDLED YET
-#elif USE_SDL || USE_OLD_SDL
+#elif LOL_USE_SDL || LOL_USE_OLD_SDL
     SdlAppDisplay display;
 #elif HAVE_GLES_2X
     /* FIXME: this macro is only deactivated if we include "lolgl.h" */
@@ -121,7 +123,7 @@ class ApplicationData
     NaClApp app;
 #elif __ANDROID__
     AndroidApp app;
-#elif USE_SDL || USE_OLD_SDL
+#elif LOL_USE_SDL || LOL_USE_OLD_SDL
     SdlApp app;
 #elif HAVE_GLES_2X
     /* FIXME: this macro is only deactivated if we include "lolgl.h" */

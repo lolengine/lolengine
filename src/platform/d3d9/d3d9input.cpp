@@ -1,17 +1,19 @@
+﻿//
+//  Lol Engine
 //
-// Lol Engine
+//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #if HAVE_CONFIG_H
 #   include "config.h"
 #endif
-#if defined USE_XINPUT
+#if defined LOL_USE_XINPUT
 #   include <d3d9.h>
 #   include <xinput.h>
 #endif
@@ -34,9 +36,9 @@ class D3d9InputData
     friend class D3d9Input;
 
 private:
-#if defined USE_XINPUT
+#if defined LOL_USE_XINPUT
     array<int, InputDeviceInternal*> m_joysticks;
-#endif // USE_XINPUT
+#endif // LOL_USE_XINPUT
 };
 
 /*
@@ -46,7 +48,7 @@ private:
 D3d9Input::D3d9Input()
   : m_data(new D3d9InputData())
 {
-#if defined USE_XINPUT
+#if defined LOL_USE_XINPUT
     for (int i = 0; i < XUSER_MAX_COUNT; i++)
     {
         XINPUT_STATE state;
@@ -86,7 +88,7 @@ D3d9Input::D3d9Input()
 
 D3d9Input::~D3d9Input()
 {
-#if defined USE_XINPUT
+#if defined LOL_USE_XINPUT
     /* Unregister all the joysticks we added */
     while (m_data->m_joysticks.count())
     {
@@ -101,7 +103,7 @@ void D3d9Input::TickGame(float seconds)
 {
     Entity::TickGame(seconds);
 
-#if defined USE_XINPUT
+#if defined LOL_USE_XINPUT
     for (int i = 0; i < m_data->m_joysticks.count(); i++)
     {
         XINPUT_STATE state;

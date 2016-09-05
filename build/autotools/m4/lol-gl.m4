@@ -1,7 +1,19 @@
+dnl
+dnl  Lol Engine
+dnl
+dnl  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
+dnl
+dnl  Lol Engine is free software. It comes without any warranty, to
+dnl  the extent permitted by applicable law. You can redistribute it
+dnl  and/or modify it under the terms of the Do What the Fuck You Want
+dnl  to Public License, Version 2, as published by the WTFPL Task Force.
+dnl  See http://www.wtfpl.net/ for more details.
+dnl
 
-# LOL_CHECK_OPENGL()
+
+# LOL_AC_CHECK_OPENGL()
 # ------------------
-AC_DEFUN([LOL_CHECK_OPENGL],
+AC_DEFUN([LOL_AC_CHECK_OPENGL],
 [
 dnl  Find which version of OpenGL to use
 ac_cv_my_have_gl="no"
@@ -114,9 +126,9 @@ AC_CHECK_HEADER(GL/glew.h,
   LIBS="${LIBS_save}"])
 if test "${ac_cv_my_have_glew}" != "no"; then
   AC_DEFINE(HAVE_GLES_2X, 1, Define to 1 if GLES 2.x is available)
-  AC_DEFINE(USE_GLEW, 1, Define to 1 to use libglew)
+  AC_DEFINE(LOL_USE_GLEW, 1, Define to 1 to use libglew)
 fi
-AM_CONDITIONAL(USE_GLEW, test "${ac_cv_my_have_glew}" != "no")
+AM_CONDITIONAL(LOL_USE_GLEW, test "${ac_cv_my_have_glew}" != "no")
 
 dnl  Poor man's GL feature detection if all else failed.
 save_LIBS="${LIBS}"
@@ -129,6 +141,6 @@ if test "${ac_cv_my_have_gl}" = "no"; then
   AC_MSG_WARN([[No OpenGL or OpenGL ES implementation found]])
 fi
 
-])# LOL_CHECK_OPENGL
+]) # LOL_AC_CHECK_OPENGL
 
 

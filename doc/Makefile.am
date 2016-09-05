@@ -14,7 +14,7 @@ man_MANS = lolengine.1
 if BUILD_DOCUMENTATION
 htmldoc_DATA = html/doxygen.css
 htmldocdir = $(datadir)/doc/lolengine-dev/html
-if USE_LATEX
+if LOL_USE_LATEX
 pdfdoc_DATA = latex/lolengine.pdf
 pdfdocdir = $(datadir)/doc/lolengine-dev/pdf
 endif
@@ -31,7 +31,7 @@ endif
 
 stamp-latex: stamp-doxygen
 if BUILD_DOCUMENTATION
-if USE_LATEX
+if LOL_USE_LATEX
 	rm -f latex/lolengine.tex latex/lolengine.pdf
 	$(SED) -i -e 's/setlength{/renewcommand{/' latex/refman.tex
 	$(SED) -i -e 's/.*usepackage.*times.*//' latex/refman.tex
