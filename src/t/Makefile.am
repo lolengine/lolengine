@@ -1,9 +1,11 @@
 
 include $(top_srcdir)/build/autotools/common.am
 
+if BUILD_TEST
 noinst_PROGRAMS = $(testsuite)
 
 TESTS = $(testsuite)
+endif
 
 # Conditionally built for now because of STLport issues
 if !LOL_USE_ANDROID

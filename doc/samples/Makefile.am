@@ -6,7 +6,9 @@ SUBDIRS = math meshviewer sandbox
 bench: benchsuite$(EXEEXT)
 	./benchsuite$(EXEEXT)
 
+if BUILD_SAMPLES
 noinst_PROGRAMS = benchsuite btphystest nacl_phystest simplex
+endif
 
 benchsuite_SOURCES = benchsuite.cpp \
     benchmark/vector.cpp benchmark/half.cpp benchmark/trig.cpp \

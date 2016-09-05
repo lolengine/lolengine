@@ -1,7 +1,9 @@
 
 include $(top_srcdir)/build/autotools/common.am
 
+if BUILD_SAMPLES
 noinst_PROGRAMS = meshviewer
+endif
 
 meshviewer_SOURCES = meshviewer.cpp meshviewer.h \
     scenesetup.cpp scenesetup.h \
