@@ -1,3 +1,18 @@
+# LOL_AC_INIT()
+# ---------------------
+AC_DEFUN([LOL_AC_INIT], [
+
+dnl  C++11 and later mode. Checked early so that we don't run into surprises.
+version_flag=''
+LOL_TRY_CXXFLAGS(-std=c++0x, [version_flag='-std=c++0x'])
+LOL_TRY_CXXFLAGS(-std=c++11, [version_flag='-std=c++11'])
+LOL_TRY_CXXFLAGS(-std=c++14, [version_flag='-std=c++14'])
+LOL_TRY_CXXFLAGS(-std=c++17, [version_flag='-std=c++17'])
+AM_CXXFLAGS="${AM_CXXFLAGS} ${version_flag}"
+CXXFLAGS="${CXXFLAGS} ${version_flag}"
+
+]) # LOL_AC_INIT
+
 
 # LOL_AC_SUBST()
 # ---------------------
@@ -202,6 +217,32 @@ LOL_TRY_LDFLAGS(-framework UIKit,
 dnl  Other complex checks
 LOL_AC_CHECK_OPENGL()
 LOL_AC_CHECK_SDL()
+
+
+dnl  Debug symbols
+LOL_TRY_LDFLAGS(-rdynamic, [AM_LDFLAGS="${AM_LDFLAGS} -rdynamic"])
+
+dnl  Code qui fait des warnings == code de porc == deux baffes dans ta gueule
+LOL_TRY_CXXFLAGS(-Wall, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wall"])
+LOL_TRY_CXXFLAGS(-Wextra, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wextra"])
+LOL_TRY_CXXFLAGS(-Wpointer-arith, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wpointer-arith"])
+LOL_TRY_CXXFLAGS(-Wcast-align, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wcast-align"])
+LOL_TRY_CXXFLAGS(-Wcast-qual, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wcast-qual"])
+LOL_TRY_CXXFLAGS(-Wshadow, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wshadow"])
+LOL_TRY_CXXFLAGS(-Wsign-compare, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wsign-compare"])
+LOL_TRY_CXXFLAGS(-Wstrict-overflow=1, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wstrict-overflow=1"])
+
+dnl  Add these even though they're implicitly set, so that we can safely
+dnl  remove them from within a Makefile.
+LOL_TRY_CXXFLAGS(-Wmaybe-uninitialized, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wmaybe-uninitialized"])
+LOL_TRY_CXXFLAGS(-Wnarrowing, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wnarrowing"])
+LOL_TRY_CXXFLAGS(-Wunused, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wunused"])
+LOL_TRY_CXXFLAGS(-Wstrict-aliasing, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wstrict-aliasing"])
+LOL_TRY_CXXFLAGS(-Wparentheses, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wparentheses"])
+LOL_TRY_CXXFLAGS(-Wreorder, [AM_CXXFLAGS="${AM_CXXFLAGS} -Wreorder"])
+
+dnl  Disable these warnings because they're annoyingly verbose
+LOL_TRY_CXXFLAGS(-Wno-psabi, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wno-psabi"])
 
 ]) # LOL_AC_CHECK
 
