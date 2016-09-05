@@ -2,7 +2,7 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros">
-    <ExternalDir>$(SolutionDir)\..\external</ExternalDir>
+    <ExternalDir>$(LolDir)\external</ExternalDir>
 
     <!-- PEGTL -->
     <PegtlDir>$(ExternalDir)\pegtl-1.3.1-e7752e81</PegtlDir>
@@ -146,10 +146,10 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <!-- Deliberately omit the \ before .. because of an Incredibuild or Visual Studio bug
-         that messes with the log file location. http://stackoverflow.com/q/12101464/111461 -->
-    <OutDir>$(SolutionDir)..\binaries\$(Platform) $(PlatformToolset) $(Configuration)\</OutDir>
-    <IntDir>$(SolutionDir)..\binaries\$(Platform) $(PlatformToolset) $(Configuration)\$(ProjectName)\</IntDir>
+    <BinDir Condition="Exists('$(SolutionDir)\lol')">$(SolutionDir)\binaries</BinDir>
+    <BinDir Condition="!Exists('$(SolutionDir)\lol')">$(LolDir)\binaries</BinDir>
+    <OutDir>$(BinDir)\$(Platform) $(PlatformToolset) $(Configuration)\</OutDir>
+    <IntDir>$(BinDir)\$(Platform) $(PlatformToolset) $(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
 
 </Project>

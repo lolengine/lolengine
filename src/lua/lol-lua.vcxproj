@@ -1,5 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="LolMacros">
+    <LolDir Condition="Exists('$(SolutionDir)\lol')">$(SolutionDir)\lol</LolDir>
+    <LolDir Condition="!Exists('$(SolutionDir)\lol')">$(SolutionDir)\..</LolDir>
+  </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|ORBIS">
       <Configuration>Debug</Configuration>
@@ -31,7 +35,7 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
-  <Import Project="$(SolutionDir)\msbuild\lol.config.props" />
+  <Import Project="$(LolDir)\build\msbuild\lol.config.props" />
   <PropertyGroup Label="Configuration">
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -44,10 +48,10 @@
   </PropertyGroup>
   <ImportGroup Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(SolutionDir)\msbuild\lol.vars.props" />
+    <Import Project="$(LolDir)\build\msbuild\lol.vars.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
-  <Import Project="$(SolutionDir)\msbuild\lol.rules.props" />
+  <Import Project="$(LolDir)\build\msbuild\lol.rules.props" />
   <ItemDefinitionGroup>
     <ClCompile>
       <PreprocessorDefinitions>LUA_ANSI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -124,6 +128,6 @@
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="$(SolutionDir)\msbuild\lolfx.targets" />
+    <Import Project="$(LolDir)\build\msbuild\lolfx.targets" />
   </ImportGroup>
 </Project>
