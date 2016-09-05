@@ -60,6 +60,7 @@ endif
 	$(mkinstalldirs) $(DESTDIR)$(mandir)/man1
 
 uninstall-local:
-	rm -f $(DESTDIR)$(datadir)/doc/libcucul-dev
+	rmdir $(DESTDIR)$(datadir)/doc/lolengine-dev/html 2>/dev/null || true
+	rmdir $(DESTDIR)$(datadir)/doc/lolengine-dev 2>/dev/null || true
 	rmdir $(DESTDIR)$(datadir)/doc 2>/dev/null || true
 
