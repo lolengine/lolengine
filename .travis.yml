@@ -15,11 +15,14 @@ addons:
       - libsdl2-image-dev
       - libsdl2-mixer-dev
       - libglew-dev
-      # maybe this can fix clang compilation
+      # this can fix clang compilation
+      - clang-3.8
       - libc++-dev
 
 before_install:
 #  - .travis/before_install.sh
+  - if [ "$CC" = "clang" ]; then export CC="clang-3.8"; fi
+  - if [ "$CXX" = "clang++" ]; then export CXX="clang++-3.8 -stdlib=libc++"; fi
   - ./bootstrap
 
 os:
