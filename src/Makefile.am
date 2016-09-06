@@ -27,8 +27,6 @@ liblol_core_a_SOURCES = \
 #liblol_core_a_CPPFLAGS = -include-pch $(srcdir)/lol/engine-internal.h.pch $(AM_CPPFLAGS) -I$(srcdir)/bullet -I$(srcdir)/lua
 liblol_core_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/bullet -I$(srcdir)/lua
 
-EXTRA_DIST += easymesh/easymesh-scanner.l easymesh/easymesh-parser.y
-
 liblol_core_headers = \
     lol/engine-internal.h lol/engine.h lol/public.h lol/extras.h \
     \
@@ -39,8 +37,8 @@ liblol_core_headers = \
     \
     lol/math/all.h \
     lol/math/functions.h lol/math/vector.h lol/math/half.h lol/math/real.h \
-    lol/math/geometry.h lol/math/interp.h lol/math/rand.h lol/math/array2d.h \
-    lol/math/array3d.h lol/math/constants.h lol/math/matrix.h lol/math/ops.h \
+    lol/math/geometry.h lol/math/interp.h lol/math/rand.h lol/math/arraynd.h \
+    lol/math/constants.h lol/math/matrix.h lol/math/ops.h \
     lol/math/transform.h lol/math/polynomial.h lol/math/bigint.h \
     lol/math/noise/gradient.h lol/math/noise/perlin.h \
     lol/math/noise/simplex.h \
@@ -49,7 +47,8 @@ liblol_core_headers = \
     lol/algorithm/sort.h lol/algorithm/portal.h lol/algorithm/aabb_tree.h \
     \
     lol/sys/all.h \
-    lol/sys/init.h lol/sys/file.h lol/sys/thread.h lol/sys/timer.h \
+    lol/sys/init.h lol/sys/file.h lol/sys/thread.h lol/sys/threadtypes.h \
+    lol/sys/timer.h \
     \
     lol/image/all.h \
     lol/image/pixel.h lol/image/color.h lol/image/image.h lol/image/movie.h \

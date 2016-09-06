@@ -11,12 +11,10 @@ disable_cflags = $(filter $(AM_CPPFLAGS:-W%=-Wno-%), \
 liblol_bullet_a_SOURCES = $(bullet_sources)
 liblol_bullet_a_CPPFLAGS = -DB3_USE_CLEW $(AM_CPPFLAGS) -I$(srcdir) $(disable_cflags)
 
-bullet_sources =
-
-if FALSE #CONDITIONAL_BUILD_MULTITHREADED
-libBulletMultiThreaded_la_CXXFLAGS = -I./BulletMultiThreaded/vectormath/scalar/cpp
-bullet_sources +=
-endif
+bullet_sources = \
+	btBulletCollisionCommon.h \
+	btBulletDynamicsCommon.h \
+	$(NULL)
 
 bullet_sources += \
 	Bullet3Collision/BroadPhaseCollision/b3BroadphaseCallback.h \
