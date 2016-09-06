@@ -20,9 +20,9 @@
 
 #include <lol/engine.h>
 
-#include <bullet/btBulletDynamicsCommon.h>
-#include <bullet/btBulletCollisionCommon.h>
-#include <bullet/BulletCollision/CollisionDispatch/btGhostObject.h>
+#include <btBulletDynamicsCommon.h>
+#include <btBulletCollisionCommon.h>
+#include <BulletCollision/CollisionDispatch/btGhostObject.h>
 
 namespace lol
 {

@@ -122,7 +122,6 @@ for file in $FILES; do
 
     case "$file" in
       # These files aren't ours, but fix their line endings
-      src/bullet/*|\
       src/lua/*|\
       external/*|\
       web/plugins/*)

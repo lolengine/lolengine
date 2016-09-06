@@ -25,7 +25,7 @@ btphystest_SOURCES = \
     physics/bulletcharactercontroller.cpp physics/bulletcharactercontroller.h \
     \
     front_camera_sprite.lolfx
-btphystest_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/src/bullet \
+btphystest_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/src/3rdparty/bullet3/src \
     -DHAVE_PHYS_USE_BULLET
 btphystest_DEPENDENCIES = @LOL_DEPS@
 btphystest_LDFLAGS = $(AM_LDFLAGS)
@@ -37,7 +37,7 @@ endif
 
 nacl_phystest_SOURCES = \
     nacl_phystest.cpp nacl_phystest.h
-nacl_phystest_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/src/bullet \
+nacl_phystest_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/src/3rdparty/bullet3/src \
     -DHAVE_PHYS_USE_BULLET
 nacl_phystest_DEPENDENCIES = @LOL_DEPS@
 nacl_phystest_LDFLAGS = $(AM_LDFLAGS)

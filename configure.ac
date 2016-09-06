@@ -262,7 +262,7 @@ LOL_AC_SUBST()
 AC_CONFIG_FILES(
  [Makefile
   src/Makefile
-  src/bullet/Makefile
+  src/3rdparty/Makefile
   src/lua/Makefile
   src/data/Makefile
   src/data/font/Makefile
