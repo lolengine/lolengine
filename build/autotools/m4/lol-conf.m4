@@ -72,22 +72,13 @@ AC_TRY_LINK([], [],
 AC_LANG_POP(C++)
 
 
-dnl  Use mingw threads if necessary
-if true; then
-  LOL_CFLAGS="$LOL_CFLAGS -I\$(lol_srcdir)/external/mingw-std-threads-0.0.ac5c9e3b/include/"
-fi
+dnl
+dnl  Activate some header-only libraries
+dnl
 
-
-dnl  Use pegtl? Yes, always
-if true; then
-  LOL_CFLAGS="$LOL_CFLAGS -I\$(lol_srcdir)/src/3rdparty/pegtl"
-fi
-
-
-dnl  Use Imgui? Yes, always
-if true; then
-  LOL_CFLAGS="$LOL_CFLAGS -I\$(lol_srcdir)/src/3rdparty/imgui"
-fi
+LOL_CFLAGS="$LOL_CFLAGS -I\$(lol_srcdir)/src/3rdparty/mingw-std-threads"
+LOL_CFLAGS="$LOL_CFLAGS -I\$(lol_srcdir)/src/3rdparty/pegtl"
+LOL_CFLAGS="$LOL_CFLAGS -I\$(lol_srcdir)/src/3rdparty/imgui"
 
 
 dnl  Use NativeClient?
