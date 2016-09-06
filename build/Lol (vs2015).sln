@@ -5,7 +5,7 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lol-core", "..\src\lol-core.vcxproj", "{9E62F2FE-3408-4EAE-8238-FD84238CEEDA}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lol-bullet", "..\src\bullet\lol-bullet.vcxproj", "{83D3B207-C601-4025-8F41-01DEDC354661}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lol-bullet", "..\src\3rdparty\lol-bullet.vcxproj", "{83D3B207-C601-4025-8F41-01DEDC354661}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lol-lua", "..\src\lua\lol-lua.vcxproj", "{D84021CA-B233-4E0F-8A52-071B83BBCCC4}"
 EndProject

@@ -4,3 +4,6 @@
 [submodule "src/3rdparty/imgui"]
 	path = src/3rdparty/imgui
 	url = ../../lolengine/imgui.git
+[submodule "src/3rdparty/bullet3"]
+	path = src/3rdparty/bullet3
+	url = ../../lolengine/bullet3.git

@@ -15,9 +15,10 @@
 
 #include <cstring>
 
-#include <bullet/btBulletDynamicsCommon.h>
-#include <bullet/btBulletCollisionCommon.h>
+#include <btBulletDynamicsCommon.h>
+#include <btBulletCollisionCommon.h>
 #include <BulletDynamics/Character/btKinematicCharacterController.h>
+
 #include "lolbtphysicsintegration.h"
 #include "easyphysics.h"
 #include "easyconstraint.h"

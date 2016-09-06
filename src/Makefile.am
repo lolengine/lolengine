@@ -1,7 +1,7 @@
 
 include $(top_srcdir)/build/autotools/common.am
 
-SUBDIRS = bullet lua data . t
+SUBDIRS = 3rdparty lua data . t
 
 noinst_LIBRARIES = liblol-core.a
 
@@ -24,8 +24,8 @@ liblol_core_a_SOURCES = \
     $(sdl_sources) \
     $(d3d9_sources) \
     $(android_sources)
-#liblol_core_a_CPPFLAGS = -include-pch $(srcdir)/lol/engine-internal.h.pch $(AM_CPPFLAGS) -I$(srcdir)/bullet -I$(srcdir)/lua
-liblol_core_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/bullet -I$(srcdir)/lua
+#liblol_core_a_CPPFLAGS = -include-pch $(srcdir)/lol/engine-internal.h.pch $(AM_CPPFLAGS) -I$(srcdir)/3rdparty/bullet3/src -I$(srcdir)/lua
+liblol_core_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/3rdparty/bullet3/src -I$(srcdir)/lua
 
 liblol_core_headers = \
     lol/engine-internal.h lol/engine.h lol/public.h lol/extras.h \
