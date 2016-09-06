@@ -86,7 +86,7 @@ fi
 
 dnl  Use Imgui? Yes, always
 if true; then
-  LOL_CFLAGS="$LOL_CFLAGS -I\$(lol_srcdir)/external/imgui"
+  LOL_CFLAGS="$LOL_CFLAGS -I\$(lol_srcdir)/src/3rdparty/imgui"
 fi
 
 

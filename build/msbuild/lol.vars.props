@@ -9,7 +9,7 @@
     <PegtlIncludes>$(PegtlDir)\include</PegtlIncludes>
 
     <!-- imgui -->
-    <ImguiDir>$(ExternalDir)\imgui</ImguiDir>
+    <ImguiDir>$(LolDir)\src\3rdparty\imgui</ImguiDir>
     <ImguiIncludes>$(ImguiDir)</ImguiIncludes>
 
     <!-- libgcc (from mingw-w64) -->
