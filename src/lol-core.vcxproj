@@ -384,7 +384,7 @@
     <ProjectReference Include="bullet\lol-bullet.vcxproj">
       <Project>{83d3b207-c601-4025-8f41-01dedc354661}</Project>
     </ProjectReference>
-    <ProjectReference Include="lua\lol-lua.vcxproj">
+    <ProjectReference Include="3rdparty\lol-lua.vcxproj">
       <Project>{d84021ca-b233-4e0f-8a52-071b83bbccc4}</Project>
     </ProjectReference>
   </ItemGroup>

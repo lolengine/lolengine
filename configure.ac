@@ -263,7 +263,6 @@ AC_CONFIG_FILES(
  [Makefile
   src/Makefile
   src/3rdparty/Makefile
-  src/lua/Makefile
   src/data/Makefile
   src/data/font/Makefile
   src/t/Makefile

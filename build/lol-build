@@ -291,8 +291,8 @@ build()
         win*-i386)
             # Because of locking issues in Wine’s winepath.exe, we only
             # build the static libraries in parallel.
-            make -j$LOL_PARALLEL -C src/3rdparty
-            make -j$LOL_PARALLEL -C src/lua
+            make -j$LOL_PARALLEL -C src/3rdparty liblol-bullet.a
+            make -j$LOL_PARALLEL -C src/3rdparty liblol-lua.a
             make -j$LOL_PARALLEL -C src/ liblol-core.a
             make
             ;;
