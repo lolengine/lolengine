@@ -36,7 +36,7 @@ LOL_CFLAGS="$LOL_CFLAGS $SDL_CFLAGS $GL_CFLAGS $EGL_CFLAGS $LIBPNG_CFLAGS"
 LOL_LIBS="$LOL_LIBS $SDL_LIBS $GL_LIBS $EGL_LIBS $LIBPNG_LIBS $D3D_LIBS"
 LOL_DEPS="${LOL_DEPS} \$(lol_builddir)/src/liblol-core.a"
 LOL_DEPS="${LOL_DEPS} \$(lol_builddir)/src/3rdparty/liblol-bullet.a"
-LOL_DEPS="${LOL_DEPS} \$(lol_builddir)/src/lua/liblol-lua.a"
+LOL_DEPS="${LOL_DEPS} \$(lol_builddir)/src/3rdparty/liblol-lua.a"
 
 dnl  How to use the Lol Engine inside this tree
 AM_CPPFLAGS="${AM_CPPFLAGS} -I\$(lol_srcdir)/src"

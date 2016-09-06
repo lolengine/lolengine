@@ -11,7 +11,7 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
-#include "lua/lua.hpp"
+#include "3rdparty/lua/src/lua.hpp"
 //#include "lua/luawrapper.hpp"
 
 #pragma once
