@@ -5,8 +5,8 @@
     <ExternalDir>$(LolDir)\external</ExternalDir>
 
     <!-- PEGTL -->
-    <PegtlDir>$(ExternalDir)\pegtl-1.3.1-e7752e81</PegtlDir>
-    <PegtlIncludes>$(PegtlDir)\include</PegtlIncludes>
+    <PegtlDir>$(LolDir)\src/3rdparty\pegtl</PegtlDir>
+    <PegtlIncludes>$(PegtlDir)</PegtlIncludes>
 
     <!-- imgui -->
     <ImguiDir>$(LolDir)\src\3rdparty\imgui</ImguiDir>

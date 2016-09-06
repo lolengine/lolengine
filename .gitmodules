@@ -11,3 +11,6 @@
 	path = src/3rdparty/lua
 	url = ../../lolengine/lua.git
 	branch = lol
+[submodule "src/3rdparty/pegtl"]
+	path = src/3rdparty/pegtl
+	url = ../../lolengine/pegtl.git
