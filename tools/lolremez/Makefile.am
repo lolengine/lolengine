@@ -3,7 +3,9 @@ include $(top_srcdir)/build/autotools/common.am
 
 EXTRA_DIST += NEWS.txt lolremez.sln lolremez.vcxproj lolremez.vcxproj.filters
 
+if BUILD_TOOLS
 noinst_PROGRAMS = lolremez
+endif
 
 lolremez_SOURCES = \
     lolremez.cpp solver.cpp solver.h matrix.h
