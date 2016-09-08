@@ -94,14 +94,12 @@ AC_ARG_ENABLE(doc,
 
 
 dnl  Common C headers
-AC_CHECK_HEADERS(stdio.h stdarg.h inttypes.h endian.h stdint.h getopt.h math.h)
-AC_CHECK_HEADERS(fastmath.h libutil.h util.h pty.h glob.h unistd.h io.h)
+AC_CHECK_HEADERS(stdio.h stdarg.h inttypes.h stdint.h math.h)
+AC_CHECK_HEADERS(fastmath.h unistd.h io.h)
 AC_CHECK_HEADERS(execinfo.h)
 AC_CHECK_HEADERS(sys/ioctl.h sys/ptrace.h sys/stat.h sys/syscall.h sys/user.h)
 AC_CHECK_HEADERS(sys/wait.h sys/time.h sys/types.h)
-AC_CHECK_HEADERS(linux/kdev_t.h linux/major.h)
-AC_CHECK_HEADERS(security/pam_appl.h security/pam_misc.h)
-AC_CHECK_HEADERS(pam/pam_appl.h pam/pam_misc.h)
+
 
 dnl  Common C++ headers
 AC_LANG_PUSH(C++)
@@ -187,14 +185,6 @@ AM_CONDITIONAL(LOL_USE_DOT, test "${DOT}" != "no")
 AC_SUBST(LOL_USE_DOT)
 
 
-dnl  Unix-specific libutil
-AC_CHECK_LIB(util, forkpty,
- [UTIL_LIBS="${UTIL_LIBS} -lutil"
-  dnl  Override future forkpty detection
-  ac_cv_func_forkpty="yes"])
-AC_CHECK_FUNCS(forkpty)
-
-
 dnl  GCC-specific symbol demangling
 AC_LANG_PUSH(C++)
 AC_TRY_LINK(
@@ -226,10 +216,6 @@ fi
 AM_CONDITIONAL(LOL_USE_GTKGL, test "${ac_cv_my_have_gtkgl}" != "no")
 
 
-dnl  Can we build neercs?
-AM_CONDITIONAL(BUILD_NEERCS, test "${ac_cv_my_have_caca}" != "no")
-
-
 dnl  Optional features
 AM_CONDITIONAL(BUILD_TEST, test "${enable_test}" != "no")
 AM_CONDITIONAL(BUILD_TOOLS, test "${enable_tools}" != "no")
@@ -240,9 +226,6 @@ AM_CONDITIONAL(BUILD_SAMPLES, test "${enable_samples}" != "no")
 dnl Should we ship non-free data?
 AM_CONDITIONAL(HAVE_NONFREE, true)
 
-dnl  Extra libraries we may need
-AC_SUBST(PAM_LIBS)
-AC_SUBST(UTIL_LIBS)
 
 LOL_AC_SUBST()
 
