@@ -37,20 +37,9 @@ AC_PROG_RANLIB
 
 LOL_AC_INIT()
 
-AC_LANG_PUSH(C++)
-AC_MSG_CHECKING(for C++11 enum class support)
-AC_TRY_LINK([], [enum class Foo : int { Bar, Baz };],
- [AC_MSG_RESULT(yes)],
- [AC_MSG_RESULT(no)
-  AC_MSG_ERROR([[C++ compiler does not support C++11 enum classes]])])
-AC_LANG_POP(C++)
-
 AC_LIBTOOL_WIN32_DLL
 AM_PROG_LIBTOOL
 AC_LIBTOOL_CXX
-
-AC_C_CONST
-AC_C_INLINE
 
 dnl Ensure an error is thrown if pkg-config M4 files are not found.
 m4_pattern_allow([^PKG_CONFIG_LIBDIR$])
@@ -196,10 +185,6 @@ AM_CONDITIONAL(LOL_USE_DOT, test "${DOT}" != "no")
 AC_SUBST(LOL_USE_DOT)
 
 
-AC_CHECK_LIB(m, sin, MATH_LIBS="${MATH_LIBS} -lm")
-AC_CHECK_LIB(pthread, main, LIBS="$LIBS -lpthread")
-
-
 dnl  Unix-specific libutil
 AC_CHECK_LIB(util, forkpty,
  [UTIL_LIBS="${UTIL_LIBS} -lutil"
@@ -253,7 +238,6 @@ dnl Should we ship non-free data?
 AM_CONDITIONAL(HAVE_NONFREE, true)
 
 dnl  Extra libraries we may need
-AC_SUBST(MATH_LIBS)
 AC_SUBST(PAM_LIBS)
 AC_SUBST(UTIL_LIBS)
 

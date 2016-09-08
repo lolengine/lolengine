@@ -24,6 +24,14 @@ LOL_TRY_CXXFLAGS(-std=c++17, [version_flag='-std=c++17'])
 AM_CXXFLAGS="${AM_CXXFLAGS} ${version_flag}"
 CXXFLAGS="${CXXFLAGS} ${version_flag}"
 
+AC_LANG_PUSH(C++)
+AC_MSG_CHECKING(for C++11 enum class support)
+AC_TRY_LINK([], [enum class Foo : int { Bar, Baz };],
+ [AC_MSG_RESULT(yes)],
+ [AC_MSG_RESULT(no)
+  AC_MSG_ERROR([[C++ compiler does not support C++11 enum classes]])])
+AC_LANG_POP(C++)
+
 ]) # LOL_AC_INIT
 
 
@@ -70,6 +78,17 @@ AC_TRY_LINK([], [],
  [AC_MSG_RESULT(no)
   AC_MSG_ERROR([[C++ compiler cannot link executables]])])
 AC_LANG_POP(C++)
+
+
+AC_C_CONST
+AC_C_INLINE
+
+dnl
+dnl  Common libraries
+dnl
+
+AC_CHECK_LIB(m, sin, LIBS="${LIBS} -lm")
+AC_CHECK_LIB(pthread, main, LIBS="${LIBS} -lpthread")
 
 
 dnl
