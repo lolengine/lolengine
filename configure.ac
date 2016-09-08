@@ -83,6 +83,8 @@ AC_ARG_ENABLE(experimental,
 
 AC_ARG_ENABLE(test,
   [  --enable-test           build test suite (default yes)])
+AC_ARG_ENABLE(tools,
+  [  --enable-tools          build miscellaneous tools (default yes)])
 AC_ARG_ENABLE(tutorial,
   [  --enable-tutorial       build tutorial applications (default yes)])
 AC_ARG_ENABLE(samples,
@@ -230,6 +232,7 @@ AM_CONDITIONAL(BUILD_NEERCS, test "${ac_cv_my_have_caca}" != "no")
 
 dnl  Optional features
 AM_CONDITIONAL(BUILD_TEST, test "${enable_test}" != "no")
+AM_CONDITIONAL(BUILD_TOOLS, test "${enable_tools}" != "no")
 AM_CONDITIONAL(BUILD_TUTORIAL, test "${enable_tutorial}" != "no")
 AM_CONDITIONAL(BUILD_SAMPLES, test "${enable_samples}" != "no")
 
