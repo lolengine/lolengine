@@ -27,8 +27,6 @@ AC_SUBST(LOLREMEZ_VERSION)
 AC_SUBST(lol_srcdir, '${top_srcdir}')
 AC_SUBST(lol_builddir, '${top_builddir}')
 
-AC_CONFIG_HEADER(config.h)
-
 AM_PROG_CC_C_O
 AC_PROG_CPP
 AC_PROG_CXX
@@ -81,6 +79,9 @@ AC_ARG_ENABLE(release,
 AC_ARG_ENABLE(experimental,
   [  --enable-experimental   experimental build (default no)])
 
+AC_ARG_ENABLE(subproject,
+  [  --enable-subproject     build as a subproject (default no)])
+
 AC_ARG_ENABLE(test,
   [  --enable-test           build test suite (default yes)])
 AC_ARG_ENABLE(tools,
@@ -91,6 +92,23 @@ AC_ARG_ENABLE(samples,
   [  --enable-samples        build sample applications (default yes)])
 AC_ARG_ENABLE(doc,
   [  --enable-doc            build documentation (needs doxygen and LaTeX)])
+
+
+dnl  Subproject builds
+if test "${enable_subproject}" = "yes"; then
+  AC_MSG_CHECKING(for a config-lol.h file in the parent project)
+  if test -f "../config-lol.h"; then
+    AC_MSG_RESULT(yes)
+    AC_DEFINE(HAVE_CONFIG_LOL_H, 1, Define to if parent project provides config-lol.h)
+    AH_BOTTOM([
+#if HAVE_CONFIG_LOL_H
+#include "../config-lol.h"
+#endif
+])
+  else
+    AC_MSG_RESULT(no)
+  fi
+fi
 
 
 dnl  Common C headers
@@ -145,7 +163,7 @@ fi
 dnl  Build documentation?
 DOXYGEN="no"
 LATEX="no"
-if test "${enable_doc}" != "no"; then
+if test "${enable_doc}" != "no" -a "${enable_subproject}" != "yes"; then
   AC_PATH_PROG(DOXYGEN, doxygen, no)
   if test "${DOXYGEN}" != "no"; then
     # Build LaTeX documentation?
@@ -217,17 +235,19 @@ AM_CONDITIONAL(LOL_USE_GTKGL, test "${ac_cv_my_have_gtkgl}" != "no")
 
 
 dnl  Optional features
-AM_CONDITIONAL(BUILD_TEST, test "${enable_test}" != "no")
-AM_CONDITIONAL(BUILD_TOOLS, test "${enable_tools}" != "no")
-AM_CONDITIONAL(BUILD_TUTORIAL, test "${enable_tutorial}" != "no")
-AM_CONDITIONAL(BUILD_SAMPLES, test "${enable_samples}" != "no")
+AM_CONDITIONAL(BUILD_TEST, test "${enable_test}" != "no" -a "${enable_subproject}" != "yes")
+AM_CONDITIONAL(BUILD_TOOLS, test "${enable_tools}" != "no" -a "${enable_subproject}" != "yes")
+AM_CONDITIONAL(BUILD_TUTORIAL, test "${enable_tutorial}" != "no" -a "${enable_subproject}" != "yes")
+AM_CONDITIONAL(BUILD_SAMPLES, test "${enable_samples}" != "no" -a "${enable_subproject}" != "yes")
 
 
 dnl Should we ship non-free data?
 AM_CONDITIONAL(HAVE_NONFREE, true)
 
 
-LOL_AC_SUBST()
+LOL_AC_FINI()
+
+AC_CONFIG_HEADER(config.h)
 
 AC_CONFIG_FILES(
  [Makefile

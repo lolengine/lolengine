@@ -56,7 +56,6 @@ fi
 auxdir="`sed -ne 's/^[ \t]*A._CONFIG_AUX_DIR *([[ ]*\([^] )]*\).*/\1/p' $conffile`"
 pkgconfig="`grep '^[ \t]*PKG_PROG_PKG_CONFIG' $conffile >/dev/null 2>&1 && echo yes || echo no`"
 libtool="`grep '^[ \t]*A._PROG_LIBTOOL' $conffile >/dev/null 2>&1 && echo yes || echo no`"
-header="`grep '^[ \t]*A._CONFIG_HEADER' $conffile >/dev/null 2>&1 && echo yes || echo no`"
 makefile="`[ -f Makefile.am ] && echo yes || echo no`"
 aclocalflags="`sed -ne 's/^[ \t]*ACLOCAL_AMFLAGS[ \t]*=//p' Makefile.am 2>/dev/null || :`"
 
@@ -151,9 +150,7 @@ fi
 
 aclocal${amvers} ${aclocalflags}
 autoconf${acvers}
-if test "$header" = "yes"; then
-  autoheader${acvers}
-fi
+autoheader${acvers}
 if test "$makefile" = "yes"; then
   #add --include-deps if you want to bootstrap with any other compiler than gcc
   #automake${amvers} --add-missing --copy --include-deps
