@@ -26,6 +26,8 @@
 LOLFX_RESOURCE_DECLARE(tile);
 LOLFX_RESOURCE_DECLARE(palette);
 LOLFX_RESOURCE_DECLARE(line);
+
+LOLFX_RESOURCE_DECLARE(blit);
 LOLFX_RESOURCE_DECLARE(postprocess);
 
 namespace lol
@@ -136,16 +138,16 @@ private:
      * the default one created by the app will be used */
     SceneDisplay* m_display = nullptr;
 
-    /** Back buffer: where to render to. */
-    Framebuffer *m_backbuffer = nullptr;
+    /** Render buffers: where to render to. */
+    Framebuffer *m_renderbuffer[4];
 
     struct postprocess
     {
-        Shader *m_shader = nullptr;
+        Shader *m_shader[2];
         VertexBuffer *m_vbo = nullptr;
         VertexDeclaration *m_vdecl = nullptr;
-        ShaderUniform m_texture;
-        ShaderAttrib m_coord;
+        ShaderUniform m_buffer_uni[2][3];
+        ShaderAttrib m_coord[2];
     }
     m_pp;
 
@@ -201,11 +203,19 @@ mutex SceneData::m_prim_mutex;
 Scene::Scene(ivec2 size)
   : data(new SceneData())
 {
-    data->m_backbuffer = new Framebuffer(size);
-    data->m_pp.m_shader = Shader::Create(LOLFX_RESOURCE_NAME(postprocess));
-    data->m_pp.m_coord = data->m_pp.m_shader->GetAttribLocation(VertexUsage::Position, 0);
+    data->m_renderbuffer[0] = new Framebuffer(size);
+    data->m_renderbuffer[1] = new Framebuffer(size);
+    data->m_renderbuffer[2] = new Framebuffer(size);
+    data->m_renderbuffer[3] = new Framebuffer(size);
+    data->m_pp.m_shader[0] = Shader::Create(LOLFX_RESOURCE_NAME(blit));
+    data->m_pp.m_shader[1] = Shader::Create(LOLFX_RESOURCE_NAME(postprocess));
+    data->m_pp.m_coord[0] = data->m_pp.m_shader[0]->GetAttribLocation(VertexUsage::Position, 0);
+    data->m_pp.m_coord[1] = data->m_pp.m_shader[1]->GetAttribLocation(VertexUsage::Position, 0);
     data->m_pp.m_vdecl = new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position));
-    data->m_pp.m_texture = data->m_pp.m_shader->GetUniformLocation("u_texture");
+    data->m_pp.m_buffer_uni[0][0] = data->m_pp.m_shader[0]->GetUniformLocation("u_buffer");
+    data->m_pp.m_buffer_uni[1][0] = data->m_pp.m_shader[1]->GetUniformLocation("u_buffer");
+    data->m_pp.m_buffer_uni[1][1] = data->m_pp.m_shader[1]->GetUniformLocation("u_prev_buffer");
+    data->m_pp.m_buffer_uni[1][2] = data->m_pp.m_shader[1]->GetUniformLocation("u_prev_final");
 
     array<vec2> quad { vec2( 1.0,  1.0), vec2(-1.0, -1.0), vec2( 1.0, -1.0),
                        vec2(-1.0, -1.0), vec2( 1.0,  1.0), vec2(-1.0,  1.0), };
@@ -621,7 +631,9 @@ void Scene::render(float seconds)
 
     /* First render into the offline buffer */
     if (do_pp)
-        data->m_backbuffer->Bind();
+    {
+        data->m_renderbuffer[0]->Bind();
+    }
 
     {
         RenderContext rc;
@@ -641,18 +653,55 @@ void Scene::render(float seconds)
 
     if (do_pp)
     {
-        data->m_backbuffer->Unbind();
+        data->m_renderbuffer[0]->Unbind();
 
         gpu_marker("PostProcess");
 
-        /* Now blit the offline buffer */
-        data->m_pp.m_shader->Bind();
-        data->m_pp.m_shader->SetUniform(data->m_pp.m_texture, data->m_backbuffer->GetTextureUniform(), 0);
-        data->m_pp.m_vdecl->SetStream(data->m_pp.m_vbo, data->m_pp.m_coord);
+        data->m_renderbuffer[3]->Bind();
+
+        RenderContext rc;
+        rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
+        rc.SetClearDepth(1.f);
+        Renderer::Get()->Clear(ClearMask::Color | ClearMask::Depth);
+
+        /* Execute post process */
+        data->m_pp.m_shader[1]->Bind();
+        data->m_pp.m_shader[1]->SetUniform(data->m_pp.m_buffer_uni[1][0], data->m_renderbuffer[0]->GetTextureUniform(), 0);
+        data->m_pp.m_shader[1]->SetUniform(data->m_pp.m_buffer_uni[1][1], data->m_renderbuffer[1]->GetTextureUniform(), 1);
+        data->m_pp.m_shader[1]->SetUniform(data->m_pp.m_buffer_uni[1][2], data->m_renderbuffer[2]->GetTextureUniform(), 2);
+        data->m_pp.m_vdecl->SetStream(data->m_pp.m_vbo, data->m_pp.m_coord[1]);
         data->m_pp.m_vdecl->Bind();
         data->m_pp.m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
         data->m_pp.m_vdecl->Unbind();
-        data->m_pp.m_shader->Unbind();
+        data->m_pp.m_shader[1]->Unbind();
+        data->m_renderbuffer[3]->Unbind();
+    }
+
+    if (do_pp)
+    {
+        gpu_marker("Blit frame");
+
+        data->m_pp.m_shader[0]->Bind();
+
+        RenderContext rc;
+        rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
+        rc.SetClearDepth(1.f);
+        Renderer::Get()->Clear(ClearMask::Color | ClearMask::Depth);
+
+        /* Blit final image to screen */
+        data->m_pp.m_shader[0]->SetUniform(data->m_pp.m_buffer_uni[0][0], data->m_renderbuffer[3]->GetTextureUniform(), 3);
+        data->m_pp.m_vdecl->SetStream(data->m_pp.m_vbo, data->m_pp.m_coord[0]);
+        data->m_pp.m_vdecl->Bind();
+        data->m_pp.m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
+        data->m_pp.m_vdecl->Unbind();
+        data->m_pp.m_shader[0]->Unbind();
+    }
+
+    if (do_pp)
+    {
+        /* Swap back buffers */
+        std::swap(data->m_renderbuffer[0], data->m_renderbuffer[1]);
+        std::swap(data->m_renderbuffer[2], data->m_renderbuffer[3]);
     }
 
     gpu_marker("End Render");
@@ -793,7 +842,6 @@ void Scene::render_tiles() // XXX: rename to Blit()
 
         shader->Unbind();
     }
-
 
 #if (defined LOL_USE_GLEW || defined HAVE_GL_2X) && !defined HAVE_GLES_2X
     glDisable(GL_TEXTURE_2D);

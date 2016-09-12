@@ -366,6 +366,7 @@
     <LolFxCompile Include="easymesh\shinydebugwireframe.lolfx" />
     <LolFxCompile Include="easymesh\shinyflat.lolfx" />
     <LolFxCompile Include="easymesh\shiny_SK.lolfx" />
+    <LolFxCompile Include="gpu\blit.lolfx" />
     <LolFxCompile Include="gpu\defaultmaterial.lolfx" />
     <LolFxCompile Include="gpu\emptymaterial.lolfx" />
     <LolFxCompile Include="gpu\line.lolfx" />
