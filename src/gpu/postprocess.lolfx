@@ -1,35 +1,44 @@
 [vert.glsl]
 
-#version 120
+#version 130
 
-attribute vec2 in_Position;
-
-varying vec2 pass_Position;
+in vec2 in_position;
+out vec2 pass_position;
 
 void main()
 {
-    pass_Position = in_Position;
-    gl_Position = vec4(in_Position, 0.0, 1.0);
+    pass_position = in_position;
+    gl_Position = vec4(in_position, 0.0, 1.0);
 }
 
 [frag.glsl]
 
-#version 120
+#version 130
 
 #if defined GL_ES
 precision highp float;
 #endif
 
-uniform sampler2D u_texture;
+uniform sampler2D u_buffer;
+uniform sampler2D u_prev_buffer;
+uniform sampler2D u_prev_final;
 
-varying vec2 pass_Position;
+in vec2 pass_position;
+out vec4 out_color;
 
 void main(void)
 {
-    vec2 pos = pass_Position;
+    vec2 pos = pass_position;
 
     vec2 texcoords = pos * 0.5 + vec2(0.5, 0.5);
-    vec4 color = vec4(texture2D(u_texture, texcoords).rgb, 1.0);
-    gl_FragColor = color;
+    vec4 color = vec4(texture2D(u_buffer, texcoords).rgb, 1.0);
+    vec4 prev_color = vec4(texture2D(u_prev_buffer, texcoords).rgb, 1.0);
+
+    /* (do stuff with color here) */
+    vec4 final_color = mix(color, prev_color, 0.01);
+
+    /* Blend final color with previous frame’s final color */
+    vec4 prev_final_color = vec4(texture2D(u_prev_final, texcoords).rgb, 1.0);
+    out_color = mix(final_color, prev_final_color, vec4(0.5) + 0.3 * (prev_final_color - final_color));
 }
 
