@@ -167,8 +167,7 @@ array<String> GetPathList(String const &file)
             ret << data_dir[i] + file;
     }
 
-    if (ret.count() == 0)
-        ret << file;
+    ret << file;
 
     return ret;
 }
