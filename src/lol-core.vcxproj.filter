@@ -291,6 +291,9 @@
     <ClCompile Include="sys\file.cpp">
       <Filter>sys</Filter>
     </ClCompile>
+    <ClCompile Include="sys\getopt.cpp">
+      <Filter>sys</Filter>
+    </ClCompile>
     <ClCompile Include="sys\timer.cpp">
       <Filter>sys</Filter>
     </ClCompile>
@@ -650,6 +653,9 @@
       <Filter>lol\math</Filter>
     </ClInclude>
     <ClInclude Include="lol\sys\file.h">
+      <Filter>lol\sys</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\sys\getopt.h">
       <Filter>lol\sys</Filter>
     </ClInclude>
     <ClInclude Include="lol\gpu\framebuffer.h">
