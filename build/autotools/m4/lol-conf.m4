@@ -68,6 +68,18 @@ LOL_CFLAGS="$LOL_CFLAGS -I\$(lol_srcdir)/src/3rdparty/mingw-std-threads"
 LOL_CFLAGS="$LOL_CFLAGS -I\$(lol_srcdir)/src/3rdparty/pegtl"
 LOL_CFLAGS="$LOL_CFLAGS -I\$(lol_srcdir)/src/3rdparty/imgui"
 
+dnl  Use system-provided getopt_long?
+ac_cv_have_getopt_long="no"
+AC_CHECK_HEADERS(getopt.h unistd.h)
+AC_CHECK_FUNCS(getopt_long,
+ [ac_cv_have_getopt_long="yes"],
+ [AC_CHECK_LIB(gnugetopt, getopt_long,
+   [ac_cv_have_getopt_long="yes"
+    LIBS="${LIBS} -lgnugetopt"])])
+if test "$ac_cv_have_getopt_long" != "no"; then
+  AC_DEFINE(HAVE_GETOPT_LONG, 1, Define to 1 if you have the ‘getopt_long’ function.)
+fi
+
 
 dnl  Use NativeClient?
 ac_cv_my_have_nacl="no"

@@ -47,8 +47,8 @@ liblol_core_headers = \
     lol/algorithm/sort.h lol/algorithm/portal.h lol/algorithm/aabb_tree.h \
     \
     lol/sys/all.h \
-    lol/sys/init.h lol/sys/file.h lol/sys/thread.h lol/sys/threadtypes.h \
-    lol/sys/timer.h \
+    lol/sys/init.h lol/sys/file.h lol/sys/getopt.h lol/sys/thread.h \
+    lol/sys/threadtypes.h lol/sys/timer.h \
     \
     lol/image/all.h \
     lol/image/pixel.h lol/image/color.h lol/image/image.h lol/image/movie.h \
@@ -108,7 +108,7 @@ liblol_core_sources = \
     mesh/primitivemesh.cpp mesh/primitivemesh.h \
     \
     sys/init.cpp sys/timer.cpp sys/file.cpp sys/hacks.cpp \
-    sys/thread.cpp sys/threadtypes.cpp \
+    sys/thread.cpp sys/threadtypes.cpp sys/getopt.cpp \
     \
     image/image.cpp image/image-private.h image/kernel.cpp image/pixel.cpp \
     image/crop.cpp image/resample.cpp image/noise.cpp image/combine.cpp \
