@@ -27,7 +27,7 @@ public:
     getopt(int argc, char * const * _argv);
     ~getopt();
 
-    void add_arg(int short_opt, char const *long_opt, bool has_arg);
+    void add_opt(int short_opt, char const *long_opt, bool has_arg);
     int parse();
 
     int index;

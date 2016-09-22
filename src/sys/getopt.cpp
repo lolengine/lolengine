@@ -66,9 +66,9 @@ getopt::~getopt()
 {
 }
 
-void getopt::add_arg(int short_opt, char const *long_opt, bool has_arg)
+void getopt::add_opt(int short_opt, char const *long_opt, bool has_arg)
 {
-    getopt_private::optdesc o = { long_opt, has_arg, nullptr, short_opt };
+    getopt_private::optdesc o { long_opt, has_arg, nullptr, short_opt };
     m_private->m_opts.push(o);
 
     if (isalnum(short_opt))
@@ -119,23 +119,25 @@ int getopt::parse()
         if (!tmp || ret == ':')
             return '?';
 
-        this->index++;
+        ++this->index;
         if (tmp[1] == ':')
         {
             if (flag[2] != '\0')
                 this->arg = flag + 2;
-            else if (this->index < m_private->m_argc)
-                this->arg = argv[this->index++];
             else
-                goto too_few;
+            {
+                if (this->index >= m_private->m_argc)
+                    goto too_few;
+                this->arg = argv[this->index++];
+            }
             return ret;
         }
 
         if (flag[2] != '\0')
         {
             flag[1] = '-';
-            this->index--;
-            argv[this->index]++;
+            --this->index;
+            ++argv[this->index];
         }
 
         return ret;
@@ -146,7 +148,7 @@ int getopt::parse()
         if (flag[2] == '\0')
             return -1;
 
-        for (int i = 0; m_private->m_opts[i].name; i++)
+        for (int i = 0; m_private->m_opts[i].name; ++i)
         {
             size_t l = strlen(m_private->m_opts[i].name);
 
@@ -159,18 +161,17 @@ int getopt::parse()
                 if (!m_private->m_opts[i].has_arg)
                     goto bad_opt;
                 longindex = i;
-                this->index++;
+                ++this->index;
                 this->arg = flag + 2 + l + 1;
                 return m_private->m_opts[i].val;
             case '\0':
                 longindex = i;
-                this->index++;
+                ++this->index;
                 if (m_private->m_opts[i].has_arg)
                 {
-                    if (this->index < m_private->argc)
-                        this->arg = argv[this->index++];
-                    else
+                    if (this->index >= m_private->argc)
                         goto too_few;
+                    this->arg = argv[this->index++];
                 }
                 return m_private->m_opts[i].val;
             default:
