@@ -57,11 +57,11 @@ static void usage()
     printf("Written by Sam Hocevar. Report bugs to <sam@hocevar.net>.\n");
 }
 
-static void FAIL(char const *message)
+static void FAIL(char const *message = nullptr)
 {
-    printf("Error: %s\n", message);
-    printf("\n");
-    usage();
+    if (message)
+        printf("Error: %s\n", message);
+    printf("Try 'lolremez --help' for more information.\n");
     exit(EXIT_FAILURE);
 }
 
@@ -73,10 +73,10 @@ int main(int argc, char **argv)
     int degree = 4;
 
     lol::getopt opt(argc, argv);
-    opt.add_arg('d', "degree",  true);
-    opt.add_arg('r', "range",   true);
-    opt.add_arg('h', "help",    false);
-    opt.add_arg('v', "version", false);
+    opt.add_opt('h', "help",    false);
+    opt.add_opt('v', "version", false);
+    opt.add_opt('d', "degree",  true);
+    opt.add_opt('r', "range",   true);
 
     for (;;)
     {
@@ -103,7 +103,7 @@ int main(int argc, char **argv)
             version();
             return EXIT_SUCCESS;
         default:
-            return EXIT_FAILURE;
+            FAIL();
         }
     }
 
