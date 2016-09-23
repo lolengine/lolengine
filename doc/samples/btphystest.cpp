@@ -760,7 +760,7 @@ void CatShaderData::SetupShaderDatas(mat4 const &model)
 
 int main(int argc, char **argv)
 {
-    System::Init(argc, argv);
+    sys::init(argc, argv);
 
     Application app("BtPhysTest", ivec2(1280, 960), 60.0f);
 

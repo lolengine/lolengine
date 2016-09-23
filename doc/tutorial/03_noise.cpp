@@ -81,7 +81,7 @@ private:
 
 int main(int argc, char **argv)
 {
-    System::Init(argc, argv);
+    sys::init(argc, argv);
 
     Application app("Tutorial 3: Noise", ivec2(1280, 720), 60.0f);
 

@@ -253,7 +253,7 @@ private:
 
 int main(int argc, char **argv)
 {
-    System::Init(argc, argv);
+    sys::init(argc, argv);
 
     Application app("Tutorial 7: Input", ivec2(640, 480), 60.0f);
 

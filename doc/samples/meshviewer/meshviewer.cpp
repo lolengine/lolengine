@@ -395,7 +395,7 @@ void MeshViewer::TickDraw(float seconds, Scene &scene)
 //The basic main --------------------------------------------------------------
 int main(int argc, char **argv)
 {
-    System::Init(argc, argv);
+    sys::init(argc, argv);
 
     Application app("MeshViewer", ivec2((int)DEFAULT_WIDTH, (int)DEFAULT_HEIGHT), 60.0f);
     if (argc > 1)

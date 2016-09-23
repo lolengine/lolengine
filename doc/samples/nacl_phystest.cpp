@@ -112,7 +112,7 @@ Nacl_PhysTest::~Nacl_PhysTest()
 
 int main(int argc, char **argv)
 {
-    System::Init(argc, argv);
+    sys::init(argc, argv);
 
     Application app("Nacl_PhysTest", ivec2(1280, 960), 60.0f);
 

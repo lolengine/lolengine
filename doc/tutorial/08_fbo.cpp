@@ -131,7 +131,7 @@ private:
 
 int main(int argc, char **argv)
 {
-    System::Init(argc, argv);
+    sys::init(argc, argv);
 
     Application app("Tutorial 08: Framebuffer Object", ivec2(512, 512), 60.0f);
 

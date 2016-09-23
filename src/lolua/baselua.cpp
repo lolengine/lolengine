@@ -58,7 +58,7 @@ class LuaBaseData
         int status = LUA_ERRFILE;
 
         File f;
-        for (auto candidate : System::GetPathList(filename))
+        for (auto candidate : sys::get_path_list(filename))
         {
             f.Open(candidate, FileAccess::Read);
             if (f.IsValid())

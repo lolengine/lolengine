@@ -52,7 +52,7 @@ public:
 protected:
     virtual bool DoWork()
     {
-        array<String> pathlist = System::GetPathList(m_path);
+        array<String> pathlist = sys::get_path_list(m_path);
         File f;
         for (String path : pathlist)
         {

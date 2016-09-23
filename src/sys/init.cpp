@@ -27,7 +27,7 @@
 namespace lol
 {
 
-namespace System
+namespace sys
 {
 
 #if _WIN32
@@ -38,7 +38,7 @@ namespace System
 
 static array<String> data_dir;
 
-void Init(int argc, char *argv[],
+void init(int argc, char *argv[],
           String const &projectdir,
           String const &solutiondir,
           String const &sourcesubdir)
@@ -95,20 +95,20 @@ void Init(int argc, char *argv[],
         String rootdir = binarydir;
         if (rootdir.count() && rootdir.last() != SEPARATOR)
             rootdir += SEPARATOR;
-        AddDataDir(rootdir);
+        add_data_dir(rootdir);
 
         /* This data dir is for engine stuff */
         rootdir = solutiondir;
         if (rootdir.count() && rootdir.last() != SEPARATOR)
             rootdir += SEPARATOR;
         rootdir += "../src/"; /* FIXME: use SEPARATOR? */
-        AddDataDir(rootdir);
+        add_data_dir(rootdir);
 
         /* This data dir is for project-specific stuff */
         rootdir = projectdir;
         if (rootdir.count() && rootdir.last() != SEPARATOR)
             rootdir += SEPARATOR;
-        AddDataDir(rootdir);
+        add_data_dir(rootdir);
 
         got_rootdir = true;
     }
@@ -132,11 +132,11 @@ void Init(int argc, char *argv[],
                 rootdir += "../";
         }
         rootdir += "src/";
-        AddDataDir(rootdir);
+        add_data_dir(rootdir);
 
         /* This data dir is for project-specific stuff */
         rootdir = binarydir;
-        AddDataDir(rootdir);
+        add_data_dir(rootdir);
 
         got_rootdir = true;
     }
@@ -151,12 +151,12 @@ void Init(int argc, char *argv[],
  * Data directory handling
  */
 
-void AddDataDir(String const &dir)
+void add_data_dir(String const &dir)
 {
     data_dir << dir;
 }
 
-array<String> GetPathList(String const &file)
+array<String> get_path_list(String const &file)
 {
     array<String> ret;
 
@@ -172,7 +172,7 @@ array<String> GetPathList(String const &file)
     return ret;
 }
 
-} /* namespace System */
+} /* namespace sys */
 
 } /* namespace lol */
 
