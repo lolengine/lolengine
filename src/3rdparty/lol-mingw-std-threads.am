@@ -1,0 +1,7 @@
+
+mingw_std_threads_sources = \
+    mingw-std-threads/mingw.condition_variable.h \
+    mingw-std-threads/mingw.mutex.h \
+    mingw-std-threads/mingw.thread.h \
+    $(NULL)
+

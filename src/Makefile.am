@@ -8,8 +8,8 @@ noinst_LIBRARIES = liblol-core.a
 liblol_core_a_SOURCES = \
     tiler.cpp tiler.h dict.cpp dict.h lolgl.h \
     audio.cpp audio.h scene.cpp scene.h font.cpp font.h \
-    textureimage.cpp textureimage.h tileset.cpp tileset.h \
-    forge.cpp forge.h video.cpp video.h \
+    textureimage.cpp textureimage.h textureimage-private.h \
+    tileset.cpp tileset.h forge.cpp forge.h video.cpp video.h \
     sample.cpp sample.h sampler.cpp sampler.h \
     profiler.cpp profiler.h text.cpp text.h emitter.cpp emitter.h \
     numeric.h utils.h messageservice.cpp messageservice.h \
