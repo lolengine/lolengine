@@ -42,5 +42,5 @@ test_entity_SOURCES = test-common.cpp \
 test_entity_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/tools/lolunit
 test_entity_DEPENDENCIES = @LOL_DEPS@
 
-noinst_DATA = data/gradient.png
+EXTRA_DIST += data/gradient.png
 

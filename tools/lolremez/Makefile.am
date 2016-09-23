@@ -8,7 +8,7 @@ noinst_PROGRAMS = lolremez
 endif
 
 lolremez_SOURCES = \
-    lolremez.cpp solver.cpp solver.h matrix.h
+    lolremez.cpp solver.cpp solver.h matrix.h expression.h
 lolremez_CPPFLAGS = $(AM_CPPFLAGS)
 lolremez_DEPENDENCIES = @LOL_DEPS@
 
