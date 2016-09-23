@@ -42,18 +42,18 @@ namespace lol
  * not as clean as the rest of the framework.
  */
 
-namespace System
+namespace sys
 {
 
-extern void Init(int argc, char *argv[],
+extern void init(int argc, char *argv[],
                  String const &projectdir = LOL_CONFIG_PROJECTDIR,
                  String const &solutiondir = LOL_CONFIG_SOLUTIONDIR,
                  String const &sourcesubdir = LOL_CONFIG_SOURCESUBDIR);
 
-extern void AddDataDir(String const &dir);
-extern array<String> GetPathList(String const &file);
+extern void add_data_dir(String const &dir);
+extern array<String> get_path_list(String const &file);
 
-} /* namespace System */
+} /* namespace sys */
 
 } /* namespace lol */
 

@@ -98,7 +98,7 @@ private:
 
 int main(int argc, char **argv)
 {
-    System::Init(argc, argv);
+    sys::init(argc, argv);
 
     Application app("Tutorial 6: Sprite", ivec2(640, 480), 60.0f);
     new SpriteTutorial();

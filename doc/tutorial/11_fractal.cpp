@@ -547,7 +547,7 @@ int main(int argc, char **argv)
 {
     ivec2 window_size(640, 480);
 
-    System::Init(argc, argv);
+    sys::init(argc, argv);
     Application app("Tutorial 3: Fractal", window_size, 60.0f);
 
     new DebugFps(5, 5);

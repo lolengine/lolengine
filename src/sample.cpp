@@ -58,7 +58,7 @@ Sample::Sample(char const *path)
     data->m_name = String("<sample> ") + path;
 
 #if defined LOL_USE_SDL_MIXER
-    for (auto candidate : System::GetPathList(path))
+    for (auto candidate : sys::get_path_list(path))
     {
         data->m_chunk = Mix_LoadWAV(candidate.C());
         if (data->m_chunk)

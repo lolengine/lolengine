@@ -404,7 +404,7 @@ private:
 
 int main(int argc, char **argv)
 {
-    System::Init(argc, argv);
+    sys::init(argc, argv);
 
     Application app("Tutorial 12: Jump Flooding Algorithm & Voronoi", ivec2(512, 512), 60.0f);
 

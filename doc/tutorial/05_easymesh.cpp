@@ -165,7 +165,7 @@ private:
 
 int main(int argc, char **argv)
 {
-    System::Init(argc, argv);
+    sys::init(argc, argv);
 
     Application app("Tutorial 5: EasyMesh", ivec2(960, 600), 60.0f);
     new EasyMeshTutorial();
