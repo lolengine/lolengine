@@ -169,7 +169,7 @@ int getopt::parse()
                 ++this->index;
                 if (m_private->m_opts[i].has_arg)
                 {
-                    if (this->index >= m_private->argc)
+                    if (this->index >= m_private->m_argc)
                         goto too_few;
                     this->arg = argv[this->index++];
                 }
