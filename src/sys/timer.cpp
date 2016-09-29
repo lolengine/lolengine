@@ -13,19 +13,9 @@
 #include <cstdlib>
 #include <stdint.h>
 
-#if __linux__ || __native_client__ || __APPLE__ \
- || (HAVE_GETTIMEOFDAY && HAVE_USLEEP && HAVE_SYS_TIME_H && HAVE_UNISTD_H)
-#   include <sys/time.h>
-#   include <unistd.h>
-#elif _WIN32
-#   define WIN32_LEAN_AND_MEAN
-#   include <windows.h>
-#   undef WIN32_LEAN_AND_MEAN
-#elif HAVE_SDL_SDL_H
-#   include <SDL/SDL.h>
-#else
-#   include <SDL.h>
-#endif
+#include <chrono>
+
+using namespace std::chrono;
 
 namespace lol
 {
@@ -41,97 +31,25 @@ class TimerData
 private:
     TimerData()
     {
-        Init();
         (void)GetSeconds(true);
-    }
-
-#if __linux__ || __native_client__ || __APPLE__ \
- || (HAVE_GETTIMEOFDAY && HAVE_USLEEP)
-    inline void Init()
-    {
-        m_tv.tv_usec = 0;
-        m_tv.tv_sec = 0;
     }
 
     float GetSeconds(bool reset)
     {
-        struct timeval tv, tv0 = m_tv;
-        gettimeofday(&tv, nullptr);
+        steady_clock::time_point tp, tp0 = m_tp;
+        tp = steady_clock::now();
         if (reset)
-            m_tv = tv;
-        return 1e-6f * (tv.tv_usec - tv0.tv_usec) + (tv.tv_sec - tv0.tv_sec);
+            m_tp = tp;
+        return duration_cast<duration<float>>(tp - tp0).count();
     }
 
     static void WaitSeconds(float seconds)
     {
         if (seconds > 0.0f)
-            usleep((int)(seconds * 1e6f));
+            std::this_thread::sleep_for(std::chrono::duration<float>(seconds));
     }
 
-    struct timeval m_tv;
-
-#elif _WIN32
-    inline void Init()
-    {
-        m_cycles.QuadPart = 0;
-    }
-
-    float GetSeconds(bool reset)
-    {
-        static float secs_per_cycle = GetSecondsPerCycle();
-        LARGE_INTEGER cycles, cycles0 = m_cycles;
-        QueryPerformanceCounter(&cycles);
-        if (reset)
-            m_cycles = cycles;
-        return secs_per_cycle * (cycles.QuadPart - cycles0.QuadPart);
-    }
-
-    static void WaitSeconds(float seconds)
-    {
-        if (seconds > 5e-4f)
-            Sleep((int)(seconds * 1e3f + 0.5f));
-    }
-
-    static float GetSecondsPerCycle()
-    {
-        LARGE_INTEGER tmp;
-        QueryPerformanceFrequency(&tmp);
-        return 1.f / tmp.QuadPart;
-    }
-
-    LARGE_INTEGER m_cycles;
-
-#else
-    inline void Init()
-    {
-        m_ticks = 0;
-    }
-
-    float GetSeconds(bool reset)
-    {
-        static bool initialised = Init();
-
-        /* The crappy SDL fallback */
-        Uint32 ticks = SDL_GetTicks(), ticks0 = m_ticks;
-        if (reset)
-            m_ticks = ticks;
-        return 1e-3f * (ticks - ticks0);
-    }
-
-    static void WaitSeconds(float seconds)
-    {
-        if (seconds > 5e-4f)
-            SDL_Delay((int)(seconds * 1e3f + 0.5f));
-    }
-
-    static bool Init()
-    {
-        SDL_Init(SDL_INIT_TIMER);
-        return true;
-    }
-
-    Uint32 m_ticks;
-#endif
+    steady_clock::time_point m_tp;
 };
 
 /*
