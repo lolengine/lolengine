@@ -125,7 +125,7 @@ AC_CHECK_HEADERS(cxxabi.h)
 AC_LANG_POP(C++)
 
 dnl  Common C functions
-AC_CHECK_FUNCS(getenv system tmpfile tmpnam getcwd _getcwd getlogin)
+AC_CHECK_FUNCS(getenv system tmpfile tmpnam getcwd _getcwd)
 AC_CHECK_FUNCS(backtrace_symbols)
 AC_CHECK_FUNCS(gettimeofday usleep)
 
@@ -239,10 +239,6 @@ AM_CONDITIONAL(BUILD_TEST, test "${enable_test}" != "no" -a "${enable_subproject
 AM_CONDITIONAL(BUILD_TOOLS, test "${enable_tools}" != "no" -a "${enable_subproject}" != "yes")
 AM_CONDITIONAL(BUILD_TUTORIAL, test "${enable_tutorial}" != "no" -a "${enable_subproject}" != "yes")
 AM_CONDITIONAL(BUILD_SAMPLES, test "${enable_samples}" != "no" -a "${enable_subproject}" != "yes")
-
-
-dnl Should we ship non-free data?
-AM_CONDITIONAL(HAVE_NONFREE, true)
 
 
 LOL_AC_FINI()
