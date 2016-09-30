@@ -16,32 +16,6 @@
 # Die if an error occurs
 set -e
 
-# LolEngine specific:
-sed -ne '/AC_CONFIG_FILES/,$p' configure.ac \
-  | sed -ne 's@[^a-z]*\(.*/.*\)[^a-z]*@\1@p' | while read p; do
-    case "$p" in
-        "")
-            continue
-            ;;
-        *Makefile)
-            required="${p}.am"
-            ;;
-        *)
-            required="${p}.in"
-            ;;
-    esac
-    if [ ! -f "${required}" ]; then
-        echo "bootstrap: ${required} does not exist -- creating stub"
-        case "$p" in
-            */*)
-                mkdir -p "${p%/*}"
-                ;;
-        esac
-        echo '# Stub created by bootstrap' > "${required}"
-        echo 'include $(top_srcdir)/build/autotools/common.am' >> "${required}"
-    fi
-done
-
 # Guess whether we are using configure.ac or configure.in
 if test -f configure.ac; then
   conffile="configure.ac"
