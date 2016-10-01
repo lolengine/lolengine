@@ -37,10 +37,13 @@ private:
 
     float GetSeconds(bool reset)
     {
-        std::chrono::steady_clock::time_point tp, tp0 = m_tp;
-        tp = std::chrono::steady_clock::now();
+        std::chrono::steady_clock::time_point
+            tp = std::chrono::steady_clock::now(),
+            tp0 = m_tp;
+
         if (reset)
             m_tp = tp;
+
         return std::chrono::duration_cast<std::chrono::duration<float>>(tp - tp0).count();
     }
 

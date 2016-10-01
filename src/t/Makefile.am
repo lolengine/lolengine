@@ -28,7 +28,7 @@ test_math_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/tools/lolunit
 test_math_DEPENDENCIES = @LOL_DEPS@
 
 test_sys_SOURCES = test-common.cpp \
-    sys/thread.cpp
+    sys/thread.cpp sys/timer.cpp
 test_sys_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/tools/lolunit
 test_sys_DEPENDENCIES = @LOL_DEPS@
 
