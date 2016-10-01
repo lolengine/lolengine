@@ -432,6 +432,8 @@ void TickerData::DrawThreadTick()
         scene.EnableDisplay();
         Renderer::Get(idx)->Clear(ClearMask::All);
 
+        scene.pre_render(data->deltatime);
+
         /* Tick objects for the draw loop */
         for (int g = Entity::DRAWGROUP_BEGIN; g < Entity::DRAWGROUP_END && !data->quit /* Stop as soon as required */; ++g)
         {
@@ -469,6 +471,8 @@ void TickerData::DrawThreadTick()
 
         /* Do the render step */
         scene.render(data->deltatime);
+
+        scene.post_render(data->deltatime);
 
         /* Disable display */
         scene.DisableDisplay();

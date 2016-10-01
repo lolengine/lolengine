@@ -622,12 +622,11 @@ void Scene::DisableDisplay()
     data->m_display->Disable();
 }
 
-/* Render everything that the scene contains */
-void Scene::render(float seconds)
-{
-    bool do_pp = true;
+static bool do_pp = true;
 
-    gpu_marker("Start Render");
+void Scene::pre_render(float seconds)
+{
+    gpu_marker("Pre Render");
 
     /* First render into the offline buffer */
     if (do_pp)
@@ -644,12 +643,23 @@ void Scene::render(float seconds)
         }
 
         Renderer::Get()->Clear(ClearMask::Color | ClearMask::Depth);
-
-        // FIXME: get rid of the delta time argument
-        render_primitives();
-        render_tiles();
-        render_lines(seconds);
     }
+}
+
+/* Render everything that the scene contains */
+void Scene::render(float seconds)
+{
+    gpu_marker("Render");
+
+    // FIXME: get rid of the delta time argument
+    render_primitives();
+    render_tiles();
+    render_lines(seconds);
+}
+
+void Scene::post_render(float seconds)
+{
+    gpu_marker("Post Render");
 
     if (do_pp)
     {
