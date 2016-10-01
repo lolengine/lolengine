@@ -95,10 +95,10 @@ liblol_core_sources = \
     input/input.cpp input/input.h input/input_internal.h input/keys.h \
     input/controller.cpp input/controller.h \
     \
-    gpu/defaultmaterial.lolfx \
+    gpu/default-material.lolfx \
+    gpu/empty-material.lolfx \
+    gpu/test-material.lolfx \
     gpu/tile.lolfx gpu/palette.lolfx gpu/line.lolfx \
-    gpu/emptymaterial.lolfx \
-    gpu/testmaterial.lolfx \
     gpu/blit.lolfx \
     gpu/postprocess.lolfx \
     \

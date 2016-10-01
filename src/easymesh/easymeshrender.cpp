@@ -15,19 +15,19 @@
 namespace lol
 {
 
-LOLFX_RESOURCE_DECLARE(shiny);
-LOLFX_RESOURCE_DECLARE(shinyflat);
-LOLFX_RESOURCE_DECLARE(shinydebugwireframe);
-LOLFX_RESOURCE_DECLARE(shinydebuglighting);
-LOLFX_RESOURCE_DECLARE(shinydebugnormal);
-LOLFX_RESOURCE_DECLARE(shinydebugUV);
-LOLFX_RESOURCE_DECLARE(shiny_SK);
+LOLFX_RESOURCE_DECLARE(easymesh_shiny);
+LOLFX_RESOURCE_DECLARE(easymesh_shinyflat);
+LOLFX_RESOURCE_DECLARE(easymesh_shinydebugwireframe);
+LOLFX_RESOURCE_DECLARE(easymesh_shinydebuglighting);
+LOLFX_RESOURCE_DECLARE(easymesh_shinydebugnormal);
+LOLFX_RESOURCE_DECLARE(easymesh_shinydebugUV);
+LOLFX_RESOURCE_DECLARE(easymesh_shiny_SK);
 
 //-----------------------------------------------------------------------------
 void EasyMesh::MeshConvert()
 {
     /* Default material */
-    Shader *shader = Shader::Create(LOLFX_RESOURCE_NAME(shiny));
+    Shader *shader = Shader::Create(LOLFX_RESOURCE_NAME(easymesh_shiny));
 
     /* Push index buffer to GPU */
     IndexBuffer *ibo = new IndexBuffer(m_indices.count() * sizeof(uint16_t));
@@ -130,18 +130,18 @@ DefaultShaderData::DefaultShaderData(DebugRenderMode render_mode)
                         (1 << VertexUsage::Color);
 
     if (render_mode == DebugRenderMode::Default)
-        m_shader = Shader::Create(LOLFX_RESOURCE_NAME(shiny));
+        m_shader = Shader::Create(LOLFX_RESOURCE_NAME(easymesh_shiny));
     else if (render_mode == DebugRenderMode::Flat)
-        m_shader = Shader::Create(LOLFX_RESOURCE_NAME(shinyflat));
+        m_shader = Shader::Create(LOLFX_RESOURCE_NAME(easymesh_shinyflat));
     else if (render_mode == DebugRenderMode::Wireframe)
-        m_shader = Shader::Create(LOLFX_RESOURCE_NAME(shinydebugwireframe));
+        m_shader = Shader::Create(LOLFX_RESOURCE_NAME(easymesh_shinydebugwireframe));
     else if (render_mode == DebugRenderMode::Lighting)
-        m_shader = Shader::Create(LOLFX_RESOURCE_NAME(shinydebuglighting));
+        m_shader = Shader::Create(LOLFX_RESOURCE_NAME(easymesh_shinydebuglighting));
     else if (render_mode == DebugRenderMode::Normal)
-        m_shader = Shader::Create(LOLFX_RESOURCE_NAME(shinydebugnormal));
+        m_shader = Shader::Create(LOLFX_RESOURCE_NAME(easymesh_shinydebugnormal));
     else if (render_mode == DebugRenderMode::UV)
     {
-        m_shader = Shader::Create(LOLFX_RESOURCE_NAME(shinydebugUV));
+        m_shader = Shader::Create(LOLFX_RESOURCE_NAME(easymesh_shinydebugUV));
         m_vert_decl_flags |= (1 << VertexUsage::TexCoord);
         with_UV = true;
     }

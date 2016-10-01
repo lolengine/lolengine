@@ -23,12 +23,12 @@
 
 #include "lolgl.h"
 
-LOLFX_RESOURCE_DECLARE(tile);
-LOLFX_RESOURCE_DECLARE(palette);
-LOLFX_RESOURCE_DECLARE(line);
+LOLFX_RESOURCE_DECLARE(gpu_tile);
+LOLFX_RESOURCE_DECLARE(gpu_palette);
+LOLFX_RESOURCE_DECLARE(gpu_line);
 
-LOLFX_RESOURCE_DECLARE(blit);
-LOLFX_RESOURCE_DECLARE(postprocess);
+LOLFX_RESOURCE_DECLARE(gpu_blit);
+LOLFX_RESOURCE_DECLARE(gpu_postprocess);
 
 namespace lol
 {
@@ -207,8 +207,8 @@ Scene::Scene(ivec2 size)
     data->m_renderbuffer[1] = new Framebuffer(size);
     data->m_renderbuffer[2] = new Framebuffer(size);
     data->m_renderbuffer[3] = new Framebuffer(size);
-    data->m_pp.m_shader[0] = Shader::Create(LOLFX_RESOURCE_NAME(blit));
-    data->m_pp.m_shader[1] = Shader::Create(LOLFX_RESOURCE_NAME(postprocess));
+    data->m_pp.m_shader[0] = Shader::Create(LOLFX_RESOURCE_NAME(gpu_blit));
+    data->m_pp.m_shader[1] = Shader::Create(LOLFX_RESOURCE_NAME(gpu_postprocess));
     data->m_pp.m_coord[0] = data->m_pp.m_shader[0]->GetAttribLocation(VertexUsage::Position, 0);
     data->m_pp.m_coord[1] = data->m_pp.m_shader[1]->GetAttribLocation(VertexUsage::Position, 0);
     data->m_pp.m_vdecl = new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position));
@@ -764,9 +764,9 @@ void Scene::render_tiles() // XXX: rename to Blit()
 #endif
 
     if (!data->m_tile_api.m_shader)
-        data->m_tile_api.m_shader = Shader::Create(LOLFX_RESOURCE_NAME(tile));
+        data->m_tile_api.m_shader = Shader::Create(LOLFX_RESOURCE_NAME(gpu_tile));
     if (!data->m_tile_api.m_palette_shader)
-        data->m_tile_api.m_palette_shader = Shader::Create(LOLFX_RESOURCE_NAME(palette));
+        data->m_tile_api.m_palette_shader = Shader::Create(LOLFX_RESOURCE_NAME(gpu_palette));
 
     for (int p = 0; p < 2; p++)
     {
@@ -878,7 +878,7 @@ void Scene::render_lines(float seconds)
     int linecount = (int)data->m_line_api.m_lines.count();
 
     if (!data->m_line_api.m_shader)
-        data->m_line_api.m_shader = Shader::Create(LOLFX_RESOURCE_NAME(line));
+        data->m_line_api.m_shader = Shader::Create(LOLFX_RESOURCE_NAME(gpu_line));
 
     array<vec4, vec4, vec4, vec4> buff;
     buff.resize(linecount);

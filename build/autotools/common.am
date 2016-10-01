@@ -40,7 +40,8 @@ SUFFIXES += .lolfx
 .lolfx.o:
 	$(lolfx_gen)
 	$(AM_V_at)(echo "char const *"; \
-         echo "lolfx_resource_$(notdir $(basename $(filter %.lolfx, $^))) ="; \
+         echo "lolfx_resource_$(basename $(filter %.lolfx, $^))" | $(SED) 's/[^a-zA-Z0-9_]/_/g'; \
+	 echo "="; \
 	 $(SED) 's/"/\\"/g' $(filter %.lolfx, $^) | $(SED) 's/\([^\r]*\).*/"\1\\n"/'; \
 	 echo ";") \
 	> $@.lolfx.cpp && \
