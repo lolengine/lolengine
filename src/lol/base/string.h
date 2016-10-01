@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
 //            © 2013—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -330,6 +330,11 @@ public:
 #undef LOL_FMT_ATTR
     static String vformat(char const *format, va_list ap);
 };
+
+inline String operator +(char c, String const &s)
+{
+    return String() + c + s;
+}
 
 inline String operator +(char const *sz, String const &s)
 {
