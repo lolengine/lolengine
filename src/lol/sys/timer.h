@@ -10,6 +10,9 @@
 
 #pragma once
 
+#include <chrono>
+#include <thread>
+
 //
 // The Timer class
 // ---------------
@@ -18,18 +21,71 @@
 namespace lol
 {
 
-class TimerData;
+/*
+ * Timer implementation class
+ */
+
+class TimerData
+{
+    friend class Timer;
+
+private:
+    TimerData()
+    {
+        (void)GetSeconds(true);
+    }
+
+    float GetSeconds(bool reset)
+    {
+        std::chrono::steady_clock::time_point tp, tp0 = m_tp;
+        tp = std::chrono::steady_clock::now();
+        if (reset)
+            m_tp = tp;
+        return std::chrono::duration_cast<std::chrono::duration<float>>(tp - tp0).count();
+    }
+
+    static void WaitSeconds(float seconds)
+    {
+        if (seconds > 0.0f)
+            std::this_thread::sleep_for(std::chrono::duration<float>(seconds));
+    }
+
+    std::chrono::steady_clock::time_point m_tp;
+};
 
 class Timer
 {
 public:
-    Timer();
-    ~Timer();
+    Timer()
+      : data(new TimerData())
+    {
+    }
 
-    void Reset();
-    float Get();
-    float Poll();
-    void Wait(float seconds);
+    ~Timer()
+    {
+        delete data;
+    }
+
+    void Reset()
+    {
+        (void)data->GetSeconds(true);
+    }
+
+    float Get()
+    {
+        return data->GetSeconds(true);
+    }
+
+    float Poll()
+    {
+        return data->GetSeconds(false);
+    }
+
+    void Wait(float seconds)
+    {
+        float secs_elapsed = data->GetSeconds(false);
+        data->WaitSeconds(seconds - secs_elapsed);
+    }
 
 private:
     TimerData *data;
