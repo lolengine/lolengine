@@ -25,15 +25,9 @@ namespace lol
  * Timer implementation class
  */
 
-class TimerData
+class Timer
 {
-    friend class Timer;
-
 private:
-    TimerData()
-    {
-        (void)GetSeconds(true);
-    }
 
     float GetSeconds(bool reset)
     {
@@ -47,55 +41,43 @@ private:
         return std::chrono::duration_cast<std::chrono::duration<float>>(tp - tp0).count();
     }
 
-    static void WaitSeconds(float seconds)
-    {
-        if (seconds > 0.0f)
-            std::this_thread::sleep_for(std::chrono::duration<float>(seconds));
-    }
-
-    std::chrono::steady_clock::time_point m_tp;
-};
-
-class Timer
-{
 public:
     Timer()
-      : data(new TimerData())
+        : m_tp()
     {
+        (void)GetSeconds(true);
     }
 
     ~Timer()
     {
-        delete data;
     }
 
     void Reset()
     {
-        (void)data->GetSeconds(true);
+        (void)GetSeconds(true);
     }
 
     float Get()
     {
-        return data->GetSeconds(true);
+        return GetSeconds(true);
     }
 
     float Poll()
     {
-        return data->GetSeconds(false);
+        return GetSeconds(false);
     }
 
     void Wait(float seconds)
     {
-        float secs_elapsed = data->GetSeconds(false);
-        data->WaitSeconds(seconds - secs_elapsed);
+        if (seconds > 0.0f)
+        {
+            float secs_elapsed = GetSeconds(false);
+            std::this_thread::sleep_for(std::chrono::duration<float>(seconds - secs_elapsed));
+        }
     }
 
 private:
-    TimerData *data;
-
-    /* Copying timers is forbidden for now. */
-    Timer(Timer const &t);
-    Timer operator =(Timer const &t);
+    std::chrono::steady_clock::time_point m_tp;
 };
 
 } /* namespace lol */
