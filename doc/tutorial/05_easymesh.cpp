@@ -21,7 +21,7 @@ using namespace lol;
 
 #define USE_CUSTOM_SHADER 1
 #if USE_CUSTOM_SHADER
-LOLFX_RESOURCE_DECLARE(shiny);
+LOLFX_RESOURCE_DECLARE(easymesh_shiny);
 #endif //USE_CUSTOM_SHADER
 
 class EasyMeshTutorial : public WorldEntity
@@ -136,7 +136,7 @@ public:
 
 #if USE_CUSTOM_SHADER
             /* Custom Shader: Init the shader */
-            Shader *custom_shader = Shader::Create(LOLFX_RESOURCE_NAME(shiny));
+            Shader *custom_shader = Shader::Create(LOLFX_RESOURCE_NAME(easymesh_shiny));
             // any other shader stuf here (Get uniform, mostly, and set texture)
 
             for (int i = 0; i < m_gears.count(); i++)

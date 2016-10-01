@@ -803,13 +803,13 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <LolFxCompile Include="gpu\emptymaterial.lolfx">
+    <LolFxCompile Include="gpu\empty-material.lolfx">
       <Filter>gpu</Filter>
     </LolFxCompile>
-    <LolFxCompile Include="gpu\defaultmaterial.lolfx">
+    <LolFxCompile Include="gpu\default-material.lolfx">
       <Filter>gpu</Filter>
     </LolFxCompile>
-    <LolFxCompile Include="gpu\testmaterial.lolfx">
+    <LolFxCompile Include="gpu\test-material.lolfx">
       <Filter>gpu</Filter>
     </LolFxCompile>
     <LolFxCompile Include="easymesh\shiny.lolfx">

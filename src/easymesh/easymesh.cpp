@@ -13,7 +13,7 @@
 
 #include <lol/engine-internal.h>
 
-LOLFX_RESOURCE_DECLARE(shiny);
+LOLFX_RESOURCE_DECLARE(easymesh_shiny);
 
 namespace lol
 {
