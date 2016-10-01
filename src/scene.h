@@ -251,7 +251,9 @@ public:
     void EnableDisplay();
     void DisableDisplay();
 
+    void pre_render(float seconds);
     void render(float seconds);
+    void post_render(float seconds);
 
 private:
     void render_primitives();
