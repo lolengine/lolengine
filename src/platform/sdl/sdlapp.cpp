@@ -207,7 +207,7 @@ SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
 
     /* Initialise everything */
     Ticker::Setup(fps);
-    Audio::Setup(2);
+    audio::init();
 
     /* Autoreleased objects */
 #if defined LOL_USE_XINPUT

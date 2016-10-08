@@ -77,7 +77,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="application\application.cpp" />
-    <ClCompile Include="audio.cpp" />
+    <ClCompile Include="audio\audio.cpp" />
+    <ClCompile Include="audio\sample.cpp" />
+    <ClCompile Include="audio\sampler.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="base\assert.cpp" />
     <ClCompile Include="base\enum.cpp" />
@@ -197,8 +199,6 @@
     <ClCompile Include="platform\sdl\sdlapp.cpp" />
     <ClCompile Include="platform\sdl\sdlinput.cpp" />
     <ClCompile Include="profiler.cpp" />
-    <ClCompile Include="sample.cpp" />
-    <ClCompile Include="sampler.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="sprite.cpp" />
     <ClCompile Include="sys\file.cpp" />
@@ -216,7 +216,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\application.h" />
-    <ClInclude Include="audio.h" />
     <ClInclude Include="camera.h" />
     <ClInclude Include="commandstack.h" />
     <ClInclude Include="debug\fps.h" />
@@ -251,6 +250,10 @@
     <ClInclude Include="lol\algorithm\all.h" />
     <ClInclude Include="lol\algorithm\portal.h" />
     <ClInclude Include="lol\algorithm\sort.h" />
+    <ClInclude Include="lol\audio\all.h" />
+    <ClInclude Include="lol\audio\audio.h" />
+    <ClInclude Include="lol\audio\sample.h" />
+    <ClInclude Include="lol\audio\sampler.h" />
     <ClInclude Include="lol\base\all.h" />
     <ClInclude Include="lol\base\array.h" />
     <ClInclude Include="lol\base\assert.h" />
@@ -348,8 +351,6 @@
     <ClInclude Include="platform\sdl\sdlapp.h" />
     <ClInclude Include="platform\sdl\sdlinput.h" />
     <ClInclude Include="profiler.h" />
-    <ClInclude Include="sample.h" />
-    <ClInclude Include="sampler.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="sprite.h" />
     <ClInclude Include="text.h" />

@@ -13,16 +13,29 @@
 #pragma once
 
 //
-// The main header
-// ---------------
+// The sampler class
+// -----------------
+// The sampler is a static class that manages samples.
 //
 
-#include <lol/base/all.h>
-#include <lol/math/all.h>
-#include <lol/algorithm/all.h>
-#include <lol/image/all.h>
-#include <lol/sys/all.h>
-#include <lol/audio/all.h>
-#include <lol/gpu/all.h>
-#include <lol/debug/all.h>
+#include <stdint.h>
+
+namespace lol
+{
+
+class sampler
+{
+public:
+    static int load_sample(char const *path);
+    static void unload_sample(int id);
+
+    static void play_sample(int id);
+    static void loop_sample(int id);
+    static void stop_sample(int id);
+
+private:
+    sampler() {}
+};
+
+} /* namespace lol */
 

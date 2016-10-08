@@ -33,12 +33,12 @@ namespace lol
 {
 
 /*
- * Sample implementation class
+ * sample implementation class
  */
 
-class SampleData
+class sample_data
 {
-    friend class Sample;
+    friend class sample;
 
 private:
     String m_name;
@@ -49,11 +49,11 @@ private:
 };
 
 /*
- * Public Sample class
+ * Public sample class
  */
 
-Sample::Sample(char const *path)
-  : data(new SampleData())
+sample::sample(char const *path)
+  : data(new sample_data())
 {
     data->m_name = String("<sample> ") + path;
 
@@ -72,7 +72,7 @@ Sample::Sample(char const *path)
 #endif
 }
 
-Sample::~Sample()
+sample::~sample()
 {
 #if defined LOL_USE_SDL_MIXER
     if (data->m_chunk)
@@ -81,17 +81,17 @@ Sample::~Sample()
     delete data;
 }
 
-void Sample::TickGame(float seconds)
+void sample::TickGame(float seconds)
 {
     Entity::TickGame(seconds);
 }
 
-char const *Sample::GetName()
+char const *sample::GetName()
 {
     return data->m_name.C();
 }
 
-void Sample::Play()
+void sample::play()
 {
 #if defined LOL_USE_SDL_MIXER
     if (data->m_chunk)
@@ -99,7 +99,7 @@ void Sample::Play()
 #endif
 }
 
-void Sample::Loop()
+void sample::loop()
 {
 #if defined LOL_USE_SDL_MIXER
     if (data->m_chunk)
@@ -107,7 +107,7 @@ void Sample::Loop()
 #endif
 }
 
-void Sample::Stop()
+void sample::stop()
 {
 #if defined LOL_USE_SDL_MIXER
     if (data->m_channel >= 0)

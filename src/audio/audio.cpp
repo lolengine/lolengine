@@ -29,19 +29,26 @@ namespace lol
 {
 
 /*
- * Public Audio class
+ * Public audio class
  */
 
-void Audio::Setup(int channels)
+void audio::init()
 {
 #if defined LOL_USE_SDL_MIXER
-    Mix_OpenAudio(22050, AUDIO_S16, channels, 1024);
+    Mix_OpenAudio(22050, AUDIO_S16, 8, 1024);
+#endif
+}
+
+void audio::set_channels(int channels)
+{
+#if defined LOL_USE_SDL_MIXER
+    Mix_AllocateChannels(channels);
 #else
     UNUSED(channels);
 #endif
 }
 
-void Audio::SetVolume(int channel, int volume)
+void audio::set_volume(int channel, int volume)
 {
 #if defined LOL_USE_SDL_MIXER
     Mix_Volume(channel,volume);
@@ -50,7 +57,7 @@ void Audio::SetVolume(int channel, int volume)
 #endif
 }
 
-void Audio::MuteAll()
+void audio::mute_all()
 {
 #if defined LOL_USE_SDL_MIXER
     Mix_Volume(-1,0);
@@ -59,7 +66,7 @@ void Audio::MuteAll()
 #endif
 }
 
-void Audio::UnmuteAll()
+void audio::unmute_all()
 {
 #if defined LOL_USE_SDL_MIXER
     Mix_Volume(-1,MIX_MAX_VOLUME);

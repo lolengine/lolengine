@@ -201,8 +201,14 @@
     <ClCompile Include="platform\d3d9\d3d9input.cpp">
       <Filter>platform\d3d9</Filter>
     </ClCompile>
-    <ClCompile Include="audio.cpp">
-      <Filter>...</Filter>
+    <ClCompile Include="audio\audio.cpp">
+      <Filter>audio</Filter>
+    </ClCompile>
+    <ClCompile Include="audio\sample.cpp">
+      <Filter>audio</Filter>
+    </ClCompile>
+    <ClCompile Include="audio\sampler.cpp">
+      <Filter>audio</Filter>
     </ClCompile>
     <ClCompile Include="camera.cpp">
       <Filter>...</Filter>
@@ -232,12 +238,6 @@
       <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="profiler.cpp">
-      <Filter>...</Filter>
-    </ClCompile>
-    <ClCompile Include="sample.cpp">
-      <Filter>...</Filter>
-    </ClCompile>
-    <ClCompile Include="sampler.cpp">
       <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="sprite.cpp">
@@ -535,9 +535,6 @@
     <ClInclude Include="platform\d3d9\d3d9input.h">
       <Filter>platform\d3d9</Filter>
     </ClInclude>
-    <ClInclude Include="audio.h">
-      <Filter>...</Filter>
-    </ClInclude>
     <ClInclude Include="camera.h">
       <Filter>...</Filter>
     </ClInclude>
@@ -577,12 +574,6 @@
     <ClInclude Include="profiler.h">
       <Filter>...</Filter>
     </ClInclude>
-    <ClInclude Include="sample.h">
-      <Filter>...</Filter>
-    </ClInclude>
-    <ClInclude Include="sampler.h">
-      <Filter>...</Filter>
-    </ClInclude>
     <ClInclude Include="simd.h">
       <Filter>...</Filter>
     </ClInclude>
@@ -597,6 +588,18 @@
     </ClInclude>
     <ClInclude Include="easymesh\easymesh.h">
       <Filter>easymesh</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\audio\all.h">
+      <Filter>lol\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\audio\audio.h">
+      <Filter>lol\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\audio\sample.h">
+      <Filter>lol\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\audio\sampler.h">
+      <Filter>lol\audio</Filter>
     </ClInclude>
     <ClInclude Include="lol\base\array.h">
       <Filter>lol\base</Filter>

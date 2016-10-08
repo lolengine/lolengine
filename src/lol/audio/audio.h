@@ -13,16 +13,29 @@
 #pragma once
 
 //
-// The main header
-// ---------------
+// The audio interface
+// -------------------
+// Helper functions to set up the audio device.
 //
 
-#include <lol/base/all.h>
-#include <lol/math/all.h>
-#include <lol/algorithm/all.h>
-#include <lol/image/all.h>
-#include <lol/sys/all.h>
-#include <lol/audio/all.h>
-#include <lol/gpu/all.h>
-#include <lol/debug/all.h>
+#include <stdint.h>
+
+namespace lol
+{
+
+class audio
+{
+public:
+    static void init();
+
+    static void set_channels(int channels);
+    static void set_volume(int channel,int volume);
+    static void mute_all();
+    static void unmute_all();
+
+private:
+    audio() {}
+};
+
+} /* namespace lol */
 
