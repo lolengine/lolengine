@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Fractal tutorial
 //
-//  Copyright © 2011—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2011—2016 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -37,6 +37,13 @@ public:
         m_size.y = (m_size.y + 15) & ~15;
         m_texel_settings = vec4(1.0, 1.0, 2.0, 2.0) / (vec4)m_size.xyxy;
         m_screen_settings = vec4(1.0, 1.0, 0.5, 0.5) * (vec4)m_size.xyxy;
+
+        m_controller = new Controller("Default");
+        m_profile << InputProfile::MouseKey(0, "Left")
+                  << InputProfile::MouseKey(1, "Right")
+                  << InputProfile::MouseKey(2, "Middle");
+        m_controller->Init(m_profile);
+        m_mouse = InputDevice::GetMouse();
 
         /* Window size decides the world aspect ratio. For instance, 640×480
          * will be mapped to (-0.66,-0.5) - (0.66,0.5). */
@@ -74,21 +81,19 @@ public:
         {
             double f = (double)i / PALETTE_STEP;
 
-            double r = 0.5 * lol::sin(f * 0.27 + 2.0) + 0.5;
-            double g = 0.5 * lol::sin(f * 0.17 - 1.8) + 0.5;
-            double b = 0.5 * lol::sin(f * 0.21 - 2.6) + 0.5;
+            vec3 hsv(lol::fmod(i * 0.002f, 1.f),
+                     0.4 * lol::sin(f * 0.27 + 2.0) + 0.4,
+                     0.4 * lol::sin(f * 0.21 - 2.6) + 0.4);
+            vec3 rgb = Color::HSVToRGB(hsv);
 
             if (f < 7.0)
             {
-                f = f < 1.0 ? 0.0 : (f - 1.0) / 6.0;
-                r *= f;
-                g *= f;
-                b *= f;
+                rgb *= f < 1.0 ? 0.0 : (f - 1.0) / 6.0;
             }
 
-            uint8_t red   = (uint8_t)r * 256;
-            uint8_t green = (uint8_t)g * 256;
-            uint8_t blue  = (uint8_t)b * 256;
+            uint8_t red   = (uint8_t)(rgb.r * 256);
+            uint8_t green = (uint8_t)(rgb.g * 256);
+            uint8_t blue  = (uint8_t)(rgb.b * 256);
 #if defined __native_client__
             m_palette.push(u8vec4(red, green, blue, 255));
 #else
@@ -113,7 +118,6 @@ public:
         m_position = vec3::zero;
         m_aabb.aa = m_position;
         m_aabb.bb = vec3((vec2)m_window_size, 0);
-        //Input::TrackMouse(this);
 
 #if LOL_FEATURE_THREADS
         /* Spawn worker threads and wait for their readiness. */
@@ -163,7 +167,7 @@ public:
     {
         WorldEntity::TickGame(seconds);
 
-        ivec2 mousepos = ivec2::zero; /* FIXME: input */
+        ivec2 mousepos = m_mouse->GetCursorPixel(0);
 
         int prev_frame = (m_frame + 4) % 4;
         m_frame = (m_frame + 1) % 4;
@@ -171,9 +175,7 @@ public:
         rcmplx worldmouse = m_center
                           + rcmplx(ScreenToWorldOffset((vec2)mousepos));
 
-        uint32_t buttons = 0;
-        //uint32_t buttons = Input::GetMouseButtons();
-        if (buttons & 0x2)
+        if (m_controller->IsKeyPressed(2))
         {
             if (!m_drag)
             {
@@ -201,9 +203,11 @@ public:
             }
         }
 
-        if (buttons & 0x5 && mousepos.x != -1)
+        bool hold_right = m_controller->IsKeyPressed(0);
+        bool hold_left = m_controller->IsKeyPressed(1);
+        if ((hold_right || hold_left) && mousepos.x != -1)
         {
-            double zoom = (buttons & 0x1) ? -0.5 : 0.5;
+            double zoom = hold_right ? -0.5 : 0.5;
             m_zoom_speed += zoom * seconds;
             if (m_zoom_speed / zoom > 5e-3f)
                 m_zoom_speed = zoom * 5e-3f;
@@ -308,7 +312,7 @@ public:
     }
 
 #if LOL_FEATURE_THREADS
-    void DoWorkHelper(thread *inst)
+    void DoWorkHelper(thread *)
     {
         m_spawnqueue.push(0);
         for ( ; ; )
@@ -332,8 +336,8 @@ public:
         int jmax = jmin + MAX_LINES * 2;
         if (jmax > m_size.y)
             jmax = m_size.y;
-        u8vec4 *m_pixelstart = &m_pixels[0]
-                             + m_size.x * (m_size.y / 4 * m_frame + line / 4);
+        u8vec4 *pixelstart = &m_pixels[0]
+                           + m_size.x * (m_size.y / 4 * m_frame + line / 4);
 
         dcmplx c = (dcmplx)m_center;
 
@@ -404,11 +408,11 @@ public:
                       + 2.024664188044341212602376988171727038739) * k
                       - 1.674876738008591047163498125918330313237;
 
-                *m_pixelstart++ = m_palette[(int)(f * PALETTE_STEP)];
+                *pixelstart++ = m_palette[(int)(f * PALETTE_STEP)];
             }
             else
             {
-                *m_pixelstart++ = u8vec4(0, 0, 0, 255);
+                *pixelstart++ = u8vec4(0, 0, 0, 255);
             }
         }
     }
@@ -452,9 +456,10 @@ public:
 
             m_vertexattrib = m_shader->GetAttribLocation(VertexUsage::Position, 0);
             m_texattrib = m_shader->GetAttribLocation(VertexUsage::TexCoord, 0);
-            m_texeluni = m_shader->GetUniformLocation("u_TexelSize");
-            m_screenuni = m_shader->GetUniformLocation("u_ScreenSize");
-            m_zoomuni = m_shader->GetUniformLocation("u_ZoomSettings");
+            m_texuni = m_shader->GetUniformLocation("u_texture");
+            m_texeluni = m_shader->GetUniformLocation("u_texel_size");
+            m_screenuni = m_shader->GetUniformLocation("u_screen_size");
+            m_zoomuni = m_shader->GetUniformLocation("u_zoom_settings");
 
             m_vdecl =
               new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position),
@@ -491,6 +496,7 @@ public:
         }
 
         m_shader->Bind();
+        m_shader->SetUniform(m_texuni, m_texture->GetTextureUniform(), 0);
         m_shader->SetUniform(m_texeluni, m_texel_settings);
         m_shader->SetUniform(m_screenuni, m_screen_settings);
         m_shader->SetUniform(m_zoomuni, m_zoom_settings);
@@ -515,7 +521,7 @@ private:
 
     Shader *m_shader;
     ShaderAttrib m_vertexattrib, m_texattrib;
-    ShaderUniform m_texeluni, m_screenuni, m_zoomuni;
+    ShaderUniform m_texuni, m_texeluni, m_screenuni, m_zoomuni;
 
     VertexDeclaration *m_vdecl;
     VertexBuffer *m_vbo, *m_tbo;
@@ -530,6 +536,11 @@ private:
 
     vec4 m_texel_settings, m_screen_settings;
     mat4 m_zoom_settings;
+
+    // Input support
+    InputDevice *m_mouse;
+    Controller *m_controller;
+    InputProfile m_profile;
 
 #if LOL_FEATURE_THREADS
     /* Worker threads */
@@ -548,7 +559,7 @@ int main(int argc, char **argv)
     ivec2 window_size(640, 480);
 
     sys::init(argc, argv);
-    Application app("Tutorial 3: Fractal", window_size, 60.0f);
+    Application app("Tutorial 11: Fractal", window_size, 60.0f);
 
     new DebugFps(5, 5);
     new Fractal(window_size);
