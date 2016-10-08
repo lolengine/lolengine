@@ -27,11 +27,11 @@ public:
     EasyMesh& GetMesh() { return m_instance; }
 
     //-------------------------------------------------------------------------
-    static EasyMeshLuaObject* New(LuaState* l, int arg_nb);
+    static EasyMeshLuaObject* New(lua_State* l, int arg_nb);
     static const LuaObjectLib* GetLib();
 
     //-------------------------------------------------------------------------
-    static int AppendCylinder(LuaState* l)
+    static int AppendCylinder(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -42,7 +42,7 @@ public:
         m->m_instance.AppendCylinder(nsides, h, d1, d2, dualside, smooth, close);
         return 0;
     }
-    static int AppendSphere(LuaState* l)
+    static int AppendSphere(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -52,7 +52,7 @@ public:
         m->m_instance.AppendSphere(ndivisions, d);
         return 0;
     }
-    static int AppendCapsule(LuaState* l)
+    static int AppendCapsule(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -62,7 +62,7 @@ public:
         m->m_instance.AppendCapsule(ndivisions, h, d);
         return 0;
     }
-    static int AppendTorus(LuaState* l)
+    static int AppendTorus(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -72,7 +72,7 @@ public:
         m->m_instance.AppendTorus(ndivisions, d1, d2);
         return 0;
     }
-    static int AppendBox(LuaState* l)
+    static int AppendBox(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -83,7 +83,7 @@ public:
         m->m_instance.AppendBox(size, chamf, smooth);
         return 0;
     }
-    static int AppendStar(LuaState* l)
+    static int AppendStar(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -94,7 +94,7 @@ public:
         m->m_instance.AppendStar(nbranches, d1, d2, fade, fade2);
         return 0;
     }
-    static int AppendExpandedStar(LuaState* l)
+    static int AppendExpandedStar(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -104,7 +104,7 @@ public:
         m->m_instance.AppendExpandedStar(nbranches, d1, d2, extrad);
         return 0;
     }
-    static int AppendDisc(LuaState* l)
+    static int AppendDisc(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -115,7 +115,7 @@ public:
         m->m_instance.AppendDisc(nsides, d, fade);
         return 0;
     }
-    static int AppendSimpleTriangle(LuaState* l)
+    static int AppendSimpleTriangle(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -125,7 +125,7 @@ public:
         m->m_instance.AppendSimpleTriangle(d, fade);
         return 0;
     }
-    static int AppendSimpleQuad(LuaState* l)
+    static int AppendSimpleQuad(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -135,7 +135,7 @@ public:
         m->m_instance.AppendSimpleQuad(size, fade);
         return 0;
     }
-    static int AppendCog(LuaState* l)
+    static int AppendCog(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -148,7 +148,7 @@ public:
         return 0;
     }
     //-------------------------------------------------------------------------
-    static int TranslateX(LuaState* l)
+    static int TranslateX(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -157,7 +157,7 @@ public:
         m->m_instance.TranslateX(f);
         return 0;
     }
-    static int TranslateY(LuaState* l)
+    static int TranslateY(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -166,7 +166,7 @@ public:
         m->m_instance.TranslateY(f);
         return 0;
     }
-    static int TranslateZ(LuaState* l)
+    static int TranslateZ(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -175,7 +175,7 @@ public:
         m->m_instance.TranslateZ(f);
         return 0;
     }
-    static int Translate(LuaState* l)
+    static int Translate(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -185,7 +185,7 @@ public:
         return 0;
     }
     //-------------------------------------------------------------------------
-    static int RotateX(LuaState* l)
+    static int RotateX(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -194,7 +194,7 @@ public:
         m->m_instance.RotateX(a);
         return 0;
     }
-    static int RotateY(LuaState* l)
+    static int RotateY(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -203,7 +203,7 @@ public:
         m->m_instance.RotateY(a);
         return 0;
     }
-    static int RotateZ(LuaState* l)
+    static int RotateZ(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -212,7 +212,7 @@ public:
         m->m_instance.RotateZ(a);
         return 0;
     }
-    static int Rotate(LuaState* l)
+    static int Rotate(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -223,7 +223,7 @@ public:
         return 0;
     }
     //-------------------------------------------------------------------------
-    static int ScaleX(LuaState* l)
+    static int ScaleX(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -232,7 +232,7 @@ public:
         m->m_instance.ScaleX(x);
         return 0;
     }
-    static int ScaleY(LuaState* l)
+    static int ScaleY(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -241,7 +241,7 @@ public:
         m->m_instance.ScaleY(y);
         return 0;
     }
-    static int ScaleZ(LuaState* l)
+    static int ScaleZ(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -250,7 +250,7 @@ public:
         m->m_instance.ScaleZ(z);
         return 0;
     }
-    static int Scale(LuaState* l)
+    static int Scale(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -260,7 +260,7 @@ public:
         return 0;
     }
     //-------------------------------------------------------------------------
-    static int RadialJitter(LuaState* l)
+    static int RadialJitter(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -270,7 +270,7 @@ public:
         return 0;
     }
     //-------------------------------------------------------------------------
-    static int TaperX(LuaState* l)
+    static int TaperX(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -280,7 +280,7 @@ public:
         m->m_instance.TaperX(y, z, xoff, abs);
         return 0;
     }
-    static int TaperY(LuaState* l)
+    static int TaperY(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -290,7 +290,7 @@ public:
         m->m_instance.TaperY(x, z, yoff, abs);
         return 0;
     }
-    static int TaperZ(LuaState* l)
+    static int TaperZ(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -301,7 +301,7 @@ public:
         return 0;
     }
     //-------------------------------------------------------------------------
-    static int TwistX(LuaState* l)
+    static int TwistX(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -310,7 +310,7 @@ public:
         m->m_instance.TwistX(t, toff);
         return 0;
     }
-    static int TwistY(LuaState* l)
+    static int TwistY(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -319,7 +319,7 @@ public:
         m->m_instance.TwistY(t, toff);
         return 0;
     }
-    static int TwistZ(LuaState* l)
+    static int TwistZ(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -329,7 +329,7 @@ public:
         return 0;
     }
     //-------------------------------------------------------------------------
-    static int ShearX(LuaState* l)
+    static int ShearX(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -339,7 +339,7 @@ public:
         m->m_instance.ShearX(y, z, xoff, abs);
         return 0;
     }
-    static int ShearY(LuaState* l)
+    static int ShearY(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -349,7 +349,7 @@ public:
         m->m_instance.ShearY(x, z, yoff, abs);
         return 0;
     }
-    static int ShearZ(LuaState* l)
+    static int ShearZ(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -360,7 +360,7 @@ public:
         return 0;
     }
     //-------------------------------------------------------------------------
-    static int StretchX(LuaState* l)
+    static int StretchX(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -369,7 +369,7 @@ public:
         m->m_instance.StretchX(y, z, xoff);
         return 0;
     }
-    static int StretchY(LuaState* l)
+    static int StretchY(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -378,7 +378,7 @@ public:
         m->m_instance.StretchY(x, z, yoff);
         return 0;
     }
-    static int StretchZ(LuaState* l)
+    static int StretchZ(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -388,7 +388,7 @@ public:
         return 0;
     }
     //-------------------------------------------------------------------------
-    static int BendXY(LuaState* l)
+    static int BendXY(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -397,7 +397,7 @@ public:
         m->m_instance.BendXY(t, toff);
         return 0;
     }
-    static int BendXZ(LuaState* l)
+    static int BendXZ(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -406,7 +406,7 @@ public:
         m->m_instance.BendXZ(t, toff);
         return 0;
     }
-    static int BendYX(LuaState* l)
+    static int BendYX(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -415,7 +415,7 @@ public:
         m->m_instance.BendYX(t, toff);
         return 0;
     }
-    static int BendYZ(LuaState* l)
+    static int BendYZ(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -424,7 +424,7 @@ public:
         m->m_instance.BendYZ(t, toff);
         return 0;
     }
-    static int BendZX(LuaState* l)
+    static int BendZX(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -433,7 +433,7 @@ public:
         m->m_instance.BendZX(t, toff);
         return 0;
     }
-    static int BendZY(LuaState* l)
+    static int BendZY(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -443,7 +443,7 @@ public:
         return 0;
     }
     //-------------------------------------------------------------------------
-    static int MirrorX(LuaState* l)
+    static int MirrorX(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -451,7 +451,7 @@ public:
         m->m_instance.MirrorX();
         return 0;
     }
-    static int MirrorY(LuaState* l)
+    static int MirrorY(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -459,7 +459,7 @@ public:
         m->m_instance.MirrorY();
         return 0;
     }
-    static int MirrorZ(LuaState* l)
+    static int MirrorZ(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -468,7 +468,7 @@ public:
         return 0;
     }
     //-------------------------------------------------------------------------
-    static int LoopStart(LuaState* l)
+    static int LoopStart(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -477,7 +477,7 @@ public:
         m->m_instance.LoopStart(loopnb);
         return 0;
     }
-    static int LoopEnd(LuaState* l)
+    static int LoopEnd(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -485,7 +485,7 @@ public:
         m->m_instance.LoopEnd();
         return 0;
     }
-    static int OpenBrace(LuaState* l)
+    static int OpenBrace(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -493,7 +493,7 @@ public:
         m->m_instance.OpenBrace();
         return 0;
     }
-    static int CloseBrace(LuaState* l)
+    static int CloseBrace(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -502,7 +502,7 @@ public:
         return 0;
     }
     //-------------------------------------------------------------------------
-    static int ToggleScaleWinding(LuaState* l)
+    static int ToggleScaleWinding(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -510,7 +510,7 @@ public:
         m->m_instance.ToggleScaleWinding();
         return 0;
     }
-    static int ToggleQuadWeighting(LuaState* l)
+    static int ToggleQuadWeighting(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -518,7 +518,7 @@ public:
         m->m_instance.ToggleQuadWeighting();
         return 0;
     }
-    static int TogglePostBuildNormal(LuaState* l)
+    static int TogglePostBuildNormal(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -526,7 +526,7 @@ public:
         m->m_instance.TogglePostBuildNormal();
         return 0;
     }
-    static int ToggleVerticeNoCleanup(LuaState* l)
+    static int ToggleVerticeNoCleanup(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -535,7 +535,7 @@ public:
         return 0;
     }
     //-------------------------------------------------------------------------
-    static int VerticesMerge(LuaState* l)
+    static int VerticesMerge(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -543,7 +543,7 @@ public:
         m->m_instance.VerticesMerge();
         return 0;
     }
-    static int VerticesSeparate(LuaState* l)
+    static int VerticesSeparate(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -551,7 +551,7 @@ public:
         m->m_instance.VerticesSeparate();
         return 0;
     }
-    static int VerticesCleanup(LuaState* l)
+    static int VerticesCleanup(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -560,7 +560,7 @@ public:
         return 0;
     }
     //-------------------------------------------------------------------------
-    static int Duplicate(LuaState* l)
+    static int Duplicate(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -569,7 +569,7 @@ public:
         m->m_instance.DupAndScale(ds, true);
         return 0;
     }
-    static int Smooth(LuaState* l)
+    static int Smooth(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -578,7 +578,7 @@ public:
         m->m_instance.SmoothMesh(pass, split_per_pass, smooth_per_pass);
         return 0;
     }
-    static int SplitTriangles(LuaState* l)
+    static int SplitTriangles(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -587,7 +587,7 @@ public:
         m->m_instance.SplitTriangles(pass);
         return 0;
     }
-    static int Chamfer(LuaState* l)
+    static int Chamfer(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -597,7 +597,7 @@ public:
         return 0;
     }
     //-------------------------------------------------------------------------
-    static int SetCurColor(LuaState* l)
+    static int SetCurColor(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -606,7 +606,7 @@ public:
         m->m_instance.SetCurColor(c);
         return 0;
     }
-    static int SetCurColorA(LuaState* l)
+    static int SetCurColorA(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -615,7 +615,7 @@ public:
         m->m_instance.SetCurColorA(c);
         return 0;
     }
-    static int SetCurColorB(LuaState* l)
+    static int SetCurColorB(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;
@@ -623,7 +623,7 @@ public:
         m->m_instance.SetCurColorB(c);
         return 0;
     }
-    static int SetVertColor(LuaState* l)
+    static int SetVertColor(lua_State* l)
     {
         LuaStack s(l);
         EzMeshPtr m;

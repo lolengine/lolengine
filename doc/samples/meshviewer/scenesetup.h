@@ -115,21 +115,21 @@ public:
     virtual ~SceneSetupLuaObject();
 
     //-------------------------------------------------------------------------
-    static SceneSetupLuaObject* New(LuaState* l, int arg_nb);
+    static SceneSetupLuaObject* New(lua_State* l, int arg_nb);
     static const LuaObjectLib* GetLib();
 
     //-------------------------------------------------------------------------
 public:
     //-- Setup command
-    static int AddLight(LuaState* l);
-    static int SetupScene(LuaState* l);
+    static int AddLight(lua_State* l);
+    static int SetupScene(lua_State* l);
     //-- main funcs
-    static int SetPosition(LuaState* l);
-    static int SetLookAt(LuaState* l);
-    static int SetColor(LuaState* l);
-    static int Show(LuaState* l);
-    static int Hide(LuaState* l);
-    static int Toggle(LuaState* l);
+    static int SetPosition(lua_State* l);
+    static int SetLookAt(lua_State* l);
+    static int SetColor(lua_State* l);
+    static int Show(lua_State* l);
+    static int Hide(lua_State* l);
+    static int Toggle(lua_State* l);
 
     //-- Setup command
     void AddLight(LightType type);

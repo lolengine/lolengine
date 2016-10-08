@@ -157,7 +157,7 @@ SceneSetupLuaObject::~SceneSetupLuaObject()
 }
 
 //-----------------------------------------------------------------------------
-SceneSetupLuaObject* SceneSetupLuaObject::New(LuaState* l, int arg_nb)
+SceneSetupLuaObject* SceneSetupLuaObject::New(lua_State* l, int arg_nb)
 {
     UNUSED(l);
     UNUSED(arg_nb);
@@ -168,7 +168,7 @@ SceneSetupLuaObject* SceneSetupLuaObject::New(LuaState* l, int arg_nb)
 }
 
 //-- Setup command ------------------------------------------------------------
-int SceneSetupLuaObject::AddLight(LuaState* l)
+int SceneSetupLuaObject::AddLight(lua_State* l)
 {
     LuaStack s(l);
     LuaSSetupPtr o;
@@ -177,7 +177,7 @@ int SceneSetupLuaObject::AddLight(LuaState* l)
     o->m_setup->AddLight(FindValue<LightType>(t().C()));
     return 0;
 }
-int SceneSetupLuaObject::SetupScene(LuaState* l)
+int SceneSetupLuaObject::SetupScene(lua_State* l)
 {
     LuaStack s(l);
     LuaSSetupPtr o;
@@ -186,7 +186,7 @@ int SceneSetupLuaObject::SetupScene(LuaState* l)
     return 0;
 }
 //-- main funcs ---------------------------------------------------------------
-int SceneSetupLuaObject::SetPosition(LuaState* l)
+int SceneSetupLuaObject::SetPosition(lua_State* l)
 {
     LuaStack s(l);
     LuaSSetupPtr o;
@@ -195,7 +195,7 @@ int SceneSetupLuaObject::SetPosition(LuaState* l)
     o->m_setup->SetPosition(c);
     return 0;
 }
-int SceneSetupLuaObject::SetLookAt(LuaState* l)
+int SceneSetupLuaObject::SetLookAt(lua_State* l)
 {
     LuaStack s(l);
     LuaSSetupPtr o;
@@ -204,7 +204,7 @@ int SceneSetupLuaObject::SetLookAt(LuaState* l)
     o->m_setup->SetLookAt(c);
     return 0;
 }
-int SceneSetupLuaObject::SetColor(LuaState* l)
+int SceneSetupLuaObject::SetColor(lua_State* l)
 {
     LuaStack s(l);
     LuaSSetupPtr o;
@@ -213,7 +213,7 @@ int SceneSetupLuaObject::SetColor(LuaState* l)
     o->m_setup->SetColor(c);
     return 0;
 }
-int SceneSetupLuaObject::Show(LuaState* l)
+int SceneSetupLuaObject::Show(lua_State* l)
 {
     LuaStack s(l);
     LuaSSetupPtr o;
@@ -222,7 +222,7 @@ int SceneSetupLuaObject::Show(LuaState* l)
     o->m_setup->Show(e);
     return 0;
 }
-int SceneSetupLuaObject::Hide(LuaState* l)
+int SceneSetupLuaObject::Hide(lua_State* l)
 {
     LuaStack s(l);
     LuaSSetupPtr o;
@@ -231,7 +231,7 @@ int SceneSetupLuaObject::Hide(LuaState* l)
     o->m_setup->Hide(e);
     return 0;
 }
-int SceneSetupLuaObject::Toggle(LuaState* l)
+int SceneSetupLuaObject::Toggle(lua_State* l)
 {
     LuaStack s(l);
     LuaSSetupPtr o;
@@ -271,7 +271,7 @@ const LuaObjectLib* SceneSetupLuaObject::GetLib()
 map<String, SceneSetup*> SceneSetupLuaLoader::m_setups;
 SceneSetupLuaLoader::SceneSetupLuaLoader() : LuaLoader()
 {
-    LuaState* l = GetLuaState();
+    lua_State* l = GetLuaState();
 
     LuaObjectDef::Register<SceneSetupLuaObject>(l);
 }

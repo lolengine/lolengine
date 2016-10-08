@@ -26,7 +26,7 @@ class LuaBaseData
     friend class Lolua::Loader;
 
     //PANIC PANIC -------------------------------------------------------------
-    static int LuaPanic(LuaState* l)
+    static int LuaPanic(lua_State* l)
     {
         char const *message = lua_tostring(l, -1);
         msg::error("%s\n", message);
@@ -35,7 +35,7 @@ class LuaBaseData
     }
 
     //Exec lua code -----------------------------------------------------------
-    static int LuaDoCode(LuaState *l, String const& s)
+    static int LuaDoCode(lua_State *l, String const& s)
     {
         int status = luaL_dostring(l, s.C());
         if (status == 1)
@@ -48,7 +48,7 @@ class LuaBaseData
     }
 
     //Open a file and exec lua code -------------------------------------------
-    static int LuaDoFile(LuaState *l)
+    static int LuaDoFile(lua_State *l)
     {
         if (lua_isnoneornil(l, 1))
             return LUA_ERRFILE;
@@ -114,14 +114,14 @@ Loader::~Loader()
 }
 
 //Store loader ------------------------------------------------------------
-static array<LuaState*, Lolua::Loader*> g_loaders;
+static array<lua_State*, Lolua::Loader*> g_loaders;
 
-void Loader::Store(LuaState* l, Lolua::Loader* loader)
+void Loader::Store(lua_State* l, Lolua::Loader* loader)
 {
     g_loaders.push(l, loader);
 }
 
-void Loader::Release(LuaState* l, Lolua::Loader* loader)
+void Loader::Release(lua_State* l, Lolua::Loader* loader)
 {
     for (int i = 0; i < g_loaders.count(); ++i)
     {
@@ -134,7 +134,7 @@ void Loader::Release(LuaState* l, Lolua::Loader* loader)
 }
 
 //Store lua object --------------------------------------------------------
-void Loader::StoreObject(LuaState* l, Object* obj)
+void Loader::StoreObject(lua_State* l, Object* obj)
 {
     for (auto loader : g_loaders)
     {
@@ -161,7 +161,7 @@ bool Loader::ExecLuaCode(String const &lua)
 }
 
 //-----------------------------------------------------------------------------
-LuaState* Loader::GetLuaState()
+lua_State* Loader::GetLuaState()
 {
     return m_lua_state;
 }

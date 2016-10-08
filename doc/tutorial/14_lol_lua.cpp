@@ -27,7 +27,7 @@ class DemoObject : public LuaObject
 public:
     DemoObject() : LuaObject() {}
     virtual ~DemoObject() {}
-    static DemoObject* New(LuaState* l, int arg_nb)
+    static DemoObject* New(lua_State* l, int arg_nb)
     {
         UNUSED(l);
         UNUSED(arg_nb);
@@ -35,13 +35,13 @@ public:
     }
 
     //-------------------------------------------------------------------------
-    static int AddFive(LuaState* l)
+    static int AddFive(lua_State* l)
     {
         LuaInt32 i; i.Get(l, 1);
         i += 5;
         return i.Return(l);
     }
-    static int AddTenInstance(LuaState* l)
+    static int AddTenInstance(lua_State* l)
     {
         LuaStack stack(l);
         LuaDemoObjectPtr obj;
@@ -55,7 +55,7 @@ public:
         return (f + 10);
     }
 
-    static int GetX(LuaState* l)
+    static int GetX(lua_State* l)
     {
         LuaStack stack(l);
         LuaDemoObjectPtr obj;
@@ -64,7 +64,7 @@ public:
         i = obj->m_x;
         return stack << i;
     }
-    static int SetX(LuaState* l)
+    static int SetX(lua_State* l)
     {
         LuaStack stack(l);
         LuaDemoObjectPtr obj;
@@ -89,7 +89,7 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-static int GlobalAddString(LuaState* l)
+static int GlobalAddString(lua_State* l)
 {
     LuaString s; s.Get(l, 1);
     s() += "_added";
@@ -102,7 +102,7 @@ class LoluaDemoLoader : public LuaLoader
 public:
     LoluaDemoLoader() : LuaLoader()
     {
-        LuaState* l = GetLuaState();
+        lua_State* l = GetLuaState();
 
         //Registering demo object
         LuaObjectDef::Register<DemoObject>(l);
@@ -116,7 +116,7 @@ public:
     }
     void TestStuff()
     {
-        LuaState* l = GetLuaState();
+        lua_State* l = GetLuaState();
 
         /*
         //create property

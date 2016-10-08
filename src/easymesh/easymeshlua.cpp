@@ -24,7 +24,7 @@ using namespace lol;
 //-----------------------------------------------------------------------------
 EasyMeshLuaLoader::EasyMeshLuaLoader() : LuaLoader()
 {
-    LuaState* l = GetLuaState();
+    lua_State* l = GetLuaState();
 
     //Registering demo object
     LuaObjectDef::Register<EasyMeshLuaObject>(l);
@@ -77,7 +77,7 @@ EasyMeshLuaObject::~EasyMeshLuaObject()
 }
 
 //-----------------------------------------------------------------------------
-EasyMeshLuaObject* EasyMeshLuaObject::New(LuaState* l, int arg_nb)
+EasyMeshLuaObject* EasyMeshLuaObject::New(lua_State* l, int arg_nb)
 {
     UNUSED(l);
     UNUSED(arg_nb);
