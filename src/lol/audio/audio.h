@@ -18,7 +18,7 @@
 // Helper functions to set up the audio device.
 //
 
-#include <stdint.h>
+#include <functional>
 
 namespace lol
 {
@@ -32,6 +32,9 @@ public:
     static void set_volume(int channel,int volume);
     static void mute_all();
     static void unmute_all();
+
+    static int start_streaming(std::function<void(void *, int)> const &f);
+    static void stop_streaming(int channel);
 
 private:
     audio() {}

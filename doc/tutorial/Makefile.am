@@ -3,7 +3,7 @@ include $(top_srcdir)/build/autotools/common.am
 
 if BUILD_TUTORIAL
 noinst_PROGRAMS = 01_triangle 02_cube 03_noise 04_texture 05_easymesh \
-                  06_sprite 07_input 08_fbo 11_fractal \
+                  06_sprite 07_input 08_fbo 09_sound 11_fractal \
                   12_voronoi 13_shader_builder 14_lol_lua
 endif
 
@@ -42,6 +42,10 @@ endif
 08_fbo_SOURCES = 08_fbo.cpp 08_fbo.lolfx
 08_fbo_CPPFLAGS = $(AM_CPPFLAGS)
 08_fbo_DEPENDENCIES = @LOL_DEPS@
+
+09_sound_SOURCES = 09_sound.cpp
+09_sound_CPPFLAGS = $(AM_CPPFLAGS)
+09_sound_DEPENDENCIES = @LOL_DEPS@
 
 11_fractal_SOURCES = 11_fractal.cpp 11_fractal.lolfx
 11_fractal_CPPFLAGS = $(AM_CPPFLAGS)
