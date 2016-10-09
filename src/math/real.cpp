@@ -136,6 +136,16 @@ template<> real::Real(double d)
     memset(m_mantissa + 2, 0, (BIGITS - 2) * sizeof(m_mantissa[0]));
 }
 
+template<> real::Real(long double f)
+{
+    /* We don’t know the long double layout, so we split it into
+     * two doubles instead. */
+    double hi = double(f);
+    double lo = double(f - (long double)hi);;
+    new(this) real(hi);
+    *this += lo;
+}
+
 template<> real::operator float() const { return (float)(double)(*this); }
 template<> real::operator int() const { return (int)(double)(*this); }
 template<> real::operator unsigned() const { return (unsigned)(double)(*this); }
@@ -173,6 +183,13 @@ template<> real::operator double() const
     }
 
     return u.d;
+}
+
+template<> real::operator long double() const
+{
+    double hi = double(*this);
+    double lo = double(*this - hi);
+    return (long double)(hi) + (long double)(lo);
 }
 
 /*

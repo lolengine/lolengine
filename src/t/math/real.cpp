@@ -102,6 +102,22 @@ lolunit_declare_fixture(real_test)
         lolunit_assert_doubles_equal(a6, 1234567876543210.0, 0.0);
     }
 
+    lolunit_declare_test(long_double_to_real)
+    {
+        real r((long double)1 / 3);
+
+        // Count how many bits are correct
+        int ok_bits = 0;
+        while (int(r) == 0)
+        {
+            r = (r * 4) - 1;
+            ok_bits += 2;
+        }
+
+        // 64 bits means our precision is better than double
+        lolunit_assert_greater(ok_bits, 64);
+    }
+
     lolunit_declare_test(init)
     {
         real r;

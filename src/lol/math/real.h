@@ -45,6 +45,7 @@ public:
 
     Real(float f);
     Real(double f);
+    Real(long double f);
     Real(int32_t i);
     Real(uint32_t i);
     Real(int64_t i);
@@ -54,6 +55,7 @@ public:
 
     operator float() const;
     operator double() const;
+    operator long double() const;
     operator int() const;
     operator unsigned int() const;
 
@@ -171,6 +173,7 @@ public:
     __LOL_REAL_OP_HELPER_INT(unsigned int)
     __LOL_REAL_OP_HELPER_FLOAT(float)
     __LOL_REAL_OP_HELPER_FLOAT(double)
+    __LOL_REAL_OP_HELPER_FLOAT(long double)
 
     /* Constants */
     static Real<N> const& R_0();
@@ -217,6 +220,7 @@ template<> real const &real::operator =(real const &x);
 template<> real::~Real();
 template<> real::Real(float f);
 template<> real::Real(double f);
+template<> real::Real(long double f);
 template<> real::Real(int32_t i);
 template<> real::Real(uint32_t i);
 template<> real::Real(int64_t i);
@@ -225,6 +229,7 @@ template<> real::Real(char const *str);
 
 template<> real::operator float() const;
 template<> real::operator double() const;
+template<> real::operator long double() const;
 template<> real::operator int() const;
 template<> real::operator unsigned int() const;
 template<> real real::operator +() const;
