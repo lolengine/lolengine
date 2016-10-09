@@ -117,9 +117,9 @@ public:
         if (m_joystick)
         {
             if (lol::abs(m_controller->GetAxisValue(AXIS_PITCH)) > 0.2f)
-                m_pitch_angle += m_controller->GetAxisValue(AXIS_PITCH) * seconds * 100;
+                m_pitch_angle += m_controller->GetAxisValue(AXIS_PITCH) * seconds;
             if (lol::abs(m_controller->GetAxisValue(AXIS_YAW)) > 0.2f)
-                m_yaw_angle += m_controller->GetAxisValue(AXIS_YAW) * seconds * 100;
+                m_yaw_angle += m_controller->GetAxisValue(AXIS_YAW) * seconds;
         }
 
         /* Handle mouse */
@@ -128,14 +128,14 @@ public:
             if (m_controller->IsKeyPressed(KEY_DRAG_MESH))
             {
                 InputDevice::CaptureMouse(true);
-                m_pitch_angle -= m_controller->GetAxisValue(AXIS_DRAG_PITCH) * seconds * 100;
-                m_yaw_angle += m_controller->GetAxisValue(AXIS_DRAG_YAW) * seconds * 100;
+                m_pitch_angle -= m_controller->GetAxisValue(AXIS_DRAG_PITCH) * seconds * 0.1f;
+                m_yaw_angle += m_controller->GetAxisValue(AXIS_DRAG_YAW) * seconds * 0.1f;
             }
             else
             {
                 InputDevice::CaptureMouse(false);
                 if (m_autorot)
-                    m_yaw_angle += seconds * 20;
+                    m_yaw_angle += seconds * 0.2f;
             }
 
             m_text->SetText(String::format(
