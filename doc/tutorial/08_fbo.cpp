@@ -60,9 +60,9 @@ public:
         {
             m_shader = Shader::Create(LOLFX_RESOURCE_NAME(08_fbo));
             m_coord = m_shader->GetAttribLocation(VertexUsage::Position, 0);
-            m_uni_flag = m_shader->GetUniformLocation("in_Flag");
-            m_uni_point = m_shader->GetUniformLocation("in_Point");
-            m_uni_color = m_shader->GetUniformLocation("in_Color");
+            m_uni_flag = m_shader->GetUniformLocation("u_flag");
+            m_uni_point = m_shader->GetUniformLocation("u_point");
+            m_uni_color = m_shader->GetUniformLocation("u_color");
             m_uni_texture = m_shader->GetUniformLocation("u_texture");
 
             m_vdecl = new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position));
@@ -93,6 +93,8 @@ public:
         RenderContext rc;
         rc.SetDepthFunc(DepthFunc::Disabled);
 
+        /* FIXME: this no longer works because we don’t restore the
+         * actually bound framebuffer. */
         m_fbo->Bind();
         m_shader->Bind();
 

@@ -2,19 +2,20 @@
 
 #version 130
 
-attribute vec3 in_Position;
-attribute vec4 in_Color;
-varying vec4 pass_Color;
+in vec3 in_position;
+in vec4 in_color;
 
 uniform mat4 u_projection;
 uniform mat4 u_view;
 uniform mat4 u_model;
 
+out vec4 pass_color;
+
 void main()
 {
     gl_Position = u_projection * u_view * u_model
-                * vec4(in_Position, 1.0);
-    pass_Color = in_Color;
+                * vec4(in_position, 1.0);
+    pass_color = in_color;
 }
 
 [frag.glsl]
@@ -25,7 +26,7 @@ void main()
 precision highp float;
 #endif
 
-varying vec4 pass_Color;
+in vec4 pass_color;
 
 mat4 bayer = mat4( 0.0, 12.0,  3.0, 15.0,
                    8.0,  4.0, 11.0,  7.0,
@@ -44,7 +45,7 @@ float rand(vec2 p)
 
 void main()
 {
-    vec4 col = pass_Color;
+    vec4 col = pass_color;
 #if defined GL_ES
     int dx = int(mod(gl_FragCoord.x, 4.0));
     int dy = int(mod(gl_FragCoord.y, 4.0));
@@ -75,54 +76,5 @@ void main()
     col.y += fract(t - col.y) - t;
     col.z += fract(t - col.z) - t;
     gl_FragColor = col;
-}
-
-[vert.hlsl]
-
-void main(float4 in_Vertex : POSITION,
-          float4 in_Color : COLOR,
-          uniform float4x4 u_projection,
-          uniform float4x4 u_view,
-          uniform float4x4 u_model,
-          out float4 out_Color : COLOR,
-          out float4 out_Position : POSITION)
-{
-    out_Position = mul(u_projection, mul(u_view, mul(u_model, in_Vertex)));
-    out_Color = in_Color;
-}
-
-[frag.hlsl]
-
-float4x4 bayer = float4x4( 0.0, 12.0,  3.0, 15.0,
-                           8.0,  4.0, 11.0,  7.0,
-                           2.0, 14.0,  1.0, 13.0,
-                          10.0,  6.0,  9.0,  5.0);
-
-#if 1
-float4x4 cluster = float4x4(12.0,  5.0,  6.0, 13.0,
-                             4.0,  0.0,  1.0,  7.0,
-                            11.0,  3.0,  2.0,  8.0,
-                            15.0, 10.0,  9.0, 14.0);
-#endif
-
-void main(float4 in_Color : COLOR,
-          float4 in_FragCoord : WPOS,
-          out float4 out_FragColor : COLOR)
-{
-    float4 col = in_Color;
-#if 1
-    int x = (int)in_FragCoord.x;
-    int y = (int)in_FragCoord.y;
-
-    // FIXME: we cannot address this matrix directly on the PS3
-    float t = bayer[int(frac(x * 0.25) * 4.0)]
-                   [int(frac(y * 0.25) * 4.0)];
-
-    t = (t + 0.5) / 17.0;
-    col.x += frac(t - col.x) - t;
-    col.y += frac(t - col.y) - t;
-    col.z += frac(t - col.z) - t;
-#endif
-    out_FragColor = col;
 }
 

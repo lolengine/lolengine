@@ -732,12 +732,12 @@ CatShaderData::CatShaderData(uint32_t vert_decl_flags, Shader* shader)
 //-----------------------------------------------------------------------------
 void CatShaderData::SetupDefaultData()
 {
-    AddUniform("in_model_view");
-    AddUniform("in_normal_mat");
-    AddUniform("in_proj");
-    AddUniform("in_texture");
-    AddUniform("in_sprite_orientation");
-    AddUniform("in_sprite_flip");
+    AddUniform("u_model_view");
+    AddUniform("u_normal_mat");
+    AddUniform("u_proj");
+    AddUniform("u_texture");
+    AddUniform("u_sprite_orientation");
+    AddUniform("u_sprite_flip");
 }
 
 //-----------------------------------------------------------------------------
@@ -750,12 +750,12 @@ void CatShaderData::SetupShaderDatas(mat4 const &model)
     mat4 modelview = view * model;
     mat3 normalmat = transpose(inverse(mat3(view)));
 
-    m_shader->SetUniform(*GetUniform("in_model_view"), modelview);
-    m_shader->SetUniform(*GetUniform("in_normal_mat"), normalmat);
-    m_shader->SetUniform(*GetUniform("in_proj"), proj);
-    m_shader->SetUniform(*GetUniform("in_texture"), m_tex_uniform, 0);
-    m_shader->SetUniform(*GetUniform("in_sprite_orientation"), m_sprite_orientation);
-    m_shader->SetUniform(*GetUniform("in_sprite_flip"), m_sprite_flip);
+    m_shader->SetUniform(*GetUniform("u_model_view"), modelview);
+    m_shader->SetUniform(*GetUniform("u_normal_mat"), normalmat);
+    m_shader->SetUniform(*GetUniform("u_proj"), proj);
+    m_shader->SetUniform(*GetUniform("u_texture"), m_tex_uniform, 0);
+    m_shader->SetUniform(*GetUniform("u_sprite_orientation"), m_sprite_orientation);
+    m_shader->SetUniform(*GetUniform("u_sprite_flip"), m_sprite_flip);
 }
 
 int main(int argc, char **argv)

@@ -92,10 +92,3 @@ void main(void)
 
 /* Defines HLSL vertex shader "Prout" */
 
-[prout.hlsl]
-
-void main(void)
-{
-    /* Blah */
-}
-

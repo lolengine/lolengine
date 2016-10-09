@@ -164,7 +164,7 @@ public:
         {
             m_shader = Shader::Create(LOLFX_RESOURCE_NAME(07_input));
 
-            m_mvp = m_shader->GetUniformLocation("in_Matrix");
+            m_mvp = m_shader->GetUniformLocation("u_matrix");
             m_coord = m_shader->GetAttribLocation(VertexUsage::Position, 0);
             m_color = m_shader->GetAttribLocation(VertexUsage::Color, 0);
 

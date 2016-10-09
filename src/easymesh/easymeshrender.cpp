@@ -166,7 +166,7 @@ static const String DefaultUniforms[8] =
     String("u_inv_view"),
     String("u_proj"),
     String("u_normalmat"),
-    String("in_Damage")
+    String("u_damage")
 };
 //-----------------------------------------------------------------------------
 void DefaultShaderData::StoreUniformNames()

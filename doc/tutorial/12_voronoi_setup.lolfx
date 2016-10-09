@@ -1,69 +1,43 @@
-//-----------------------------------------------------------------------------
-//GLSL
-//-----------------------------------------------------------------------------
+
 [vert.glsl]
 
-#version 120
+#version 130
 
-attribute vec2 in_Position;
+in vec2 in_position;
 
-uniform vec2 in_screen_res;
+uniform vec2 u_screen_res;
 
-varying vec2 pass_position;
+out vec2 pass_position;
 
 void main()
 {
-    pass_position = ((vec2(1.0) + in_Position) * 0.5 * in_screen_res);
-    gl_Position = vec4(in_Position, 0.0, 1.0);
+    pass_position = ((vec2(1.0) + in_position) * 0.5 * u_screen_res);
+    gl_Position = vec4(in_position, 0.0, 1.0);
 }
 
 [frag.glsl]
 
-#version 120
+#version 130
 
 #if defined GL_ES
 precision highp float;
 #endif
 
-uniform sampler2D in_texture;
-uniform vec3 in_source_point;
-uniform vec2 in_screen_res;
+in vec2 pass_position;
 
-varying vec2 pass_position;
+uniform sampler2D u_texture;
+uniform vec3 u_source_point;
+uniform vec2 u_screen_res;
 
 void main(void)
 {
-    if (floor(in_source_point.xy) == floor(pass_position))
-        gl_FragColor = vec4(in_source_point.xy / in_screen_res, in_source_point.z, 1.0);
+    if (floor(u_source_point.xy) == floor(pass_position))
+        gl_FragColor = vec4(u_source_point.xy / u_screen_res, u_source_point.z, 1.0);
     else
     {
-        vec4 src_color = texture2D(in_texture, pass_position / in_screen_res);
+        vec4 src_color = texture2D(u_texture, pass_position / u_screen_res);
         gl_FragColor = src_color;//vec4(0.0, 0.0, 0.0, 1.0);
     }
-        //vec4(pass_position / in_screen_res, 0.0, 1.0);
-}
-
-//-----------------------------------------------------------------------------
-//HLSL
-//-----------------------------------------------------------------------------
-[vert.hlsl]
-
-void main(float2 in_Position : POSITION,
-          out float2 pass_Position : TEXCOORD0,
-          out float4 out_Position : POSITION)
-{
-    pass_Position = in_Position;
-    out_Position = float4(in_Position, 0.0, 1.0);
-}
-
-[frag.hlsl]
-
-void main(in float2 pass_Position : TEXCOORD0,
-          uniform float in_Flag,
-          uniform float3 in_Point,
-          uniform float3 in_Color,
-          out float4 out_FragColor : COLOR)
-{
-    out_FragColor = float4(0.0);
+        //vec4(pass_position / u_screen_res, 0.0, 1.0);
 }
 

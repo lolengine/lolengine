@@ -71,7 +71,7 @@ public:
 
             m_shader = Shader::Create(LOLFX_RESOURCE_NAME(04_texture));
             m_coord = m_shader->GetAttribLocation(VertexUsage::Position, 0);
-            m_texture_uni = m_shader->GetUniformLocation("u_Texture");
+            m_texture_uni = m_shader->GetUniformLocation("u_texture");
 
             m_vdecl = new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position));
 
@@ -86,6 +86,7 @@ public:
         }
 
         /* Send new heightmap to GPU */
+        m_texture->Bind();
         m_texture->SetData(m_heightmap.data());
 
         m_shader->Bind();
