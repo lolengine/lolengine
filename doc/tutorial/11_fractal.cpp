@@ -20,6 +20,8 @@
 #include <lol/engine.h>
 #include "loldebug.h"
 
+#define USE_REAL 0
+
 using namespace lol;
 
 LOLFX_RESOURCE_DECLARE(11_fractal);
@@ -28,6 +30,7 @@ class Fractal : public WorldEntity
 {
 public:
     Fractal(ivec2 const &size)
+      : m_julia(false)
     {
         /* Ensure texture size is a multiple of 16 for better aligned
          * data access. Store the dimensions of a texel for our shader,
@@ -41,7 +44,8 @@ public:
         m_controller = new Controller("Default");
         m_profile << InputProfile::MouseKey(0, "Left")
                   << InputProfile::MouseKey(1, "Right")
-                  << InputProfile::MouseKey(2, "Middle");
+                  << InputProfile::MouseKey(2, "Middle")
+                  << InputProfile::Keyboard(3, "Space");
         m_controller->Init(m_profile);
         m_mouse = InputDevice::GetMouse();
 
@@ -70,10 +74,10 @@ public:
             m_deltascale[i] = real("1");
             m_dirty[i] = 2;
         }
-        m_center = rcmplx(-0.75, 0.0);
+        m_view.center = rcmplx(-0.75, 0.0);
         m_zoom_speed = 0.0;
-        m_translate = rcmplx(0.0, 0.0);
-        m_radius = 5.0;
+        m_view.translate = rcmplx(0.0, 0.0);
+        m_view.radius = 5.0;
         m_ready = false;
         m_drag = false;
 
@@ -81,9 +85,9 @@ public:
         {
             double f = (double)i / PALETTE_STEP;
 
-            vec3 hsv(lol::fmod(i * 0.002f, 1.f),
-                     0.4 * lol::sin(f * 0.27 + 2.0) + 0.4,
-                     0.4 * lol::sin(f * 0.21 - 2.6) + 0.4);
+            vec3 hsv(lol::fmod(i * 0.001f, 1.f),
+                     0.3 * lol::sin(f * 0.27 + 2.0) + 0.3,
+                     0.3 * lol::sin(f * 0.21 - 2.6) + 0.6);
             vec3 rgb = Color::HSVToRGB(hsv);
 
             if (f < 7.0)
@@ -102,17 +106,17 @@ public:
         }
 
 #if !defined __native_client__
+        m_zoomtext = new Text("", "data/font/ascii.png");
+        m_zoomtext->SetPos(vec3(5, (float)m_window_size.y - 15, 1));
+        Ticker::Ref(m_zoomtext);
+
         m_centertext = new Text("", "data/font/ascii.png");
-        m_centertext->SetPos(vec3(5, (float)m_window_size.y - 15, 1));
+        m_centertext->SetPos(vec3(5, (float)m_window_size.y - 29, 1));
         Ticker::Ref(m_centertext);
 
         m_mousetext = new Text("", "data/font/ascii.png");
-        m_mousetext->SetPos(vec3(5, (float)m_window_size.y - 29, 1));
+        m_mousetext->SetPos(vec3(5, (float)m_window_size.y - 43, 1));
         Ticker::Ref(m_mousetext);
-
-        m_zoomtext = new Text("", "data/font/ascii.png");
-        m_zoomtext->SetPos(vec3(5, (float)m_window_size.y - 43, 1));
-        Ticker::Ref(m_zoomtext);
 #endif
 
         m_position = vec3::zero;
@@ -139,7 +143,6 @@ public:
             m_donequeue.pop();
 #endif
 
-        //Input::UntrackMouse(this);
 #if !defined __native_client__
         Ticker::Unref(m_centertext);
         Ticker::Unref(m_mousetext);
@@ -147,20 +150,20 @@ public:
 #endif
     }
 
-    inline dcmplx TexelToWorldOffset(vec2 texel)
+    inline f128cmplx TexelToWorldOffset(vec2 texel)
     {
         double dx = (0.5 + texel.x - m_size.x / 2) * m_texel2world.x;
         double dy = (0.5 + m_size.y / 2 - texel.y) * m_texel2world.y;
-        return m_radius * dcmplx(dx, dy);
+        return m_view.radius * f128cmplx(dx, dy);
     }
 
-    inline dcmplx ScreenToWorldOffset(vec2 pixel)
+    inline f128cmplx ScreenToWorldOffset(vec2 pixel)
     {
         /* No 0.5 offset here, because we want to be able to position the
          * mouse at (0,0) exactly. */
         double dx = pixel.x - m_window_size.x / 2;
         double dy = m_window_size.y / 2 - pixel.y;
-        return m_radius * m_window2world * dcmplx(dx, dy);
+        return m_view.radius * m_window2world * f128cmplx(dx, dy);
     }
 
     virtual void TickGame(float seconds)
@@ -172,8 +175,23 @@ public:
         int prev_frame = (m_frame + 4) % 4;
         m_frame = (m_frame + 1) % 4;
 
-        rcmplx worldmouse = m_center
-                          + rcmplx(ScreenToWorldOffset((vec2)mousepos));
+        if (m_controller->WasKeyPressedThisFrame(3))
+        {
+            m_julia = !m_julia;
+            if (m_julia)
+            {
+                m_saved_view = m_view;
+                m_view.r0 = m_view.center + rcmplx(ScreenToWorldOffset((vec2)mousepos));
+            }
+            else
+            {
+                m_view = m_saved_view;
+            }
+            for (auto & flag : m_dirty)
+                flag = 2;
+        }
+
+        rcmplx worldmouse = m_view.center + rcmplx(ScreenToWorldOffset((vec2)mousepos));
 
         if (m_controller->IsKeyPressed(2))
         {
@@ -182,24 +200,24 @@ public:
                 m_oldmouse = mousepos;
                 m_drag = true;
             }
-            m_translate = rcmplx(ScreenToWorldOffset((vec2)m_oldmouse)
-                                  - ScreenToWorldOffset((vec2)mousepos));
+            m_view.translate = rcmplx(ScreenToWorldOffset((vec2)m_oldmouse)
+                                    - ScreenToWorldOffset((vec2)mousepos));
             /* XXX: the purpose of this hack is to avoid translating by
              * an exact number of pixels. If this were to happen, the step()
              * optimisation for i915 cards in our shader would behave
              * incorrectly because a quarter of the pixels in the image
              * would have tied rankings in the distance calculation. */
-            m_translate *= real(1023.0 / 1024.0);
+            m_view.translate *= real(1023.0 / 1024.0);
             m_oldmouse = mousepos;
         }
         else
         {
             m_drag = false;
-            if (m_translate != rcmplx(0.0, 0.0))
+            if (m_view.translate != rcmplx(0.0, 0.0))
             {
-                m_translate *= real(std::pow(2.0, -seconds * 5.0));
-                if ((double)norm(m_translate) < m_radius * 1e-4)
-                    m_translate = rcmplx(0.0, 0.0);
+                m_view.translate *= real(std::pow(2.0, -seconds * 5.0));
+                if ((double)norm(m_view.translate) < m_view.radius * 1e-4)
+                    m_view.translate = rcmplx(0.0, 0.0);
             }
         }
 
@@ -219,34 +237,35 @@ public:
                 m_zoom_speed = 0.0;
         }
 
-        if (m_zoom_speed || m_translate != rcmplx(0.0, 0.0))
+        if (m_zoom_speed || m_view.translate != rcmplx(0.0, 0.0))
         {
-            rcmplx oldcenter = m_center;
-            double oldradius = m_radius;
+            rcmplx oldcenter = m_view.center;
+            double oldradius = m_view.radius;
             double zoom = std::pow(2.0, seconds * 1e3f * m_zoom_speed);
-            if (m_radius * zoom > 8.0)
+            if (m_view.radius * zoom > 8.0)
             {
                 m_zoom_speed *= -1.0;
-                zoom = 8.0 / m_radius;
+                zoom = 8.0 / m_view.radius;
             }
-            else if (m_radius * zoom < 1e-14)
+            else if (m_view.radius * zoom < MAX_ZOOM)
             {
                 m_zoom_speed *= -1.0;
-                zoom = 1e-14 / m_radius;
+                zoom = MAX_ZOOM / m_view.radius;
             }
-            m_radius *= zoom;
-            m_center += m_translate;
-            m_center = (m_center - worldmouse) * real(zoom) + worldmouse;
-            worldmouse = m_center
-                       + rcmplx(ScreenToWorldOffset((vec2)mousepos));
+            m_view.radius *= zoom;
+            m_view.center += m_view.translate;
+            m_view.center = (m_view.center - worldmouse) * real(zoom) + worldmouse;
+            worldmouse = m_view.center
+                          + rcmplx(ScreenToWorldOffset((vec2)mousepos));
 
             /* Store the transformation properties to go from m_frame - 1
              * to m_frame. */
-            m_deltashift[prev_frame] = (m_center - oldcenter) / real(oldradius);
+            m_deltashift[prev_frame] = (m_view.center - oldcenter) / real(oldradius);
             m_deltashift[prev_frame].x /= m_size.x * m_texel2world.x;
             m_deltashift[prev_frame].y /= m_size.y * m_texel2world.y;
-            m_deltascale[prev_frame] = m_radius / oldradius;
-            m_dirty[0] = m_dirty[1] = m_dirty[2] = m_dirty[3] = 2;
+            m_deltascale[prev_frame] = m_view.radius / oldradius;
+            for (auto & flag : m_dirty)
+                flag = 2;
         }
         else
         {
@@ -283,16 +302,16 @@ public:
 #if !defined __native_client__
         char buf[256];
         std::sprintf(buf, "center: ");
-        m_center.x.sprintf(buf + strlen(buf), 30);
+        m_view.center.x.sprintf(buf + strlen(buf), 30);
         std::sprintf(buf + strlen(buf), " ");
-        m_center.y.sprintf(buf + strlen(buf), 30);
+        m_view.center.y.sprintf(buf + strlen(buf), 30);
         m_centertext->SetText(buf);
         std::sprintf(buf, " mouse: ");
         worldmouse.x.sprintf(buf + strlen(buf), 30);
         std::sprintf(buf + strlen(buf), " ");
         worldmouse.y.sprintf(buf + strlen(buf), 30);
         m_mousetext->SetText(buf);
-        std::sprintf(buf, "  zoom: %g", 1.0 / m_radius);
+        std::sprintf(buf, "[%s] zoom: %g", m_julia ? "Julia" : "Mandelbrot", 1.0 / m_view.radius);
         m_zoomtext->SetText(buf);
 #endif
 
@@ -339,38 +358,49 @@ public:
         u8vec4 *pixelstart = &m_pixels[0]
                            + m_size.x * (m_size.y / 4 * m_frame + line / 4);
 
-        dcmplx c = (dcmplx)m_center;
+#if USE_REAL
+        rcmplx c = (rcmplx)m_view.center;
+        rcmplx jr0 = (rcmplx)m_view.r0;
+#else
+        f128cmplx c = (f128cmplx)m_view.center;
+        f128cmplx jr0 = (f128cmplx)m_view.r0;
+#endif
 
         for (int j = jmin; j < jmax; j += 2)
         for (int i = m_frame % 2; i < m_size.x; i += 2)
         {
-            double xr, yr, x0, y0, x1, y1, x2, y2, x3, y3;
-            dcmplx z0 = c + TexelToWorldOffset(vec2(ivec2(i, j)));
-            //dcmplx r0(0.28693186889504513, 0.014286693904085048);
-            //dcmplx r0(0.001643721971153, 0.822467633298876);
-            //dcmplx r0(-1.207205434596, 0.315432814901);
-            //dcmplx r0(-0.79192956889854, -0.14632423080102);
-            //dcmplx r0(0.3245046418497685, 0.04855101129280834);
-            dcmplx r0 = z0;
+#if USE_REAL
+            real xr, yr, x0, y0, x1, y1, x2, y2, x3, y3;
+            real sqx0, sqy0, sqx1, sqy1, sqx2, sqy2, sqx3, sqy3;
+            rcmplx z0 = c + rcmplx(TexelToWorldOffset(vec2(ivec2(i, j))));
+            rcmplx r0 = m_julia ? jr0 : z0;
+#else
+            ldouble xr, yr, x0, y0, x1, y1, x2, y2, x3, y3;
+            ldouble sqx0, sqy0, sqx1, sqy1, sqx2, sqy2, sqx3, sqy3;
+            f128cmplx z0 = c + TexelToWorldOffset(vec2(ivec2(i, j)));
+            f128cmplx r0 = m_julia ? jr0 : z0;
+#endif
 
             x0 = z0.x; y0 = z0.y;
             xr = r0.x; yr = r0.y;
+            sqx0 = x0 * x0; sqy0 = y0 * y0;
 
             int iter = MAX_ITERATIONS - 4;
             for (;;)
             {
                 /* Unroll the loop: tests are more expensive to do at each
-                 * iteration than the few extra multiplications. */
-                x1 = x0 * x0 - y0 * y0 + xr;
-                y1 = x0 * y0 + x0 * y0 + yr;
-                x2 = x1 * x1 - y1 * y1 + xr;
-                y2 = x1 * y1 + x1 * y1 + yr;
-                x3 = x2 * x2 - y2 * y2 + xr;
-                y3 = x2 * y2 + x2 * y2 + yr;
-                x0 = x3 * x3 - y3 * y3 + xr;
-                y0 = x3 * y3 + x3 * y3 + yr;
+                 * iteration than the few extra multiplications, at least
+                 * with floats/doubles. */
+                x1 = sqx0 - sqy0 + xr; y1 = x0 * y0 + x0 * y0 + yr;
+                sqx1 = x1 * x1; sqy1 = y1 * y1;
+                x2 = sqx1 - sqy1 + xr; y2 = x1 * y1 + x1 * y1 + yr;
+                sqx2 = x2 * x2; sqy2 = y2 * y2;
+                x3 = sqx2 - sqy2 + xr; y3 = x2 * y2 + x2 * y2 + yr;
+                sqx3 = x3 * x3; sqy3 = y3 * y3;
+                x0 = sqx3 - sqy3 + xr; y0 = x3 * y3 + x3 * y3 + yr;
+                sqx0 = x0 * x0; sqy0 = y0 * y0;
 
-                if (x0 * x0 + y0 * y0 >= maxsqlen)
+                if ((double)sqx0 + (double)sqy0 >= maxsqlen)
                     break;
                 iter -= 4;
                 if (iter < 4)
@@ -379,19 +409,19 @@ public:
 
             if (iter)
             {
-                double n = x0 * x0 + y0 * y0;
+                double n = (double)sqx0 + (double)sqy0;
 
-                if (x1 * x1 + y1 * y1 >= maxsqlen)
+                if ((double)sqx1 + (double)sqy1 >= maxsqlen)
                 {
-                    iter += 3; n = x1 * x1 + y1 * y1;
+                    iter += 3; n = (double)sqx1 + (double)sqy1;
                 }
-                else if (x2 * x2 + y2 * y2 >= maxsqlen)
+                else if ((double)sqx2 + (double)sqy2 >= maxsqlen)
                 {
-                    iter += 2; n = x2 * x2 + y2 * y2;
+                    iter += 2; n = (double)sqx2 + (double)sqy2;
                 }
-                else if (x3 * x3 + y3 * y3 >= maxsqlen)
+                else if ((double)sqx3 + (double)sqy3 >= maxsqlen)
                 {
-                    iter += 1; n = x3 * x3 + y3 * y3;
+                    iter += 1; n = (double)sqx3 + (double)sqy3;
                 }
 
                 if (n > maxsqlen * maxsqlen)
@@ -399,7 +429,7 @@ public:
 
                 /* Approximate log(sqrt(n))/log(sqrt(maxsqlen)) */
                 double f = iter;
-                union { double n; uint64_t x; } u = { n };
+                union { double n; uint64_t x; } u = { (double)n };
                 double k = (double)(u.x >> 42) - (((1 << 10) - 1) << 10);
                 k *= k1;
 
@@ -509,10 +539,13 @@ public:
     }
 
 private:
-    static int const MAX_ITERATIONS = 340;
+    static int const MAX_ITERATIONS = 400;
     static int const PALETTE_STEP = 32;
     static int const MAX_THREADS = 8;
     static int const MAX_LINES = 8;
+
+    // 1e-14 for doubles, 1e-17 for long doubles
+    static double constexpr MAX_ZOOM = 1e-17;
 
     ivec2 m_size, m_window_size, m_oldmouse;
     double m_window2world;
@@ -530,9 +563,18 @@ private:
     int m_frame, m_slices, m_dirty[4];
     bool m_ready, m_drag;
 
-    rcmplx m_deltashift[4], m_center, m_translate;
+    struct view_settings
+    {
+        rcmplx center, translate, r0;
+        double radius;
+    };
+
+    view_settings m_view, m_saved_view;
+
+    rcmplx m_deltashift[4];
     real m_deltascale[4];
-    double m_zoom_speed, m_radius;
+    double m_zoom_speed;
+    bool m_julia;
 
     vec4 m_texel_settings, m_screen_settings;
     mat4 m_zoom_settings;
