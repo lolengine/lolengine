@@ -294,9 +294,6 @@
     <ClCompile Include="sys\getopt.cpp">
       <Filter>sys</Filter>
     </ClCompile>
-    <ClCompile Include="sys\timer.cpp">
-      <Filter>sys</Filter>
-    </ClCompile>
     <ClCompile Include="base\log.cpp">
       <Filter>base</Filter>
     </ClCompile>

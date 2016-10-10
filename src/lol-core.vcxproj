@@ -207,7 +207,6 @@
     <ClCompile Include="sys\init.cpp" />
     <ClCompile Include="sys\thread.cpp" />
     <ClCompile Include="sys\threadtypes.cpp" />
-    <ClCompile Include="sys\timer.cpp" />
     <ClCompile Include="text.cpp" />
     <ClCompile Include="textureimage.cpp" />
     <ClCompile Include="tiler.cpp" />
