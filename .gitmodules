@@ -1,19 +1,24 @@
 [submodule "external"]
 	path = external
-	url = ../../lolengine/lol-external.git
+	url = ../../lolengine/ext-binaries.git
+	branch = master
 [submodule "src/3rdparty/imgui"]
 	path = src/3rdparty/imgui
-	url = ../../lolengine/imgui.git
+	url = ../../lolengine/ext-imgui.git
+	branch = master
 [submodule "src/3rdparty/bullet3"]
 	path = src/3rdparty/bullet3
-	url = ../../lolengine/bullet3.git
+	url = ../../lolengine/ext-bullet3.git
+	branch = lol
 [submodule "src/3rdparty/lua"]
 	path = src/3rdparty/lua
-	url = ../../lolengine/lua.git
+	url = ../../lolengine/ext-lua.git
 	branch = lol
 [submodule "src/3rdparty/pegtl"]
 	path = src/3rdparty/pegtl
-	url = ../../lolengine/pegtl.git
+	url = ../../lolengine/ext-pegtl.git
+	branch = lol
 [submodule "src/3rdparty/mingw-std-threads"]
 	path = src/3rdparty/mingw-std-threads
-	url = ../../lolengine/mingw-std-threads.git
+	url = ../../lolengine/ext-mingw-std-threads.git
+	branch = master
