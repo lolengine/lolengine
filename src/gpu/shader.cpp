@@ -674,12 +674,22 @@ String ShaderData::Patch(String const &code, ShaderType type)
 
         for (char const * const *rep = fast_replaces; rep[0]; rep += 2)
         {
-            char *match;
+			size_t l0 = strlen(rep[0]);
+			size_t l1 = strlen(rep[1]);
+
+			if (l1 > l0)
+			{
+				int padding = patched_code.count_occurence(rep[0]) * (l1 - l0);
+				if (padding > 0)
+				{
+					patched_code.resize(patched_code.count() + padding);
+					end = patched_code.C() + patched_code.count() + 1 - padding;
+				}
+			}
+
+			char *match;
             while ((match = strstr(patched_code.C(), rep[0])))
             {
-                size_t l0 = strlen(rep[0]);
-                size_t l1 = strlen(rep[1]);
-
                 if (l1 > l0)
                     memmove(match + l1, match + l0, (end - match) - l0);
                 memcpy(match, rep[1], l1);

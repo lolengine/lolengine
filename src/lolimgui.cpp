@@ -145,7 +145,11 @@ io.AddInputCharacter((unsigned short)c);
 
 void LolImGui::Shutdown()
 {
-    Ticker::Unref(g_lolimgui);
+	if (g_lolimgui)
+	{
+		Ticker::Unref(g_lolimgui);
+		g_lolimgui = nullptr;
+	}
 
     ImGui::Shutdown();
 }
