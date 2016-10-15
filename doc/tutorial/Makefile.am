@@ -4,7 +4,7 @@ include $(top_srcdir)/build/autotools/common.am
 if BUILD_TUTORIAL
 noinst_PROGRAMS = 01_triangle 02_cube 03_noise 04_texture 05_easymesh \
                   06_sprite 07_input 08_fbo 09_sound 11_fractal \
-                  12_voronoi 13_shader_builder 14_lol_lua 15_lolimgui
+                  12_voronoi 13_shader_builder 14_lol_lua 15_lolimgui 15_scenegraph
 endif
 
 01_triangle_SOURCES = 01_triangle.cpp 01_triangle.lolfx
@@ -69,3 +69,6 @@ endif
 15_lolimgui_CPPFLAGS = $(AM_CPPFLAGS)
 15_lolimgui_DEPENDENCIES = @LOL_DEPS@
 
+15_scenegraph_SOURCES = 15_scenegraph.cpp 15_scenegraph.lolfx
+15_scenegraph_CPPFLAGS = $(AM_CPPFLAGS)
+15_scenegraph_DEPENDENCIES = @LOL_DEPS@

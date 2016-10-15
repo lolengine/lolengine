@@ -1,0 +1,34 @@
+[vert.glsl]
+
+#version 130
+
+attribute vec3 in_position;
+attribute vec3 in_color;
+
+uniform mat4 u_projection_matrix;
+uniform mat4 u_view_matrix;
+uniform mat4 u_model_matrix;
+
+out vec3 pass_color;
+
+void main(void)
+{
+    gl_Position = u_projection_matrix * u_view_matrix * u_model_matrix * vec4(in_position, 1.0);
+    pass_color = in_color;
+}
+
+[frag.glsl]
+
+#version 130
+
+#if defined GL_ES
+precision highp float;
+#endif
+
+in vec3 pass_color;
+
+void main(void)
+{
+    gl_FragColor = vec4(pass_color, 1.0);
+}
+
