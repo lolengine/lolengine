@@ -658,9 +658,11 @@ String ShaderData::Patch(String const &code, ShaderType type)
         }
 
         /* Perform small replaces */
-        char const * const fast_replaces[] =
-        {
-            "#version 130", "#version 120",
+		char const * const fast_replaces[] =
+		{
+			"#version 130", "#version 120",
+			"out vec4 out_color;", " ",
+			"out_color =", "gl_FragColor =",
             "in vec2", type == ShaderType::Vertex ? "attribute vec2" : "varying vec2",
             "in vec3", type == ShaderType::Vertex ? "attribute vec3" : "varying vec3",
             "in vec4", type == ShaderType::Vertex ? "attribute vec4" : "varying vec4",
@@ -674,33 +676,22 @@ String ShaderData::Patch(String const &code, ShaderType type)
 
         for (char const * const *rep = fast_replaces; rep[0]; rep += 2)
         {
-			size_t l0 = strlen(rep[0]);
-			size_t l1 = strlen(rep[1]);
-
-			if (l1 > l0)
+			while (true)
 			{
-				int padding = patched_code.count_occurence(rep[0]) * (l1 - l0);
-				if (padding > 0)
-				{
-					patched_code.resize(patched_code.count() + padding);
-					end = patched_code.C() + patched_code.count() + 1 - padding;
-				}
-			}
+				int index = patched_code.index_of(rep[0]);
+				if (index == INDEX_NONE)
+					break;
 
-			char *match;
-            while ((match = strstr(patched_code.C(), rep[0])))
-            {
-                if (l1 > l0)
-                    memmove(match + l1, match + l0, (end - match) - l0);
-                memcpy(match, rep[1], l1);
-                if (l1 < l0)
-                    memset(match + l0, ' ', l1 - l0);
-                end += l1 - l0;
-            }
+				size_t l0 = strlen(rep[0]);
+				size_t l1 = strlen(rep[1]);
+
+				String left = patched_code.sub(0, index);
+				String right = patched_code.sub(index + l0, patched_code.count() - (index + l0));
+
+				patched_code = left + String(rep[1]) + right;
+			}
         }
     }
-
-    patched_code.resize((int)strlen(patched_code.C()));
 
     return patched_code;
 }

@@ -123,3 +123,5 @@ tools/vslol/obj/*/*
 tools/vslol/obj/*/*/*
 tools/vslol/obj/*/*/*
 tools/vslol/*.suo
+# Built stuff
+binaries/
