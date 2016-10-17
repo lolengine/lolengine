@@ -73,27 +73,19 @@ esac
 if [ -f "$top_srcdir/.git/index" ]; then
     info "detected Git repository"
     repo=git
-elif [ -f "$top_srcdir/.svn/format" -o -f "$top_srcdir/.svn/wc.db" ]; then
-    info "detected SVN repository"
-    repo=svn
 else
-    info "not in a Vcs directory, nothing to do"
+    info "not in a Git directory, nothing to do"
     exit 0
 fi
 
 total_crlfs=0
 total_spaces=0
 total_tabs=0
-total_props=0
 
 OIFS="$IFS"
 IFS='
 '
-if [ "$repo" = git ]; then
-    FILES="`git ls-files`"
-else
-    FILES="`svn ls -R`"
-fi
+FILES="`git ls-files`"
 
 total_files=0
 for file in $FILES; do
@@ -147,20 +139,6 @@ for file in $FILES; do
         fi
     fi
 
-    # Check for LF SVN prop
-    if [ "$repo" = svn -a "$should_check_props" = true ]; then
-        if [ "$(svn propget svn:eol-style "$file")" != "LF" ]; then
-            clean=false
-            if [ "$fix" = true ]; then
-                svn propset svn:eol-style LF "$file"
-                info "$file is missing svn:eol-style property"
-            else
-                error "$file is missing svn:eol-style property"
-            fi
-            total_props="$(($total_props + 1))"
-        fi
-    fi
-
     # Check for trailing spaces
     if [ "$should_check_spaces" = true ]; then
         nspaces="$($SED 's/.*[^ \t]//' "$file" | tr -cd '\t ' | wc -c)"
@@ -198,16 +176,7 @@ done
 IFS="$OIFS"
 
 if [ "$total_errors" -gt 0 ]; then
-    if [ "$commit" = "true" ]; then
-        # EITHER: commit all modified files
-        svn commit --username lolbot --non-interactive -F - << EOF
-fixed $total_errors files out of $total_files:
- - removed $total_crlfs CR characters
- - removed $total_spaces trailing whitespaces
- - replaced $total_tabs tabs with spaces
- - fixed $total_props svn:eol-style properties
-EOF
-    elif [ "$fix" = "true" ]; then
+    if [ "$fix" = "true" ]; then
         # OR: report in stdout
         info "fixed $total_errors files out of $total_files:"
         if [ "$total_crlfs" -gt 0 ]; then
@@ -219,10 +188,6 @@ EOF
         if [ "$total_tabs" -gt 0 ]; then
             info " - fixed $total_tabs tabs"
         fi
-        if [ "$total_props" -gt 0 ]; then
-            info " - fixed $total_props svn:eol-style properties"
-        fi
-        info "re-run with -c to commit fixes"
     else
         # OR: warn about how to fix errors
         info "re-run with -w to fix errors"
