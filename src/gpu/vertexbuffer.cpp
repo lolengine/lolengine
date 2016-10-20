@@ -103,6 +103,11 @@ void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
     }
 }
 
+void VertexDeclaration::DrawIndexedElements_(MeshPrimitive type, int count, const short* skip)
+{
+	glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, skip);
+}
+
 void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
                                             int vskip, int vcount,
                                             int skip, int count)

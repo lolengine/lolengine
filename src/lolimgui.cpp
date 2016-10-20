@@ -287,13 +287,13 @@ void PrimitiveLolImGui::Render(Scene& scene, PrimitiveSource* primitive)
 // If text or lines are blurry when integrating ImGui in your engine:
 // - in your Render function, try translating your projection matrix by (0.5f,0.5f) or (0.375f,0.375f)
 //-------------------------------------------------------------------------
-void LolImGui::RenderDrawLists(ImDrawList** const cmd_lists, int cmd_lists_count)
+void LolImGui::RenderDrawLists(ImDrawData* draw_data)
 {
-    g_lolimgui->RenderDrawListsMethod(cmd_lists, cmd_lists_count);
+    g_lolimgui->RenderDrawListsMethod(draw_data);
 }
-void LolImGui::RenderDrawListsMethod(ImDrawList** const cmd_lists, int cmd_lists_count)
+void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
 {
-    if (cmd_lists_count == 0)
+    if (draw_data == nullptr)
         return;
 
     vec2 size = vec2(Video::GetSize());
@@ -307,10 +307,12 @@ void LolImGui::RenderDrawListsMethod(ImDrawList** const cmd_lists, int cmd_lists
     if (!m_shader)
     {
         String code;
-        m_builder.Build(code);
+		m_builder.Build(code);
 
-        m_shader = Shader::Create(m_builder.GetName(), code);
+		msg::debug("\nCREATED SHADER:\n%s\n", code.C());
+		m_shader = Shader::Create(m_builder.GetName(), code);
         ASSERT(m_shader);
+		msg::debug("\nPATCHED SHADER:\n%s\n", code.C());
 
         m_ortho.m_uniform = m_shader->GetUniformLocation(m_ortho.m_var);
         m_texture.m_uniform = m_shader->GetUniformLocation(m_texture.m_var);
@@ -336,28 +338,40 @@ void LolImGui::RenderDrawListsMethod(ImDrawList** const cmd_lists, int cmd_lists
     rc.SetDepthFunc(DepthFunc::Disabled);
 
     m_shader->Bind();
-    for (int n = 0; n < cmd_lists_count; n++)
+    for (int n = 0; n < draw_data->CmdListsCount; n++)
     {
-        const ImDrawList* cmd_list = cmd_lists[n];
-        const unsigned char* vtx_buffer = (const unsigned char*)&cmd_list->vtx_buffer.front();
+        const ImDrawList* cmd_list = draw_data->CmdLists[n];
+        const unsigned char* vtx_buffer = (const unsigned char*)&cmd_list->VtxBuffer.front();
 
         //Register uniforms
         m_shader->SetUniform(m_ortho, ortho);
         m_shader->SetUniform(m_texture, m_font->GetTexture()->GetTextureUniform(), 0);
 
-        int vtx_offset = 0;
-        for (size_t cmd_i = 0; cmd_i < cmd_list->commands.size(); cmd_i++)
+		struct Vertex
+		{
+			vec2 pos, tex;
+			u8vec4 color;
+		};
+		
+		VertexBuffer* vbo = new VertexBuffer(cmd_list->VtxBuffer.Size * sizeof(ImDrawVert));
+		ImDrawVert *vert = (ImDrawVert *)vbo->Lock(0, 0);
+		memcpy(vert, cmd_list->VtxBuffer.Data, cmd_list->VtxBuffer.Size * sizeof(ImDrawVert));
+		vbo->Unlock();
+
+		IndexBuffer *ibo = new IndexBuffer(cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx));
+		uint16_t *indices = (uint16_t *)ibo->Lock(0, 0);
+		memcpy(vert, cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx));
+		ibo->Unlock();
+
+		m_font->Bind();
+		ibo->Bind();
+		m_vdecl->Bind();
+		m_vdecl->SetStream(vbo, m_attribs[0], m_attribs[1], m_attribs[2]);
+
+		const ImDrawIdx* idx_buffer_offset = 0;
+		for (size_t cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
         {
-            const ImDrawCmd* pcmd = &cmd_list->commands[cmd_i];
-
-            struct Vertex
-            {
-                vec2 pos, tex;
-                u8vec4 color;
-            };
-
-            VertexBuffer* vbo = new VertexBuffer(pcmd->vtx_count * sizeof(Vertex));
-            Vertex *vert = (Vertex *)vbo->Lock(0, 0);
+            const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[cmd_i];
 
 #ifdef SHOW_IMGUI_DEBUG
             //-----------------------------------------------------------------
@@ -374,7 +388,7 @@ void LolImGui::RenderDrawListsMethod(ImDrawList** const cmd_lists, int cmd_lists
             for (int i = 0; i < 4; ++i)
                 Debug::DrawLine(pos[i], pos[(i + 1) % 4], Color::white);
             ImDrawVert* buf = (ImDrawVert*)(vtx_buffer + vtx_offset);
-            for (uint16_t i = 0; i < pcmd->vtx_count; i += 3)
+            for (uint16_t i = 0; i < pcmd->ElemCount; i += 3)
             {
                 vec2 pos[3];
                 pos[0] = vec2(buf[i + 0].pos.x, buf[i + 0].pos.y);
@@ -393,21 +407,20 @@ void LolImGui::RenderDrawListsMethod(ImDrawList** const cmd_lists, int cmd_lists
             //-----------------------------------------------------------------
 #endif //SHOW_IMGUI_DEBUG
 
-            memcpy(vert, vtx_buffer + vtx_offset, pcmd->vtx_count * sizeof(Vertex));
-            vbo->Unlock();
-
-            m_font->Bind();
-            m_vdecl->Bind();
-            m_vdecl->SetStream(vbo, m_attribs[0], m_attribs[1], m_attribs[2]);
-            m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, pcmd->vtx_count);
-            m_vdecl->Unbind();
-            m_font->Unbind();
-
-            vtx_offset += pcmd->vtx_count * sizeof(Vertex);
-
-            delete vbo;
+			m_vdecl->DrawIndexedElements_(MeshPrimitive::Triangles, pcmd->ElemCount, (const short*)idx_buffer_offset);
+			//m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, 0, 0, 0, 0, pcmd->ElemCount);
+			//m_vdecl->DrawElements(MeshPrimitive::Triangles, (int)idx_buffer_offset, pcmd->ElemCount);
+			idx_buffer_offset += pcmd->ElemCount;
         }
-    }
-    m_shader->Unbind();
+
+		m_vdecl->Unbind();
+		ibo->Unbind();
+		m_font->Unbind();
+
+		delete vbo;
+		delete ibo;
+	}
+
+	m_shader->Unbind();
 }
 
