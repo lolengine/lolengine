@@ -50,7 +50,7 @@
     </None>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{81C83B42-D00A-4FA3-9A3D-80F9D46524BF}</ProjectGuid>
+    <ProjectGuid>{31B96262-1C41-43B9-BA38-27AA385B05DB}</ProjectGuid>
     <ConfigurationType>Application</ConfigurationType>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
