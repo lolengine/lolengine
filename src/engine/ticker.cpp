@@ -504,7 +504,7 @@ void Ticker::Setup(float fps)
 
 #if LOL_FEATURE_THREADS
     data->gamethread = new thread(std::bind(&TickerData::GameThreadMain, data));
-    data->gametick.push(1);
+    data->drawtick.push(1);
 
     data->diskthread = new thread(std::bind(&TickerData::DiskThreadMain, data));
 #endif
