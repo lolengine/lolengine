@@ -14,11 +14,12 @@ liblol_core_a_SOURCES = \
     numeric.h utils.h messageservice.cpp messageservice.h \
     gradient.cpp gradient.h gradient.lolfx \
     platform.cpp platform.h sprite.cpp sprite.h camera.cpp camera.h \
-    light.cpp light.h lolimgui.cpp lolimgui.h \
+    light.cpp light.h \
     \
     $(liblol_core_headers) \
     $(liblol_core_sources) \
     \
+    $(imgui_sources) \
     $(nacl_sources) \
     $(sdl_sources) \
     $(d3d9_sources) \
@@ -142,6 +143,12 @@ sdl_sources = \
 
 d3d9_sources = \
     platform/d3d9/d3d9input.cpp platform/d3d9/d3d9input.h
+
+imgui_sources = \
+    lolimgui.cpp lolimgui.h \
+    3rdparty/imgui/imgui_demo.cpp \
+    3rdparty/imgui/imgui_draw.cpp \
+    $(NULL)
 
 if LOL_USE_NACL
 nacl_sources = \
