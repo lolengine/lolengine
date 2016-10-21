@@ -454,7 +454,7 @@ void GpuEasyMeshData::RenderMeshData(mat4 const &model, int render_mode)
     vdecl->SetStream(vbo, Attribs[0], Attribs[1], Attribs[2], Attribs[3]);
 
     m_ibo->Bind();
-    vdecl->DrawIndexedElements(MeshPrimitive::Triangles, 0, 0, m_vertexcount, 0, m_indexcount);
+    vdecl->DrawIndexedElements(MeshPrimitive::Triangles, m_indexcount);
     m_ibo->Unbind();
     vdecl->Unbind();
 }

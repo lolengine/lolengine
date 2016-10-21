@@ -44,6 +44,14 @@ public:
 		ImGui::SetNextWindowFocus();
 		ImGui::Begin("testature");
 		{
+			if (ImGui::IsWindowHovered())
+				ImGui::Text("Hovered: true");
+			else
+				ImGui::Text("Hovered: false");
+			if (ImGui::IsWindowFocused())
+				ImGui::Text("Focused: true");
+			else
+				ImGui::Text("Focused: false");
 			ImGui::Text("Hello, world!");
 			ImGui::Text("prout!");
 			ImGui::Text("prout!%i", 100);
@@ -58,10 +66,20 @@ public:
 			ImGui::Text("Ctrl: %s", io.KeyCtrl ? "true" : "false");
 			ImGui::Text("Clipboard %s", LolImGui::GetClipboard());
 			ImGui::InputText("base input", buf, 512);
-			if (ImGui::IsItemActive())
+		}
+		ImGui::End();
+		ImGui::Begin("SO FUN !!");
+		{
+			if (ImGui::IsWindowHovered())
+				ImGui::Text("Hovered: true");
+			else
+				ImGui::Text("Hovered: false");
+			if (ImGui::IsWindowFocused())
 				ImGui::Text("Focused: true");
 			else
 				ImGui::Text("Focused: false");
+			ImGui::Text("poucka!");
+			ImGui::Text("    poucka!");
 		}
 		ImGui::End();
 	}

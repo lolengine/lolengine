@@ -212,9 +212,7 @@ public:
 
     /* Draw elements. See MeshPrimitive for a list of all available
      * types. Both skip and count are numbers of indices, not primitives. */
-	void DrawIndexedElements_(MeshPrimitive type, int count, const short* skip);
-	void DrawIndexedElements(MeshPrimitive type, int vbase, int vskip,
-                             int vcount, int skip, int count);
+	void DrawIndexedElements(MeshPrimitive type, int count, const short* skip = nullptr, short typeSize = 2);
 
     void Unbind();
     void SetStream(VertexBuffer *vb, ShaderAttrib attr1,

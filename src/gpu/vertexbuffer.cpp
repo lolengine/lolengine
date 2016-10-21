@@ -103,45 +103,30 @@ void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
     }
 }
 
-void VertexDeclaration::DrawIndexedElements_(MeshPrimitive type, int count, const short* skip)
-{
-	glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, skip);
-}
-
-void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int vbase,
-                                            int vskip, int vcount,
-                                            int skip, int count)
+void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int count, const short* skip, short typeSize)
 {
     if (count <= 0)
         return;
+
+	uint32_t elementType = typeSize == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
 
     /* FIXME: this has nothing to do here! */
     switch (type.ToScalar())
     {
     case MeshPrimitive::Triangles:
-        /* FIXME: ignores most of the arguments! */
-        UNUSED(vbase, vskip, vcount, skip);
-        glDrawElements(GL_TRIANGLES, count, GL_UNSIGNED_SHORT, 0);
+        glDrawElements(GL_TRIANGLES, count, elementType, skip);
         break;
     case MeshPrimitive::TriangleStrips:
-        /* FIXME: ignores most of the arguments! */
-        UNUSED(vbase, vskip, vcount, skip);
-        glDrawElements(GL_TRIANGLE_STRIP, count, GL_UNSIGNED_SHORT, 0);
-        break;
+        glDrawElements(GL_TRIANGLE_STRIP, count, elementType, skip);
+		break;
     case MeshPrimitive::TriangleFans:
-        /* FIXME: ignores most of the arguments! */
-        UNUSED(vbase, vskip, vcount, skip);
-        glDrawElements(GL_TRIANGLE_FAN, count, GL_UNSIGNED_SHORT, 0);
+        glDrawElements(GL_TRIANGLE_FAN, count, elementType, skip);
         break;
     case MeshPrimitive::Points:
-        /* FIXME: ignores most of the arguments! */
-        UNUSED(vbase, vskip, vcount, skip);
-        glDrawElements(GL_POINTS, count, GL_UNSIGNED_SHORT, 0);
+        glDrawElements(GL_POINTS, count, elementType, skip);
         break;
     case MeshPrimitive::Lines:
-        /* FIXME: ignores most of the arguments! */
-        UNUSED(vbase, vskip, vcount, skip);
-        glDrawElements(GL_LINES, count, GL_UNSIGNED_SHORT, 0);
+        glDrawElements(GL_LINES, count, elementType, skip);
         break;
     }
 }

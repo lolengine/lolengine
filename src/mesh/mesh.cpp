@@ -146,8 +146,7 @@ void SubMesh::Render()
 	
     m_ibo->Bind();
     m_vdecl->Bind();
-    m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, 0, 0, vertex_count,
-                                 0, m_ibo->GetSize() / sizeof(uint16_t));
+    m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, m_ibo->GetSize() / sizeof(uint16_t));
     m_vdecl->Unbind();
     m_ibo->Unbind();
 }

@@ -78,7 +78,6 @@ LolImGui::LolImGui()
 
     Ticker::Ref(m_controller = new Controller("ImGui_Controller"));
     m_controller->Init(m_profile);
-    //InputDevice::CaptureMouse(true);
     m_mouse = InputDevice::GetMouse();
     m_keyboard = InputDevice::GetKeyboard();
 
@@ -234,7 +233,7 @@ void LolImGui::TickGame(float seconds)
         cursor.y = 1.f - cursor.y;
         cursor *= video_size;
         io.MousePos = ImVec2(cursor.x, cursor.y);
-        msg::debug("%.2f/%.2f\n", io.MousePos.x, io.MousePos.y);
+        //msg::debug("%.2f/%.2f\n", io.MousePos.x, io.MousePos.y);
         io.MouseWheel = m_controller->GetAxisValue(LolImGuiAxis::Scroll);
 
         for (int i = LolImGuiKey::MOUSE_KEY_START; i < LolImGuiKey::MOUSE_KEY_END; ++i)
@@ -247,11 +246,13 @@ void LolImGui::TickGame(float seconds)
             case LolImGuiKey::Focus:
                 if (m_controller->IsKeyReleased(i))
                 {
-                    msg::debug("Not focused .....\n");
+                    //msg::debug("Not focused .....\n");
                     io.MousePos = ImVec2(-1.f, -1.f);
                 }
                 else
-                    msg::debug("Focused !!\n");
+				{
+                    //msg::debug("Focused !!\n");
+				}
                 break;
             }
         }
@@ -309,10 +310,8 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
         String code;
 		m_builder.Build(code);
 
-		msg::debug("\nCREATED SHADER:\n%s\n", code.C());
 		m_shader = Shader::Create(m_builder.GetName(), code);
         ASSERT(m_shader);
-		msg::debug("\nPATCHED SHADER:\n%s\n", code.C());
 
         m_ortho.m_uniform = m_shader->GetUniformLocation(m_ortho.m_var);
         m_texture.m_uniform = m_shader->GetUniformLocation(m_texture.m_var);
@@ -359,8 +358,8 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
 		vbo->Unlock();
 
 		IndexBuffer *ibo = new IndexBuffer(cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx));
-		uint16_t *indices = (uint16_t *)ibo->Lock(0, 0);
-		memcpy(vert, cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx));
+		ImDrawIdx *indices = (ImDrawIdx *)ibo->Lock(0, 0);
+		memcpy(indices, cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx));
 		ibo->Unlock();
 
 		m_font->Bind();
@@ -371,12 +370,16 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
 		const ImDrawIdx* idx_buffer_offset = 0;
 		for (size_t cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
         {
-            const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[cmd_i];
-
+            const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[(int)cmd_i];
 #ifdef SHOW_IMGUI_DEBUG
             //-----------------------------------------------------------------
             //<Debug render> --------------------------------------------------
             //-----------------------------------------------------------------
+			//Doesn't work anymore ......
+			static uint32_t idx_buffer_offset_i = 0;
+			if (cmd_i == 0)
+				idx_buffer_offset_i = 0;
+
             float mod = -200.f;
             vec3 off = vec3(vec2(-size.x, -size.y), 0.f);
             vec3 pos[4] = {
@@ -387,29 +390,32 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
             };
             for (int i = 0; i < 4; ++i)
                 Debug::DrawLine(pos[i], pos[(i + 1) % 4], Color::white);
-            ImDrawVert* buf = (ImDrawVert*)(vtx_buffer + vtx_offset);
+			ImDrawVert* buf = vert;
             for (uint16_t i = 0; i < pcmd->ElemCount; i += 3)
             {
+				uint16_t ib = indices[idx_buffer_offset_i + i];
                 vec2 pos[3];
-                pos[0] = vec2(buf[i + 0].pos.x, buf[i + 0].pos.y);
-                pos[1] = vec2(buf[i + 1].pos.x, buf[i + 1].pos.y);
-                pos[2] = vec2(buf[i + 2].pos.x, buf[i + 2].pos.y);
+                pos[0] = vec2(buf[ib + 0].pos.x, buf[ib + 0].pos.y);
+                pos[1] = vec2(buf[ib + 1].pos.x, buf[ib + 1].pos.y);
+                pos[2] = vec2(buf[ib + 2].pos.x, buf[ib + 2].pos.y);
                 vec4 col[3];
-                col[0] = vec4(Color::FromRGBA32(buf[i + 0].col).arg, 1.f);
-                col[1] = vec4(Color::FromRGBA32(buf[i + 1].col).arg, 1.f);
-                col[2] = vec4(Color::FromRGBA32(buf[i + 2].col).arg, 1.f);
+                col[0] = vec4(Color::FromRGBA32(buf[ib + 0].col).arg, 1.f);
+                col[1] = vec4(Color::FromRGBA32(buf[ib + 1].col).arg, 1.f);
+                col[2] = vec4(Color::FromRGBA32(buf[ib + 2].col).arg, 1.f);
                 Debug::DrawLine((off + vec3(pos[0], 0.f)) / mod, (off + vec3(pos[1], 0.f)) / mod, col[0]);
                 Debug::DrawLine((off + vec3(pos[1], 0.f)) / mod, (off + vec3(pos[2], 0.f)) / mod, col[1]);
                 Debug::DrawLine((off + vec3(pos[2], 0.f)) / mod, (off + vec3(pos[0], 0.f)) / mod, col[2]);
             }
-            //-----------------------------------------------------------------
+			idx_buffer_offset_i += pcmd->ElemCount;
+			
+			//-----------------------------------------------------------------
             //<\Debug render> -------------------------------------------------
             //-----------------------------------------------------------------
 #endif //SHOW_IMGUI_DEBUG
+			Debug::DrawLine(vec2::zero, vec2::axis_x, Color::green);
 
-			m_vdecl->DrawIndexedElements_(MeshPrimitive::Triangles, pcmd->ElemCount, (const short*)idx_buffer_offset);
-			//m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, 0, 0, 0, 0, pcmd->ElemCount);
-			//m_vdecl->DrawElements(MeshPrimitive::Triangles, (int)idx_buffer_offset, pcmd->ElemCount);
+			m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, pcmd->ElemCount, (const short*)idx_buffer_offset);
+
 			idx_buffer_offset += pcmd->ElemCount;
         }
 
