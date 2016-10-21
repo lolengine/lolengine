@@ -27,6 +27,13 @@ lolcheck: lolcheck-recursive
 lolcheck-recursive:
 	$(lol_recursive_rule)
 
+#
+# Make tests verbose
+# FIXME: this does not seem to work as documented
+#
+
+AM_TESTS_FD_REDIRECT = 9>&2
+
 
 #
 # .lolfx build rule

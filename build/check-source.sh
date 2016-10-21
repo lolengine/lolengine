@@ -18,15 +18,15 @@ while [ "$#" -gt 0 ]; do
         quiet=true
         ;;
       *)
-        echo "E: invalid argument $1"
+        echo "E: invalid argument $1" >&2
         exit 1
         ;;
     esac
     shift
 done
 
-error() { if [ "$quiet" != true ]; then echo "E: $1"; fi }
-info() { if [ "$quiet" != true ]; then echo "I: $1"; fi }
+error() { if [ "$quiet" != true ]; then echo "E: $1" >&2; fi }
+info() { if [ "$quiet" != true ]; then echo "I: $1" >&2; fi }
 
 # Ensure the system tools do not attempt to perform multibyte conversions
 export LANG=C
@@ -191,6 +191,7 @@ if [ "$total_errors" -gt 0 ]; then
     else
         # OR: warn about how to fix errors
         info "re-run with -w to fix errors"
+        exit 1
     fi
 else
     info "all $total_files source files appear to be OK, congratulations"
