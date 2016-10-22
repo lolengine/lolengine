@@ -64,7 +64,7 @@ public:
 			ImGui::Text("Scroll: %f", io.MouseWheel);
 			ImGui::Text("Maj: %s", io.KeyShift ? "true" : "false");
 			ImGui::Text("Ctrl: %s", io.KeyCtrl ? "true" : "false");
-			ImGui::Text("Clipboard %s", LolImGui::GetClipboard());
+			ImGui::Text("Clipboard %s", LolImGui::GetClipboard().C());
 			ImGui::InputText("base input", buf, 512);
 		}
 		ImGui::End();

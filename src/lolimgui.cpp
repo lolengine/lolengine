@@ -128,8 +128,9 @@ void LolImGui::Init()
 
     //Func pointer
     io.RenderDrawListsFn = LolImGui::RenderDrawLists;
-    io.SetClipboardTextFn = LolImGui::SetClipboard;
-    io.GetClipboardTextFn = LolImGui::GetClipboard;
+    io.SetClipboardTextFn = LolImGui::SetClipboardCallback;
+    io.GetClipboardTextFn = LolImGui::GetClipboardCallback;
+    io.ClipboardUserData = &g_lolimgui->m_clipboard;
 }
 
 /* CALLBACKS
@@ -154,14 +155,20 @@ void LolImGui::Shutdown()
 }
 
 //-----------------------------------------------------------------------------
-static String g_clipboard;
-void LolImGui::SetClipboard(const char* text)
+String LolImGui::GetClipboard()
 {
-    g_clipboard = text;
+    return g_lolimgui ? g_lolimgui->m_clipboard : "";
 }
-const char* LolImGui::GetClipboard()
+
+void LolImGui::SetClipboardCallback(void *data, const char* text)
 {
-    return g_clipboard.C();
+    String *clipboard = (String *)data;
+    *clipboard = text;
+}
+const char* LolImGui::GetClipboardCallback(void *data)
+{
+    String *clipboard = (String *)data;
+    return clipboard->C();
 }
 
 //-----------------------------------------------------------------------------

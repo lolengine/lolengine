@@ -137,12 +137,14 @@ public:
     static void Shutdown();
 
     //-------------------------------------------------------------------------
-    static void SetClipboard(const char* text);
-    static const char* GetClipboard();
+    static String GetClipboard();
 
 protected:
     virtual void TickGame(float seconds);
     virtual void TickDraw(float seconds, Scene &scene);
+
+    static void SetClipboardCallback(void *data, const char* text);
+    static const char* GetClipboardCallback(void *data);
 
     static void RenderDrawLists(ImDrawData* draw_data);
     void RenderDrawListsMethod(ImDrawData* draw_data);
@@ -172,6 +174,7 @@ protected:
     InputDevice* m_keyboard = nullptr;
     InputProfile m_profile;
     //map<ImGuiKey_, LolImGuiKey> m_keys;
+    String m_clipboard;
 };
 
 //-----------------------------------------------------------------------------
