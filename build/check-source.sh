@@ -176,7 +176,15 @@ done
 IFS="$OIFS"
 
 if [ "$total_errors" -gt 0 ]; then
-    if [ "$fix" = "true" ]; then
+    if [ "$commit" = "true" ]; then
+        # EITHER: commit all modified files
+        git commit --author 'Lolbot <lolbot@zoy.org>' -a -F - << EOF
+fixed $total_errors files out of $total_files:
+ - removed $total_crlfs CR characters
+ - removed $total_spaces trailing whitespaces
+ - replaced $total_tabs tabs with spaces
+EOF
+    elif [ "$fix" = "true" ]; then
         # OR: report in stdout
         info "fixed $total_errors files out of $total_files:"
         if [ "$total_crlfs" -gt 0 ]; then
@@ -188,6 +196,7 @@ if [ "$total_errors" -gt 0 ]; then
         if [ "$total_tabs" -gt 0 ]; then
             info " - fixed $total_tabs tabs"
         fi
+        info "re-run with -c to commit fixes"
     else
         # OR: warn about how to fix errors
         info "re-run with -w to fix errors"
