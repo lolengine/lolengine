@@ -143,7 +143,7 @@ void SubMesh::Render()
         ShaderUniform u_tex = m_shader->GetUniformLocation(m_textures[i].m1.C());
         m_shader->SetUniform(u_tex, m_textures[i].m2->GetTextureUniform(), i);
     }
-	
+
     m_ibo->Bind();
     m_vdecl->Bind();
     m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, m_ibo->GetSize() / sizeof(uint16_t));

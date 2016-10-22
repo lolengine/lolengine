@@ -167,9 +167,9 @@ protected:
     Uniform m_ortho;
     Uniform m_texture;
     array<ShaderAttrib> m_attribs;
-	VertexDeclaration* m_vdecl = nullptr;
-	IndexBuffer* m_ibuff = nullptr;
-	Controller* m_controller = nullptr;
+    VertexDeclaration* m_vdecl = nullptr;
+    IndexBuffer* m_ibuff = nullptr;
+    Controller* m_controller = nullptr;
     InputDevice* m_mouse = nullptr;
     InputDevice* m_keyboard = nullptr;
     InputProfile m_profile;

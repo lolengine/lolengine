@@ -145,11 +145,11 @@ io.AddInputCharacter((unsigned short)c);
 
 void LolImGui::Shutdown()
 {
-	if (g_lolimgui)
-	{
-		Ticker::Unref(g_lolimgui);
-		g_lolimgui = nullptr;
-	}
+    if (g_lolimgui)
+    {
+        Ticker::Unref(g_lolimgui);
+        g_lolimgui = nullptr;
+    }
 
     ImGui::Shutdown();
 }
@@ -257,9 +257,9 @@ void LolImGui::TickGame(float seconds)
                     io.MousePos = ImVec2(-1.f, -1.f);
                 }
                 else
-				{
+                {
                     //msg::debug("Focused !!\n");
-				}
+                }
                 break;
             }
         }
@@ -315,9 +315,9 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
     if (!m_shader)
     {
         String code;
-		m_builder.Build(code);
+        m_builder.Build(code);
 
-		m_shader = Shader::Create(m_builder.GetName(), code);
+        m_shader = Shader::Create(m_builder.GetName(), code);
         ASSERT(m_shader);
 
         m_ortho.m_uniform = m_shader->GetUniformLocation(m_ortho.m_var);
@@ -353,39 +353,39 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
         m_shader->SetUniform(m_ortho, ortho);
         m_shader->SetUniform(m_texture, m_font->GetTexture()->GetTextureUniform(), 0);
 
-		struct Vertex
-		{
-			vec2 pos, tex;
-			u8vec4 color;
-		};
-		
-		VertexBuffer* vbo = new VertexBuffer(cmd_list->VtxBuffer.Size * sizeof(ImDrawVert));
-		ImDrawVert *vert = (ImDrawVert *)vbo->Lock(0, 0);
-		memcpy(vert, cmd_list->VtxBuffer.Data, cmd_list->VtxBuffer.Size * sizeof(ImDrawVert));
-		vbo->Unlock();
+        struct Vertex
+        {
+            vec2 pos, tex;
+            u8vec4 color;
+        };
 
-		IndexBuffer *ibo = new IndexBuffer(cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx));
-		ImDrawIdx *indices = (ImDrawIdx *)ibo->Lock(0, 0);
-		memcpy(indices, cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx));
-		ibo->Unlock();
+        VertexBuffer* vbo = new VertexBuffer(cmd_list->VtxBuffer.Size * sizeof(ImDrawVert));
+        ImDrawVert *vert = (ImDrawVert *)vbo->Lock(0, 0);
+        memcpy(vert, cmd_list->VtxBuffer.Data, cmd_list->VtxBuffer.Size * sizeof(ImDrawVert));
+        vbo->Unlock();
 
-		m_font->Bind();
-		ibo->Bind();
-		m_vdecl->Bind();
-		m_vdecl->SetStream(vbo, m_attribs[0], m_attribs[1], m_attribs[2]);
+        IndexBuffer *ibo = new IndexBuffer(cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx));
+        ImDrawIdx *indices = (ImDrawIdx *)ibo->Lock(0, 0);
+        memcpy(indices, cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx));
+        ibo->Unlock();
 
-		const ImDrawIdx* idx_buffer_offset = 0;
-		for (size_t cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
+        m_font->Bind();
+        ibo->Bind();
+        m_vdecl->Bind();
+        m_vdecl->SetStream(vbo, m_attribs[0], m_attribs[1], m_attribs[2]);
+
+        const ImDrawIdx* idx_buffer_offset = 0;
+        for (size_t cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
         {
             const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[(int)cmd_i];
 #ifdef SHOW_IMGUI_DEBUG
             //-----------------------------------------------------------------
             //<Debug render> --------------------------------------------------
             //-----------------------------------------------------------------
-			//Doesn't work anymore ......
-			static uint32_t idx_buffer_offset_i = 0;
-			if (cmd_i == 0)
-				idx_buffer_offset_i = 0;
+            //Doesn't work anymore ......
+            static uint32_t idx_buffer_offset_i = 0;
+            if (cmd_i == 0)
+                idx_buffer_offset_i = 0;
 
             float mod = -200.f;
             vec3 off = vec3(vec2(-size.x, -size.y), 0.f);
@@ -397,10 +397,10 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
             };
             for (int i = 0; i < 4; ++i)
                 Debug::DrawLine(pos[i], pos[(i + 1) % 4], Color::white);
-			ImDrawVert* buf = vert;
+            ImDrawVert* buf = vert;
             for (uint16_t i = 0; i < pcmd->ElemCount; i += 3)
             {
-				uint16_t ib = indices[idx_buffer_offset_i + i];
+                uint16_t ib = indices[idx_buffer_offset_i + i];
                 vec2 pos[3];
                 pos[0] = vec2(buf[ib + 0].pos.x, buf[ib + 0].pos.y);
                 pos[1] = vec2(buf[ib + 1].pos.x, buf[ib + 1].pos.y);
@@ -413,27 +413,27 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
                 Debug::DrawLine((off + vec3(pos[1], 0.f)) / mod, (off + vec3(pos[2], 0.f)) / mod, col[1]);
                 Debug::DrawLine((off + vec3(pos[2], 0.f)) / mod, (off + vec3(pos[0], 0.f)) / mod, col[2]);
             }
-			idx_buffer_offset_i += pcmd->ElemCount;
-			
-			//-----------------------------------------------------------------
+            idx_buffer_offset_i += pcmd->ElemCount;
+
+            //-----------------------------------------------------------------
             //<\Debug render> -------------------------------------------------
             //-----------------------------------------------------------------
 #endif //SHOW_IMGUI_DEBUG
-			Debug::DrawLine(vec2::zero, vec2::axis_x, Color::green);
+            Debug::DrawLine(vec2::zero, vec2::axis_x, Color::green);
 
-			m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, pcmd->ElemCount, (const short*)idx_buffer_offset);
+            m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, pcmd->ElemCount, (const short*)idx_buffer_offset);
 
-			idx_buffer_offset += pcmd->ElemCount;
+            idx_buffer_offset += pcmd->ElemCount;
         }
 
-		m_vdecl->Unbind();
-		ibo->Unbind();
-		m_font->Unbind();
+        m_vdecl->Unbind();
+        ibo->Unbind();
+        m_font->Unbind();
 
-		delete vbo;
-		delete ibo;
-	}
+        delete vbo;
+        delete ibo;
+    }
 
-	m_shader->Unbind();
+    m_shader->Unbind();
 }
 

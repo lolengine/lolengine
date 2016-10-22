@@ -108,7 +108,7 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int count, const
     if (count <= 0)
         return;
 
-	uint32_t elementType = typeSize == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
+    uint32_t elementType = typeSize == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
 
     /* FIXME: this has nothing to do here! */
     switch (type.ToScalar())
@@ -118,7 +118,7 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int count, const
         break;
     case MeshPrimitive::TriangleStrips:
         glDrawElements(GL_TRIANGLE_STRIP, count, elementType, skip);
-		break;
+        break;
     case MeshPrimitive::TriangleFans:
         glDrawElements(GL_TRIANGLE_FAN, count, elementType, skip);
         break;

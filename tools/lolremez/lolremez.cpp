@@ -41,7 +41,7 @@ static void usage()
 {
     printf("Usage: lolremez [-d degree] [-r xmin:xmax] x-expression [x-error]\n");
     printf("       lolremez -h | --help\n");
-    printf("       lolremez -V | --version\n"); 
+    printf("       lolremez -V | --version\n");
     printf("Find a polynomial approximation for x-expression.\n");
     printf("\n");
     printf("Mandatory arguments to long options are mandatory for short options too.\n");

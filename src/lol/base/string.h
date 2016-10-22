@@ -170,18 +170,18 @@ public:
         return -1;
     }
 
-	int count_occurence(String const& token) const { return last_index_of(token.C()); }
-	int count_occurence(char const* token) const
-	{
-		int count = 0;
-		const char *match = strstr(C(), token);
-		while (match)
-		{
-			count++;
-			match = strstr(match + 1, token);
-		}
-		return count;
-	}
+    int count_occurence(String const& token) const { return last_index_of(token.C()); }
+    int count_occurence(char const* token) const
+    {
+        int count = 0;
+        const char *match = strstr(C(), token);
+        while (match)
+        {
+            count++;
+            match = strstr(match + 1, token);
+        }
+        return count;
+    }
 
     int replace(char const old_token, char const new_token,
                 bool all_occurrences = false)
