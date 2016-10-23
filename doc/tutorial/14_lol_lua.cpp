@@ -37,18 +37,26 @@ public:
     //-------------------------------------------------------------------------
     static int AddFive(lua_State* l)
     {
-        LuaInt32 i; i.Get(l, 1);
+		LuaStack stack(l);
+		int32_t i = stack.GetVar<int32_t>();
+		//LuaInt32 i; i.Get(l, 1);
         i += 5;
-        return i.Return(l);
-    }
+        //return i.Return(l);
+		return stack.SetVar(i).Return();
+	}
     static int AddTenInstance(lua_State* l)
     {
         LuaStack stack(l);
-        LuaDemoObjectPtr obj;
-        LuaFloat f;
-        stack >> obj >> f;
+		DemoObject* obj = nullptr; // stack.GetPtr<DemoObject>();
+		float f = stack.GetVar<float>();
+
+        //LuaDemoObjectPtr obj;
+        //LuaFloat f;
+        //stack >> obj >> f;
         f = obj->AddTenMethod(f);
-        return f.Return(l);
+
+		//return f.Return(l);
+		return 0;// stack.SetVar(f).SetPtr().Return();
     }
     float AddTenMethod(float f)
     {

@@ -883,6 +883,24 @@ public:
         return lua_gettop(m_state);
     }
 
+	//-------------------------------------------------------------------------
+	template<typename T>
+	T GetVar(T defaultValue = 0, bool isOptional = false)
+	{
+		return Var<T>(defaultValue, m_state, m_index, isOptional).GetValue();
+	}
+
+	//-------------------------------------------------------------------------
+	template<typename T>
+	Stack& SetVar(T& value)
+	{
+		m_result += Var<T>(value, m_state, m_index).Return(m_state);
+		return *this;
+	}
+
+	//-------------------------------------------------------------------------
+	int32_t Return() { return m_result; }
+
     //-------------------------------------------------------------------------
     template<typename T>
     Stack& operator>>(T& var)
@@ -891,42 +909,6 @@ public:
         return *this;
     }
 
-    /*
-    template<typename T>
-    Stack& operator>>(Var<T>& var)
-    {
-        var = Var<T>(var.GetValue(), m_state, m_index, var.IsOptional());
-        return *this;
-    }
-    template<typename T>
-    Stack& operator>>(Var<T>& var)
-    {
-        var = Var<T>(var.GetValue(), m_state, m_index, var.IsOptional());
-        return *this;
-    }
-    template<typename T>
-    Stack& operator>>(VarPtr<T>& var)
-    {
-        var = VarPtr<T>(m_state, m_index);
-        return *this;
-    }
-    */
-    /*
-    template<typename T>
-    Stack& operator>>(T& var)
-    {
-        Var<T> ret(m_state, m_index);
-        var = ret.GetValue();
-        return *this;
-    }
-    template<typename T>
-    Stack& operator>>(VarPtrLight<T>& var)
-    {
-        var = VarPtrLight<T>(m_state, m_index);
-        return *this;
-    }
-    */
-
     //-------------------------------------------------------------------------
     template<typename T>
     Stack& operator<<(T& var)
@@ -934,27 +916,6 @@ public:
         m_result += var.Return(m_state);
         return *this;
     }
-    /*
-    template<typename T>
-    Stack& operator<<(T& var)
-    {
-        Var<T> ret(var, false);
-        m_result += ret.Return(m_state);
-        return *this;
-    }
-    template<typename T>
-    Stack& operator<<(VarPtr<T>& var)
-    {
-        m_result += var.Return(m_state);
-        return *this;
-    }
-    template<typename T>
-    Stack& operator<<(VarPtrLight<T>& var)
-    {
-        m_result += var.Return(m_state);
-        return *this;
-    }
-    */
 
 private:
     lua_State*  m_state = nullptr;
