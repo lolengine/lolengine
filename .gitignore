@@ -101,6 +101,7 @@ doc/tutorial/12_voronoi
 doc/tutorial/13_shader_builder
 doc/tutorial/14_lol_lua
 doc/tutorial/15_lolimgui
+doc/tutorial/16_movie
 tools/make-font
 # Our data
 doc/doxygen.cfg
