@@ -81,10 +81,9 @@ EasyMeshLuaObject* EasyMeshLuaObject::New(lua_State* l, int arg_nb)
 {
     UNUSED(l);
     UNUSED(arg_nb);
-    LuaStack s(l);
-    LuaString n("", true);
-    s >> n;
-    return new EasyMeshLuaObject(n());
+    LuaStack s = LuaStack::Begin(l);
+    String str = s.Get("", true);
+    return new EasyMeshLuaObject(str);
 }
 
 //-----------------------------------------------------------------------------

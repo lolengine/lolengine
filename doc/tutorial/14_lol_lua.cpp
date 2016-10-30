@@ -23,7 +23,6 @@ using namespace lol;
 //-----------------------------------------------------------------------------
 class DemoObject : public LuaObject
 {
-    typedef Lolua::VarPtr<DemoObject> LuaDemoObjectPtr;
 public:
     DemoObject() : LuaObject() {}
     virtual ~DemoObject() {}

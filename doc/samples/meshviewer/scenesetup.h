@@ -103,12 +103,10 @@ public:
     bool                        m_show_gizmo;
     bool                        m_show_lights;
 };
-typedef Lolua::VarEnum<SceneSetup::DisplayBase> LuaDisplay;
 
 //-----------------------------------------------------------------------------
 class SceneSetupLuaObject : public LuaObject
 {
-    typedef Lolua::VarPtr<SceneSetupLuaObject> LuaSSetupPtr;
 public:
     //-------------------------------------------------------------------------
     SceneSetupLuaObject(String& name);

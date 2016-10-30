@@ -16,9 +16,6 @@
 
 #pragma once
 
-#define OLD_VAR_SYSTEM true
-#define NEW_VAR_SYSTEM true
-
 namespace lol
 {
 
@@ -134,20 +131,19 @@ public:
             { "New", New<TLuaClass> },
             { "Store", Store<TLuaClass> },
             { "__gc", Del<TLuaClass> },
+            { "__tostring", ToString<TLuaClass> },
+            { "__add", OpAdd<TLuaClass> },
+            { "__sub", OpSubstract<TLuaClass> },
+            { "__mul", OpMultiply<TLuaClass> },
+            { "__div", OpDivide<TLuaClass> },
+            { "__mod", OpModulo<TLuaClass> },
+            { "__unm", OpUnaryNeg<TLuaClass> },
+            { "__concat", OpConcat<TLuaClass> },
+            { "__eq", CmpEqual<TLuaClass> },
+            { "__lt", CmpLessThan<TLuaClass> },
+            { "__le", CmpLessEqual<TLuaClass> },
             { NULL, NULL }
         };
-        //TODO: Touky: Implement that
-        //__tostring : ToString
-        //__add : Addition(+)
-        //__sub : Subtraction(-)
-        //__mul : Multiplication(*)
-        //__div : Division(/ )
-        //__mod : Modulos(%)
-        //__unm : Unary - , used for negation on numbers
-        //__concat : Concatenation(..)
-        //__eq : Equality(== )
-        //__lt : Less than(<)
-        //__le : Less than or equal to(<= )
 
         //Create Static metatable
         luaL_newmetatable(l, GetStaticName<TLuaClass>());
@@ -235,6 +231,18 @@ protected:
     //-------------------------------------------------------------------------
     template <typename TLuaClass> static int Store(lua_State * l);
     template <typename TLuaClass> static int Del(lua_State * l);
+    //-------------------------------------------------------------------------
+    template <typename TLuaClass> static int ToString(lua_State* l) { ASSERT(false); return 0; }
+    template <typename TLuaClass> static int OpAdd(lua_State* l) { ASSERT(false); return 0; }
+    template <typename TLuaClass> static int OpSubstract(lua_State* l) { ASSERT(false); return 0; }
+    template <typename TLuaClass> static int OpMultiply(lua_State* l) { ASSERT(false); return 0; }
+    template <typename TLuaClass> static int OpDivide(lua_State* l) { ASSERT(false); return 0; }
+    template <typename TLuaClass> static int OpModulo(lua_State* l) { ASSERT(false); return 0; }
+    template <typename TLuaClass> static int OpUnaryNeg(lua_State* l) { ASSERT(false); return 0; }
+    template <typename TLuaClass> static int OpConcat(lua_State* l) { ASSERT(false); return 0; }
+    template <typename TLuaClass> static int CmpEqual(lua_State* l) { ASSERT(false); return 0; }
+    template <typename TLuaClass> static int CmpLessThan(lua_State* l) { ASSERT(false); return 0; }
+    template <typename TLuaClass> static int CmpLessEqual(lua_State* l) { ASSERT(false); return 0; }
 };
 
 //-----------------------------------------------------------------------------
@@ -249,654 +257,21 @@ public:
 };
 
 //-----------------------------------------------------------------------------
-#if OLD_VAR_SYSTEM
-
-//-----------------------------------------------------------------------------
-template<typename T>
-class VarPtr
-{
-protected:
-    T* m_value = nullptr;
-    bool m_optional = false;
-
-public:
-    VarPtr(bool optional = false)
-    {
-        m_optional = optional;
-    }
-    VarPtr(T* value, bool optional = false)
-        : VarPtr(optional)
-    {
-        m_value = value;
-    }
-    VarPtr(lua_State* l, int& index, bool optional = false)
-        : VarPtr(optional)
-    {
-        GetInc(l, index);
-    }
-    VarPtr(T* value, lua_State* l, int& index, bool optional = false)
-        : VarPtr(value, optional)
-    {
-        GetInc(l, index);
-    }
-
-    inline T* operator ()()       { return m_value; }
-    inline T* operator ->()       { return m_value; }
-    inline T* operator=(T* value) { m_value = value; }
-    inline T* GetValue()          { return m_value; }
-    inline bool IsValid(lua_State* l, int index)
-    {
-        return InnerIsValid(l, index);
-    }
-    inline bool IsOptional()
-    {
-        return m_optional;
-    }
-private:
-    inline void GetInc(lua_State* l, int& index)
-    {
-        bool is_nil = lua_isnil(l, index);
-        if (!m_optional || (!is_nil && InnerIsValid(l, index)))
-        {
-            ASSERT(!is_nil);
-            InnerGet(l, index);
-        }
-    }
-public:
-    inline void Get(lua_State* l, int index)
-    {
-        int idx = index;
-        GetInc(l, idx);
-    }
-    inline int Return(lua_State* l)
-    {
-        InnerPush(l);
-        return 1;
-    }
-
-protected:
-    virtual bool InnerIsValid(lua_State* l, int index)
-    {
-        return !!lua_isuserdata(l, index);
-    }
-    virtual void InnerGet(lua_State* l, int& index)
-    {
-        T** obj = static_cast<T**>(luaL_checkudata(l, index++, ObjectHelper::GetMethodName<T>()));
-        m_value = obj ? *obj : nullptr;
-    }
-    void InnerPush(lua_State* l)
-    {
-        T** data = (T**)lua_newuserdata(l, sizeof(T*));
-        *data = m_value;
-    }
-};
-
-//-----------------------------------------------------------------------------
-/* TODO: FIX THAT TOUKY !!
-template<typename T>
-class VarPtrLight
-{
-public:
-    VarPtrLight(bool optional = false) : VarPtr(optional) { }
-    VarPtrLight(T* value, bool optional = false) : VarPtr(value, optional) { }
-    VarPtrLight(lua_State* l, int& index, bool optional = false) : VarPtr(l, index, optional) { }
-    VarPtrLight(T* value, lua_State* l, int& index, bool optional = false) : VarPtr(value, l, index, optional) { }
-protected:
-    virtual void InnerGet(lua_State* l, int& index)
-    {
-        T** obj = static_cast<T**>(luaL_testudata(l, index++, ObjectDef::GetMethodName<T>()));
-        m_value = obj ? *obj : nullptr;
-    }
-};
-*/
-
-//-----------------------------------------------------------------------------
-template<typename T>
-class Var
-{
-protected:
-    bool m_optional = false;
-    T m_value;
-
-public:
-    Var(bool optional = false)
-    {
-        m_optional = optional;
-        InnerInit();
-    }
-    Var(T value, bool optional = false)
-    {
-        m_optional = optional;
-        m_value = value;
-    }
-    Var(lua_State* l, int& index, bool optional = false)
-    {
-        m_optional = optional;
-        GetInc(l, index);
-    }
-    Var(T value, lua_State* l, int& index, bool optional = false)
-    {
-        m_optional = optional;
-        m_value = value;
-        GetInc(l, index);
-    }
-    inline operator T()     { return m_value; }
-    inline T& operator ()() { return m_value; }
-    inline T& GetValue()    { return m_value; }
-    inline bool IsValid(lua_State* l, int index)
-    {
-        return InnerIsValid(l, index);
-    }
-    inline bool IsOptional()
-    {
-        return m_optional;
-    }
-private:
-    void GetInc(lua_State* l, int& index)
-    {
-        bool is_nil = lua_isnil(l, index);
-        if (!m_optional || (!is_nil && InnerIsValid(l, index)))
-        {
-            ASSERT(!is_nil);
-            InnerGet(l, index);
-        }
-    }
-public:
-    inline void Get(lua_State* l, int index)
-    {
-        int idx = index;
-        GetInc(l, idx);
-    }
-    inline int Return(lua_State* l)
-    {
-        return InnerPush(l);
-    }
-    inline Var<T>&  operator-(const T& value)  { m_value - value; return *this; }
-    inline Var<T>&  operator+(const T& value)  { m_value + value; return *this; }
-    inline Var<T>&  operator*(const T& value)  { m_value  * value; return *this; }
-    inline Var<T>&  operator/(const T& value)  { m_value / value; return *this; }
-    inline Var<T>&  operator=(const T& value)  { m_value = value; return *this; }
-    inline Var<T>& operator-=(const T& value)  { m_value -= value; return *this; }
-    inline Var<T>& operator+=(const T& value)  { m_value += value; return *this; }
-    inline Var<T>& operator*=(const T& value)  { m_value *= value; return *this; }
-    inline Var<T>& operator/=(const T& value)  { m_value /= value; return *this; }
-    inline Var<T>&  operator-(const Var<T>& o) { m_value - o.m_value; return *this; }
-    inline Var<T>&  operator+(const Var<T>& o) { m_value + o.m_value; return *this; }
-    inline Var<T>&  operator*(const Var<T>& o) { m_value  * o.m_value; return *this; }
-    inline Var<T>&  operator/(const Var<T>& o) { m_value / o.m_value; return *this; }
-    inline Var<T>&  operator=(const Var<T>& o) { m_value = o.m_value; return *this; }
-    inline Var<T>& operator-=(const Var<T>& o) { m_value -= o.m_value; return *this; }
-    inline Var<T>& operator+=(const Var<T>& o) { m_value += o.m_value; return *this; }
-    inline Var<T>& operator*=(const Var<T>& o) { m_value *= o.m_value; return *this; }
-    inline Var<T>& operator/=(const Var<T>& o) { m_value /= o.m_value; return *this; }
-    inline bool operator==(const T& value)     { return m_value == value; }
-    inline bool operator!=(const T& value)     { return m_value != value; }
-    inline bool operator==(const Var<T>& o)    { return m_value == o.m_value; }
-    inline bool operator!=(const Var<T>& o)    { return m_value != o.m_value; }
-
-protected:
-    void InnerInit()                          { m_value = T(0); }
-    bool InnerIsValid(lua_State* l, int index) { UNUSED(l); UNUSED(index); ASSERT(false); return false; }
-    void InnerGet(lua_State* l, int& index)    { UNUSED(l); UNUSED(index); ASSERT(false); }
-    int InnerPush(lua_State* l)                { UNUSED(l); ASSERT(false); return 0; }
-};
-
-//-----------------------------------------------------------------------------
-#ifndef BASE_TYPES
-template<> inline bool Var<bool>::InnerIsValid(lua_State* l, int index)
-{
-    return lua_isboolean(l, index);
-}
-template<> inline void Var<bool>::InnerGet(lua_State* l, int& index)
-{
-    m_value = !!lua_toboolean(l, index++);
-}
-template<> inline int Var<bool>::InnerPush(lua_State* l)
-{
-    lua_pushboolean(l, m_value);
-    return 1;
-}
-//-----------------------------------------------------------------------------
-template<> inline bool Var<char const*>::InnerIsValid(lua_State* l, int index)
-{
-    return !!lua_isstring(l, index);
-}
-template<> inline void Var<char const*>::InnerGet(lua_State* l, int& index)
-{
-    m_value = lua_tostring(l, index++);
-}
-template<> inline int Var<char const*>::InnerPush(lua_State* l)
-{
-    lua_pushstring(l, m_value);
-    return 1;
-}
-//-----------------------------------------------------------------------------
-template<> inline void Var<String>::InnerInit()
-{
-    m_value = String();
-}
-template<> inline bool Var<String>::InnerIsValid(lua_State* l, int index)
-{
-    Var<char const*> v;
-    return v.IsValid(l, index);
-}
-template<> inline void Var<String>::InnerGet(lua_State* l, int& index)
-{
-    Var<char const*> v(l, index);
-    m_value = v();
-}
-template<> inline int Var<String>::InnerPush(lua_State* l)
-{
-    Var<char const*> v;
-    v = m_value.C();
-    return v.Return(l);
-}
-//-----------------------------------------------------------------------------
-template<> inline bool Var<double>::InnerIsValid(lua_State* l, int index)
-{
-    return !!lua_isnumber(l, index);
-}
-template<> inline void Var<double>::InnerGet(lua_State* l, int& index)
-{
-    m_value = lua_tonumber(l, index++);
-}
-template<> inline int Var<double>::InnerPush(lua_State* l)
-{
-    lua_pushnumber(l, m_value);
-    return 1;
-}
-//-----------------------------------------------------------------------------
-template<> inline bool Var<float>::InnerIsValid(lua_State* l, int index)
-{
-    Var<double> v;
-    return v.IsValid(l, index);
-}
-template<> inline void Var<float>::InnerGet(lua_State* l, int& index)
-{
-    Var<double> v(l, index);
-    m_value = (float)v();
-}
-template<> inline int Var<float>::InnerPush(lua_State* l)
-{
-    Var<double> v = (double)m_value;
-    return v.Return(l);
-}
-
-#if 0
-//-----------------------------------------------------------------------------
-template<> inline bool Var<int64_t>::InnerIsValid(lua_State* l, int index)
-{
-    return !!lua_isnumber(l, index);
-}
-template<> inline void Var<int64_t>::InnerGet(lua_State* l, int& index)
-{
-    m_value = lua_tointeger(l, index++);
-}
-template<> inline int Var<int64_t>::InnerPush(lua_State* l)
-{
-    lua_pushinteger(l, m_value);
-    return 1;
-}
-#endif
-
-//-----------------------------------------------------------------------------
-template<> inline bool Var<int32_t>::InnerIsValid(lua_State* l, int index)
-{
-    Var<int64_t> v;
-    return v.IsValid(l, index);
-}
-template<> inline void Var<int32_t>::InnerGet(lua_State* l, int& index)
-{
-    Var<int64_t> v(l, index);
-    m_value = (int32_t)v();
-}
-template<> inline int Var<int32_t>::InnerPush(lua_State* l)
-{
-    Var<int64_t> v = (int64_t)m_value;
-    return v.Return(l);
-}
-
-//-----------------------------------------------------------------------------
-template<> inline bool Var<uint32_t>::InnerIsValid(lua_State* l, int index)
-{
-    return !!lua_isnumber(l, index);
-}
-template<> inline void Var<uint32_t>::InnerGet(lua_State* l, int& index)
-{
-    m_value = (uint32_t)(lua_Unsigned)lua_tointeger(l, index++);
-}
-template<> inline int Var<uint32_t>::InnerPush(lua_State* l)
-{
-    lua_pushinteger(l, (lua_Integer)m_value);
-    return 1;
-}
-
-#if 0
-//-----------------------------------------------------------------------------
-template<> inline bool Var<uint64_t>::InnerIsValid(lua_State* l, int index)
-{
-    Var<uint32_t> v;
-    return v.IsValid(l, index);
-}
-template<> inline void Var<uint64_t>::InnerGet(lua_State* l, int& index)
-{
-    Var<uint32_t> v(l, index);
-    m_value = (uint64_t)v();
-}
-template<> inline int Var<uint64_t>::InnerPush(lua_State* l)
-{
-    Var<uint32_t> v = (uint32_t)m_value;
-    return v.Return(l);
-}
-#endif
-
-//-----------------------------------------------------------------------------
-template<> inline bool Var<vec2>::InnerIsValid(lua_State* l, int index)
-{
-    Var<float> x;
-    return x.IsValid(l, index);
-}
-template<> inline void Var<vec2>::InnerGet(lua_State* l, int& index)
-{
-    Var<float> x(l, index);
-    Var<float> y(x(), l, index, true);
-    m_value = vec2(x, y);
-}
-template<> inline int Var<vec2>::InnerPush(lua_State* l)
-{
-    Var<float> x = m_value.x;
-    Var<float> y = m_value.y;
-    return (x.Return(l) + y.Return(l));
-}
-//-----------------------------------------------------------------------------
-template<> inline bool Var<vec3>::InnerIsValid(lua_State* l, int index)
-{
-    Var<float> x;
-    return x.IsValid(l, index);
-}
-template<> inline void Var<vec3>::InnerGet(lua_State* l, int& index)
-{
-    Var<float> x(l, index);
-    Var<float> y(x(), l, index, true);
-    Var<float> z(x(), l, index, true);
-    m_value = vec3(x, y, z);
-}
-template<> inline int Var<vec3>::InnerPush(lua_State* l)
-{
-    Var<float> x = m_value.x;
-    Var<float> y = m_value.y;
-    Var<float> z = m_value.z;
-    return (x.Return(l) + y.Return(l) + z.Return(l));
-}
-//-----------------------------------------------------------------------------
-template<> inline bool Var<vec4>::InnerIsValid(lua_State* l, int index)
-{
-    Var<float> x;
-    return x.IsValid(l, index);
-}
-template<> inline void Var<vec4>::InnerGet(lua_State* l, int& index)
-{
-    Var<float> x(l, index);
-    Var<float> y(x(), l, index, true);
-    Var<float> z(x(), l, index, true);
-    Var<float> w(x(), l, index, true);
-    m_value = vec4(x, y, z, w);
-}
-template<> inline int Var<vec4>::InnerPush(lua_State* l)
-{
-    Var<float> x = m_value.x;
-    Var<float> y = m_value.y;
-    Var<float> z = m_value.z;
-    Var<float> w = m_value.w;
-    return (x.Return(l) + y.Return(l) + z.Return(l) + w.Return(l));
-}
-#endif //BASE_TYPES
-
-//-----------------------------------------------------------------------------
-#ifndef CUSTOM_TYPES
-class VarColor
-{
-protected:
-    Var<vec4> m_value;
-
-public:
-    VarColor(bool optional = false)
-    {
-        m_value = Var<vec4>(optional);
-        InnerInit();
-    }
-    VarColor(vec4 value, bool optional = false)
-    {
-        m_value = Var<vec4>(value, optional);
-    }
-    VarColor(lua_State* l, int& index, bool optional = false)
-        : VarColor(optional)
-    {
-        GetInc(l, index);
-    }
-    VarColor(vec4 value, lua_State* l, int& index, bool optional = false)
-        : VarColor(value, optional)
-    {
-        GetInc(l, index);
-    }
-
-    inline operator vec4()     { return m_value; }
-    inline vec4& operator ()() { return m_value(); }
-    inline vec4& GetValue()    { return m_value.GetValue(); }
-    inline bool IsValid(lua_State* l, int index)
-    {
-        return InnerIsValid(l, index);
-    }
-    inline bool IsOptional()
-    {
-        return m_value.IsOptional();
-    }
-private:
-    void GetInc(lua_State* l, int& index)
-    {
-        bool is_nil = lua_isnil(l, index);
-        if (!m_value.IsOptional() || (!is_nil && InnerIsValid(l, index)))
-        {
-            ASSERT(!is_nil);
-            InnerGet(l, index);
-        }
-    }
-public:
-    inline void Get(lua_State* l, int index)
-    {
-        int idx = index;
-        GetInc(l, idx);
-    }
-    inline int Return(lua_State* l)
-    {
-        return InnerPush(l);
-    }
-    inline VarColor&  operator-(const vec4& value)  { m_value - value; return *this; }
-    inline VarColor&  operator+(const vec4& value)  { m_value + value; return *this; }
-    inline VarColor&  operator*(const vec4& value)  { m_value  * value; return *this; }
-    inline VarColor&  operator/(const vec4& value)  { m_value / value; return *this; }
-    inline VarColor&  operator=(const vec4& value)  { m_value = value; return *this; }
-    inline VarColor& operator-=(const vec4& value)  { m_value -= value; return *this; }
-    inline VarColor& operator+=(const vec4& value)  { m_value += value; return *this; }
-    inline VarColor& operator*=(const vec4& value)  { m_value *= value; return *this; }
-    inline VarColor& operator/=(const vec4& value)  { m_value /= value; return *this; }
-    inline VarColor&  operator-(const Var<vec4>& o) { m_value - o; return *this; }
-    inline VarColor&  operator+(const Var<vec4>& o) { m_value + o; return *this; }
-    inline VarColor&  operator*(const Var<vec4>& o) { m_value  * o; return *this; }
-    inline VarColor&  operator/(const Var<vec4>& o) { m_value / o; return *this; }
-    inline VarColor&  operator=(const Var<vec4>& o) { m_value = o; return *this; }
-    inline VarColor& operator-=(const Var<vec4>& o) { m_value -= o; return *this; }
-    inline VarColor& operator+=(const Var<vec4>& o) { m_value += o; return *this; }
-    inline VarColor& operator*=(const Var<vec4>& o) { m_value *= o; return *this; }
-    inline VarColor& operator/=(const Var<vec4>& o) { m_value /= o; return *this; }
-    inline bool operator==(const vec4& value)     { return m_value == value; }
-    inline bool operator!=(const vec4& value)     { return m_value != value; }
-    inline bool operator==(const Var<vec4>& o)    { return m_value == o; }
-    inline bool operator!=(const Var<vec4>& o)    { return m_value != o; }
-    inline VarColor&  operator-(const VarColor& v)  { m_value -  v.m_value; return *this; }
-    inline VarColor&  operator+(const VarColor& v)  { m_value +  v.m_value; return *this; }
-    inline VarColor&  operator*(const VarColor& v)  { m_value  * v.m_value; return *this; }
-    inline VarColor&  operator/(const VarColor& v)  { m_value /  v.m_value; return *this; }
-    inline VarColor&  operator=(const VarColor& v)  { m_value =  v.m_value; return *this; }
-    inline VarColor& operator-=(const VarColor& v)  { m_value -= v.m_value; return *this; }
-    inline VarColor& operator+=(const VarColor& v)  { m_value += v.m_value; return *this; }
-    inline VarColor& operator*=(const VarColor& v)  { m_value *= v.m_value; return *this; }
-    inline VarColor& operator/=(const VarColor& v)  { m_value /= v.m_value; return *this; }
-    inline bool operator==(const VarColor& v)     { return m_value == v.m_value; }
-    inline bool operator!=(const VarColor& v)     { return m_value != v.m_value; }
-
-protected:
-    void InnerInit()
-    {
-        m_value = vec4::zero;
-    }
-    bool InnerIsValid(lua_State* l, int index)
-    {
-        Var<String> s;
-        return m_value.IsValid(l, index) || s.IsValid(l, index);
-    }
-    void InnerGet(lua_State* l, int& index)
-    {
-        //Try vec4 first
-        if (m_value.IsValid(l, index))
-        {
-            m_value.Get(l, index);
-        }
-        else
-        {
-            Var<String> c(l, index);
-            *this = Color::C8BppHexString(c);
-        }
-    }
-    int InnerPush(lua_State* l)
-    {
-        Var<String> c = Color::HexString8Bpp(m_value);
-        return c.Return(l);
-    }
-};
-
-//-----------------------------------------------------------------------------
-template<typename E>
-class VarEnum
-{
-protected:
-    SafeEnum<E> m_value;
-    bool m_optional = false;
-
-public:
-    VarEnum(bool optional = false)
-    {
-        m_optional = optional;
-        InnerInit();
-    }
-    VarEnum(SafeEnum<E> value, bool optional = false)
-        : VarEnum(optional)
-    {
-        m_value = value;
-    }
-    VarEnum(lua_State* l, int& index, bool optional = false)
-        : VarEnum(optional)
-    {
-        GetInc(l, index);
-    }
-    VarEnum(SafeEnum<E> value, lua_State* l, int& index, bool optional = false)
-        : VarEnum(value, optional)
-    {
-        GetInc(l, index);
-    }
-
-    inline operator SafeEnum<E>()     { return m_value; }
-    inline SafeEnum<E>& operator ()() { return m_value; }
-    inline SafeEnum<E>& GetValue()    { return m_value; }
-    inline bool IsValid(lua_State* l, int index)
-    {
-        return InnerIsValid(l, index);
-    }
-    inline bool IsOptional()
-    {
-        return m_optional;
-    }
-private:
-    void GetInc(lua_State* l, int& index)
-    {
-        bool is_nil = lua_isnil(l, index);
-        if (!m_optional || (!is_nil && InnerIsValid(l, index)))
-        {
-            ASSERT(!is_nil);
-            InnerGet(l, index);
-        }
-    }
-public:
-    inline void Get(lua_State* l, int index)
-    {
-        int idx = index;
-        GetInc(l, idx);
-    }
-    inline int Return(lua_State* l)
-    {
-        return InnerPush(l);
-    }
-    inline VarEnum<E>&  operator-(const SafeEnum<E>& value)  { m_value - value; return *this; }
-    inline VarEnum<E>&  operator+(const SafeEnum<E>& value)  { m_value + value; return *this; }
-    inline VarEnum<E>&  operator*(const SafeEnum<E>& value)  { m_value  * value; return *this; }
-    inline VarEnum<E>&  operator/(const SafeEnum<E>& value)  { m_value / value; return *this; }
-    inline VarEnum<E>&  operator=(const SafeEnum<E>& value)  { m_value = value; return *this; }
-    inline VarEnum<E>& operator-=(const SafeEnum<E>& value)  { m_value -= value; return *this; }
-    inline VarEnum<E>& operator+=(const SafeEnum<E>& value)  { m_value += value; return *this; }
-    inline VarEnum<E>& operator*=(const SafeEnum<E>& value)  { m_value *= value; return *this; }
-    inline VarEnum<E>& operator/=(const SafeEnum<E>& value)  { m_value /= value; return *this; }
-    inline bool operator==(const SafeEnum<E>& value)     { return m_value == value; }
-    inline bool operator!=(const SafeEnum<E>& value)     { return m_value != value; }
-    inline VarEnum<E>&  operator-(const VarEnum<E>& v)  { m_value - v.m_value; return *this; }
-    inline VarEnum<E>&  operator+(const VarEnum<E>& v)  { m_value + v.m_value; return *this; }
-    inline VarEnum<E>&  operator*(const VarEnum<E>& v)  { m_value  * v.m_value; return *this; }
-    inline VarEnum<E>&  operator/(const VarEnum<E>& v)  { m_value / v.m_value; return *this; }
-    inline VarEnum<E>&  operator=(const VarEnum<E>& v)  { m_value = v.m_value; return *this; }
-    inline VarEnum<E>& operator-=(const VarEnum<E>& v)  { m_value -= v.m_value; return *this; }
-    inline VarEnum<E>& operator+=(const VarEnum<E>& v)  { m_value += v.m_value; return *this; }
-    inline VarEnum<E>& operator*=(const VarEnum<E>& v)  { m_value *= v.m_value; return *this; }
-    inline VarEnum<E>& operator/=(const VarEnum<E>& v)  { m_value /= v.m_value; return *this; }
-    inline bool operator==(const VarEnum<E>& v)     { return m_value == v.m_value; }
-    inline bool operator!=(const VarEnum<E>& v)     { return m_value != v.m_value; }
-
-protected:
-    void InnerInit()
-    {
-        m_value = SafeEnum<E>(0);
-    }
-    bool InnerIsValid(lua_State* l, int index)
-    {
-        Var<String> s;
-        return s.IsValid(l, index);
-    }
-    void InnerGet(lua_State* l, int& index)
-    {
-        Var<String> c(l, index);
-        *this = FindValue<SafeEnum<E> >(c);
-    }
-    int InnerPush(lua_State* l)
-    {
-        Var<String> s = this->GetValue().ToString();
-        return s.Return(l);
-    }
-};
-#endif //CUSTOM_TYPES
-
-#endif //OLD_VAR_SYSTEM
-
-//-----------------------------------------------------------------------------
 // Stack: Main class that encapsulates everything -----------------------------
 //-----------------------------------------------------------------------------
 class Stack
 {
-public:
-
-#if NEW_VAR_SYSTEM
-
     //-------------------------------------------------------------------------
+public:
     static Stack Begin(lua_State* state, int32_t start_index = 1)
     {
         return Stack(state, start_index);
+    }
+
+    //-------------------------------------------------------------------------
+    void SetIndex(int32_t index)
+    {
+        m_index = index;
     }
 
     //-------------------------------------------------------------------------
@@ -905,25 +280,22 @@ public:
         return m_result;
     }
 
-#if !OLD_VAR_SYSTEM
+    //-------------------------------------------------------------------------
 protected:
-#endif //!OLD_VAR_SYSTEM
-
-#endif //NEW_VAR_SYSTEM
-    
     Stack(lua_State* l, int32_t start_index = 1)
     {
         m_state = l;
         m_index = start_index;
     }
+
+public:
     virtual ~Stack() { }
 
+protected:
     int32_t GetArgs()
     {
         return lua_gettop(m_state);
     }
-
-#if NEW_VAR_SYSTEM
 
 public:
     //-------------------------------------------------------------------------
@@ -945,6 +317,7 @@ public:
         }
         Ptr(const T*& value) { m_value = value; }
         inline operator T*() { return m_value; }
+        inline T* operator ->() { return m_value; }
         inline Ptr<T>& operator=(T const*& value) { m_value = value; return *this; }
     };
 
@@ -985,13 +358,6 @@ protected:
     template<typename T> T InnerGet(T value) { UNUSED(value); ASSERT(false, INNER_ERROR); return InnerDefault<T>(); }
     template<typename T> int InnerPush(T value) { UNUSED(value); ASSERT(false, INNER_ERROR); return 0; }
 
-#ifndef INNER_T_T
-    //template<typename T, template <typename> class C> C<T> InnerDefault() { return C<E>(); }
-    //template<typename E> bool InnerIsValid() { return InnerIsValid<String>(); }
-    //template<typename E> SafeEnum<E> InnerGet(SafeEnum<E> value) { return FindValue<SafeEnum<E> >(InnerGet<char const*>(value.ToString().C())); }
-    //template<typename E> int InnerPush(SafeEnum<E> value) { return InnerPush<char const*>(value.ToString.C()); }
-#endif //STACK_STRING
-
 #ifndef INNER_SAFE_ENUM
     template<typename E> SafeEnum<E> InnerDefaultSafeEnum() { return SafeEnum<E>(); }
     template<typename E> bool InnerIsValidSafeEnum() { return InnerIsValid<String>(); }
@@ -1016,35 +382,7 @@ protected:
     }
 #endif //STACK_STRING
 
-#endif //NEW_VAR_SYSTEM
-
-	//-------------------------------------------------------------------------
-#if OLD_VAR_SYSTEM
-public:
-    inline operator int32_t() { return m_result; }
     //-------------------------------------------------------------------------
-
-    template<typename T>
-    Stack& operator>>(T& var)
-    {
-        var = T(var.GetValue(), m_state, m_index, var.IsOptional());
-        return *this;
-    }
-
-#if !NEW_VAR_SYSTEM
-
-    //-------------------------------------------------------------------------
-    template<typename T>
-    Stack& operator<<(T& var)
-    {
-        m_result += var.Return(m_state);
-        return *this;
-    }
-
-#endif //NEW_VAR_SYSTEM
-
-#endif //OLD_VAR_SYSTEM
-
 private:
     lua_State*  m_state = nullptr;
     int32_t m_index = 1;
@@ -1052,21 +390,7 @@ private:
 };
 
 //-----------------------------------------------------------------------------
-#if NEW_VAR_SYSTEM
-
 #ifndef REGION_STACK_VAR
-
-//#if OLD_VAR_SYSTEM && NEW_VAR_SYSTEM
-//
-////-------------------------------------------------------------------------
-//template<typename T, typename V>
-//Stack& Stack::operator<<(Var<T>& var)
-//{
-//    m_result += var.Return(m_state);
-//    return *this;
-//}
-//
-//#endif //OLD_VAR_SYSTEM && NEW_VAR_SYSTEM
 
 #ifndef STACK_BOOL
 template<> inline bool Stack::InnerIsValid<bool>()       { return lua_isboolean(m_state, m_index); }
@@ -1104,7 +428,6 @@ template<> inline int Stack::InnerPush<float>(float value)  { return InnerPush<d
 #endif //STACK_FLOAT
 
 //-----------------------------------------------------------------------------
-//DO NOT REMOVE: IT IS THE BASIS FOR INT 32
 #ifndef STACK_INT64
 template<> inline bool Stack::InnerIsValid<int64_t>()             { return !!lua_isnumber(m_state, m_index); }
 template<> inline int64_t Stack::InnerGet<int64_t>(int64_t value) { UNUSED(value); return lua_tointeger(m_state, m_index++); }
@@ -1153,35 +476,7 @@ template<> inline vec4 Stack::InnerGet<vec4>(vec4 value) { return vec4(InnerGet<
 template<> inline int Stack::InnerPush<vec4>(vec4 value) { return (InnerPush<float>(value.x) + InnerPush<float>(value.y) + InnerPush<float>(value.z) + InnerPush<float>(value.w)); }
 #endif STACK_VEC4
 
-//-----------------------------------------------------------------------------
-#ifndef STACK_SAFE_ENUM
-//template<typename E> inline SafeEnum<E> Stack::InnerDefault<SafeEnum, E>()              { return SafeEnum<E>(); }
-//template<typename E> inline bool Stack::InnerIsValid<SafeEnum<E> >()                     { return InnerIsValid<String>(); }
-//template<typename E> inline SafeEnum<E> Stack::InnerGet<SafeEnum<E> >(SafeEnum<E> value) { return FindValue<SafeEnum<E> >(InnerGet<char const*>(value.ToString().C())); }
-//template<typename E> inline int Stack::InnerPush<SafeEnum<E> >(SafeEnum<E> value)        { return InnerPush<char const*>(value.ToString.C()); }
-#endif //STACK_STRING
-
-//-----------------------------------------------------------------------------
-#ifndef STACK_PTR
-//template<typename P> inline Stack::Ptr<P> Stack::InnerDefault<Stack::Ptr<P> >() { return Stack::Ptr<P>(nullptr); }
-//template<typename P> inline bool Stack::InnerIsValid<Stack::Ptr<P> >() { return !!lua_isuserdata(m_state, m_index); }
-//template<typename P> inline Stack::Ptr<P> Stack::InnerGet<Stack::Ptr<P> >(Stack::Ptr<P> value)
-//{
-//    P** obj = static_cast<P**>(value.m_throw_error
-//                                    ? luaL_checkudata(m_state, m_index++, ObjectHelper::GetMethodName<P>())
-//                                    : luaL_testudata(m_state, m_index++, ObjectHelper::GetMethodName<P>()) );
-//    return Stack::Ptr<P>(obj ? *obj : value.m_value);
-//}
-//template<typename P> inline int Stack::InnerPush<Stack::Ptr<P> >(Stack::Ptr<P> value)
-//{
-//    P** data = (P**)lua_newuserdata(m_state, sizeof(P*));
-//    *data = value.m_value;
-//}
-#endif //STACK_STRING
-
 #endif //REGION_STACK_VAR
-
-#endif //NEW_VAR_SYSTEM
 
 //-----------------------------------------------------------------------------
 class Loader
@@ -1194,7 +489,6 @@ public:
     bool ExecLuaFile(String const &lua);
     bool ExecLuaCode(String const &lua);
 
-#if NEW_VAR_SYSTEM
     //-------------------------------------------------------------------------
 #define DECLARE_LOADER_GET(T0, T1, GET_NAME) \
     template<typename T0> \
@@ -1213,27 +507,6 @@ public:
 
 #undef DECLARE_LOADER_GET
 
-#else //OLD_VAR_SYSTEM
-
-    template<typename T>
-    T GetVar(String const &name)
-    {
-        lua_getglobal(m_lua_state, name.C());
-        Var<T> var; var.Get(m_lua_state, -1);
-        lua_pop(m_lua_state, 1);
-        return var;
-    }
-    template<typename T>
-    T* GetPtr(String const &name)
-    {
-        lua_getglobal(m_lua_state, name.C());
-        VarPtr<T> var; var.Get(m_lua_state, -1);
-        lua_pop(m_lua_state, 1);
-        return var();
-    }
-
-#endif //OLD_VAR_SYSTEM
-
 protected:
     lua_State* GetLuaState();
     static void Store(lua_State* l, Loader* loader);
@@ -1249,12 +522,11 @@ private:
 //-----------------------------------------------------------------------------
 // ObjectHelper member implementations that require VarPtr
 
-#if NEW_VAR_SYSTEM
 template <typename TLuaClass>
 int ObjectHelper::Store(lua_State * l)
 {
     auto stack = LuaStack::Begin(l);
-    auto obj = stack.Get<Stack::Ptr<TLuaClass> >();
+    TLuaClass* obj = stack.GetPtr<TLuaClass>();
     ASSERT(obj);
     Loader::StoreObject(l, obj);
     return 0;
@@ -1264,36 +536,11 @@ template <typename TLuaClass>
 int ObjectHelper::Del(lua_State * l)
 {
     auto stack = LuaStack::Begin(l);
-    auto obj = stack.Get<Stack::Ptr<TLuaClass> >();
+    TLuaClass* obj = stack.GetPtr<TLuaClass>();
     ASSERT(obj);
     delete obj;
     return 0;
 }
-
-#else //OLD_VAR_SYSTEM
-
-template <typename TLuaClass>
-int ObjectHelper::Store(lua_State * l)
-{
-    VarPtr<TLuaClass> obj;
-    obj.Get(l, 1);
-    ASSERT(obj());
-    Loader::StoreObject(l, obj());
-    return 0;
-}
-
-template <typename TLuaClass>
-int ObjectHelper::Del(lua_State * l)
-{
-    VarPtr<TLuaClass> obj;
-    obj.Get(l, 1);
-    ASSERT(obj());
-    delete obj();
-    return 0;
-}
-
-#endif //OLD_VAR_SYSTEM
-
 
 } /* namespace Lolua */
 
@@ -1305,22 +552,5 @@ typedef Lolua::Object::Library  LuaObjectLibrary;
 typedef Lolua::Loader           LuaLoader;
 typedef Lolua::Stack            LuaStack;
 template <typename P> using LuaPtr = Lolua::Stack::Ptr<P>;
-//template <typename P>
-//typedef Lolua::Stack::Ptr<P>    LuaPtr<P>;
-#if OLD_VAR_SYSTEM
-typedef Lolua::Var<bool>        LuaBool;
-typedef Lolua::Var<char const*> LuaCharPtr;
-typedef Lolua::Var<String>      LuaString;
-typedef Lolua::Var<double>      LuaDouble;
-typedef Lolua::Var<float>       LuaFloat;
-typedef Lolua::Var<int64_t>     LuaInt64;
-typedef Lolua::Var<int32_t>     LuaInt32;
-typedef Lolua::Var<uint32_t>    LuaUInt32;
-typedef Lolua::Var<uint64_t>    LuaUInt64;
-typedef Lolua::Var<vec2>        LuaVec2;
-typedef Lolua::Var<vec3>        LuaVec3;
-typedef Lolua::Var<vec4>        LuaVec4;
-typedef Lolua::VarColor         LuaColor;
-#endif //OLD_VAR_SYSTEM
 
 } /* namespace lol */
