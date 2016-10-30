@@ -16,6 +16,9 @@
 
 #pragma once
 
+#define OLD_VAR_SYSTEM true
+#define NEW_VAR_SYSTEM true
+
 namespace lol
 {
 
@@ -33,69 +36,70 @@ typedef struct ClassVar
 } ClassVar;
 
 //-----------------------------------------------------------------------------
-struct ObjectLib
-{
-    typedef struct ClassVarStr
-    {
-        ClassVarStr() { }
-        ClassVarStr(String var_name, lua_CFunction get, lua_CFunction set)
-        {
-            m_get_name = String("Get") + var_name;
-            m_set_name = String("Set") + var_name;
-            m_get = get;
-            m_set = set;
-        }
-        String m_get_name = "";
-        String m_set_name = "";
-        lua_CFunction m_get = nullptr;
-        lua_CFunction m_set = nullptr;
-    } ClassVarStr;
-
-    ObjectLib(String class_name,
-        array<ClassMethod> const& statics,
-        array<ClassMethod> const& methods,
-        array<ClassVar> const& variables)
-    {
-        m_class_name = class_name;
-        m_static_name = class_name + "_lib";
-        m_method_name = class_name + "_inst";
-
-        m_statics = statics;
-        if (m_statics.count() == 0
-            || m_statics.last().name != nullptr
-            || m_statics.last().func != nullptr)
-            m_statics.push({ nullptr, nullptr });
-
-        m_methods = methods;
-        if (m_methods.count() == 0
-            || m_methods.last().name != nullptr
-            || m_methods.last().func != nullptr)
-            m_methods.push({ nullptr, nullptr });
-
-        for (ClassVar const& cv : variables)
-        {
-            if (cv.name && cv.get && cv.set)
-            {
-                m_variables.push({ cv.name, cv.get, cv.set });
-            }
-        }
-        if (m_variables.count() == 0
-            || variables.last().name != nullptr
-            || variables.last().get != nullptr
-            || variables.last().set != nullptr)
-            m_variables.push(ClassVarStr());
-    }
-    String m_class_name = "";
-    String m_static_name = "";
-    String m_method_name = "";
-    array<ClassMethod> m_statics;
-    array<ClassMethod> m_methods;
-    array<ClassVarStr> m_variables;
-};
-
-//-----------------------------------------------------------------------------
 class Object
 {
+public:
+    //-----------------------------------------------------------------------------
+    struct Library
+    {
+        typedef struct ClassVarStr
+        {
+            ClassVarStr() { }
+            ClassVarStr(String var_name, lua_CFunction get, lua_CFunction set)
+            {
+                m_get_name = String("Get") + var_name;
+                m_set_name = String("Set") + var_name;
+                m_get = get;
+                m_set = set;
+            }
+            String m_get_name = "";
+            String m_set_name = "";
+            lua_CFunction m_get = nullptr;
+            lua_CFunction m_set = nullptr;
+        } ClassVarStr;
+
+        Library(String class_name,
+            array<ClassMethod> const& statics,
+            array<ClassMethod> const& methods,
+            array<ClassVar> const& variables)
+        {
+            m_class_name = class_name;
+            m_static_name = class_name + "_lib";
+            m_method_name = class_name + "_inst";
+
+            m_statics = statics;
+            if (m_statics.count() == 0
+                || m_statics.last().name != nullptr
+                || m_statics.last().func != nullptr)
+                m_statics.push({ nullptr, nullptr });
+
+            m_methods = methods;
+            if (m_methods.count() == 0
+                || m_methods.last().name != nullptr
+                || m_methods.last().func != nullptr)
+                m_methods.push({ nullptr, nullptr });
+
+            for (ClassVar const& cv : variables)
+            {
+                if (cv.name && cv.get && cv.set)
+                {
+                    m_variables.push({ cv.name, cv.get, cv.set });
+                }
+            }
+            if (m_variables.count() == 0
+                || variables.last().name != nullptr
+                || variables.last().get != nullptr
+                || variables.last().set != nullptr)
+                m_variables.push(ClassVarStr());
+        }
+        String m_class_name = "";
+        String m_static_name = "";
+        String m_method_name = "";
+        array<ClassMethod> m_statics;
+        array<ClassMethod> m_methods;
+        array<ClassVarStr> m_variables;
+    };
+
 public:
     Object() { }
     virtual ~Object() { }
@@ -106,19 +110,20 @@ public:
         ASSERT(false);
         return nullptr;
     }
-    static const ObjectLib* GetLib() { ASSERT(false); return nullptr; }
+    static const Library* GetLib() { ASSERT(false); return nullptr; }
 };
 
 //-----------------------------------------------------------------------------
 // Class available to link C++ class to Lua methods
 //--
-class ObjectDef
+class ObjectHelper
 {
-public:
+private:
     //-------------------------------------------------------------------------
-    ObjectDef() { }
-    virtual ~ObjectDef() { }
+    ObjectHelper() { }
+    virtual ~ObjectHelper() { }
 
+public:
     //-------------------------------------------------------------------------
     template <typename TLuaClass>
     static void Register(lua_State *l)
@@ -163,8 +168,8 @@ public:
         lua_setfield(l, -1, "__index");
 
         //Create variables Get/Set
-        const array<ObjectLib::ClassVarStr>& variables = GetVariables<TLuaClass>();
-        for (const ObjectLib::ClassVarStr& var : variables)
+        const array<Object::Library::ClassVarStr>& variables = GetVariables<TLuaClass>();
+        for (const Object::Library::ClassVarStr& var : variables)
         {
             if (!var.m_get || !var.m_set)
                 continue;
@@ -183,27 +188,29 @@ public:
     }
 
 private:
+    //-------------------------------------------------------------------------
     template <typename TLuaClass>
-    static const ObjectLib* GetLib()
+    static const Object::Library* GetLibrary()
     {
-        const ObjectLib* lib = TLuaClass::GetLib();
+        const Object::Library* lib = TLuaClass::GetLib();
         ASSERT(lib);
         return lib;
     }
 
 public:
+    //-------------------------------------------------------------------------
     template <typename TLuaClass>
-    static const char* GetObjectName() { return GetLib<TLuaClass>()->m_class_name.C(); }
+    static const char* GetObjectName() { return GetLibrary<TLuaClass>()->m_class_name.C(); }
     template <typename TLuaClass>
-    static const char* GetStaticName() { return GetLib<TLuaClass>()->m_static_name.C(); }
+    static const char* GetStaticName() { return GetLibrary<TLuaClass>()->m_static_name.C(); }
     template <typename TLuaClass>
-    static const char* GetMethodName() { return GetLib<TLuaClass>()->m_method_name.C(); }
+    static const char* GetMethodName() { return GetLibrary<TLuaClass>()->m_method_name.C(); }
     template <typename TLuaClass>
-    static const ClassMethod* GetStaticMethods() { return GetLib<TLuaClass>()->m_statics.data(); }
+    static const ClassMethod* GetStaticMethods() { return GetLibrary<TLuaClass>()->m_statics.data(); }
     template <typename TLuaClass>
-    static const ClassMethod* GetInstanceMethods() { return GetLib<TLuaClass>()->m_methods.data(); }
+    static const ClassMethod* GetInstanceMethods() { return GetLibrary<TLuaClass>()->m_methods.data(); }
     template <typename TLuaClass>
-    static const array<ObjectLib::ClassVarStr>& GetVariables() { return GetLib<TLuaClass>()->m_variables; }
+    static const array<Object::Library::ClassVarStr>& GetVariables() { return GetLibrary<TLuaClass>()->m_variables; }
 
 protected:
     //-------------------------------------------------------------------------
@@ -240,6 +247,9 @@ public:
         lua_setglobal(l, name);
     }
 };
+
+//-----------------------------------------------------------------------------
+#if OLD_VAR_SYSTEM
 
 //-----------------------------------------------------------------------------
 template<typename T>
@@ -311,7 +321,7 @@ protected:
     }
     virtual void InnerGet(lua_State* l, int& index)
     {
-        T** obj = static_cast<T**>(luaL_checkudata(l, index++, ObjectDef::GetMethodName<T>()));
+        T** obj = static_cast<T**>(luaL_checkudata(l, index++, ObjectHelper::GetMethodName<T>()));
         m_value = obj ? *obj : nullptr;
     }
     void InnerPush(lua_State* l)
@@ -339,6 +349,7 @@ protected:
     }
 };
 */
+
 //-----------------------------------------------------------------------------
 template<typename T>
 class Var
@@ -431,6 +442,7 @@ protected:
 };
 
 //-----------------------------------------------------------------------------
+#ifndef BASE_TYPES
 template<> inline bool Var<bool>::InnerIsValid(lua_State* l, int index)
 {
     return lua_isboolean(l, index);
@@ -638,8 +650,10 @@ template<> inline int Var<vec4>::InnerPush(lua_State* l)
     Var<float> w = m_value.w;
     return (x.Return(l) + y.Return(l) + z.Return(l) + w.Return(l));
 }
+#endif //BASE_TYPES
 
 //-----------------------------------------------------------------------------
+#ifndef CUSTOM_TYPES
 class VarColor
 {
 protected:
@@ -866,48 +880,158 @@ protected:
         return s.Return(l);
     }
 };
+#endif //CUSTOM_TYPES
 
+#endif //OLD_VAR_SYSTEM
+
+//-----------------------------------------------------------------------------
+// Stack: Main class that encapsulates everything -----------------------------
 //-----------------------------------------------------------------------------
 class Stack
 {
 public:
+
+#if NEW_VAR_SYSTEM
+
+    //-------------------------------------------------------------------------
+    static Stack Begin(lua_State* state, int32_t start_index = 1)
+    {
+        return Stack(state, start_index);
+    }
+
+    //-------------------------------------------------------------------------
+    int32_t End()
+    {
+        return m_result;
+    }
+
+#if !OLD_VAR_SYSTEM
+protected:
+#endif //!OLD_VAR_SYSTEM
+
+#endif //NEW_VAR_SYSTEM
+    
     Stack(lua_State* l, int32_t start_index = 1)
     {
         m_state = l;
         m_index = start_index;
     }
     virtual ~Stack() { }
-    inline operator int32_t() { return m_result; }
+
     int32_t GetArgs()
     {
         return lua_gettop(m_state);
     }
 
-	//-------------------------------------------------------------------------
-	template<typename T>
-	T GetVar(T defaultValue = 0, bool isOptional = false)
-	{
-		return Var<T>(defaultValue, m_state, m_index, isOptional).GetValue();
-	}
+#if NEW_VAR_SYSTEM
+
+public:
+    //-------------------------------------------------------------------------
+    //The encapsulating struct for pointers
+    template<typename T>
+    struct Ptr
+    {
+    public:
+        T* m_value = nullptr;
+        bool m_throw_error = false;
+
+        //---------------------------------------------------------------------
+        //m_value: Your stored value
+        //throw_error: If true, lua will throw an error if the value get fails
+        Ptr(T* value, bool throw_error = false)
+        {
+            m_value = value;
+            m_throw_error = throw_error;
+        }
+        Ptr(const T*& value) { m_value = value; }
+        inline operator T*() { return m_value; }
+        inline Ptr<T>& operator=(T const*& value) { m_value = value; return *this; }
+    };
 
 	//-------------------------------------------------------------------------
-	template<typename T>
-	Stack& SetVar(T& value)
-	{
-		m_result += Var<T>(value, m_state, m_index).Return(m_state);
-		return *this;
-	}
-
-	//-------------------------------------------------------------------------
-	int32_t Return() { return m_result; }
+    template<typename T> T Get(bool isOptional = false) { return Get(InnerDefault<T>(), isOptional); }
+    template<typename E> SafeEnum<E> GetEnum(bool isOptional = false) { return GetEnum(InnerDefaultSafeEnum<E>(), isOptional); }
+    template<typename P> Ptr<P> GetPtr(bool isOptional = false) { return GetPtr(InnerDefaultPtr<P>(), isOptional); }
 
     //-------------------------------------------------------------------------
+#define DECLARE_STACK_GET(T0, T1, GET_NAME, INNER_IS_VALID, INNER_GET) \
+    template<typename T0> \
+    T1 GET_NAME(T1 value, bool isOptional = false) \
+    { \
+        bool is_nil = lua_isnil(m_state, m_index); \
+        if (!isOptional || (!is_nil && INNER_IS_VALID<T0>())) \
+        { \
+            ASSERT(!is_nil); /* touky: should assert, though ? */ \
+            return INNER_GET<T0>(value); \
+        } \
+        return value; \
+    }
+
+    DECLARE_STACK_GET(T, T, Get, InnerIsValid, InnerGet);
+    DECLARE_STACK_GET(E, SafeEnum<E>, GetEnum, InnerIsValidSafeEnum, InnerGetSafeEnum);
+    DECLARE_STACK_GET(P, Ptr<P>, GetPtr, InnerIsValidPtr, InnerGetPtr);
+
+#undef DECLARE_STACK_GET
+
+    //-------------------------------------------------------------------------
+    template<typename T> Stack& operator<<(T& value) { m_result += InnerPush<T>(value); return *this; }
+    template<typename E> Stack& operator<<(SafeEnum<E>& value) { m_result += InnerPushSafeEnum<E>(value); return *this; }
+    template<typename P> Stack& operator<<(Ptr<P>& value) { m_result += InnerPushPtr<P>(value); return *this; }
+
+protected:
+    #define INNER_ERROR "Your type is not implemented. For pointers, use LuaPtr<MyType>()"
+    template<typename T> T InnerDefault() { return T(0); }
+	template<typename T> bool InnerIsValid() { ASSERT(false, INNER_ERROR); return false; }
+    template<typename T> T InnerGet(T value) { UNUSED(value); ASSERT(false, INNER_ERROR); return InnerDefault<T>(); }
+    template<typename T> int InnerPush(T value) { UNUSED(value); ASSERT(false, INNER_ERROR); return 0; }
+
+#ifndef INNER_T_T
+    //template<typename T, template <typename> class C> C<T> InnerDefault() { return C<E>(); }
+    //template<typename E> bool InnerIsValid() { return InnerIsValid<String>(); }
+    //template<typename E> SafeEnum<E> InnerGet(SafeEnum<E> value) { return FindValue<SafeEnum<E> >(InnerGet<char const*>(value.ToString().C())); }
+    //template<typename E> int InnerPush(SafeEnum<E> value) { return InnerPush<char const*>(value.ToString.C()); }
+#endif //STACK_STRING
+
+#ifndef INNER_SAFE_ENUM
+    template<typename E> SafeEnum<E> InnerDefaultSafeEnum() { return SafeEnum<E>(); }
+    template<typename E> bool InnerIsValidSafeEnum() { return InnerIsValid<String>(); }
+    template<typename E> SafeEnum<E> InnerGetSafeEnum(SafeEnum<E> value) { return FindValue<SafeEnum<E> >(InnerGet<String>(value.ToString())); }
+    template<typename E> int InnerPushSafeEnum(SafeEnum<E> value) { return InnerPush<String>(value.ToString()); }
+#endif //STACK_STRING
+
+#ifndef INNER_PTR
+    template<typename P> inline Ptr<P> InnerDefaultPtr() { return Ptr<P>(nullptr); }
+    template<typename P> inline bool InnerIsValidPtr() { return !!lua_isuserdata(m_state, m_index); }
+    template<typename P> inline Ptr<P> InnerGetPtr(Ptr<P> value)
+    {
+        P** obj = static_cast<P**>(value.m_throw_error
+                                        ? luaL_checkudata(m_state, m_index++, ObjectHelper::GetMethodName<P>())
+                                        : luaL_testudata(m_state, m_index++, ObjectHelper::GetMethodName<P>()) );
+        return Ptr<P>(obj ? *obj : value.m_value);
+    }
+    template<typename P> inline int InnerPushPtr(Ptr<P> value)
+    {
+        P** data = (P**)lua_newuserdata(m_state, sizeof(P*));
+        *data = value.m_value;
+    }
+#endif //STACK_STRING
+
+#endif //NEW_VAR_SYSTEM
+
+	//-------------------------------------------------------------------------
+#if OLD_VAR_SYSTEM
+public:
+    inline operator int32_t() { return m_result; }
+    //-------------------------------------------------------------------------
+
     template<typename T>
     Stack& operator>>(T& var)
     {
         var = T(var.GetValue(), m_state, m_index, var.IsOptional());
         return *this;
     }
+
+#if !NEW_VAR_SYSTEM
 
     //-------------------------------------------------------------------------
     template<typename T>
@@ -917,6 +1041,10 @@ public:
         return *this;
     }
 
+#endif //NEW_VAR_SYSTEM
+
+#endif //OLD_VAR_SYSTEM
+
 private:
     lua_State*  m_state = nullptr;
     int32_t m_index = 1;
@@ -924,15 +1052,168 @@ private:
 };
 
 //-----------------------------------------------------------------------------
+#if NEW_VAR_SYSTEM
+
+#ifndef REGION_STACK_VAR
+
+//#if OLD_VAR_SYSTEM && NEW_VAR_SYSTEM
+//
+////-------------------------------------------------------------------------
+//template<typename T, typename V>
+//Stack& Stack::operator<<(Var<T>& var)
+//{
+//    m_result += var.Return(m_state);
+//    return *this;
+//}
+//
+//#endif //OLD_VAR_SYSTEM && NEW_VAR_SYSTEM
+
+#ifndef STACK_BOOL
+template<> inline bool Stack::InnerIsValid<bool>()       { return lua_isboolean(m_state, m_index); }
+template<> inline bool Stack::InnerGet<bool>(bool value) { UNUSED(value); return !!lua_toboolean(m_state, m_index++); }
+template<> inline int Stack::InnerPush<bool>(bool value) { lua_pushboolean(m_state, value); return 1; }
+#endif // STACK_BOOL
+
+//-----------------------------------------------------------------------------
+#ifndef STACK_CHAR_CONST
+template<> inline bool Stack::InnerIsValid<char const*>()                     { return !!lua_isstring(m_state, m_index); }
+template<> inline char const* Stack::InnerGet<char const*>(char const* value) { UNUSED(value); return lua_tostring(m_state, m_index++); }
+template<> inline int Stack::InnerPush<char const*>(char const* value)        { lua_pushstring(m_state, value); return 1; }
+#endif // STACK_CHAR_CONST
+
+//-----------------------------------------------------------------------------
+#ifndef STACK_STRING
+template<> inline String Stack::InnerDefault<String>()         { return String(); }
+template<> inline bool Stack::InnerIsValid<String>()           { return InnerIsValid<char const*>(); }
+template<> inline String Stack::InnerGet<String>(String value) { return String(InnerGet<char const*>(value.C())); }
+template<> inline int Stack::InnerPush<String>(String value)   { return InnerPush<char const*>(value.C()); }
+#endif //STACK_STRING
+
+//-----------------------------------------------------------------------------
+#ifndef STACK_STRING
+template<> inline bool Stack::InnerIsValid<double>()           { return !!lua_isnumber(m_state, m_index); }
+template<> inline double Stack::InnerGet<double>(double value) { UNUSED(value); return lua_tonumber(m_state, m_index++); }
+template<> inline int Stack::InnerPush<double>(double value)   { lua_pushnumber(m_state, value); return 1; }
+#endif //STACK_STRING
+
+//-----------------------------------------------------------------------------
+#ifndef STACK_FLOAT
+template<> inline bool Stack::InnerIsValid<float>()         { return InnerIsValid<double>(); }
+template<> inline float Stack::InnerGet<float>(float value) { return (float)InnerGet<double>((double)value); }
+template<> inline int Stack::InnerPush<float>(float value)  { return InnerPush<double>((double)value); }
+#endif //STACK_FLOAT
+
+//-----------------------------------------------------------------------------
+//DO NOT REMOVE: IT IS THE BASIS FOR INT 32
+#ifndef STACK_INT64
+template<> inline bool Stack::InnerIsValid<int64_t>()             { return !!lua_isnumber(m_state, m_index); }
+template<> inline int64_t Stack::InnerGet<int64_t>(int64_t value) { UNUSED(value); return lua_tointeger(m_state, m_index++); }
+template<> inline int Stack::InnerPush<int64_t>(int64_t value)    { lua_pushinteger(m_state, value); return 1; }
+#endif //STACK_INT64
+
+//-----------------------------------------------------------------------------
+#ifndef STACK_UINT64
+template<> inline bool Stack::InnerIsValid<uint64_t>()               { return !!lua_isnumber(m_state, m_index); }
+template<> inline uint64_t Stack::InnerGet<uint64_t>(uint64_t value) { UNUSED(value); return (uint64_t)lua_tointeger(m_state, m_index++); }
+template<> inline int Stack::InnerPush<uint64_t>(uint64_t value)     { lua_pushinteger(m_state, (lua_Unsigned)value); return 1; }
+#endif //STACK_UINT64
+
+//-----------------------------------------------------------------------------
+#ifndef STACK_INT32
+template<> inline bool Stack::InnerIsValid<int32_t>()             { return !!lua_isnumber(m_state, m_index); }
+template<> inline int32_t Stack::InnerGet<int32_t>(int32_t value) { UNUSED(value); return (int32_t)lua_tointeger(m_state, m_index++); }
+template<> inline int Stack::InnerPush<int32_t>(int32_t value)    { lua_pushinteger(m_state, (lua_Integer)value); return 1; }
+#endif STACK_INT32
+
+//-----------------------------------------------------------------------------
+#ifndef STACK_UINT32
+template<> inline bool Stack::InnerIsValid<uint32_t>()               { return !!lua_isnumber(m_state, m_index); }
+template<> inline uint32_t Stack::InnerGet<uint32_t>(uint32_t value) { UNUSED(value); return (uint32_t)(lua_Unsigned)lua_tointeger(m_state, m_index++); }
+template<> inline int Stack::InnerPush<uint32_t>(uint32_t value)     { lua_pushinteger(m_state, (lua_Unsigned)value); return 1; }
+#endif //STACK_UINT32
+
+//-----------------------------------------------------------------------------
+#ifndef STACK_VEC2
+template<> inline bool Stack::InnerIsValid<vec2>()       { return InnerIsValid<float>(); }
+template<> inline vec2 Stack::InnerGet<vec2>(vec2 value) { return vec2(InnerGet<float>(value.x), Get<float>(value.y, true)); }
+template<> inline int Stack::InnerPush<vec2>(vec2 value) { return (InnerPush<float>(value.x) + InnerPush<float>(value.y)); }
+#endif //STACK_VEC2
+
+//-----------------------------------------------------------------------------
+#ifndef STACK_VEC3
+template<> inline bool Stack::InnerIsValid<vec3>()       { return InnerIsValid<float>(); }
+template<> inline vec3 Stack::InnerGet<vec3>(vec3 value) { return vec3(InnerGet<float>(value.x), Get<float>(value.y, true), Get<float>(value.z, true)); }
+template<> inline int Stack::InnerPush<vec3>(vec3 value) { return (InnerPush<float>(value.x) + InnerPush<float>(value.y) + InnerPush<float>(value.z)); }
+#endif //STACK_VEC3
+
+//-----------------------------------------------------------------------------
+#ifndef STACK_VEC4
+template<> inline bool Stack::InnerIsValid<vec4>()       { return InnerIsValid<float>(); }
+template<> inline vec4 Stack::InnerGet<vec4>(vec4 value) { return vec4(InnerGet<float>(value.x), Get<float>(value.y, true), Get<float>(value.z, true), Get<float>(value.w, true)); }
+template<> inline int Stack::InnerPush<vec4>(vec4 value) { return (InnerPush<float>(value.x) + InnerPush<float>(value.y) + InnerPush<float>(value.z) + InnerPush<float>(value.w)); }
+#endif STACK_VEC4
+
+//-----------------------------------------------------------------------------
+#ifndef STACK_SAFE_ENUM
+//template<typename E> inline SafeEnum<E> Stack::InnerDefault<SafeEnum, E>()              { return SafeEnum<E>(); }
+//template<typename E> inline bool Stack::InnerIsValid<SafeEnum<E> >()                     { return InnerIsValid<String>(); }
+//template<typename E> inline SafeEnum<E> Stack::InnerGet<SafeEnum<E> >(SafeEnum<E> value) { return FindValue<SafeEnum<E> >(InnerGet<char const*>(value.ToString().C())); }
+//template<typename E> inline int Stack::InnerPush<SafeEnum<E> >(SafeEnum<E> value)        { return InnerPush<char const*>(value.ToString.C()); }
+#endif //STACK_STRING
+
+//-----------------------------------------------------------------------------
+#ifndef STACK_PTR
+//template<typename P> inline Stack::Ptr<P> Stack::InnerDefault<Stack::Ptr<P> >() { return Stack::Ptr<P>(nullptr); }
+//template<typename P> inline bool Stack::InnerIsValid<Stack::Ptr<P> >() { return !!lua_isuserdata(m_state, m_index); }
+//template<typename P> inline Stack::Ptr<P> Stack::InnerGet<Stack::Ptr<P> >(Stack::Ptr<P> value)
+//{
+//    P** obj = static_cast<P**>(value.m_throw_error
+//                                    ? luaL_checkudata(m_state, m_index++, ObjectHelper::GetMethodName<P>())
+//                                    : luaL_testudata(m_state, m_index++, ObjectHelper::GetMethodName<P>()) );
+//    return Stack::Ptr<P>(obj ? *obj : value.m_value);
+//}
+//template<typename P> inline int Stack::InnerPush<Stack::Ptr<P> >(Stack::Ptr<P> value)
+//{
+//    P** data = (P**)lua_newuserdata(m_state, sizeof(P*));
+//    *data = value.m_value;
+//}
+#endif //STACK_STRING
+
+#endif //REGION_STACK_VAR
+
+#endif //NEW_VAR_SYSTEM
+
+//-----------------------------------------------------------------------------
 class Loader
 {
-    friend class ObjectDef;
+    friend class ObjectHelper;
 public:
     Loader();
     virtual ~Loader();
 
     bool ExecLuaFile(String const &lua);
     bool ExecLuaCode(String const &lua);
+
+#if NEW_VAR_SYSTEM
+    //-------------------------------------------------------------------------
+#define DECLARE_LOADER_GET(T0, T1, GET_NAME) \
+    template<typename T0> \
+    T1 GET_NAME(String const &name) \
+    { \
+        lua_getglobal(m_lua_state, name.C()); \
+        auto stack = LuaStack::Begin(m_lua_state, -1); \
+        auto result = stack.GET_NAME<T0>(); \
+        lua_pop(m_lua_state, 1); \
+        return result; \
+    }
+
+    DECLARE_LOADER_GET(T, T, Get);
+    DECLARE_LOADER_GET(E, SafeEnum<E>, GetEnum);
+    DECLARE_LOADER_GET(P, P*, GetPtr);
+
+#undef DECLARE_LOADER_GET
+
+#else //OLD_VAR_SYSTEM
 
     template<typename T>
     T GetVar(String const &name)
@@ -951,6 +1232,8 @@ public:
         return var();
     }
 
+#endif //OLD_VAR_SYSTEM
+
 protected:
     lua_State* GetLuaState();
     static void Store(lua_State* l, Loader* loader);
@@ -964,10 +1247,33 @@ private:
 };
 
 //-----------------------------------------------------------------------------
-// ObjectDef member implementations that require VarPtr
+// ObjectHelper member implementations that require VarPtr
+
+#if NEW_VAR_SYSTEM
+template <typename TLuaClass>
+int ObjectHelper::Store(lua_State * l)
+{
+    auto stack = LuaStack::Begin(l);
+    auto obj = stack.Get<Stack::Ptr<TLuaClass> >();
+    ASSERT(obj);
+    Loader::StoreObject(l, obj);
+    return 0;
+}
 
 template <typename TLuaClass>
-int ObjectDef::Store(lua_State * l)
+int ObjectHelper::Del(lua_State * l)
+{
+    auto stack = LuaStack::Begin(l);
+    auto obj = stack.Get<Stack::Ptr<TLuaClass> >();
+    ASSERT(obj);
+    delete obj;
+    return 0;
+}
+
+#else //OLD_VAR_SYSTEM
+
+template <typename TLuaClass>
+int ObjectHelper::Store(lua_State * l)
 {
     VarPtr<TLuaClass> obj;
     obj.Get(l, 1);
@@ -977,7 +1283,7 @@ int ObjectDef::Store(lua_State * l)
 }
 
 template <typename TLuaClass>
-int ObjectDef::Del(lua_State * l)
+int ObjectHelper::Del(lua_State * l)
 {
     VarPtr<TLuaClass> obj;
     obj.Get(l, 1);
@@ -986,13 +1292,22 @@ int ObjectDef::Del(lua_State * l)
     return 0;
 }
 
+#endif //OLD_VAR_SYSTEM
+
+
 } /* namespace Lolua */
 
+//TYPEDEFS
 typedef Lolua::Function         LuaFunction;
-typedef Lolua::ObjectDef        LuaObjectDef;
+typedef Lolua::ObjectHelper     LuaObjectHelper;
 typedef Lolua::Object           LuaObject;
-typedef Lolua::ObjectLib        LuaObjectLib;
+typedef Lolua::Object::Library  LuaObjectLibrary;
 typedef Lolua::Loader           LuaLoader;
+typedef Lolua::Stack            LuaStack;
+template <typename P> using LuaPtr = Lolua::Stack::Ptr<P>;
+//template <typename P>
+//typedef Lolua::Stack::Ptr<P>    LuaPtr<P>;
+#if OLD_VAR_SYSTEM
 typedef Lolua::Var<bool>        LuaBool;
 typedef Lolua::Var<char const*> LuaCharPtr;
 typedef Lolua::Var<String>      LuaString;
@@ -1006,6 +1321,6 @@ typedef Lolua::Var<vec2>        LuaVec2;
 typedef Lolua::Var<vec3>        LuaVec3;
 typedef Lolua::Var<vec4>        LuaVec4;
 typedef Lolua::VarColor         LuaColor;
-typedef Lolua::Stack            LuaStack;
+#endif //OLD_VAR_SYSTEM
 
 } /* namespace lol */

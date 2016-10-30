@@ -242,10 +242,10 @@ int SceneSetupLuaObject::Toggle(lua_State* l)
 }
 
 //-----------------------------------------------------------------------------
-const LuaObjectLib* SceneSetupLuaObject::GetLib()
+const LuaObjectLibrary* SceneSetupLuaObject::GetLib()
 {
     typedef SceneSetupLuaObject SSLO;
-    static const LuaObjectLib lib = LuaObjectLib(
+    static const LuaObjectLibrary lib = LuaObjectLibrary(
         "SceneSetup",
         //Statics
         { { nullptr, nullptr } },
@@ -273,7 +273,7 @@ SceneSetupLuaLoader::SceneSetupLuaLoader() : LuaLoader()
 {
     lua_State* l = GetLuaState();
 
-    LuaObjectDef::Register<SceneSetupLuaObject>(l);
+    LuaObjectHelper::Register<SceneSetupLuaObject>(l);
 }
 
 //-----------------------------------------------------------------------------

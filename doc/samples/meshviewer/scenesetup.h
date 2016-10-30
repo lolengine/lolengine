@@ -116,7 +116,7 @@ public:
 
     //-------------------------------------------------------------------------
     static SceneSetupLuaObject* New(lua_State* l, int arg_nb);
-    static const LuaObjectLib* GetLib();
+    static const LuaObjectLibrary* GetLib();
 
     //-------------------------------------------------------------------------
 public:

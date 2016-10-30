@@ -62,6 +62,12 @@ template< class T > inline int GetRandom(array<T> src)
 // Gets the value for the given enum type.
 template<class T> inline T FindValue(const char* name)
 {
+    auto str = String(name);
+    return FindValue<T>(str);
+}
+
+template<class T> inline T FindValue(String const& name)
+{
     String n = name;
     n.to_lower();
     for (int i = 0; i < T::Max; ++i)
@@ -71,10 +77,6 @@ template<class T> inline T FindValue(const char* name)
             return T(i);
     }
     return T::Max;
-}
-template<class T> inline T FindValue(String const& name)
-{
-    return FindValue<T>(name.C());
 }
 
 } /* namespace lol */

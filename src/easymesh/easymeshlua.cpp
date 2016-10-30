@@ -27,7 +27,7 @@ EasyMeshLuaLoader::EasyMeshLuaLoader() : LuaLoader()
     lua_State* l = GetLuaState();
 
     //Registering demo object
-    LuaObjectDef::Register<EasyMeshLuaObject>(l);
+    LuaObjectHelper::Register<EasyMeshLuaObject>(l);
 }
 
 //-----------------------------------------------------------------------------
@@ -88,10 +88,10 @@ EasyMeshLuaObject* EasyMeshLuaObject::New(lua_State* l, int arg_nb)
 }
 
 //-----------------------------------------------------------------------------
-const LuaObjectLib* EasyMeshLuaObject::GetLib()
+const LuaObjectLibrary* EasyMeshLuaObject::GetLib()
 {
     typedef EasyMeshLuaObject EMLO;
-    static const LuaObjectLib lib = LuaObjectLib(
+    static const LuaObjectLibrary lib = LuaObjectLibrary(
         "EasyMesh",
         //Statics
         { { nullptr, nullptr } },

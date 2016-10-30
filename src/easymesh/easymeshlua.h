@@ -28,7 +28,7 @@ public:
 
     //-------------------------------------------------------------------------
     static EasyMeshLuaObject* New(lua_State* l, int arg_nb);
-    static const LuaObjectLib* GetLib();
+    static const LuaObjectLibrary* GetLib();
 
     //-------------------------------------------------------------------------
     static int AppendCylinder(lua_State* l)

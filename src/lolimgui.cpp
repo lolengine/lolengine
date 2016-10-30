@@ -375,7 +375,7 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
         m_vdecl->SetStream(vbo, m_attribs[0], m_attribs[1], m_attribs[2]);
 
         const ImDrawIdx* idx_buffer_offset = 0;
-        for (size_t cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
+        for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
         {
             const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[(int)cmd_i];
 #ifdef SHOW_IMGUI_DEBUG

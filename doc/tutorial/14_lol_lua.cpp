@@ -37,27 +37,25 @@ public:
     //-------------------------------------------------------------------------
     static int AddFive(lua_State* l)
     {
-		LuaStack stack(l);
-		int32_t i = stack.GetVar<int32_t>();
-		//LuaInt32 i; i.Get(l, 1);
+		auto stack = LuaStack::Begin(l);
+		int32_t i = stack.Get<int32_t>();
+
         i += 5;
-        //return i.Return(l);
-		return stack.SetVar(i).Return();
-	}
+
+        return (stack << i).End();
+    }
+
     static int AddTenInstance(lua_State* l)
     {
-        LuaStack stack(l);
-		DemoObject* obj = nullptr; // stack.GetPtr<DemoObject>();
-		float f = stack.GetVar<float>();
+        auto stack = LuaStack::Begin(l);
+        DemoObject* obj = stack.GetPtr<DemoObject>();
+		float f = stack.Get<float>();
 
-        //LuaDemoObjectPtr obj;
-        //LuaFloat f;
-        //stack >> obj >> f;
         f = obj->AddTenMethod(f);
 
-		//return f.Return(l);
-		return 0;// stack.SetVar(f).SetPtr().Return();
+        return (stack << f).End();
     }
+
     float AddTenMethod(float f)
     {
         return (f + 10);
@@ -65,27 +63,30 @@ public:
 
     static int GetX(lua_State* l)
     {
-        LuaStack stack(l);
-        LuaDemoObjectPtr obj;
-        LuaInt32 i;
-        stack >> obj;
+        auto stack = LuaStack::Begin(l);
+        DemoObject* obj = stack.GetPtr<DemoObject>();
+        auto i = stack.Get<int32_t>();
+
         i = obj->m_x;
-        return stack << i;
+
+        return (stack << i).End();
     }
+
     static int SetX(lua_State* l)
     {
-        LuaStack stack(l);
-        LuaDemoObjectPtr obj;
-        LuaInt32 i;
-        stack >> obj >> i;
+        auto stack = LuaStack::Begin(l);
+        DemoObject* obj = stack.GetPtr<DemoObject>();
+        auto i = stack.Get<int32_t>();
+
         obj->m_x = i;
-        return 0;
+
+        return stack.End();
     }
 
     //-------------------------------------------------------------------------
-    static const LuaObjectLib* GetLib()
+    static const LuaObjectLibrary* GetLib()
     {
-        static const LuaObjectLib lib = LuaObjectLib(
+        static const LuaObjectLibrary lib = LuaObjectLibrary(
             "LoluaDemo",
             { { "AddFive", &DemoObject::AddFive } },
             { { "AddTenInstance", &DemoObject::AddTenInstance } },
@@ -99,9 +100,12 @@ public:
 //-----------------------------------------------------------------------------
 static int GlobalAddString(lua_State* l)
 {
-    LuaString s; s.Get(l, 1);
-    s() += "_added";
-    return s.Return(l);
+    auto stack = LuaStack::Begin(l);
+    auto s = stack.Get<String>();
+
+    s += "_added";
+
+    return (stack << s).End();
 }
 
 //-----------------------------------------------------------------------------
@@ -113,7 +117,7 @@ public:
         lua_State* l = GetLuaState();
 
         //Registering demo object
-        LuaObjectDef::Register<DemoObject>(l);
+        LuaObjectHelper::Register<DemoObject>(l);
 
         //Registering function
         LuaFunction add_string(l, "GlobalAddString", &GlobalAddString);
@@ -166,18 +170,18 @@ public:
         demo_loader->TestStuff();
 
         //Grab global test values
-        float testvalue_num = demo_loader->GetVar<float>("testvalue_num");
-        int32_t testvalue_int = demo_loader->GetVar<int32_t>("testvalue_int");
-        uint32_t testvalue_uint = demo_loader->GetVar<uint32_t>("testvalue_uint");
-        String testvalue_str = demo_loader->GetVar<String>("testvalue_str");
+        float testvalue_num = demo_loader->Get<float>("testvalue_num");
+        int32_t testvalue_int = demo_loader->Get<int32_t>("testvalue_int");
+        uint32_t testvalue_uint = demo_loader->Get<uint32_t>("testvalue_uint");
+        String testvalue_str = demo_loader->Get<String>("testvalue_str");
 
         //Grab string modified with function
-        String function_return = demo_loader->GetVar<String>("function_return");
+        String function_return = demo_loader->Get<String>("function_return");
 
         //Grab global values modified with DemoObject
-        int32_t loluademo_return = demo_loader->GetVar<int32_t>("loluademo_return");
-        int32_t loluademo_getx = demo_loader->GetVar<int32_t>("loluademo_getx");
-        float loluademo_inst_return = demo_loader->GetVar<float>("loluademo_inst_return");
+        int32_t loluademo_return = demo_loader->Get<int32_t>("loluademo_return");
+        int32_t loluademo_getx = demo_loader->Get<int32_t>("loluademo_getx");
+        float loluademo_inst_return = demo_loader->Get<float>("loluademo_inst_return");
         DemoObject* loluademo_inst = demo_loader->GetPtr<DemoObject>("loluademo_inst");
 
         msg::info("Lua Vars: \
