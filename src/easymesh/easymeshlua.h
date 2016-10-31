@@ -38,12 +38,13 @@ public:
         auto h = s.Get<float>();
         auto d1 = s.Get<float>();
         auto d2 = s.Get<float>();
-        auto dualside = s.Get<bool>(false, true);
-        auto smooth = s.Get<bool>(false, true);
-        auto close = s.Get<bool>(false, true);
+        auto dualside = s.Get<bool>(false);
+        auto smooth = s.Get<bool>(false);
+        auto close = s.Get<bool>(false);
         m->m_instance.AppendCylinder(nsides, h, d1, d2, dualside, smooth, close);
         return s.End();
     }
+    //LOLUA_DECLARE_VOID_METHOD(AppendSphere, GetPtr<EasyMeshLuaObject>(), m_instance.AppendSphere, Get<int32_t>(), Get<float>());
     static int AppendSphere(lua_State* l)
     {
         auto s = LuaStack::Begin(l);
@@ -53,6 +54,7 @@ public:
         m->m_instance.AppendSphere(ndivisions, d);
         return s.End();
     }
+
     static int AppendCapsule(lua_State* l)
     {
         auto s = LuaStack::Begin(l);
@@ -78,8 +80,8 @@ public:
         auto s = LuaStack::Begin(l);
         auto m = s.GetPtr<EasyMeshLuaObject>();
         auto size = s.Get<vec3>();
-        auto chamf = s.Get<float>(0.f, true);
-        auto smooth = s.Get<bool>(false, true);
+        auto chamf = s.Get<float>(0.f);
+        auto smooth = s.Get<bool>(false);
         m->m_instance.AppendBox(size, chamf, smooth);
         return s.End();
     }
@@ -90,8 +92,8 @@ public:
         auto nbranches = s.Get<int32_t>();
         auto d1 = s.Get<float>();
         auto d2 = s.Get<float>();
-        auto fade = s.Get<bool>(false, true);
-        auto fade2 = s.Get<bool>(false, true);
+        auto fade = s.Get<bool>(false);
+        auto fade2 = s.Get<bool>(false);
         m->m_instance.AppendStar(nbranches, d1, d2, fade, fade2);
         return s.End();
     }
@@ -102,7 +104,7 @@ public:
         auto nbranches = s.Get<int32_t>();
         auto d1 = s.Get<float>();
         auto d2 = s.Get<float>();
-        auto extrad = s.Get<float>(0.f, true);
+        auto extrad = s.Get<float>(0.f);
         m->m_instance.AppendExpandedStar(nbranches, d1, d2, extrad);
         return s.End();
     }
@@ -112,7 +114,7 @@ public:
         auto m = s.GetPtr<EasyMeshLuaObject>();
         auto nsides = s.Get<int32_t>();
         auto d = s.Get<float>();
-        auto fade = s.Get<bool>(false, true);
+        auto fade = s.Get<bool>(false);
         m->m_instance.AppendDisc(nsides, d, fade);
         return s.End();
     }
@@ -121,7 +123,7 @@ public:
         auto s = LuaStack::Begin(l);
         auto m = s.GetPtr<EasyMeshLuaObject>();
         auto d = s.Get<float>();
-        auto fade = s.Get<bool>(false, true);
+        auto fade = s.Get<bool>(false);
         m->m_instance.AppendSimpleTriangle(d, fade);
         return s.End();
     }
@@ -130,7 +132,7 @@ public:
         auto s = LuaStack::Begin(l);
         auto m = s.GetPtr<EasyMeshLuaObject>();
         auto size = s.Get<float>();
-        auto fade = s.Get<bool>(false, true);
+        auto fade = s.Get<bool>(false);
         m->m_instance.AppendSimpleQuad(size, fade);
         return s.End();
     }
@@ -140,11 +142,11 @@ public:
         auto m = s.GetPtr<EasyMeshLuaObject>();
         auto nbsides = s.Get<int32_t>();
         auto h = s.Get<float>();
-        auto sidemul = s.Get<float>(0.f, true);
+        auto sidemul = s.Get<float>(0.f);
         auto d0 = s.Get<vec2>();
         auto d1 = s.Get<vec2>();
         auto d2 = s.Get<vec2>();
-        auto offset = s.Get<bool>(false, true);
+        auto offset = s.Get<bool>(false);
         m->m_instance.AppendCog(nbsides, h, d0.x, d0.y, d1.x, d1.y, d2.x, d2.y, sidemul, offset);
         return s.End();
     }
@@ -264,8 +266,8 @@ public:
         auto m = s.GetPtr<EasyMeshLuaObject>();
         auto y = s.Get<float>();
         auto z = s.Get<float>();
-        auto xoff = s.Get<float>(0.f, true);
-        auto abs = s.Get<bool>(true, true);
+        auto xoff = s.Get<float>(0.f);
+        auto abs = s.Get<bool>(true);
         m->m_instance.TaperX(y, z, xoff, abs);
         return s.End();
     }
@@ -275,8 +277,8 @@ public:
         auto m = s.GetPtr<EasyMeshLuaObject>();
         auto x = s.Get<float>();
         auto z = s.Get<float>();
-        auto yoff = s.Get<float>(0.f, true);
-        auto abs = s.Get<bool>(true, true);
+        auto yoff = s.Get<float>(0.f);
+        auto abs = s.Get<bool>(true);
         m->m_instance.TaperY(x, z, yoff, abs);
         return s.End();
     }
@@ -286,8 +288,8 @@ public:
         auto m = s.GetPtr<EasyMeshLuaObject>();
         auto x = s.Get<float>();
         auto y = s.Get<float>();
-        auto zoff = s.Get<float>(0.f, true);
-        auto abs = s.Get<bool>(true, true);
+        auto zoff = s.Get<float>(0.f);
+        auto abs = s.Get<bool>(true);
         m->m_instance.TaperZ(x, y, zoff, abs);
         return s.End();
     }
@@ -297,7 +299,7 @@ public:
         auto s = LuaStack::Begin(l);
         auto m = s.GetPtr<EasyMeshLuaObject>();
         auto t = s.Get<float>();
-        auto toff = s.Get<float>(0.f, true);
+        auto toff = s.Get<float>(0.f);
         m->m_instance.TwistX(t, toff);
         return s.End();
     }
@@ -306,7 +308,7 @@ public:
         auto s = LuaStack::Begin(l);
         auto m = s.GetPtr<EasyMeshLuaObject>();
         auto t = s.Get<float>();
-        auto toff = s.Get<float>(0.f, true);
+        auto toff = s.Get<float>(0.f);
         m->m_instance.TwistY(t, toff);
         return s.End();
     }
@@ -315,7 +317,7 @@ public:
         auto s = LuaStack::Begin(l);
         auto m = s.GetPtr<EasyMeshLuaObject>();
         auto t = s.Get<float>();
-        auto toff = s.Get<float>(0.f, true);
+        auto toff = s.Get<float>(0.f);
         m->m_instance.TwistZ(t, toff);
         return s.End();
     }
@@ -326,8 +328,8 @@ public:
         auto m = s.GetPtr<EasyMeshLuaObject>();
         auto y = s.Get<float>();
         auto z = s.Get<float>();
-        auto xoff = s.Get<float>(0.f, true);
-        auto abs = s.Get<bool>(true, true);
+        auto xoff = s.Get<float>(0.f);
+        auto abs = s.Get<bool>(true);
         m->m_instance.ShearX(y, z, xoff, abs);
         return s.End();
     }
@@ -337,8 +339,8 @@ public:
         auto m = s.GetPtr<EasyMeshLuaObject>();
         auto x = s.Get<float>();
         auto z = s.Get<float>();
-        auto yoff = s.Get<float>(0.f, true);
-        auto abs = s.Get<bool>(true, true);
+        auto yoff = s.Get<float>(0.f);
+        auto abs = s.Get<bool>(true);
         m->m_instance.ShearY(x, z, yoff, abs);
         return s.End();
     }
@@ -348,8 +350,8 @@ public:
         auto m = s.GetPtr<EasyMeshLuaObject>();
         auto x = s.Get<float>();
         auto y = s.Get<float>();
-        auto zoff = s.Get<float>(0.f, true);
-        auto abs = s.Get<bool>(true, true);
+        auto zoff = s.Get<float>(0.f);
+        auto abs = s.Get<bool>(true);
         m->m_instance.ShearZ(x, y, zoff, abs);
         return s.End();
     }
@@ -360,7 +362,7 @@ public:
         auto m = s.GetPtr<EasyMeshLuaObject>();
         auto y = s.Get<float>();
         auto z = s.Get<float>();
-        auto xoff = s.Get<float>(0.f, true);
+        auto xoff = s.Get<float>(0.f);
         m->m_instance.StretchX(y, z, xoff);
         return s.End();
     }
@@ -370,7 +372,7 @@ public:
         auto m = s.GetPtr<EasyMeshLuaObject>();
         auto x = s.Get<float>();
         auto z = s.Get<float>();
-        auto yoff = s.Get<float>(0.f, true);
+        auto yoff = s.Get<float>(0.f);
         m->m_instance.StretchY(x, z, yoff);
         return s.End();
     }
@@ -380,7 +382,7 @@ public:
         auto m = s.GetPtr<EasyMeshLuaObject>();
         auto x = s.Get<float>();
         auto y = s.Get<float>();
-        auto zoff = s.Get<float>(0.f, true);
+        auto zoff = s.Get<float>(0.f);
         m->m_instance.StretchZ(x, y, zoff);
         return s.End();
     }
@@ -390,7 +392,7 @@ public:
         auto s = LuaStack::Begin(l);
         auto m = s.GetPtr<EasyMeshLuaObject>();
         auto t = s.Get<float>();
-        auto toff = s.Get<float>(0.f, true);
+        auto toff = s.Get<float>(0.f);
         m->m_instance.BendXY(t, toff);
         return s.End();
     }
@@ -399,7 +401,7 @@ public:
         auto s = LuaStack::Begin(l);
         auto m = s.GetPtr<EasyMeshLuaObject>();
         auto t = s.Get<float>();
-        auto toff = s.Get<float>(0.f, true);
+        auto toff = s.Get<float>(0.f);
         m->m_instance.BendXZ(t, toff);
         return s.End();
     }
@@ -408,7 +410,7 @@ public:
         auto s = LuaStack::Begin(l);
         auto m = s.GetPtr<EasyMeshLuaObject>();
         auto t = s.Get<float>();
-        auto toff = s.Get<float>(0.f, true);
+        auto toff = s.Get<float>(0.f);
         m->m_instance.BendYX(t, toff);
         return s.End();
     }
@@ -417,7 +419,7 @@ public:
         auto s = LuaStack::Begin(l);
         auto m = s.GetPtr<EasyMeshLuaObject>();
         auto t = s.Get<float>();
-        auto toff = s.Get<float>(0.f, true);
+        auto toff = s.Get<float>(0.f);
         m->m_instance.BendYZ(t, toff);
         return s.End();
     }
@@ -426,7 +428,7 @@ public:
         auto s = LuaStack::Begin(l);
         auto m = s.GetPtr<EasyMeshLuaObject>();
         auto t = s.Get<float>();
-        auto toff = s.Get<float>(0.f, true);
+        auto toff = s.Get<float>(0.f);
         m->m_instance.BendZX(t, toff);
         return s.End();
     }
@@ -435,7 +437,7 @@ public:
         auto s = LuaStack::Begin(l);
         auto m = s.GetPtr<EasyMeshLuaObject>();
         auto t = s.Get<float>();
-        auto toff = s.Get<float>(0.f, true);
+        auto toff = s.Get<float>(0.f);
         m->m_instance.BendZY(t, toff);
         return s.End();
     }

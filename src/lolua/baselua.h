@@ -321,37 +321,56 @@ public:
         inline Ptr<T>& operator=(T const*& value) { m_value = value; return *this; }
     };
 
-	//-------------------------------------------------------------------------
-    template<typename T> T Get(bool isOptional = false) { return Get(InnerDefault<T>(), isOptional); }
-    template<typename E> SafeEnum<E> GetEnum(bool isOptional = false) { return GetEnum(InnerDefaultSafeEnum<E>(), isOptional); }
-    template<typename P> Ptr<P> GetPtr(bool isOptional = false) { return GetPtr(InnerDefaultPtr<P>(), isOptional); }
-
-    //-------------------------------------------------------------------------
-#define DECLARE_STACK_GET(T0, T1, GET_NAME, INNER_IS_VALID, INNER_GET) \
-    template<typename T0> \
-    T1 GET_NAME(T1 value, bool isOptional = false) \
-    { \
-        bool is_nil = lua_isnil(m_state, m_index); \
-        if (!isOptional || (!is_nil && INNER_IS_VALID<T0>())) \
-        { \
-            ASSERT(!is_nil); /* touky: should assert, though ? */ \
-            return INNER_GET<T0>(value); \
-        } \
-        return value; \
+private:
+    bool AllowGet(bool is_optional, bool value_validity)
+    {
+        bool is_nil = lua_isnil(m_state, m_index);
+        if (!is_optional || (!is_nil && value_validity))
+        {
+            ASSERT(!is_nil); /* touky: should it assert, though ? */
+            return true;
+        }
+        return false;
     }
 
-    DECLARE_STACK_GET(T, T, Get, InnerIsValid, InnerGet);
-    DECLARE_STACK_GET(E, SafeEnum<E>, GetEnum, InnerIsValidSafeEnum, InnerGetSafeEnum);
-    DECLARE_STACK_GET(P, Ptr<P>, GetPtr, InnerIsValidPtr, InnerGetPtr);
+public:
+	//-------------------------------------------------------------------------
+    template<typename T> T Get() { return Get(InnerDefault<T>(), false); }
+    template<typename T> T Get(T default_value) { return Get(default_value, true); }
+    template<typename E> SafeEnum<E> GetEnum() { return GetEnum(InnerDefaultSafeEnum<E>(), false); }
+    template<typename E> SafeEnum<E> GetEnum(SafeEnum<E> default_value) { return GetEnum(default_value, true); }
+    template<typename P> Ptr<P> GetPtr() { return GetPtr(InnerDefaultPtr<P>(), false); }
+    template<typename P> Ptr<P> GetPtr(Ptr<P> default_value) { return GetPtr(default_value, true); }
 
-#undef DECLARE_STACK_GET
-
+private:
     //-------------------------------------------------------------------------
-    template<typename T> Stack& operator<<(T& value) { m_result += InnerPush<T>(value); return *this; }
-    template<typename E> Stack& operator<<(SafeEnum<E>& value) { m_result += InnerPushSafeEnum<E>(value); return *this; }
-    template<typename P> Stack& operator<<(Ptr<P>& value) { m_result += InnerPushPtr<P>(value); return *this; }
+    template<typename T> T Get(T default_value, bool is_optional)
+    {
+        if (AllowGet(is_optional, InnerIsValid<T>()))
+            return InnerGet(default_value);
+        return default_value;
+    }
+    template<typename E> SafeEnum<E> GetEnum(SafeEnum<E> default_value, bool is_optional)
+    {
+        if (AllowGet(is_optional, InnerIsValidSafeEnum<E>()))
+            return InnerGetSafeEnum(default_value);
+        return default_value;
+    }
+    template<typename P> Ptr<P> GetPtr(Ptr<P> default_value, bool is_optional)
+    {
+        if (AllowGet(is_optional, InnerIsValidPtr<P>()))
+            return InnerGetPtr(default_value);
+        return default_value;
+    }
+
+public:
+    //-------------------------------------------------------------------------
+    template<typename T> Stack& operator<<(T value) { m_result += InnerPush<T>(value); return *this; }
+    template<typename E> Stack& operator<<(SafeEnum<E> value) { m_result += InnerPushSafeEnum<E>(value); return *this; }
+    template<typename P> Stack& operator<<(Ptr<P> value) { m_result += InnerPushPtr<P>(value); return *this; }
 
 protected:
+    //-------------------------------------------------------------------------
     #define INNER_ERROR "Your type is not implemented. For pointers, use LuaPtr<MyType>()"
     template<typename T> T InnerDefault() { return T(0); }
 	template<typename T> bool InnerIsValid() { ASSERT(false, INNER_ERROR); return false; }
@@ -388,6 +407,56 @@ private:
     int32_t m_index = 1;
     int32_t m_result = 0;
 };
+
+//-----------------------------------------------------------------------------
+#define /***/ LOLUA_VAR_1(a00) auto v00 = s.a00;
+#define /***/ LOLUA_VAR_2(a00, a01) LOLUA_VAR_1(a00) auto v01 = s.a01;
+#define /***/ LOLUA_VAR_3(a00, a01, a02) LOLUA_VAR_2(a00, a01) auto v02 = s.a02;
+#define /***/ LOLUA_VAR_4(a00, a01, a02, a03) LOLUA_VAR_3(a00, a01, a02) auto v03 = s.a03;
+#define /***/ LOLUA_VAR_5(a00, a01, a02, a03, a04) LOLUA_VAR_4(a00, a01, a02, a03) auto v04 = s.a04;
+#define /***/ LOLUA_VAR_6(a00, a01, a02, a03, a04, a05) LOLUA_VAR_5(a00, a01, a02, a03, a04) auto v05 = s.a05;
+#define /***/ LOLUA_VAR_7(a00, a01, a02, a03, a04, a05, a06) LOLUA_VAR_6(a00, a01, a02, a03, a04, a05) auto v06 = s.a06;
+#define /***/ LOLUA_VAR_8(a00, a01, a02, a03, a04, a05, a06, a07) LOLUA_VAR_7(a00, a01, a02, a03, a04, a05, a06) auto v07 = s.a07;
+#define /***/ LOLUA_VAR_9(a00, a01, a02, a03, a04, a05, a06, a07, a08) LOLUA_VAR_8(a00, a01, a02, a03, a04, a05, a06, a07) auto v08 = s.a08;
+#define /**/ LOLUA_VAR_10(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09) LOLUA_VAR_9(a00, a01, a02, a03, a04, a05, a06, a07, a08) auto v09 = s.a09;
+#define /**/ LOLUA_VAR_11(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10) LOLUA_VAR_10(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09) auto v10 = s.a10;
+#define /**/ LOLUA_VAR_12(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11) LOLUA_VAR_11(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09) auto v11 = s.a11;
+//-----------------------------------------------------------------------------
+#define /***/ LOLUA_ARG_1(a00) v00
+#define /***/ LOLUA_ARG_2(a00, a01) LOLUA_ARG_1(a00), v01
+#define /***/ LOLUA_ARG_3(a00, a01, a02) LOLUA_ARG_2(a00, a01), v02
+#define /***/ LOLUA_ARG_4(a00, a01, a02, a03) LOLUA_ARG_3(a00, a01, a02), v03
+#define /***/ LOLUA_ARG_5(a00, a01, a02, a03, a04) LOLUA_ARG_4(a00, a01, a02, a03), v04
+#define /***/ LOLUA_ARG_6(a00, a01, a02, a03, a04, a05) LOLUA_ARG_5(a00, a01, a02, a03, a04), v05
+#define /***/ LOLUA_ARG_7(a00, a01, a02, a03, a04, a05, a06) LOLUA_ARG_6(a00, a01, a02, a03, a04, a05), v06
+#define /***/ LOLUA_ARG_8(a00, a01, a02, a03, a04, a05, a06, a07) LOLUA_ARG_7(a00, a01, a02, a03, a04, a05, a06), v07
+#define /***/ LOLUA_ARG_9(a00, a01, a02, a03, a04, a05, a06, a07, a08) LOLUA_ARG_8(a00, a01, a02, a03, a04, a05, a06, a07), v08
+#define /**/ LOLUA_ARG_10(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09) LOLUA_ARG_9(a00, a01, a02, a03, a04, a05, a06, a07, a08), v09
+#define /**/ LOLUA_ARG_11(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10) LOLUA_ARG_10(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09), v10
+#define /**/ LOLUA_ARG_12(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09, a10, a11) LOLUA_ARG_11(a00, a01, a02, a03, a04, a05, a06, a07, a08, a09), v11
+//-----------------------------------------------------------------------------
+
+//-----------------------------------------------------------------------------
+#define LOLUA_DECLARE_VOID_METHOD(LUA_FUNC_NAME, INSTANCE_GET, INSTANCE_CALL, ...) \
+    static int LUA_FUNC_NAME(lua_State* l) \
+    { \
+        auto s = LuaStack::Begin(l); \
+        auto o = s.INSTANCE_GET; \
+        LOL_CALL(LOL_CAT(LOLUA_VAR_, LOL_CALL(LOL_COUNT_TO_12, (__VA_ARGS__))), (__VA_ARGS__)) \
+        o->INSTANCE_CALL(LOL_CALL(LOL_CAT(LOLUA_ARG_, LOL_CALL(LOL_COUNT_TO_12, (__VA_ARGS__))), (__VA_ARGS__))); \
+        return s.End(); \
+    }
+
+//-----------------------------------------------------------------------------
+#define LOLUA_DECLARE_RETURN_METHOD(LUA_FUNC_NAME, INSTANCE_GET, INSTANCE_CALL, ...) \
+    static int LUA_FUNC_NAME(lua_State* l) \
+    { \
+        auto s = LuaStack::Begin(l); \
+        auto o = s.INSTANCE_GET; \
+        LOL_CALL(LOL_CAT(LOLUA_VAR_, LOL_CALL(LOL_COUNT_TO_12, (__VA_ARGS__))), (__VA_ARGS__)) \
+        s << o->INSTANCE_CALL(LOL_CALL(LOL_CAT(LOLUA_ARG_, LOL_CALL(LOL_COUNT_TO_12, (__VA_ARGS__))), (__VA_ARGS__))); \
+        return s.End(); \
+    }
 
 //-----------------------------------------------------------------------------
 #ifndef REGION_STACK_VAR

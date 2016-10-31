@@ -43,20 +43,24 @@ public:
 
         return (stack << i).End();
     }
-
-    static int AddTenInstance(lua_State* l)
+    
+    LOLUA_DECLARE_RETURN_METHOD(AddTenInstance, GetPtr<DemoObject>(), AddTenMethod, Get<float>(), Get<int32_t>(), Get<int32_t>());
+    static int _AddTenInstance(lua_State* l)
     {
         auto stack = LuaStack::Begin(l);
         DemoObject* obj = stack.GetPtr<DemoObject>();
-		float f = stack.Get<float>();
+        float f = stack.Get<float>();
+        int32_t i = stack.Get<int32_t>();
+        int32_t i2 = stack.Get<int32_t>();
 
-        f = obj->AddTenMethod(f);
+        f = obj->AddTenMethod(f, i, i2);
 
         return (stack << f).End();
     }
 
-    float AddTenMethod(float f)
+    float AddTenMethod(float f, int32_t i, int32_t i2)
     {
+        UNUSED(i, i2);
         return (f + 10);
     }
 
@@ -71,7 +75,8 @@ public:
         return (stack << i).End();
     }
 
-    static int SetX(lua_State* l)
+    LOLUA_DECLARE_VOID_METHOD(SetX, GetPtr<DemoObject>(), SetXMethod, Get<int32_t>());
+    static int _SetX(lua_State* l)
     {
         auto stack = LuaStack::Begin(l);
         DemoObject* obj = stack.GetPtr<DemoObject>();
@@ -81,6 +86,12 @@ public:
 
         return stack.End();
     }
+
+    void SetXMethod(int32_t i)
+    {
+        m_x = i;
+    }
+
 
     //-------------------------------------------------------------------------
     static const LuaObjectLibrary* GetLib()
@@ -189,6 +200,12 @@ public:
         msg::info("Lua Vars: \
             function_return: %s, loluademo_return: %i, loluademo_inst_return: %.f, loluademo_getx: %i, loluademo_inst->m_x: %i.\n",
             function_return.C(), loluademo_return, loluademo_inst_return, loluademo_getx, loluademo_inst->m_x);
+
+#define /***/ _LOLUA_ARG_1(a00) (float)a00
+#define /***/ _LOLUA_ARG_2(a00, a01) _LOLUA_ARG_1(a00), _LOLUA_ARG_1(a01)
+#define /***/ _LOLUA_ARG_3(a00, a01, a02) _LOLUA_ARG_1(a00), _LOLUA_ARG_2(a01, a02)
+#define /***/ _LOLUA_ARG_4(a00, a01, a02, a03) _LOLUA_ARG_1(a00), _LOLUA_ARG_3(a01, a02, a03)
+        msg::info("_LOLUA_ARG_1: %f, %f, %f, %f\n", _LOLUA_ARG_4(0, 1, 2, 3));
 
         delete demo_loader;
 
