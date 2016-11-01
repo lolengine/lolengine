@@ -437,18 +437,39 @@ private:
 //-----------------------------------------------------------------------------
 
 //-----------------------------------------------------------------------------
-#define LOLUA_DECLARE_VOID_METHOD(LUA_FUNC_NAME, INSTANCE_GET, INSTANCE_CALL, ...) \
+#define LOLUA_DECLARE_BEGIN(LUA_FUNC_NAME, INSTANCE_GET) \
     static int LUA_FUNC_NAME(lua_State* l) \
     { \
         auto s = LuaStack::Begin(l); \
-        auto o = s.INSTANCE_GET; \
-        LOL_CALL(LOL_CAT(LOLUA_VAR_, LOL_CALL(LOL_COUNT_TO_12, (__VA_ARGS__))), (__VA_ARGS__)) \
-        o->INSTANCE_CALL(LOL_CALL(LOL_CAT(LOLUA_ARG_, LOL_CALL(LOL_COUNT_TO_12, (__VA_ARGS__))), (__VA_ARGS__))); \
+        auto o = s.INSTANCE_GET;
+
+#define LOLUA_DECLARE_VARS(...) \
+    LOL_CALL(LOL_CAT(LOLUA_VAR_, LOL_CALL(LOL_COUNT_TO_12, (__VA_ARGS__))), (__VA_ARGS__));
+
+#define LOLUA_DECLARE_CALL(INSTANCE_CALL, ...) \
+    o->INSTANCE_CALL(LOL_CALL(LOL_CAT(LOLUA_ARG_, LOL_CALL(LOL_COUNT_TO_12, (__VA_ARGS__))), (__VA_ARGS__)));
+
+#define LOLUA_DECLARE_CALL_VOID(INSTANCE_CALL) \
+    o->INSTANCE_CALL();
+
+#define LOLUA_DECLARE_END \
         return s.End(); \
     }
 
 //-----------------------------------------------------------------------------
-#define LOLUA_DECLARE_RETURN_METHOD(LUA_FUNC_NAME, INSTANCE_GET, INSTANCE_CALL, ...) \
+#define LOLUA_DECLARE_VOID_METHOD_VOID(LUA_FUNC_NAME, INSTANCE_GET, INSTANCE_CALL, ...) \
+    LOLUA_DECLARE_BEGIN(LUA_FUNC_NAME, INSTANCE_GET); \
+    LOLUA_DECLARE_CALL_VOID(INSTANCE_CALL) \
+    LOLUA_DECLARE_END
+
+#define LOLUA_DECLARE_VOID_METHOD_ARGS(LUA_FUNC_NAME, INSTANCE_GET, INSTANCE_CALL, ...) \
+    LOLUA_DECLARE_BEGIN(LUA_FUNC_NAME, INSTANCE_GET); \
+    LOLUA_DECLARE_VARS(__VA_ARGS__) \
+    LOLUA_DECLARE_CALL(INSTANCE_CALL, __VA_ARGS__) \
+    LOLUA_DECLARE_END
+
+//-----------------------------------------------------------------------------
+#define LOLUA_DECLARE_RETURN_METHOD_ARGS(LUA_FUNC_NAME, INSTANCE_GET, INSTANCE_CALL, ...) \
     static int LUA_FUNC_NAME(lua_State* l) \
     { \
         auto s = LuaStack::Begin(l); \

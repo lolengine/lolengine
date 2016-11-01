@@ -29,589 +29,89 @@ public:
     static EasyMeshLuaObject* New(lua_State* l, int arg_nb);
     static const LuaObjectLibrary* GetLib();
 
-    //-------------------------------------------------------------------------
-    static int AppendCylinder(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto nsides = s.Get<int32_t>();
-        auto h = s.Get<float>();
-        auto d1 = s.Get<float>();
-        auto d2 = s.Get<float>();
-        auto dualside = s.Get<bool>(false);
-        auto smooth = s.Get<bool>(false);
-        auto close = s.Get<bool>(false);
-        m->m_instance.AppendCylinder(nsides, h, d1, d2, dualside, smooth, close);
-        return s.End();
-    }
-    //LOLUA_DECLARE_VOID_METHOD(AppendSphere, GetPtr<EasyMeshLuaObject>(), m_instance.AppendSphere, Get<int32_t>(), Get<float>());
-    static int AppendSphere(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto ndivisions = s.Get<int32_t>();
-        auto d = s.Get<float>();
-        m->m_instance.AppendSphere(ndivisions, d);
-        return s.End();
-    }
+#define EMLO GetPtr<EasyMeshLuaObject>()
 
-    static int AppendCapsule(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto ndivisions = s.Get<int32_t>();
-        auto h = s.Get<float>();
-        auto d = s.Get<float>();
-        m->m_instance.AppendCapsule(ndivisions, h, d);
-        return s.End();
-    }
-    static int AppendTorus(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto ndivisions = s.Get<int32_t>();
-        auto d1 = s.Get<float>();
-        auto d2 = s.Get<float>();
-        m->m_instance.AppendTorus(ndivisions, d1, d2);
-        return s.End();
-    }
-    static int AppendBox(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto size = s.Get<vec3>();
-        auto chamf = s.Get<float>(0.f);
-        auto smooth = s.Get<bool>(false);
-        m->m_instance.AppendBox(size, chamf, smooth);
-        return s.End();
-    }
-    static int AppendStar(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto nbranches = s.Get<int32_t>();
-        auto d1 = s.Get<float>();
-        auto d2 = s.Get<float>();
-        auto fade = s.Get<bool>(false);
-        auto fade2 = s.Get<bool>(false);
-        m->m_instance.AppendStar(nbranches, d1, d2, fade, fade2);
-        return s.End();
-    }
-    static int AppendExpandedStar(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto nbranches = s.Get<int32_t>();
-        auto d1 = s.Get<float>();
-        auto d2 = s.Get<float>();
-        auto extrad = s.Get<float>(0.f);
-        m->m_instance.AppendExpandedStar(nbranches, d1, d2, extrad);
-        return s.End();
-    }
-    static int AppendDisc(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto nsides = s.Get<int32_t>();
-        auto d = s.Get<float>();
-        auto fade = s.Get<bool>(false);
-        m->m_instance.AppendDisc(nsides, d, fade);
-        return s.End();
-    }
-    static int AppendSimpleTriangle(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto d = s.Get<float>();
-        auto fade = s.Get<bool>(false);
-        m->m_instance.AppendSimpleTriangle(d, fade);
-        return s.End();
-    }
-    static int AppendSimpleQuad(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto size = s.Get<float>();
-        auto fade = s.Get<bool>(false);
-        m->m_instance.AppendSimpleQuad(size, fade);
-        return s.End();
-    }
-    static int AppendCog(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto nbsides = s.Get<int32_t>();
-        auto h = s.Get<float>();
-        auto sidemul = s.Get<float>(0.f);
-        auto d0 = s.Get<vec2>();
-        auto d1 = s.Get<vec2>();
-        auto d2 = s.Get<vec2>();
-        auto offset = s.Get<bool>(false);
-        m->m_instance.AppendCog(nbsides, h, d0.x, d0.y, d1.x, d1.y, d2.x, d2.y, sidemul, offset);
-        return s.End();
-    }
     //-------------------------------------------------------------------------
-    static int TranslateX(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto f = s.Get<float>();
-        m->m_instance.TranslateX(f);
-        return s.End();
-    }
-    static int TranslateY(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto f = s.Get<float>();
-        m->m_instance.TranslateY(f);
-        return s.End();
-    }
-    static int TranslateZ(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto f = s.Get<float>();
-        m->m_instance.TranslateZ(f);
-        return s.End();
-    }
-    static int Translate(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto v = s.Get<vec3>();
-        m->m_instance.Translate(v);
-        return s.End();
-    }
+    LOLUA_DECLARE_VOID_METHOD_ARGS(AppendCylinder, EMLO, m_instance.AppendCylinder, Get<int32_t>(), Get<float>(), Get<float>(), Get<float>(), Get<bool>(false), Get<bool>(false), Get<bool>(false));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(AppendSphere, EMLO, m_instance.AppendSphere, Get<int32_t>(), Get<float>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(AppendCapsule, EMLO, m_instance.AppendCapsule, Get<int32_t>(), Get<float>(), Get<float>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(AppendTorus, EMLO, m_instance.AppendTorus, Get<int32_t>(), Get<float>(), Get<float>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(AppendBox, EMLO, m_instance.AppendBox, Get<vec3>(), Get<float>(0.f), Get<bool>(false));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(AppendStar, EMLO, m_instance.AppendStar, Get<int32_t>(), Get<float>(), Get<float>(), Get<bool>(false), Get<bool>(false));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(AppendExpandedStar, EMLO, m_instance.AppendExpandedStar, Get<int32_t>(), Get<float>(), Get<float>(), Get<float>(0.f));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(AppendDisc, EMLO, m_instance.AppendDisc, Get<int32_t>(), Get<float>(), Get<bool>(false));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(AppendSimpleTriangle, EMLO, m_instance.AppendSimpleTriangle, Get<float>(), Get<bool>(false));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(AppendSimpleQuad, EMLO, m_instance.AppendSimpleQuad, Get<float>(), Get<bool>(false));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(AppendCog, EMLO, m_instance.AppendCog, Get<int32_t>(), Get<float>(), Get<vec2>(), Get<vec2>(), Get<vec2>(), Get<float>(0.f), Get<bool>(false));
     //-------------------------------------------------------------------------
-    static int RotateX(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto a = s.Get<float>();
-        m->m_instance.RotateX(a);
-        return s.End();
-    }
-    static int RotateY(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto a = s.Get<float>();
-        m->m_instance.RotateY(a);
-        return s.End();
-    }
-    static int RotateZ(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto a = s.Get<float>();
-        m->m_instance.RotateZ(a);
-        return s.End();
-    }
-    static int Rotate(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto a = s.Get<float>();
-        auto v = s.Get<vec3>();
-        m->m_instance.Rotate(a, v);
-        return s.End();
-    }
+    LOLUA_DECLARE_VOID_METHOD_ARGS(TranslateX, EMLO, m_instance.TranslateX, Get<float>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(TranslateY, EMLO, m_instance.TranslateY, Get<float>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(TranslateZ, EMLO, m_instance.TranslateZ, Get<float>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(Translate, EMLO, m_instance.Translate, Get<vec3>());
     //-------------------------------------------------------------------------
-    static int ScaleX(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto x = s.Get<float>();
-        m->m_instance.ScaleX(x);
-        return s.End();
-    }
-    static int ScaleY(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto y = s.Get<float>();
-        m->m_instance.ScaleY(y);
-        return s.End();
-    }
-    static int ScaleZ(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto z = s.Get<float>();
-        m->m_instance.ScaleZ(z);
-        return s.End();
-    }
-    static int Scale(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto v = s.Get<vec3>();
-        m->m_instance.Scale(v);
-        return s.End();
-    }
+    LOLUA_DECLARE_VOID_METHOD_ARGS(RotateX, EMLO, m_instance.RotateX, Get<float>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(RotateY, EMLO, m_instance.RotateY, Get<float>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(RotateZ, EMLO, m_instance.RotateZ, Get<float>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(Rotate, EMLO, m_instance.Rotate, Get<float>(), Get<vec3>());
     //-------------------------------------------------------------------------
-    static int RadialJitter(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto f = s.Get<float>();
-        m->m_instance.RadialJitter(f);
-        return s.End();
-    }
+    LOLUA_DECLARE_VOID_METHOD_ARGS(ScaleX, EMLO, m_instance.ScaleX, Get<float>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(ScaleY, EMLO, m_instance.ScaleY, Get<float>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(ScaleZ, EMLO, m_instance.ScaleZ, Get<float>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(Scale, EMLO,  m_instance.Scale, Get<vec3>());
     //-------------------------------------------------------------------------
-    static int TaperX(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto y = s.Get<float>();
-        auto z = s.Get<float>();
-        auto xoff = s.Get<float>(0.f);
-        auto abs = s.Get<bool>(true);
-        m->m_instance.TaperX(y, z, xoff, abs);
-        return s.End();
-    }
-    static int TaperY(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto x = s.Get<float>();
-        auto z = s.Get<float>();
-        auto yoff = s.Get<float>(0.f);
-        auto abs = s.Get<bool>(true);
-        m->m_instance.TaperY(x, z, yoff, abs);
-        return s.End();
-    }
-    static int TaperZ(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto x = s.Get<float>();
-        auto y = s.Get<float>();
-        auto zoff = s.Get<float>(0.f);
-        auto abs = s.Get<bool>(true);
-        m->m_instance.TaperZ(x, y, zoff, abs);
-        return s.End();
-    }
+    LOLUA_DECLARE_VOID_METHOD_ARGS(RadialJitter, EMLO, m_instance.RadialJitter, Get<float>());
     //-------------------------------------------------------------------------
-    static int TwistX(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto t = s.Get<float>();
-        auto toff = s.Get<float>(0.f);
-        m->m_instance.TwistX(t, toff);
-        return s.End();
-    }
-    static int TwistY(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto t = s.Get<float>();
-        auto toff = s.Get<float>(0.f);
-        m->m_instance.TwistY(t, toff);
-        return s.End();
-    }
-    static int TwistZ(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto t = s.Get<float>();
-        auto toff = s.Get<float>(0.f);
-        m->m_instance.TwistZ(t, toff);
-        return s.End();
-    }
+    LOLUA_DECLARE_VOID_METHOD_ARGS(TaperX, EMLO, m_instance.TaperX, Get<float>(), Get<float>(), Get<float>(0.f), Get<bool>(true));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(TaperY, EMLO, m_instance.TaperY, Get<float>(), Get<float>(), Get<float>(0.f), Get<bool>(true));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(TaperZ, EMLO, m_instance.TaperZ, Get<float>(), Get<float>(), Get<float>(0.f), Get<bool>(true));
     //-------------------------------------------------------------------------
-    static int ShearX(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto y = s.Get<float>();
-        auto z = s.Get<float>();
-        auto xoff = s.Get<float>(0.f);
-        auto abs = s.Get<bool>(true);
-        m->m_instance.ShearX(y, z, xoff, abs);
-        return s.End();
-    }
-    static int ShearY(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto x = s.Get<float>();
-        auto z = s.Get<float>();
-        auto yoff = s.Get<float>(0.f);
-        auto abs = s.Get<bool>(true);
-        m->m_instance.ShearY(x, z, yoff, abs);
-        return s.End();
-    }
-    static int ShearZ(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto x = s.Get<float>();
-        auto y = s.Get<float>();
-        auto zoff = s.Get<float>(0.f);
-        auto abs = s.Get<bool>(true);
-        m->m_instance.ShearZ(x, y, zoff, abs);
-        return s.End();
-    }
+    LOLUA_DECLARE_VOID_METHOD_ARGS(TwistX, EMLO, m_instance.TwistX, Get<float>(), Get<float>(0.f));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(TwistY, EMLO, m_instance.TwistY, Get<float>(), Get<float>(0.f));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(TwistZ, EMLO, m_instance.TwistZ, Get<float>(), Get<float>(0.f));
     //-------------------------------------------------------------------------
-    static int StretchX(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto y = s.Get<float>();
-        auto z = s.Get<float>();
-        auto xoff = s.Get<float>(0.f);
-        m->m_instance.StretchX(y, z, xoff);
-        return s.End();
-    }
-    static int StretchY(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto x = s.Get<float>();
-        auto z = s.Get<float>();
-        auto yoff = s.Get<float>(0.f);
-        m->m_instance.StretchY(x, z, yoff);
-        return s.End();
-    }
-    static int StretchZ(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto x = s.Get<float>();
-        auto y = s.Get<float>();
-        auto zoff = s.Get<float>(0.f);
-        m->m_instance.StretchZ(x, y, zoff);
-        return s.End();
-    }
+    LOLUA_DECLARE_VOID_METHOD_ARGS(ShearX, EMLO, m_instance.ShearX, Get<float>(), Get<float>(), Get<float>(0.f), Get<bool>(true));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(ShearY, EMLO, m_instance.ShearY, Get<float>(), Get<float>(), Get<float>(0.f), Get<bool>(true));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(ShearZ, EMLO, m_instance.ShearZ, Get<float>(), Get<float>(), Get<float>(0.f), Get<bool>(true));
     //-------------------------------------------------------------------------
-    static int BendXY(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto t = s.Get<float>();
-        auto toff = s.Get<float>(0.f);
-        m->m_instance.BendXY(t, toff);
-        return s.End();
-    }
-    static int BendXZ(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto t = s.Get<float>();
-        auto toff = s.Get<float>(0.f);
-        m->m_instance.BendXZ(t, toff);
-        return s.End();
-    }
-    static int BendYX(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto t = s.Get<float>();
-        auto toff = s.Get<float>(0.f);
-        m->m_instance.BendYX(t, toff);
-        return s.End();
-    }
-    static int BendYZ(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto t = s.Get<float>();
-        auto toff = s.Get<float>(0.f);
-        m->m_instance.BendYZ(t, toff);
-        return s.End();
-    }
-    static int BendZX(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto t = s.Get<float>();
-        auto toff = s.Get<float>(0.f);
-        m->m_instance.BendZX(t, toff);
-        return s.End();
-    }
-    static int BendZY(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto t = s.Get<float>();
-        auto toff = s.Get<float>(0.f);
-        m->m_instance.BendZY(t, toff);
-        return s.End();
-    }
+    LOLUA_DECLARE_VOID_METHOD_ARGS(StretchX, EMLO, m_instance.StretchX, Get<float>(), Get<float>(), Get<float>(0.f));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(StretchY, EMLO, m_instance.StretchY, Get<float>(), Get<float>(), Get<float>(0.f));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(StretchZ, EMLO, m_instance.StretchZ, Get<float>(), Get<float>(), Get<float>(0.f));
     //-------------------------------------------------------------------------
-    static int MirrorX(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        m->m_instance.MirrorX();
-        return s.End();
-    }
-    static int MirrorY(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        m->m_instance.MirrorY();
-        return s.End();
-    }
-    static int MirrorZ(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        m->m_instance.MirrorZ();
-        return s.End();
-    }
+    LOLUA_DECLARE_VOID_METHOD_ARGS(BendXY, EMLO, m_instance.BendXY, Get<float>(), Get<float>(0.f));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(BendXZ, EMLO, m_instance.BendXZ, Get<float>(), Get<float>(0.f));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(BendYX, EMLO, m_instance.BendYX, Get<float>(), Get<float>(0.f));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(BendYZ, EMLO, m_instance.BendYZ, Get<float>(), Get<float>(0.f));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(BendZX, EMLO, m_instance.BendZX, Get<float>(), Get<float>(0.f));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(BendZY, EMLO, m_instance.BendZY, Get<float>(), Get<float>(0.f));
     //-------------------------------------------------------------------------
-    static int LoopStart(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto loopnb = s.Get<int32_t>();
-        m->m_instance.LoopStart(loopnb);
-        return s.End();
-    }
-    static int LoopEnd(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        m->m_instance.LoopEnd();
-        return s.End();
-    }
-    static int OpenBrace(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        m->m_instance.OpenBrace();
-        return s.End();
-    }
-    static int CloseBrace(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        m->m_instance.CloseBrace();
-        return s.End();
-    }
+    LOLUA_DECLARE_VOID_METHOD_VOID(MirrorX, EMLO, m_instance.MirrorX);
+    LOLUA_DECLARE_VOID_METHOD_VOID(MirrorY, EMLO, m_instance.MirrorY);
+    LOLUA_DECLARE_VOID_METHOD_VOID(MirrorZ, EMLO, m_instance.MirrorZ);
     //-------------------------------------------------------------------------
-    static int ToggleScaleWinding(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        m->m_instance.ToggleScaleWinding();
-        return s.End();
-    }
-    static int ToggleQuadWeighting(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        m->m_instance.ToggleQuadWeighting();
-        return s.End();
-    }
-    static int TogglePostBuildNormal(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        m->m_instance.TogglePostBuildNormal();
-        return s.End();
-    }
-    static int ToggleVerticeNoCleanup(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        m->m_instance.ToggleVerticeNoCleanup();
-        return s.End();
-    }
+    LOLUA_DECLARE_VOID_METHOD_ARGS(LoopStart, EMLO, m_instance.LoopStart, Get<int32_t>());
+    LOLUA_DECLARE_VOID_METHOD_VOID(LoopEnd, EMLO, m_instance.LoopEnd);
+    LOLUA_DECLARE_VOID_METHOD_VOID(OpenBrace, EMLO, m_instance.OpenBrace, Get<float>());
+    LOLUA_DECLARE_VOID_METHOD_VOID(CloseBrace, EMLO, m_instance.CloseBrace, Get<float>());
     //-------------------------------------------------------------------------
-    static int VerticesMerge(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        m->m_instance.VerticesMerge();
-        return s.End();
-    }
-    static int VerticesSeparate(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        m->m_instance.VerticesSeparate();
-        return s.End();
-    }
-    static int VerticesCleanup(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        m->m_instance.VerticesCleanup();
-        return s.End();
-    }
+    LOLUA_DECLARE_VOID_METHOD_VOID(ToggleScaleWinding, EMLO, m_instance.ToggleScaleWinding);
+    LOLUA_DECLARE_VOID_METHOD_VOID(ToggleQuadWeighting, EMLO, m_instance.ToggleQuadWeighting);
+    LOLUA_DECLARE_VOID_METHOD_VOID(TogglePostBuildNormal, EMLO, m_instance.TogglePostBuildNormal);
+    LOLUA_DECLARE_VOID_METHOD_VOID(ToggleVerticeNoCleanup, EMLO, m_instance.ToggleVerticeNoCleanup);
     //-------------------------------------------------------------------------
-    static int Duplicate(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto ds = s.Get<vec3>(vec3(1.f));
-        m->m_instance.DupAndScale(ds, true);
-        return s.End();
-    }
-    static int Smooth(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto pass = s.Get<int32_t>();
-        auto split_per_pass = s.Get<int32_t>();
-        auto smooth_per_pass = s.Get<int32_t>();
-        m->m_instance.SmoothMesh(pass, split_per_pass, smooth_per_pass);
-        return s.End();
-    }
-    static int SplitTriangles(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto pass = s.Get<int32_t>();
-        m->m_instance.SplitTriangles(pass);
-        return s.End();
-    }
-    static int Chamfer(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto f = s.Get<float>();
-        m->m_instance.Chamfer(f);
-        return s.End();
-    }
+    LOLUA_DECLARE_VOID_METHOD_VOID(VerticesMerge, EMLO, m_instance.VerticesMerge);
+    LOLUA_DECLARE_VOID_METHOD_VOID(VerticesSeparate, EMLO, m_instance.VerticesSeparate);
+    LOLUA_DECLARE_VOID_METHOD_VOID(VerticesCleanup, EMLO, m_instance.VerticesCleanup);
     //-------------------------------------------------------------------------
-    static int SetCurColor(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto c = s.Get<vec4>();
-        m->m_instance.SetCurColor(c);
-        return s.End();
-    }
-    static int SetCurColorA(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto c = s.Get<vec4>();
-        m->m_instance.SetCurColorA(c);
-        return s.End();
-    }
-    static int SetCurColorB(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto c = s.Get<vec4>();
-        m->m_instance.SetCurColorB(c);
-        return s.End();
-    }
-    static int SetVertColor(lua_State* l)
-    {
-        auto s = LuaStack::Begin(l);
-        auto m = s.GetPtr<EasyMeshLuaObject>();
-        auto c = s.Get<vec4>();
-        m->m_instance.SetVertColor(c);
-        return s.End();
-    }
+    LOLUA_DECLARE_VOID_METHOD_ARGS(Duplicate, EMLO, m_instance.DupAndScale, Get<vec3>(vec3(1.f)), Get<bool>(true));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(Smooth, EMLO, m_instance.SmoothMesh, Get<int32_t>(), Get<int32_t>(), Get<int32_t>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(SplitTriangles, EMLO, m_instance.SplitTriangles, Get<int32_t>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(Chamfer, EMLO, m_instance.Chamfer, Get<float>());
+    //-------------------------------------------------------------------------
+    LOLUA_DECLARE_VOID_METHOD_ARGS(SetCurColor, EMLO, m_instance.SetCurColor, Get<vec4>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(SetCurColorA, EMLO, m_instance.SetCurColorA, Get<vec4>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(SetCurColorB, EMLO, m_instance.SetCurColorB, Get<vec4>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(SetVertColor, EMLO, m_instance.SetVertColor, Get<vec4>());
+
     /*
     (csgu|csgunion)          { return token::T_CSGUNION; }
     (csgs|CsgSub)            { return token::T_CSGSUBSTRACT; }
@@ -620,6 +120,7 @@ public:
     (csgx|csgxor)            { return token::T_CSGXOR; }
     */
 
+    #undef EMLO
 };
 
 //-----------------------------------------------------------------------------

@@ -89,7 +89,8 @@ EasyMeshLuaObject* EasyMeshLuaObject::New(lua_State* l, int arg_nb)
 //-----------------------------------------------------------------------------
 const LuaObjectLibrary* EasyMeshLuaObject::GetLib()
 {
-    typedef EasyMeshLuaObject EMLO;
+#define EMLO EasyMeshLuaObject
+
     static const LuaObjectLibrary lib = LuaObjectLibrary(
         "EasyMesh",
         //Statics
@@ -181,6 +182,8 @@ const LuaObjectLibrary* EasyMeshLuaObject::GetLib()
         //Variables
         { { nullptr, nullptr, nullptr } });
     return &lib;
+
+#undef EMLO
 }
 
 //-----------------------------------------------------------------------------

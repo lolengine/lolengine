@@ -44,7 +44,7 @@ public:
         return (stack << i).End();
     }
     
-    LOLUA_DECLARE_RETURN_METHOD(AddTenInstance, GetPtr<DemoObject>(), AddTenMethod, Get<float>(), Get<int32_t>(), Get<int32_t>());
+    LOLUA_DECLARE_RETURN_METHOD_ARGS(AddTenInstance, GetPtr<DemoObject>(), AddTenMethod, Get<float>(), Get<int32_t>(), Get<int32_t>());
     static int _AddTenInstance(lua_State* l)
     {
         auto stack = LuaStack::Begin(l);
@@ -75,7 +75,7 @@ public:
         return (stack << i).End();
     }
 
-    LOLUA_DECLARE_VOID_METHOD(SetX, GetPtr<DemoObject>(), SetXMethod, Get<int32_t>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(SetX, GetPtr<DemoObject>(), SetXMethod, Get<int32_t>());
     static int _SetX(lua_State* l)
     {
         auto stack = LuaStack::Begin(l);
@@ -198,7 +198,7 @@ public:
             testvalue_num: %.2f, testvalue_int: %i, testvalue_uint: %i, testvalue_str: %s.\n",
             testvalue_num, testvalue_int, testvalue_uint, testvalue_str.C());
         msg::info("Lua Vars: \
-            function_return: %s, loluademo_return: %i, loluademo_inst_return: %.f, loluademo_getx: %i, loluademo_inst->m_x: %i.\n",
+            function_return: %s, loluademo_return: %i, loluademo_inst_return: %.2f, loluademo_getx: %i, loluademo_inst->m_x: %i.\n",
             function_return.C(), loluademo_return, loluademo_inst_return, loluademo_getx, loluademo_inst->m_x);
 
 #define /***/ _LOLUA_ARG_1(a00) (float)a00

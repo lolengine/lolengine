@@ -392,7 +392,11 @@ public:
         - offset : useless
      */
     void AppendCog(int nbsides, float h, float d10, float d20, float d11,
-                   float d21, float d12, float d22, float sidemul=0.f, bool offset=false);
+                   float d21, float d12, float d22, float sidemul = 0.f, bool offset = false);
+    void AppendCog(int nbsides, float h, vec2 d0, vec2 d1, vec2 d2, float sidemul = 0.f, bool offset = false)
+    {
+        AppendCog(nbsides, h, d0.x, d0.y, d1.x, d1.y, d2.x, d2.y, sidemul, offset);
+    }
 
     //-------------------------------------------------------------------------
     //TODO : Mesh Bone operations
