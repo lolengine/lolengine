@@ -234,14 +234,8 @@ public:
     void AddTile(TileSet *tileset, int id, mat4 model);
 
 public:
-    void SetLineTime(float new_time = -1.f);
-    void SetLineMask(int new_mask = 0xFFFFFFFF);
-    void SetLineSegmentSize(float new_segment_size = 1.f);
-    void SetLineColor(vec4 new_color = vec4(1.f));
-
-    float GetLineSegmentSize();
-    vec4 GetLineColor();
     void AddLine(vec3 a, vec3 b, vec4 color);
+    void AddLine(vec3 a, vec3 b, vec4 color, float duration, int mask);
 
     void AddLight(Light *light);
     array<Light *> const &GetLights();

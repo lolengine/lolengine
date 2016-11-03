@@ -419,7 +419,7 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
             //<\Debug render> -------------------------------------------------
             //-----------------------------------------------------------------
 #endif //SHOW_IMGUI_DEBUG
-            Debug::DrawLine(vec2::zero, vec2::axis_x, Color::green);
+            //Debug::DrawLine(vec2::zero, vec2::axis_x /*, Color::green*/);
 
             m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, pcmd->ElemCount, (const short*)idx_buffer_offset);
 

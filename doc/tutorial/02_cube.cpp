@@ -44,6 +44,22 @@ public:
                           4, 5, 1, 1, 0, 4, 3, 2, 6, 6, 7, 3, }),
         m_ready(false)
     {
+        m_camera = new Camera();
+        m_camera->SetProjection(mat4::perspective(radians(30.f), 960.f, 600.f, .1f, 1000.f));
+        m_camera->SetView(mat4::lookat(vec3(-15.f, 5.f, 0.f),
+            vec3(0.f, -1.f, 0.f),
+            vec3(0.f, 1.f, 0.f)));
+        Scene& scene = Scene::GetScene();
+        scene.PushCamera(m_camera);
+        Ticker::Ref(m_camera);
+
+    }
+
+    ~Cube()
+    {
+        Scene& scene = Scene::GetScene();
+        scene.PopCamera(m_camera);
+        Ticker::Unref(m_camera);
     }
 
     virtual void TickGame(float seconds)
@@ -58,6 +74,25 @@ public:
         mat4 proj = mat4::perspective(radians(45.0f), 640.0f, 480.0f, 0.1f, 10.0f);
 
         m_matrix = proj * view * model * anim;
+
+        {
+            auto context0 = Debug::DrawContext::New(Color::red);
+            {
+                auto context1 = Debug::DrawContext::New(Color::blue);
+                Debug::DrawBox(box3(vec3(0.f), vec3(1.2f)));
+                Debug::DrawGrid(vec3(0.f), vec3::axis_x, vec3::axis_y, vec3::axis_z, 10.0f);
+                {
+                    auto context2 = Debug::DrawContext::New(context0);
+                    Debug::DrawBox(box3(vec3(0.f), vec3(1.3f)));
+                }
+                {
+                    auto context2 = Debug::DrawContext::New(context0);
+                    context2.SetColor(Color::yellow);
+                    Debug::DrawBox(box3(vec3(-1.f), vec3(1.4f)));
+                }
+            }
+            Debug::DrawBox(box3(vec3(0.f), vec3(1.1f)));
+        }
     }
 
     virtual void TickDraw(float seconds, Scene &scene)
@@ -115,6 +150,7 @@ public:
     }
 
 private:
+    Camera* m_camera = nullptr;
     float m_angle;
     mat4 m_matrix;
     array<vec3,vec3> m_mesh;

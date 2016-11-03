@@ -168,10 +168,10 @@ private:
     /* Old line API <P0, P1, COLOR, TIME, MASK> */
     struct line_api
     {
-        float m_time, m_segment_size;
-        vec4 m_color;
+        //float m_duration, m_segment_size;
+        //vec4 m_color;
         array<vec3, vec3, vec4, float, int, bool, bool> m_lines;
-        int m_mask, m_debug_mask;
+        int /*m_mask,*/ m_debug_mask;
         Shader *m_shader;
         VertexDeclaration *m_vdecl;
     }
@@ -241,11 +241,6 @@ Scene::Scene(ivec2 size)
     data->m_line_api.m_vdecl = new VertexDeclaration(VertexStream<vec4,vec4>(VertexUsage::Position, VertexUsage::Color));
 
     data->m_line_api.m_debug_mask = 1;
-
-    SetLineTime();
-    SetLineMask();
-    SetLineSegmentSize();
-    SetLineColor();
 }
 
 //-----------------------------------------------------------------------------
@@ -533,56 +528,19 @@ void Scene::AddTile(TileSet *tileset, int id, mat4 model)
 }
 
 //-----------------------------------------------------------------------------
-void Scene::SetLineTime(float new_time)
-{
-    ASSERT(!!data, "Trying to access a non-ready scene");
-
-    data->m_line_api.m_time = new_time;
-}
-
-void Scene::SetLineMask(int new_mask)
-{
-    ASSERT(!!data, "Trying to access a non-ready scene");
-
-    data->m_line_api.m_mask = new_mask;
-}
-
-void Scene::SetLineSegmentSize(float new_segment_size)
-{
-    ASSERT(!!data, "Trying to access a non-ready scene");
-
-    data->m_line_api.m_segment_size = new_segment_size;
-}
-
-void Scene::SetLineColor(vec4 new_color)
-{
-    ASSERT(!!data, "Trying to access a non-ready scene");
-
-    data->m_line_api.m_color = new_color;
-}
-
-//-----------------------------------------------------------------------------
-float Scene::GetLineSegmentSize()
-{
-    ASSERT(!!data, "Trying to access a non-ready scene");
-
-    return data->m_line_api.m_segment_size;
-}
-
-vec4 Scene::GetLineColor()
-{
-    ASSERT(!!data, "Trying to access a non-ready scene");
-
-    return data->m_line_api.m_color;
-}
-
-//-----------------------------------------------------------------------------
 void Scene::AddLine(vec3 a, vec3 b, vec4 color)
 {
     ASSERT(!!data, "Trying to access a non-ready scene");
 
-    data->m_line_api.m_lines.push(a, b, color,
-                        data->m_line_api.m_time, data->m_line_api.m_mask, false, false);
+    data->m_line_api.m_lines.push(a, b, color, -1.f, 0xFFFFFFFF, false, false);
+}
+
+//-----------------------------------------------------------------------------
+void Scene::AddLine(vec3 a, vec3 b, vec4 color, float duration, int mask)
+{
+    ASSERT(!!data, "Trying to access a non-ready scene");
+
+    data->m_line_api.m_lines.push(a, b, color, duration, mask, false, false);
 }
 
 //-----------------------------------------------------------------------------
