@@ -414,7 +414,7 @@ void BtPhysTest::TickGame(float seconds)
         return;
     }
 
-    Debug::DrawSetupSegment(1.f);
+    auto context = Debug::DrawContext::New(Color::white, 1.f);
     Debug::DrawGrid(vec3::zero, vec3::axis_x, vec3::axis_y, vec3::axis_z, 10.f);
 
     if (m_controller->WasKeyReleasedThisFrame(BtPhysTestKeyInput::KEY_QUIT))
