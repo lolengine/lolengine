@@ -18,7 +18,6 @@ namespace lol
 //-----------------------------------------------------------------------------
 class EasyMeshLuaObject : public LuaObject
 {
-    typedef Lolua::VarPtr<EasyMeshLuaObject> EzMeshPtr;
     EasyMesh m_instance;
 public:
     //-------------------------------------------------------------------------
@@ -28,610 +27,91 @@ public:
 
     //-------------------------------------------------------------------------
     static EasyMeshLuaObject* New(lua_State* l, int arg_nb);
-    static const LuaObjectLib* GetLib();
+    static const LuaObjectLibrary* GetLib();
+
+#define EMLO GetPtr<EasyMeshLuaObject>()
 
     //-------------------------------------------------------------------------
-    static int AppendCylinder(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaInt32 nsides;
-        LuaFloat h, d1, d2;
-        LuaBool dualside(false, true), smooth(false, true), close(false, true);
-        s >> m >> nsides >> h >> d1 >> d2 >> dualside >> smooth >> close;
-        m->m_instance.AppendCylinder(nsides, h, d1, d2, dualside, smooth, close);
-        return 0;
-    }
-    static int AppendSphere(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaInt32 ndivisions;
-        LuaFloat d;
-        s >> m >> ndivisions >> d;
-        m->m_instance.AppendSphere(ndivisions, d);
-        return 0;
-    }
-    static int AppendCapsule(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaInt32 ndivisions;
-        LuaFloat h, d;
-        s >> m >> ndivisions >> h >> d;
-        m->m_instance.AppendCapsule(ndivisions, h, d);
-        return 0;
-    }
-    static int AppendTorus(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaInt32 ndivisions;
-        LuaFloat d1, d2;
-        s >> m >> ndivisions >> d1 >> d2;
-        m->m_instance.AppendTorus(ndivisions, d1, d2);
-        return 0;
-    }
-    static int AppendBox(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaVec3 size;
-        LuaFloat chamf(0.f, true);
-        LuaBool smooth(false, true);
-        s >> m >> size >> chamf >> smooth;
-        m->m_instance.AppendBox(size, chamf, smooth);
-        return 0;
-    }
-    static int AppendStar(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaInt32 nbranches;
-        LuaFloat d1, d2;
-        LuaBool fade(false, true), fade2(false, true);
-        s >> m >> nbranches >> d1 >> d2 >> fade >> fade2;
-        m->m_instance.AppendStar(nbranches, d1, d2, fade, fade2);
-        return 0;
-    }
-    static int AppendExpandedStar(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaInt32 nbranches;
-        LuaFloat d1, d2, extrad(0.f, true);
-        s >> m >> nbranches >> d1 >> d2 >> extrad;
-        m->m_instance.AppendExpandedStar(nbranches, d1, d2, extrad);
-        return 0;
-    }
-    static int AppendDisc(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaInt32 nsides;
-        LuaFloat d;
-        LuaBool fade(false, true);
-        s >> m >> nsides >> d >> fade;
-        m->m_instance.AppendDisc(nsides, d, fade);
-        return 0;
-    }
-    static int AppendSimpleTriangle(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat d;
-        LuaBool fade(false, true);
-        s >> m >> d >> fade;
-        m->m_instance.AppendSimpleTriangle(d, fade);
-        return 0;
-    }
-    static int AppendSimpleQuad(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat size;
-        LuaBool fade(false, true);
-        s >> m >> size >> fade;
-        m->m_instance.AppendSimpleQuad(size, fade);
-        return 0;
-    }
-    static int AppendCog(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaInt32 nbsides;
-        LuaFloat h, sidemul(0.f, true);
-        LuaVec2 d0, d1, d2;
-        LuaBool offset(false, true);
-        s >> m >> nbsides >> h >> d0 >> d1 >> d2 >> sidemul >> offset;
-        m->m_instance.AppendCog(nbsides, h, d0().x, d0().y, d1().x, d1().y, d2().x, d2().y, sidemul, offset);
-        return 0;
-    }
+    LOLUA_DECLARE_VOID_METHOD_ARGS(AppendCylinder, EMLO, m_instance.AppendCylinder, Get<int32_t>(), Get<float>(), Get<float>(), Get<float>(), Get<bool>(false), Get<bool>(false), Get<bool>(false));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(AppendSphere, EMLO, m_instance.AppendSphere, Get<int32_t>(), Get<float>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(AppendCapsule, EMLO, m_instance.AppendCapsule, Get<int32_t>(), Get<float>(), Get<float>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(AppendTorus, EMLO, m_instance.AppendTorus, Get<int32_t>(), Get<float>(), Get<float>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(AppendBox, EMLO, m_instance.AppendBox, Get<vec3>(), Get<float>(0.f), Get<bool>(false));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(AppendStar, EMLO, m_instance.AppendStar, Get<int32_t>(), Get<float>(), Get<float>(), Get<bool>(false), Get<bool>(false));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(AppendExpandedStar, EMLO, m_instance.AppendExpandedStar, Get<int32_t>(), Get<float>(), Get<float>(), Get<float>(0.f));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(AppendDisc, EMLO, m_instance.AppendDisc, Get<int32_t>(), Get<float>(), Get<bool>(false));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(AppendSimpleTriangle, EMLO, m_instance.AppendSimpleTriangle, Get<float>(), Get<bool>(false));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(AppendSimpleQuad, EMLO, m_instance.AppendSimpleQuad, Get<float>(), Get<bool>(false));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(AppendCog, EMLO, m_instance.AppendCog, Get<int32_t>(), Get<float>(), Get<vec2>(), Get<vec2>(), Get<vec2>(), Get<float>(0.f), Get<bool>(false));
     //-------------------------------------------------------------------------
-    static int TranslateX(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat f;
-        s >> m >> f;
-        m->m_instance.TranslateX(f);
-        return 0;
-    }
-    static int TranslateY(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat f;
-        s >> m >> f;
-        m->m_instance.TranslateY(f);
-        return 0;
-    }
-    static int TranslateZ(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat f;
-        s >> m >> f;
-        m->m_instance.TranslateZ(f);
-        return 0;
-    }
-    static int Translate(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaVec3 v;
-        s >> m >> v;
-        m->m_instance.Translate(v);
-        return 0;
-    }
+    LOLUA_DECLARE_VOID_METHOD_ARGS(TranslateX, EMLO, m_instance.TranslateX, Get<float>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(TranslateY, EMLO, m_instance.TranslateY, Get<float>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(TranslateZ, EMLO, m_instance.TranslateZ, Get<float>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(Translate, EMLO, m_instance.Translate, Get<vec3>());
     //-------------------------------------------------------------------------
-    static int RotateX(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat a;
-        s >> m >> a;
-        m->m_instance.RotateX(a);
-        return 0;
-    }
-    static int RotateY(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat a;
-        s >> m >> a;
-        m->m_instance.RotateY(a);
-        return 0;
-    }
-    static int RotateZ(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat a;
-        s >> m >> a;
-        m->m_instance.RotateZ(a);
-        return 0;
-    }
-    static int Rotate(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat a;
-        LuaVec3 v;
-        s >> m >> a >> v;
-        m->m_instance.Rotate(a, v);
-        return 0;
-    }
+    LOLUA_DECLARE_VOID_METHOD_ARGS(RotateX, EMLO, m_instance.RotateX, Get<float>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(RotateY, EMLO, m_instance.RotateY, Get<float>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(RotateZ, EMLO, m_instance.RotateZ, Get<float>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(Rotate, EMLO, m_instance.Rotate, Get<float>(), Get<vec3>());
     //-------------------------------------------------------------------------
-    static int ScaleX(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat x;
-        s >> m >> x;
-        m->m_instance.ScaleX(x);
-        return 0;
-    }
-    static int ScaleY(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat y;
-        s >> m >> y;
-        m->m_instance.ScaleY(y);
-        return 0;
-    }
-    static int ScaleZ(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat z;
-        s >> m >> z;
-        m->m_instance.ScaleZ(z);
-        return 0;
-    }
-    static int Scale(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaVec3 v;
-        s >> m >> v;
-        m->m_instance.Scale(v);
-        return 0;
-    }
+    LOLUA_DECLARE_VOID_METHOD_ARGS(ScaleX, EMLO, m_instance.ScaleX, Get<float>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(ScaleY, EMLO, m_instance.ScaleY, Get<float>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(ScaleZ, EMLO, m_instance.ScaleZ, Get<float>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(Scale, EMLO,  m_instance.Scale, Get<vec3>());
     //-------------------------------------------------------------------------
-    static int RadialJitter(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat f;
-        s >> m >> f;
-        m->m_instance.RadialJitter(f);
-        return 0;
-    }
+    LOLUA_DECLARE_VOID_METHOD_ARGS(RadialJitter, EMLO, m_instance.RadialJitter, Get<float>());
     //-------------------------------------------------------------------------
-    static int TaperX(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat y, z, xoff(0.f, true);
-        LuaBool abs(true, true);
-        s >> m >> y >> z >> xoff >> abs;
-        m->m_instance.TaperX(y, z, xoff, abs);
-        return 0;
-    }
-    static int TaperY(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat x, z, yoff(0.f, true);
-        LuaBool abs(true, true);
-        s >> m >> x >> z >> yoff >> abs;
-        m->m_instance.TaperY(x, z, yoff, abs);
-        return 0;
-    }
-    static int TaperZ(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat x, y, zoff(0.f, true);
-        LuaBool abs(true, true);
-        s >> m >> x >> y >> zoff >> abs;
-        m->m_instance.TaperZ(x, y, zoff, abs);
-        return 0;
-    }
+    LOLUA_DECLARE_VOID_METHOD_ARGS(TaperX, EMLO, m_instance.TaperX, Get<float>(), Get<float>(), Get<float>(0.f), Get<bool>(true));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(TaperY, EMLO, m_instance.TaperY, Get<float>(), Get<float>(), Get<float>(0.f), Get<bool>(true));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(TaperZ, EMLO, m_instance.TaperZ, Get<float>(), Get<float>(), Get<float>(0.f), Get<bool>(true));
     //-------------------------------------------------------------------------
-    static int TwistX(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat t, toff(0.f, true);
-        s >> m >> t >> toff;
-        m->m_instance.TwistX(t, toff);
-        return 0;
-    }
-    static int TwistY(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat t, toff(0.f, true);
-        s >> m >> t >> toff;
-        m->m_instance.TwistY(t, toff);
-        return 0;
-    }
-    static int TwistZ(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat t, toff(0.f, true);
-        s >> m >> t >> toff;
-        m->m_instance.TwistZ(t, toff);
-        return 0;
-    }
+    LOLUA_DECLARE_VOID_METHOD_ARGS(TwistX, EMLO, m_instance.TwistX, Get<float>(), Get<float>(0.f));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(TwistY, EMLO, m_instance.TwistY, Get<float>(), Get<float>(0.f));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(TwistZ, EMLO, m_instance.TwistZ, Get<float>(), Get<float>(0.f));
     //-------------------------------------------------------------------------
-    static int ShearX(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat y, z, xoff(0.f, true);
-        LuaBool abs(true, true);
-        s >> m >> y >> z >> xoff >> abs;
-        m->m_instance.ShearX(y, z, xoff, abs);
-        return 0;
-    }
-    static int ShearY(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat x, z, yoff(0.f, true);
-        LuaBool abs(true, true);
-        s >> m >> x >> z >> yoff >> abs;
-        m->m_instance.ShearY(x, z, yoff, abs);
-        return 0;
-    }
-    static int ShearZ(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat x, y, zoff(0.f, true);
-        LuaBool abs(true, true);
-        s >> m >> x >> y >> zoff >> abs;
-        m->m_instance.ShearZ(x, y, zoff, abs);
-        return 0;
-    }
+    LOLUA_DECLARE_VOID_METHOD_ARGS(ShearX, EMLO, m_instance.ShearX, Get<float>(), Get<float>(), Get<float>(0.f), Get<bool>(true));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(ShearY, EMLO, m_instance.ShearY, Get<float>(), Get<float>(), Get<float>(0.f), Get<bool>(true));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(ShearZ, EMLO, m_instance.ShearZ, Get<float>(), Get<float>(), Get<float>(0.f), Get<bool>(true));
     //-------------------------------------------------------------------------
-    static int StretchX(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat y, z, xoff(0.f, true);
-        s >> m >> y >> z >> xoff;
-        m->m_instance.StretchX(y, z, xoff);
-        return 0;
-    }
-    static int StretchY(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat x, z, yoff(0.f, true);
-        s >> m >> x >> z >> yoff;
-        m->m_instance.StretchY(x, z, yoff);
-        return 0;
-    }
-    static int StretchZ(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat x, y, zoff(0.f, true);
-        s >> m >> x >> y >> zoff;
-        m->m_instance.StretchZ(x, y, zoff);
-        return 0;
-    }
+    LOLUA_DECLARE_VOID_METHOD_ARGS(StretchX, EMLO, m_instance.StretchX, Get<float>(), Get<float>(), Get<float>(0.f));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(StretchY, EMLO, m_instance.StretchY, Get<float>(), Get<float>(), Get<float>(0.f));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(StretchZ, EMLO, m_instance.StretchZ, Get<float>(), Get<float>(), Get<float>(0.f));
     //-------------------------------------------------------------------------
-    static int BendXY(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat t, toff(0.f, true);
-        s >> m >> t >> toff;
-        m->m_instance.BendXY(t, toff);
-        return 0;
-    }
-    static int BendXZ(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat t, toff(0.f, true);
-        s >> m >> t >> toff;
-        m->m_instance.BendXZ(t, toff);
-        return 0;
-    }
-    static int BendYX(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat t, toff(0.f, true);
-        s >> m >> t >> toff;
-        m->m_instance.BendYX(t, toff);
-        return 0;
-    }
-    static int BendYZ(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat t, toff(0.f, true);
-        s >> m >> t >> toff;
-        m->m_instance.BendYZ(t, toff);
-        return 0;
-    }
-    static int BendZX(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat t, toff(0.f, true);
-        s >> m >> t >> toff;
-        m->m_instance.BendZX(t, toff);
-        return 0;
-    }
-    static int BendZY(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat t, toff(0.f, true);
-        s >> m >> t >> toff;
-        m->m_instance.BendZY(t, toff);
-        return 0;
-    }
+    LOLUA_DECLARE_VOID_METHOD_ARGS(BendXY, EMLO, m_instance.BendXY, Get<float>(), Get<float>(0.f));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(BendXZ, EMLO, m_instance.BendXZ, Get<float>(), Get<float>(0.f));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(BendYX, EMLO, m_instance.BendYX, Get<float>(), Get<float>(0.f));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(BendYZ, EMLO, m_instance.BendYZ, Get<float>(), Get<float>(0.f));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(BendZX, EMLO, m_instance.BendZX, Get<float>(), Get<float>(0.f));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(BendZY, EMLO, m_instance.BendZY, Get<float>(), Get<float>(0.f));
     //-------------------------------------------------------------------------
-    static int MirrorX(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        s >> m;
-        m->m_instance.MirrorX();
-        return 0;
-    }
-    static int MirrorY(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        s >> m;
-        m->m_instance.MirrorY();
-        return 0;
-    }
-    static int MirrorZ(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        s >> m;
-        m->m_instance.MirrorZ();
-        return 0;
-    }
+    LOLUA_DECLARE_VOID_METHOD_VOID(MirrorX, EMLO, m_instance.MirrorX);
+    LOLUA_DECLARE_VOID_METHOD_VOID(MirrorY, EMLO, m_instance.MirrorY);
+    LOLUA_DECLARE_VOID_METHOD_VOID(MirrorZ, EMLO, m_instance.MirrorZ);
     //-------------------------------------------------------------------------
-    static int LoopStart(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaInt32 loopnb;
-        s >> m >> loopnb;
-        m->m_instance.LoopStart(loopnb);
-        return 0;
-    }
-    static int LoopEnd(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        s >> m;
-        m->m_instance.LoopEnd();
-        return 0;
-    }
-    static int OpenBrace(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        s >> m;
-        m->m_instance.OpenBrace();
-        return 0;
-    }
-    static int CloseBrace(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        s >> m;
-        m->m_instance.CloseBrace();
-        return 0;
-    }
+    LOLUA_DECLARE_VOID_METHOD_ARGS(LoopStart, EMLO, m_instance.LoopStart, Get<int32_t>());
+    LOLUA_DECLARE_VOID_METHOD_VOID(LoopEnd, EMLO, m_instance.LoopEnd);
+    LOLUA_DECLARE_VOID_METHOD_VOID(OpenBrace, EMLO, m_instance.OpenBrace, Get<float>());
+    LOLUA_DECLARE_VOID_METHOD_VOID(CloseBrace, EMLO, m_instance.CloseBrace, Get<float>());
     //-------------------------------------------------------------------------
-    static int ToggleScaleWinding(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        s >> m;
-        m->m_instance.ToggleScaleWinding();
-        return 0;
-    }
-    static int ToggleQuadWeighting(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        s >> m;
-        m->m_instance.ToggleQuadWeighting();
-        return 0;
-    }
-    static int TogglePostBuildNormal(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        s >> m;
-        m->m_instance.TogglePostBuildNormal();
-        return 0;
-    }
-    static int ToggleVerticeNoCleanup(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        s >> m;
-        m->m_instance.ToggleVerticeNoCleanup();
-        return 0;
-    }
+    LOLUA_DECLARE_VOID_METHOD_VOID(ToggleScaleWinding, EMLO, m_instance.ToggleScaleWinding);
+    LOLUA_DECLARE_VOID_METHOD_VOID(ToggleQuadWeighting, EMLO, m_instance.ToggleQuadWeighting);
+    LOLUA_DECLARE_VOID_METHOD_VOID(TogglePostBuildNormal, EMLO, m_instance.TogglePostBuildNormal);
+    LOLUA_DECLARE_VOID_METHOD_VOID(ToggleVerticeNoCleanup, EMLO, m_instance.ToggleVerticeNoCleanup);
     //-------------------------------------------------------------------------
-    static int VerticesMerge(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        s >> m;
-        m->m_instance.VerticesMerge();
-        return 0;
-    }
-    static int VerticesSeparate(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        s >> m;
-        m->m_instance.VerticesSeparate();
-        return 0;
-    }
-    static int VerticesCleanup(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        s >> m;
-        m->m_instance.VerticesCleanup();
-        return 0;
-    }
+    LOLUA_DECLARE_VOID_METHOD_VOID(VerticesMerge, EMLO, m_instance.VerticesMerge);
+    LOLUA_DECLARE_VOID_METHOD_VOID(VerticesSeparate, EMLO, m_instance.VerticesSeparate);
+    LOLUA_DECLARE_VOID_METHOD_VOID(VerticesCleanup, EMLO, m_instance.VerticesCleanup);
     //-------------------------------------------------------------------------
-    static int Duplicate(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaVec3 ds(vec3(1.f));
-        s >> m >> ds;
-        m->m_instance.DupAndScale(ds, true);
-        return 0;
-    }
-    static int Smooth(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaInt32 pass, split_per_pass, smooth_per_pass;
-        s >> m >> pass >> split_per_pass >> smooth_per_pass;
-        m->m_instance.SmoothMesh(pass, split_per_pass, smooth_per_pass);
-        return 0;
-    }
-    static int SplitTriangles(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaInt32 pass;
-        s >> m >> pass;
-        m->m_instance.SplitTriangles(pass);
-        return 0;
-    }
-    static int Chamfer(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaFloat f;
-        s >> m >> f;
-        m->m_instance.Chamfer(f);
-        return 0;
-    }
+    LOLUA_DECLARE_VOID_METHOD_ARGS(Duplicate, EMLO, m_instance.DupAndScale, Get<vec3>(vec3(1.f)), Get<bool>(true));
+    LOLUA_DECLARE_VOID_METHOD_ARGS(Smooth, EMLO, m_instance.SmoothMesh, Get<int32_t>(), Get<int32_t>(), Get<int32_t>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(SplitTriangles, EMLO, m_instance.SplitTriangles, Get<int32_t>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(Chamfer, EMLO, m_instance.Chamfer, Get<float>());
     //-------------------------------------------------------------------------
-    static int SetCurColor(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaColor c;
-        s >> m >> c;
-        m->m_instance.SetCurColor(c);
-        return 0;
-    }
-    static int SetCurColorA(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaColor c;
-        s >> m >> c;
-        m->m_instance.SetCurColorA(c);
-        return 0;
-    }
-    static int SetCurColorB(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaColor c;
-        m->m_instance.SetCurColorB(c);
-        return 0;
-    }
-    static int SetVertColor(lua_State* l)
-    {
-        LuaStack s(l);
-        EzMeshPtr m;
-        LuaColor c;
-        s >> m >> c;
-        m->m_instance.SetVertColor(c);
-        return 0;
-    }
+    LOLUA_DECLARE_VOID_METHOD_ARGS(SetCurColor, EMLO, m_instance.SetCurColor, Get<vec4>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(SetCurColorA, EMLO, m_instance.SetCurColorA, Get<vec4>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(SetCurColorB, EMLO, m_instance.SetCurColorB, Get<vec4>());
+    LOLUA_DECLARE_VOID_METHOD_ARGS(SetVertColor, EMLO, m_instance.SetVertColor, Get<vec4>());
+
     /*
     (csgu|csgunion)          { return token::T_CSGUNION; }
     (csgs|CsgSub)            { return token::T_CSGSUBSTRACT; }
@@ -640,6 +120,7 @@ public:
     (csgx|csgxor)            { return token::T_CSGXOR; }
     */
 
+    #undef EMLO
 };
 
 //-----------------------------------------------------------------------------

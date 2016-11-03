@@ -159,93 +159,83 @@ SceneSetupLuaObject::~SceneSetupLuaObject()
 //-----------------------------------------------------------------------------
 SceneSetupLuaObject* SceneSetupLuaObject::New(lua_State* l, int arg_nb)
 {
-    UNUSED(l);
     UNUSED(arg_nb);
-    LuaStack s(l);
-    LuaString n;
-    s >> n;
-    return new SceneSetupLuaObject(n());
+    auto s = LuaStack::Begin(l);
+    auto n = s.Get<String>();
+    return new SceneSetupLuaObject(n);
 }
 
 //-- Setup command ------------------------------------------------------------
 int SceneSetupLuaObject::AddLight(lua_State* l)
 {
-    LuaStack s(l);
-    LuaSSetupPtr o;
-    LuaString t;
-    s >> o >> t;
-    o->m_setup->AddLight(FindValue<LightType>(t().C()));
-    return 0;
+    auto s = LuaStack::Begin(l);
+    auto o = s.GetPtr<SceneSetupLuaObject>();
+    auto t = s.Get<String>();
+    o->m_setup->AddLight(FindValue<LightType>(t.C()));
+    return s.End();
 }
 int SceneSetupLuaObject::SetupScene(lua_State* l)
 {
-    LuaStack s(l);
-    LuaSSetupPtr o;
-    s >> o;
+    auto s = LuaStack::Begin(l);
+    auto o = s.GetPtr<SceneSetupLuaObject>();
     o->m_setup->SetupScene();
-    return 0;
+    return s.End();
 }
 //-- main funcs ---------------------------------------------------------------
 int SceneSetupLuaObject::SetPosition(lua_State* l)
 {
-    LuaStack s(l);
-    LuaSSetupPtr o;
-    LuaVec3 c;
-    s >> o >> c;
+    auto s = LuaStack::Begin(l);
+    auto o = s.GetPtr<SceneSetupLuaObject>();
+    auto c = s.Get<vec3>();
     o->m_setup->SetPosition(c);
-    return 0;
+    return s.End();
 }
 int SceneSetupLuaObject::SetLookAt(lua_State* l)
 {
-    LuaStack s(l);
-    LuaSSetupPtr o;
-    LuaVec3 c;
-    s >> o >> c;
+    auto s = LuaStack::Begin(l);
+    auto o = s.GetPtr<SceneSetupLuaObject>();
+    auto c = s.Get<vec3>();
     o->m_setup->SetLookAt(c);
-    return 0;
+    return s.End();
 }
 int SceneSetupLuaObject::SetColor(lua_State* l)
 {
-    LuaStack s(l);
-    LuaSSetupPtr o;
-    LuaColor c;
-    s >> o >> c;
+    auto s = LuaStack::Begin(l);
+    auto o = s.GetPtr<SceneSetupLuaObject>();
+    auto c = s.Get<vec4>();
     o->m_setup->SetColor(c);
-    return 0;
+    return s.End();
 }
 int SceneSetupLuaObject::Show(lua_State* l)
 {
-    LuaStack s(l);
-    LuaSSetupPtr o;
-    LuaDisplay e;
-    s >> o >> e;
+    auto s = LuaStack::Begin(l);
+    auto o = s.GetPtr<SceneSetupLuaObject>();
+    auto e = s.GetEnum<SceneSetup::DisplayBase>();
     o->m_setup->Show(e);
-    return 0;
+    return s.End();
 }
 int SceneSetupLuaObject::Hide(lua_State* l)
 {
-    LuaStack s(l);
-    LuaSSetupPtr o;
-    LuaDisplay e;
-    s >> o >> e;
+    auto s = LuaStack::Begin(l);
+    auto o = s.GetPtr<SceneSetupLuaObject>();
+    auto e = s.GetEnum<SceneSetup::DisplayBase>();
     o->m_setup->Hide(e);
-    return 0;
+    return s.End();
 }
 int SceneSetupLuaObject::Toggle(lua_State* l)
 {
-    LuaStack s(l);
-    LuaSSetupPtr o;
-    LuaDisplay e;
-    s >> o >> e;
+    auto s = LuaStack::Begin(l);
+    auto o = s.GetPtr<SceneSetupLuaObject>();
+    auto e = s.GetEnum<SceneSetup::DisplayBase>();
     o->m_setup->Toggle(e);
-    return 0;
+    return s.End();
 }
 
 //-----------------------------------------------------------------------------
-const LuaObjectLib* SceneSetupLuaObject::GetLib()
+const LuaObjectLibrary* SceneSetupLuaObject::GetLib()
 {
     typedef SceneSetupLuaObject SSLO;
-    static const LuaObjectLib lib = LuaObjectLib(
+    static const LuaObjectLibrary lib = LuaObjectLibrary(
         "SceneSetup",
         //Statics
         { { nullptr, nullptr } },
@@ -264,7 +254,7 @@ const LuaObjectLib* SceneSetupLuaObject::GetLib()
         },
         //Variables
         { { nullptr, nullptr, nullptr } });
-            return &lib;
+    return &lib;
 }
 
 //-----------------------------------------------------------------------------
@@ -273,7 +263,7 @@ SceneSetupLuaLoader::SceneSetupLuaLoader() : LuaLoader()
 {
     lua_State* l = GetLuaState();
 
-    LuaObjectDef::Register<SceneSetupLuaObject>(l);
+    LuaObjectHelper::Register<SceneSetupLuaObject>(l);
 }
 
 //-----------------------------------------------------------------------------
