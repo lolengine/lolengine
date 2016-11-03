@@ -28,11 +28,11 @@ namespace Debug
         class Data
         {
         public:
+            vec4 m_color = vec4(1.f);
             float m_duration = 0.0f;
             int m_mask = 0;
             float m_segment_size = 8;
 
-//Resets draw infos
             Data() {}
             Data(vec4 color, float duration = -1.f, int mask = 0xFFFFFFFF, float segment_size = 1.f)
             {
