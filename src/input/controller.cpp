@@ -364,7 +364,7 @@ void Controller::UnbindProfile()
     if (m_keyboard)
     {
         for (InputProfile::Keyboard& key : m_profile.m_keys)
-            GetKey(key.m_idx).UnbindKeyboard(key.m_name);
+            GetKey(key.m_value).UnbindKeyboard(key.m_name);
         m_keyboard = nullptr;
     }
 
@@ -372,22 +372,22 @@ void Controller::UnbindProfile()
     if (m_mouse)
     {
         for (InputProfile::MouseKey& key : m_profile.m_mouse_keys)
-            GetKey(key.m_idx).UnbindMouse(key.m_name);
+            GetKey(key.m_value).UnbindMouse(key.m_name);
         for (InputProfile::MouseAxis& axis : m_profile.m_mouse_axis)
-            GetAxis(axis.m_idx).UnbindMouse(axis.m_name);
+            GetAxis(axis.m_value).UnbindMouse(axis.m_name);
         m_mouse = nullptr;
     }
 
     //Joystick
     for (InputProfile::JoystickKey& key : m_profile.m_joystick_keys)
     {
-        if (m_joystick_idx.find(key.m_joy) != INDEX_NONE)
-            GetKey(key.m_idx).UnbindJoystick(key.m_joy, key.m_name);
+        if (m_joystick_idx.find(key.m_index) != INDEX_NONE)
+            GetKey(key.m_value).UnbindJoystick(key.m_index, key.m_name);
     }
     for (InputProfile::JoystickAxis& axis : m_profile.m_joystick_axis)
     {
-        if (m_joystick_idx.find(axis.m_joy) != INDEX_NONE)
-            GetAxis(axis.m_idx).UnbindJoystick(axis.m_joy, axis.m_name);
+        if (m_joystick_idx.find(axis.m_index) != INDEX_NONE)
+            GetAxis(axis.m_value).UnbindJoystick(axis.m_index, axis.m_name);
     }
     m_joystick.empty();
     m_joystick_idx.empty();
@@ -410,7 +410,7 @@ void Controller::BindProfile(InputProfile const& setup)
     if (m_keyboard)
     {
         for (InputProfile::Keyboard& key : m_profile.m_keys)
-            GetKey(key.m_idx).BindKeyboard(key.m_name);
+            GetKey(key.m_value).BindKeyboard(key.m_name);
     }
 
     //Mouse
@@ -418,9 +418,9 @@ void Controller::BindProfile(InputProfile const& setup)
     if (m_mouse)
     {
         for (InputProfile::MouseKey& key : m_profile.m_mouse_keys)
-            GetKey(key.m_idx).BindMouse(key.m_name);
+            GetKey(key.m_value).BindMouse(key.m_name);
         for (InputProfile::MouseAxis& axis : m_profile.m_mouse_axis)
-            GetAxis(axis.m_idx).BindMouse(axis.m_name);
+            GetAxis(axis.m_value).BindMouse(axis.m_name);
     }
 
     //Joystick
@@ -435,13 +435,13 @@ void Controller::BindProfile(InputProfile const& setup)
     }
     for (InputProfile::JoystickKey& key : m_profile.m_joystick_keys)
     {
-        if (m_joystick_idx.find(key.m_joy) != INDEX_NONE)
-            GetKey(key.m_idx).BindJoystick(key.m_joy, key.m_name);
+        if (m_joystick_idx.find(key.m_index) != INDEX_NONE)
+            GetKey(key.m_value).BindJoystick(key.m_index, key.m_name);
     }
     for (InputProfile::JoystickAxis& axis : m_profile.m_joystick_axis)
     {
-        if (m_joystick_idx.find(axis.m_joy) != INDEX_NONE)
-            GetAxis(axis.m_idx).BindJoystick(axis.m_joy, axis.m_name);
+        if (m_joystick_idx.find(axis.m_index) != INDEX_NONE)
+            GetAxis(axis.m_value).BindJoystick(axis.m_index, axis.m_name);
     }
 
     m_mutex.unlock();

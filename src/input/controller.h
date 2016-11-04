@@ -144,36 +144,47 @@ class InputProfile
     friend class Controller;
 private:
     //---------------------------------------------------------------------
-    class Key
+    class KeyBase
     {
         friend class Controller;
         friend class InputProfile;
     public:
-        Key() { }
-        Key(int idx, String const& name) : m_idx(idx), m_name(name) { }
-        Key(const Key& other) : m_idx(other.m_idx), m_name(other.m_name) { }
-        ~Key() { }
-        bool operator==(const Key& other) { return m_name == other.m_name; }
-    private:
-        int m_idx = 0;
+        KeyBase() { }
+        KeyBase(int value, String const& name) : m_value(value), m_name(name) { }
+        KeyBase(const KeyBase& other) : m_value(other.m_value), m_name(other.m_name) { }
+        ~KeyBase() { }
+        bool operator==(const KeyBase& other) { return m_name == other.m_name; }
+    protected:
+        int m_value = 0;
         String m_name;
     };
+
     //---------------------------------------------------------------------
-    class Joystick
+    class Key : public KeyBase
     {
         friend class Controller;
         friend class InputProfile;
     public:
-        Joystick() { }
-        Joystick(uint64_t joy, int idx, String const& name) : m_joy(joy), m_idx(idx), m_name(name) { }
-        Joystick(const Joystick& other) : m_joy(other.m_joy), m_idx(other.m_idx), m_name(other.m_name) { }
-        ~Joystick() { }
-        bool operator==(const Joystick& other) { return m_name == other.m_name; }
-    private:
-        uint64_t m_joy = 0;
-        int m_idx = 0;
-        String m_name;
+        Key() : KeyBase() { }
+        Key(int value, String const& name) : KeyBase(value, name) { }
+        Key(const Key& other) : KeyBase(other.m_value, other.m_name) { }
+        ~Key() { }
     };
+
+    //---------------------------------------------------------------------
+    class Joystick : public KeyBase
+    {
+        friend class Controller;
+        friend class InputProfile;
+    public:
+        Joystick() : KeyBase() { }
+        Joystick(uint64_t index, int value, String const& name) : KeyBase(value, name), m_index(index) { }
+        Joystick(const Joystick& other) : KeyBase(other.m_value, other.m_name), m_index(other.m_index) { }
+        ~Joystick() { }
+    private:
+        uint64_t m_index = 0;
+    };
+
 public:
     //---------------------------------------------------------------------
     class Keyboard : public Key
@@ -182,9 +193,10 @@ public:
         friend class InputProfile;
     public:
         Keyboard() : Key() { }
-        Keyboard(int idx, String const& name) : Key(idx, name) { }
-        Keyboard(const Keyboard& other) : Key(other.m_idx, other.m_name) { }
+        Keyboard(int value, String const& name) : Key(value, name) { }
+        Keyboard(const Keyboard& other) : Key(other.m_value, other.m_name) { }
     };
+
     //---------------------------------------------------------------------
     class MouseKey : public Key
     {
@@ -192,9 +204,10 @@ public:
         friend class InputProfile;
     public:
         MouseKey() : Key() { }
-        MouseKey(int idx, String const& name) : Key(idx, name) { }
-        MouseKey(const Keyboard& other) : Key(other.m_idx, other.m_name) { }
+        MouseKey(int value, String const& name) : Key(value, name) { }
+        MouseKey(const Keyboard& other) : Key(other.m_value, other.m_name) { }
     };
+
     //---------------------------------------------------------------------
     class MouseAxis : public Key
     {
@@ -202,9 +215,10 @@ public:
         friend class InputProfile;
     public:
         MouseAxis() : Key() { }
-        MouseAxis(int idx, String const& name) : Key(idx, name) { }
-        MouseAxis(const Keyboard& other) : Key(other.m_idx, other.m_name) { }
+        MouseAxis(int value, String const& name) : Key(value, name) { }
+        MouseAxis(const Keyboard& other) : Key(other.m_value, other.m_name) { }
     };
+
     //---------------------------------------------------------------------
     class JoystickKey : public Joystick
     {
@@ -212,8 +226,8 @@ public:
         friend class InputProfile;
     public:
         JoystickKey() : Joystick() { }
-        JoystickKey(uint64_t joy, int idx, String const& name) : Joystick(joy, idx, name) { }
-        JoystickKey(const JoystickKey& other) : Joystick(other.m_joy, other.m_idx, other.m_name) { }
+        JoystickKey(uint64_t index, int value, String const& name) : Joystick(index, value, name) { }
+        JoystickKey(const JoystickKey& other) : Joystick(other.m_index, other.m_value, other.m_name) { }
     };
     //---------------------------------------------------------------------
     class JoystickAxis : public Joystick
@@ -222,8 +236,8 @@ public:
         friend class InputProfile;
     public:
         JoystickAxis() : Joystick() { }
-        JoystickAxis(uint64_t joy, int idx, String const& name) : Joystick(joy, idx, name) { }
-        JoystickAxis(const JoystickAxis& other) : Joystick(other.m_joy, other.m_idx, other.m_name) { }
+        JoystickAxis(uint64_t index, int value, String const& name) : Joystick(index, value, name) { }
+        JoystickAxis(const JoystickAxis& other) : Joystick(other.m_index, other.m_value, other.m_name) { }
     };
 public:
     InputProfile() { }
@@ -275,14 +289,14 @@ public:
     //------
     InputProfile& operator<<(InputProfile::JoystickKey const& binding)
     {
-        m_joystick.push_unique(binding.m_joy);
+        m_joystick.push_unique(binding.m_index);
         m_joystick_keys.push_unique(binding);
         return *this;
     }
     InputProfile& operator<<(array<InputProfile::JoystickKey> const& bindings)
     {
         for (InputProfile::JoystickKey const& binding : bindings)
-            m_joystick.push_unique(binding.m_joy);
+            m_joystick.push_unique(binding.m_index);
         m_joystick_keys += bindings;
         return *this;
     }
@@ -300,14 +314,14 @@ public:
     //------
     InputProfile& operator<<(InputProfile::JoystickAxis const& binding)
     {
-        m_joystick.push_unique(binding.m_joy);
+        m_joystick.push_unique(binding.m_index);
         m_joystick_axis.push_unique(binding);
         return *this;
     }
     InputProfile& operator<<(array<InputProfile::JoystickAxis> const& bindings)
     {
         for (InputProfile::JoystickAxis const& binding : bindings)
-            m_joystick.push_unique(binding.m_joy);
+            m_joystick.push_unique(binding.m_index);
         m_joystick_axis += bindings;
         return *this;
     }
@@ -331,18 +345,18 @@ public:
     typedef SafeEnum<InputTypeBase> InputType;
 
     //Template helper ---------------------------------------------------------
-    template <typename T, int N_BEGIN, int N_END>
+    template <typename BIND_SRC, int SRC_BEGIN, int SRC_END>
     void AddBindings(InputType const& type, uint64_t joy = 0)
     {
-        for (int i = N_BEGIN; i < N_END; ++i)
+        for (int i = SRC_BEGIN; i < SRC_END; ++i)
         {
             switch (type.ToScalar())
             {
-            case InputType::Keyboard:/******/*this << InputProfile::Keyboard/******/(/***/i, T(i).ToString()); break;
-            case InputType::MouseKey:/******/*this << InputProfile::MouseKey/******/(/***/i, T(i).ToString()); break;
-            case InputType::JoystickKey:/***/*this << InputProfile::JoystickKey/***/(joy, i, T(i).ToString()); break;
-            case InputType::MouseAxis:/*****/*this << InputProfile::MouseAxis/*****/(/***/i, T(i).ToString()); break;
-            case InputType::JoystickAxis:/**/*this << InputProfile::JoystickAxis/**/(joy, i, T(i).ToString()); break;
+            case InputType::Keyboard: /*    */ *this << InputProfile::Keyboard/*    */(/**/ i, BIND_SRC(i).ToString()); break;
+            case InputType::MouseKey: /*    */ *this << InputProfile::MouseKey/*    */(/**/ i, BIND_SRC(i).ToString()); break;
+            case InputType::JoystickKey: /* */ *this << InputProfile::JoystickKey/* */(joy, i, BIND_SRC(i).ToString()); break;
+            case InputType::MouseAxis: /*   */ *this << InputProfile::MouseAxis/*   */(/**/ i, BIND_SRC(i).ToString()); break;
+            case InputType::JoystickAxis: /**/ *this << InputProfile::JoystickAxis/**/(joy, i, BIND_SRC(i).ToString()); break;
             default: break;
             }
         }
