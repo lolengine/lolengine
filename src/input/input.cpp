@@ -36,6 +36,16 @@ String InputDevice::GetText()
     return ret;
 }
 
+bool InputDevice::IsTextInputActive()
+{
+    return m_input_active;
+}
+
+void InputDevice::SetTextInputActive(bool status)
+{
+    m_input_active = status;
+}
+
 void InputDeviceInternal::AddKey(int index, const char* name)
 {
     if (index == -1)

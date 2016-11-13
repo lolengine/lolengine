@@ -227,6 +227,8 @@ void LolImGui::TickGame(float seconds)
         }
     }
 
+    m_keyboard->SetTextInputActive(io.WantTextInput);
+
     //Update text input
     String text = m_keyboard->GetText();
     //text.case_change(io.KeyShift);
