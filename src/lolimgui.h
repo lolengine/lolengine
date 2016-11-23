@@ -12,7 +12,20 @@
 
 #pragma once
 
+#define IM_VEC2_CLASS_EXTRA ImVec2(const lol::vec2 &v) { x = v.x; y = v.y; } \
+                            ImVec2(const lol::ivec2 &v) : ImVec2(lol::vec2(v)) { } \
+                            operator lol::vec2() const { return lol::vec2(x, y); } \
+                            operator lol::ivec2() const { return lol::ivec2(lol::vec2(x, y)); }
+
+#define IM_VEC4_CLASS_EXTRA ImVec4(const lol::vec4 &v) { x = v.x; y = v.y; z = v.z; w = v.w; } \
+                            ImVec4(const lol::ivec4 &v) : ImVec4(lol::vec4(v)) { } \
+                            operator lol::vec4() { return lol::vec4(x, y, z, w); } \
+                            operator lol::ivec4() const { return lol::ivec4(lol::vec4(x, y, z, w)); }
+
 #include "imgui.h"
+
+#undef IM_VEC2_CLASS_EXTRA
+#undef IM_VEC4_CLASS_EXTRA
 
 //Imgui extension ---------------------------------------------------------------------------------
 typedef int ImGuiSetDock;           // condition flags for Set*()           // enum ImGuiSetCond_
