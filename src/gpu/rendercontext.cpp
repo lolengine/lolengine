@@ -59,6 +59,8 @@ private:
     TrackedState<DepthMask> m_depth_mask;
     TrackedState<CullMode> m_cull_mode;
     TrackedState<PolygonMode> m_polygon_mode;
+    TrackedState<ScissorMode> m_scissor_mode;
+    TrackedState<vec4> m_scissor_rect;
 };
 
 /*
@@ -100,6 +102,9 @@ RenderContext::~RenderContext()
 
     if (m_data->m_polygon_mode.HasChanged())
         Renderer::Get()->SetPolygonMode(m_data->m_polygon_mode.GetValue());
+
+    if (m_data->m_scissor_mode.HasChanged())
+        Renderer::Get()->SetScissorMode(m_data->m_scissor_mode.GetValue());
 
     delete m_data;
 }
@@ -253,6 +258,32 @@ void RenderContext::SetPolygonMode(PolygonMode mode)
 PolygonMode RenderContext::GetPolygonMode()
 {
     return Renderer::Get()->GetPolygonMode();
+}
+
+void RenderContext::SetScissorMode(ScissorMode mode)
+{
+    if (!m_data->m_scissor_mode.HasChanged())
+        m_data->m_scissor_mode.TrackValue(Renderer::Get()->GetScissorMode());
+
+    Renderer::Get()->SetScissorMode(mode);
+}
+
+void RenderContext::SetScissorRect(vec4 rect)
+{
+    if (!m_data->m_scissor_rect.HasChanged())
+        m_data->m_scissor_rect.TrackValue(Renderer::Get()->GetScissorRect());
+
+    Renderer::Get()->SetScissorRect(rect);
+}
+
+ScissorMode RenderContext::GetScissorMode()
+{
+    return Renderer::Get()->GetScissorMode();
+}
+
+vec4 RenderContext::GetScissorRect()
+{
+    return Renderer::Get()->GetScissorRect();
 }
 
 } /* namespace lol */
