@@ -14,10 +14,26 @@
 
 #include "imgui.h"
 
+//Imgui extension ---------------------------------------------------------------------------------
+typedef int ImGuiSetDock;           // condition flags for Set*()           // enum ImGuiSetCond_
+
+enum ImGuiSetDock_
+{
+    ImGuiSetDock_TopLeft = 0,
+    ImGuiSetDock_TopRight = 1,
+    ImGuiSetDock_BottomLeft = 2,
+    ImGuiSetDock_BottomRight = 3,
+};
+
+namespace ImGui
+{
+    IMGUI_API void SetNextWindowSizeAndDock(const ImVec2& size, ImGuiSetDock dock, ImGuiSetCond cond = 0);
+}
+
+//LolImGui ----------------------------------------------------------------------------------------
 namespace lol
 {
 
-//LolImGui --------------------------------------------------------------------
 class LolImGui : public Entity
 {
     typedef Entity super;
