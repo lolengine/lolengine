@@ -18,6 +18,28 @@
 
 using namespace lol;
 
+//Imgui extension ---------------------------------------------------------------------------------
+namespace ImGui
+{
+    IMGUI_API void SetNextWindowSizeAndDock(const ImVec2& size, ImGuiSetDock dock, ImGuiSetCond cond)
+    {
+        vec2 video_size = vec2(Video::GetSize());
+        ImVec2 pos = ImVec2();
+
+        switch (dock)
+        {
+        case ImGuiSetDock_TopLeft: pos = ImVec2(0, 0); break;
+        case ImGuiSetDock_TopRight: pos = ImVec2(video_size.x - size.x, 0); break;
+        case ImGuiSetDock_BottomLeft: pos = ImVec2(0, video_size.y - size.y); break;
+        case ImGuiSetDock_BottomRight: pos = ImVec2(video_size.x - size.x, video_size.y - size.y); break;
+        }
+
+        ImGui::SetNextWindowPos(pos, cond);
+        ImGui::SetNextWindowSize(size, cond);
+    }
+}
+
+//LolImGui ----------------------------------------------------------------------------------------
 #define Line(s) ((s) + "\n")
 
 //-----------------------------------------------------------------------------

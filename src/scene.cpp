@@ -723,7 +723,7 @@ void Scene::render_tiles() // XXX: rename to Blit()
 
     if (!data->m_tile_api.m_shader)
         data->m_tile_api.m_shader = Shader::Create(LOLFX_RESOURCE_NAME(gpu_tile));
-    if (!data->m_tile_api.m_palette_shader)
+    if (!data->m_tile_api.m_palette_shader && data->m_tile_api.m_palettes.count())
         data->m_tile_api.m_palette_shader = Shader::Create(LOLFX_RESOURCE_NAME(gpu_palette));
 
     for (int p = 0; p < 2; p++)
@@ -749,7 +749,7 @@ void Scene::render_tiles() // XXX: rename to Blit()
         shader->SetUniform(uni_mat, mat4(1.f));
 
         uni_tex = shader->GetUniformLocation("u_texture");
-        uni_pal = data->m_tile_api.m_palette_shader->GetUniformLocation("u_palette");
+        uni_pal = data->m_tile_api.m_palette_shader ? data->m_tile_api.m_palette_shader->GetUniformLocation("u_palette") : ShaderUniform();
         uni_texsize = shader->GetUniformLocation("u_texsize");
 
         for (int buf = 0, i = 0, n; i < tiles.count(); i = n, buf += 2)
@@ -809,6 +809,9 @@ void Scene::render_tiles() // XXX: rename to Blit()
         tiles.empty();
 
         shader->Unbind();
+
+        if (!data->m_tile_api.m_palette_shader)
+            break;
     }
 
 #if (defined LOL_USE_GLEW || defined HAVE_GL_2X) && !defined HAVE_GLES_2X
