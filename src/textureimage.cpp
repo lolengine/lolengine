@@ -162,6 +162,11 @@ Image const * TextureImage::GetImage() const
     return m_data->m_image;
 }
 
+ivec2 TextureImage::GetImageSize() const
+{
+    return m_data->m_image_size;
+}
+
 ivec2 TextureImage::GetTextureSize() const
 {
     return m_data->m_texture_size;

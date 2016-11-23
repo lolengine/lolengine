@@ -57,6 +57,7 @@ public:
     Texture const * GetTexture() const;
     Image * GetImage();
     Image const * GetImage() const;
+    ivec2 GetImageSize() const;
     ivec2 GetTextureSize() const;
     void Bind();
     void Unbind();
