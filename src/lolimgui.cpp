@@ -366,6 +366,7 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
     RenderContext rc;
     rc.SetCullMode(CullMode::Disabled);
     rc.SetDepthFunc(DepthFunc::Disabled);
+    rc.SetScissorMode(ScissorMode::Enabled);
 
     m_shader->Bind();
     for (int n = 0; n < draw_data->CmdListsCount; n++)
@@ -402,6 +403,11 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
         for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
         {
             const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[(int)cmd_i];
+            TextureImage* image = (TextureImage*)pcmd->TextureId;
+            if (image) image->Bind();
+
+            rc.SetScissorRect(vec4(pcmd->ClipRect.x, pcmd->ClipRect.y, pcmd->ClipRect.z, pcmd->ClipRect.w));
+
 #ifdef SHOW_IMGUI_DEBUG
             //-----------------------------------------------------------------
             //<Debug render> --------------------------------------------------
@@ -448,6 +454,8 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
             m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, pcmd->ElemCount, (const short*)idx_buffer_offset);
 
             idx_buffer_offset += pcmd->ElemCount;
+
+            if (image) image->Unbind();
         }
 
         m_vdecl->Unbind();

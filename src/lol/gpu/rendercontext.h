@@ -36,6 +36,8 @@ public:
     void SetDepthMask(DepthMask mask);
     void SetCullMode(CullMode mode);
     void SetPolygonMode(PolygonMode mode);
+    void SetScissorMode(ScissorMode mode);
+    void SetScissorRect(vec4 rect);
 
     ibox2 GetViewport();
     vec4 GetClearColor();
@@ -50,6 +52,8 @@ public:
     DepthMask GetDepthMask();
     CullMode GetCullMode();
     PolygonMode GetPolygonMode();
+    ScissorMode GetScissorMode();
+    vec4 GetScissorRect();
 
 private:
     RenderContextData *m_data;
