@@ -62,6 +62,8 @@ public:
     void define_tile(ivec2 count);
     int GetTileCount() const;
     ivec2 GetTileSize(int tileid) const;
+    ibox2 GetTilePixel(int tileid) const;
+    box2 GetTileTexel(int tileid) const;
 
     void SetPalette(TileSet* palette);
     TileSet* GetPalette();

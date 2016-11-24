@@ -162,6 +162,16 @@ ivec2 TileSet::GetTileSize(int tileid) const
     return m_tileset_data->m_tiles[tileid].m1.extent();
 }
 
+ibox2 TileSet::GetTilePixel(int tileid) const
+{
+    return m_tileset_data->m_tiles[tileid].m1;
+}
+
+box2 TileSet::GetTileTexel(int tileid) const
+{
+    return m_tileset_data->m_tiles[tileid].m2;
+}
+
 //Palette ---------------------------------------------------------------------
 void TileSet::SetPalette(TileSet* palette)
 {
