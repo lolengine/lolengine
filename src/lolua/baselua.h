@@ -398,6 +398,7 @@ protected:
     {
         P** data = (P**)lua_newuserdata(m_state, sizeof(P*));
         *data = value.m_value;
+        return 1;
     }
 #endif //STACK_STRING
 
