@@ -10,7 +10,7 @@
 
 #include <lol/engine-internal.h>
 
-#include "../../image/image-private.h"
+#include "../../image/resource-private.h"
 
 namespace lol
 {
@@ -19,12 +19,12 @@ namespace lol
  * Image implementation class
  */
 
-class ZedPaletteImageCodec : public ImageCodec
+class ZedPaletteImageCodec : public ResourceCodec
 {
 public:
     virtual char const *GetName() { return "<ZedPaletteImageCodec>"; }
-    virtual bool Load(Image *image, char const *path);
-    virtual bool Save(Image *image, char const *path);
+    virtual ResourceCodecData* Load(char const *path);
+    virtual bool Save(char const *path, ResourceCodecData* data);
 };
 
 DECLARE_IMAGE_CODEC(ZedPaletteImageCodec, 10)
@@ -33,10 +33,10 @@ DECLARE_IMAGE_CODEC(ZedPaletteImageCodec, 10)
  * Public Image class
  */
 
-bool ZedPaletteImageCodec::Load(Image *image, char const *path)
+ResourceCodecData* ZedPaletteImageCodec::Load(char const *path)
 {
     if (!lol::String(path).ends_with(".pal"))
-        return false;
+        return nullptr;
 
     File file;
     file.Open(path, FileAccess::Read, true);
@@ -53,13 +53,15 @@ bool ZedPaletteImageCodec::Load(Image *image, char const *path)
     int32_t tex_size = 2;
     while (tex_size < tex_sqrt)
         tex_size <<= 1;
-    image->m_data->m_size = ivec2(tex_size);
+    auto data = new ResourceImageData(new Image(ivec2(tex_size)));
+    auto image = data->m_image;
 #else
     int32_t tex_sqrt = file_size / 3;
     int32_t tex_size = 2;
     while (tex_size < tex_sqrt)
         tex_size <<= 1;
-    image->SetSize(ivec2(tex_size, 1));
+    auto data = new ResourceImageData(new Image(ivec2(tex_size, 1)));
+    auto image = data->m_image;
 #endif
 
     u8vec4 *pixels = image->Lock<PixelFormat::RGBA_8>();
@@ -73,12 +75,12 @@ bool ZedPaletteImageCodec::Load(Image *image, char const *path)
     }
     image->Unlock(pixels);
 
-    return true;
+    return data;
 }
 
-bool ZedPaletteImageCodec::Save(Image *image, char const *path)
+bool ZedPaletteImageCodec::Save(char const *path, ResourceCodecData* data)
 {
-    UNUSED(path);
+    UNUSED(path, data);
     /* FIXME: do we need to implement this? */
     return true;
 }

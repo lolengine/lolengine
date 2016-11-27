@@ -16,7 +16,7 @@
 
 #import <UIKit/UIKit.h>
 
-#include "../../image/image-private.h"
+#include "../../image/resource-private.h"
 
 namespace lol
 {
@@ -25,12 +25,12 @@ namespace lol
  * Image implementation class
  */
 
-class IosImageCodec : public ImageCodec
+class IosImageCodec : public ResourceCodec
 {
 public:
     virtual char const *GetName() { return "<IosImageCodec>"; }
-    virtual bool Load(Image *image, char const *path);
-    virtual bool Save(Image *image, char const *path);
+    virtual ResourceCodecData* Load(char const *path);
+    virtual bool Save(char const *path, ResourceCodecData* data);
 };
 
 DECLARE_IMAGE_CODEC(IosImageCodec, 100)
@@ -39,7 +39,7 @@ DECLARE_IMAGE_CODEC(IosImageCodec, 100)
  * Public Image class
  */
 
-bool IosImageCodec::Load(Image *image, char const *path)
+ResourceCodecData* IosImageCodec::Load(char const *path)
 {
     NSString *fullpath = [NSString stringWithUTF8String:path];
     NSArray *chunks = [fullpath componentsSeparatedByString: @"/"];
@@ -54,7 +54,7 @@ bool IosImageCodec::Load(Image *image, char const *path)
 #if !LOL_BUILD_RELEASE
         msg::error("could not load %s\n", path);
 #endif
-        return false;
+        return nullptr;
     }
 
     int w = CGImageGetWidth(image.CGImage);
@@ -75,12 +75,12 @@ bool IosImageCodec::Load(Image *image, char const *path)
     [image release];
     [pngdata release];
 
-    return true;
+    return new ResourceCodecData();
 }
 
-bool IosImageCodec::Save(Image *image, char const *path)
+bool IosImageCodec::Save(char const *path, ResourceCodecData* data)
 {
-    UNUSED(path);
+    UNUSED(path, data);
 
     /* TODO: unimplemented */
     return true;

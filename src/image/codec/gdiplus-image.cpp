@@ -26,7 +26,7 @@ using std::max;
 
 #if LOL_USE_GDIPLUS
 
-#include "../../image/image-private.h"
+#include "../../image/resource-private.h"
 
 namespace lol
 {
@@ -35,12 +35,12 @@ namespace lol
  * Image implementation class
  */
 
-class GdiPlusImageCodec : public ImageCodec
+class GdiPlusImageCodec : public ResourceCodec
 {
 public:
     virtual char const *GetName() { return "<GdiPlusImageCodec>"; }
-    virtual bool Load(Image *image, char const *path);
-    virtual bool Save(Image *image, char const *path);
+    virtual ResourceCodecData* Load(char const *path);
+    virtual bool Save(char const *path, ResourceCodecData* data);
 };
 
 DECLARE_IMAGE_CODEC(GdiPlusImageCodec, 100)
@@ -49,7 +49,7 @@ DECLARE_IMAGE_CODEC(GdiPlusImageCodec, 100)
  * Public Image class
  */
 
-bool GdiPlusImageCodec::Load(Image *image, char const *path)
+ResourceCodecData* GdiPlusImageCodec::Load(char const *path)
 {
     Gdiplus::Status status;
     ULONG_PTR token;
@@ -58,7 +58,7 @@ bool GdiPlusImageCodec::Load(Image *image, char const *path)
     if (status != Gdiplus::Ok)
     {
         msg::error("error %d while initialising GDI+\n", status);
-        return false;
+        return nullptr;
     }
 
     array<String> pathlist = sys::get_path_list(path);
@@ -99,7 +99,7 @@ bool GdiPlusImageCodec::Load(Image *image, char const *path)
     if (!bitmap)
     {
         msg::error("could not load %s\n", path);
-        return false;
+        return nullptr;
     }
 
     ivec2 size(bitmap->GetWidth(), bitmap->GetHeight());
@@ -110,13 +110,14 @@ bool GdiPlusImageCodec::Load(Image *image, char const *path)
     {
         msg::error("could not lock bits in %s\n", path);
         delete bitmap;
-        return false;
+        return nullptr;
     }
 
     /* FIXME: GDI+ doesn't know about RGBA, only ARGB. And OpenGL doesn't
      * know about ARGB, only RGBA. So we swap bytes. We could also fix
      * this in the shader. */
-    image->SetSize(size);
+    auto data = new ResourceImageData(new Image(ivec2(size)));
+    auto image = data->m_image;
     u8vec4 *pdst = image->Lock<PixelFormat::RGBA_8>();
     u8vec4 *psrc = static_cast<u8vec4 *>(bdata.Scan0);
     for (int n = 0; n < size.x * size.y; n++)
@@ -126,11 +127,15 @@ bool GdiPlusImageCodec::Load(Image *image, char const *path)
     bitmap->UnlockBits(&bdata);
     delete bitmap;
 
-    return true;
+    return data;
 }
 
-bool GdiPlusImageCodec::Save(Image *image, char const *path)
+bool GdiPlusImageCodec::Save(char const *path, ResourceCodecData* data)
 {
+    auto data_image = dynamic_cast<ResourceImageData*>(data);
+    if (data_image == nullptr)
+        return false;
+
     ULONG_PTR token;
     Gdiplus::GdiplusStartupInput input;
     Gdiplus::GdiplusStartup(&token, &input, nullptr);
@@ -178,6 +183,7 @@ bool GdiPlusImageCodec::Save(Image *image, char const *path)
         return false;
     }
 
+    auto image = data_image->m_image;
     ivec2 size = image->GetSize();
 
     Gdiplus::Bitmap *b = new Gdiplus::Bitmap(size.x, size.y,

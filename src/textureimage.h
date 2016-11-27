@@ -18,6 +18,7 @@
 // zero, the texture is freed.
 //
 
+#include <lol/image/resource.h>
 #include <lol/image/image.h>
 #include <lol/gpu/texture.h>
 
@@ -43,6 +44,7 @@ public:
 
 protected:
     void Init(char const *path);
+    virtual void Init(char const *path, ResourceCodecData* loaded_data);
     virtual void Init(char const *path, Image* image);
 
 protected:

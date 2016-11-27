@@ -278,10 +278,10 @@ void SdlInputData::Tick(float seconds)
 #   endif
             {
                 //Lock management
-#   if defined SDLOL_CapsLock && defined SDLOL_ScrollLock && defined SDLOL_NumLockClear
             case SDLOL_CapsLock:
             case SDLOL_ScrollLock:
             case SDLOL_NumLockClear:
+#   if defined SDLOL_CapsLock && defined SDLOL_ScrollLock && defined SDLOL_NumLockClear
                 //Update status on key down only
                 if (event.type == SDL_KEYDOWN)
                 {

@@ -19,61 +19,6 @@
 namespace lol
 {
 
-/* HACK: We cannot make this an ImageLoader member function, because the
- * REGISTER_IMAGE_CODEC macro forward-declares free functions from
- * the "lol" namespace. An apparent bug in Visual Studio's compiler
- * makes it think these functions are actually in the top-level
- * namespace when the forward declaration is in a class member function.
- * To avoid the problem, we make the forward declaration in a free
- * function.
- * The bug was reported to Microsoft and fixed by them, but the fix
- * is not yet available.
- * https://connect.microsoft.com/VisualStudio/feedback/details/730878/ */
-static bool RegisterAllCodecs(array<ImageCodec *> &codeclist)
-{
-#if defined __ANDROID__
-    REGISTER_IMAGE_CODEC(AndroidImageCodec)
-#endif
-#if defined LOL_USE_GDIPLUS
-    REGISTER_IMAGE_CODEC(GdiPlusImageCodec)
-#endif
-#if defined __APPLE__ && defined __MACH__ && defined __arm__
-    REGISTER_IMAGE_CODEC(IosImageCodec)
-#endif
-#if defined LOL_USE_SDL_IMAGE
-    REGISTER_IMAGE_CODEC(SdlImageCodec)
-#endif
-#if defined LOL_USE_IMLIB2
-    REGISTER_IMAGE_CODEC(Imlib2ImageCodec)
-#endif
-    REGISTER_IMAGE_CODEC(DummyImageCodec)
-    REGISTER_IMAGE_CODEC(ZedImageCodec)
-    REGISTER_IMAGE_CODEC(ZedPaletteImageCodec)
-    REGISTER_IMAGE_CODEC(OricImageCodec)
-
-    return true;
-}
-
-/*
- * Our static image loader
- */
-
-static class ImageLoader
-{
-    friend class Image;
-
-public:
-    inline ImageLoader()
-    {
-        RegisterAllCodecs(m_codecs);
-    }
-
-private:
-    array<ImageCodec *> m_codecs;
-    map<String, Image *> m_images;
-}
-g_image_loader;
-
 /*
  * Public Image class
  */
@@ -117,77 +62,59 @@ Image::~Image()
     delete m_data;
 }
 
-void Image::DummyFill()
-{
-    //TODO: This is not very beautiful
-    for (auto codec : g_image_loader.m_codecs)
-    {
-        if (String(codec->GetName()).contains("Dummy"))
-        {
-            codec->Load(this, nullptr);
-            return;
-        }
-    }
-}
-
-void Image::Copy(uint8_t* pixels, ivec2 const& size, PixelFormat fmt)
+void Image::Copy(uint8_t* src_pixels, ivec2 const& size, PixelFormat fmt)
 {
     ASSERT(fmt != PixelFormat::Unknown);
     SetSize(size);
     SetFormat(fmt);
-    memcpy(m_data->m_pixels[(int)fmt]->data(), pixels,
+    memcpy(m_data->m_pixels[(int)fmt]->data(), src_pixels,
             size.x * size.y * BytesPerPixel(fmt));
 }
 
-void Image::Copy(Image const &other)
+void Image::Copy(Image const &src)
 {
-    ivec2 size = other.GetSize();
-    PixelFormat fmt = other.GetFormat();
+    ivec2 size = src.GetSize();
+    PixelFormat fmt = src.GetFormat();
 
     SetSize(size);
     if (fmt != PixelFormat::Unknown)
     {
         SetFormat(fmt);
         memcpy(m_data->m_pixels[(int)fmt]->data(),
-            other.m_data->m_pixels[(int)fmt]->data(),
+            src.m_data->m_pixels[(int)fmt]->data(),
             size.x * size.y * BytesPerPixel(fmt));
     }
 }
 
+void Image::DummyFill()
+{
+    Load("DUMMY");
+}
+
 bool Image::Load(char const *path)
 {
-    ImageCodec* last_codec = nullptr;
-    for (auto codec : g_image_loader.m_codecs)
+    auto resource = ResourceLoader::Load(path);
+    if (resource == nullptr)
+        return false;
+
+    auto image_resource = dynamic_cast<ResourceImageData*>(resource);
+    if (image_resource == nullptr)
     {
-        last_codec = codec;
-        if (codec->Load(this, path))
-        {
-            msg::info("Image::Load: Codec %s succesfully loaded %s.\n", codec->GetName(), path);
-            return true;
-        }
+        delete image_resource;
+        return false;
     }
 
-    //Log error, because we shouldn't be here
-    msg::error("Image::Load: Last codec %s, Error loading image %s.\n", last_codec->GetName(), path);
-    return false;
+    Copy(*image_resource->m_image);
+    delete image_resource;
+    return true;
 }
 
 bool Image::Save(char const *path)
 {
-    ImageCodec* last_codec = nullptr;
-    for (auto codec : g_image_loader.m_codecs)
-    {
-        last_codec = codec;
-        if (codec->Save(this, path))
-        {
-            msg::info("Image::Save: Codec %s succesfully saved %s.\n", codec->GetName(), path);
-            return true;
-        }
-    }
-
-    //Log error, because we shouldn't be here
-    msg::error("Image::Save: Last codec %s, Error saving image %s.\n", last_codec->GetName(), path);
-    return false;
+    auto data = new ResourceImageData(new Image(*this));
+    auto result = ResourceLoader::Save(path, data);
+    delete data;
+    return result;
 }
 
 ivec2 Image::GetSize() const
@@ -279,13 +206,6 @@ void Image::Unlock(void const *pixels)
 {
     ASSERT(m_data->m_pixels.has_key((int)m_data->m_format));
     ASSERT(pixels == m_data->m_pixels[(int)m_data->m_format]->data());
-}
-
-bool Image::RetrieveTiles(array<ivec2, ivec2>& tiles) const
-{
-    /* TODO: re-implement this */
-    //return m_data->m_codecdata->RetrieveTiles(tiles);
-    return false;
 }
 
 } /* namespace lol */
