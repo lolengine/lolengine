@@ -95,7 +95,7 @@ ResourceCodecData* ResourceLoader::Load(char const *path)
 
     //Log error, because we shouldn't be here
     msg::error("Image::Load: Last codec %s, Error loading resource %s.\n", last_codec->GetName(), path);
-    return false;
+    return nullptr;
 }
 
 bool ResourceLoader::Save(char const *path, ResourceCodecData* data)

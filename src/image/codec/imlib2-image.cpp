@@ -22,7 +22,7 @@ static_assert(sizeof(DATA32) == sizeof(uint32_t), "Imlib2 type DATA32 is broken"
 static_assert(sizeof(DATA16) == sizeof(uint16_t), "Imlib2 type DATA16 is broken");
 static_assert(sizeof(DATA8)  == sizeof(uint8_t),  "Imlib2 type DATA8 is broken");
 
-#include "../../image/image-private.h"
+#include "../../image/resource-private.h"
 
 namespace lol
 {
@@ -31,17 +31,18 @@ namespace lol
  * Imlib2 image codec
  */
 
-class Imlib2ImageCodec : public ImageCodec
+class Imlib2ImageCodec : public ResourceCodec
 {
 public:
-    virtual bool Load(Image *image, char const *path);
-    virtual bool Save(Image *image, char const *path);
+    virtual char const *GetName() { return "<Imlib2ImageCodec>"; }
+    virtual ResourceCodecData* Load(char const *path);
+    virtual bool Save(char const *path, ResourceCodecData* data);
 };
 
 /* Set priority higher than SDL because we can save in many formats. */
 DECLARE_IMAGE_CODEC(Imlib2ImageCodec, 70)
 
-bool Imlib2ImageCodec::Load(Image *image, char const *path)
+ResourceCodecData *Imlib2ImageCodec::Load(char const *path)
 {
     Imlib_Image im = nullptr;
 
@@ -57,7 +58,7 @@ bool Imlib2ImageCodec::Load(Image *image, char const *path)
 #if !LOL_BUILD_RELEASE
         msg::error("could not load image %s\n", path);
 #endif
-        return false;
+        return nullptr;
     }
 
     imlib_context_set_image(im);
@@ -69,11 +70,12 @@ bool Imlib2ImageCodec::Load(Image *image, char const *path)
 #if !LOL_BUILD_RELEASE
         msg::error("could not get image data for %s\n", path);
 #endif
-        return false;
+        return nullptr;
     }
 
     ivec2 size(imlib_image_get_width(), imlib_image_get_height());
-    image->SetSize(size);
+    auto data = new ResourceImageData(new Image(size));
+    auto image = data->m_image;
 
     u8vec4 *dstdata = image->Lock<PixelFormat::RGBA_8>();
 
@@ -88,11 +90,16 @@ bool Imlib2ImageCodec::Load(Image *image, char const *path)
 
     imlib_free_image();
 
-    return true;
+    return data;
 }
 
-bool Imlib2ImageCodec::Save(Image *image, char const *path)
+bool Imlib2ImageCodec::Save(char const *path, ResourceCodecData *data)
 {
+    auto data_image = dynamic_cast<ResourceImageData*>(data);
+    if (data_image == nullptr)
+        return false;
+
+    auto image = data_image->m_image;
     ivec2 size = image->GetSize();
     Imlib_Image priv = imlib_create_image(size.x, size.y);
 
