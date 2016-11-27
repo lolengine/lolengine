@@ -11,7 +11,7 @@
 
 #include <lol/engine-internal.h>
 
-#include "../../image/image-private.h"
+#include "../../image/resource-private.h"
 
 namespace lol
 {
@@ -20,24 +20,12 @@ namespace lol
  * Image implementation class
  */
 
-class ZedImageCodec : public ImageCodec
+class ZedImageCodec : public ResourceCodec
 {
 public:
     virtual char const *GetName() { return "<ZedImageCodec>"; }
-    virtual bool Load(Image *image, char const *path);
-    virtual bool Save(Image *image, char const *path);
-
-    virtual bool RetrieveTiles(array<ivec2, ivec2>& tiles)
-    {
-        bool result = m_tiles.count() > 0;
-        tiles += m_tiles;
-        m_tiles.empty();
-        return result;
-    }
-
-private:
-    //<Pos, Size>
-    array<ivec2, ivec2> m_tiles;
+    virtual ResourceCodecData* Load(char const *path);
+    virtual bool Save(char const *path, ResourceCodecData* data);
 };
 
 DECLARE_IMAGE_CODEC(ZedImageCodec, 10)
@@ -46,10 +34,10 @@ DECLARE_IMAGE_CODEC(ZedImageCodec, 10)
  * Public Image class
  */
 
-bool ZedImageCodec::Load(Image *image, char const *path)
+ResourceCodecData* ZedImageCodec::Load(char const *path)
 {
     if (!lol::String(path).ends_with(".RSC"))
-        return false;
+        return nullptr;
 
     // Compacter definition
     struct CompactSecondary
@@ -142,7 +130,9 @@ bool ZedImageCodec::Load(Image *image, char const *path)
     }
     file_offset << file_size;
 
-    m_tiles.reserve(file_count);
+    //<Pos, Size>
+    array<ivec2, ivec2> tiles;
+    tiles.reserve(file_count);
 
     Compacter2d compacter;
     compacter.StepSetup(8, 8, 10);
@@ -151,6 +141,7 @@ bool ZedImageCodec::Load(Image *image, char const *path)
     array<uint8_t> file_convert;
     file_convert.reserve(file_size);
     array<ivec2> available_sizes;
+    //got through all the files and store them
     for (int i = 0; i < file_count; i++)
     {
         file_pos = file_offset[i];
@@ -187,8 +178,10 @@ bool ZedImageCodec::Load(Image *image, char const *path)
         //Prepare buffer and tiles infos
         int32_t convert_pos = file_convert.count();
         ivec2 size = ivec2(size_x, size_y);
-        compacter.Store(m_tiles.count(), ivec2(size_x, size_y));
-        m_tiles.push(ivec2(file_convert.count(), data_length), ivec2(size_x, size_y));
+        //store tile in compacter
+        compacter.Store(tiles.count(), ivec2(size_x, size_y));
+        //push tile on the stack
+        tiles.push(ivec2(file_convert.count(), data_length), ivec2(size_x, size_y));
         file_convert.resize(convert_pos + data_length);
 
         //Retrieve actual datas
@@ -233,8 +226,9 @@ bool ZedImageCodec::Load(Image *image, char const *path)
     while (tex_size < tex_sqrt)
         tex_size <<= 1;
 
-    //Prepare final imqge
-    image->SetSize(ivec2(tex_size));
+    //Prepare final image
+    auto data = new ResourceTilesetData(new Image(ivec2(tex_size)));
+    auto image = data->m_image;
     uint8_t *pixels = image->Lock<PixelFormat::Y_8>();
 
     //Data refactor stage
@@ -255,8 +249,8 @@ bool ZedImageCodec::Load(Image *image, char const *path)
 
                 compacter.m_primary[j].m_count--;
                 int i = compacter.m_primary[j].m_secondary[k].m_tiles.pop();
-                int32_t file_off = m_tiles[i].m1[0];
-                ivec2 t_size = m_tiles[i].m2;
+                int32_t file_off = tiles[i].m1[0];
+                ivec2 t_size = tiles[i].m2;
 
                 ASSERT(pos.y + t_size.y < tex_size);
 
@@ -277,7 +271,7 @@ bool ZedImageCodec::Load(Image *image, char const *path)
                 }
 
                 //Register new pos and move to next
-                m_tiles[i].m1 = pos;
+                tiles[i].m1 = pos;
                 pos.x += t_size.x;
             }
         }
@@ -292,12 +286,14 @@ bool ZedImageCodec::Load(Image *image, char const *path)
     }
     image->Unlock(pixels);
 
-    return true;
+    data->m_tiles = tiles;
+
+    return data;
 }
 
-bool ZedImageCodec::Save(Image *image, char const *path)
+bool ZedImageCodec::Save(char const *path, ResourceCodecData* data)
 {
-    UNUSED(path);
+    UNUSED(path, data);
     /* FIXME: do we need to implement this? */
     return true;
 }

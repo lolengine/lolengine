@@ -10,7 +10,7 @@
 
 #include <lol/engine-internal.h>
 
-#include "../../image/image-private.h"
+#include "../../image/resource-private.h"
 
 namespace lol
 {
@@ -19,12 +19,12 @@ namespace lol
  * Image implementation class
  */
 
-class DummyImageCodec : public ImageCodec
+class DummyImageCodec : public ResourceCodec
 {
 public:
     virtual char const *GetName() { return "<DummyImageCodec>"; }
-    virtual bool Load(Image *image, char const *path);
-    virtual bool Save(Image *image, char const *path);
+    virtual ResourceCodecData* Load(char const *path);
+    virtual bool Save(char const *path, ResourceCodecData* data);
 };
 
 //Priority 0 because it's supposed to be the last one
@@ -34,11 +34,13 @@ DECLARE_IMAGE_CODEC(DummyImageCodec, 0)
  * Public Image class
  */
 
-bool DummyImageCodec::Load(Image *image, char const *path)
+ResourceCodecData* DummyImageCodec::Load(char const *path)
 {
-    UNUSED(path);
+    if (strcmp("DUMMY", path))
+        return nullptr;
 
-    image->SetSize(ivec2(256));
+    auto data = new ResourceImageData(new Image(ivec2(256)));
+    auto image = data->m_image;
     u8vec4 *pixels = image->Lock<PixelFormat::RGBA_8>(), *tmp = pixels;
     for (int j = 0; j < 256; j++)
         for (int i = 0; i < 256; i++)
@@ -51,13 +53,12 @@ bool DummyImageCodec::Load(Image *image, char const *path)
         }
     image->Unlock(pixels);
 
-    //return false, because we're not supposed to be here.
-    return false;
+    return data;
 }
 
-bool DummyImageCodec::Save(Image *image, char const *path)
+bool DummyImageCodec::Save(char const *path, ResourceCodecData* data)
 {
-    UNUSED(path);
+    UNUSED(path, data);
 
     return false;
 }

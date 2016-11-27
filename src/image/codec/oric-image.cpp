@@ -12,7 +12,7 @@
 
 #include <cctype>
 
-#include "../../image/image-private.h"
+#include "../../image/resource-private.h"
 
 namespace lol
 {
@@ -27,12 +27,12 @@ namespace lol
  * Image implementation class
  */
 
-class OricImageCodec : public ImageCodec
+class OricImageCodec : public ResourceCodec
 {
 public:
     virtual char const *GetName() { return "<OricImageCodec>"; }
-    virtual bool Load(Image *image, char const *path);
-    virtual bool Save(Image *image, char const *path);
+    virtual ResourceCodecData* Load(char const *path);
+    virtual bool Save(char const *path, ResourceCodecData* data);
 
 private:
     static String ReadScreen(char const *name);
@@ -45,7 +45,7 @@ DECLARE_IMAGE_CODEC(OricImageCodec, 100)
  * Public Image class
  */
 
-bool OricImageCodec::Load(Image *image, char const *path)
+ResourceCodecData* OricImageCodec::Load(char const *path)
 {
     static u8vec4 const pal[8] =
     {
@@ -61,9 +61,10 @@ bool OricImageCodec::Load(Image *image, char const *path)
 
     String screen = ReadScreen(path);
     if (screen.count() == 0)
-        return false;
+        return nullptr;
 
-    image->SetSize(ivec2(WIDTH, screen.count() * 6 / WIDTH));
+    auto data = new ResourceImageData(new Image(ivec2(WIDTH, screen.count() * 6 / WIDTH)));
+    auto image = data->m_image;
 
     u8vec4 *pixels = image->Lock<PixelFormat::RGBA_8>();
 
@@ -102,12 +103,16 @@ bool OricImageCodec::Load(Image *image, char const *path)
 
     image->Unlock(pixels);
 
-    return true;
+    return data;
 }
 
-bool OricImageCodec::Save(Image *image, char const *path)
+bool OricImageCodec::Save(char const *path, ResourceCodecData* data)
 {
-    int len = strlen(path);
+    auto data_image = dynamic_cast<ResourceImageData*>(data);
+    if (data_image == nullptr)
+        return false;
+
+    int len = (int)strlen(path);
     if (len < 4 || path[len - 4] != '.'
         || toupper(path[len - 3]) != 'T'
         || toupper(path[len - 2]) != 'A'
@@ -124,6 +129,7 @@ bool OricImageCodec::Save(Image *image, char const *path)
         result << (uint8_t)name[0];
     result << 0;
 
+    auto image = data_image->m_image;
     Image tmp;
     ivec2 size = image->GetSize();
     if (size.x != WIDTH)
@@ -481,7 +487,7 @@ void OricImageCodec::WriteScreen(Image &image, array<uint8_t> &result)
     for (int y = 0; y < size.y; y++)
         for (int x = 0; x < size.x; x++)
             for (int c = 0; c < 3; c++)
-                src[x][y][c] = 0xffff * pixels[y * size.x + x][2 - c];
+                src[x][y][c] = 0xffff * (int32_t)pixels[y * size.x + x][2 - c];
 
     /* Let the fun begin */
     for (int y = 0; y < size.y; y++)

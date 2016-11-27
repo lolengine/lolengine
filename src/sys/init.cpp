@@ -104,6 +104,13 @@ void init(int argc, char *argv[],
         rootdir += "../src/"; /* FIXME: use SEPARATOR? */
         add_data_dir(rootdir);
 
+        /* This data dir is for submodule support stuff */
+        rootdir = solutiondir;
+        if (rootdir.count() && rootdir.last() != SEPARATOR)
+            rootdir += SEPARATOR;
+        rootdir += "./lol/src/"; /* FIXME: use SEPARATOR? */
+        add_data_dir(rootdir);
+
         /* This data dir is for project-specific stuff */
         rootdir = projectdir;
         if (rootdir.count() && rootdir.last() != SEPARATOR)

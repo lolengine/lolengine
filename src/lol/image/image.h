@@ -106,9 +106,6 @@ public:
     template<typename T>
     void Unlock2D(array2d<T> const &);
 
-    /* XXX: this does not belong here */
-    bool RetrieveTiles(array<ivec2, ivec2>& tiles) const;
-
     /* Image processing kernels */
     static array2d<float> BayerKernel(ivec2 size);
     static array2d<float> HalftoneKernel(ivec2 size);

@@ -57,7 +57,19 @@ TextureImage::~TextureImage()
 
 void TextureImage::Init(char const *path)
 {
-    Init(path, new Image(path));
+    Init(path, ResourceLoader::Load(path));
+}
+
+void TextureImage::Init(char const *path, ResourceCodecData* loaded_data)
+{
+    //Load image if available
+    auto image_data = dynamic_cast<ResourceImageData*>(loaded_data);
+    if (image_data != nullptr)
+    {
+        Init(path, new Image(*image_data->m_image));
+    }
+
+    delete image_data;
 }
 
 void TextureImage::Init(char const *path, Image* image)

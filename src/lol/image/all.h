@@ -15,5 +15,6 @@
 #include <lol/image/pixel.h>
 #include <lol/image/color.h>
 #include <lol/image/image.h>
+#include <lol/image/resource.h>
 #include <lol/image/movie.h>
 

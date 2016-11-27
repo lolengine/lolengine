@@ -43,6 +43,7 @@ class TileSet : public TextureImage
 public:
     TileSet(char const *path);
     TileSet(char const *path, Image* image);
+    TileSet(char const *path, Image* image, array<ivec2, ivec2>& tiles);
 
     /* Old style: path to PNG file */
     TileSet(char const *path, ivec2 size, ivec2 count);
@@ -51,6 +52,7 @@ public:
     virtual ~TileSet();
 
 protected:
+    virtual void Init(char const *path, ResourceCodecData* loaded_data);
     virtual void Init(char const *path, Image* image);
 
 public:
@@ -58,8 +60,11 @@ public:
     virtual char const *GetName();
 
     /* New methods */
+    void clear_all();
     int define_tile(ibox2 rect);
     void define_tile(ivec2 count);
+    void define_tile(array<ibox2>& tiles);
+    void define_tile(array<ivec2, ivec2>& tiles);
     int GetTileCount() const;
     ivec2 GetTileSize(int tileid) const;
     ibox2 GetTilePixel(int tileid) const;

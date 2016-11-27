@@ -66,38 +66,5 @@ public:
     PixelFormat m_format;
 };
 
-class ImageCodec
-{
-public:
-    virtual char const *GetName() { return "<ImageCodec>"; }
-    virtual bool Load(Image *image, char const *path) = 0;
-    virtual bool Save(Image *image, char const *path) = 0;
-
-    /* TODO: this should become more fine-grained */
-    int m_priority;
-};
-
-#define REGISTER_IMAGE_CODEC(name) \
-    extern ImageCodec *Register##name(); \
-    { \
-        /* Insert image codecs in a sorted list */ \
-        ImageCodec *codec = Register##name(); \
-        int i = 0, prio = codec->m_priority; \
-        for ( ; i < codeclist.count(); ++i) \
-        { \
-            if (codeclist[i]->m_priority <= prio) \
-                break; \
-        } \
-        codeclist.insert(codec, i); \
-    }
-
-#define DECLARE_IMAGE_CODEC(name, priority) \
-    ImageCodec *Register##name() \
-    { \
-        ImageCodec *ret = new name(); \
-        ret->m_priority = priority; \
-        return ret; \
-    }
-
 } /* namespace lol */
 
