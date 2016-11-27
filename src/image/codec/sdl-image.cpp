@@ -62,7 +62,7 @@ ResourceCodecData* SdlImageCodec::Load(char const *path)
 #if !LOL_BUILD_RELEASE
         msg::error("could not load image %s\n", path);
 #endif
-        return false;
+        return nullptr;
     }
 
     ivec2 size(surface->w, surface->h);

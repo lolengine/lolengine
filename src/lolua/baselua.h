@@ -232,17 +232,17 @@ protected:
     template <typename TLuaClass> static int Store(lua_State * l);
     template <typename TLuaClass> static int Del(lua_State * l);
     //-------------------------------------------------------------------------
-    template <typename TLuaClass> static int ToString(lua_State* l) { ASSERT(false); return 0; }
-    template <typename TLuaClass> static int OpAdd(lua_State* l) { ASSERT(false); return 0; }
-    template <typename TLuaClass> static int OpSubstract(lua_State* l) { ASSERT(false); return 0; }
-    template <typename TLuaClass> static int OpMultiply(lua_State* l) { ASSERT(false); return 0; }
-    template <typename TLuaClass> static int OpDivide(lua_State* l) { ASSERT(false); return 0; }
-    template <typename TLuaClass> static int OpModulo(lua_State* l) { ASSERT(false); return 0; }
-    template <typename TLuaClass> static int OpUnaryNeg(lua_State* l) { ASSERT(false); return 0; }
-    template <typename TLuaClass> static int OpConcat(lua_State* l) { ASSERT(false); return 0; }
-    template <typename TLuaClass> static int CmpEqual(lua_State* l) { ASSERT(false); return 0; }
-    template <typename TLuaClass> static int CmpLessThan(lua_State* l) { ASSERT(false); return 0; }
-    template <typename TLuaClass> static int CmpLessEqual(lua_State* l) { ASSERT(false); return 0; }
+    template <typename TLuaClass> static int ToString(lua_State* l) { UNUSED(l); ASSERT(false); return 0; }
+    template <typename TLuaClass> static int OpAdd(lua_State* l) { UNUSED(l); ASSERT(false); return 0; }
+    template <typename TLuaClass> static int OpSubstract(lua_State* l) { UNUSED(l); ASSERT(false); return 0; }
+    template <typename TLuaClass> static int OpMultiply(lua_State* l) { UNUSED(l); ASSERT(false); return 0; }
+    template <typename TLuaClass> static int OpDivide(lua_State* l) { UNUSED(l); ASSERT(false); return 0; }
+    template <typename TLuaClass> static int OpModulo(lua_State* l) { UNUSED(l); ASSERT(false); return 0; }
+    template <typename TLuaClass> static int OpUnaryNeg(lua_State* l) { UNUSED(l); ASSERT(false); return 0; }
+    template <typename TLuaClass> static int OpConcat(lua_State* l) { UNUSED(l); ASSERT(false); return 0; }
+    template <typename TLuaClass> static int CmpEqual(lua_State* l) { UNUSED(l); ASSERT(false); return 0; }
+    template <typename TLuaClass> static int CmpLessThan(lua_State* l) { UNUSED(l); ASSERT(false); return 0; }
+    template <typename TLuaClass> static int CmpLessEqual(lua_State* l) { UNUSED(l); ASSERT(false); return 0; }
 };
 
 //-----------------------------------------------------------------------------
@@ -334,7 +334,7 @@ private:
     }
 
 public:
-	//-------------------------------------------------------------------------
+    //-------------------------------------------------------------------------
     template<typename T> T Get() { return Get(InnerDefault<T>(), false); }
     template<typename T> T Get(T default_value) { return Get(default_value, true); }
     template<typename E> SafeEnum<E> GetEnum() { return GetEnum(InnerDefaultSafeEnum<E>(), false); }
@@ -373,7 +373,7 @@ protected:
     //-------------------------------------------------------------------------
     #define INNER_ERROR "Your type is not implemented. For pointers, use LuaPtr<MyType>()"
     template<typename T> T InnerDefault() { return T(0); }
-	template<typename T> bool InnerIsValid() { ASSERT(false, INNER_ERROR); return false; }
+    template<typename T> bool InnerIsValid() { ASSERT(false, INNER_ERROR); return false; }
     template<typename T> T InnerGet(T value) { UNUSED(value); ASSERT(false, INNER_ERROR); return InnerDefault<T>(); }
     template<typename T> int InnerPush(T value) { UNUSED(value); ASSERT(false, INNER_ERROR); return 0; }
 
@@ -441,7 +441,7 @@ private:
 #define LOLUA_DECLARE_BEGIN(LUA_FUNC_NAME, INSTANCE_GET) \
     static int LUA_FUNC_NAME(lua_State* l) \
     { \
-        auto s = LuaStack::Begin(l); \
+        auto s = Lolua::Stack::Begin(l); \
         auto o = s.INSTANCE_GET;
 
 #define LOLUA_DECLARE_VARS(...) \
@@ -473,7 +473,7 @@ private:
 #define LOLUA_DECLARE_RETURN_METHOD_ARGS(LUA_FUNC_NAME, INSTANCE_GET, INSTANCE_CALL, ...) \
     static int LUA_FUNC_NAME(lua_State* l) \
     { \
-        auto s = LuaStack::Begin(l); \
+        auto s = Lolua::Stack::Begin(l); \
         auto o = s.INSTANCE_GET; \
         LOL_CALL(LOL_CAT(LOLUA_VAR_, LOL_CALL(LOL_COUNT_TO_12, (__VA_ARGS__))), (__VA_ARGS__)) \
         s << o->INSTANCE_CALL(LOL_CALL(LOL_CAT(LOLUA_ARG_, LOL_CALL(LOL_COUNT_TO_12, (__VA_ARGS__))), (__VA_ARGS__))); \
@@ -537,7 +537,7 @@ template<> inline int Stack::InnerPush<uint64_t>(uint64_t value)     { lua_pushi
 template<> inline bool Stack::InnerIsValid<int32_t>()             { return !!lua_isnumber(m_state, m_index); }
 template<> inline int32_t Stack::InnerGet<int32_t>(int32_t value) { UNUSED(value); return (int32_t)lua_tointeger(m_state, m_index++); }
 template<> inline int Stack::InnerPush<int32_t>(int32_t value)    { lua_pushinteger(m_state, (lua_Integer)value); return 1; }
-#endif STACK_INT32
+#endif // STACK_INT32
 
 //-----------------------------------------------------------------------------
 #ifndef STACK_UINT32
@@ -565,7 +565,7 @@ template<> inline int Stack::InnerPush<vec3>(vec3 value) { return (InnerPush<flo
 template<> inline bool Stack::InnerIsValid<vec4>()       { return InnerIsValid<float>(); }
 template<> inline vec4 Stack::InnerGet<vec4>(vec4 value) { return vec4(InnerGet<float>(value.x), Get<float>(value.y, true), Get<float>(value.z, true), Get<float>(value.w, true)); }
 template<> inline int Stack::InnerPush<vec4>(vec4 value) { return (InnerPush<float>(value.x) + InnerPush<float>(value.y) + InnerPush<float>(value.z) + InnerPush<float>(value.w)); }
-#endif STACK_VEC4
+#endif // STACK_VEC4
 
 #endif //REGION_STACK_VAR
 
@@ -586,7 +586,7 @@ public:
     T1 GET_NAME(String const &name) \
     { \
         lua_getglobal(m_lua_state, name.C()); \
-        auto stack = LuaStack::Begin(m_lua_state, -1); \
+        auto stack = Lolua::Stack::Begin(m_lua_state, -1); \
         auto result = stack.GET_NAME<T0>(); \
         lua_pop(m_lua_state, 1); \
         return result; \
@@ -616,7 +616,7 @@ private:
 template <typename TLuaClass>
 int ObjectHelper::Store(lua_State * l)
 {
-    auto stack = LuaStack::Begin(l);
+    auto stack = Lolua::Stack::Begin(l);
     TLuaClass* obj = stack.GetPtr<TLuaClass>();
     ASSERT(obj);
     Loader::StoreObject(l, obj);
@@ -626,7 +626,7 @@ int ObjectHelper::Store(lua_State * l)
 template <typename TLuaClass>
 int ObjectHelper::Del(lua_State * l)
 {
-    auto stack = LuaStack::Begin(l);
+    auto stack = Lolua::Stack::Begin(l);
     TLuaClass* obj = stack.GetPtr<TLuaClass>();
     ASSERT(obj);
     delete obj;
