@@ -211,7 +211,9 @@ protected:
 
     static bool m_capturemouse;
 
-    InputDevice(String const &name) : m_name(name)
+    InputDevice(String const &name)
+      : m_name(name),
+        m_input_active(false)
     {
         devices.push_unique(this);
     }
