@@ -43,12 +43,12 @@ public:
     array2d<typename PixelType<T>::type> m_array2d;
 };
 
-class ImageData
+class image_data
 {
-    friend class Image;
+    friend class image;
 
 public:
-    ImageData()
+    image_data()
       : m_size(0, 0),
         m_wrap_x(WrapMode::Clamp),
         m_wrap_y(WrapMode::Clamp),

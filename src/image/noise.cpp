@@ -17,7 +17,7 @@
 namespace lol
 {
 
-bool Image::RenderRandom(ivec2 size)
+bool image::RenderRandom(ivec2 size)
 {
     SetSize(size);
     vec4 *pixels = Lock<PixelFormat::RGBA_F32>();

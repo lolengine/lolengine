@@ -42,18 +42,18 @@ class TileSet : public TextureImage
 
 public:
     TileSet(char const *path);
-    TileSet(char const *path, Image* image);
-    TileSet(char const *path, Image* image, array<ivec2, ivec2>& tiles);
+    TileSet(char const *path, image* img);
+    TileSet(char const *path, image* img, array<ivec2, ivec2>& tiles);
 
     /* Old style: path to PNG file */
     TileSet(char const *path, ivec2 size, ivec2 count);
-    TileSet(char const *path, Image* image, ivec2 size, ivec2 count);
+    TileSet(char const *path, image* img, ivec2 size, ivec2 count);
 
     virtual ~TileSet();
 
 protected:
     virtual void Init(char const *path, ResourceCodecData* loaded_data);
-    virtual void Init(char const *path, Image* image);
+    virtual void Init(char const *path, image* img);
 
 public:
     /* Inherited from Entity */

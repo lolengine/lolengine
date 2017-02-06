@@ -17,7 +17,7 @@
 namespace lol
 {
 
-array2d<float> Image::BayerKernel(ivec2 size)
+array2d<float> image::BayerKernel(ivec2 size)
 {
     array2d<float> ret(size);
 
@@ -46,7 +46,7 @@ array2d<float> Image::BayerKernel(ivec2 size)
     return ret;
 }
 
-array2d<float> Image::HalftoneKernel(ivec2 size)
+array2d<float> image::HalftoneKernel(ivec2 size)
 {
     array2d<float> ret(size);
 
@@ -75,7 +75,7 @@ array2d<float> Image::HalftoneKernel(ivec2 size)
     return NormalizeKernel(ret);
 }
 
-array2d<float> Image::BlueNoiseKernel(ivec2 size, ivec2 gsize)
+array2d<float> image::BlueNoiseKernel(ivec2 size, ivec2 gsize)
 {
     float const epsilon = 1.f / (size.x * size.y + 1);
     gsize = lol::min(size, gsize);
@@ -180,7 +180,7 @@ static int cmpdot(const void *p1, const void *p2)
     return ((Dot const *)p1)->val > ((Dot const *)p2)->val;
 }
 
-array2d<float> Image::NormalizeKernel(array2d<float> const &kernel)
+array2d<float> image::NormalizeKernel(array2d<float> const &kernel)
 {
     ivec2 size = kernel.size();
 
@@ -209,7 +209,7 @@ array2d<float> Image::NormalizeKernel(array2d<float> const &kernel)
     return dst;
 }
 
-array2d<float> Image::EdiffKernel(EdiffAlgorithm algorithm)
+array2d<float> image::EdiffKernel(EdiffAlgorithm algorithm)
 {
     switch (algorithm)
     {
@@ -270,7 +270,7 @@ array2d<float> Image::EdiffKernel(EdiffAlgorithm algorithm)
  * there is little chance that any value below 0.2 will be useful. */
 #define BLUR_EPSILON 0.2f
 
-array2d<float> Image::GaussianKernel(vec2 radius, float angle, vec2 delta)
+array2d<float> image::GaussianKernel(vec2 radius, float angle, vec2 delta)
 {
     array2d<float> kernel;
 

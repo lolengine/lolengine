@@ -60,7 +60,7 @@ static u8vec4 f32tou8(vec4 pixel)
  * Pixel-level image manipulation
  */
 
-PixelFormat Image::GetFormat() const
+PixelFormat image::GetFormat() const
 {
     return m_data->m_format;
 }
@@ -81,7 +81,7 @@ PixelFormat Image::GetFormat() const
  * x lossless conversion (u8 to float)
  * # lossy conversion (dithering and/or convert color→gray)
  */
-void Image::SetFormat(PixelFormat fmt)
+void image::SetFormat(PixelFormat fmt)
 {
     PixelFormat old_fmt = m_data->m_format;
 

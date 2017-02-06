@@ -37,9 +37,9 @@ namespace lol
     class ResourceImageData : public ResourceCodecData
     {
     public:
-        ResourceImageData(Image* image)
+        ResourceImageData(image* img)
         {
-            m_image = image;
+            m_image = img;
         }
 
         virtual ~ResourceImageData()
@@ -48,15 +48,15 @@ namespace lol
                 delete m_image;
         }
 
-        Image* m_image = nullptr;
+        image* m_image = nullptr;
     };
 
     //ResourceImageData -----------------------------------------------------------
     class ResourceTilesetData : public ResourceImageData
     {
     public:
-        ResourceTilesetData(Image* image)
-            : ResourceImageData(image)
+        ResourceTilesetData(image* img)
+            : ResourceImageData(img)
         { }
 
         array<ivec2, ivec2> m_tiles;

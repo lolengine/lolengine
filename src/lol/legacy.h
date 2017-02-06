@@ -1,7 +1,7 @@
-//
+﻿//
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -13,32 +13,14 @@
 #pragma once
 
 //
-// The Movie class
-// ---------------
+// Legacy types that will disappear one day
+// ----------------------------------------
 //
-
-#include <lol/image/movie.h>
 
 namespace lol
 {
 
-class Movie
-{
-public:
-    Movie(String const &name, ivec2 size, float fps);
-
-    /* TODO: Rule of three */
-#if 0
-    Movie(Movie const &other);
-    Movie & operator =(Movie other);
-#endif
-    ~Movie();
-
-    void Feed(image const &image);
-
-private:
-    class MovieData *m_data;
-};
+typedef image Image;
 
 } /* namespace lol */
 

@@ -17,10 +17,10 @@
 namespace lol
 {
 
-static Image ResizeBicubic(Image &image, ivec2 size);
-static Image ResizeBresenham(Image &image, ivec2 size);
+static image ResizeBicubic(image &src, ivec2 size);
+static image ResizeBresenham(image &src, ivec2 size);
 
-Image Image::Resize(ivec2 size, ResampleAlgorithm algorithm)
+image image::Resize(ivec2 size, ResampleAlgorithm algorithm)
 {
     switch (algorithm)
     {
@@ -32,12 +32,12 @@ Image Image::Resize(ivec2 size, ResampleAlgorithm algorithm)
     }
 }
 
-static Image ResizeBicubic(Image &image, ivec2 size)
+static image ResizeBicubic(image &src, ivec2 size)
 {
-    Image dst(size);
-    ivec2 const oldsize = image.GetSize();
+    image dst(size);
+    ivec2 const oldsize = src.GetSize();
 
-    vec4 const *srcp = image.Lock<PixelFormat::RGBA_F32>();
+    vec4 const *srcp = src.Lock<PixelFormat::RGBA_F32>();
     vec4 *dstp = dst.Lock<PixelFormat::RGBA_F32>();
 
     float scalex = size.x > 1 ? (oldsize.x - 1.f) / (size.x - 1) : 1.f;
@@ -122,7 +122,7 @@ static Image ResizeBicubic(Image &image, ivec2 size)
     }
 
     dst.Unlock(dstp);
-    image.Unlock(srcp);
+    src.Unlock(srcp);
 
     return dst;
 }
@@ -134,13 +134,13 @@ static Image ResizeBicubic(Image &image, ivec2 size)
 /* FIXME: the algorithm does not handle alpha components properly. Resulting
  * alpha should be the mean alpha value of the neightbouring pixels, but
  * the colour components should be weighted with the alpha value. */
-static Image ResizeBresenham(Image &image, ivec2 size)
+static image ResizeBresenham(image &src, ivec2 size)
 {
-    Image dst(size);
-    ivec2 const oldsize = image.GetSize();
+    image dst(size);
+    ivec2 const oldsize = src.GetSize();
     float const invswsh = 1.0f / (oldsize.x * oldsize.y);
 
-    vec4 const *srcp = image.Lock<PixelFormat::RGBA_F32>();
+    vec4 const *srcp = src.Lock<PixelFormat::RGBA_F32>();
     vec4 *dstp = dst.Lock<PixelFormat::RGBA_F32>();
 
     array<vec4> aline, line;
@@ -199,7 +199,7 @@ static Image ResizeBresenham(Image &image, ivec2 size)
     }
 
     dst.Unlock(dstp);
-    image.Unlock(srcp);
+    src.Unlock(srcp);
 
     return dst;
 }

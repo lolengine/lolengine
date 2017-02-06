@@ -13,7 +13,7 @@
 #pragma once
 
 //
-// The Image class
+// The image class
 // ---------------
 //
 
@@ -58,24 +58,24 @@ enum class EdiffAlgorithm : uint8_t
     Lite,
 };
 
-//Image -----------------------------------------------------------------------
-class Image
+// image -----------------------------------------------------------------------
+class image
 {
 public:
-    Image();
-    Image(ivec2 size);
+    image();
+    image(ivec2 size);
     /* XXX: use of this ctor should be discouraged, as it will not
      * return information about a possible error. */
-    Image(char const *path);
+    image(char const *path);
 
     /* Rule of three */
-    Image(Image const &other);
-    Image & operator =(Image other);
-    ~Image();
+    image(image const &other);
+    image & operator =(image other);
+    ~image();
 
     void DummyFill();
     void Copy(uint8_t* pixels, ivec2 const& size, PixelFormat fmt);
-    void Copy(Image const &other);
+    void Copy(image const &other);
     bool Load(char const *path);
     bool Save(char const *path);
 
@@ -121,51 +121,51 @@ public:
     bool RenderRandom(ivec2 size);
 
     /* Resize and crop */
-    Image Resize(ivec2 size, ResampleAlgorithm algorithm);
-    Image Crop(ibox2 box) const;
+    image Resize(ivec2 size, ResampleAlgorithm algorithm);
+    image Crop(ibox2 box) const;
 
     /* Image processing */
-    Image AutoContrast() const;
-    Image Brightness(float val) const;
-    Image Contrast(float val) const;
-    Image Convolution(array2d<float> const &kernel);
-    Image Dilate();
-    Image Erode();
-    Image Invert() const;
-    Image Median(ivec2 radii) const;
-    Image Median(array2d<float> const &kernel) const;
-    Image Sharpen(array2d<float> const &kernel);
-    Image Threshold(float val) const;
-    Image Threshold(vec3 val) const;
-    Image RGBToYUV() const;
-    Image YUVToRGB() const;
+    image AutoContrast() const;
+    image Brightness(float val) const;
+    image Contrast(float val) const;
+    image Convolution(array2d<float> const &kernel);
+    image Dilate();
+    image Erode();
+    image Invert() const;
+    image Median(ivec2 radii) const;
+    image Median(array2d<float> const &kernel) const;
+    image Sharpen(array2d<float> const &kernel);
+    image Threshold(float val) const;
+    image Threshold(vec3 val) const;
+    image RGBToYUV() const;
+    image YUVToRGB() const;
 
     /* Dithering */
-    Image DitherRandom() const;
-    Image DitherEdiff(array2d<float> const &kernel,
+    image DitherRandom() const;
+    image DitherEdiff(array2d<float> const &kernel,
                       ScanMode scan = ScanMode::Raster) const;
-    Image DitherOstromoukhov(ScanMode scan = ScanMode::Raster) const;
-    Image DitherOrdered(array2d<float> const &kernel) const;
-    Image DitherHalftone(float radius, float angle) const;
-    Image DitherDbs() const;
+    image DitherOstromoukhov(ScanMode scan = ScanMode::Raster) const;
+    image DitherOrdered(array2d<float> const &kernel) const;
+    image DitherHalftone(float radius, float angle) const;
+    image DitherDbs() const;
 
     /* Combine images */
-    static Image Merge(Image &src1, Image &src2, float alpha);
-    static Image Mean(Image &src1, Image &src2);
-    static Image Min(Image &src1, Image &src2);
-    static Image Max(Image &src1, Image &src2);
-    static Image Overlay(Image &src1, Image &src2);
-    static Image Screen(Image &src1, Image &src2);
-    static Image Multiply(Image &src1, Image &src2);
-    static Image Divide(Image &src1, Image &src2);
-    static Image Add(Image &src1, Image &src2);
-    static Image Sub(Image &src1, Image &src2);
-    static Image Difference(Image &src1, Image &src2);
+    static image Merge(image &src1, image &src2, float alpha);
+    static image Mean(image &src1, image &src2);
+    static image Min(image &src1, image &src2);
+    static image Max(image &src1, image &src2);
+    static image Overlay(image &src1, image &src2);
+    static image Screen(image &src1, image &src2);
+    static image Multiply(image &src1, image &src2);
+    static image Divide(image &src1, image &src2);
+    static image Add(image &src1, image &src2);
+    static image Sub(image &src1, image &src2);
+    static image Difference(image &src1, image &src2);
 
 private:
     void *Lock2DHelper(PixelFormat T);
 
-    class ImageData *m_data;
+    class image_data *m_data;
 };
 
 } /* namespace lol */

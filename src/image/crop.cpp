@@ -19,12 +19,12 @@
 namespace lol
 {
 
-Image Image::Crop(ibox2 box) const
+image image::Crop(ibox2 box) const
 {
     ivec2 const srcsize = GetSize();
     ivec2 const dstsize = box.extent();
 
-    Image dst(dstsize);
+    image dst(dstsize);
     PixelFormat format = GetFormat();
 
     if (format != PixelFormat::Unknown)

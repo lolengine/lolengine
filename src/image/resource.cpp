@@ -88,13 +88,13 @@ ResourceCodecData* ResourceLoader::Load(char const *path)
         auto data = codec->Load(path);
         if (data != nullptr)
         {
-            msg::info("Image::Load: Codec %s succesfully loaded %s.\n", codec->GetName(), path);
+            msg::info("image::Load: Codec %s succesfully loaded %s.\n", codec->GetName(), path);
             return data;
         }
     }
 
     //Log error, because we shouldn't be here
-    msg::error("Image::Load: Last codec %s, Error loading resource %s.\n", last_codec->GetName(), path);
+    msg::error("image::Load: Last codec %s, Error loading resource %s.\n", last_codec->GetName(), path);
     return nullptr;
 }
 
@@ -106,13 +106,13 @@ bool ResourceLoader::Save(char const *path, ResourceCodecData* data)
         last_codec = codec;
         if (codec->Save(path, data))
         {
-            msg::info("Image::Save: Codec %s succesfully saved %s.\n", codec->GetName(), path);
+            msg::info("image::Save: Codec %s succesfully saved %s.\n", codec->GetName(), path);
             return true;
         }
     }
 
     //Log error, because we shouldn't be here
-    msg::error("Image::Save: Last codec %s, Error saving resource %s.\n", last_codec->GetName(), path);
+    msg::error("image::Save: Last codec %s, Error saving resource %s.\n", last_codec->GetName(), path);
     return false;
 }
 

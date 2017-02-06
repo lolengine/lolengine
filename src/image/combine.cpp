@@ -33,14 +33,14 @@ enum class MergeMode
 };
 
 template<PixelFormat FORMAT, MergeMode MODE>
-static Image GenericMerge(Image &src1, Image &src2, float alpha)
+static image GenericMerge(image &src1, image &src2, float alpha)
 {
     typedef typename PixelType<FORMAT>::type pixel_t;
 
     ASSERT(src1.GetSize() == src2.GetSize());
     int const count = src1.GetSize().x * src2.GetSize().y;
 
-    Image dst(src1.GetSize());
+    image dst(src1.GetSize());
 
     pixel_t const *src1p = src1.Lock<FORMAT>();
     pixel_t const *src2p = src2.Lock<FORMAT>();
@@ -79,7 +79,7 @@ static Image GenericMerge(Image &src1, Image &src2, float alpha)
 }
 
 template<MergeMode MODE>
-static Image GenericMerge(Image &src1, Image &src2, float alpha)
+static image GenericMerge(image &src1, image &src2, float alpha)
 {
     bool gray1 = src1.GetFormat() == PixelFormat::Y_8
                   || src1.GetFormat() == PixelFormat::Y_F32;
@@ -92,57 +92,57 @@ static Image GenericMerge(Image &src1, Image &src2, float alpha)
 
 }
 
-Image Image::Merge(Image &src1, Image &src2, float alpha)
+image image::Merge(image &src1, image &src2, float alpha)
 {
     return GenericMerge<MergeMode::Mix>(src1, src2, alpha);
 }
 
-Image Image::Mean(Image &src1, Image &src2)
+image image::Mean(image &src1, image &src2)
 {
     return GenericMerge<MergeMode::Mix>(src1, src2, 0.5f);
 }
 
-Image Image::Min(Image &src1, Image &src2)
+image image::Min(image &src1, image &src2)
 {
     return GenericMerge<MergeMode::Min>(src1, src2, 0.0f);
 }
 
-Image Image::Max(Image &src1, Image &src2)
+image image::Max(image &src1, image &src2)
 {
     return GenericMerge<MergeMode::Max>(src1, src2, 0.0f);
 }
 
-Image Image::Overlay(Image &src1, Image &src2)
+image image::Overlay(image &src1, image &src2)
 {
     return GenericMerge<MergeMode::Overlay>(src1, src2, 0.0f);
 }
 
-Image Image::Screen(Image &src1, Image &src2)
+image image::Screen(image &src1, image &src2)
 {
     return GenericMerge<MergeMode::Screen>(src1, src2, 0.0f);
 }
 
-Image Image::Divide(Image &src1, Image &src2)
+image image::Divide(image &src1, image &src2)
 {
     return GenericMerge<MergeMode::Divide>(src1, src2, 0.0f);
 }
 
-Image Image::Multiply(Image &src1, Image &src2)
+image image::Multiply(image &src1, image &src2)
 {
     return GenericMerge<MergeMode::Multiply>(src1, src2, 0.0f);
 }
 
-Image Image::Add(Image &src1, Image &src2)
+image image::Add(image &src1, image &src2)
 {
     return GenericMerge<MergeMode::Add>(src1, src2, 0.0f);
 }
 
-Image Image::Sub(Image &src1, Image &src2)
+image image::Sub(image &src1, image &src2)
 {
     return GenericMerge<MergeMode::Sub>(src1, src2, 0.0f);
 }
 
-Image Image::Difference(Image &src1, Image &src2)
+image image::Difference(image &src1, image &src2)
 {
     return GenericMerge<MergeMode::Difference>(src1, src2, 0.0f);
 }
