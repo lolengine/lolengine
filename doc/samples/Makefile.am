@@ -7,8 +7,12 @@ bench: benchsuite$(EXEEXT)
 	./benchsuite$(EXEEXT)
 
 if BUILD_SAMPLES
-noinst_PROGRAMS = benchsuite btphystest nacl_phystest simplex
+noinst_PROGRAMS = bluenoise benchsuite btphystest nacl_phystest simplex
 endif
+
+bluenoise_SOURCES = bluenoise.cpp
+bluenoise_CPPFLAGS = $(AM_CPPFLAGS)
+bluenoise_DEPENDENCIES = @LOL_DEPS@
 
 benchsuite_SOURCES = benchsuite.cpp \
     benchmark/vector.cpp benchmark/half.cpp benchmark/trig.cpp \

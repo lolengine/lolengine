@@ -79,6 +79,7 @@ _ReSharper.*
 # Our binaries
 demos/lol.js/lol.js
 doc/samples/benchsuite
+doc/samples/bluenoise
 doc/samples/btphystest
 doc/samples/meshviewer/meshviewer
 doc/samples/nacl_phystest
