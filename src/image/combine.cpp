@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2004-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2004—2017 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -33,18 +35,18 @@ enum class MergeMode
 };
 
 template<PixelFormat FORMAT, MergeMode MODE>
-static image GenericMerge(image &src1, image &src2, float alpha)
+static image generic_merge(image &src1, image &src2, float alpha)
 {
     typedef typename PixelType<FORMAT>::type pixel_t;
 
-    ASSERT(src1.GetSize() == src2.GetSize());
-    int const count = src1.GetSize().x * src2.GetSize().y;
+    ASSERT(src1.size() == src2.size());
+    int const count = src1.size().x * src2.size().y;
 
-    image dst(src1.GetSize());
+    image dst(src1.size());
 
-    pixel_t const *src1p = src1.Lock<FORMAT>();
-    pixel_t const *src2p = src2.Lock<FORMAT>();
-    pixel_t *dstp = dst.Lock<FORMAT>();
+    pixel_t const *src1p = src1.lock<FORMAT>();
+    pixel_t const *src2p = src2.lock<FORMAT>();
+    pixel_t *dstp = dst.lock<FORMAT>();
 
     for (int n = 0; n < count; ++n)
     {
@@ -71,80 +73,80 @@ static image GenericMerge(image &src1, image &src2, float alpha)
             dstp[n] = lol::abs(src1p[n] - src2p[n]);
     }
 
-    src1.Unlock(src1p);
-    src2.Unlock(src2p);
-    dst.Unlock(dstp);
+    src1.unlock(src1p);
+    src2.unlock(src2p);
+    dst.unlock(dstp);
 
     return dst;
 }
 
 template<MergeMode MODE>
-static image GenericMerge(image &src1, image &src2, float alpha)
+static image generic_merge(image &src1, image &src2, float alpha)
 {
-    bool gray1 = src1.GetFormat() == PixelFormat::Y_8
-                  || src1.GetFormat() == PixelFormat::Y_F32;
-    bool gray2 = src2.GetFormat() == PixelFormat::Y_8
-                  || src2.GetFormat() == PixelFormat::Y_F32;
+    bool gray1 = src1.format() == PixelFormat::Y_8
+                  || src1.format() == PixelFormat::Y_F32;
+    bool gray2 = src2.format() == PixelFormat::Y_8
+                  || src2.format() == PixelFormat::Y_F32;
     if (gray1 && gray2)
-        return GenericMerge<PixelFormat::Y_F32, MODE>(src1, src2, alpha);
+        return generic_merge<PixelFormat::Y_F32, MODE>(src1, src2, alpha);
     else
-        return GenericMerge<PixelFormat::RGBA_F32, MODE>(src1, src2, alpha);
+        return generic_merge<PixelFormat::RGBA_F32, MODE>(src1, src2, alpha);
 
 }
 
 image image::Merge(image &src1, image &src2, float alpha)
 {
-    return GenericMerge<MergeMode::Mix>(src1, src2, alpha);
+    return generic_merge<MergeMode::Mix>(src1, src2, alpha);
 }
 
 image image::Mean(image &src1, image &src2)
 {
-    return GenericMerge<MergeMode::Mix>(src1, src2, 0.5f);
+    return generic_merge<MergeMode::Mix>(src1, src2, 0.5f);
 }
 
 image image::Min(image &src1, image &src2)
 {
-    return GenericMerge<MergeMode::Min>(src1, src2, 0.0f);
+    return generic_merge<MergeMode::Min>(src1, src2, 0.0f);
 }
 
 image image::Max(image &src1, image &src2)
 {
-    return GenericMerge<MergeMode::Max>(src1, src2, 0.0f);
+    return generic_merge<MergeMode::Max>(src1, src2, 0.0f);
 }
 
 image image::Overlay(image &src1, image &src2)
 {
-    return GenericMerge<MergeMode::Overlay>(src1, src2, 0.0f);
+    return generic_merge<MergeMode::Overlay>(src1, src2, 0.0f);
 }
 
 image image::Screen(image &src1, image &src2)
 {
-    return GenericMerge<MergeMode::Screen>(src1, src2, 0.0f);
+    return generic_merge<MergeMode::Screen>(src1, src2, 0.0f);
 }
 
 image image::Divide(image &src1, image &src2)
 {
-    return GenericMerge<MergeMode::Divide>(src1, src2, 0.0f);
+    return generic_merge<MergeMode::Divide>(src1, src2, 0.0f);
 }
 
 image image::Multiply(image &src1, image &src2)
 {
-    return GenericMerge<MergeMode::Multiply>(src1, src2, 0.0f);
+    return generic_merge<MergeMode::Multiply>(src1, src2, 0.0f);
 }
 
 image image::Add(image &src1, image &src2)
 {
-    return GenericMerge<MergeMode::Add>(src1, src2, 0.0f);
+    return generic_merge<MergeMode::Add>(src1, src2, 0.0f);
 }
 
 image image::Sub(image &src1, image &src2)
 {
-    return GenericMerge<MergeMode::Sub>(src1, src2, 0.0f);
+    return generic_merge<MergeMode::Sub>(src1, src2, 0.0f);
 }
 
 image image::Difference(image &src1, image &src2)
 {
-    return GenericMerge<MergeMode::Difference>(src1, src2, 0.0f);
+    return generic_merge<MergeMode::Difference>(src1, src2, 0.0f);
 }
 
 } /* namespace lol */

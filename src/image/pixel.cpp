@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2004—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2004—2017 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -60,7 +60,7 @@ static u8vec4 f32tou8(vec4 pixel)
  * Pixel-level image manipulation
  */
 
-PixelFormat image::GetFormat() const
+PixelFormat image::format() const
 {
     return m_data->m_format;
 }
@@ -81,41 +81,41 @@ PixelFormat image::GetFormat() const
  * x lossless conversion (u8 to float)
  * # lossy conversion (dithering and/or convert color→gray)
  */
-void image::SetFormat(PixelFormat fmt)
+void image::set_format(PixelFormat fmt)
 {
     PixelFormat old_fmt = m_data->m_format;
 
     /* Preliminary intermediate conversions */
     if (old_fmt == PixelFormat::RGBA_8 && fmt == PixelFormat::Y_F32)
-        SetFormat(PixelFormat::RGBA_F32);
+        set_format(PixelFormat::RGBA_F32);
     else if (old_fmt == PixelFormat::RGB_8 && fmt == PixelFormat::Y_F32)
-        SetFormat(PixelFormat::RGBA_F32);
+        set_format(PixelFormat::RGBA_F32);
     else if (old_fmt == PixelFormat::Y_F32 && fmt == PixelFormat::RGBA_8)
-        SetFormat(PixelFormat::RGBA_F32);
+        set_format(PixelFormat::RGBA_F32);
     else if (old_fmt == PixelFormat::Y_F32 && fmt == PixelFormat::RGB_8)
-        SetFormat(PixelFormat::RGBA_F32);
+        set_format(PixelFormat::RGBA_F32);
     else if (old_fmt == PixelFormat::RGB_F32 && fmt == PixelFormat::RGBA_8)
-        SetFormat(PixelFormat::RGBA_F32);
+        set_format(PixelFormat::RGBA_F32);
     else if (old_fmt == PixelFormat::RGBA_F32 && fmt == PixelFormat::Y_F32)
-        SetFormat(PixelFormat::RGB_F32);
+        set_format(PixelFormat::RGB_F32);
     else if (old_fmt == PixelFormat::RGBA_F32 && fmt == PixelFormat::RGB_8)
-        SetFormat(PixelFormat::RGB_F32);
+        set_format(PixelFormat::RGB_F32);
     else if (old_fmt == PixelFormat::RGB_8 && fmt == PixelFormat::Y_8)
-        SetFormat(PixelFormat::RGB_F32);
+        set_format(PixelFormat::RGB_F32);
     else if (old_fmt == PixelFormat::RGBA_8 && fmt == PixelFormat::Y_8)
-        SetFormat(PixelFormat::RGB_F32);
+        set_format(PixelFormat::RGB_F32);
     else if (old_fmt == PixelFormat::RGB_F32 && fmt == PixelFormat::Y_8)
-        SetFormat(PixelFormat::Y_F32);
+        set_format(PixelFormat::Y_F32);
     else if (old_fmt == PixelFormat::RGBA_F32 && fmt == PixelFormat::Y_8)
-        SetFormat(PixelFormat::Y_F32);
+        set_format(PixelFormat::Y_F32);
 
     old_fmt = m_data->m_format;
 
     /* Set the new active pixel format */
     m_data->m_format = fmt;
 
-    ivec2 size = GetSize();
-    int count = size.x * size.y;
+    ivec2 isize = size();
+    int count = isize.x * isize.y;
 
     /* If we never used this format, allocate a new buffer: we will
      * obviously need it. */
@@ -131,17 +131,17 @@ void image::SetFormat(PixelFormat fmt)
             case PixelFormat::Unknown:
                 break;
             case PixelFormat::Y_8:
-                data = new PixelData<PixelFormat::Y_8>(size); break;
+                data = new PixelData<PixelFormat::Y_8>(isize); break;
             case PixelFormat::RGB_8:
-                data = new PixelData<PixelFormat::RGB_8>(size); break;
+                data = new PixelData<PixelFormat::RGB_8>(isize); break;
             case PixelFormat::RGBA_8:
-                data = new PixelData<PixelFormat::RGBA_8>(size); break;
+                data = new PixelData<PixelFormat::RGBA_8>(isize); break;
             case PixelFormat::Y_F32:
-                data = new PixelData<PixelFormat::Y_F32>(size); break;
+                data = new PixelData<PixelFormat::Y_F32>(isize); break;
             case PixelFormat::RGB_F32:
-                data = new PixelData<PixelFormat::RGB_F32>(size); break;
+                data = new PixelData<PixelFormat::RGB_F32>(isize); break;
             case PixelFormat::RGBA_F32:
-                data = new PixelData<PixelFormat::RGBA_F32>(size); break;
+                data = new PixelData<PixelFormat::RGBA_F32>(isize); break;
         }
 #if __GNUC__
 #pragma GCC diagnostic pop
@@ -314,31 +314,31 @@ void image::SetFormat(PixelFormat fmt)
 #if 0
         init_tables();
 
-        for (int y = 0; y < size.y; y++)
-            for (int x = 0; x < size.x; x++)
+        for (int y = 0; y < isize.y; y++)
+            for (int x = 0; x < isize.x; x++)
                 for (i = 0; i < 4; i++)
                 {
                     double p, e;
                     uint8_t d;
 
-                    p = src[4 * (y * size.x + x) + i];
+                    p = src[4 * (y * isize.x + x) + i];
 
                     if (p < 0.) d = 0.;
                     else if (p > 1.) d = 255;
                     else d = (int)(255.999 * pow(p, 1. / global_gamma));
 
-                    dest[4 * (y * size.x + x) + i] = d;
+                    dest[4 * (y * isize.x + x) + i] = d;
 
                     e = (p - u8tof32(d)) / 16;
-                    if (x < size.x - 1)
-                        src[4 * (y * size.x + x + 1) + i] += e * 7;
-                    if (y < size.y - 1)
+                    if (x < isize.x - 1)
+                        src[4 * (y * isize.x + x + 1) + i] += e * 7;
+                    if (y < isize.y - 1)
                     {
                         if (x > 0)
-                            src[4 * ((y + 1) * size.x + x - 1) + i] += e * 3;
-                        src[4 * ((y + 1) * size.x + x) + i] += e * 5;
-                        if (x < size.x - 1)
-                            src[4 * ((y + 1) * size.x + x + 1) + i] += e;
+                            src[4 * ((y + 1) * isize.x + x - 1) + i] += e * 3;
+                        src[4 * ((y + 1) * isize.x + x) + i] += e * 5;
+                        if (x < isize.x - 1)
+                            src[4 * ((y + 1) * isize.x + x + 1) + i] += e;
                     }
                 }
 #endif

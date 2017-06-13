@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2004-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2004—2017 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -35,10 +37,10 @@ image image::Resize(ivec2 size, ResampleAlgorithm algorithm)
 static image ResizeBicubic(image &src, ivec2 size)
 {
     image dst(size);
-    ivec2 const oldsize = src.GetSize();
+    ivec2 const oldsize = src.size();
 
-    vec4 const *srcp = src.Lock<PixelFormat::RGBA_F32>();
-    vec4 *dstp = dst.Lock<PixelFormat::RGBA_F32>();
+    vec4 const *srcp = src.lock<PixelFormat::RGBA_F32>();
+    vec4 *dstp = dst.lock<PixelFormat::RGBA_F32>();
 
     float scalex = size.x > 1 ? (oldsize.x - 1.f) / (size.x - 1) : 1.f;
     float scaley = size.y > 1 ? (oldsize.y - 1.f) / (size.y - 1) : 1.f;
@@ -121,8 +123,8 @@ static image ResizeBicubic(image &src, ivec2 size)
         }
     }
 
-    dst.Unlock(dstp);
-    src.Unlock(srcp);
+    dst.unlock(dstp);
+    src.unlock(srcp);
 
     return dst;
 }
@@ -137,11 +139,11 @@ static image ResizeBicubic(image &src, ivec2 size)
 static image ResizeBresenham(image &src, ivec2 size)
 {
     image dst(size);
-    ivec2 const oldsize = src.GetSize();
+    ivec2 const oldsize = src.size();
     float const invswsh = 1.0f / (oldsize.x * oldsize.y);
 
-    vec4 const *srcp = src.Lock<PixelFormat::RGBA_F32>();
-    vec4 *dstp = dst.Lock<PixelFormat::RGBA_F32>();
+    vec4 const *srcp = src.lock<PixelFormat::RGBA_F32>();
+    vec4 *dstp = dst.lock<PixelFormat::RGBA_F32>();
 
     array<vec4> aline, line;
     aline.resize(size.x);
@@ -198,8 +200,8 @@ static image ResizeBresenham(image &src, ivec2 size)
             dstp[y * size.x + x] = aline[x] * invswsh;
     }
 
-    dst.Unlock(dstp);
-    src.Unlock(srcp);
+    dst.unlock(dstp);
+    src.unlock(srcp);
 
     return dst;
 }

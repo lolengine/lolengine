@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -76,46 +76,52 @@ public:
     void DummyFill();
     void Copy(uint8_t* pixels, ivec2 const& size, PixelFormat fmt);
     void Copy(image const &other);
-    bool Load(char const *path);
-    bool Save(char const *path);
+    bool load(char const *path);
+    bool save(char const *path);
 
     /* Low level access */
-    ivec2 GetSize() const;
-    void SetSize(ivec2);
+    ivec2 size() const;
+    void resize(ivec2);
 
-    PixelFormat GetFormat() const;
-    void SetFormat(PixelFormat fmt);
+    PixelFormat format() const;
+    void set_format(PixelFormat fmt);
 
     WrapMode GetWrapX() const;
     WrapMode GetWrapY() const;
     void SetWrap(WrapMode wrap_x, WrapMode wrap_y);
 
     /* Lock continuous arrays of pixels for writing */
-    template<PixelFormat T> typename PixelType<T>::type *Lock();
-    void *Lock();
-    void Unlock(void const *pixels);
+    template<PixelFormat T> typename PixelType<T>::type *lock();
+    void *lock();
+    void unlock(void const *pixels);
 
     /* Lock 2D arrays of pixels for writing */
     template<PixelFormat T>
-    inline array2d<typename PixelType<T>::type> &Lock2D()
+    inline array2d<typename PixelType<T>::type> &lock2d()
     {
         /* Hack: this indirection is needed because of a Visual Studio ICE */
-        return *(array2d<typename PixelType<T>::type> *)Lock2DHelper(T);
+        return *(array2d<typename PixelType<T>::type> *)lock2d_helper(T);
     }
 
     template<typename T>
-    void Unlock2D(array2d<T> const &);
+    void unlock2d(array2d<T> const &);
 
     /* Image processing kernels */
-    static array2d<float> BayerKernel(ivec2 size);
-    static array2d<float> HalftoneKernel(ivec2 size);
-    static array2d<float> BlueNoiseKernel(ivec2 size,
-                                          ivec2 gsize = ivec2(7, 7));
-    static array2d<float> EdiffKernel(EdiffAlgorithm algorithm);
-    static array2d<float> NormalizeKernel(array2d<float> const &kernel);
-    static array2d<float> GaussianKernel(vec2 radius,
-                                         float angle = 0.f,
-                                         vec2 delta = vec2(0.f, 0.f));
+    struct kernel
+    {
+        kernel() = delete;
+
+        static array2d<float> normalize(array2d<float> const &kernel);
+
+        static array2d<float> bayer(ivec2 size);
+        static array2d<float> halftone(ivec2 size);
+        static array2d<float> blue_noise(ivec2 size,
+                                         ivec2 gsize = ivec2(7, 7));
+        static array2d<float> ediff(EdiffAlgorithm algorithm);
+        static array2d<float> gaussian(vec2 radius,
+                                       float angle = 0.f,
+                                       vec2 delta = vec2(0.f, 0.f));
+    };
 
     /* Rendering */
     bool RenderRandom(ivec2 size);
@@ -141,13 +147,13 @@ public:
     image YUVToRGB() const;
 
     /* Dithering */
-    image DitherRandom() const;
-    image DitherEdiff(array2d<float> const &kernel,
-                      ScanMode scan = ScanMode::Raster) const;
-    image DitherOstromoukhov(ScanMode scan = ScanMode::Raster) const;
-    image DitherOrdered(array2d<float> const &kernel) const;
-    image DitherHalftone(float radius, float angle) const;
-    image DitherDbs() const;
+    image dither_random() const;
+    image dither_ediff(array2d<float> const &kernel,
+                       ScanMode scan = ScanMode::Raster) const;
+    image dither_ostromoukhov(ScanMode scan = ScanMode::Raster) const;
+    image dither_ordered(array2d<float> const &kernel) const;
+    image dither_halftone(float radius, float angle) const;
+    image dither_dbs() const;
 
     /* Combine images */
     static image Merge(image &src1, image &src2, float alpha);
@@ -163,7 +169,7 @@ public:
     static image Difference(image &src1, image &src2);
 
 private:
-    void *Lock2DHelper(PixelFormat T);
+    void *lock2d_helper(PixelFormat T);
 
     class image_data *m_data;
 };

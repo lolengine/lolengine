@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -116,13 +116,13 @@ ResourceCodecData* GdiPlusImageCodec::Load(char const *path)
     /* FIXME: GDI+ doesn't know about RGBA, only ARGB. And OpenGL doesn't
      * know about ARGB, only RGBA. So we swap bytes. We could also fix
      * this in the shader. */
-    auto data = new ResourceImageData(new Image(ivec2(size)));
+    auto data = new ResourceImageData(new image(ivec2(size)));
     auto image = data->m_image;
-    u8vec4 *pdst = image->Lock<PixelFormat::RGBA_8>();
+    u8vec4 *pdst = image->lock<PixelFormat::RGBA_8>();
     u8vec4 *psrc = static_cast<u8vec4 *>(bdata.Scan0);
     for (int n = 0; n < size.x * size.y; n++)
         pdst[n] = psrc[n].bgra;
-    image->Unlock(pdst);
+    image->unlock(pdst);
 
     bitmap->UnlockBits(&bdata);
     delete bitmap;
@@ -184,7 +184,7 @@ bool GdiPlusImageCodec::Save(char const *path, ResourceCodecData* data)
     }
 
     auto image = data_image->m_image;
-    ivec2 size = image->GetSize();
+    ivec2 size = image->size();
 
     Gdiplus::Bitmap *b = new Gdiplus::Bitmap(size.x, size.y,
                                              PixelFormat32bppARGB);
@@ -201,13 +201,13 @@ bool GdiPlusImageCodec::Save(char const *path, ResourceCodecData* data)
         return false;
     }
 
-    u8vec4 *psrc = image->Lock<PixelFormat::RGBA_8>();
+    u8vec4 *psrc = image->lock<PixelFormat::RGBA_8>();
     u8vec4 *psrc0 = psrc;
     u8vec4 *pdst = static_cast<u8vec4 *>(bdata.Scan0);
     for (int y = 0; y < size.y; y++)
         for (int x = 0; x < size.x; x++)
             *pdst++ = (*psrc++).bgra;
-    image->Unlock(psrc0);
+    image->unlock(psrc0);
     b->UnlockBits(&bdata);
 
     if (b->Save(wpath, &clsid, nullptr) != Gdiplus::Ok)

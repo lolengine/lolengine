@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -36,7 +38,7 @@ public:
 
 private:
     static String ReadScreen(char const *name);
-    static void WriteScreen(Image &image, array<uint8_t> &result);
+    static void WriteScreen(image &image, array<uint8_t> &result);
 };
 
 DECLARE_IMAGE_CODEC(OricImageCodec, 100)
@@ -63,12 +65,12 @@ ResourceCodecData* OricImageCodec::Load(char const *path)
     if (screen.count() == 0)
         return nullptr;
 
-    auto data = new ResourceImageData(new Image(ivec2(WIDTH, screen.count() * 6 / WIDTH)));
-    auto image = data->m_image;
+    auto data = new ResourceImageData(new image(ivec2(WIDTH, screen.count() * 6 / WIDTH)));
+    auto img = data->m_image;
 
-    u8vec4 *pixels = image->Lock<PixelFormat::RGBA_8>();
+    u8vec4 *pixels = img->lock<PixelFormat::RGBA_8>();
 
-    for (int y = 0; y < image->GetSize().y; y++)
+    for (int y = 0; y < img->size().y; y++)
     {
         u8vec2 bgfg(0, 7);
 
@@ -101,7 +103,7 @@ ResourceCodecData* OricImageCodec::Load(char const *path)
         }
     }
 
-    image->Unlock(pixels);
+    img->unlock(pixels);
 
     return data;
 }
@@ -129,18 +131,18 @@ bool OricImageCodec::Save(char const *path, ResourceCodecData* data)
         result << (uint8_t)name[0];
     result << 0;
 
-    auto image = data_image->m_image;
-    Image tmp;
-    ivec2 size = image->GetSize();
+    auto img = data_image->m_image;
+    image tmp;
+    ivec2 size = img->size();
     if (size.x != WIDTH)
     {
         size.y = (int)((float)size.y * WIDTH / size.x);
         size.x = WIDTH;
-        tmp = image->Resize(size, ResampleAlgorithm::Bresenham);
-        image = &tmp;
+        tmp = img->Resize(size, ResampleAlgorithm::Bresenham);
+        img = &tmp;
     }
 
-    WriteScreen(*image, result);
+    WriteScreen(*img, result);
 
     File f;
     f.Open(path, FileAccess::Write);
@@ -469,10 +471,10 @@ static uint8_t bestmove(ivec3 const *in, u8vec2 bgfg,
     return bestcommand;
 }
 
-void OricImageCodec::WriteScreen(Image &image, array<uint8_t> &result)
+void OricImageCodec::WriteScreen(image &img, array<uint8_t> &result)
 {
-    ivec2 size = image.GetSize();
-    vec4 *pixels = image.Lock<PixelFormat::RGBA_F32>();
+    ivec2 size = img.size();
+    vec4 *pixels = img.lock<PixelFormat::RGBA_F32>();
 
     int stride = (size.x + 1);
 
@@ -526,7 +528,7 @@ void OricImageCodec::WriteScreen(Image &image, array<uint8_t> &result)
         }
     }
 
-    image.Unlock(pixels);
+    img.unlock(pixels);
 
     //fprintf(stderr, " done.\n");
 }

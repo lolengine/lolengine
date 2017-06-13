@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
 //            © 2014—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -175,7 +175,7 @@ public:
 protected:
     virtual bool DoWork()
     {
-        return m_image.Load(m_path.C());
+        return m_image.load(m_path.C());
     }
 
     String  m_path;

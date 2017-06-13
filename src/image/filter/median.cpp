@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2004-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2004—2017 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -33,38 +35,38 @@ static int cmpfloat(void const *i1, void const *i2)
     return (a > b) - (a < b);
 }
 
-Image Image::Median(ivec2 ksize) const
+image image::Median(ivec2 ksize) const
 {
-    ivec2 const size = GetSize();
-    Image tmp = *this;
-    Image ret(size);
+    ivec2 const isize = size();
+    image tmp = *this;
+    image ret(isize);
 
-    if (GetFormat() == PixelFormat::Y_8 || GetFormat() == PixelFormat::Y_F32)
+    if (format() == PixelFormat::Y_8 || format() == PixelFormat::Y_F32)
     {
         ivec2 const lsize = 2 * ksize + ivec2(1);
         array2d<float> list(lsize);
 
-        float *srcp = tmp.Lock<PixelFormat::Y_F32>();
-        float *dstp = ret.Lock<PixelFormat::Y_F32>();
+        float *srcp = tmp.lock<PixelFormat::Y_F32>();
+        float *dstp = ret.lock<PixelFormat::Y_F32>();
 
-        for (int y = 0; y < size.y; y++)
+        for (int y = 0; y < isize.y; y++)
         {
-            for (int x = 0; x < size.x; x++)
+            for (int x = 0; x < isize.x; x++)
             {
                 /* Make a list of neighbours */
                 for (int j = -ksize.y; j <= ksize.y; j++)
                 {
                     int y2 = y + j;
-                    if (y2 < 0) y2 = size.y - 1 - ((-y2 - 1) % size.y);
-                    else if (y2 > 0) y2 = y2 % size.y;
+                    if (y2 < 0) y2 = isize.y - 1 - ((-y2 - 1) % isize.y);
+                    else if (y2 > 0) y2 = y2 % isize.y;
 
                     for (int i = -ksize.x; i <= ksize.x; i++)
                     {
                         int x2 = x + i;
-                        if (x2 < 0) x2 = size.x - 1 - ((-x2 - 1) % size.x);
-                        else if (x2 > 0) x2 = x2 % size.x;
+                        if (x2 < 0) x2 = isize.x - 1 - ((-x2 - 1) % isize.x);
+                        else if (x2 > 0) x2 = x2 % isize.x;
 
-                        list[i + ksize.x][j + ksize.y] = srcp[y2 * size.x + x2];
+                        list[i + ksize.x][j + ksize.y] = srcp[y2 * isize.x + x2];
                     }
                 }
 
@@ -72,39 +74,39 @@ Image Image::Median(ivec2 ksize) const
                 qsort(&list[0][0], lsize.x * lsize.y, sizeof(float), cmpfloat);
 
                 /* Store the median value */
-                dstp[y * size.x + x] = *(&list[0][0] + lsize.x * lsize.y / 2);
+                dstp[y * isize.x + x] = *(&list[0][0] + lsize.x * lsize.y / 2);
             }
         }
 
-        tmp.Unlock(srcp);
-        ret.Unlock(dstp);
+        tmp.unlock(srcp);
+        ret.unlock(dstp);
     }
     else
     {
         ivec2 const lsize = 2 * ksize + ivec2(1);
         array2d<vec3> list(lsize);
 
-        vec4 *srcp = tmp.Lock<PixelFormat::RGBA_F32>();
-        vec4 *dstp = ret.Lock<PixelFormat::RGBA_F32>();
+        vec4 *srcp = tmp.lock<PixelFormat::RGBA_F32>();
+        vec4 *dstp = ret.lock<PixelFormat::RGBA_F32>();
 
-        for (int y = 0; y < size.y; y++)
+        for (int y = 0; y < isize.y; y++)
         {
-            for (int x = 0; x < size.x; x++)
+            for (int x = 0; x < isize.x; x++)
             {
                 /* Make a list of neighbours */
                 for (int j = -ksize.y; j <= ksize.y; j++)
                 {
                     int y2 = y + j;
-                    if (y2 < 0) y2 = size.y - 1 - ((-y2 - 1) % size.y);
-                    else if (y2 > 0) y2 = y2 % size.y;
+                    if (y2 < 0) y2 = isize.y - 1 - ((-y2 - 1) % isize.y);
+                    else if (y2 > 0) y2 = y2 % isize.y;
 
                     for (int i = -ksize.x; i <= ksize.x; i++)
                     {
                         int x2 = x + i;
-                        if (x2 < 0) x2 = size.x - 1 - ((-x2 - 1) % size.x);
-                        else if (x2 > 0) x2 = x2 % size.x;
+                        if (x2 < 0) x2 = isize.x - 1 - ((-x2 - 1) % isize.x);
+                        else if (x2 > 0) x2 = x2 % isize.x;
 
-                        list[i + ksize.x][j + ksize.y] = srcp[y2 * size.x + x2].rgb;
+                        list[i + ksize.x][j + ksize.y] = srcp[y2 * isize.x + x2].rgb;
                     }
                 }
 
@@ -139,26 +141,26 @@ Image Image::Median(ivec2 ksize) const
                 }
 
                 /* Store the median value */
-                dstp[y * size.x + x] = vec4(median, srcp[y * size.x + x].a);
+                dstp[y * isize.x + x] = vec4(median, srcp[y * isize.x + x].a);
             }
         }
 
-        tmp.Unlock(srcp);
-        ret.Unlock(dstp);
+        tmp.unlock(srcp);
+        ret.unlock(dstp);
     }
 
     return ret;
 }
 
-Image Image::Median(array2d<float> const &kernel) const
+image image::Median(array2d<float> const &kernel) const
 {
-    ivec2 const size = GetSize();
-    Image tmp = *this;
-    Image ret(size);
+    ivec2 const isize = size();
+    image tmp = *this;
+    image ret(isize);
 
     /* FIXME: TODO */
 #if 0
-    if (GetFormat() == PixelFormat::Y_8 || GetFormat() == PixelFormat::Y_F32)
+    if (format() == PixelFormat::Y_8 || format() == PixelFormat::Y_F32)
     {
     }
     else
@@ -167,27 +169,27 @@ Image Image::Median(array2d<float> const &kernel) const
         ivec2 const ksize = kernel.size();
         array2d<vec3> list(ksize);
 
-        vec4 *srcp = tmp.Lock<PixelFormat::RGBA_F32>();
-        vec4 *dstp = ret.Lock<PixelFormat::RGBA_F32>();
+        vec4 *srcp = tmp.lock<PixelFormat::RGBA_F32>();
+        vec4 *dstp = ret.lock<PixelFormat::RGBA_F32>();
 
-        for (int y = 0; y < size.y; y++)
+        for (int y = 0; y < isize.y; y++)
         {
-            for (int x = 0; x < size.x; x++)
+            for (int x = 0; x < isize.x; x++)
             {
                 /* Make a list of neighbours */
                 for (int j = 0; j < ksize.y; j++)
                 {
                     int y2 = y + j - ksize.y / 2;
-                    if (y2 < 0) y2 = size.y - 1 - ((-y2 - 1) % size.y);
-                    else if (y2 > 0) y2 = y2 % size.y;
+                    if (y2 < 0) y2 = isize.y - 1 - ((-y2 - 1) % isize.y);
+                    else if (y2 > 0) y2 = y2 % isize.y;
 
                     for (int i = 0; i < ksize.x; i++)
                     {
                         int x2 = x + i - ksize.x / 2;
-                        if (x2 < 0) x2 = size.x - 1 - ((-x2 - 1) % size.x);
-                        else if (x2 > 0) x2 = x2 % size.x;
+                        if (x2 < 0) x2 = isize.x - 1 - ((-x2 - 1) % isize.x);
+                        else if (x2 > 0) x2 = x2 % isize.x;
 
-                        list[i][j] = srcp[y2 * size.x + x2].rgb;
+                        list[i][j] = srcp[y2 * isize.x + x2].rgb;
                     }
                 }
 
@@ -222,12 +224,12 @@ Image Image::Median(array2d<float> const &kernel) const
                 }
 
                 /* Store the median value */
-                dstp[y * size.x + x] = vec4(median, srcp[y * size.x + x].a);
+                dstp[y * isize.x + x] = vec4(median, srcp[y * isize.x + x].a);
             }
         }
 
-        tmp.Unlock(srcp);
-        ret.Unlock(dstp);
+        tmp.unlock(srcp);
+        ret.unlock(dstp);
     }
 
     return ret;

@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2004-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2004—2017 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -21,18 +23,18 @@ namespace lol
 
 image image::Crop(ibox2 box) const
 {
-    ivec2 const srcsize = GetSize();
+    ivec2 const srcsize = size();
     ivec2 const dstsize = box.extent();
 
     image dst(dstsize);
-    PixelFormat format = GetFormat();
+    PixelFormat fmt = format();
 
-    if (format != PixelFormat::Unknown)
+    if (fmt != PixelFormat::Unknown)
     {
-        dst.SetFormat(format);
-        uint8_t const *srcp = (uint8_t const *)m_data->m_pixels[(int)format];
-        uint8_t *dstp = (uint8_t *)dst.m_data->m_pixels[(int)format];
-        uint8_t bpp = BytesPerPixel(format);
+        dst.set_format(fmt);
+        uint8_t const *srcp = (uint8_t const *)m_data->m_pixels[(int)fmt];
+        uint8_t *dstp = (uint8_t *)dst.m_data->m_pixels[(int)fmt];
+        uint8_t bpp = BytesPerPixel(fmt);
 
         int len = dstsize.x;
 

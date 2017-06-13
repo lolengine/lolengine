@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Lua tutorial
 //
-//  Copyright © 2014—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//  Copyright © 2014—2017 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -36,14 +36,14 @@ public:
     //-------------------------------------------------------------------------
     static int AddFive(lua_State* l)
     {
-		auto stack = LuaStack::Begin(l);
-		int32_t i = stack.Get<int32_t>();
+        auto stack = LuaStack::Begin(l);
+        int32_t i = stack.Get<int32_t>();
 
         i += 5;
 
         return (stack << i).End();
     }
-    
+
     LOLUA_DECLARE_RETURN_METHOD_ARGS(AddTenInstance, GetPtr<DemoObject>(), AddTenMethod, Get<float>(), Get<int32_t>(), Get<int32_t>());
     static int _AddTenInstance(lua_State* l)
     {

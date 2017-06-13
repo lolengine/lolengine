@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -75,11 +75,11 @@ ResourceCodecData* SdlImageCodec::Load(char const *path)
         surface = tmp;
     }
 
-    auto data = new ResourceImageData(new Image(size));
+    auto data = new ResourceImageData(new image(size));
     auto image = data->m_image;
-    u8vec4 *pixel_data = image->Lock<PixelFormat::RGBA_8>();
+    u8vec4 *pixel_data = image->lock<PixelFormat::RGBA_8>();
     memcpy(pixel_data, surface->pixels, 4 * size.x * size.y);
-    image->Unlock(pixel_data);
+    image->unlock(pixel_data);
 
     SDL_FreeSurface(surface);
 
@@ -93,12 +93,12 @@ bool SdlImageCodec::Save(char const *path, ResourceCodecData* data)
         return false;
 
     auto image = data_image->m_image;
-    ivec2 size = image->GetSize();
+    ivec2 size = image->size();
     SDL_Surface *surface = Create32BppSurface(size);
 
-    u8vec4 *pixel_data = image->Lock<PixelFormat::RGBA_8>();
+    u8vec4 *pixel_data = image->lock<PixelFormat::RGBA_8>();
     memcpy(surface->pixels, pixel_data, 4 * size.x * size.y);
-    image->Unlock(pixel_data);
+    image->unlock(pixel_data);
 
     int ret = SDL_SaveBMP(surface, path);
     SDL_FreeSurface(surface);

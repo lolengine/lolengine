@@ -1,11 +1,14 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//              2014 Benjamin Huet <huet.benjamin@gmail.com>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -41,8 +44,8 @@ ResourceCodecData* ZedPaletteImageCodec::Load(char const *path)
     File file;
     file.Open(path, FileAccess::Read, true);
 
-    //Put file in memory
-    long file_size = file.GetSize();
+    // Put file in memory
+    long file_size = file.size();
     array<uint8_t> file_buffer;
     file_buffer.resize(file_size);
     file.Read((uint8_t*)&file_buffer[0], file_size);
@@ -53,18 +56,18 @@ ResourceCodecData* ZedPaletteImageCodec::Load(char const *path)
     int32_t tex_size = 2;
     while (tex_size < tex_sqrt)
         tex_size <<= 1;
-    auto data = new ResourceImageData(new Image(ivec2(tex_size)));
+    auto data = new ResourceImageData(new image(ivec2(tex_size)));
     auto image = data->m_image;
 #else
     int32_t tex_sqrt = file_size / 3;
     int32_t tex_size = 2;
     while (tex_size < tex_sqrt)
         tex_size <<= 1;
-    auto data = new ResourceImageData(new Image(ivec2(tex_size, 1)));
+    auto data = new ResourceImageData(new image(ivec2(tex_size, 1)));
     auto image = data->m_image;
 #endif
 
-    u8vec4 *pixels = image->Lock<PixelFormat::RGBA_8>();
+    u8vec4 *pixels = image->lock<PixelFormat::RGBA_8>();
     for (int i = 0; i < file_buffer.count();)
     {
         pixels->r = file_buffer[i++];
@@ -73,7 +76,7 @@ ResourceCodecData* ZedPaletteImageCodec::Load(char const *path)
         pixels->a = (i == 0) ? 0 : 255;
         ++pixels;
     }
-    image->Unlock(pixels);
+    image->unlock(pixels);
 
     return data;
 }

@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -44,10 +46,10 @@ TextureImage::TextureImage(char const *path)
     Init(path);
 }
 
-TextureImage::TextureImage(char const *path, Image* image)
+TextureImage::TextureImage(char const *path, image* img)
     : m_data(GetNewData())
 {
-    Init(path, image);
+    Init(path, img);
 }
 
 TextureImage::~TextureImage()
@@ -66,19 +68,19 @@ void TextureImage::Init(char const *path, ResourceCodecData* loaded_data)
     auto image_data = dynamic_cast<ResourceImageData*>(loaded_data);
     if (image_data != nullptr)
     {
-        Init(path, new Image(*image_data->m_image));
+        Init(path, new image(*image_data->m_image));
     }
 
     delete image_data;
 }
 
-void TextureImage::Init(char const *path, Image* image)
+void TextureImage::Init(char const *path, image* img)
 {
     m_data->m_name = String("<textureimage> ") + path;
 
     m_data->m_texture = nullptr;
-    m_data->m_image = image;
-    m_data->m_image_size = m_data->m_image->GetSize();
+    m_data->m_image = img;
+    m_data->m_image_size = m_data->m_image->size();
     m_data->m_texture_size = ivec2(PotUp(m_data->m_image_size.x),
                                    PotUp(m_data->m_image_size.y));
 
@@ -111,13 +113,13 @@ void TextureImage::TickDraw(float seconds, Scene &scene)
             m_data->m_texture = nullptr;
         }
 
-        PixelFormat format = m_data->m_image->GetFormat();
+        PixelFormat format = m_data->m_image->format();
         int planes = BytesPerPixel(format);
 
         int w = m_data->m_texture_size.x;
         int h = m_data->m_texture_size.y;
 
-        uint8_t *pixels = (uint8_t *)m_data->m_image->Lock();
+        uint8_t *pixels = (uint8_t *)m_data->m_image->lock();
         bool resized = false;
         if (w != m_data->m_image_size.x || h != m_data->m_image_size.y)
         {
@@ -129,6 +131,7 @@ void TextureImage::TickDraw(float seconds, Scene &scene)
             pixels = tmp;
             resized = false;
         }
+        /* FIXME: no unlock? */
 
         m_data->m_texture = new Texture(ivec2(w, h), format);
         m_data->m_texture->SetData(pixels);
@@ -146,12 +149,12 @@ char const *TextureImage::GetName()
     return m_data->m_name.C();
 }
 
-void TextureImage::UpdateTexture(Image* image)
+void TextureImage::UpdateTexture(image* img)
 {
-    m_data->m_image = image;
-    m_data->m_image_size = m_data->m_image->GetSize();
+    m_data->m_image = img;
+    m_data->m_image_size = m_data->m_image->size();
     m_data->m_texture_size = ivec2(PotUp(m_data->m_image_size.x),
-                                    PotUp(m_data->m_image_size.y));
+                                   PotUp(m_data->m_image_size.y));
 }
 
 Texture * TextureImage::GetTexture()
@@ -164,12 +167,12 @@ Texture const * TextureImage::GetTexture() const
     return m_data->m_texture;
 }
 
-Image * TextureImage::GetImage()
+image * TextureImage::GetImage()
 {
     return m_data->m_image;
 }
 
-Image const * TextureImage::GetImage() const
+image const * TextureImage::GetImage() const
 {
     return m_data->m_image;
 }

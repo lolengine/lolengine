@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Simplex Noise tutorial
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
 //            © 2013-2014 Guillaume Bittoun <guillaume.bittoun@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -31,8 +31,8 @@ int main(int argc, char **argv)
     srand(time(nullptr));
 
     /* Create an image */
-    Image img(size);
-    array2d<vec4> &data = img.Lock2D<PixelFormat::RGBA_F32>();
+    image img(size);
+    array2d<vec4> &data = img.lock2d<PixelFormat::RGBA_F32>();
 
     /* Declare plenty of allocators */
     simplex_noise<2> s2;
@@ -141,7 +141,7 @@ int main(int argc, char **argv)
 #endif
 
     /* Save image */
-    img.Unlock2D(data);
-    img.Save("simplex.png");
+    img.unlock2d(data);
+    img.save("simplex.png");
 }
 

@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -74,10 +74,10 @@ ResourceCodecData *Imlib2ImageCodec::Load(char const *path)
     }
 
     ivec2 size(imlib_image_get_width(), imlib_image_get_height());
-    auto data = new ResourceImageData(new Image(size));
+    auto data = new ResourceImageData(new image(size));
     auto image = data->m_image;
 
-    u8vec4 *dstdata = image->Lock<PixelFormat::RGBA_8>();
+    u8vec4 *dstdata = image->lock<PixelFormat::RGBA_8>();
 
     for (int i = 0; i < size.x * size.y; i++)
     {
@@ -86,7 +86,7 @@ ResourceCodecData *Imlib2ImageCodec::Load(char const *path)
         else
             dstdata[i] = srcdata[i].bgra;
     }
-    image->Unlock(dstdata);
+    image->unlock(dstdata);
 
     imlib_free_image();
 
@@ -100,13 +100,13 @@ bool Imlib2ImageCodec::Save(char const *path, ResourceCodecData *data)
         return false;
 
     auto image = data_image->m_image;
-    ivec2 size = image->GetSize();
+    ivec2 size = image->size();
     Imlib_Image priv = imlib_create_image(size.x, size.y);
 
     imlib_context_set_image(priv);
     imlib_image_set_has_alpha(1);
 
-    u8vec4 const *srcdata = image->Lock<PixelFormat::RGBA_8>();
+    u8vec4 const *srcdata = image->lock<PixelFormat::RGBA_8>();
     u8vec4 *dstdata = (u8vec4 *)imlib_image_get_data();
 
     for (int i = 0; i < size.x * size.y; i++)
@@ -118,7 +118,7 @@ bool Imlib2ImageCodec::Save(char const *path, ResourceCodecData *data)
     }
 
     imlib_image_put_back_data((DATA32 *)dstdata);
-    image->Unlock(srcdata);
+    image->unlock(srcdata);
 
     imlib_save_image(path);
     imlib_free_image();

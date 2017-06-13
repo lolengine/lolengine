@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2004-2015 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2004—2017 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -24,44 +26,44 @@ namespace lol
 
 /* FIXME: though the algorithm is supposed to stop, we do not have a real,
  * guaranteed stop condition here. */
-Image Image::DitherDbs() const
+image image::dither_dbs() const
 {
-    ivec2 size = GetSize();
+    ivec2 isize = size();
 
     /* Build our human visual system kernel. */
-    array2d<float> kernel;
-    kernel.resize(ivec2(NN, NN));
+    array2d<float> ker;
+    ker.resize(ivec2(NN, NN));
     float t = 0.f;
     for (int j = 0; j < NN; j++)
         for (int i = 0; i < NN; i++)
         {
             vec2 v = vec2(i - N, j - N);
-            kernel[i][j] = exp(-sqlength(v / 1.6f) / 2.f)
-                         + exp(-sqlength(v / 0.6f) / 2.f);
-            t += kernel[i][j];
+            ker[i][j] = exp(-sqlength(v / 1.6f) / 2.f)
+                      + exp(-sqlength(v / 0.6f) / 2.f);
+            t += ker[i][j];
         }
 
     for (int j = 0; j < NN; j++)
         for (int i = 0; i < NN; i++)
-            kernel[i][j] /= t;
+            ker[i][j] /= t;
 
     /* A list of cells in our picture. If no change is done to a cell
      * for two iterations, we stop considering changes to it. */
-    ivec2 const csize = (size + ivec2(CELL - 1)) / CELL;
+    ivec2 const csize = (isize + ivec2(CELL - 1)) / CELL;
     array2d<int> changelist(csize);
     memset(changelist.data(), 0, changelist.bytes());
 
-    Image dst = *this;
-    dst.SetFormat(PixelFormat::Y_F32);
+    image dst = *this;
+    dst.set_format(PixelFormat::Y_F32);
 
-    Image tmp1 = dst.Convolution(kernel);
-    array2d<float> &tmp1data = tmp1.Lock2D<PixelFormat::Y_F32>();
+    image tmp1 = dst.Convolution(ker);
+    array2d<float> &tmp1data = tmp1.lock2d<PixelFormat::Y_F32>();
 
-    dst = dst.DitherRandom();
-    array2d<float> &dstdata = dst.Lock2D<PixelFormat::Y_F32>();
+    dst = dst.dither_random();
+    array2d<float> &dstdata = dst.lock2d<PixelFormat::Y_F32>();
 
-    Image tmp2 = dst.Convolution(kernel);
-    array2d<float> &tmp2data = tmp2.Lock2D<PixelFormat::Y_F32>();
+    image tmp2 = dst.Convolution(ker);
+    array2d<float> &tmp2data = tmp2.lock2d<PixelFormat::Y_F32>();
 
     for (int run = 0, last_change = 0; ; ++run)
     {
@@ -84,7 +86,7 @@ Image Image::DitherDbs() const
             ivec2 const pos(cx * CELL + pixel % CELL,
                             cy * CELL + pixel / CELL);
 
-            if (!(pos >= ivec2(0)) || !(pos < size))
+            if (!(pos >= ivec2(0)) || !(pos < isize))
                 continue;
 
             /* The best operation we can do */
@@ -103,7 +105,7 @@ Image Image::DitherDbs() const
 
             for (ivec2 const op : op_list)
             {
-                if (!(pos + op >= ivec2(0)) || !(pos + op < size))
+                if (!(pos + op >= ivec2(0)) || !(pos + op < isize))
                     continue;
 
                 bool flip = (op == ivec2(0));
@@ -115,9 +117,9 @@ Image Image::DitherDbs() const
 
                 /* TODO: implement min/max for 3+ arguments */
                 int imin = max(max(-N, op.x - N), -pos.x);
-                int imax = min(min(N + 1, op.x + NN - N), size.x - pos.x);
+                int imax = min(min(N + 1, op.x + NN - N), isize.x - pos.x);
                 int jmin = max(max(-N, op.y - N), -pos.y);
-                int jmax = min(min(N + 1, op.y + NN - N), size.y - pos.y);
+                int jmax = min(min(N + 1, op.y + NN - N), isize.y - pos.y);
 
                 float error = 0.f;
                 for (int j = jmin; j < jmax; j++)
@@ -125,9 +127,9 @@ Image Image::DitherDbs() const
                 {
                     ivec2 pos2 = pos + ivec2(i, j);
 
-                    float m = kernel[i + N][j + N];
+                    float m = ker[i + N][j + N];
                     if (!flip)
-                        m -= kernel[i - op.x + N][j - op.y + N];
+                        m -= ker[i - op.x + N][j - op.y + N];
                     float p = tmp1data[pos2];
                     float q1 = tmp2data[pos2];
                     float q2 = q1 + m * (d2 - d);
@@ -154,13 +156,13 @@ Image Image::DitherDbs() const
                 for (int i = -N; i <= N; i++)
                 {
                     ivec2 off(i, j);
-                    float delta = (d2 - d) * kernel[i + N][j + N];
+                    float delta = (d2 - d) * ker[i + N][j + N];
 
-                    if (pos + off >= ivec2(0) && pos + off < size)
+                    if (pos + off >= ivec2(0) && pos + off < isize)
                         tmp2data[pos + off] += delta;
 
                     if (!flip && pos + off + best_op >= ivec2(0)
-                         && pos + off + best_op < size)
+                         && pos + off + best_op < isize)
                         tmp2data[pos + off + best_op] -= delta;
                 }
 
@@ -173,9 +175,9 @@ Image Image::DitherDbs() const
             ++changelist[cx][cy];
     }
 
-    tmp1.Unlock2D(tmp1data);
-    tmp2.Unlock2D(tmp2data);
-    dst.Unlock2D(dstdata);
+    tmp1.unlock2d(tmp1data);
+    tmp2.unlock2d(tmp2data);
+    dst.unlock2d(dstdata);
 
     return dst;
 }

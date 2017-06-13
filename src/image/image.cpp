@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -20,7 +20,7 @@ namespace lol
 {
 
 /*
- * Public Image class
+ * Public image class
  */
 
 image::image()
@@ -31,13 +31,13 @@ image::image()
 image::image(char const *path)
   : m_data(new image_data())
 {
-    Load(path);
+    load(path);
 }
 
 image::image(ivec2 size)
   : m_data(new image_data())
 {
-    SetSize(size);
+    resize(size);
 }
 
 image::image (image const &other)
@@ -65,21 +65,21 @@ image::~image()
 void image::Copy(uint8_t* src_pixels, ivec2 const& size, PixelFormat fmt)
 {
     ASSERT(fmt != PixelFormat::Unknown);
-    SetSize(size);
-    SetFormat(fmt);
+    resize(size);
+    set_format(fmt);
     memcpy(m_data->m_pixels[(int)fmt]->data(), src_pixels,
             size.x * size.y * BytesPerPixel(fmt));
 }
 
 void image::Copy(image const &src)
 {
-    ivec2 size = src.GetSize();
-    PixelFormat fmt = src.GetFormat();
+    ivec2 size = src.size();
+    PixelFormat fmt = src.format();
 
-    SetSize(size);
+    resize(size);
     if (fmt != PixelFormat::Unknown)
     {
-        SetFormat(fmt);
+        set_format(fmt);
         memcpy(m_data->m_pixels[(int)fmt]->data(),
             src.m_data->m_pixels[(int)fmt]->data(),
             size.x * size.y * BytesPerPixel(fmt));
@@ -88,10 +88,10 @@ void image::Copy(image const &src)
 
 void image::DummyFill()
 {
-    Load("DUMMY");
+    load("DUMMY");
 }
 
-bool image::Load(char const *path)
+bool image::load(char const *path)
 {
     auto resource = ResourceLoader::Load(path);
     if (resource == nullptr)
@@ -109,7 +109,7 @@ bool image::Load(char const *path)
     return true;
 }
 
-bool image::Save(char const *path)
+bool image::save(char const *path)
 {
     auto data = new ResourceImageData(new image(*this));
     auto result = ResourceLoader::Save(path, data);
@@ -117,12 +117,12 @@ bool image::Save(char const *path)
     return result;
 }
 
-ivec2 image::GetSize() const
+ivec2 image::size() const
 {
     return m_data->m_size;
 }
 
-void image::SetSize(ivec2 size)
+void image::resize(ivec2 size)
 {
     ASSERT(size.x > 0);
     ASSERT(size.y > 0);
@@ -158,24 +158,24 @@ void image::SetWrap(WrapMode wrap_x, WrapMode wrap_y)
     m_data->m_wrap_y = wrap_y;
 }
 
-/* The Lock() method */
-template<PixelFormat T> typename PixelType<T>::type *image::Lock()
+/* The lock() method */
+template<PixelFormat T> typename PixelType<T>::type *image::lock()
 {
-    SetFormat(T);
+    set_format(T);
 
     return (typename PixelType<T>::type *)m_data->m_pixels[(int)T]->data();
 }
 
-/* The Lock2D() method */
-void *image::Lock2DHelper(PixelFormat T)
+/* The lock2d() method */
+void *image::lock2d_helper(PixelFormat T)
 {
-    SetFormat(T);
+    set_format(T);
 
     return m_data->m_pixels[(int)T]->data2d();
 }
 
 template<typename T>
-void image::Unlock2D(array2d<T> const &array)
+void image::unlock2d(array2d<T> const &array)
 {
     ASSERT(m_data->m_pixels.has_key((int)m_data->m_format));
     ASSERT(array.data() == m_data->m_pixels[(int)m_data->m_format]->data());
@@ -183,9 +183,9 @@ void image::Unlock2D(array2d<T> const &array)
 
 /* Explicit specialisations for the above templates */
 #define _T(T) \
-    template PixelType<T>::type *image::Lock<T>(); \
-    template array2d<PixelType<T>::type> &image::Lock2D<T>(); \
-    template void image::Unlock2D(array2d<PixelType<T>::type> const &array);
+    template PixelType<T>::type *image::lock<T>(); \
+    template array2d<PixelType<T>::type> &image::lock2d<T>(); \
+    template void image::unlock2d(array2d<PixelType<T>::type> const &array);
 _T(PixelFormat::Y_8)
 _T(PixelFormat::RGB_8)
 _T(PixelFormat::RGBA_8)
@@ -195,14 +195,14 @@ _T(PixelFormat::RGBA_F32)
 #undef _T
 
 /* Special case for the "any" format: return the last active buffer */
-void *image::Lock()
+void *image::lock()
 {
     ASSERT(m_data->m_format != PixelFormat::Unknown);
 
     return m_data->m_pixels[(int)m_data->m_format]->data();
 }
 
-void image::Unlock(void const *pixels)
+void image::unlock(void const *pixels)
 {
     ASSERT(m_data->m_pixels.has_key((int)m_data->m_format));
     ASSERT(pixels == m_data->m_pixels[(int)m_data->m_format]->data());

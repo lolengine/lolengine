@@ -1,12 +1,14 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2014 Benjamin Huet <huet.benjamin@gmail.com>
-//                2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//              2014 Benjamin Huet <huet.benjamin@gmail.com>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -43,8 +45,8 @@ ResourceCodecData* ZedImageCodec::Load(char const *path)
     struct CompactSecondary
     {
         CompactSecondary(int32_t size) { m_size = size; }
-        int32_t                 m_size;
-        array<int32_t>          m_tiles;
+        int32_t m_size;
+        array<int32_t> m_tiles;
     };
     struct CompactMain
     {
@@ -108,7 +110,7 @@ ResourceCodecData* ZedImageCodec::Load(char const *path)
     file.Open(path, FileAccess::Read, true);
 
     //Put file in memory
-    long file_size = file.GetSize();
+    long file_size = file.size();
     array<uint8_t> file_buffer;
     file_buffer.resize(file_size);
     file.Read((uint8_t*)&file_buffer[0], file_size);
@@ -227,9 +229,9 @@ ResourceCodecData* ZedImageCodec::Load(char const *path)
         tex_size <<= 1;
 
     //Prepare final image
-    auto data = new ResourceTilesetData(new Image(ivec2(tex_size)));
+    auto data = new ResourceTilesetData(new image(ivec2(tex_size)));
     auto image = data->m_image;
-    uint8_t *pixels = image->Lock<PixelFormat::Y_8>();
+    uint8_t *pixels = image->lock<PixelFormat::Y_8>();
 
     //Data refactor stage
     ivec2 pos = ivec2(0);
@@ -284,7 +286,7 @@ ResourceCodecData* ZedImageCodec::Load(char const *path)
             j++;
         }
     }
-    image->Unlock(pixels);
+    image->unlock(pixels);
 
     data->m_tiles = tiles;
 

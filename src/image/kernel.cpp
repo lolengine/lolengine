@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2004-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2004—2017 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -17,7 +19,7 @@
 namespace lol
 {
 
-array2d<float> image::BayerKernel(ivec2 size)
+array2d<float> image::kernel::bayer(ivec2 size)
 {
     array2d<float> ret(size);
 
@@ -46,7 +48,7 @@ array2d<float> image::BayerKernel(ivec2 size)
     return ret;
 }
 
-array2d<float> image::HalftoneKernel(ivec2 size)
+array2d<float> image::kernel::halftone(ivec2 size)
 {
     array2d<float> ret(size);
 
@@ -72,10 +74,10 @@ array2d<float> image::HalftoneKernel(ivec2 size)
             ret[x][y] = flip ? 10.f - r : r;
         }
 
-    return NormalizeKernel(ret);
+    return normalize(ret);
 }
 
-array2d<float> image::BlueNoiseKernel(ivec2 size, ivec2 gsize)
+array2d<float> image::kernel::blue_noise(ivec2 size, ivec2 gsize)
 {
     float const epsilon = 1.f / (size.x * size.y + 1);
     gsize = lol::min(size, gsize);
@@ -180,7 +182,7 @@ static int cmpdot(const void *p1, const void *p2)
     return ((Dot const *)p1)->val > ((Dot const *)p2)->val;
 }
 
-array2d<float> image::NormalizeKernel(array2d<float> const &kernel)
+array2d<float> image::kernel::normalize(array2d<float> const &kernel)
 {
     ivec2 size = kernel.size();
 
@@ -209,7 +211,7 @@ array2d<float> image::NormalizeKernel(array2d<float> const &kernel)
     return dst;
 }
 
-array2d<float> image::EdiffKernel(EdiffAlgorithm algorithm)
+array2d<float> image::kernel::ediff(EdiffAlgorithm algorithm)
 {
     switch (algorithm)
     {
@@ -270,7 +272,7 @@ array2d<float> image::EdiffKernel(EdiffAlgorithm algorithm)
  * there is little chance that any value below 0.2 will be useful. */
 #define BLUR_EPSILON 0.2f
 
-array2d<float> image::GaussianKernel(vec2 radius, float angle, vec2 delta)
+array2d<float> image::kernel::gaussian(vec2 radius, float angle, vec2 delta)
 {
     array2d<float> kernel;
 
