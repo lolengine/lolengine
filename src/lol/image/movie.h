@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -13,32 +13,41 @@
 #pragma once
 
 //
-// The Movie class
+// The movie class
 // ---------------
 //
 
-#include <lol/image/movie.h>
+#include <lol/image/pixel.h>
+#include <lol/image/image.h>
+
+extern "C" struct AVFormatContext;
+extern "C" struct AVCodecContext;
+extern "C" struct AVStream;
+extern "C" struct AVFrame;
 
 namespace lol
 {
 
-class Movie
+class movie
 {
 public:
-    Movie(String const &name, ivec2 size, float fps);
+    movie(ivec2 size);
 
-    /* TODO: Rule of three */
-#if 0
-    Movie(Movie const &other);
-    Movie & operator =(Movie other);
-#endif
-    ~Movie();
-
-    void Feed(image const &image);
+    bool open_file(char const *filename);
+    bool push_image(image &im);
+    void close();
 
 private:
-    class MovieData *m_data;
+    bool open_codec();
+
+private:
+    AVFormatContext *m_avformat;
+    AVCodecContext *m_avcodec;
+    AVStream *m_stream;
+    AVFrame *m_frame;
+    ivec2 m_size;
+    int m_index;
 };
 
-} /* namespace lol */
+} // namespace lol
 
