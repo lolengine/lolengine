@@ -18,6 +18,7 @@
 // zero, the texture is freed.
 //
 
+#include <lol/image/resource.h>
 #include <lol/image/image.h>
 #include <lol/gpu/texture.h>
 
@@ -38,12 +39,13 @@ protected:
 
 public:
     TextureImage(char const *path);
-    TextureImage(char const *path, Image* image);
+    TextureImage(char const *path, image* img);
     virtual ~TextureImage();
 
 protected:
     void Init(char const *path);
-    virtual void Init(char const *path, Image* image);
+    virtual void Init(char const *path, ResourceCodecData* loaded_data);
+    virtual void Init(char const *path, image* img);
 
 protected:
     virtual void TickDraw(float seconds, Scene &scene);
@@ -52,11 +54,12 @@ public:
     /* Inherited from Entity */
     virtual char const *GetName();
 
-    void UpdateTexture(Image* image);
+    void UpdateTexture(image* img);
     Texture * GetTexture();
     Texture const * GetTexture() const;
-    Image * GetImage();
-    Image const * GetImage() const;
+    image * GetImage();
+    image const * GetImage() const;
+    ivec2 GetImageSize() const;
     ivec2 GetTextureSize() const;
     void Bind();
     void Unbind();

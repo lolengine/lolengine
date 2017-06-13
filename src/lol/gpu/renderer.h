@@ -123,6 +123,13 @@ enum class AlphaFunc : uint8_t
     Always,
 };
 
+/* A safe enum to indicate the depth mask. */
+enum class ScissorMode : uint8_t
+{
+    Disabled,
+    Enabled,
+};
+
 class Renderer
 {
 private:
@@ -175,6 +182,11 @@ public:
 
     void SetPolygonMode(PolygonMode mode);
     PolygonMode GetPolygonMode() const;
+
+    void SetScissorMode(ScissorMode mode);
+    void SetScissorRect(vec4 rect);
+    ScissorMode GetScissorMode() const;
+    vec4 GetScissorRect() const;
 
 private:
     RendererData *m_data;

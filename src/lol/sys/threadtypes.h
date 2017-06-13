@@ -124,16 +124,16 @@ public:
     { }
 
     //Returns a dummy image, and start a job to load the image on a thread
-    Image* Load(const lol::String& path);
-    bool CheckStatus(Image* image);
+    image* Load(const lol::String& path);
+    bool CheckStatus(image* img);
 
 protected:
     virtual void TreatResult(ThreadJob* result);
 
 private:
-    Image               m_dummy_image;
-    map<String, Image*> m_images;
-    array<Image*>       m_loaded_images;
+    image               m_dummy_image;
+    map<String, image*> m_images;
+    array<image*>       m_loaded_images;
 };
 
 } /* namespace lol */

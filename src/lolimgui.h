@@ -12,12 +12,50 @@
 
 #pragma once
 
+#define IM_VEC2_CLASS_EXTRA ImVec2(const lol::vec2 &v) { x = v.x; y = v.y; } \
+                            ImVec2(const lol::ivec2 &v) : ImVec2(lol::vec2(v)) { } \
+                            operator lol::vec2() const { return lol::vec2(x, y); } \
+                            operator lol::ivec2() const { return lol::ivec2(lol::vec2(x, y)); }
+
+#define IM_VEC4_CLASS_EXTRA ImVec4(const lol::vec4 &v) { x = v.x; y = v.y; z = v.z; w = v.w; } \
+                            ImVec4(const lol::ivec4 &v) : ImVec4(lol::vec4(v)) { } \
+                            operator lol::vec4() const { return lol::vec4(x, y, z, w); } \
+                            operator lol::ivec4() const { return lol::ivec4(lol::vec4(x, y, z, w)); }
+
 #include "imgui.h"
 
+#undef IM_VEC2_CLASS_EXTRA
+#undef IM_VEC4_CLASS_EXTRA
+
+//Imgui extension ---------------------------------------------------------------------------------
+typedef int ImGuiSetDock;           // condition flags for Set*()           // enum ImGuiSetCond_
+
+enum ImGuiSetDock_
+{
+    ImGuiSetDock_Center,
+    ImGuiSetDock_Top,
+    ImGuiSetDock_TopRight,
+    ImGuiSetDock_Right,
+    ImGuiSetDock_BottomRight,
+    ImGuiSetDock_Bottom,
+    ImGuiSetDock_BottomLeft,
+    ImGuiSetDock_Left,
+    ImGuiSetDock_TopLeft,
+};
+
+namespace ImGui
+{
+    IMGUI_API void SetNextWindowDockingAndSize(const ImVec2& size, ImGuiSetDock dock, const ImVec2& padding, ImGuiSetCond cond = 0);
+    IMGUI_API void SetNextWindowDockingAndSize(const ImVec2& size, ImGuiSetDock dock, const ImVec4& padding = ImVec4(0, 0, 0, 0), ImGuiSetCond cond = 0);
+    IMGUI_API void SetNextWindowDocking(ImGuiSetDock dock, const ImVec2& padding, ImGuiSetCond cond = 0);
+    IMGUI_API void SetNextWindowDocking(ImGuiSetDock dock, const ImVec4& padding = ImVec4(0, 0, 0, 0), ImGuiSetCond cond = 0);
+    IMGUI_API float GetMainMenuBarHeight();
+}
+
+//LolImGui ----------------------------------------------------------------------------------------
 namespace lol
 {
 
-//LolImGui --------------------------------------------------------------------
 class LolImGui : public Entity
 {
     typedef Entity super;

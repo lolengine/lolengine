@@ -54,6 +54,8 @@ private:
     DepthMask m_depth_mask;
     CullMode m_cull_mode;
     PolygonMode m_polygon_mode;
+    ScissorMode m_scissor_mode;
+    vec4 m_scissor_rect;
 };
 
 /*
@@ -105,6 +107,9 @@ Renderer::Renderer(ivec2 size)
     SetCullMode(CullMode::Clockwise);
 
     m_data->m_polygon_mode = PolygonMode::Point;
+    SetPolygonMode(PolygonMode::Fill);
+
+    m_data->m_scissor_mode = ScissorMode::Disabled;
     SetPolygonMode(PolygonMode::Fill);
 
     /* Add some rendering states that we don't export to the user */
@@ -546,6 +551,43 @@ void Renderer::SetPolygonMode(PolygonMode mode)
 PolygonMode Renderer::GetPolygonMode() const
 {
     return m_data->m_polygon_mode;
+}
+
+/*
+* Scissor test mode
+*/
+
+void Renderer::SetScissorMode(ScissorMode mode)
+{
+    if (m_data->m_scissor_mode == mode)
+        return;
+
+    if (mode == ScissorMode::Enabled)
+        glEnable(GL_SCISSOR_TEST);
+    else
+        glDisable(GL_SCISSOR_TEST);
+
+    m_data->m_scissor_mode = mode;
+}
+
+void Renderer::SetScissorRect(vec4 rect)
+{
+    m_data->m_scissor_rect = rect;
+    if (m_data->m_scissor_mode == ScissorMode::Enabled)
+    {
+        glScissor((int)rect.x, (int)Video::GetSize().y - rect.w, (int)(rect.z - rect.x), (int)(rect.w - rect.y));
+        //glScissor((int)rect.x, (int)rect.y, (int)(rect.z - rect.x), (int)(rect.w - rect.y));
+    }
+}
+
+ScissorMode Renderer::GetScissorMode() const
+{
+    return m_data->m_scissor_mode;
+}
+
+vec4 Renderer::GetScissorRect() const
+{
+    return m_data->m_scissor_rect;
 }
 
 } /* namespace lol */

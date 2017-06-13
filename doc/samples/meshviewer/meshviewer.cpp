@@ -384,8 +384,7 @@ void MeshViewer::TickDraw(float seconds, Scene &scene)
 
     //Draw gizmos & grid
     Debug::DrawGizmo(vec3::zero, vec3::axis_x, vec3::axis_y, vec3::axis_z, 10.f);
-    Debug::DrawSetupColor(Color::white);
-    Debug::DrawSetupSegment(1.f);
+    auto context = Debug::DrawContext::New(Color::white);
     Debug::DrawGrid(vec3::zero, vec3::axis_x, vec3::axis_y, vec3::axis_z, 10.f);
 
     /** OLD STUFF **/

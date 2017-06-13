@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2004-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2004—2017 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -17,21 +19,21 @@
 namespace lol
 {
 
-static Image SepConv(Image &src, array<float> const &hvec,
+static image SepConv(image &src, array<float> const &hvec,
                      array<float> const &vvec);
-static Image NonSepConv(Image &src, array2d<float> const &kernel);
+static image NonSepConv(image &src, array2d<float> const &in_kernel);
 
-Image Image::Convolution(array2d<float> const &kernel)
+image image::Convolution(array2d<float> const &in_kernel)
 {
     /* Find the cell with the largest value */
-    ivec2 ksize = kernel.size();
+    ivec2 ksize = in_kernel.size();
     int bestx = -1, besty = -1;
     float tmp = 0.f;
     for (int dy = 0; dy < ksize.y; ++dy)
         for (int dx = 0; dx < ksize.x; ++dx)
-            if (lol::sq(kernel[dx][dy]) > tmp)
+            if (lol::sq(in_kernel[dx][dy]) > tmp)
             {
-                tmp = sq(kernel[dx][dy]);
+                tmp = sq(in_kernel[dx][dy]);
                 bestx = dx;
                 besty = dy;
             }
@@ -52,8 +54,8 @@ Image Image::Convolution(array2d<float> const &kernel)
             if (dx == bestx)
                 continue;
 
-            float p = kernel[dx][dy] * kernel[bestx][besty];
-            float q = kernel[dx][besty] * kernel[bestx][dy];
+            float p = in_kernel[dx][dy] * in_kernel[bestx][besty];
+            float q = in_kernel[dx][besty] * in_kernel[bestx][dy];
 
             if (lol::abs(p - q) > 1.0e-8f)
                 separable = false;
@@ -65,29 +67,29 @@ Image Image::Convolution(array2d<float> const &kernel)
         /* Matrix rank is 1! Separate the filter. */
         array<float> hvec, vvec;
 
-        float norm = 1.0f / lol::sqrt(lol::abs(kernel[bestx][besty]));
+        float norm = 1.0f / lol::sqrt(lol::abs(in_kernel[bestx][besty]));
         for (int dx = 0; dx < ksize.x; dx++)
-            hvec << norm * kernel[dx][besty];
+            hvec << norm * in_kernel[dx][besty];
         for (int dy = 0; dy < ksize.y; dy++)
-            vvec << norm * kernel[bestx][dy];
+            vvec << norm * in_kernel[bestx][dy];
 
         return SepConv(*this, hvec, vvec);
     }
     else
     {
-        return NonSepConv(*this, kernel);
+        return NonSepConv(*this, in_kernel);
     }
 }
 
-Image Image::Sharpen(array2d<float> const &kernel)
+image image::Sharpen(array2d<float> const &in_kernel)
 {
-    ivec2 ksize = kernel.size();
+    ivec2 ksize = in_kernel.size();
     array2d<float> newkernel(ksize);
 
     for (int dy = 0; dy < ksize.y; ++dy)
         for (int dx = 0; dx < ksize.x; ++dx)
         {
-            newkernel[dx][dy] = - kernel[dx][dy];
+            newkernel[dx][dy] = - in_kernel[dx][dy];
             if (dx == ksize.x / 2 && dy == ksize.y / 2)
                 newkernel[dx][dy] += 2.f;
         }
@@ -96,16 +98,16 @@ Image Image::Sharpen(array2d<float> const &kernel)
 }
 
 template<PixelFormat FORMAT, int WRAP_X, int WRAP_Y>
-static Image NonSepConv(Image &src, array2d<float> const &kernel)
+static image NonSepConv(image &src, array2d<float> const &in_kernel)
 {
     typedef typename PixelType<FORMAT>::type pixel_t;
 
-    ivec2 const size = src.GetSize();
-    ivec2 const ksize = kernel.size();
-    Image dst(size);
+    ivec2 const size = src.size();
+    ivec2 const ksize = in_kernel.size();
+    image dst(size);
 
-    array2d<pixel_t> const &srcp = src.Lock2D<FORMAT>();
-    array2d<pixel_t> &dstp = dst.Lock2D<FORMAT>();
+    array2d<pixel_t> const &srcp = src.lock2d<FORMAT>();
+    array2d<pixel_t> &dstp = dst.lock2d<FORMAT>();
 
     for (int y = 0; y < size.y; y++)
     {
@@ -123,7 +125,7 @@ static Image NonSepConv(Image &src, array2d<float> const &kernel)
 
                 for (int dx = 0; dx < ksize.x; dx++)
                 {
-                    float f = kernel[dx][dy];
+                    float f = in_kernel[dx][dy];
 
                     int x2 = x + dx - ksize.x / 2;
                     if (x2 < 0)
@@ -139,33 +141,33 @@ static Image NonSepConv(Image &src, array2d<float> const &kernel)
         }
     }
 
-    src.Unlock2D(srcp);
-    dst.Unlock2D(dstp);
+    src.unlock2d(srcp);
+    dst.unlock2d(dstp);
 
     return dst;
 }
 
-static Image NonSepConv(Image &src, array2d<float> const &kernel)
+static image NonSepConv(image &src, array2d<float> const &in_kernel)
 {
     bool const wrap_x = src.GetWrapX() == WrapMode::Repeat;
     bool const wrap_y = src.GetWrapY() == WrapMode::Repeat;
 
-    if (src.GetFormat() == PixelFormat::Y_8
-         || src.GetFormat() == PixelFormat::Y_F32)
+    if (src.format() == PixelFormat::Y_8
+         || src.format() == PixelFormat::Y_F32)
     {
         if (wrap_x)
         {
             if (wrap_y)
-                return NonSepConv<PixelFormat::Y_F32, 1, 1>(src, kernel);
+                return NonSepConv<PixelFormat::Y_F32, 1, 1>(src, in_kernel);
             else
-                return NonSepConv<PixelFormat::Y_F32, 1, 0>(src, kernel);
+                return NonSepConv<PixelFormat::Y_F32, 1, 0>(src, in_kernel);
         }
         else
         {
             if (wrap_y)
-                return NonSepConv<PixelFormat::Y_F32, 0, 1>(src, kernel);
+                return NonSepConv<PixelFormat::Y_F32, 0, 1>(src, in_kernel);
             else
-                return NonSepConv<PixelFormat::Y_F32, 0, 0>(src, kernel);
+                return NonSepConv<PixelFormat::Y_F32, 0, 0>(src, in_kernel);
         }
     }
     else
@@ -173,32 +175,32 @@ static Image NonSepConv(Image &src, array2d<float> const &kernel)
         if (wrap_x)
         {
             if (wrap_y)
-                return NonSepConv<PixelFormat::RGBA_F32, 1, 1>(src, kernel);
+                return NonSepConv<PixelFormat::RGBA_F32, 1, 1>(src, in_kernel);
             else
-                return NonSepConv<PixelFormat::RGBA_F32, 1, 0>(src, kernel);
+                return NonSepConv<PixelFormat::RGBA_F32, 1, 0>(src, in_kernel);
         }
         else
         {
             if (wrap_y)
-                return NonSepConv<PixelFormat::RGBA_F32, 0, 1>(src, kernel);
+                return NonSepConv<PixelFormat::RGBA_F32, 0, 1>(src, in_kernel);
             else
-                return NonSepConv<PixelFormat::RGBA_F32, 0, 0>(src, kernel);
+                return NonSepConv<PixelFormat::RGBA_F32, 0, 0>(src, in_kernel);
         }
     }
 }
 
 template<PixelFormat FORMAT, int WRAP_X, int WRAP_Y>
-static Image SepConv(Image &src, array<float> const &hvec,
+static image SepConv(image &src, array<float> const &hvec,
                      array<float> const &vvec)
 {
     typedef typename PixelType<FORMAT>::type pixel_t;
 
-    ivec2 const size = src.GetSize();
+    ivec2 const size = src.size();
     ivec2 const ksize(hvec.count(), vvec.count());
-    Image dst(size);
+    image dst(size);
 
-    array2d<pixel_t> const &srcp = src.Lock2D<FORMAT>();
-    array2d<pixel_t> &dstp = dst.Lock2D<FORMAT>();
+    array2d<pixel_t> const &srcp = src.lock2d<FORMAT>();
+    array2d<pixel_t> &dstp = dst.lock2d<FORMAT>();
 
     array2d<pixel_t> tmp(size);
 
@@ -244,20 +246,20 @@ static Image SepConv(Image &src, array<float> const &hvec,
         }
     }
 
-    src.Unlock2D(srcp);
-    dst.Unlock2D(dstp);
+    src.unlock2d(srcp);
+    dst.unlock2d(dstp);
 
     return dst;
 }
 
-static Image SepConv(Image &src, array<float> const &hvec,
+static image SepConv(image &src, array<float> const &hvec,
                      array<float> const &vvec)
 {
     bool const wrap_x = src.GetWrapX() == WrapMode::Repeat;
     bool const wrap_y = src.GetWrapY() == WrapMode::Repeat;
 
-    if (src.GetFormat() == PixelFormat::Y_8
-         || src.GetFormat() == PixelFormat::Y_F32)
+    if (src.format() == PixelFormat::Y_8
+         || src.format() == PixelFormat::Y_F32)
     {
         if (wrap_x)
         {

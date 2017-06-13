@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Lua tutorial
 //
-//  Copyright © 2014—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//  Copyright © 2014—2017 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -23,7 +23,6 @@ using namespace lol;
 //-----------------------------------------------------------------------------
 class DemoObject : public LuaObject
 {
-    typedef Lolua::VarPtr<DemoObject> LuaDemoObjectPtr;
 public:
     DemoObject() : LuaObject() {}
     virtual ~DemoObject() {}
@@ -37,47 +36,67 @@ public:
     //-------------------------------------------------------------------------
     static int AddFive(lua_State* l)
     {
-        LuaInt32 i; i.Get(l, 1);
+        auto stack = LuaStack::Begin(l);
+        int32_t i = stack.Get<int32_t>();
+
         i += 5;
-        return i.Return(l);
+
+        return (stack << i).End();
     }
-    static int AddTenInstance(lua_State* l)
+
+    LOLUA_DECLARE_RETURN_METHOD_ARGS(AddTenInstance, GetPtr<DemoObject>(), AddTenMethod, Get<float>(), Get<int32_t>(), Get<int32_t>());
+    static int _AddTenInstance(lua_State* l)
     {
-        LuaStack stack(l);
-        LuaDemoObjectPtr obj;
-        LuaFloat f;
-        stack >> obj >> f;
-        f = obj->AddTenMethod(f);
-        return f.Return(l);
+        auto stack = LuaStack::Begin(l);
+        DemoObject* obj = stack.GetPtr<DemoObject>();
+        float f = stack.Get<float>();
+        int32_t i = stack.Get<int32_t>();
+        int32_t i2 = stack.Get<int32_t>();
+
+        f = obj->AddTenMethod(f, i, i2);
+
+        return (stack << f).End();
     }
-    float AddTenMethod(float f)
+
+    float AddTenMethod(float f, int32_t i, int32_t i2)
     {
+        UNUSED(i, i2);
         return (f + 10);
     }
 
     static int GetX(lua_State* l)
     {
-        LuaStack stack(l);
-        LuaDemoObjectPtr obj;
-        LuaInt32 i;
-        stack >> obj;
+        auto stack = LuaStack::Begin(l);
+        DemoObject* obj = stack.GetPtr<DemoObject>();
+        auto i = stack.Get<int32_t>();
+
         i = obj->m_x;
-        return stack << i;
-    }
-    static int SetX(lua_State* l)
-    {
-        LuaStack stack(l);
-        LuaDemoObjectPtr obj;
-        LuaInt32 i;
-        stack >> obj >> i;
-        obj->m_x = i;
-        return 0;
+
+        return (stack << i).End();
     }
 
-    //-------------------------------------------------------------------------
-    static const LuaObjectLib* GetLib()
+    LOLUA_DECLARE_VOID_METHOD_ARGS(SetX, GetPtr<DemoObject>(), SetXMethod, Get<int32_t>());
+    static int _SetX(lua_State* l)
     {
-        static const LuaObjectLib lib = LuaObjectLib(
+        auto stack = LuaStack::Begin(l);
+        DemoObject* obj = stack.GetPtr<DemoObject>();
+        auto i = stack.Get<int32_t>();
+
+        obj->m_x = i;
+
+        return stack.End();
+    }
+
+    void SetXMethod(int32_t i)
+    {
+        m_x = i;
+    }
+
+
+    //-------------------------------------------------------------------------
+    static const LuaObjectLibrary* GetLib()
+    {
+        static const LuaObjectLibrary lib = LuaObjectLibrary(
             "LoluaDemo",
             { { "AddFive", &DemoObject::AddFive } },
             { { "AddTenInstance", &DemoObject::AddTenInstance } },
@@ -91,9 +110,12 @@ public:
 //-----------------------------------------------------------------------------
 static int GlobalAddString(lua_State* l)
 {
-    LuaString s; s.Get(l, 1);
-    s() += "_added";
-    return s.Return(l);
+    auto stack = LuaStack::Begin(l);
+    auto s = stack.Get<String>();
+
+    s += "_added";
+
+    return (stack << s).End();
 }
 
 //-----------------------------------------------------------------------------
@@ -105,7 +127,7 @@ public:
         lua_State* l = GetLuaState();
 
         //Registering demo object
-        LuaObjectDef::Register<DemoObject>(l);
+        LuaObjectHelper::Register<DemoObject>(l);
 
         //Registering function
         LuaFunction add_string(l, "GlobalAddString", &GlobalAddString);
@@ -158,26 +180,32 @@ public:
         demo_loader->TestStuff();
 
         //Grab global test values
-        float testvalue_num = demo_loader->GetVar<float>("testvalue_num");
-        int32_t testvalue_int = demo_loader->GetVar<int32_t>("testvalue_int");
-        uint32_t testvalue_uint = demo_loader->GetVar<uint32_t>("testvalue_uint");
-        String testvalue_str = demo_loader->GetVar<String>("testvalue_str");
+        float testvalue_num = demo_loader->Get<float>("testvalue_num");
+        int32_t testvalue_int = demo_loader->Get<int32_t>("testvalue_int");
+        uint32_t testvalue_uint = demo_loader->Get<uint32_t>("testvalue_uint");
+        String testvalue_str = demo_loader->Get<String>("testvalue_str");
 
         //Grab string modified with function
-        String function_return = demo_loader->GetVar<String>("function_return");
+        String function_return = demo_loader->Get<String>("function_return");
 
         //Grab global values modified with DemoObject
-        int32_t loluademo_return = demo_loader->GetVar<int32_t>("loluademo_return");
-        int32_t loluademo_getx = demo_loader->GetVar<int32_t>("loluademo_getx");
-        float loluademo_inst_return = demo_loader->GetVar<float>("loluademo_inst_return");
+        int32_t loluademo_return = demo_loader->Get<int32_t>("loluademo_return");
+        int32_t loluademo_getx = demo_loader->Get<int32_t>("loluademo_getx");
+        float loluademo_inst_return = demo_loader->Get<float>("loluademo_inst_return");
         DemoObject* loluademo_inst = demo_loader->GetPtr<DemoObject>("loluademo_inst");
 
         msg::info("Lua Vars: \
             testvalue_num: %.2f, testvalue_int: %i, testvalue_uint: %i, testvalue_str: %s.\n",
             testvalue_num, testvalue_int, testvalue_uint, testvalue_str.C());
         msg::info("Lua Vars: \
-            function_return: %s, loluademo_return: %i, loluademo_inst_return: %.f, loluademo_getx: %i, loluademo_inst->m_x: %i.\n",
+            function_return: %s, loluademo_return: %i, loluademo_inst_return: %.2f, loluademo_getx: %i, loluademo_inst->m_x: %i.\n",
             function_return.C(), loluademo_return, loluademo_inst_return, loluademo_getx, loluademo_inst->m_x);
+
+#define /***/ _LOLUA_ARG_1(a00) (float)a00
+#define /***/ _LOLUA_ARG_2(a00, a01) _LOLUA_ARG_1(a00), _LOLUA_ARG_1(a01)
+#define /***/ _LOLUA_ARG_3(a00, a01, a02) _LOLUA_ARG_1(a00), _LOLUA_ARG_2(a01, a02)
+#define /***/ _LOLUA_ARG_4(a00, a01, a02, a03) _LOLUA_ARG_1(a00), _LOLUA_ARG_3(a01, a02, a03)
+        msg::info("_LOLUA_ARG_1: %f, %f, %f, %f\n", _LOLUA_ARG_4(0, 1, 2, 3));
 
         delete demo_loader;
 

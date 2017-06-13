@@ -56,14 +56,12 @@ public:
 
     bool open_file(char const *filename)
     {
-        avformat_alloc_output_context2(&m_avformat, nullptr, nullptr, filename);
+        /* Third argument specifies format */
+        avformat_alloc_output_context2(&m_avformat, nullptr, "gif", filename);
         if (!m_avformat)
         {
-            msg::debug("could not deduce output format from file extension %s: using GIF\n", filename);
-            avformat_alloc_output_context2(&m_avformat, nullptr, "gif", filename);
-
-            if (!m_avformat)
-                return false;
+            msg::debug("could not create output context");
+            return false;
         }
 
         if (!open_codec())
@@ -89,7 +87,7 @@ public:
         return true;
     }
 
-    bool push_image(Image &im)
+    bool push_image(image &im)
     {
         // Make sure the encoder does not hold a reference on our
         // frame (GIF does that in order to compress using deltas).
@@ -97,10 +95,10 @@ public:
             return false;
 
         // Convert image to 3:3:2. TODO: add some dithering
-        u8vec3 *data = im.Lock<PixelFormat::RGB_8>();
-        for (int n = 0; n < im.GetSize().x * im.GetSize().y; ++n)
+        u8vec3 *data = im.lock<PixelFormat::RGB_8>();
+        for (int n = 0; n < im.size().x * im.size().y; ++n)
             m_frame->data[0][n] = (data[n].r & 0xe0) | ((data[n].g & 0xe0) >> 3) | (data[n].b >> 6);
-        im.Unlock(data);
+        im.unlock(data);
 
         m_frame->pts = m_index++;
 
@@ -234,9 +232,9 @@ int main(int argc, char **argv)
 
     for (int i = 0; i < 256; ++i)
     {
-        Image im(size);
+        image im(size);
 
-        array2d<u8vec3> &data = im.Lock2D<PixelFormat::RGB_8>();
+        array2d<u8vec3> &data = im.lock2d<PixelFormat::RGB_8>();
         for (int y = 0; y < size.y; ++y)
         for (int x = 0; x < size.x; ++x)
         {
@@ -244,7 +242,7 @@ int main(int argc, char **argv)
             data[x][y].g = x / 4 * 4 * y / 16 + i;
             data[x][y].b = y + i;
         }
-        im.Unlock2D(data);
+        im.unlock2d(data);
 
         if (!enc.push_image(im))
             break;

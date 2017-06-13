@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -22,7 +22,7 @@ static_assert(sizeof(DATA32) == sizeof(uint32_t), "Imlib2 type DATA32 is broken"
 static_assert(sizeof(DATA16) == sizeof(uint16_t), "Imlib2 type DATA16 is broken");
 static_assert(sizeof(DATA8)  == sizeof(uint8_t),  "Imlib2 type DATA8 is broken");
 
-#include "../../image/image-private.h"
+#include "../../image/resource-private.h"
 
 namespace lol
 {
@@ -31,17 +31,18 @@ namespace lol
  * Imlib2 image codec
  */
 
-class Imlib2ImageCodec : public ImageCodec
+class Imlib2ImageCodec : public ResourceCodec
 {
 public:
-    virtual bool Load(Image *image, char const *path);
-    virtual bool Save(Image *image, char const *path);
+    virtual char const *GetName() { return "<Imlib2ImageCodec>"; }
+    virtual ResourceCodecData* Load(char const *path);
+    virtual bool Save(char const *path, ResourceCodecData* data);
 };
 
 /* Set priority higher than SDL because we can save in many formats. */
 DECLARE_IMAGE_CODEC(Imlib2ImageCodec, 70)
 
-bool Imlib2ImageCodec::Load(Image *image, char const *path)
+ResourceCodecData *Imlib2ImageCodec::Load(char const *path)
 {
     Imlib_Image im = nullptr;
 
@@ -57,7 +58,7 @@ bool Imlib2ImageCodec::Load(Image *image, char const *path)
 #if !LOL_BUILD_RELEASE
         msg::error("could not load image %s\n", path);
 #endif
-        return false;
+        return nullptr;
     }
 
     imlib_context_set_image(im);
@@ -69,13 +70,14 @@ bool Imlib2ImageCodec::Load(Image *image, char const *path)
 #if !LOL_BUILD_RELEASE
         msg::error("could not get image data for %s\n", path);
 #endif
-        return false;
+        return nullptr;
     }
 
     ivec2 size(imlib_image_get_width(), imlib_image_get_height());
-    image->SetSize(size);
+    auto data = new ResourceImageData(new image(size));
+    auto image = data->m_image;
 
-    u8vec4 *dstdata = image->Lock<PixelFormat::RGBA_8>();
+    u8vec4 *dstdata = image->lock<PixelFormat::RGBA_8>();
 
     for (int i = 0; i < size.x * size.y; i++)
     {
@@ -84,22 +86,27 @@ bool Imlib2ImageCodec::Load(Image *image, char const *path)
         else
             dstdata[i] = srcdata[i].bgra;
     }
-    image->Unlock(dstdata);
+    image->unlock(dstdata);
 
     imlib_free_image();
 
-    return true;
+    return data;
 }
 
-bool Imlib2ImageCodec::Save(Image *image, char const *path)
+bool Imlib2ImageCodec::Save(char const *path, ResourceCodecData *data)
 {
-    ivec2 size = image->GetSize();
+    auto data_image = dynamic_cast<ResourceImageData*>(data);
+    if (data_image == nullptr)
+        return false;
+
+    auto image = data_image->m_image;
+    ivec2 size = image->size();
     Imlib_Image priv = imlib_create_image(size.x, size.y);
 
     imlib_context_set_image(priv);
     imlib_image_set_has_alpha(1);
 
-    u8vec4 const *srcdata = image->Lock<PixelFormat::RGBA_8>();
+    u8vec4 const *srcdata = image->lock<PixelFormat::RGBA_8>();
     u8vec4 *dstdata = (u8vec4 *)imlib_image_get_data();
 
     for (int i = 0; i < size.x * size.y; i++)
@@ -111,7 +118,7 @@ bool Imlib2ImageCodec::Save(Image *image, char const *path)
     }
 
     imlib_image_put_back_data((DATA32 *)dstdata);
-    image->Unlock(srcdata);
+    image->unlock(srcdata);
 
     imlib_save_image(path);
     imlib_free_image();

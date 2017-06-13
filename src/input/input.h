@@ -98,6 +98,8 @@ public:
 
     /** Gets the latest contents of text input. */
     String GetText();
+    bool IsTextInputActive();
+    void SetTextInputActive(bool status);
 
     /** Gets the current value of the given axis. Devices should try to
       * clamp this value between -1 and 1, though it is not guaranteed. */
@@ -199,6 +201,7 @@ protected:
 
     /** Text input state */
     String m_text;
+    bool m_input_active;
 
     /** Axis states (value and sensitivity) */
     array<float, float> m_axis;
@@ -208,7 +211,9 @@ protected:
 
     static bool m_capturemouse;
 
-    InputDevice(String const &name) : m_name(name)
+    InputDevice(String const &name)
+      : m_name(name),
+        m_input_active(false)
     {
         devices.push_unique(this);
     }

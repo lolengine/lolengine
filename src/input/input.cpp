@@ -36,6 +36,16 @@ String InputDevice::GetText()
     return ret;
 }
 
+bool InputDevice::IsTextInputActive()
+{
+    return m_input_active;
+}
+
+void InputDevice::SetTextInputActive(bool status)
+{
+    m_input_active = status;
+}
+
 void InputDeviceInternal::AddKey(int index, const char* name)
 {
     if (index == -1)
@@ -104,7 +114,7 @@ InputDeviceInternal* InputDeviceInternal::CreateStandardMouse()
     mouse->AddAxis(g_name_mouse_axis_y.C());
     mouse->AddAxis(g_name_mouse_axis_xpixel.C());
     mouse->AddAxis(g_name_mouse_axis_ypixel.C());
-    mouse->AddAxis(g_name_mouse_axis_scroll.C());
+    mouse->AddAxis(g_name_mouse_axis_scroll.C(), .0000001f);
 
     mouse->AddCursor(g_name_mouse_cursor.C());
 

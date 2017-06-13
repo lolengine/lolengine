@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2004-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2004—2017 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -17,28 +19,28 @@
 namespace lol
 {
 
-Image Image::YUVToRGB() const
+image image::YUVToRGB() const
 {
-    Image ret = *this;
-    int count = GetSize().x * GetSize().y;
+    image ret = *this;
+    int count = size().x * size().y;
 
-    vec4 *pixels = ret.Lock<PixelFormat::RGBA_F32>();
+    vec4 *pixels = ret.lock<PixelFormat::RGBA_F32>();
     for (int n = 0; n < count; ++n)
         pixels[n] = Color::YUVToRGB(pixels[n]);
-    ret.Unlock(pixels);
+    ret.unlock(pixels);
 
     return ret;
 }
 
-Image Image::RGBToYUV() const
+image image::RGBToYUV() const
 {
-    Image ret = *this;
-    int count = GetSize().x * GetSize().y;
+    image ret = *this;
+    int count = size().x * size().y;
 
-    vec4 *pixels = ret.Lock<PixelFormat::RGBA_F32>();
+    vec4 *pixels = ret.lock<PixelFormat::RGBA_F32>();
     for (int n = 0; n < count; ++n)
         pixels[n] = Color::RGBToYUV(pixels[n]);
-    ret.Unlock(pixels);
+    ret.unlock(pixels);
 
     return ret;
 }

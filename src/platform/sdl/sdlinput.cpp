@@ -251,6 +251,13 @@ void SdlInputData::Tick(float seconds)
 
     m_mouse->SetAxis(4, 0);
 
+#   if !LOL_USE_OLD_SDL
+    if (m_keyboard->IsTextInputActive())
+        SDL_StartTextInput();
+    else
+        SDL_StopTextInput();
+#   endif
+
     /* Handle keyboard and WM events */
     SDL_Event event;
     while (SDL_PollEvent(&event))
@@ -271,10 +278,10 @@ void SdlInputData::Tick(float seconds)
 #   endif
             {
                 //Lock management
-#   if defined SDLOL_CapsLock && defined SDLOL_ScrollLock && defined SDLOL_NumLockClear
             case SDLOL_CapsLock:
             case SDLOL_ScrollLock:
             case SDLOL_NumLockClear:
+#   if defined SDLOL_CapsLock && defined SDLOL_ScrollLock && defined SDLOL_NumLockClear
                 //Update status on key down only
                 if (event.type == SDL_KEYDOWN)
                 {
@@ -306,19 +313,9 @@ void SdlInputData::Tick(float seconds)
 #   else
                 if (ScanCodeIsValid(sc))
                 {
+                    //Set key updates the corresponding key
                     m_keyboard->SetKey(sc, event.type == SDL_KEYDOWN);
-                    if (event.type == SDL_KEYDOWN
-                        && !m_keyboard->GetKey(SDLOL_RCtrl)
-                        && !m_keyboard->GetKey(SDLOL_LCtrl)
-                        && !m_keyboard->GetKey(SDLOL_RAlt)
-                        && !m_keyboard->GetKey(SDLOL_LAlt))
-                    {
-                        String str = ScanCodeToText(sc);
-                        str.case_change(m_keyboard->GetKey(SDLOL_CapsLockStatus)
-                                         ^ (m_keyboard->GetKey(SDLOL_RShift)
-                                         || m_keyboard->GetKey(SDLOL_LShift)));
-                        m_keyboard->AddText(str);
-                    }
+
                     /* DEBUG STUFF
                     msg::info("Repeat: 0x%02x : %s/%s/%s/%i\n",
                         (int)m_keyboard, ScanCodeToText(sc).C(), ScanCodeToName(sc).C(),
@@ -333,6 +330,14 @@ void SdlInputData::Tick(float seconds)
 #   endif
             }
             break;
+
+#   if !LOL_USE_OLD_SDL
+        //case SDL_TEXTEDITING: //TODO: handle that ?
+        case SDL_TEXTINPUT:
+                m_keyboard->AddText(event.text.text);
+                break;
+
+#   endif
 
 #   if LOL_USE_OLD_SDL
         case SDL_MOUSEBUTTONDOWN:

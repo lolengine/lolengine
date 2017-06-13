@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2004-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2004—2017 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -17,34 +19,34 @@
 namespace lol
 {
 
-Image Image::Brightness(float val) const
+image image::Brightness(float val) const
 {
-    Image ret = *this;
-    int count = GetSize().x * GetSize().y;
+    image ret = *this;
+    int count = size().x * size().y;
 
-    if (GetFormat() == PixelFormat::Y_8 || GetFormat() == PixelFormat::Y_F32)
+    if (format() == PixelFormat::Y_8 || format() == PixelFormat::Y_F32)
     {
-        float *pixels = ret.Lock<PixelFormat::Y_F32>();
+        float *pixels = ret.lock<PixelFormat::Y_F32>();
         for (int n = 0; n < count; ++n)
             pixels[n] = lol::clamp(pixels[n] + val, 0.f, 1.f);
-        ret.Unlock(pixels);
+        ret.unlock(pixels);
     }
     else
     {
-        vec4 *pixels = ret.Lock<PixelFormat::RGBA_F32>();
+        vec4 *pixels = ret.lock<PixelFormat::RGBA_F32>();
         for (int n = 0; n < count; ++n)
             pixels[n] = vec4(lol::clamp(pixels[n].rgb + vec3(val), 0.f, 1.f),
                              pixels[n].a);
-        ret.Unlock(pixels);
+        ret.unlock(pixels);
     }
 
     return ret;
 }
 
-Image Image::Contrast(float val) const
+image image::Contrast(float val) const
 {
-    Image ret = *this;
-    int count = GetSize().x * GetSize().y;
+    image ret = *this;
+    int count = size().x * size().y;
 
     if (val >= 0.f)
     {
@@ -58,22 +60,22 @@ Image Image::Contrast(float val) const
         val = lol::clamp(1.f + val, 0.f, 1.f);
     }
 
-    if (GetFormat() == PixelFormat::Y_8 || GetFormat() == PixelFormat::Y_F32)
+    if (format() == PixelFormat::Y_8 || format() == PixelFormat::Y_F32)
     {
         float add = -0.5f * val + 0.5f;
-        float *pixels = ret.Lock<PixelFormat::Y_F32>();
+        float *pixels = ret.lock<PixelFormat::Y_F32>();
         for (int n = 0; n < count; ++n)
             pixels[n] = lol::clamp(pixels[n] * val + add, 0.f, 1.f);
-        ret.Unlock(pixels);
+        ret.unlock(pixels);
     }
     else
     {
         vec3 add = vec3(-0.5f * val + 0.5f);
-        vec4 *pixels = ret.Lock<PixelFormat::RGBA_F32>();
+        vec4 *pixels = ret.lock<PixelFormat::RGBA_F32>();
         for (int n = 0; n < count; ++n)
             pixels[n] = vec4(lol::clamp(pixels[n].rgb * val + add, 0.f, 1.f),
                              pixels[n].a);
-        ret.Unlock(pixels);
+        ret.unlock(pixels);
     }
 
     return ret;
@@ -83,16 +85,16 @@ Image Image::Contrast(float val) const
  * TODO: the current approach is naive; we should use the histogram in order
  * to decide how to change the contrast.
  */
-Image Image::AutoContrast() const
+image image::AutoContrast() const
 {
-    Image ret = *this;
+    image ret = *this;
 
     float min_val = 1.f, max_val = 0.f;
-    int count = GetSize().x * GetSize().y;
+    int count = size().x * size().y;
 
-    if (GetFormat() == PixelFormat::Y_8 || GetFormat() == PixelFormat::Y_F32)
+    if (format() == PixelFormat::Y_8 || format() == PixelFormat::Y_F32)
     {
-        float *pixels = ret.Lock<PixelFormat::Y_F32>();
+        float *pixels = ret.lock<PixelFormat::Y_F32>();
         for (int n = 0; n < count; ++n)
         {
             min_val = lol::min(min_val, pixels[n]);
@@ -103,11 +105,11 @@ Image Image::AutoContrast() const
         for (int n = 0; n < count; ++n)
             pixels[n] = (pixels[n] - min_val) * t;
 
-        ret.Unlock(pixels);
+        ret.unlock(pixels);
     }
     else
     {
-        vec4 *pixels = ret.Lock<PixelFormat::RGBA_F32>();
+        vec4 *pixels = ret.lock<PixelFormat::RGBA_F32>();
         for (int n = 0; n < count; ++n)
         {
             min_val = lol::min(min_val, pixels[n].r);
@@ -125,60 +127,60 @@ Image Image::AutoContrast() const
                              (pixels[n].b - min_val) * t,
                              pixels[n].a);;
 
-        ret.Unlock(pixels);
+        ret.unlock(pixels);
     }
 
     return ret;
 }
 
-Image Image::Invert() const
+image image::Invert() const
 {
-    Image ret = *this;
-    int count = GetSize().x * GetSize().y;
+    image ret = *this;
+    int count = size().x * size().y;
 
-    if (GetFormat() == PixelFormat::Y_8 || GetFormat() == PixelFormat::Y_F32)
+    if (format() == PixelFormat::Y_8 || format() == PixelFormat::Y_F32)
     {
-        float *pixels = ret.Lock<PixelFormat::Y_F32>();
+        float *pixels = ret.lock<PixelFormat::Y_F32>();
         for (int n = 0; n < count; ++n)
             pixels[n] = 1.f - pixels[n];
-        ret.Unlock(pixels);
+        ret.unlock(pixels);
     }
     else
     {
-        vec4 *pixels = ret.Lock<PixelFormat::RGBA_F32>();
+        vec4 *pixels = ret.lock<PixelFormat::RGBA_F32>();
         for (int n = 0; n < count; ++n)
             pixels[n] = vec4(vec3(1.f) -pixels[n].rgb, pixels[n].a);
-        ret.Unlock(pixels);
+        ret.unlock(pixels);
     }
 
     return ret;
 }
 
-Image Image::Threshold(float val) const
+image image::Threshold(float val) const
 {
-    Image ret = *this;
-    int count = GetSize().x * GetSize().y;
+    image ret = *this;
+    int count = size().x * size().y;
 
-    float *pixels = ret.Lock<PixelFormat::Y_F32>();
+    float *pixels = ret.lock<PixelFormat::Y_F32>();
     for (int n = 0; n < count; ++n)
         pixels[n] = pixels[n] > val ? 1.f : 0.f;
-    ret.Unlock(pixels);
+    ret.unlock(pixels);
 
     return ret;
 }
 
-Image Image::Threshold(vec3 val) const
+image image::Threshold(vec3 val) const
 {
-    Image ret = *this;
-    int count = GetSize().x * GetSize().y;
+    image ret = *this;
+    int count = size().x * size().y;
 
-    vec4 *pixels = ret.Lock<PixelFormat::RGBA_F32>();
+    vec4 *pixels = ret.lock<PixelFormat::RGBA_F32>();
     for (int n = 0; n < count; ++n)
         pixels[n] = vec4(pixels[n].r > val.r ? 1.f : 0.f,
                          pixels[n].g > val.g ? 1.f : 0.f,
                          pixels[n].b > val.b ? 1.f : 0.f,
                          pixels[n].a);
-    ret.Unlock(pixels);
+    ret.unlock(pixels);
 
     return ret;
 }

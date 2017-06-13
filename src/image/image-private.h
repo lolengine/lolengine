@@ -43,12 +43,12 @@ public:
     array2d<typename PixelType<T>::type> m_array2d;
 };
 
-class ImageData
+class image_data
 {
-    friend class Image;
+    friend class image;
 
 public:
-    ImageData()
+    image_data()
       : m_size(0, 0),
         m_wrap_x(WrapMode::Clamp),
         m_wrap_y(WrapMode::Clamp),
@@ -65,39 +65,6 @@ public:
     /* The last bitplane being accessed for writing */
     PixelFormat m_format;
 };
-
-class ImageCodec
-{
-public:
-    virtual char const *GetName() { return "<ImageCodec>"; }
-    virtual bool Load(Image *image, char const *path) = 0;
-    virtual bool Save(Image *image, char const *path) = 0;
-
-    /* TODO: this should become more fine-grained */
-    int m_priority;
-};
-
-#define REGISTER_IMAGE_CODEC(name) \
-    extern ImageCodec *Register##name(); \
-    { \
-        /* Insert image codecs in a sorted list */ \
-        ImageCodec *codec = Register##name(); \
-        int i = 0, prio = codec->m_priority; \
-        for ( ; i < codeclist.count(); ++i) \
-        { \
-            if (codeclist[i]->m_priority <= prio) \
-                break; \
-        } \
-        codeclist.insert(codec, i); \
-    }
-
-#define DECLARE_IMAGE_CODEC(name, priority) \
-    ImageCodec *Register##name() \
-    { \
-        ImageCodec *ret = new name(); \
-        ret->m_priority = priority; \
-        return ret; \
-    }
 
 } /* namespace lol */
 

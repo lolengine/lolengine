@@ -1,18 +1,20 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
 
 #include <cctype>
 
-#include "../../image/image-private.h"
+#include "../../image/resource-private.h"
 
 namespace lol
 {
@@ -27,16 +29,16 @@ namespace lol
  * Image implementation class
  */
 
-class OricImageCodec : public ImageCodec
+class OricImageCodec : public ResourceCodec
 {
 public:
     virtual char const *GetName() { return "<OricImageCodec>"; }
-    virtual bool Load(Image *image, char const *path);
-    virtual bool Save(Image *image, char const *path);
+    virtual ResourceCodecData* Load(char const *path);
+    virtual bool Save(char const *path, ResourceCodecData* data);
 
 private:
     static String ReadScreen(char const *name);
-    static void WriteScreen(Image &image, array<uint8_t> &result);
+    static void WriteScreen(image &image, array<uint8_t> &result);
 };
 
 DECLARE_IMAGE_CODEC(OricImageCodec, 100)
@@ -45,7 +47,7 @@ DECLARE_IMAGE_CODEC(OricImageCodec, 100)
  * Public Image class
  */
 
-bool OricImageCodec::Load(Image *image, char const *path)
+ResourceCodecData* OricImageCodec::Load(char const *path)
 {
     static u8vec4 const pal[8] =
     {
@@ -61,13 +63,14 @@ bool OricImageCodec::Load(Image *image, char const *path)
 
     String screen = ReadScreen(path);
     if (screen.count() == 0)
-        return false;
+        return nullptr;
 
-    image->SetSize(ivec2(WIDTH, screen.count() * 6 / WIDTH));
+    auto data = new ResourceImageData(new image(ivec2(WIDTH, screen.count() * 6 / WIDTH)));
+    auto img = data->m_image;
 
-    u8vec4 *pixels = image->Lock<PixelFormat::RGBA_8>();
+    u8vec4 *pixels = img->lock<PixelFormat::RGBA_8>();
 
-    for (int y = 0; y < image->GetSize().y; y++)
+    for (int y = 0; y < img->size().y; y++)
     {
         u8vec2 bgfg(0, 7);
 
@@ -100,14 +103,18 @@ bool OricImageCodec::Load(Image *image, char const *path)
         }
     }
 
-    image->Unlock(pixels);
+    img->unlock(pixels);
 
-    return true;
+    return data;
 }
 
-bool OricImageCodec::Save(Image *image, char const *path)
+bool OricImageCodec::Save(char const *path, ResourceCodecData* data)
 {
-    int len = strlen(path);
+    auto data_image = dynamic_cast<ResourceImageData*>(data);
+    if (data_image == nullptr)
+        return false;
+
+    int len = (int)strlen(path);
     if (len < 4 || path[len - 4] != '.'
         || toupper(path[len - 3]) != 'T'
         || toupper(path[len - 2]) != 'A'
@@ -124,17 +131,18 @@ bool OricImageCodec::Save(Image *image, char const *path)
         result << (uint8_t)name[0];
     result << 0;
 
-    Image tmp;
-    ivec2 size = image->GetSize();
+    auto img = data_image->m_image;
+    image tmp;
+    ivec2 size = img->size();
     if (size.x != WIDTH)
     {
         size.y = (int)((float)size.y * WIDTH / size.x);
         size.x = WIDTH;
-        tmp = image->Resize(size, ResampleAlgorithm::Bresenham);
-        image = &tmp;
+        tmp = img->Resize(size, ResampleAlgorithm::Bresenham);
+        img = &tmp;
     }
 
-    WriteScreen(*image, result);
+    WriteScreen(*img, result);
 
     File f;
     f.Open(path, FileAccess::Write);
@@ -463,10 +471,10 @@ static uint8_t bestmove(ivec3 const *in, u8vec2 bgfg,
     return bestcommand;
 }
 
-void OricImageCodec::WriteScreen(Image &image, array<uint8_t> &result)
+void OricImageCodec::WriteScreen(image &img, array<uint8_t> &result)
 {
-    ivec2 size = image.GetSize();
-    vec4 *pixels = image.Lock<PixelFormat::RGBA_F32>();
+    ivec2 size = img.size();
+    vec4 *pixels = img.lock<PixelFormat::RGBA_F32>();
 
     int stride = (size.x + 1);
 
@@ -481,7 +489,7 @@ void OricImageCodec::WriteScreen(Image &image, array<uint8_t> &result)
     for (int y = 0; y < size.y; y++)
         for (int x = 0; x < size.x; x++)
             for (int c = 0; c < 3; c++)
-                src[x][y][c] = 0xffff * pixels[y * size.x + x][2 - c];
+                src[x][y][c] = 0xffff * (int32_t)pixels[y * size.x + x][2 - c];
 
     /* Let the fun begin */
     for (int y = 0; y < size.y; y++)
@@ -520,7 +528,7 @@ void OricImageCodec::WriteScreen(Image &image, array<uint8_t> &result)
         }
     }
 
-    image.Unlock(pixels);
+    img.unlock(pixels);
 
     //fprintf(stderr, " done.\n");
 }

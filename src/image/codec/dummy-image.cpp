@@ -1,16 +1,18 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
 
-#include "../../image/image-private.h"
+#include "../../image/resource-private.h"
 
 namespace lol
 {
@@ -19,12 +21,12 @@ namespace lol
  * Image implementation class
  */
 
-class DummyImageCodec : public ImageCodec
+class DummyImageCodec : public ResourceCodec
 {
 public:
     virtual char const *GetName() { return "<DummyImageCodec>"; }
-    virtual bool Load(Image *image, char const *path);
-    virtual bool Save(Image *image, char const *path);
+    virtual ResourceCodecData* Load(char const *path);
+    virtual bool Save(char const *path, ResourceCodecData* data);
 };
 
 //Priority 0 because it's supposed to be the last one
@@ -34,12 +36,14 @@ DECLARE_IMAGE_CODEC(DummyImageCodec, 0)
  * Public Image class
  */
 
-bool DummyImageCodec::Load(Image *image, char const *path)
+ResourceCodecData* DummyImageCodec::Load(char const *path)
 {
-    UNUSED(path);
+    if (strcmp("DUMMY", path))
+        return nullptr;
 
-    image->SetSize(ivec2(256));
-    u8vec4 *pixels = image->Lock<PixelFormat::RGBA_8>(), *tmp = pixels;
+    auto data = new ResourceImageData(new image(ivec2(256)));
+    auto image = data->m_image;
+    u8vec4 *pixels = image->lock<PixelFormat::RGBA_8>(), *tmp = pixels;
     for (int j = 0; j < 256; j++)
         for (int i = 0; i < 256; i++)
         {
@@ -49,15 +53,14 @@ bool DummyImageCodec::Load(Image *image, char const *path)
             tmp->a = (((i >> 4) ^ (j >> 4)) & 1) * 0xff;
             ++tmp;
         }
-    image->Unlock(pixels);
+    image->unlock(pixels);
 
-    //return false, because we're not supposed to be here.
-    return false;
+    return data;
 }
 
-bool DummyImageCodec::Save(Image *image, char const *path)
+bool DummyImageCodec::Save(char const *path, ResourceCodecData* data)
 {
-    UNUSED(path);
+    UNUSED(path, data);
 
     return false;
 }

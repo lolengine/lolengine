@@ -40,8 +40,9 @@ class LuaBaseData
         int status = luaL_dostring(l, s.C());
         if (status == 1)
         {
-            LuaString error; error.Get(l, -1);
-            msg::error("Lua error %s\n", error().C());
+            auto stack = LuaStack::Begin(l, -1);
+            auto error = stack.Get<String>();
+            msg::error("Lua error %s\n", error.C());
             lua_pop(l, 1);
         }
         return status;
@@ -53,8 +54,8 @@ class LuaBaseData
         if (lua_isnoneornil(l, 1))
             return LUA_ERRFILE;
 
-        LuaCharPtr var; var.Get(l, 1);
-        char const *filename = var;// lua_tostring(l, 1);
+        auto stack = LuaStack::Begin(l);
+        char const *filename = stack.Get<char const*>();
         int status = LUA_ERRFILE;
 
         File f;
@@ -76,8 +77,9 @@ class LuaBaseData
             msg::error("could not find Lua file %s\n", filename);
         else if (status == 1)
         {
-            LuaString error; error.Get(l, -1);
-            msg::error("Lua error %s\n", error().C());
+            stack.SetIndex(-1);
+            auto error = stack.Get<String>();
+            msg::error("Lua error %s\n", error.C());
             lua_pop(l, 1);
         }
 

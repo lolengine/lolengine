@@ -18,6 +18,72 @@
 
 using namespace lol;
 
+//Imgui extension ---------------------------------------------------------------------------------
+namespace ImGui
+{
+    IMGUI_API void SetNextWindowDockingAndSize(const ImVec2& size, ImGuiSetDock dock, const ImVec2& padding, ImGuiSetCond cond)
+    {
+        SetNextWindowDockingAndSize(size, dock, ImVec4(vec2(padding).xyxy), cond);
+    }
+    IMGUI_API void SetNextWindowDockingAndSize(const ImVec2& size, ImGuiSetDock dock, const ImVec4& padding, ImGuiSetCond cond)
+    {
+        vec4 pdg = padding;
+        vec2 vsz = vec2(Video::GetSize());
+        vec2 ctr = pdg.xy + (((vsz - pdg.zw) - pdg.xy) * .5f);
+        vec2 pos = vec2();
+
+        switch (dock)
+        {
+        case ImGuiSetDock_Center:       pos = vec2(ctr.x - (size.x * .5f), ctr.y - (size.y * .5f)); break;
+        case ImGuiSetDock_Top:          pos = vec2(ctr.x - (size.x * .5f), pdg.y); break;
+        case ImGuiSetDock_TopRight:     pos = vec2(vsz.x - (size.x + pdg.z), pdg.y); break;
+        case ImGuiSetDock_Right:        pos = vec2(vsz.x - (size.x + pdg.z), ctr.y - (size.y * .5f)); break;
+        case ImGuiSetDock_BottomRight:  pos = vec2(vsz.x - (size.x + pdg.z), vsz.y - (size.y + pdg.w)); break;
+        case ImGuiSetDock_Bottom:       pos = vec2(ctr.x - (size.x * .5f), vsz.y - (size.y + pdg.w)); break;
+        case ImGuiSetDock_BottomLeft:   pos = vec2(pdg.x, vsz.y - (size.y + pdg.w)); break;
+        case ImGuiSetDock_Left:         pos = vec2(pdg.x, ctr.y - (size.y * .5f)); break;
+        case ImGuiSetDock_TopLeft:      pos = vec2(pdg.x, pdg.y); break;
+        }
+
+        ImGui::SetNextWindowPos(pos, cond);
+        ImGui::SetNextWindowSize(size, cond);
+    }
+
+    IMGUI_API void SetNextWindowDocking(ImGuiSetDock dock, const ImVec2& padding, ImGuiSetCond cond)
+    {
+        SetNextWindowDocking(dock, ImVec4(vec2(padding).xyxy), cond);
+    }
+    IMGUI_API void SetNextWindowDocking(ImGuiSetDock dock, const ImVec4& padding, ImGuiSetCond cond)
+    {
+        vec2 vsz = vec2(Video::GetSize());
+        vec2 size = vec2();
+        vec2 pos = vec2();
+        vec4 pdg = padding;
+
+        switch (dock)
+        {
+        case ImGuiSetDock_Center:       size = vsz - vec2(pdg.x + pdg.z, pdg.y + pdg.w);  break;
+        case ImGuiSetDock_Top:          size = vec2(vsz.x - (pdg.x + pdg.z), vsz.y *.5f - pdg.y); break;
+        case ImGuiSetDock_TopRight:     size = vec2(vsz.x *.5f - pdg.z, vsz.y *.5f - pdg.y); break;
+        case ImGuiSetDock_Right:        size = vec2(vsz.x *.5f - pdg.z, vsz.y - (pdg.y + pdg.w)); break;
+        case ImGuiSetDock_BottomRight:  size = vec2(vsz.x *.5f - pdg.z, vsz.y *.5f - pdg.w); break;
+        case ImGuiSetDock_Bottom:       size = vec2(vsz.x - (pdg.x + pdg.z), vsz.y *.5f - pdg.w); break;
+        case ImGuiSetDock_BottomLeft:   size = vec2(vsz.x *.5f - pdg.x, vsz.y *.5f - pdg.w); break;
+        case ImGuiSetDock_Left:         size = vec2(vsz.x *.5f - pdg.x, vsz.y - (pdg.y + pdg.w)); break;
+        case ImGuiSetDock_TopLeft:      size = vec2(vsz.x *.5f - pdg.x, vsz.y *.5f - pdg.y); break;
+        }
+
+        SetNextWindowDockingAndSize(size, dock, padding, cond);
+    }
+
+    IMGUI_API float GetMainMenuBarHeight()
+    {
+        ImGuiContext& g = *GImGui;
+        return g.FontBaseSize + g.Style.FramePadding.y * 2.0f;
+    }
+}
+
+//LolImGui ----------------------------------------------------------------------------------------
 #define Line(s) ((s) + "\n")
 
 //-----------------------------------------------------------------------------
@@ -227,6 +293,8 @@ void LolImGui::TickGame(float seconds)
         }
     }
 
+    m_keyboard->SetTextInputActive(io.WantTextInput);
+
     //Update text input
     String text = m_keyboard->GetText();
     //text.case_change(io.KeyShift);
@@ -342,6 +410,7 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
     RenderContext rc;
     rc.SetCullMode(CullMode::Disabled);
     rc.SetDepthFunc(DepthFunc::Disabled);
+    rc.SetScissorMode(ScissorMode::Enabled);
 
     m_shader->Bind();
     for (int n = 0; n < draw_data->CmdListsCount; n++)
@@ -375,9 +444,14 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
         m_vdecl->SetStream(vbo, m_attribs[0], m_attribs[1], m_attribs[2]);
 
         const ImDrawIdx* idx_buffer_offset = 0;
-        for (size_t cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
+        for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
         {
             const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[(int)cmd_i];
+            TextureImage* image = (TextureImage*)pcmd->TextureId;
+            if (image) image->Bind();
+
+            rc.SetScissorRect(vec4(pcmd->ClipRect.x, pcmd->ClipRect.y, pcmd->ClipRect.z, pcmd->ClipRect.w));
+
 #ifdef SHOW_IMGUI_DEBUG
             //-----------------------------------------------------------------
             //<Debug render> --------------------------------------------------
@@ -419,11 +493,13 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
             //<\Debug render> -------------------------------------------------
             //-----------------------------------------------------------------
 #endif //SHOW_IMGUI_DEBUG
-            Debug::DrawLine(vec2::zero, vec2::axis_x, Color::green);
+            //Debug::DrawLine(vec2::zero, vec2::axis_x /*, Color::green*/);
 
             m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, pcmd->ElemCount, (const short*)idx_buffer_offset);
 
             idx_buffer_offset += pcmd->ElemCount;
+
+            if (image) image->Unbind();
         }
 
         m_vdecl->Unbind();

@@ -46,25 +46,25 @@ protected:
  */
 
 TileSet::TileSet(char const *path)
-  : TextureImage(path),
-    m_tileset_data(new TileSetData()),
-    m_palette(nullptr)
+  : m_tileset_data(new TileSetData()),
+    m_palette(nullptr),
+    TextureImage(path)
 {
-    array<ivec2, ivec2> tiles;
-    if (m_data->m_image->RetrieveTiles(tiles))
-        for (int i = 0; i < tiles.count(); i++)
-            define_tile(ibox2(tiles[0].m1, tiles[0].m1 + tiles[0].m2));
 }
 
 TileSet::TileSet(char const *path, Image* image)
-  : TextureImage(path, image),
+    : TextureImage(path, image),
     m_tileset_data(new TileSetData()),
     m_palette(nullptr)
 {
-    array<ivec2, ivec2> tiles;
-    if (m_data->m_image->RetrieveTiles(tiles))
-        for (int i = 0; i < tiles.count(); i++)
-            define_tile(ibox2(tiles[0].m1, tiles[0].m1 + tiles[0].m2));
+}
+
+TileSet::TileSet(char const *path, Image* image, array<ivec2, ivec2>& tiles)
+    : TextureImage(path, image),
+    m_tileset_data(new TileSetData()),
+    m_palette(nullptr)
+{
+    define_tile(tiles);
 }
 
 TileSet::TileSet(char const *path, ivec2 size, ivec2 count)
@@ -118,6 +118,20 @@ TileSet::~TileSet()
     delete m_tileset_data;
 }
 
+void TileSet::Init(char const *path, ResourceCodecData* loaded_data)
+{
+    //Load tileset if available
+    auto tileset_data = dynamic_cast<ResourceTilesetData*>(loaded_data);
+    if (tileset_data != nullptr)
+    {
+        define_tile(tileset_data->m_tiles);
+    }
+
+    m_data->m_name = String("<tileset> ") + path;
+
+    super::Init(path, loaded_data);
+}
+
 void TileSet::Init(char const *path, Image* image)
 {
     super::Init(path, image);
@@ -132,6 +146,11 @@ char const *TileSet::GetName()
 }
 
 //New methods -----------------------------------------------------------------
+void TileSet::clear_all()
+{
+    m_tileset_data->m_tiles.empty();
+}
+
 int TileSet::define_tile(ibox2 rect)
 {
     m_tileset_data->m_tiles.push(rect,
@@ -152,6 +171,18 @@ void TileSet::define_tile(ivec2 count)
     }
 }
 
+void TileSet::define_tile(array<ibox2>& tiles)
+{
+    for (int i = 0; i < tiles.count(); i++)
+        define_tile(tiles[i]);
+}
+
+void TileSet::define_tile(array<ivec2, ivec2>& tiles)
+{
+    for (int i = 0; i < tiles.count(); i++)
+        define_tile(ibox2(tiles[i].m1, tiles[i].m1 + tiles[i].m2));
+}
+
 int TileSet::GetTileCount() const
 {
     return m_tileset_data->m_tiles.count();
@@ -160,6 +191,16 @@ int TileSet::GetTileCount() const
 ivec2 TileSet::GetTileSize(int tileid) const
 {
     return m_tileset_data->m_tiles[tileid].m1.extent();
+}
+
+ibox2 TileSet::GetTilePixel(int tileid) const
+{
+    return m_tileset_data->m_tiles[tileid].m1;
+}
+
+box2 TileSet::GetTileTexel(int tileid) const
+{
+    return m_tileset_data->m_tiles[tileid].m2;
 }
 
 //Palette ---------------------------------------------------------------------

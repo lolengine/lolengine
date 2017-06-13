@@ -34,7 +34,7 @@ public:
 #endif
     ~Movie();
 
-    void Feed(Image const &image);
+    void Feed(image const &image);
 
 private:
     class MovieData *m_data;

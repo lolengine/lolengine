@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2004-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2004—2017 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -17,19 +19,19 @@
 namespace lol
 {
 
-Image Image::DitherRandom() const
+image image::dither_random() const
 {
-    Image dst = *this;
+    image dst = *this;
 
-    float *pixels = dst.Lock<PixelFormat::Y_F32>();
-    int count = GetSize().x * GetSize().y;
+    float *pixels = dst.lock<PixelFormat::Y_F32>();
+    int count = size().x * size().y;
 
     for (int n = 0; n < count; ++n)
     {
         pixels[n] = (pixels[n] > lol::rand(0.5f)) ? 1.f : 0.f;
     }
 
-    dst.Unlock(pixels);
+    dst.unlock(pixels);
 
     return dst;
 }

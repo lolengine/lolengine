@@ -1,16 +1,19 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//              2014 Benjamin Huet <huet.benjamin@gmail.com>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
 
-#include "../../image/image-private.h"
+#include "../../image/resource-private.h"
 
 namespace lol
 {
@@ -19,12 +22,12 @@ namespace lol
  * Image implementation class
  */
 
-class ZedPaletteImageCodec : public ImageCodec
+class ZedPaletteImageCodec : public ResourceCodec
 {
 public:
     virtual char const *GetName() { return "<ZedPaletteImageCodec>"; }
-    virtual bool Load(Image *image, char const *path);
-    virtual bool Save(Image *image, char const *path);
+    virtual ResourceCodecData* Load(char const *path);
+    virtual bool Save(char const *path, ResourceCodecData* data);
 };
 
 DECLARE_IMAGE_CODEC(ZedPaletteImageCodec, 10)
@@ -33,16 +36,16 @@ DECLARE_IMAGE_CODEC(ZedPaletteImageCodec, 10)
  * Public Image class
  */
 
-bool ZedPaletteImageCodec::Load(Image *image, char const *path)
+ResourceCodecData* ZedPaletteImageCodec::Load(char const *path)
 {
     if (!lol::String(path).ends_with(".pal"))
-        return false;
+        return nullptr;
 
     File file;
     file.Open(path, FileAccess::Read, true);
 
-    //Put file in memory
-    long file_size = file.GetSize();
+    // Put file in memory
+    long file_size = file.size();
     array<uint8_t> file_buffer;
     file_buffer.resize(file_size);
     file.Read((uint8_t*)&file_buffer[0], file_size);
@@ -53,16 +56,18 @@ bool ZedPaletteImageCodec::Load(Image *image, char const *path)
     int32_t tex_size = 2;
     while (tex_size < tex_sqrt)
         tex_size <<= 1;
-    image->m_data->m_size = ivec2(tex_size);
+    auto data = new ResourceImageData(new image(ivec2(tex_size)));
+    auto image = data->m_image;
 #else
     int32_t tex_sqrt = file_size / 3;
     int32_t tex_size = 2;
     while (tex_size < tex_sqrt)
         tex_size <<= 1;
-    image->SetSize(ivec2(tex_size, 1));
+    auto data = new ResourceImageData(new image(ivec2(tex_size, 1)));
+    auto image = data->m_image;
 #endif
 
-    u8vec4 *pixels = image->Lock<PixelFormat::RGBA_8>();
+    u8vec4 *pixels = image->lock<PixelFormat::RGBA_8>();
     for (int i = 0; i < file_buffer.count();)
     {
         pixels->r = file_buffer[i++];
@@ -71,14 +76,14 @@ bool ZedPaletteImageCodec::Load(Image *image, char const *path)
         pixels->a = (i == 0) ? 0 : 255;
         ++pixels;
     }
-    image->Unlock(pixels);
+    image->unlock(pixels);
 
-    return true;
+    return data;
 }
 
-bool ZedPaletteImageCodec::Save(Image *image, char const *path)
+bool ZedPaletteImageCodec::Save(char const *path, ResourceCodecData* data)
 {
-    UNUSED(path);
+    UNUSED(path, data);
     /* FIXME: do we need to implement this? */
     return true;
 }

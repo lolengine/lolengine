@@ -103,7 +103,7 @@ public:
     TextureUniform GetTextureUniform() const;
     ivec2 GetSize() const;
 
-    class Image GetImage() const;
+    class image GetImage() const;
 
     void Bind();
     void Unbind();

@@ -36,4 +36,5 @@
 
 #include <lol/public.h>
 #include <lol/extras.h>
+#include <lol/legacy.h>
 

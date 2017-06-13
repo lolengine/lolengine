@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2004-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2004—2017 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -23,49 +25,49 @@ namespace lol
  * Making the matrix generic is not terribly slower: the performance
  * hit is around 4% for Floyd-Steinberg and 13% for JaJuNi, with the
  * benefit of a lot less code. */
-Image Image::DitherEdiff(array2d<float> const &kernel, ScanMode scan) const
+image image::dither_ediff(array2d<float> const &ker, ScanMode scan) const
 {
-    Image dst = *this;
+    image dst = *this;
 
-    ivec2 size = dst.GetSize();
-    ivec2 ksize = kernel.size();
+    ivec2 isize = dst.size();
+    ivec2 ksize = ker.size();
 
     int kx;
     for (kx = 0; kx < ksize.x; kx++)
-        if (kernel[kx][0] > 0.f)
+        if (ker[kx][0] > 0.f)
             break;
 
-    float *pixels = dst.Lock<PixelFormat::Y_F32>();
-    for (int y = 0; y < size.y; y++)
+    float *pixels = dst.lock<PixelFormat::Y_F32>();
+    for (int y = 0; y < isize.y; y++)
     {
         bool reverse = (y & 1) && (scan == ScanMode::Serpentine);
 
-        for (int x = 0; x < size.x; x++)
+        for (int x = 0; x < isize.x; x++)
         {
-            int x2 = reverse ? size.x - 1 - x : x;
+            int x2 = reverse ? isize.x - 1 - x : x;
             int s = reverse ? -1 : 1;
 
-            float p = pixels[y * size.x + x2];
+            float p = pixels[y * isize.x + x2];
             float q = p < 0.5f ? 0.f : 1.f;
-            pixels[y * size.x + x2] = q;
+            pixels[y * isize.x + x2] = q;
 
             float e = (p - q);
 
-            for (int j = 0; j < ksize.y && y < size.y - j; j++)
+            for (int j = 0; j < ksize.y && y < isize.y - j; j++)
                 for (int i = 0; i < ksize.x; i++)
                 {
                     if (j == 0 && i <= kx)
                         continue;
 
-                    if (x + i - kx < 0 || x + i - kx >= size.x)
+                    if (x + i - kx < 0 || x + i - kx >= isize.x)
                         continue;
 
-                    pixels[(y + j) * size.x + x2 + (i - kx) * s]
-                       += e * kernel[i][j];
+                    pixels[(y + j) * isize.x + x2 + (i - kx) * s]
+                       += e * ker[i][j];
                 }
         }
     }
-    dst.Unlock(pixels);
+    dst.unlock(pixels);
 
     return dst;
 }

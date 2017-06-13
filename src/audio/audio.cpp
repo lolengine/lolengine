@@ -33,6 +33,7 @@ struct audio_streamer
     int m_channel;
     std::function<void(void *, int)> m_callback;
 #if defined LOL_USE_SDL_MIXER
+    array<uint8_t> m_empty; // SDL keeps a reference to this
     Mix_Chunk *m_chunk;
 #endif
 };
@@ -95,9 +96,8 @@ int audio::start_streaming(std::function<void(void *, int)> const &f)
     audio_streamer *s = new audio_streamer();
     g_streamers.push(s);
 
-    array<uint8_t> empty;
-    empty.resize(1024);
-    s->m_chunk = Mix_QuickLoad_RAW(empty.data(), empty.bytes());
+    s->m_empty.resize(1024);
+    s->m_chunk = Mix_QuickLoad_RAW(s->m_empty.data(), s->m_empty.bytes());
     s->m_channel = Mix_PlayChannel(-1, s->m_chunk, -1);
     s->m_callback = f;
     Mix_RegisterEffect(s->m_channel, trampoline, nullptr, s);

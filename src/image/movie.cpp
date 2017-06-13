@@ -60,7 +60,7 @@ Movie::~Movie()
     delete m_data;
 }
 
-void Movie::Feed(Image const &image)
+void Movie::Feed(image const &image)
 {
 #if LOL_USE_FFMPEG
 

@@ -21,7 +21,7 @@ extern "C" {
 #include <android_native_app_glue.h>
 }
 
-#include "../../image/image-private.h"
+#include "../../image/resource-private.h"
 
 namespace lol
 {
@@ -32,12 +32,12 @@ extern ANativeActivity *g_activity;
  * Image implementation class
  */
 
-class AndroidImageCodec : public ImageCodec
+class AndroidImageCodec : public ResourceCodec
 {
 public:
     virtual char const *GetName() { return "<AndroidImageCodec>"; }
-    virtual bool Load(Image *image, char const *path);
-    virtual bool Save(Image *image, char const *path);
+    virtual ResourceCodecData* Load(char const *path);
+    virtual bool Save(char const *path, ResourceCodecData* data);
     virtual bool Close();
 
     virtual uint8_t *GetData() const;
@@ -50,7 +50,7 @@ private:
 
 DECLARE_IMAGE_CODEC(AndroidImageCodec, 100)
 
-bool AndroidImageCodec::Load(Image *image, char const *path)
+ResourceCodecData* AndroidImageCodec::Load(char const *path)
 {
     JNIEnv *env;
     jint res = g_activity->vm->GetEnv((void **)&env, JNI_VERSION_1_2);
@@ -106,12 +106,12 @@ bool AndroidImageCodec::Load(Image *image, char const *path)
     }
     m_format = PixelFormat::RGBA_8;
 
-    return true;
+    return new ResourceCodecData();
 }
 
-bool AndroidImageCodec::Save(Image *image, char const *path)
+bool AndroidImageCodec::Save(char const *path, ResourceCodecData* data)
 {
-    UNUSED(path);
+    UNUSED(path, data);
 
     /* TODO: unimplemented */
 }
