@@ -71,7 +71,9 @@ void getopt::add_opt(int short_opt, char const *long_opt, bool has_arg)
     getopt_private::optdesc o { long_opt, has_arg, nullptr, short_opt };
     m_private->m_opts.push(o);
 
-    if (isalnum(short_opt))
+    /* “The standards require that the argument [to isalnum()] is either
+     * EOF or a value that is representable in the type unsigned char.” */
+    if ((int)(unsigned char)short_opt == short_opt && isalnum(short_opt))
     {
         m_private->m_optstring += (char)short_opt;
         if (has_arg)
