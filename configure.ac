@@ -21,8 +21,6 @@ AM_DEFAULT_VERBOSITY=0
 dnl Versioning of the separate software we ship
 LOLUNIT_VERSION=0.1
 AC_SUBST(LOLUNIT_VERSION)
-LOLREMEZ_VERSION=0.2
-AC_SUBST(LOLREMEZ_VERSION)
 
 AC_SUBST(lol_srcdir, '${top_srcdir}')
 AC_SUBST(lol_builddir, '${top_builddir}')
@@ -262,7 +260,6 @@ AC_CONFIG_FILES(
   doc/samples/sandbox/Makefile
   doc/tutorial/Makefile
   tools/Makefile
-  tools/lolremez/Makefile
   tools/lolunit/Makefile
   tools/vimlol/Makefile
   tools/vslol/Makefile
