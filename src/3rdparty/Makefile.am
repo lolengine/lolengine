@@ -19,6 +19,8 @@ liblol_lua_a_CPPFLAGS = $(AM_CPPFLAGS) -DLUA_ANSI
 include lol-lua.am
 
 EXTRA_DIST += $(imgui_sources) $(mingw_std_threads_sources) $(pegtl_sources)
+EXTRA_DIST += lol-bullet.vcxproj
+EXTRA_DIST += lol-lua.vcxproj
 
 include lol-imgui.am
 include lol-mingw-std-threads.am

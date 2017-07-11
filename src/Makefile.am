@@ -5,6 +5,8 @@ SUBDIRS = 3rdparty data . t
 
 noinst_LIBRARIES = liblol-core.a
 
+EXTRA_DIST = lol-core.vcxproj
+
 liblol_core_a_SOURCES = \
     tiler.cpp tiler.h dict.cpp dict.h lolgl.h \
     scene.cpp scene.h font.cpp font.h \
