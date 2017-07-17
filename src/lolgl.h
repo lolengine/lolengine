@@ -46,6 +46,7 @@
 #   else
 #       define GL_GLEXT_PROTOTYPES
 #       include <GL/gl.h>
+#       include <GL/glext.h>
 #   endif
 #elif defined HAVE_GLES_2X
 #   if defined __APPLE__ && defined __MACH__
