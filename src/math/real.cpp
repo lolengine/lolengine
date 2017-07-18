@@ -101,7 +101,7 @@ template<> real::~Real()
     delete[] m_mantissa;
 }
 
-/* FIXME: 64-bit integer loading is incorrect,we lose precision. */
+/* FIXME: 64-bit integer loading is incorrect, we lose precision. */
 template<> real::Real(int32_t i) { new(this) real((double)i); }
 template<> real::Real(uint32_t i) { new(this) real((double)i); }
 template<> real::Real(int64_t i) { new(this) real((double)i); }
@@ -747,25 +747,41 @@ template<> real cbrt(real const &x)
 
 template<> real pow(real const &x, real const &y)
 {
+    /* Shortcuts for degenerate cases */
     if (!y)
         return real::R_1();
     if (!x)
         return real::R_0();
+
+    /* Small integer exponent: use exponentiation by squaring */
+    int int_y = (int)y;
+    if (y == (real)int_y)
+    {
+        real ret = real::R_1();
+        real x_n = int_y > 0 ? x : inverse(x);
+
+        while (int_y) /* Can be > 0 or < 0 */
+        {
+            if (int_y & 1)
+                ret *= x_n;
+            x_n *= x_n;
+            int_y /= 2;
+        }
+
+        return ret;
+    }
+
+    /* If x is positive, nothing special to do. */
     if (x > real::R_0())
         return exp(y * log(x));
-    else /* x < 0 */
-    {
-        /* Odd integer exponent */
-        if (y == (round(y / 2) * 2))
-            return exp(y * log(-x));
 
-        /* Even integer exponent */
-        if (y == round(y))
-            return -exp(y * log(-x));
-
-        /* FIXME: negative nth root */
-        return real::R_0();
-    }
+    /* XXX: manpage for pow() says “If x is a finite value less than 0,
+     * and y is a finite noninteger, a domain error occurs, and a NaN is
+     * returned”. We check whether y is closer to an even number or to
+     * an odd number and return something reasonable. */
+    real round_y = round(y);
+    bool is_odd = round_y / 2 == round(round_y / 2);
+    return is_odd ? exp(y * log(-x)) : -exp(y * log(-x));
 }
 
 static real fast_fact(unsigned int x)
