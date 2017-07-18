@@ -21,7 +21,7 @@
 #   undef WIN32_LEAN_AND_MEAN
 #endif
 
-#include "pegtl.hh"
+#include "tao/pegtl.hpp"
 
 #include "lolgl.h"
 
@@ -99,6 +99,7 @@ int ShaderData::nshaders = 0;
  * LolFx parser
  */
 
+using namespace tao;
 using namespace pegtl;
 
 struct lolfx_parser
@@ -154,14 +155,16 @@ public:
     lolfx_parser(String const &code)
       : m_section("header")
     {
-        pegtl::parse_string<lolfx, action>(code.C(), "shader", this);
+        string_input<> in(code.C(), "shader");
+        pegtl::parse<lolfx, action>(in, this);
     }
 };
 
 template<>
 struct lolfx_parser::action<lolfx_parser::do_title>
 {
-    static void apply(action_input const &in, lolfx_parser *that)
+    template<typename INPUT>
+    static void apply(INPUT const &in, lolfx_parser *that)
     {
         that->m_section = in.string().c_str();
     }
@@ -170,7 +173,8 @@ struct lolfx_parser::action<lolfx_parser::do_title>
 template<>
 struct lolfx_parser::action<lolfx_parser::code_section>
 {
-    static void apply(action_input const &in, lolfx_parser *that)
+    template<typename INPUT>
+    static void apply(INPUT const &in, lolfx_parser *that)
     {
         that->m_programs[that->m_section] = in.string().c_str();
     }

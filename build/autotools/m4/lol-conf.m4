@@ -65,7 +65,7 @@ dnl  Activate some header-only libraries
 dnl
 
 LOL_CFLAGS="$LOL_CFLAGS -I\$(lol_srcdir)/src/3rdparty/mingw-std-threads"
-LOL_CFLAGS="$LOL_CFLAGS -I\$(lol_srcdir)/src/3rdparty/pegtl"
+LOL_CFLAGS="$LOL_CFLAGS -I\$(lol_srcdir)/src/3rdparty/pegtl/include"
 LOL_CFLAGS="$LOL_CFLAGS -I\$(lol_srcdir)/src/3rdparty/imgui"
 
 dnl  Use system-provided getopt_long?
