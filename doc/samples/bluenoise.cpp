@@ -23,16 +23,16 @@ int main(int argc, char **argv)
     UNUSED(argc, argv);
 
     ivec2 const size(64);
-    auto const &kernel = image::BlueNoiseKernel(size, ivec2(8));
+    auto const &kernel = image::kernel::blue_noise(size, ivec2(8));
 
     image im(size.xy);
-    array2d<vec4> &data = im.Lock2D<PixelFormat::RGBA_F32>();
+    array2d<vec4> &data = im.lock2d<PixelFormat::RGBA_F32>();
 
     for (int j = 0; j < size.y; ++j)
     for (int i = 0; i < size.x; ++i)
         data[i][j] = vec4(vec3(kernel[i][j]), 1.0f);
-    im.Unlock2D(data);
-    im.Save("bluenoise.png");
+    im.unlock2d(data);
+    im.save("bluenoise.png");
 
     return 0;
 }
