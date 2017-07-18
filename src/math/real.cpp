@@ -199,7 +199,7 @@ template<> real::Real(char const *str)
 {
     real ret = 0;
     int exponent = 0;
-    bool comma = false, nonzero = false, negative = false, finished = false;
+    bool hex = false, comma = false, nonzero = false, negative = false, finished = false;
 
     for (char const *p = str; *p && !finished; p++)
     {
@@ -216,26 +216,50 @@ template<> real::Real(char const *str)
                 finished = true;
             comma = true;
             break;
+        case 'x':
+        case 'X':
+            /* This character is only valid for 0x... and 0X... numbers */
+            if (p != str + 1 || str[0] != '0')
+                finished = true;
+            hex = true;
+            break;
+        case 'p':
+        case 'P':
+            if (hex)
+                exponent += atoi(p + 1);
+            finished = true;
+            break;
+        case 'e':
+        case 'E':
+            if (!hex)
+            {
+                exponent += atoi(p + 1);
+                finished = true;
+                break;
+            }
+        case 'a': case 'b': case 'c': case 'd': case 'f':
+        case 'A': case 'B': case 'C': case 'D': case 'F':
         case '0': case '1': case '2': case '3': case '4':
         case '5': case '6': case '7': case '8': case '9':
             if (nonzero)
             {
-                real x = ret + ret;
-                x = x + x + ret;
-                ret = x + x;
+                /* Multiply ret by 10 or 16 depending the base. */
+                if (!hex)
+                {
+                    real x = ret + ret;
+                    ret = x + x + ret;
+                }
+                ret.m_signexp += hex ? 4 : 1;
             }
             if (*p != '0')
             {
-                ret += (int)(*p - '0');
+                ret += (*p >= 'a' && *p <= 'f') ? (int)(*p - 'a' + 10)
+                     : (*p >= 'A' && *p <= 'F') ? (int)(*p - 'A' + 10)
+                     : (int)(*p - '0');
                 nonzero = true;
             }
             if (comma)
-                exponent--;
-            break;
-        case 'e':
-        case 'E':
-            exponent += atoi(p + 1);
-            finished = true;
+                exponent -= hex ? 4 : 1;
             break;
         default:
             finished = true;
@@ -243,7 +267,9 @@ template<> real::Real(char const *str)
         }
     }
 
-    if (exponent)
+    if (hex)
+        ret.m_signexp += exponent;
+    else if (exponent)
         ret *= pow(R_10(), (real)exponent);
 
     if (negative)
@@ -1428,7 +1454,7 @@ template<> void real::sprintf(char *str, int ndigits) const
     /* Normalise x so that mantissa is in [1..9.999] */
     /* FIXME: better use int64_t when the cast is implemented */
     int exponent = ceil(log10(x));
-    x /= pow(R_10(), (real)exponent);
+    x *= pow(R_10(), -(real)exponent);
 
     if (x < R_1())
     {
