@@ -33,8 +33,10 @@ namespace lol
  */
 
 static real fast_log(real const &x);
-static real fast_pi();
-static real fast_min();
+
+static real load_min();
+static real load_max();
+static real load_pi();
 
 #define LOL_CONSTANT_GETTER(name, value) \
     template<> real const& real::name() \
@@ -49,15 +51,15 @@ LOL_CONSTANT_GETTER(R_2,        (real)2.0);
 LOL_CONSTANT_GETTER(R_3,        (real)3.0);
 LOL_CONSTANT_GETTER(R_10,       (real)10.0);
 
-LOL_CONSTANT_GETTER(R_MAX,      ldexp(R_1(), (1 << 30));
-LOL_CONSTANT_GETTER(R_MIN,      ldexp(R_1(), 1 - (1 << 30));
+LOL_CONSTANT_GETTER(R_MIN,      load_min());
+LOL_CONSTANT_GETTER(R_MAX,      load_max());
 
 LOL_CONSTANT_GETTER(R_LN2,      fast_log(R_2()));
 LOL_CONSTANT_GETTER(R_LN10,     log(R_10()));
 LOL_CONSTANT_GETTER(R_LOG2E,    inverse(R_LN2()));
 LOL_CONSTANT_GETTER(R_LOG10E,   inverse(R_LN10()));
 LOL_CONSTANT_GETTER(R_E,        exp(R_1()));
-LOL_CONSTANT_GETTER(R_PI,       fast_pi());
+LOL_CONSTANT_GETTER(R_PI,       load_pi());
 LOL_CONSTANT_GETTER(R_PI_2,     R_PI() / 2);
 LOL_CONSTANT_GETTER(R_PI_3,     R_PI() / R_3());
 LOL_CONSTANT_GETTER(R_PI_4,     R_PI() / 4);
@@ -1084,24 +1086,19 @@ template<> real modf(real const &x, real *iptr)
     return copysign(absx - tmp, x);
 }
 
-template<> real ulp(real const &x)
-{
-    real ret = real::R_1();
-    if (x)
-        ret.m_signexp = x.m_signexp + 1 - real::BIGITS * real::BIGIT_BITS;
-    else
-        ret.m_signexp = 0;
-    return ret;
-}
-
 template<> real nextafter(real const &x, real const &y)
 {
+    /* Linux manpage: “If x equals y, the functions return y.” */
     if (x == y)
-        return x;
-    else if (x < y)
-        return x + ulp(x);
-    else
-        return x - ulp(x);
+        return y;
+
+    /* Ensure x is positive. */
+    if (x.m_signexp >> 31)
+        return -nextafter(-x, -y);
+
+    /* FIXME: broken for now */
+    real ulp = ldexp(x, -real::TOTAL_BITS);
+    return x < y ? x + ulp : x - ulp;
 }
 
 template<> real copysign(real const &x, real const &y)
@@ -1485,7 +1482,21 @@ template<> void real::sprintf(char *str, int ndigits) const
     *str++ = '\0';
 }
 
-static real fast_pi()
+static real load_min()
+{
+    real ret = 1;
+    return ldexp(ret, 2 - (1 << 30));
+}
+
+static real load_max()
+{
+    real ret = 1;
+    /* FIXME: the last bits of the mantissa are not properly handled! */
+    ret = ldexp(ret, real::TOTAL_BITS - 1) - ret;
+    return ldexp(ret, (1 << 30) - (real::TOTAL_BITS - 1));
+}
+
+static real load_pi()
 {
     /* Approximate Pi using Machin's formula: 16*atan(1/5)-4*atan(1/239) */
     real ret = 0, x0 = 5, x1 = 239;

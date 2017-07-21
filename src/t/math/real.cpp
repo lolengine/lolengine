@@ -272,14 +272,6 @@ lolunit_declare_fixture(real_test)
         lolunit_assert_equal((double)ldexp(a3, -7), 0.0);
     }
 
-    lolunit_declare_test(real_ulp)
-    {
-        real a1 = real::R_PI();
-
-        lolunit_refute_equal((double)(a1 + ulp(a1) - a1), 0.0);
-        lolunit_assert_equal((double)(a1 + ulp(a1) / 2 - a1), 0.0);
-    }
-
     lolunit_declare_test(real_bool)
     {
         real a = 0.0;
