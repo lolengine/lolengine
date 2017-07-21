@@ -109,7 +109,6 @@ public:
     template<int K> friend Real<K> frexp(Real<K> const &x, int *exp);
     template<int K> friend Real<K> ldexp(Real<K> const &x, int exp);
     template<int K> friend Real<K> modf(Real<K> const &x, Real<K> *iptr);
-    template<int K> friend Real<K> ulp(Real<K> const &x);
     template<int K> friend Real<K> nextafter(Real<K> const &x, Real<K> const &y);
 
     /* Power functions */
@@ -200,11 +199,15 @@ public:
     static Real<N> const& R_SQRT3();
     static Real<N> const& R_SQRT1_2();
 
+    static Real<N> const& R_MIN();
+    static Real<N> const& R_MAX();
+
     /* XXX: changing this requires tuning real::fres (the number of
      * Newton-Raphson iterations) and real::print (the number of printed
      * digits) */
     static int const BIGITS = N;
     static int const BIGIT_BITS = 32;
+    static int const TOTAL_BITS = BIGITS * BIGIT_BITS;
 
 private:
     uint32_t *m_mantissa;
@@ -274,7 +277,6 @@ template<int K> Real<K> log10(Real<K> const &x);
 template<int K> Real<K> frexp(Real<K> const &x, int *exp);
 template<int K> Real<K> ldexp(Real<K> const &x, int exp);
 template<int K> Real<K> modf(Real<K> const &x, Real<K> *iptr);
-template<int K> Real<K> ulp(Real<K> const &x);
 template<int K> Real<K> nextafter(Real<K> const &x, Real<K> const &y);
 template<int K> Real<K> inverse(Real<K> const &x);
 template<int K> Real<K> sqrt(Real<K> const &x);
@@ -314,7 +316,6 @@ template<> real log10(real const &x);
 template<> real frexp(real const &x, int *exp);
 template<> real ldexp(real const &x, int exp);
 template<> real modf(real const &x, real *iptr);
-template<> real ulp(real const &x);
 template<> real nextafter(real const &x, real const &y);
 template<> real inverse(real const &x);
 template<> real sqrt(real const &x);

@@ -34,6 +34,7 @@ namespace lol
 
 static real fast_log(real const &x);
 static real fast_pi();
+static real fast_min();
 
 #define LOL_CONSTANT_GETTER(name, value) \
     template<> real const& real::name() \
@@ -47,6 +48,9 @@ LOL_CONSTANT_GETTER(R_1,        (real)1.0);
 LOL_CONSTANT_GETTER(R_2,        (real)2.0);
 LOL_CONSTANT_GETTER(R_3,        (real)3.0);
 LOL_CONSTANT_GETTER(R_10,       (real)10.0);
+
+LOL_CONSTANT_GETTER(R_MAX,      ldexp(R_1(), (1 << 30));
+LOL_CONSTANT_GETTER(R_MIN,      ldexp(R_1(), 1 - (1 << 30));
 
 LOL_CONSTANT_GETTER(R_LN2,      fast_log(R_2()));
 LOL_CONSTANT_GETTER(R_LN10,     log(R_10()));
