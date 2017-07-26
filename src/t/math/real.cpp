@@ -251,7 +251,7 @@ lolunit_declare_fixture(real_test)
         /* 1 / 3 * 3 should be close to 1... check that it does not differ
          * by more than 2^-k where k is the number of bits in the mantissa. */
         real a = real::R_1() / real::R_3() * real::R_3();
-        real b = ldexp(real::R_1() - a, real::BIGITS * real::BIGIT_BITS);
+        real b = ldexp(real::R_1() - a, real::TOTAL_BITS);
 
         lolunit_assert_lequal((double)fabs(b), 1.0);
     }

@@ -132,8 +132,9 @@ public:
     template<int K> friend Real<K> degrees(Real<K> const &x);
     template<int K> friend Real<K> radians(Real<K> const &x);
 
-    void hexprint() const;
+    void xprint() const;
     void print(int ndigits = 150) const;
+    void sxprintf(char *str) const;
     void sprintf(char *str, int ndigits = 150) const;
 
     /* Additional operators using base C++ types */
@@ -202,16 +203,20 @@ public:
     static Real<N> const& R_MIN();
     static Real<N> const& R_MAX();
 
-    /* XXX: changing this requires tuning real::fres (the number of
-     * Newton-Raphson iterations) and real::print (the number of printed
-     * digits) */
-    static int const BIGITS = N;
-    static int const BIGIT_BITS = 32;
-    static int const TOTAL_BITS = BIGITS * BIGIT_BITS;
-
 private:
     uint32_t *m_mantissa;
     uint32_t m_signexp;
+
+public:
+    /* XXX: changing this requires tuning real::fres (the number of
+     * Newton-Raphson iterations) and real::print (the number of printed
+     * digits) */
+    static int const BIGIT_COUNT = N;
+    static int const BIGIT_BITS = 8 * sizeof(*m_mantissa);
+    static int const TOTAL_BITS = BIGIT_COUNT * BIGIT_BITS;
+
+    static int const EXPONENT_BITS = 8 * sizeof(m_signexp) - 1;
+    static int const EXPONENT_BIAS = (1 << (EXPONENT_BITS - 1)) - 1;
 };
 
 /*
@@ -333,8 +338,9 @@ template<> real fract(real const &x);
 template<> real degrees(real const &x);
 template<> real radians(real const &x);
 
-template<> void real::hexprint() const;
+template<> void real::xprint() const;
 template<> void real::print(int ndigits) const;
+template<> void real::sxprintf(char *str) const;
 template<> void real::sprintf(char *str, int ndigits) const;
 
 } /* namespace lol */
