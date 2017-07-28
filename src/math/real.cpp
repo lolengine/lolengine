@@ -1468,8 +1468,15 @@ template<> void real::sprintf(char *str, int ndigits) const
 
     /* Normalise x so that mantissa is in [1..9.999] */
     /* FIXME: better use int64_t when the cast is implemented */
+    /* FIXME: does not work with R_MAX and probably R_MIN */
     int exponent = ceil(log10(x));
     x *= pow(R_10(), -(real)exponent);
+
+    if (ndigits < 1)
+        ndigits = 1;
+
+    /* Add a bias to simulate some naive rounding */
+    x += real(4.99f) * pow(R_10(), -(real)(ndigits + 1));
 
     if (x < R_1())
     {
@@ -1487,6 +1494,10 @@ template<> void real::sprintf(char *str, int ndigits) const
         x -= real(digit);
         x *= R_10();
     }
+
+    /* Remove excess trailing zeroes */
+    while (str[-1] == '0' && str[-2] != '.')
+        --str;
 
     /* Print exponent information */
     if (exponent)
