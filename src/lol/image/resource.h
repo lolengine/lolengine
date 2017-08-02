@@ -1,8 +1,8 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2016—2017 Sam Hocevar <sam@hocevar.net>
-//  Copyright © 2016—2017 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//  Copyright Â© 2010â€”2017 Sam Hocevar <sam@hocevar.net>
+//            Â© 2016â€”2017 Benjamin â€œToukyâ€ Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it

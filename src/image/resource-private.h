@@ -1,13 +1,14 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-//  Copyright: (c) 2016—2017 Sam Hocevar <sam@hocevar.net>
-//  Copyright © 2016—2017 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//  Copyright Â© 2010â€”2017 Sam Hocevar <sam@hocevar.net>
+//            Â© 2016â€”2017 Benjamin â€œToukyâ€ Huet <huet.benjamin@gmail.com>
 //
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
