@@ -2,7 +2,7 @@
 // Lol Engine
 //
 // Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//            (c) 2009-2013 Cédric Lecacheur <jordx@free.fr>
+//            (c) 2009-2013 CÃ©dric Lecacheur <jordx@free.fr>
 //            (c) 2009-2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
 //   This program is free software; you can redistribute it and/or
 //   modify it under the terms of the Do What The Fuck You Want To

@@ -21,39 +21,39 @@ namespace lol
 {
 
 /* HACK: We cannot make this an ImageLoader member function, because the
-* REGISTER_IMAGE_CODEC macro forward-declares free functions from
-* the "lol" namespace. An apparent bug in Visual Studio's compiler
-* makes it think these functions are actually in the top-level
-* namespace when the forward declaration is in a class member function.
-* To avoid the problem, we make the forward declaration in a free
-* function.
-* The bug was reported to Microsoft and fixed by them, but the fix
-* is not yet available.
-* https://connect.microsoft.com/VisualStudio/feedback/details/730878/ */
+ * REGISTER_IMAGE_CODEC macro forward-declares free functions from
+ * the "lol" namespace. An apparent bug in Visual Studio's compiler
+ * makes it think these functions are actually in the top-level
+ * namespace when the forward declaration is in a class member function.
+ * To avoid the problem, we make the forward declaration in a free
+ * function.
+ * The bug was reported to Microsoft and fixed by them, but the fix
+ * is not yet available.
+ * https://connect.microsoft.com/VisualStudio/feedback/details/730878/ */
 static bool RegisterAllCodecs(array<ResourceCodec *> &codeclist)
 {
 #if defined __ANDROID__
     REGISTER_IMAGE_CODEC(AndroidImageCodec)
 #endif
 #if defined LOL_USE_GDIPLUS
-        REGISTER_IMAGE_CODEC(GdiPlusImageCodec)
+    REGISTER_IMAGE_CODEC(GdiPlusImageCodec)
 #endif
 #if defined __APPLE__ && defined __MACH__ && defined __arm__
-        REGISTER_IMAGE_CODEC(IosImageCodec)
+    REGISTER_IMAGE_CODEC(IosImageCodec)
 #endif
 #if defined LOL_USE_SDL_IMAGE
-        REGISTER_IMAGE_CODEC(SdlImageCodec)
+    REGISTER_IMAGE_CODEC(SdlImageCodec)
 #endif
 #if defined LOL_USE_IMLIB2
-        REGISTER_IMAGE_CODEC(Imlib2ImageCodec)
+    REGISTER_IMAGE_CODEC(Imlib2ImageCodec)
 #endif
-        REGISTER_IMAGE_CODEC(ZedImageCodec)
-        REGISTER_IMAGE_CODEC(ZedPaletteImageCodec)
-        REGISTER_IMAGE_CODEC(OricImageCodec)
+    REGISTER_IMAGE_CODEC(ZedImageCodec)
+    REGISTER_IMAGE_CODEC(ZedPaletteImageCodec)
+    REGISTER_IMAGE_CODEC(OricImageCodec)
 
-        REGISTER_IMAGE_CODEC(DummyImageCodec)
+    REGISTER_IMAGE_CODEC(DummyImageCodec)
 
-        return true;
+    return true;
 }
 
 /*
@@ -108,7 +108,7 @@ bool ResourceLoader::Save(char const *path, ResourceCodecData* data)
         last_codec = codec;
         if (codec->Save(path, data))
         {
-            msg::info("image::save: codec %s succesfully saved %s.\n",
+            msg::debug("image::save: codec %s succesfully saved %s.\n",
                       codec->GetName(), path);
             return true;
         }
