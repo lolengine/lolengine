@@ -1,8 +1,8 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2016—2017 Sam Hocevar <sam@hocevar.net>
-//  Copyright © 2016—2017 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//  Copyright Â© 2010â€”2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright Â© 2016â€”2017 Benjamin â€œToukyâ€ Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -88,13 +88,15 @@ ResourceCodecData* ResourceLoader::Load(char const *path)
         auto data = codec->Load(path);
         if (data != nullptr)
         {
-            msg::info("image::Load: Codec %s succesfully loaded %s.\n", codec->GetName(), path);
+            msg::debug("image::load: codec %s succesfully loaded %s.\n",
+                       codec->GetName(), path);
             return data;
         }
     }
 
     //Log error, because we shouldn't be here
-    msg::error("image::Load: Last codec %s, Error loading resource %s.\n", last_codec->GetName(), path);
+    msg::error("image::load: last codec %s, error loading resource %s.\n",
+               last_codec->GetName(), path);
     return nullptr;
 }
 
@@ -106,13 +108,15 @@ bool ResourceLoader::Save(char const *path, ResourceCodecData* data)
         last_codec = codec;
         if (codec->Save(path, data))
         {
-            msg::info("image::Save: Codec %s succesfully saved %s.\n", codec->GetName(), path);
+            msg::info("image::save: codec %s succesfully saved %s.\n",
+                      codec->GetName(), path);
             return true;
         }
     }
 
     //Log error, because we shouldn't be here
-    msg::error("image::Save: Last codec %s, Error saving resource %s.\n", last_codec->GetName(), path);
+    msg::error("image::save: last codec %s, error saving resource %s.\n",
+               last_codec->GetName(), path);
     return false;
 }
 

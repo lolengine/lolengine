@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -150,7 +150,7 @@ int Ticker::Unref(Entity *entity)
 void TickerData::GameThreadMain()
 {
 #if LOL_BUILD_DEBUG
-    msg::info("ticker game thread initialised\n");
+    msg::debug("ticker game thread initialised\n");
 #endif
 
     for (;;)
@@ -167,7 +167,7 @@ void TickerData::GameThreadMain()
     drawtick.push(0);
 
 #if LOL_BUILD_DEBUG
-    msg::info("ticker game thread terminated\n");
+    msg::debug("ticker game thread terminated\n");
 #endif
 }
 #endif /* LOL_FEATURE_THREADS */
@@ -176,7 +176,7 @@ void TickerData::GameThreadMain()
 void TickerData::DrawThreadMain() /* unused */
 {
 #if LOL_BUILD_DEBUG
-    msg::info("ticker draw thread initialised\n");
+    msg::debug("ticker draw thread initialised\n");
 #endif
 
     for (;;)
@@ -191,7 +191,7 @@ void TickerData::DrawThreadMain() /* unused */
     }
 
 #if LOL_BUILD_DEBUG
-    msg::info("ticker draw thread terminated\n");
+    msg::debug("ticker draw thread terminated\n");
 #endif
 }
 #endif /* LOL_FEATURE_THREADS */
@@ -255,7 +255,7 @@ void TickerData::GameThreadTick()
     data->keepalive += data->deltatime;
     if (data->keepalive > 10.f)
     {
-        msg::info("ticker keepalive: tick!\n");
+        msg::debug("ticker keepalive: tick!\n");
         data->keepalive = 0.f;
     }
 #endif

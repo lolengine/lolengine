@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -300,7 +300,7 @@ void SdlInputData::Tick(float seconds)
                     }
                     m_keyboard->SetKey(sc2, !m_keyboard->GetKey(sc2));
                     /* DEBUG STUFF
-                    msg::info("Repeat: 0x%02x : %s/%s/%s/%i\n",
+                    msg::debug("Repeat: 0x%02x : %s/%s/%s/%i\n",
                         (int)m_keyboard, ScanCodeToText(sc2).C(), ScanCodeToName(sc2).C(),
                         m_keyboard->GetKey(sc2) ? "up" : "down", event.key.repeat);
                     */
@@ -317,7 +317,7 @@ void SdlInputData::Tick(float seconds)
                     m_keyboard->SetKey(sc, event.type == SDL_KEYDOWN);
 
                     /* DEBUG STUFF
-                    msg::info("Repeat: 0x%02x : %s/%s/%s/%i\n",
+                    msg::debug("Repeat: 0x%02x : %s/%s/%s/%i\n",
                         (int)m_keyboard, ScanCodeToText(sc).C(), ScanCodeToName(sc).C(),
                         event.type == SDL_KEYDOWN ? "up" : "down", event.key.repeat);
                     */

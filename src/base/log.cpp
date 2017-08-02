@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -13,6 +13,7 @@
 #include <lol/engine-internal.h>
 
 #include <cstdio>
+#include <cstdlib>
 
 #if defined(_WIN32)
 #   define WIN32_LEAN_AND_MEAN
@@ -72,6 +73,18 @@ void msg::error(char const *fmt, ...)
 
 void msg::helper(MessageType type, char const *fmt, va_list ap)
 {
+    /* Unless this is a debug build, ignore debug messages unless
+     * the LOL_DEBUG environment variable is set. */
+#if !defined LOL_BUILD_DEBUG
+    if (type == MessageType::Debug)
+    {
+        static char const *var = getenv("LOL_DEBUG");
+        static bool const disable_debug = !var || !var[0];
+        if (disable_debug)
+            return;
+    }
+#endif
+
 #if defined __ANDROID__
     static int const prio[] =
     {

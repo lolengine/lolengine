@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -42,7 +42,7 @@ AAssetManager *g_assets;
 extern "C" jint
 JNI_OnLoad(JavaVM* vm, void* reserved)
 {
-    msg::info("Java layer loading library, vm=0x%08lx", (long)(intptr_t)vm);
+    msg::debug("Java layer loading library, vm=0x%08lx", (long)(intptr_t)vm);
     return JNI_VERSION_1_4;
 }
 
@@ -152,7 +152,7 @@ int lol::AndroidAppData::CreateDisplay()
     eglQuerySurface(m_display, m_surface, EGL_HEIGHT, &h);
 
     /* Launch our renderer */
-    msg::info("Java layer initialising renderer (%dx%d)", w, h);
+    msg::debug("Java layer initialising renderer (%dx%d)", w, h);
     Video::Setup(ivec2(w, h));
 
     return 0;
@@ -267,8 +267,8 @@ AndroidAppData *g_data;
 
 void android_main(android_app* native_app)
 {
-    msg::info("Java layer calling android_main() for app 0x%08lx",
-              (long)native_app);
+    msg::debug("Java layer calling android_main() for app 0x%08lx",
+               (long)native_app);
 
     /* Register native activity */
     g_activity = native_app->activity;
@@ -278,7 +278,7 @@ void android_main(android_app* native_app)
     jint res = g_activity->vm->GetEnv((void **)&jni_env, JNI_VERSION_1_2);
     if (res < 0)
     {
-        msg::info("JVM environment not found, trying to attach thread\n");
+        msg::debug("JVM environment not found, trying to attach thread\n");
         res = g_activity->vm->AttachCurrentThread(&jni_env, nullptr);
     }
     if (res < 0)
@@ -329,7 +329,7 @@ void android_main(android_app* native_app)
             source->process(native_app, source);
     }
 
-    msg::info("Java layer running real main()\n");
+    msg::debug("Java layer running real main()\n");
 
     /* Call the user's main() function. One of these will work. */
     lol_android_main();
@@ -341,7 +341,7 @@ lol::AndroidApp::AndroidApp(char const *title, ivec2 res, float fps)
   : m_data(g_data)
 {
     /* Launch our ticker */
-    msg::info("Java layer initialising ticker at %g fps", fps);
+    msg::debug("Java layer initialising ticker at %g fps", fps);
     Ticker::Setup(fps);
 
     m_data->m_wanted_resolution = res;
