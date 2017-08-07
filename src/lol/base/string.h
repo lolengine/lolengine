@@ -34,13 +34,13 @@ private:
     typedef array<char> super;
 
 public:
-    inline String()
+    inline LOL_ATTR_NODISCARD String()
       : super()
     {
         push('\0');
     }
 
-    inline String(char const *str)
+    inline LOL_ATTR_NODISCARD String(char const *str)
       : super()
     {
         using namespace std;
@@ -49,7 +49,7 @@ public:
         memcpy(&(*this)[0], str, count() + 1);
     }
 
-    inline String(char const *str, int item_count)
+    inline LOL_ATTR_NODISCARD String(char const *str, int item_count)
       : super()
     {
         using namespace std;
@@ -59,7 +59,7 @@ public:
         ((super &)*this)[item_count] = '\0';
     }
 
-    inline String(String const &s)
+    inline LOL_ATTR_NODISCARD String(String const &s)
       : super((super const &)s)
     {
     }
@@ -268,13 +268,13 @@ public:
         return true;
     }
 
-    inline String operator +(String const &s) const
+    inline LOL_ATTR_NODISCARD String operator +(String const &s) const
     {
         String ret(*this);
         return ret += s;
     }
 
-    inline String operator +(char c) const
+    inline LOL_ATTR_NODISCARD String operator +(char c) const
     {
         String ret(*this);
         return ret += c;
@@ -334,22 +334,16 @@ public:
         return res < 0;
     }
 
-#ifdef __GNUC__
-#   define LOL_FMT_ATTR(n, p) __attribute__((format(printf, n, p)))
-#else
-#   define LOL_FMT_ATTR(n, p)
-#endif
-    static String format(char const *format, ...) LOL_FMT_ATTR(1, 2);
-#undef LOL_FMT_ATTR
+    static String format(char const *format, ...) LOL_ATTR_FORMAT(1, 2);
     static String vformat(char const *format, va_list ap);
 };
 
-inline String operator +(char c, String const &s)
+inline LOL_ATTR_NODISCARD String operator +(char c, String const &s)
 {
     return String() + c + s;
 }
 
-inline String operator +(char const *sz, String const &s)
+inline LOL_ATTR_NODISCARD String operator +(char const *sz, String const &s)
 {
     return String(sz) + s;
 }

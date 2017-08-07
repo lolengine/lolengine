@@ -27,16 +27,10 @@ namespace lol
 class msg
 {
 public:
-#ifdef __GNUC__
-#   define LOL_FMT_ATTR(n, p) __attribute__((format(printf, n, p)))
-#else
-#   define LOL_FMT_ATTR(n, p)
-#endif
-    static void debug(char const *format, ...) LOL_FMT_ATTR(1, 2);
-    static void info(char const *format, ...) LOL_FMT_ATTR(1, 2);
-    static void warn(char const *format, ...) LOL_FMT_ATTR(1, 2);
-    static void error(char const *format, ...) LOL_FMT_ATTR(1, 2);
-#undef LOL_FMT_ATTR
+    static void debug(char const *format, ...) LOL_ATTR_FORMAT(1, 2);
+    static void info(char const *format, ...) LOL_ATTR_FORMAT(1, 2);
+    static void warn(char const *format, ...) LOL_ATTR_FORMAT(1, 2);
+    static void error(char const *format, ...) LOL_ATTR_FORMAT(1, 2);
 
 private:
     enum class MessageType

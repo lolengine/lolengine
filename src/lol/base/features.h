@@ -38,7 +38,7 @@
 
 
 /*
- * Check for C++11 features.
+ * Check for C++11 and later features.
  */
 
 /* These features aren't necessarily supported by all compilers */
@@ -51,10 +51,13 @@
 #undef LOL_FEATURE_CXX11_TEMPLATE_ALIASES
 #undef LOL_FEATURE_CXX11_SFINAE_FOR_CTORS
 
+#undef LOL_FEATURE_CXX17_ATTRIBUTE_NODISCARD
+
 /* Features supported by GCC */
 #if defined __GNUC__
 #   define LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS 1
 #   define LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS 1
+#   define LOL_FEATURE_CXX17_ATTRIBUTE_NODISCARD 1
 #   if defined(__GXX_EXPERIMENTAL_CXX0X) || __cplusplus >= 201103L
 #       define LOL_FEATURE_CXX11_CONSTEXPR 1
 #       define LOL_FEATURE_CXX11_ISNAN 1
@@ -72,6 +75,7 @@
 #   define LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS 1
 #   define LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS 1
 #   define LOL_FEATURE_CXX11_ARRAY_INITIALIZERS 1
+#   define LOL_FEATURE_CXX17_ATTRIBUTE_NODISCARD 1
 #   if __has_feature(cxx_constexpr)
 #       define LOL_FEATURE_CXX11_CONSTEXPR 1
 #   endif
@@ -97,9 +101,27 @@
 #   endif
     /* Supported in VS 2015 but causes massive warning output */
 #   undef LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
-    /* Still unsupported as of VS 2015 */
+    /* Still unsupported as of VS 2015 (TODO: check VS2017) */
 #   undef LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
 #   undef LOL_FEATURE_CXX11_CONSTEXPR
+#   undef LOL_FEATURE_CXX17_ATTRIBUTE_NODISCARD
+#endif
+
+
+/*
+ * Define some attribute macros.
+ */
+
+#ifdef __GNUC__
+#   define LOL_ATTR_FORMAT(n, p) __attribute__((format(printf, n, p)))
+#else
+#   define LOL_ATTR_FORMAT(n, p)
+#endif
+
+#ifdef LOL_FEATURE_CXX17_ATTRIBUTE_NODISCARD
+#   define LOL_ATTR_NODISCARD [[nodiscard]]
+#else
+#   define LOL_ATTR_NODISCARD /* */
 #endif
 
 

@@ -204,18 +204,21 @@ public:
     static Real<N> const& R_MAX();
 
 private:
-    uint32_t *m_mantissa;
-    uint32_t m_signexp;
+    typedef uint32_t bigit_t;
+    typedef uint32_t signexp_t;
+
+    bigit_t *m_mantissa;
+    signexp_t m_signexp;
 
 public:
     /* XXX: changing this requires tuning real::fres (the number of
      * Newton-Raphson iterations) and real::print (the number of printed
      * digits) */
     static int const BIGIT_COUNT = N;
-    static int const BIGIT_BITS = 8 * sizeof(*m_mantissa);
+    static int const BIGIT_BITS = 8 * sizeof(bigit_t);
     static int const TOTAL_BITS = BIGIT_COUNT * BIGIT_BITS;
 
-    static int const EXPONENT_BITS = 8 * sizeof(m_signexp) - 1;
+    static int const EXPONENT_BITS = 8 * sizeof(signexp_t) - 1;
     static int const EXPONENT_BIAS = (1 << (EXPONENT_BITS - 1)) - 1;
 };
 
