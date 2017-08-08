@@ -341,8 +341,8 @@ protected:
 
         void update_balance()
         {
-            m_stairs[0] = m_child[0] ? (m_child[0]->m_stairs[0] > m_child[0]->m_stairs[1] ? m_child[0]->m_stairs[0] : m_child[0]->m_stairs[1]) + 1 : 0;
-            m_stairs[1] = m_child[1] ? (m_child[1]->m_stairs[0] > m_child[1]->m_stairs[1] ? m_child[1]->m_stairs[0] : m_child[1]->m_stairs[1]) + 1 : 0;
+            for (int i = 0; i <= 1; ++i)
+                m_stairs[i] = m_child[i] ? std::max(m_child[i]->m_stairs[0], m_child[i]->m_stairs[1]) + 1 : 0;
         }
 
         void rebalance_if_needed()
