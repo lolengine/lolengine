@@ -28,19 +28,19 @@
 namespace lol
 {
 
-class String : protected array<char>
+class LOL_ATTR_NODISCARD String : protected array<char>
 {
 private:
     typedef array<char> super;
 
 public:
-    inline LOL_ATTR_NODISCARD String()
+    inline String()
       : super()
     {
         push('\0');
     }
 
-    inline LOL_ATTR_NODISCARD String(char const *str)
+    inline String(char const *str)
       : super()
     {
         using namespace std;
@@ -49,7 +49,7 @@ public:
         memcpy(&(*this)[0], str, count() + 1);
     }
 
-    inline LOL_ATTR_NODISCARD String(char const *str, int item_count)
+    inline String(char const *str, int item_count)
       : super()
     {
         using namespace std;
@@ -59,7 +59,7 @@ public:
         ((super &)*this)[item_count] = '\0';
     }
 
-    inline LOL_ATTR_NODISCARD String(String const &s)
+    inline String(String const &s)
       : super((super const &)s)
     {
     }
@@ -268,13 +268,13 @@ public:
         return true;
     }
 
-    inline LOL_ATTR_NODISCARD String operator +(String const &s) const
+    inline String operator +(String const &s) const
     {
         String ret(*this);
         return ret += s;
     }
 
-    inline LOL_ATTR_NODISCARD String operator +(char c) const
+    inline String operator +(char c) const
     {
         String ret(*this);
         return ret += c;
@@ -338,12 +338,12 @@ public:
     static String vformat(char const *format, va_list ap);
 };
 
-inline LOL_ATTR_NODISCARD String operator +(char c, String const &s)
+inline String operator +(char c, String const &s)
 {
     return String() + c + s;
 }
 
-inline LOL_ATTR_NODISCARD String operator +(char const *sz, String const &s)
+inline String operator +(char const *sz, String const &s)
 {
     return String(sz) + s;
 }

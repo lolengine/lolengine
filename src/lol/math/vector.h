@@ -57,7 +57,7 @@ namespace lol
  */
 
 template<typename T, int N, int SWIZZLE>
-struct vec_t
+struct LOL_ATTR_NODISCARD vec_t
     /* MUST have a different base than e.g. vec_t<T,2> otherwise the unions
      * in vec_t<T,2> with the same base will cause empty base optimisation
      * failures. */
@@ -108,7 +108,7 @@ struct vec_t
 /* The generic “vec_t” type, which is a fixed-size vector with no
  * swizzling. There's an override for N=2, N=3, N=4 that has swizzling. */
 template<typename T, int N>
-struct vec_t<T, N, FULL_SWIZZLE>
+struct LOL_ATTR_NODISCARD vec_t<T, N, FULL_SWIZZLE>
   : public componentwise_ops::base<T>
 {
     static int const count = N;
@@ -221,7 +221,7 @@ private:
  */
 
 template <typename T>
-struct vec_t<T,2>
+struct LOL_ATTR_NODISCARD vec_t<T,2>
   : public swizzle_ops::base<T>
 {
     static int const count = 2;
@@ -337,7 +337,7 @@ static_assert(sizeof(dvec2) == 16, "sizeof(dvec2) == 16");
  */
 
 template <typename T>
-struct vec_t<T,3>
+struct LOL_ATTR_NODISCARD vec_t<T,3>
   : public swizzle_ops::base<T>
 {
     static int const count = 3;
@@ -583,7 +583,7 @@ static_assert(sizeof(dvec3) == 24, "sizeof(dvec3) == 24");
  */
 
 template <typename T>
-struct vec_t<T,4>
+struct LOL_ATTR_NODISCARD vec_t<T,4>
   : public swizzle_ops::base<T>
 {
     static int const count = 4;
@@ -1138,7 +1138,7 @@ static inline vec_t<T,N> mix(vec_t<T,N,SWIZZLE1> const &x,
  * Some GLSL-like functions.
  */
 
-template<typename T, int N, int SWIZZLE1, int SWIZZLE2>
+template<typename T, int N, int SWIZZLE1, int SWIZZLE2> LOL_ATTR_NODISCARD
 static inline T dot(vec_t<T,N,SWIZZLE1> const &a,
                     vec_t<T,N,SWIZZLE2> const &b)
 {
@@ -1148,13 +1148,13 @@ static inline T dot(vec_t<T,N,SWIZZLE1> const &a,
     return ret;
 }
 
-template<typename T, int N, int SWIZZLE>
+template<typename T, int N, int SWIZZLE> LOL_ATTR_NODISCARD
 static inline T sqlength(vec_t<T,N,SWIZZLE> const &a)
 {
     return dot(a, a);
 }
 
-template<typename T, int N, int SWIZZLE>
+template<typename T, int N, int SWIZZLE> LOL_ATTR_NODISCARD
 static inline T length(vec_t<T,N,SWIZZLE> const &a)
 {
     /* FIXME: this is not very nice */
@@ -1172,7 +1172,7 @@ static inline vec_t<T,N> lerp(vec_t<T,N,SWIZZLE1> const &a,
     return ret;
 }
 
-template<typename T, int N, int SWIZZLE1, int SWIZZLE2>
+template<typename T, int N, int SWIZZLE1, int SWIZZLE2> LOL_ATTR_NODISCARD
 static inline T distance(vec_t<T,N,SWIZZLE1> const &a,
                          vec_t<T,N,SWIZZLE2> const &b)
 {

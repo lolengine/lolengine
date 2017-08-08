@@ -29,7 +29,7 @@ namespace lol
 {
 
 //AxisBase --------------------------------------------------------------------
-    struct AxisBase : public StructSafeEnum
+struct AxisBase : public StructSafeEnum
 {
     enum Type
     {
@@ -90,7 +90,7 @@ T_(box_t<, C_ 4>, box4)
 #undef T_
 
 template<typename T, int N>
-struct box_t
+struct LOL_ATTR_NODISCARD box_t
 {
     inline box_t()
       : aa(vec_t<T, N>(T(0))),
@@ -153,12 +153,12 @@ struct box_t
         return *this = *this * s;
     }
 
-    bool operator ==(box_t<T,N> const &box) const
+    LOL_ATTR_NODISCARD bool operator ==(box_t<T,N> const &box) const
     {
         return aa == box.aa && bb == box.bb;
     }
 
-    bool operator !=(box_t<T,N> const &box) const
+    LOL_ATTR_NODISCARD bool operator !=(box_t<T,N> const &box) const
     {
         return aa != box.aa || bb != box.bb;
     }
@@ -192,19 +192,19 @@ private:
     float Minus() const;
     float Plus()  const;
 public:
-    bool operator==(float value) const;
-    bool operator!=(float value) const;
-    bool operator<(float value)  const;
-    bool operator<=(float value) const;
-    bool operator>(float value)  const;
-    bool operator>=(float value) const;
+    LOL_ATTR_NODISCARD bool operator==(float value) const;
+    LOL_ATTR_NODISCARD bool operator!=(float value) const;
+    LOL_ATTR_NODISCARD bool operator<(float value)  const;
+    LOL_ATTR_NODISCARD bool operator<=(float value) const;
+    LOL_ATTR_NODISCARD bool operator>(float value)  const;
+    LOL_ATTR_NODISCARD bool operator>=(float value) const;
 };
-bool operator==(float value, const TestEpsilon& epsilon);
-bool operator!=(float value, const TestEpsilon& epsilon);
-bool operator<(float value, const TestEpsilon& epsilon);
-bool operator<=(float value, const TestEpsilon& epsilon);
-bool operator>(float value, const TestEpsilon& epsilon);
-bool operator>=(float value, const TestEpsilon& epsilon);
+LOL_ATTR_NODISCARD bool operator==(float value, const TestEpsilon& epsilon);
+LOL_ATTR_NODISCARD bool operator!=(float value, const TestEpsilon& epsilon);
+LOL_ATTR_NODISCARD bool operator<(float value, const TestEpsilon& epsilon);
+LOL_ATTR_NODISCARD bool operator<=(float value, const TestEpsilon& epsilon);
+LOL_ATTR_NODISCARD bool operator>(float value, const TestEpsilon& epsilon);
+LOL_ATTR_NODISCARD bool operator>=(float value, const TestEpsilon& epsilon);
 
 //--
 static inline bool TestAABBVsAABB(box2 const &b1, box2 const &b2)

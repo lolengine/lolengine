@@ -91,13 +91,13 @@ public:
     void SetWrap(WrapMode wrap_x, WrapMode wrap_y);
 
     /* Lock continuous arrays of pixels for writing */
-    template<PixelFormat T> typename PixelType<T>::type *lock();
-    void *lock();
+    template<PixelFormat T> LOL_ATTR_NODISCARD typename PixelType<T>::type *lock();
+    LOL_ATTR_NODISCARD void *lock();
     void unlock(void const *pixels);
 
     /* Lock 2D arrays of pixels for writing */
     template<PixelFormat T>
-    inline array2d<typename PixelType<T>::type> &lock2d()
+    LOL_ATTR_NODISCARD inline array2d<typename PixelType<T>::type> &lock2d()
     {
         /* Hack: this indirection is needed because of a Visual Studio ICE */
         return *(array2d<typename PixelType<T>::type> *)lock2d_helper(T);

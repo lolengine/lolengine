@@ -50,7 +50,7 @@ enum class SortAlgorithm : uint8_t
  * m_count are allocated. The rest is uninitialised memory.
  */
 
-template<typename T, typename ARRAY> class array_base
+template<typename T, typename ARRAY> class LOL_ATTR_NODISCARD array_base
 {
 public:
     typedef T element_t;

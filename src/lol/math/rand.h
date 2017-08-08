@@ -22,48 +22,48 @@ namespace lol
 {
 
 /* Random number generators */
-template<typename T> static inline T rand();
-template<typename T> static inline T rand(T a);
-template<typename T> static inline T rand(T a, T b);
+template<typename T> LOL_ATTR_NODISCARD static inline T rand();
+template<typename T> LOL_ATTR_NODISCARD static inline T rand(T a);
+template<typename T> LOL_ATTR_NODISCARD static inline T rand(T a, T b);
 
 /* One-value random number generators */
-template<typename T> static inline T rand(T a)
+template<typename T> LOL_ATTR_NODISCARD static inline T rand(T a)
 {
     return a ? rand<T>() % a : T(0);
 }
 
-template<> inline half rand<half>(half a)
+template<> LOL_ATTR_NODISCARD inline half rand<half>(half a)
 {
     float f = (float)std::rand() / (float)RAND_MAX;
     return (half)(a * f);
 }
 
-template<> inline float rand<float>(float a)
+template<> LOL_ATTR_NODISCARD inline float rand<float>(float a)
 {
     float f = (float)std::rand() / (float)RAND_MAX;
     return a * f;
 }
 
-template<> inline double rand<double>(double a)
+template<> LOL_ATTR_NODISCARD inline double rand<double>(double a)
 {
     double f = (double)std::rand() / (double)RAND_MAX;
     return a * f;
 }
 
-template<> inline ldouble rand<ldouble>(ldouble a)
+template<> LOL_ATTR_NODISCARD inline ldouble rand<ldouble>(ldouble a)
 {
     ldouble f = (ldouble)std::rand() / (ldouble)RAND_MAX;
     return a * f;
 }
 
 /* Two-value random number generator -- no need for specialisation */
-template<typename T> static inline T rand(T a, T b)
+template<typename T> LOL_ATTR_NODISCARD static inline T rand(T a, T b)
 {
     return a + rand<T>(b - a);
 }
 
 /* Default random number generator */
-template<typename T> static inline T rand()
+template<typename T> LOL_ATTR_NODISCARD static inline T rand()
 {
     switch (sizeof(T))
     {
@@ -117,10 +117,10 @@ template<typename T> static inline T rand()
     }
 }
 
-template<> inline half rand<half>() { return rand<half>(1.f); }
-template<> inline float rand<float>() { return rand<float>(1.f); }
-template<> inline double rand<double>() { return rand<double>(1.0); }
-template<> inline ldouble rand<ldouble>() { return rand<ldouble>(1.0); }
+template<> LOL_ATTR_NODISCARD inline half rand<half>() { return rand<half>(1.f); }
+template<> LOL_ATTR_NODISCARD inline float rand<float>() { return rand<float>(1.f); }
+template<> LOL_ATTR_NODISCARD inline double rand<double>() { return rand<double>(1.0); }
+template<> LOL_ATTR_NODISCARD inline ldouble rand<ldouble>() { return rand<ldouble>(1.0); }
 
 } /* namespace lol */
 

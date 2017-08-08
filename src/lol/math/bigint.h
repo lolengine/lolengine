@@ -40,7 +40,7 @@ namespace lol
  */
 
 template<unsigned int N = 16, typename T = uint32_t>
-class bigint
+class LOL_ATTR_NODISCARD bigint
 {
     static int const bits_per_digit = sizeof(T) * 8 - 1;
     static T const digit_mask = ~((T)1 << bits_per_digit);

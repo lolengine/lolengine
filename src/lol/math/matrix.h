@@ -34,7 +34,7 @@ namespace lol
  */
 
 template<typename T, int COLS, int ROWS>
-struct mat_t
+struct LOL_ATTR_NODISCARD mat_t
   : public linear_ops::base<vec_t<T,ROWS>>
 {
     static int const count = COLS;
@@ -72,7 +72,7 @@ private:
  */
 
 template <typename T>
-struct mat_t<T, 2, 2>
+struct LOL_ATTR_NODISCARD mat_t<T, 2, 2>
   : public linear_ops::base<vec_t<T,2>>
 {
     static int const count = 2;
@@ -157,7 +157,7 @@ static_assert(sizeof(dmat2) == 32, "sizeof(dmat2) == 32");
  */
 
 template <typename T>
-struct mat_t<T, 3, 3>
+struct LOL_ATTR_NODISCARD mat_t<T, 3, 3>
   : public linear_ops::base<vec_t<T,3>>
 {
     static int const count = 3;
@@ -288,7 +288,7 @@ static_assert(sizeof(dmat3) == 72, "sizeof(dmat3) == 72");
  */
 
 template <typename T>
-struct mat_t<T, 4, 4>
+struct LOL_ATTR_NODISCARD mat_t<T, 4, 4>
   : public linear_ops::base<vec_t<T,4>>
 {
     static int const count = 4;
@@ -498,7 +498,7 @@ mat_t<T, N - 1, N - 1> submatrix(mat_t<T, N, N> const &m, int i, int j)
  * Compute square matrix cofactor
  */
 
-template<typename T, int N>
+template<typename T, int N> LOL_ATTR_NODISCARD
 T cofactor(mat_t<T, N, N> const &m, int i, int j)
 {
     ASSERT(i >= 0); ASSERT(j >= 0); ASSERT(i < N); ASSERT(j < N);
@@ -506,7 +506,7 @@ T cofactor(mat_t<T, N, N> const &m, int i, int j)
     return ((i + j) & 1) ? -tmp : tmp;
 }
 
-template<typename T>
+template<typename T> LOL_ATTR_NODISCARD
 T cofactor(mat_t<T, 2, 2> const &m, int i, int j)
 {
     /* This specialisation shouldn't be needed, but Visual Studio. */
@@ -548,7 +548,7 @@ void lu_decomposition(mat_t<T, N, N> const &m, mat_t<T, N, N> & L, mat_t<T, N, N
  * Compute square matrix determinant, with a specialisation for 1×1 matrices
  */
 
-template<typename T, int N>
+template<typename T, int N> LOL_ATTR_NODISCARD
 T determinant(mat_t<T, N, N> const &m)
 {
     mat_t<T, N, N> L, U;
@@ -562,7 +562,7 @@ T determinant(mat_t<T, N, N> const &m)
     return permutation_det(P) * det;
 }
 
-template<typename T>
+template<typename T> LOL_ATTR_NODISCARD
 T const & determinant(mat_t<T, 1, 1> const &m)
 {
     return m[0][0];
@@ -655,7 +655,7 @@ vec_t<int, N> p_transpose(vec_t<int, N> P)
  * Compute the determinant of a permutation square matrix corresponding to the permutation vector
  */
 
-template<int N>
+template<int N> LOL_ATTR_NODISCARD
 int permutation_det(vec_t<int, N> const & permutation)
 {
     int result = 1;

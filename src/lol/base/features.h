@@ -53,11 +53,17 @@
 
 #undef LOL_FEATURE_CXX17_ATTRIBUTE_NODISCARD
 
+/* Features detected through __has_cpp_attribute */
+#ifdef __has_cpp_attribute
+#   if __has_cpp_attribute(deprecated)
+#       define LOL_FEATURE_CXX17_ATTRIBUTE_NODISCARD 1
+#   endif
+#endif
+
 /* Features supported by GCC */
 #if defined __GNUC__
 #   define LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS 1
 #   define LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS 1
-#   define LOL_FEATURE_CXX17_ATTRIBUTE_NODISCARD 1
 #   if defined(__GXX_EXPERIMENTAL_CXX0X) || __cplusplus >= 201103L
 #       define LOL_FEATURE_CXX11_CONSTEXPR 1
 #       define LOL_FEATURE_CXX11_ISNAN 1
@@ -75,7 +81,6 @@
 #   define LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS 1
 #   define LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS 1
 #   define LOL_FEATURE_CXX11_ARRAY_INITIALIZERS 1
-#   define LOL_FEATURE_CXX17_ATTRIBUTE_NODISCARD 1
 #   if __has_feature(cxx_constexpr)
 #       define LOL_FEATURE_CXX11_CONSTEXPR 1
 #   endif
@@ -104,7 +109,6 @@
     /* Still unsupported as of VS 2015 (TODO: check VS2017) */
 #   undef LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
 #   undef LOL_FEATURE_CXX11_CONSTEXPR
-#   undef LOL_FEATURE_CXX17_ATTRIBUTE_NODISCARD
 #endif
 
 

@@ -25,7 +25,7 @@ namespace lol
 {
 
 template<typename T>
-struct polynomial
+struct LOL_ATTR_NODISCARD polynomial
 {
     /* The zero polynomial */
     explicit inline polynomial() {}
@@ -90,7 +90,7 @@ struct polynomial
     /* Evaluate polynomial at a given value. This method can also
      * be used to compose polynomials, i.e. using another polynomial
      * as the value instead of a scalar. */
-    template<typename U> U eval(U x) const
+    template<typename U> LOL_ATTR_NODISCARD U eval(U x) const
     {
         U ret(leading());
         for (int i = degree() - 1; i >= 0; --i)
@@ -260,7 +260,7 @@ struct polynomial
      * copy because we cannot let the user mess with the integrity of
      * the structure (i.e. the guarantee that the leading coefficient
      * remains non-zero). */
-    inline T operator[](ptrdiff_t n) const
+    LOL_ATTR_NODISCARD inline T operator[](ptrdiff_t n) const
     {
         if (n < 0 || n > degree())
             return T(0);
@@ -269,7 +269,7 @@ struct polynomial
     }
 
     /* Return the leading coefficient */
-    inline T leading() const
+    LOL_ATTR_NODISCARD inline T leading() const
     {
         return (*this)[degree()];
     }

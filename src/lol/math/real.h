@@ -35,7 +35,8 @@ namespace lol
  * avoid accidental implicit conversions ("int x = 1; sqrt(x)" will never
  * call real::sqrt).
  */
-template<int N> class Real
+template<int N>
+class LOL_ATTR_NODISCARD Real
 {
 public:
     Real();
@@ -53,11 +54,11 @@ public:
 
     Real(char const *str);
 
-    operator float() const;
-    operator double() const;
-    operator long double() const;
-    operator int() const;
-    operator unsigned int() const;
+    LOL_ATTR_NODISCARD operator float() const;
+    LOL_ATTR_NODISCARD operator double() const;
+    LOL_ATTR_NODISCARD operator long double() const;
+    LOL_ATTR_NODISCARD operator int() const;
+    LOL_ATTR_NODISCARD operator unsigned int() const;
 
     Real<N> operator +() const;
     Real<N> operator -() const;
@@ -70,15 +71,15 @@ public:
     Real<N> const &operator *=(Real<N> const &x);
     Real<N> const &operator /=(Real<N> const &x);
 
-    bool operator ==(Real<N> const &x) const;
-    bool operator !=(Real<N> const &x) const;
-    bool operator <(Real<N> const &x) const;
-    bool operator >(Real<N> const &x) const;
-    bool operator <=(Real<N> const &x) const;
-    bool operator >=(Real<N> const &x) const;
+    LOL_ATTR_NODISCARD bool operator ==(Real<N> const &x) const;
+    LOL_ATTR_NODISCARD bool operator !=(Real<N> const &x) const;
+    LOL_ATTR_NODISCARD bool operator <(Real<N> const &x) const;
+    LOL_ATTR_NODISCARD bool operator >(Real<N> const &x) const;
+    LOL_ATTR_NODISCARD bool operator <=(Real<N> const &x) const;
+    LOL_ATTR_NODISCARD bool operator >=(Real<N> const &x) const;
 
-    bool operator !() const;
-    operator bool() const;
+    LOL_ATTR_NODISCARD bool operator !() const;
+    LOL_ATTR_NODISCARD operator bool() const;
 
     /* Comparison functions */
     template<int K> friend Real<K> min(Real<K> const &a, Real<K> const &b);
@@ -238,11 +239,11 @@ template<> real::Real(int64_t i);
 template<> real::Real(uint64_t i);
 template<> real::Real(char const *str);
 
-template<> real::operator float() const;
-template<> real::operator double() const;
-template<> real::operator long double() const;
-template<> real::operator int() const;
-template<> real::operator unsigned int() const;
+template<> LOL_ATTR_NODISCARD real::operator float() const;
+template<> LOL_ATTR_NODISCARD real::operator double() const;
+template<> LOL_ATTR_NODISCARD real::operator long double() const;
+template<> LOL_ATTR_NODISCARD real::operator int() const;
+template<> LOL_ATTR_NODISCARD real::operator unsigned int() const;
 template<> real real::operator +() const;
 template<> real real::operator -() const;
 template<> real real::operator +(real const &x) const;
@@ -253,14 +254,14 @@ template<> real const &real::operator +=(real const &x);
 template<> real const &real::operator -=(real const &x);
 template<> real const &real::operator *=(real const &x);
 template<> real const &real::operator /=(real const &x);
-template<> bool real::operator ==(real const &x) const;
-template<> bool real::operator !=(real const &x) const;
-template<> bool real::operator <(real const &x) const;
-template<> bool real::operator >(real const &x) const;
-template<> bool real::operator <=(real const &x) const;
-template<> bool real::operator >=(real const &x) const;
-template<> bool real::operator !() const;
-template<> real::operator bool() const;
+template<> LOL_ATTR_NODISCARD bool real::operator ==(real const &x) const;
+template<> LOL_ATTR_NODISCARD bool real::operator !=(real const &x) const;
+template<> LOL_ATTR_NODISCARD bool real::operator <(real const &x) const;
+template<> LOL_ATTR_NODISCARD bool real::operator >(real const &x) const;
+template<> LOL_ATTR_NODISCARD bool real::operator <=(real const &x) const;
+template<> LOL_ATTR_NODISCARD bool real::operator >=(real const &x) const;
+template<> LOL_ATTR_NODISCARD bool real::operator !() const;
+template<> LOL_ATTR_NODISCARD real::operator bool() const;
 
 template<int K> Real<K> min(Real<K> const &a, Real<K> const &b);
 template<int K> Real<K> max(Real<K> const &a, Real<K> const &b);

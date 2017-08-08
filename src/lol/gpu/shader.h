@@ -36,7 +36,6 @@ namespace lol
 //VertexUsageBase -------------------------------------------------------------
 struct VertexUsageBase : public StructSafeEnum
 {
-
     enum Type
     {
         Position,
@@ -56,6 +55,7 @@ struct VertexUsageBase : public StructSafeEnum
         Sample,
         MAX,
     };
+
 protected:
     virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
     {
