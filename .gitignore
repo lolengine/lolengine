@@ -52,11 +52,11 @@ perf.data*
 *~
 .ycm_extra_conf.pyc
 # Visual Studio cruft
+.vs
 *.vcxproj.user
 *.csproj.user
 binaries/*Debug
 binaries/*Release
-build/.vs
 build/*.VC.VC.opendb
 build/*.VC.db
 build/*.sdf
