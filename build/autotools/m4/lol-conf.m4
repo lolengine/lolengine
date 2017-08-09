@@ -128,9 +128,11 @@ AM_CONDITIONAL(LOL_USE_EGL, test "${ac_cv_my_have_egl}" != "no")
 
 dnl Use libpng? (replacement for SDL_image)
 ac_cv_my_have_libpng="no"
-PKG_CHECK_MODULES(LIBPNG, libpng, [ac_cv_my_have_libpng="yes"], [:])
-if test "${ac_cv_my_have_libpng}" != "no"; then
-  AC_DEFINE(LOL_USE_LIBPNG, 1, Define to 1 to use libpng)
+if test "${enable_png}" != "no"; then
+  PKG_CHECK_MODULES(LIBPNG, libpng, [ac_cv_my_have_libpng="yes"], [:])
+  if test "${ac_cv_my_have_libpng}" != "no"; then
+    AC_DEFINE(LOL_USE_LIBPNG, 1, Define to 1 to use libpng)
+  fi
 fi
 AM_CONDITIONAL(LOL_USE_LIBPNG, test "${ac_cv_my_have_libpng}" != "no")
 
