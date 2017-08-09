@@ -135,11 +135,13 @@ AM_CONDITIONAL(LOL_USE_LIBPNG, test "${ac_cv_my_have_libpng}" != "no")
 
 dnl  Use Imlib2?
 ac_cv_my_have_imlib2="no"
-PKG_CHECK_MODULES(IMLIB2, imlib2, [ac_cv_my_have_imlib2="yes"], [:])
-if test "${ac_cv_my_have_imlib2}" != "no"; then
-  AC_DEFINE(LOL_USE_IMLIB2, 1, Define to 1 to use Imlib2)
-  LOL_CFLAGS="${LOL_CFLAGS} ${IMLIB2_CFLAGS}"
-  LOL_LIBS="${LOL_LIBS} ${IMLIB2_LIBS}"
+if test "${enable_imlib2}" != "no"; then
+  PKG_CHECK_MODULES(IMLIB2, imlib2, [ac_cv_my_have_imlib2="yes"], [:])
+  if test "${ac_cv_my_have_imlib2}" != "no"; then
+    AC_DEFINE(LOL_USE_IMLIB2, 1, Define to 1 to use Imlib2)
+    LOL_CFLAGS="${LOL_CFLAGS} ${IMLIB2_CFLAGS}"
+    LOL_LIBS="${LOL_LIBS} ${IMLIB2_LIBS}"
+  fi
 fi
 AM_CONDITIONAL(LOL_USE_IMLIB2, test "${ac_cv_my_have_imlib2}" = "yes")
 

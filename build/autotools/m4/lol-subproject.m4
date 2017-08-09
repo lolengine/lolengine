@@ -20,7 +20,7 @@ dnl  Build and configure Lol Engine before our repository
 dnl  Ensure $lol_srcdir and $lol_builddir are properly set
 dnl
 
-ac_configure_args="${ac_configure_args} --enable-subproject"
+ac_configure_args="${ac_configure_args} --enable-subproject $1"
 AC_CONFIG_SUBDIRS([lol])
 AC_SUBST(lol_srcdir, '${top_srcdir}/lol')
 AC_SUBST(lol_builddir, '${top_builddir}/lol')
