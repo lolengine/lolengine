@@ -1,7 +1,7 @@
 dnl
 dnl  Lol Engine
 dnl
-dnl  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
+dnl  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
 dnl
 dnl  Lol Engine is free software. It comes without any warranty, to
 dnl  the extent permitted by applicable law. You can redistribute it
@@ -15,6 +15,7 @@ dnl
 # ---------------------
 AC_DEFUN([LOL_AC_CHECK_FFMPEG],
 [
+ac_cv_my_have_ffmpeg="no"
 if test "${enable_ffmpeg}" != "no"; then
   LOL_AC_CHECK_FFMPEG_INNER()
 fi

@@ -1,7 +1,7 @@
 dnl
 dnl  Lol Engine
 dnl
-dnl  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
+dnl  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
 dnl
 dnl  Lol Engine is free software. It comes without any warranty, to
 dnl  the extent permitted by applicable law. You can redistribute it
@@ -15,13 +15,17 @@ dnl
 # ------------------
 AC_DEFUN([LOL_AC_CHECK_SDL],
 [
+ac_cv_my_have_sdl="no"
+ac_cv_my_have_old_sdl="no"
+ac_cv_my_have_sdl_image="no"
+ac_cv_my_have_sdl_mixer="no"
 if test "${enable_sdl}" != "no"; then
   LOL_AC_CHECK_SDL_INNER()
 fi
-AM_CONDITIONAL(LOL_USE_SDL, test "x${ac_cv_my_have_sdl}" = xyes)
-AM_CONDITIONAL(LOL_USE_SDL_MIXER, test "x${ac_cv_my_have_sdl_mixer}" = xyes)
-AM_CONDITIONAL(LOL_USE_SDL_IMAGE, test "x${ac_cv_my_have_sdl_image}" = xyes)
-AM_CONDITIONAL(LOL_USE_OLD_SDL, test "x${ac_cv_my_have_old_sdl}" = xyes)
+AM_CONDITIONAL(LOL_USE_SDL, test "${ac_cv_my_have_sdl}" != "no")
+AM_CONDITIONAL(LOL_USE_SDL_MIXER, test "${ac_cv_my_have_sdl_mixer}" != "no")
+AM_CONDITIONAL(LOL_USE_SDL_IMAGE, test "${ac_cv_my_have_sdl_image}" != "no")
+AM_CONDITIONAL(LOL_USE_OLD_SDL, test "${ac_cv_my_have_old_sdl}" != "no")
 ])
 
 # LOL_AC_CHECK_SDL_INNER()
@@ -46,11 +50,6 @@ dnl    LOL_USE_SDL_MIXER   -- whether SDL_mixer was found
 dnl  Generated shell variables:
 dnl    SDL_CFLAGS      -- flags for SDL compilation
 dnl    SDL_LIBS        -- flags for SDL linking
-
-ac_cv_my_have_sdl="no"
-ac_cv_my_have_old_sdl="no"
-ac_cv_my_have_sdl_image="no"
-ac_cv_my_have_sdl_mixer="no"
 
 
 dnl  First, try the proper pkg-config check for SDL2

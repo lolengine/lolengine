@@ -1,7 +1,7 @@
 dnl
 dnl  Lol Engine
 dnl
-dnl  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
+dnl  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
 dnl
 dnl  Lol Engine is free software. It comes without any warranty, to
 dnl  the extent permitted by applicable law. You can redistribute it
@@ -80,6 +80,8 @@ AC_ARG_ENABLE(experimental,
 AC_ARG_ENABLE(subproject,
   [  --enable-subproject     build as a subproject (default no)])
 
+AC_ARG_ENABLE(gl,
+  [  --enable-gl             build using OpenGL or OpenGL ES (default autodetected)])
 AC_ARG_ENABLE(ffmpeg,
   [  --enable-ffmpeg         build using FFmpeg (default autodetected)])
 AC_ARG_ENABLE(sdl,

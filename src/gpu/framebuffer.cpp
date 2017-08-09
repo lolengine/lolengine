@@ -12,6 +12,9 @@
 
 #include <lol/engine-internal.h>
 
+// FIXME: fine-tune this define
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
+
 #include "lolgl.h"
 
 namespace lol
@@ -390,4 +393,6 @@ void Framebuffer::Unbind()
 }
 
 } /* namespace lol */
+
+#endif
 

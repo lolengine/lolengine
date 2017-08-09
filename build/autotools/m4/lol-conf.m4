@@ -1,7 +1,7 @@
 dnl
 dnl  Lol Engine
 dnl
-dnl  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
+dnl  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
 dnl
 dnl  Lol Engine is free software. It comes without any warranty, to
 dnl  the extent permitted by applicable law. You can redistribute it
@@ -102,25 +102,27 @@ AC_CHECK_LIB(log, __android_log_vprint,
 AM_CONDITIONAL(LOL_USE_ANDROID, test "${ac_cv_my_have_android}" != "no")
 
 
-dnl  Use EGL?
+dnl  Use EGL? (autodetect unless GL is disabled)
 ac_cv_my_have_egl="no"
-PKG_CHECK_MODULES(EGL, egl, [ac_cv_my_have_egl="yes"], [:])
-if test "${ac_cv_my_have_egl}" != "no"; then
-  AC_DEFINE(LOL_USE_EGL, 1, Define to 1 to use libegl)
-  EGL_LIBS="${EGL_LIBS} -lX11"
+if test "${enable_gl}" != "no"; then
+  PKG_CHECK_MODULES(EGL, egl, [ac_cv_my_have_egl="yes"], [:])
+  if test "${ac_cv_my_have_egl}" != "no"; then
+    AC_DEFINE(LOL_USE_EGL, 1, Define to 1 to use libegl)
+    EGL_LIBS="${EGL_LIBS} -lX11"
+  fi
+  AC_CHECK_LIB(EGL, main,
+   [ac_cv_my_have_egl="yes"
+    AC_DEFINE(LOL_USE_EGL, 1, Define to 1 to use libegl)
+    EGL_LIBS="-lEGL"])
+  dnl  Raspberry Pi is different, check for it with extra libs; also we
+  dnl  look for a different function to bypass autoconf caching
+  AC_CHECK_LIB(EGL, eglGetDisplay,
+   [ac_cv_my_have_egl="yes"
+    AC_DEFINE(LOL_USE_EGL, 1, Define to 1 to use libegl)
+    EGL_LIBS="-lEGL -lvcos -lvchiq_arm -lbcm_host -lGLESv2"],
+   [:],
+   [-lvcos -lvchiq_arm -lbcm_host -lGLESv2])
 fi
-AC_CHECK_LIB(EGL, main,
- [ac_cv_my_have_egl="yes"
-  AC_DEFINE(LOL_USE_EGL, 1, Define to 1 to use libegl)
-  EGL_LIBS="-lEGL"])
-dnl  Raspberry Pi is different, check for it with extra libs; also we
-dnl  look for a different function to bypass autoconf caching
-AC_CHECK_LIB(EGL, eglGetDisplay,
- [ac_cv_my_have_egl="yes"
-  AC_DEFINE(LOL_USE_EGL, 1, Define to 1 to use libegl)
-  EGL_LIBS="-lEGL -lvcos -lvchiq_arm -lbcm_host -lGLESv2"],
- [:],
- [-lvcos -lvchiq_arm -lbcm_host -lGLESv2])
 AM_CONDITIONAL(LOL_USE_EGL, test "${ac_cv_my_have_egl}" != "no")
 
 

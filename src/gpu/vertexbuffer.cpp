@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -13,6 +13,9 @@
 #include <lol/engine-internal.h>
 
 #include "lolgl.h"
+
+// FIXME: fine-tune this define
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
 
 namespace lol
 {
@@ -388,4 +391,6 @@ void VertexBuffer::Unlock()
 }
 
 } /* namespace lol */
+
+#endif
 
