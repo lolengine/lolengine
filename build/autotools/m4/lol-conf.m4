@@ -162,33 +162,6 @@ fi
 AM_CONDITIONAL(LOL_USE_GDIPLUS, test "${ac_cv_my_have_gdiplus}" = "yes")
 
 
-dnl  Use libavcodec? (required for movie encoding)
-ac_cv_my_have_ffmpeg="yes"
-PKG_CHECK_MODULES([LIBAVCODEC], [libavcodec], [:], [ac_cv_my_have_ffmpeg=no])
-PKG_CHECK_MODULES([LIBAVUTIL], [libavutil], [:], [ac_cv_my_have_ffmpeg=no])
-PKG_CHECK_MODULES([LIBAVFORMAT], [libavformat], [:], [ac_cv_my_have_ffmpeg=no])
-PKG_CHECK_MODULES([LIBSWSCALE], [libswscale], [:], [ac_cv_my_have_ffmpeg=no])
-if test "${ac_cv_my_have_ffmpeg}" = "no"; then
-  ac_cv_my_have_ffmpeg="yes"
-  AC_CHECK_HEADERS(libavcodec/avcodec.h, [:], [ac_cv_my_have_ffmpeg=no])
-  AC_CHECK_HEADERS(libavformat/avformat.h, [:], [ac_cv_my_have_ffmpeg=no])
-  AC_CHECK_HEADERS(libswscale/swscale.h, [:], [ac_cv_my_have_ffmpeg=no])
-  if test "${ac_cv_my_have_ffmpeg}" = "yes"; then
-    LIBAVCODEC_LIBS="-lavcodec"
-    LIBAVUTIL_LIBS="-lavutil"
-    LIBAVFORMAT_LIBS="-lavformat"
-    LIBSWSCALE_LIBS="-lswscale"
-    AC_CHECK_LIB(ws2_32, main, LOL_LIBS="${LOL_LIBS} -lws2_32")
-  fi
-fi
-if test "${ac_cv_my_have_ffmpeg}" != "no"; then
-  AC_DEFINE(LOL_USE_FFMPEG, 1, Define to 1 to use FFmpeg)
-  LOL_CFLAGS="${LOL_CFLAGS} ${LIBAVFORMAT_CFLAGS} ${LIBAVUTIL_CFLAGS} ${LIBAVCODEC_CFLAGS} ${LIBSWSCALE_CFLAGS}"
-  LOL_LIBS="${LOL_LIBS} ${LIBAVFORMAT_LIBS} ${LIBAVUTIL_LIBS} ${LIBAVCODEC_LIBS} ${LIBSWSCALE_LIBS}"
-fi
-AM_CONDITIONAL(LOL_USE_FFMPEG, test "${ac_cv_my_have_ffmpeg}" != "no")
-
-
 dnl  Are we building using MinGW?
 LOL_TRY_CXXFLAGS(-mwindows -mwin32,
  [AM_CXXFLAGS="${AM_CXXFLAGS} -mwindows -mwin32"
@@ -223,6 +196,7 @@ LOL_TRY_LDFLAGS(-framework UIKit,
 dnl  Other complex checks
 LOL_AC_CHECK_OPENGL()
 LOL_AC_CHECK_SDL()
+LOL_AC_CHECK_FFMPEG()
 
 
 dnl  Debug symbols

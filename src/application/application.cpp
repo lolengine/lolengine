@@ -32,6 +32,32 @@
 namespace lol
 {
 
+class null_display
+{
+    friend class ApplicationDisplayData;
+
+public:
+    null_display(char const *, ivec2) {}
+    virtual ~null_display() {}
+
+protected:
+    void SetResolution(ivec2) {}
+    void SetPosition(ivec2) {}
+
+    void Enable() {}
+    void Disable() {}
+};
+
+class null_app
+{
+public:
+    null_app(char const *, ivec2, float) {}
+    virtual ~null_app() {}
+
+    void ShowPointer(bool) {}
+    void Tick() {}
+};
+
 //-----------------------------------------------------------------------------
 class ApplicationDisplayData
 {
@@ -69,7 +95,7 @@ protected:
     /* FIXME: this macro is only deactivated if we include "lolgl.h" */
     //NOT HANDLED YET
 #else
-#   error No application class available on this platform
+    null_display display;
 #endif
 };
 
@@ -129,7 +155,7 @@ class ApplicationData
     /* FIXME: this macro is only deactivated if we include "lolgl.h" */
     EglApp app;
 #else
-#   error No application class available on this platform
+    null_app app;
 #endif
 };
 

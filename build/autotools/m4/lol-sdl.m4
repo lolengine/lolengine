@@ -15,6 +15,19 @@ dnl
 # ------------------
 AC_DEFUN([LOL_AC_CHECK_SDL],
 [
+if test "${enable_sdl}" != "no"; then
+  LOL_AC_CHECK_SDL_INNER()
+fi
+AM_CONDITIONAL(LOL_USE_SDL, test "x${ac_cv_my_have_sdl}" = xyes)
+AM_CONDITIONAL(LOL_USE_SDL_MIXER, test "x${ac_cv_my_have_sdl_mixer}" = xyes)
+AM_CONDITIONAL(LOL_USE_SDL_IMAGE, test "x${ac_cv_my_have_sdl_image}" = xyes)
+AM_CONDITIONAL(LOL_USE_OLD_SDL, test "x${ac_cv_my_have_old_sdl}" = xyes)
+])
+
+# LOL_AC_CHECK_SDL_INNER()
+# ------------------------
+AC_DEFUN([LOL_AC_CHECK_SDL_INNER],
+[
 dnl  Find which version of SDL to use (always required on Linux or Win32)
 dnl
 dnl  Defined C/C++ macros:
@@ -169,27 +182,22 @@ if test "x${ac_cv_my_have_sdl}" = xno; then
 else
   AC_DEFINE(LOL_USE_SDL, 1, Define to 1 to use SDL)
 fi
-AM_CONDITIONAL(LOL_USE_SDL, test "x${ac_cv_my_have_sdl}" = xyes)
 
 if test "x${ac_cv_my_have_sdl_mixer}" = xno; then
   AC_MSG_WARN([SDL_mixer not found])
 else
   AC_DEFINE(LOL_USE_SDL_MIXER, 1, Define to 1 to use SDL_mixer)
 fi
-AM_CONDITIONAL(LOL_USE_SDL_MIXER, test "x${ac_cv_my_have_sdl_mixer}" = xyes)
 
 if test "x${ac_cv_my_have_sdl_image}" = xno; then
   AC_MSG_WARN([SDL_image not found])
 else
   AC_DEFINE(LOL_USE_SDL_IMAGE, 1, Define to 1 to use SDL_image)
 fi
-AM_CONDITIONAL(LOL_USE_SDL_IMAGE, test "x${ac_cv_my_have_sdl_image}" = xyes)
 
 if test "x${ac_cv_my_have_old_sdl}" != xno; then
   AC_DEFINE(LOL_USE_OLD_SDL, 1, Define to 1 to use SDL)
 fi
-AM_CONDITIONAL(LOL_USE_OLD_SDL, test "x${ac_cv_my_have_old_sdl}" = xyes)
 
-]) # LOL_AC_CHECK_SDL
-
+]) # LOL_AC_CHECK_SDL_INNER
 

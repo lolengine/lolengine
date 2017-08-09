@@ -80,6 +80,11 @@ AC_ARG_ENABLE(experimental,
 AC_ARG_ENABLE(subproject,
   [  --enable-subproject     build as a subproject (default no)])
 
+AC_ARG_ENABLE(ffmpeg,
+  [  --enable-ffmpeg         build using FFmpeg (default autodetected)])
+AC_ARG_ENABLE(sdl,
+  [  --enable-sdl            build using SDL (default autodetected)])
+
 AC_ARG_ENABLE(test,
   [  --enable-test           build test suite (default yes)])
 AC_ARG_ENABLE(tools,

@@ -140,9 +140,11 @@ liblol_core_sources = \
     debug/fps.cpp debug/fps.h debug/lines.cpp \
     debug/record.cpp debug/record.h debug/stats.cpp debug/stats.h
 
+if LOL_USE_SDL
 sdl_sources = \
     platform/sdl/sdlapp.cpp platform/sdl/sdlapp.h \
     platform/sdl/sdlinput.cpp platform/sdl/sdlinput.h
+endif
 
 d3d9_sources = \
     platform/d3d9/d3d9input.cpp platform/d3d9/d3d9input.h
