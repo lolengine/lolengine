@@ -390,7 +390,7 @@ struct LOL_ATTR_NODISCARD polynomial
             quotient.set(n, remainder.leading());
             for (int i = 0; i < p.degree(); ++i)
                 remainder.m_coefficients[n + i] -= remainder.leading() * p[i];
-            remainder.m_coefficients.pop();
+            (void)remainder.m_coefficients.pop();
         }
 
         return ret;
@@ -400,8 +400,8 @@ private:
     /* Enforce the non-zero leading coefficient rule. */
     void reduce_degree()
     {
-        while (m_coefficients.count() && m_coefficients.last() == T(0))
-            m_coefficients.pop();
+        while (m_coefficients.count() && !m_coefficients.last())
+            (void)m_coefficients.pop();
     }
 
     /* The polynomial coefficients */
