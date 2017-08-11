@@ -66,7 +66,8 @@
       <AdditionalDependencies Condition="'$(Platform)'=='Orbis'">$(OrbisDeps);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Link Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">
-      <SubSystem>Windows</SubSystem>
+      <SubSystem Condition="'$(enable_sdl)'!='no'">Windows</SubSystem>
+      <SubSystem Condition="'$(enable_sdl)'=='no'">Console</SubSystem>
     </Link>
     <Link Condition="'$(Configuration)'=='Debug'">
       <GenerateDebugInformation>true</GenerateDebugInformation>
