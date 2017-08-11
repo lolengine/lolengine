@@ -16,11 +16,29 @@ dnl
 AC_DEFUN([LOL_AC_SUBPROJECT], [
 
 dnl
+dnl  Parse build.config if present
+dnl
+
+AC_MSG_WARN([${srcdir}])
+ac_lol_configure_args=""
+if test -f ${srcdir}/build.config; then
+  for x in `sed -ne 's,.*<enable_\(@<:@^>@:>@*\)>\(@<:@^<@:>@*\)</enable_@<:@^>@:>@*>.*,\1=\2,p' ${srcdir}/build.config`; do
+    eval "enable_${x}"
+    case ${x} in
+      *=no)  arg="--disable-${x%=no}" ;;
+      *=yes) arg="--enable-${x%=yes}" ;;
+      *) arg="" ;;
+    esac
+    ac_lol_configure_args="${ac_lol_configure_args} ${arg}"
+  done
+fi
+
+dnl
 dnl  Build and configure Lol Engine before our repository
 dnl  Ensure $lol_srcdir and $lol_builddir are properly set
 dnl
 
-ac_configure_args="${ac_configure_args} --enable-subproject $1"
+ac_configure_args="${ac_configure_args} --enable-subproject ${ac_lol_configure_args} $1"
 AC_CONFIG_SUBDIRS([lol])
 AC_SUBST(lol_srcdir, '${top_srcdir}/lol')
 AC_SUBST(lol_builddir, '${top_builddir}/lol')
