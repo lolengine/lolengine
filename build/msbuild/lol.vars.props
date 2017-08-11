@@ -18,34 +18,12 @@
     <LibGccLibs Condition="'$(Platform)'=='x64'">$(LibGccDir)\lib\x86_64-w64-mingw32</LibGccLibs>
     <LibGccDeps>libgcc.lib</LibGccDeps>
 
-    <!-- SDL -->
-    <SdlDir>$(ExternalDir)\sdl-2.0.3</SdlDir>
-    <SdlImageDir>$(ExternalDir)\sdl-image-2.0.0</SdlImageDir>
-    <SdlMixerDir>$(ExternalDir)\sdl-mixer-2.0.0</SdlMixerDir>
-    <SdlIncludes>$(SdlDir)\include;$(SdlImageDir)\include;$(SdlMixerDir)\include</SdlIncludes>
-    <SdlLibs Condition="'$(Platform)'=='Win32'">$(SdlDir)\lib\i686-w64-mingw32;$(SdlImageDir)\lib\i686-w64-msvc;$(SdlMixerDir)\lib\i686-w64-msvc</SdlLibs>
-    <SdlLibs Condition="'$(Platform)'=='x64'">$(SdlDir)\lib\x86_64-msvc;$(SdlImageDir)\lib\x86_64-msvc;$(SdlMixerDir)\lib\x86_64-msvc</SdlLibs>
-    <SdlDeps Condition="'$(Platform)'=='Win32'">SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib</SdlDeps>
-    <SdlDeps Condition="'$(Platform)'=='x64'">SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib</SdlDeps>
-    <Win32Defines>HAVE_SDL_H;LOL_USE_SDL;$(Win32Defines)</Win32Defines>
-    <Win32Defines>LOL_USE_SDL_MIXER;LOL_USE_SDL_IMAGE;$(Win32Defines)</Win32Defines>
-
     <!-- GTK+ & GtkGl -->
     <GtkDir>$(ExternalDir)\gtk-2.22.1</GtkDir>
     <GtkGlDir>$(ExternalDir)\gtkglarea-2.0.1</GtkGlDir>
     <GtkIncludes>$(GtkDir)\lib\glib-2.0\include;$(GtkDir)\lib\gtk-2.0\include;$(GtkDir)\include\glib-2.0;$(GtkDir)\include\gtk-2.0;$(GtkDir)\include\cairo;$(GtkDir)\include\pango-1.0;$(GtkDir)\include\gdk-pixbuf-2.0;$(GtkDir)\include\atk-1.0;$(GtkGlDir)\include</GtkIncludes>
     <GtkLibs>$(GtkDir)\lib;$(GtkDir)\bin;$(GtkGlDir)\lib</GtkLibs>
     <GtkDeps>gobject-2.0.lib;gthread-2.0.lib;glib-2.0.lib;gdk-win32-2.0.lib;gtk-win32-2.0.lib;gtkgl-2.0.lib</GtkDeps>
-
-    <!-- FFmpeg -->
-<!--
-    <FfmpegDir>$(ExternalDir)\ffmpeg-20141018</FfmpegDir>
-    <FfmpegIncludes>$(FfmpegDir)\include</FfmpegIncludes>
-    <FfmpegLibs Condition="'$(Platform)'=='Win32'">$(FfmpegDir)\lib\i686-w64-mingw32</FfmpegLibs>
-    <FfmpegLibs Condition="'$(Platform)'=='x64'">$(FfmpegDir)\lib\x86_64-w64-mingw32</FfmpegLibs>
-    <FfmpegDeps>swscale.lib;avformat.lib;avcodec.lib;swresample.lib;avutil.lib;ws2_32.lib</FfmpegDeps>
-    <Win32Defines>LOL_USE_FFMPEG;$(Win32Defines)</Win32Defines>
--->
 
     <!-- Assimp -->
     <AssimpDir>$(ExternalDir)\assimp-3.1.1</AssimpDir>
@@ -69,15 +47,6 @@
     <GdiDeps>Gdiplus.lib</GdiDeps>
     <Win32Defines>LOL_USE_GDIPLUS;$(Win32Defines)</Win32Defines>
 
-    <!-- OpenGL & GLEW -->
-    <GlewDir>$(ExternalDir)\glew-1.9.0</GlewDir>
-    <GlIncludes>$(GlewDir)\include</GlIncludes>
-    <GlLibs Condition="'$(Platform)'=='Win32'">$(GlewDir)\lib\i686-w64-mingw32</GlLibs>
-    <GlLibs Condition="'$(Platform)'=='x64'">$(GlewDir)\lib\x86_64-w64-mingw32</GlLibs>
-    <GlDeps Condition="'$(Platform)'=='Win32'">opengl32.lib;glew32s.lib</GlDeps>
-    <GlDeps Condition="'$(Platform)'=='x64'">opengl32.lib;glew32s.lib</GlDeps>
-    <Win32Defines>HAVE_GL_2X;LOL_USE_GLEW;GLEW_STATIC;$(Win32Defines)</Win32Defines>
-
     <!-- Xinput -->
     <XinputIncludes>$(DXSDK_DIR)\Include</XinputIncludes>
     <XinputLibs Condition="'$(Platform)'=='Win32'">$(DXSDK_DIR)\Lib\x86</XinputLibs>
@@ -91,8 +60,45 @@
     <!-- PS4-specific -->
     <OrbisDefines>HAVE_STDIO_H;
                   $(OrbisDefines)</OrbisDefines>
-
   </PropertyGroup>
+
+  <!-- OpenGL & GLEW -->
+  <PropertyGroup Condition="'$(enable_gl)'!='no'" Label="UserMacros">
+    <GlewDir>$(ExternalDir)\glew-1.9.0</GlewDir>
+    <GlIncludes>$(GlewDir)\include</GlIncludes>
+    <GlLibs Condition="'$(Platform)'=='Win32'">$(GlewDir)\lib\i686-w64-mingw32</GlLibs>
+    <GlLibs Condition="'$(Platform)'=='x64'">$(GlewDir)\lib\x86_64-w64-mingw32</GlLibs>
+    <GlDeps Condition="'$(Platform)'=='Win32'">opengl32.lib;glew32s.lib</GlDeps>
+    <GlDeps Condition="'$(Platform)'=='x64'">opengl32.lib;glew32s.lib</GlDeps>
+    <Win32Defines>HAVE_GL_2X;LOL_USE_GLEW;GLEW_STATIC;$(Win32Defines)</Win32Defines>
+  </PropertyGroup>
+
+  <!-- SDL -->
+  <PropertyGroup Condition="'$(enable_sdl)'!='no'" Label="UserMacros">
+    <SdlDir>$(ExternalDir)\sdl-2.0.3</SdlDir>
+    <SdlImageDir>$(ExternalDir)\sdl-image-2.0.0</SdlImageDir>
+    <SdlMixerDir>$(ExternalDir)\sdl-mixer-2.0.0</SdlMixerDir>
+    <SdlIncludes>$(SdlDir)\include;$(SdlImageDir)\include;$(SdlMixerDir)\include</SdlIncludes>
+    <SdlLibs Condition="'$(Platform)'=='Win32'">$(SdlDir)\lib\i686-w64-mingw32;$(SdlImageDir)\lib\i686-w64-msvc;$(SdlMixerDir)\lib\i686-w64-msvc</SdlLibs>
+    <SdlLibs Condition="'$(Platform)'=='x64'">$(SdlDir)\lib\x86_64-msvc;$(SdlImageDir)\lib\x86_64-msvc;$(SdlMixerDir)\lib\x86_64-msvc</SdlLibs>
+    <SdlDeps Condition="'$(Platform)'=='Win32'">SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib</SdlDeps>
+    <SdlDeps Condition="'$(Platform)'=='x64'">SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib</SdlDeps>
+    <Win32Defines>HAVE_SDL_H;LOL_USE_SDL;$(Win32Defines)</Win32Defines>
+    <Win32Defines>LOL_USE_SDL_MIXER;LOL_USE_SDL_IMAGE;$(Win32Defines)</Win32Defines>
+  </PropertyGroup>
+
+  <!-- FFmpeg -->
+<!--
+  <PropertyGroup Condition="'$(enable_ffmpeg)'!='no'" Label="UserMacros">
+    <FfmpegDir>$(ExternalDir)\ffmpeg-20141018</FfmpegDir>
+    <FfmpegIncludes>$(FfmpegDir)\include</FfmpegIncludes>
+    <FfmpegLibs Condition="'$(Platform)'=='Win32'">$(FfmpegDir)\lib\i686-w64-mingw32</FfmpegLibs>
+    <FfmpegLibs Condition="'$(Platform)'=='x64'">$(FfmpegDir)\lib\x86_64-w64-mingw32</FfmpegLibs>
+    <FfmpegDeps>swscale.lib;avformat.lib;avcodec.lib;swresample.lib;avutil.lib;ws2_32.lib</FfmpegDeps>
+    <Win32Defines>LOL_USE_FFMPEG;$(Win32Defines)</Win32Defines>
+  </PropertyGroup>
+-->
+
   <PropertyGroup />
 
   <ItemDefinitionGroup />

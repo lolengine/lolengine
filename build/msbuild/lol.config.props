@@ -4,7 +4,8 @@
   <!--
      - Import settings that can be overridden by the user
    -->
-  <Import Project="config-build.xml" />
+  <Import Condition="Exists('$(SolutionDir)\lol\build.config')" Project="$(SolutionDir)\lol\build.config" />
+  <Import Condition="Exists('$(SolutionDir)\build.config')" Project="$(SolutionDir)\build.config" />
 
   <!--
      - Import defaults settings from Visual Studio
