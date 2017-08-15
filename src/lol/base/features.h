@@ -55,7 +55,7 @@
 
 /* Features detected through __has_cpp_attribute */
 #ifdef __has_cpp_attribute
-#   if __has_cpp_attribute(deprecated)
+#   if __has_cpp_attribute(nodiscard)
 #       define LOL_FEATURE_CXX17_ATTRIBUTE_NODISCARD 1
 #   endif
 #endif
