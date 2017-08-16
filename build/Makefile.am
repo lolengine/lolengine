@@ -9,7 +9,6 @@ EXTRA_DIST += lol-build \
               build-nacl32 build-nacl64 build-android build-html \
               \
               msbuild/lolfx.targets \
-              msbuild/config-build.xml \
               msbuild/lolfx.xml \
               msbuild/lolfx.props \
               msbuild/lol.config.props \
