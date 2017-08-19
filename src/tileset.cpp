@@ -46,21 +46,21 @@ protected:
  */
 
 TileSet::TileSet(char const *path)
-  : m_tileset_data(new TileSetData()),
-    m_palette(nullptr),
-    TextureImage(path)
+  : TextureImage(path),
+    m_tileset_data(new TileSetData()),
+    m_palette(nullptr)
 {
 }
 
 TileSet::TileSet(char const *path, Image* image)
-    : TextureImage(path, image),
+  : TextureImage(path, image),
     m_tileset_data(new TileSetData()),
     m_palette(nullptr)
 {
 }
 
 TileSet::TileSet(char const *path, Image* image, array<ivec2, ivec2>& tiles)
-    : TextureImage(path, image),
+  : TextureImage(path, image),
     m_tileset_data(new TileSetData()),
     m_palette(nullptr)
 {

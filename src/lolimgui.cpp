@@ -346,6 +346,8 @@ void LolImGui::TickDraw(float seconds, Scene &scene)
 }
 void PrimitiveLolImGui::Render(Scene& scene, PrimitiveSource* primitive)
 {
+    UNUSED(scene, primitive);
+
     ImGuiIO& io = ImGui::GetIO();
     if (io.Fonts->TexID)
         ImGui::Render();
@@ -416,7 +418,7 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
     for (int n = 0; n < draw_data->CmdListsCount; n++)
     {
         const ImDrawList* cmd_list = draw_data->CmdLists[n];
-        const unsigned char* vtx_buffer = (const unsigned char*)&cmd_list->VtxBuffer.front();
+        /*const unsigned char* vtx_buffer = (const unsigned char*)&cmd_list->VtxBuffer.front();*/
 
         //Register uniforms
         m_shader->SetUniform(m_ortho, ortho);

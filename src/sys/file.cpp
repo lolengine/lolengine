@@ -25,6 +25,10 @@
 #   include <dirent.h>
 #endif
 
+#if defined HAVE_UNISTD_H
+#   include <unistd.h>
+#endif
+
 #include <atomic>
 #include <sys/stat.h>
 
@@ -60,6 +64,7 @@ class FileData
             case StreamType::StdOut: m_fd = stdout; break;
             case StreamType::StdErr: m_fd = stderr; break;
 #endif
+            default: break;
         }
     }
 
@@ -352,6 +357,8 @@ class DirectoryData
 
     void Open(String const &directory, FileAccess mode)
     {
+        UNUSED(mode); /* FIXME */
+
         m_type = StreamType::File;
 #if __ANDROID__
         /* FIXME: not implemented */
@@ -540,6 +547,7 @@ bool Directory::GetContent(array<String>* files, array<Directory>* directories)
 {
     array<String> sfiles, sdirectories;
     bool found_some = m_data->GetContentList(&sfiles, &sdirectories);
+    UNUSED(found_some);
 
     if (directories)
         for (int i = 0; i < sdirectories.count(); i++)
@@ -608,8 +616,8 @@ bool Directory::SetCurrent(String directory)
     String result = directory;
     result.replace('/', '\\', true);
     return !!SetCurrentDirectory(result.C());
-#elif HAVE_STDIO_H
-    /* FIXME: not implemented */
+#elif HAVE_UNISTD_H
+    chdir(directory.C());
 #endif
     return false;
 }

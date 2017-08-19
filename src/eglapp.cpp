@@ -259,6 +259,8 @@ EglApp::EglApp(char const *title, ivec2 res, float fps) :
     Ticker::Setup(fps);
     Video::Setup((ivec2)data->screen_size);
     audio::init();
+#else
+    UNUSED(title, res, fps);
 #endif
 }
 

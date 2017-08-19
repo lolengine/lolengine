@@ -39,6 +39,9 @@ void PrimitiveMesh::Render(Scene& scene, PrimitiveSource* primitive)
     ShaderUniform u_model, u_modelview, u_normalmat, uni_tex, uni_texsize;
     ShaderAttrib a_pos, a_tex;
 
+    /* FIXME: ignored for now */
+    UNUSED(primitive);
+
     {
         /* If this primitive uses a new shader, update attributes */
         if (m_submesh->GetShader() != shader)

@@ -320,6 +320,7 @@ static float cie_1931_xyz[] =
 
 /* CIE 1964 Colorimetric Observer, aka. 10º Observer
  * for wavelengths 360 to 830. */
+#if 0
 static float cie_1964_xyz[] =
 {
     /* 360 — 399 nm */
@@ -571,6 +572,7 @@ static float cie_1964_xyz[] =
     1.747e-06f, 7.074e-07f, 0.0000000f, 1.647e-06f, 6.675e-07f, 0.0000000f,
     1.553e-06f, 6.297e-07f, 0.0000000f,
 };
+#endif
 
 vec3 Color::WavelengthToCIExyY(float nm)
 {

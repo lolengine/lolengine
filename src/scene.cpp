@@ -58,6 +58,8 @@ static inline void gpu_marker(char const *message)
 #if LOL_USE_GLEW
     if (GLEW_GREMEDY_string_marker)
         glStringMarkerGREMEDY(0, message);
+#else
+    UNUSED(message);
 #endif
 }
 
@@ -498,7 +500,7 @@ void Scene::ReleaseAllPrimitiveRenderers(uintptr_t key)
 }
 
 //-----------------------------------------------------------------------------
-void Scene::AddTile(TileSet *tileset, int id, vec3 pos, int o, vec2 scale, float radians)
+void Scene::AddTile(TileSet *tileset, int id, vec3 pos, vec2 scale, float radians)
 {
     ASSERT(id < tileset->GetTileCount());
 
@@ -582,7 +584,7 @@ void Scene::DisableDisplay()
 
 static bool do_pp = true;
 
-void Scene::pre_render(float seconds)
+void Scene::pre_render(float)
 {
     gpu_marker("Pre Render");
 
@@ -615,7 +617,7 @@ void Scene::render(float seconds)
     render_lines(seconds);
 }
 
-void Scene::post_render(float seconds)
+void Scene::post_render(float)
 {
     gpu_marker("Post Render");
 

@@ -322,6 +322,23 @@ struct LOL_ATTR_NODISCARD sqt_t
 };
 
 /*
+ * stdstream method implementations
+ */
+
+template<typename U>
+std::ostream &operator<<(std::ostream &stream, cmplx_t<U> const &c)
+{
+    return stream << "(" << c.x << ", " << c.y << ")";
+}
+
+template<typename U>
+std::ostream &operator<<(std::ostream &stream, quat_t<U> const &q)
+{
+    return stream << "(" << q.w << ", " << q.x << ", "
+                         << q.y << ", " << q.z << ")";
+}
+
+/*
  * Common operations on transforms
  */
 

@@ -220,7 +220,6 @@ void Debug::DrawBox(vec2 a, vec2 b, mat2 transform, DCD data)
     v[2] = b;
     v[3] = vec2(b.x, a.y);
 
-    int i = 0;
     Debug::DrawLine((transform * v[0]).xy, (transform * v[1]).xy, data);
     Debug::DrawLine((transform * v[1]).xy, (transform * v[2]).xy, data);
     Debug::DrawLine((transform * v[2]).xy, (transform * v[3]).xy, data);
@@ -253,7 +252,6 @@ void Debug::DrawCircle(vec2 a, vec2 s, DCD data)
 //--
 void Debug::DrawCircle(vec3 a, vec3 x, vec3 y, DCD data)
 {
-    Scene& scene = Scene::GetScene();
     float size = F_PI * 2.f * lol::max(length(x), length(y));
     int segment_nb = lol::max(1, (int)((size * .25f) / data.m_segment_size));
     for (int i = 0; i < segment_nb; i++)
@@ -272,7 +270,6 @@ void Debug::DrawCircle(vec3 a, vec3 x, vec3 y, DCD data)
 //--
 void Debug::DrawCircle(vec2 a, vec2 x, vec2 y, DCD data)
 {
-    Scene& scene = Scene::GetScene();
     float size = F_PI * 2.f * lol::max(length(x), length(y));
     int segment_nb = lol::max(1, (int)((size * .25f) / data.m_segment_size));
     for (int i = 0; i < segment_nb; i++)
@@ -318,7 +315,6 @@ void Debug::DrawCapsule(vec3 a, float s, vec3 h, DCD data)
 //--
 void Debug::DrawCapsule(vec3 a, vec3 x, vec3 y, vec3 z, vec3 h, DCD data)
 {
-    Scene& scene = Scene::GetScene();
     float size = F_PI * 2.f * lol::max(length(x), length(y));
     int segment_nb = lol::max(1, (int)((size * .25f) / data.m_segment_size));
     for (int i = -1; i < 2; i += 2)

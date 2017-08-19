@@ -97,7 +97,6 @@ void CsgBsp::AddTriangleToTree(int const &tri_idx, vec3 const &tri_p0, vec3 cons
         {
             //there are two intersections, no more.
             vec3 isec_v[2] = { vec3(.0f), vec3(.0f) };
-            int isec_i[2] = { 0, 0 };
             int isec_base = 0;
             int isec_idx = 0;
 
@@ -108,7 +107,7 @@ void CsgBsp::AddTriangleToTree(int const &tri_idx, vec3 const &tri_p0, vec3 cons
                 if (TestRayVsPlane(v[i], v[(i + 1) % 3],
                                     m_tree[leaf_idx].m_origin, m_tree[leaf_idx].m_normal,
                                     isec_v[isec_idx]))
-                    isec_i[isec_idx++] = i;
+                    ++isec_idx;
                 else
                     isec_base = i;
             }
@@ -274,7 +273,6 @@ int CsgBsp::TestTriangleToTree(vec3 const &tri_p0, vec3 const &tri_p1, vec3 cons
                 int isec_i[2] = { 0, 0 };
                 int new_v_idx[2] = { 0, 0 };
                 int isec_base = 0;
-                int isec_idx = 0;
 
                 int i = 0;
                 for (; i < m_tree[leaf_idx].m_tri_list.count(); i++)
@@ -351,11 +349,11 @@ int CsgBsp::TestTriangleToTree(vec3 const &tri_p0, vec3 const &tri_p1, vec3 cons
 
                             int v_idx0 = (isec_base == 1)?(1):(0);
                             int v_idx1 = (isec_base == 1)?(0):(1);
+                            int tri_to_remove = tri_to_process.count() - 1;
+#if 0
                             //Leaf_type is the type for the triangle that is alone on its side.
                             int leaf_type = res_side[(isec_base + 2) % 3];
-                            int tri_to_remove = tri_to_process.count() - 1;
 
-#if 0
                             if (m_tree[leaf_idx].m_leaves[leaf_type] == LEAF_CURRENT && tri_to_process.last().m1.last() == 1)
                                 tri_list.push(leaf_type,
                                                 t[(isec_base + 2) % 3], new_v_idx[v_idx1], new_v_idx[v_idx0]);

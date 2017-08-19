@@ -1018,6 +1018,29 @@ static_assert(sizeof(vec4) == 16, "sizeof(vec4) == 16");
 static_assert(sizeof(dvec4) == 32, "sizeof(dvec4) == 32");
 
 /*
+ * stdstream method implementations
+ */
+
+template<typename U>
+std::ostream &operator<<(std::ostream &stream, vec_t<U,2> const &v)
+{
+    return stream << "(" << v.x << ", " << v.y << ")";
+}
+
+template<typename U>
+std::ostream &operator<<(std::ostream &stream, vec_t<U,3> const &v)
+{
+    return stream << "(" << v.x << ", " << v.y << ", " << v.z << ")";
+}
+
+template<typename U>
+std::ostream &operator<<(std::ostream &stream, vec_t<U,4> const &v)
+{
+    return stream << "(" << v.x << ", " << v.y << ", "
+                         << v.z << ", " << v.w << ")";
+}
+
+/*
  * vec_t *(scalar, vec_t)
  */
 

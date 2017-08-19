@@ -121,6 +121,8 @@ void Video::Capture(uint32_t *buffer)
             buffer[j * width + i] = buffer[(height - j - 1) * width + i];
             buffer[(height - j - 1) * width + i] = tmp;
         }
+#else
+    UNUSED(buffer);
 #endif
 }
 

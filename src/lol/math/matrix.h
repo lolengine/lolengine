@@ -63,6 +63,10 @@ struct LOL_ATTR_NODISCARD mat_t
     inline vec_t<T,ROWS>& operator[](size_t n) { return m_data[n]; }
     inline vec_t<T,ROWS> const& operator[](size_t n) const { return m_data[n]; }
 
+    template<class U>
+    friend std::ostream &operator<<(std::ostream &stream,
+                                    mat_t<U,COLS,ROWS> const &m);
+
 private:
     vec_t<T,ROWS> m_data[COLS];
 };
@@ -130,10 +134,6 @@ struct LOL_ATTR_NODISCARD mat_t<T, 2, 2>
 
     void printf() const;
     String tostring() const;
-
-    template<class U>
-    friend std::ostream &operator<<(std::ostream &stream,
-                                    mat_t<U,2,2> const &m);
 
     static const mat_t<T,2,2> identity;
 
@@ -261,10 +261,6 @@ struct LOL_ATTR_NODISCARD mat_t<T, 3, 3>
 
     void printf() const;
     String tostring() const;
-
-    template<class U>
-    friend std::ostream &operator<<(std::ostream &stream,
-                                    mat_t<U,3,3> const &m);
 
     static const mat_t<T,3,3> identity;
 
@@ -442,10 +438,6 @@ struct LOL_ATTR_NODISCARD mat_t<T, 4, 4>
     void printf() const;
     String tostring() const;
 
-    template<class U>
-    friend std::ostream &operator<<(std::ostream &stream,
-                                    mat_t<U,4,4> const &m);
-
     static const mat_t<T,4,4> identity;
 
 private:
@@ -462,6 +454,24 @@ static_assert(sizeof(f16mat4) == 32, "sizeof(f16mat4) == 32");
 #endif
 static_assert(sizeof(mat4) == 64, "sizeof(mat4) == 64");
 static_assert(sizeof(dmat4) == 128, "sizeof(dmat4) == 128");
+
+/*
+ * stdstream method implementations
+ */
+
+template<class U, int COLS, int ROWS>
+std::ostream &operator<<(std::ostream &stream,
+                         mat_t<U,COLS,ROWS> const &m)
+{
+    for (int y = 0; y < ROWS; ++y)
+    {
+        stream << (y == 0 ? "(" : ", ");
+        for (int x = 0; x < COLS; ++x)
+            stream << (x == 0 ? "(" : ", ") << m[x][y];
+        stream << ")";
+    }
+    return stream << ")";
+}
 
 /*
  * Transpose any matrix

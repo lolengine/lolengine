@@ -46,7 +46,7 @@ void Sprite::TickDraw(float seconds, Scene &scene)
 {
     Entity::TickDraw(seconds, scene);
 
-    scene.AddTile(data->tileset, data->id, m_position, 0, vec2(1.0f), 0.0f);
+    scene.AddTile(data->tileset, data->id, m_position, vec2(1.0f), 0.0f);
 }
 
 Sprite::~Sprite()

@@ -99,9 +99,11 @@ bool movie::open_file(char const *filename)
         msg::error("could not write header: %s\n", ERROR_TO_STRING(ret));
         return false;
     }
-#endif
-
     return true;
+#else
+    UNUSED(filename);
+    return false;
+#endif
 }
 
 bool movie::push_image(image &im)
@@ -144,6 +146,8 @@ bool movie::push_image(image &im)
             return false;
         }
     }
+#else
+    UNUSED(im);
 #endif
 
     return true;

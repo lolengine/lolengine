@@ -64,9 +64,9 @@ void audio::set_channels(int channels)
 void audio::set_volume(int channel, int volume)
 {
 #if defined LOL_USE_SDL_MIXER
-    Mix_Volume(channel,volume);
+    Mix_Volume(channel, volume);
 #else
-    UNUSED(channel);
+    UNUSED(channel, volume);
 #endif
 }
 

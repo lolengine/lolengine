@@ -69,7 +69,7 @@ void Entity::TickGame(float seconds)
 
 void Entity::TickDraw(float seconds, Scene &scene)
 {
-    (void)seconds;
+    UNUSED(seconds, scene);
 #if !LOL_BUILD_RELEASE
     if (m_tickstate != STATE_PRETICK_DRAW)
         msg::error("invalid entity draw tick\n");

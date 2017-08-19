@@ -187,17 +187,18 @@ const LuaObjectLibrary* EasyMeshLuaObject::GetLib()
 }
 
 //-----------------------------------------------------------------------------
-bool EasyMesh::Compile(char const *command, bool Execute)
+bool EasyMesh::Compile(char const *command, bool execute)
 {
     bool res = false;
     // FIXME: make this work again
+    UNUSED(command, execute);
 #if 0
     EasyMeshCompiler mc(*this);
     BD()->Enable(MeshBuildOperation::CommandRecording);
     if ((res = mc.ParseString(command)))
     {
         BD()->Disable(MeshBuildOperation::CommandRecording);
-        if (Execute)
+        if (execute)
             ExecuteCmdStack();
     }
 #endif

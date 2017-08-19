@@ -132,10 +132,12 @@ void SubMesh::Render()
             attribs[j] = m_shader->GetAttribLocation(usage, usages[usage_index]++);
         }
 
-        vertex_count = m_vbos[i]->GetSize() / m_vdecl->GetStream(i).GetSize();
+        vertex_count += m_vbos[i]->GetSize() / m_vdecl->GetStream(i).GetSize();
 
         m_vdecl->SetStream(m_vbos[i], attribs);
     }
+
+    UNUSED(vertex_count);
 
     for (int i = 0; i < m_textures.count(); ++i)
     {

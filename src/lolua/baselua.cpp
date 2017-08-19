@@ -151,7 +151,7 @@ void Loader::StoreObject(lua_State* l, Object* obj)
 //-----------------------------------------------------------------------------
 bool Loader::ExecLuaFile(String const &lua)
 {
-    const char* c = lua_pushstring(m_lua_state, lua.C());
+    lua_pushstring(m_lua_state, lua.C());
     int status = LuaBaseData::LuaDoFile(m_lua_state);
     return status == 0;
 }

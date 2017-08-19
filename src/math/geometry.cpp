@@ -123,7 +123,7 @@ namespace lol
         //We first need to find two points intersecting, no matter on which triangle.
         for (int i = 0; i < 2 && isecIdx < 2; i++)
         {
-            int found_isec = -1;
+            /*int found_isec = -1;*/
             for (int j = 0; j < 3 && isecIdx < 2; j++)
             {
                 int pIdx = j + i * 3;
@@ -150,7 +150,7 @@ namespace lol
                         //if it's the second intersection, we need it to be different from the first one.
                         (isecIdx == 1 && length(isec[0] - isec[1]) > TestEpsilon::Get()))
                     {
-                        found_isec = i;
+                        /*found_isec = i;*/
                         isecIdx++;
                     }
                 }
@@ -172,11 +172,9 @@ namespace lol
                            vec3 &isec_p)
     {
         vec3 rayD0 = ray_p01 - ray_p00;
-        float rayS0 = length(rayD0);
         vec3 rayD0N = normalize(rayD0);
 
         vec3 rayD1 = ray_p11 - ray_p10;
-        float rayS1 = length(rayD1);
         vec3 rayD1N = normalize(rayD1);
 
         vec3 rayP0P1 = ray_p10 - ray_p00;

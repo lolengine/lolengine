@@ -89,7 +89,7 @@ void Font::Print(Scene &scene, vec3 pos, char const *str, vec2 scale, float spac
             break;
         default:
             if (ch != ' ')
-                scene.AddTile(data->tileset, ch & 255, pos, 0, scale, 0.0f);
+                scene.AddTile(data->tileset, ch & 255, pos, scale, 0.0f);
             pos.x += data->size.x * scale.x;
             break;
         }

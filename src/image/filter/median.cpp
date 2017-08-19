@@ -152,7 +152,7 @@ image image::Median(ivec2 ksize) const
     return ret;
 }
 
-image image::Median(array2d<float> const &kernel) const
+image image::Median(array2d<float> const &ker) const
 {
     ivec2 const isize = size();
     image tmp = *this;
@@ -166,7 +166,7 @@ image image::Median(array2d<float> const &kernel) const
     else
 #endif
     {
-        ivec2 const ksize = kernel.size();
+        ivec2 const ksize = ker.size();
         array2d<vec3> list(ksize);
 
         vec4 *srcp = tmp.lock<PixelFormat::RGBA_F32>();
@@ -207,7 +207,7 @@ image image::Median(array2d<float> const &kernel) const
                     for (int j = 0; j < ksize.y; ++j)
                         for (int i = 0; i < ksize.x; ++i)
                         {
-                            float d = kernel[i][j] /
+                            float d = ker[i][j] /
                                       (1e-10f + distance(median, list[i][j]));
                             s1 += list[i][j] * d;
                             s2 += d;
