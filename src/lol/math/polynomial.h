@@ -274,6 +274,17 @@ struct LOL_ATTR_NODISCARD polynomial
         return (*this)[degree()];
     }
 
+    /* Boolean operations */
+    bool operator !() const
+    {
+        return degree() < 0;
+    }
+
+    operator bool() const
+    {
+        return !!*this;
+    }
+
     /* Unary plus */
     polynomial<T> operator +() const
     {
