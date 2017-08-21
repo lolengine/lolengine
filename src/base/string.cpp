@@ -25,6 +25,39 @@
 namespace lol
 {
 
+array<std::string> split(std::string const &s, char sep)
+{
+    array<std::string> ret;
+    size_t start = 0, end = 0;
+    while ((end = s.find(sep, start)) != std::string::npos)
+    {
+        ret << s.substr(start, end - start);
+        start = end + 1;
+    }
+    ret << s.substr(start);
+    return ret;
+}
+
+array<std::string> split(std::string const &s, std::string const &seps)
+{
+    array<std::string> ret;
+    size_t start = s.find_first_not_of(seps), end = 0;
+
+    while ((end = s.find_first_of(seps, start)) != std::string::npos)
+    {
+        ret << s.substr(start, end - start);
+        start = s.find_first_not_of(seps, end);
+    }
+    if (start != std::string::npos)
+        ret << s.substr(start);
+
+    return ret;
+}
+
+/*
+ * XXX: deprecated
+ */
+
 String String::format(char const *format, ...)
 {
     String ret;

@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
 //            © 2013—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -14,9 +14,30 @@
 #pragma once
 
 //
-// The String class
+// The string tools
 // ----------------
-// A very simple String class, based on Array.
+// Contains some utilities to work with std::string objects.
+//
+
+#include <string>
+
+namespace lol
+{
+
+/* Split a string along a single separator */
+array<std::string> split(std::string const &s, char sep);
+
+/* Split a string along multiple separators */
+array<std::string> split(std::string const &s, std::string const &seps);
+
+} /* namespace lol */
+
+//
+// The deprecated String class
+// ---------------------------
+// A very simple String class, based on Array. The most interesting
+// thing in there was LOL_ATTR_NODISCARD but apart from that there was
+// no real point in using our own class. Phase this out.
 //
 
 #include <lol/base/assert.h>
