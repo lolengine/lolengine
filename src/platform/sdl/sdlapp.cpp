@@ -201,6 +201,7 @@ private:
 SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
     data(new SdlAppData())
 {
+    UNUSED(title);
 #if LOL_USE_SDL || LOL_USE_OLD_SDL
     ivec2 window_size = res;
     ivec2 screen_size = res;

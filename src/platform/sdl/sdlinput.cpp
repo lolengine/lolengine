@@ -68,6 +68,7 @@ static int sdl12_to_scancode(int ch, int sc)
         return false;
     }
     //-------------------------------------------------------------------------
+    /* DEBUG STUFF
     static String ScanCodeToText(int sc)
     {
         switch (sc)
@@ -80,7 +81,9 @@ static int sdl12_to_scancode(int ch, int sc)
         }
         return String();
     }
+    */
     //-------------------------------------------------------------------------
+    /* DEBUG STUFF
     static String ScanCodeToName(int sc)
     {
         switch (sc)
@@ -93,6 +96,7 @@ static int sdl12_to_scancode(int ch, int sc)
         }
         return String();
     }
+    */
 #endif
 
 /*
@@ -237,6 +241,9 @@ void SdlInput::TickDraw(float seconds, Scene &scene)
 void SdlInputData::Tick(float seconds)
 {
 #if LOL_USE_SDL || LOL_USE_OLD_SDL
+    /* FIXME: maybe we should make use of this? */
+    UNUSED(seconds);
+
     /* Pump all joystick events because no event is coming to us. */
 #   if SDL_FORCE_POLL_JOYSTICK && !EMSCRIPTEN
     SDL_JoystickUpdate();
@@ -459,6 +466,7 @@ void SdlInputData::SetMousePos(ivec2 position)
 {
 #if LOL_USE_SDL
     // FIXME: how do I warped mouse?
+    UNUSED(position);
 #elif LOL_USE_OLD_SDL
     SDL_WarpMouse((uint16_t)position.x, (uint16_t)position.y);
 #else

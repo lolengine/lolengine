@@ -52,11 +52,15 @@
 #undef LOL_FEATURE_CXX11_SFINAE_FOR_CTORS
 
 #undef LOL_FEATURE_CXX17_ATTRIBUTE_NODISCARD
+#undef LOL_FEATURE_CXX17_ATTRIBUTE_FALLTHROUGH
 
 /* Features detected through __has_cpp_attribute */
 #ifdef __has_cpp_attribute
 #   if __has_cpp_attribute(nodiscard)
 #       define LOL_FEATURE_CXX17_ATTRIBUTE_NODISCARD 1
+#   endif
+#   if __has_cpp_attribute(fallthrough)
+#       define LOL_FEATURE_CXX17_ATTRIBUTE_FALLTHROUGH 1
 #   endif
 #endif
 
@@ -126,6 +130,12 @@
 #   define LOL_ATTR_NODISCARD [[nodiscard]]
 #else
 #   define LOL_ATTR_NODISCARD /* */
+#endif
+
+#ifdef LOL_FEATURE_CXX17_ATTRIBUTE_FALLTHROUGH
+#   define LOL_ATTR_FALLTHROUGH [[fallthrough]]
+#else
+#   define LOL_ATTR_FALLTHROUGH /* */
 #endif
 
 

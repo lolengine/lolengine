@@ -44,7 +44,7 @@ float Color::DistanceCIEDE2000(vec3 lab1, vec3 lab2)
     float hp2 = atan2(lab2.z, ap2);
     float dhp = fmod(hp2 - hp1 + 3.f * F_PI, 2.f * F_PI) - F_PI; /* -pi .. pi */
     float dHp = 2.f * sqrt(Cp1 * Cp2) * sin(0.5f * dhp);
-    float Hp_ = Cp1 * Cp2 ? fmod(hp1 + 0.5f * dhp + 2.f * F_PI, 2.f * F_PI) : hp1 + hp2; /* 0 .. 2pi */
+    float Hp_ = (Cp1 && Cp2) ? fmod(hp1 + 0.5f * dhp + 2.f * F_PI, 2.f * F_PI) : hp1 + hp2; /* 0 .. 2pi */
 
     float T = 1.f - 0.17f * cos(Hp_ - F_PI / 6.f)
                   + 0.24f * cos(2.f * Hp_)

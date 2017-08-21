@@ -327,16 +327,16 @@ Shader::Shader(String const &name,
         int attrib_type;
         glGetActiveAttrib(data->prog_id, i, max_len, &attrib_len, (GLint*)&attrib_size, (GLenum*)&attrib_type, name_buffer);
 
-        String name(name_buffer);
+        String attr_name(name_buffer);
         int index = -1;
         VertexUsage usage = VertexUsage::MAX;
         for (int j = 0; j < (int)VertexUsage::MAX; ++j)
         {
-            if (name.starts_with(attribute_names[j]) ||
-                name.starts_with(String(attribute_names[j]).to_lower()))
+            if (attr_name.starts_with(attribute_names[j]) ||
+                attr_name.starts_with(String(attribute_names[j]).to_lower()))
             {
                 usage = VertexUsage(j);
-                char* idx_ptr = name.C() + strlen(attribute_names[j]);
+                char* idx_ptr = attr_name.C() + strlen(attribute_names[j]);
                 index = strtol(idx_ptr, nullptr, 10);
                 break;
             }
@@ -357,7 +357,7 @@ Shader::Shader(String const &name,
             if (data->attrib_locations.has_key(flags))
             {
                 msg::error("error while parsing attribute semantics in %s\n",
-                           name.C());
+                           attr_name.C());
             }
 #endif
             data->attrib_locations[flags] = location;
@@ -691,6 +691,7 @@ String ShaderData::Patch(String const &code, ShaderType type)
 
                 size_t l0 = strlen(rep[0]);
                 size_t l1 = strlen(rep[1]);
+                UNUSED(l1);
 
                 String left = patched_code.sub(0, index);
                 String right = patched_code.sub(index + l0, patched_code.count() - (index + l0));

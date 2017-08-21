@@ -60,12 +60,12 @@ void bench_real(int mode)
 
         timer.Get();
         for (size_t i = 0; i < REAL_TABLE_SIZE / 128; i++)
-            sin(real(0.01 * i));
+            (void)sin(real(0.01 * i));
         result[3] += timer.Get() * 128;
 
         timer.Get();
         for (size_t i = 0; i < REAL_TABLE_SIZE / 128; i++)
-            exp((real)(int)(i - REAL_TABLE_SIZE / 256));
+            (void)exp((real)(int)(i - REAL_TABLE_SIZE / 256));
         result[4] += timer.Get() * 128;
     }
 

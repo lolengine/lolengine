@@ -138,9 +138,9 @@ public:
     }
     void TestStuff()
     {
+        /*
         lua_State* l = GetLuaState();
 
-        /*
         //create property
         lua_pushnumber(l, 5.0);
         lua_setfield(l, -2, "x");

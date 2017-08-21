@@ -37,12 +37,12 @@ static String error2string(int errnum)
     return String(tmp);
 }
 
-static void ffmpeg_logger(void *ptr, int level, const char *fmt, va_list vl)
+/*static void ffmpeg_logger(void *ptr, int level, const char *fmt, va_list vl)
 {
     // FIXME: use lol::msg::debug
     UNUSED(ptr, level);
     vfprintf(stderr, fmt, vl);
-}
+}*/
 #endif
 
 movie::movie(ivec2 size)
