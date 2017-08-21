@@ -81,7 +81,7 @@ public:
             int frame = (int)(m_sprites[i].m2 * FRAME_COUNT);
 //            m_sprites[i].m1.z = frame;
             scene.AddTile(m_tileset, frame,
-                          m_sprites[i].m1, 0, vec2(2.f), 0.f);
+                          m_sprites[i].m1, vec2(2.f), 0.f);
         }
     }
 
