@@ -133,6 +133,10 @@ public:
     template<int K> friend Real<K> degrees(Real<K> const &x);
     template<int K> friend Real<K> radians(Real<K> const &x);
 
+    /* Additional functions */
+    template<int K> friend Real<K> franke(Real<K> const &x, Real<K> const &y);
+    template<int K> friend Real<K> peaks(Real<K> const &x, Real<K> const &y);
+
     void xprint() const;
     void print(int ndigits = 150) const;
     void sxprintf(char *str) const;
@@ -302,6 +306,8 @@ template<int K> Real<K> abs(Real<K> const &x);
 template<int K> Real<K> fract(Real<K> const &x);
 template<int K> Real<K> degrees(Real<K> const &x);
 template<int K> Real<K> radians(Real<K> const &x);
+template<int K> Real<K> franke(Real<K> const &x, Real<K> const &y);
+template<int K> Real<K> peaks(Real<K> const &x, Real<K> const &y);
 
 template<> real min(real const &a, real const &b);
 template<> real max(real const &a, real const &b);
@@ -341,6 +347,8 @@ template<> real abs(real const &x);
 template<> real fract(real const &x);
 template<> real degrees(real const &x);
 template<> real radians(real const &x);
+template<> real franke(real const &x, real const &y);
+template<> real peaks(real const &x, real const &y);
 
 template<> void real::xprint() const;
 template<> void real::print(int ndigits) const;

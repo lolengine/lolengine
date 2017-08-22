@@ -1421,6 +1421,45 @@ template<> real atan2(real const &y, real const &x)
     return ret;
 }
 
+/* Franke’s function, used as a test for interpolation methods */
+template<> real franke(real const &x, real const &y)
+{
+    /* Compute 9x and 9y */
+    real nx = x + x; nx += nx; nx += nx + x;
+    real ny = y + y; ny += ny; ny += ny + y;
+
+    /* Temporary variables for the formula */
+    real a = nx - real::R_2();
+    real b = ny - real::R_2();
+    real c = nx + real::R_1();
+    real d = ny + real::R_1();
+    real e = nx - real(7);
+    real f = ny - real::R_3();
+    real g = nx - real(4);
+    real h = ny - real(7);
+
+    return exp(-(a * a + b * b) * real(0.25)) * real(0.75)
+         + exp(-(c * c / real(49) + d * d / real::R_10())) * real(0.75)
+         + exp(-(e * e + f * f) * real(0.25)) * real(0.5)
+         - exp(-(g * g + h * h)) / real(5);
+}
+
+/* The Peaks example function from Matlab */
+template<> real peaks(real const &x, real const &y)
+{
+    real x2 = x * x;
+    real y2 = y * y;
+    /* 3 * (1-x)^2 * exp(-x^2 - (y+1)^2) */
+    real ret = real::R_3()
+             * (x2 - x - x + real::R_1())
+             * exp(- x2 - y2 - y - y - real::R_1());
+    /* -10 * (x/5 - x^3 - y^5) * exp(-x^2 - y^2) */
+    ret -= (x + x - real::R_10() * (x2 * x + y2 * y2 * y)) * exp(-x2 - y2);
+    /* -1/3 * exp(-(x+1)^2 - y^2) */
+    ret -= exp(-x2 - x - x - real::R_1() - y2) / real::R_3();
+    return ret;
+}
+
 template<> void real::sxprintf(char *str) const;
 template<> void real::sprintf(char *str, int ndigits) const;
 
