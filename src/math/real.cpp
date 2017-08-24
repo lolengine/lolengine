@@ -726,12 +726,12 @@ template<> real sqrt(real const &x)
     ret.m_mantissa.resize(x.m_mantissa.count());
     ret.m_mantissa[0] = v.x << 9;
 
-    /* FIXME: check this, it’s been a long time… */
+    /* FIXME FIXME FIXME: this is broken */
     ret.m_exponent = -x.m_exponent / 2 + (v.x >> 23) - (u.x >> 23);
 
     /* FIXME: 1+log2(bigit_count()) steps of Newton-Raphson seems to be enough for
      * convergence, but this hasn't been checked seriously. */
-    for (int i = 1; i <= x.bigit_count(); i *= 2)
+    for (int i = 1; i <= 1024 * x.bigit_count(); i *= 2)
     {
         ret = ret * (real::R_3() - ret * ret * x);
         --ret.m_exponent;
