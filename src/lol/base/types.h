@@ -20,8 +20,8 @@ typedef long double ldouble;
 
 /* The “real” type used for real numbers. It’s a specialisation of the
  * “Real” template class. */
-template<int N> class Real;
-typedef Real<16> real;
+template<typename T> class Real;
+typedef Real<uint32_t> real;
 
 /* The “half” type used for 16-bit floating point numbers. */
 class half;

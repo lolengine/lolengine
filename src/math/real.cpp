@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -77,34 +77,14 @@ LOL_CONSTANT_GETTER(R_SQRT1_2,  R_SQRT2() / 2);
  * Now carry on with the rest of the Real class.
  */
 
+#define DEFAULT_SIZE 16
+
 template<> real::Real()
+  : m_exponent(0),
+    m_sign(false),
+    m_nan(false),
+    m_inf(false)
 {
-    m_mantissa = new uint32_t[BIGIT_COUNT];
-    memset(m_mantissa, 0, BIGIT_COUNT * sizeof(uint32_t));
-    m_signexp = 0;
-}
-
-template<> real::Real(real const &x)
-{
-    m_mantissa = new uint32_t[BIGIT_COUNT];
-    memcpy(m_mantissa, x.m_mantissa, BIGIT_COUNT * sizeof(uint32_t));
-    m_signexp = x.m_signexp;
-}
-
-template<> real const &real::operator =(real const &x)
-{
-    if (&x != this)
-    {
-        memcpy(m_mantissa, x.m_mantissa, BIGIT_COUNT * sizeof(uint32_t));
-        m_signexp = x.m_signexp;
-    }
-
-    return *this;
-}
-
-template<> real::~Real()
-{
-    delete[] m_mantissa;
 }
 
 /* FIXME: 64-bit integer loading is incorrect, we lose precision. */
@@ -116,40 +96,44 @@ template<> real::Real(uint64_t i) { new(this) real((double)i); }
 template<> real::Real(float f) { new(this) real((double)f); }
 
 template<> real::Real(double d)
+  : m_exponent(0),
+    m_sign(false),
+    m_nan(false),
+    m_inf(false)
 {
-    new(this) real();
-
     union { double d; uint64_t x; } u = { d };
 
-    uint32_t sign = (u.x >> 63) << 31;
-    uint32_t exponent = (u.x << 1) >> 53;
+    m_sign = bool(u.x >> 63);
+
+    exponent_t exponent = (u.x << 1) >> 53;
 
     switch (exponent)
     {
-    case 0x00:
-        m_signexp = sign;
+    case 0x00: /* +0 / -0 */
         break;
-    case 0x7ff:
-        m_signexp = sign | 0x7fffffffu;
+    case 0x7ff: /* Inf/NaN (FIXME: handle NaN!) */
+        m_inf = true;
         break;
     default:
-        m_signexp = sign | (exponent + EXPONENT_BIAS - ((1 << 10) - 1));
+        /* Only works with 32-bit bigits for now */
+        static_assert(sizeof(bigit_t) == 4);
+        m_exponent = exponent - ((1 << 10) - 1);
+        m_mantissa.resize(DEFAULT_SIZE);
+        m_mantissa[0] = (bigit_t)(u.x >> 20);
+        m_mantissa[1] = (bigit_t)(u.x << 12);
         break;
     }
-
-    m_mantissa[0] = (uint32_t)(u.x >> 20);
-    m_mantissa[1] = (uint32_t)(u.x << 12);
-    memset(m_mantissa + 2, 0, (BIGIT_COUNT - 2) * sizeof(m_mantissa[0]));
 }
 
 template<> real::Real(long double f)
 {
-    /* We don’t know the long double layout, so we split it into
-     * two doubles instead. */
-    double hi = double(f);
-    double lo = double(f - (long double)hi);;
-    new(this) real(hi);
-    *this += lo;
+    /* We don’t know the long double layout, so we get rid of the
+     * exponent, then load it into a real in two steps. */
+    int exponent;
+    f = frexpl(f, &exponent);
+    new(this) real(double(f));
+    *this += double(f - (long double)*this);
+    m_exponent += exponent;
 }
 
 template<> real::operator float() const { return (float)(double)(*this); }
@@ -161,14 +145,14 @@ template<> real::operator double() const
     union { double d; uint64_t x; } u;
 
     /* Get sign */
-    u.x = m_signexp >> 31;
-    u.x <<= 11;
+    u.x = (m_sign ? 1 : 0) << 11;
 
-    /* Compute new exponent */
-    uint32_t exponent = (m_signexp << 1) >> 1;
-    int e = (int)exponent - EXPONENT_BIAS + ((1 << 10) - 1);
+    /* Compute new exponent (FIXME: handle Inf/NaN) */
+    int64_t e = m_exponent + ((1 << 10) - 1);
 
-    if (e < 0)
+    if (m_mantissa.count() == 0)
+        u.x <<= 52;
+    else if (e < 0) /* if exponent underflows, set to zero */
         u.x <<= 52;
     else if (e >= 0x7ff)
     {
@@ -181,11 +165,15 @@ template<> real::operator double() const
 
         /* Store mantissa if necessary */
         u.x <<= 32;
-        u.x |= m_mantissa[0];
+        if (m_mantissa.count() > 0)
+            u.x |= m_mantissa[0];
         u.x <<= 20;
-        u.x |= m_mantissa[1] >> 12;
-        /* Rounding */
-        u.x += (m_mantissa[1] >> 11) & 1;
+        if (m_mantissa.count() > 1)
+        {
+            u.x |= m_mantissa[1] >> 12;
+            /* Rounding */
+            u.x += (m_mantissa[1] >> 11) & 1;
+        }
     }
 
     return u.d;
@@ -256,7 +244,7 @@ template<> real::Real(char const *str)
                     real x = ret + ret;
                     ret = x + x + ret;
                 }
-                ret.m_signexp += hex ? 4 : 1;
+                ret.m_exponent += hex ? 4 : 1;
             }
             if (*p != '0')
             {
@@ -275,14 +263,14 @@ template<> real::Real(char const *str)
     }
 
     if (hex)
-        ret.m_signexp += exponent;
+        ret.m_exponent += exponent;
     else if (exponent)
         ret *= pow(R_10(), (real)exponent);
 
     if (negative)
         ret = -ret;
 
-    new(this) real(ret);
+    *this = ret;
 }
 
 template<> real real::operator +() const
@@ -293,69 +281,73 @@ template<> real real::operator +() const
 template<> real real::operator -() const
 {
     real ret = *this;
-    ret.m_signexp ^= 0x80000000u;
+    ret.m_sign ^= true;
     return ret;
 }
 
 template<> real real::operator +(real const &x) const
 {
-    if (x.m_signexp << 1 == 0)
+    if (x.m_mantissa.count() == 0)
         return *this;
+
+    if (m_mantissa.count() == 0)
+        return x;
 
     /* Ensure both arguments are positive. Otherwise, switch signs,
      * or replace + with -. */
-    if (m_signexp >> 31)
+    if (m_sign)
         return -(-*this + -x);
 
-    if (x.m_signexp >> 31)
+    if (x.m_sign)
         return *this - (-x);
 
     /* Ensure *this has the larger exponent (no need for the mantissa to
      * be larger, as in subtraction). Otherwise, switch. */
-    if ((m_signexp << 1) < (x.m_signexp << 1))
+    if (m_exponent < x.m_exponent)
         return x + *this;
 
-    real ret;
+    int64_t e1 = m_exponent;
+    int64_t e2 = x.m_exponent;
 
-    int e1 = m_signexp - EXPONENT_BIAS;
-    int e2 = x.m_signexp - EXPONENT_BIAS;
+    int64_t bigoff = (e1 - e2) / bigit_bits();
+    int64_t off = e1 - e2 - bigoff * bigit_bits();
 
-    int bigoff = (e1 - e2) / BIGIT_BITS;
-    int off = e1 - e2 - bigoff * BIGIT_BITS;
-
-    if (bigoff > BIGIT_COUNT)
+    /* FIXME: ensure we have the same number of bigits */
+    if (bigoff > bigit_count())
         return *this;
 
-    ret.m_signexp = m_signexp;
+    real ret;
+    ret.m_mantissa.resize(m_mantissa.count());
+    ret.m_exponent = m_exponent;
 
     uint64_t carry = 0;
-    for (int i = BIGIT_COUNT; i--; )
+    for (int i = bigit_count(); i--; )
     {
         carry += m_mantissa[i];
         if (i - bigoff >= 0)
             carry += x.m_mantissa[i - bigoff] >> off;
 
         if (off && i - bigoff > 0)
-            carry += (x.m_mantissa[i - bigoff - 1] << (BIGIT_BITS - off)) & 0xffffffffu;
+            carry += (x.m_mantissa[i - bigoff - 1] << (bigit_bits() - off)) & 0xffffffffu;
         else if (i - bigoff == 0)
-            carry += (uint64_t)1 << (BIGIT_BITS - off);
+            carry += (uint64_t)1 << (bigit_bits() - off);
 
         ret.m_mantissa[i] = (uint32_t)carry;
-        carry >>= BIGIT_BITS;
+        carry >>= bigit_bits();
     }
 
     /* Renormalise in case we overflowed the mantissa */
     if (carry)
     {
         carry--;
-        for (int i = 0; i < BIGIT_COUNT; i++)
+        for (int i = 0; i < bigit_count(); ++i)
         {
             uint32_t tmp = ret.m_mantissa[i];
-            ret.m_mantissa[i] = ((uint32_t)carry << (BIGIT_BITS - 1))
+            ret.m_mantissa[i] = ((uint32_t)carry << (bigit_bits() - 1))
                               | (tmp >> 1);
             carry = tmp & 1u;
         }
-        ret.m_signexp++;
+        ret.m_exponent++;
     }
 
     return ret;
@@ -363,61 +355,65 @@ template<> real real::operator +(real const &x) const
 
 template<> real real::operator -(real const &x) const
 {
-    if (x.m_signexp << 1 == 0)
+    if (x.m_mantissa.count() == 0)
         return *this;
+
+    if (m_mantissa.count() == 0)
+        return -x;
 
     /* Ensure both arguments are positive. Otherwise, switch signs,
      * or replace - with +. */
-    if (m_signexp >> 31)
+    if (m_sign)
         return -(-*this + x);
 
-    if (x.m_signexp >> 31)
+    if (x.m_sign)
         return (*this) + (-x);
 
     /* Ensure *this is larger than x */
     if (*this < x)
         return -(x - *this);
 
-    real ret;
+    int64_t e1 = m_exponent;
+    int64_t e2 = x.m_exponent;
 
-    int e1 = m_signexp - EXPONENT_BIAS;
-    int e2 = x.m_signexp - EXPONENT_BIAS;
+    int64_t bigoff = (e1 - e2) / bigit_bits();
+    int64_t off = e1 - e2 - bigoff * bigit_bits();
 
-    int bigoff = (e1 - e2) / BIGIT_BITS;
-    int off = e1 - e2 - bigoff * BIGIT_BITS;
-
-    if (bigoff > BIGIT_COUNT)
+    /* FIXME: ensure we have the same number of bigits */
+    if (bigoff > bigit_count())
         return *this;
 
-    ret.m_signexp = m_signexp;
+    real ret;
+    ret.m_mantissa.resize(m_mantissa.count());
+    ret.m_exponent = m_exponent;
 
     /* int64_t instead of uint64_t to preserve sign through shifts */
     int64_t carry = 0;
-    for (int i = 0; i < bigoff; i++)
+    for (int i = 0; i < bigoff; ++i)
     {
-        carry -= x.m_mantissa[BIGIT_COUNT - 1 - i];
+        carry -= x.m_mantissa[bigit_count() - 1 - i];
         /* Emulates a signed shift */
-        carry >>= BIGIT_BITS;
-        carry |= carry << BIGIT_BITS;
+        carry >>= bigit_bits();
+        carry |= carry << bigit_bits();
     }
-    if (bigoff < BIGIT_COUNT)
-        carry -= x.m_mantissa[BIGIT_COUNT - 1 - bigoff] & (((int64_t)1 << off) - 1);
+    if (bigoff < bigit_count())
+        carry -= x.m_mantissa[bigit_count() - 1 - bigoff] & (((int64_t)1 << off) - 1);
     carry /= (int64_t)1 << off;
 
-    for (int i = BIGIT_COUNT; i--; )
+    for (int i = bigit_count(); i--; )
     {
         carry += m_mantissa[i];
         if (i - bigoff >= 0)
             carry -= x.m_mantissa[i - bigoff] >> off;
 
         if (off && i - bigoff > 0)
-            carry -= (x.m_mantissa[i - bigoff - 1] << (BIGIT_BITS - off)) & 0xffffffffu;
+            carry -= (x.m_mantissa[i - bigoff - 1] << (bigit_bits() - off)) & 0xffffffffu;
         else if (i - bigoff == 0)
-            carry -= (uint64_t)1 << (BIGIT_BITS - off);
+            carry -= (uint64_t)1 << (bigit_bits() - off);
 
         ret.m_mantissa[i] = (uint32_t)carry;
-        carry >>= BIGIT_BITS;
-        carry |= carry << BIGIT_BITS;
+        carry >>= bigit_bits();
+        carry |= carry << bigit_bits();
     }
 
     carry += 1;
@@ -428,11 +424,11 @@ template<> real real::operator -(real const &x) const
         /* How much do we need to shift the mantissa? FIXME: this could
          * be computed above */
         off = 0;
-        for (int i = 0; i < BIGIT_COUNT; i++)
+        for (int i = 0; i < bigit_count(); ++i)
         {
             if (!ret.m_mantissa[i])
             {
-                off += BIGIT_BITS;
+                off += bigit_bits();
                 continue;
             }
 
@@ -440,23 +436,23 @@ template<> real real::operator -(real const &x) const
                 off++;
             break;
         }
-        if (off == BIGIT_COUNT * BIGIT_BITS)
-            ret.m_signexp &= 0x80000000u;
+        if (off == total_bits())
+            ret.m_mantissa.resize(0);
         else
         {
-            off++; /* Shift one more to get rid of the leading one */
-            ret.m_signexp -= off;
+            off++; /* Shift once more to get rid of the leading 1 */
+            ret.m_exponent -= off;
 
-            bigoff = off / BIGIT_BITS;
-            off -= bigoff * BIGIT_BITS;
+            bigoff = off / bigit_bits();
+            off -= bigoff * bigit_bits();
 
-            for (int i = 0; i < BIGIT_COUNT; i++)
+            for (int i = 0; i < bigit_count(); ++i)
             {
                 uint32_t tmp = 0;
-                if (i + bigoff < BIGIT_COUNT)
+                if (i + bigoff < bigit_count())
                     tmp |= ret.m_mantissa[i + bigoff] << off;
-                if (off && i + bigoff + 1 < BIGIT_COUNT)
-                    tmp |= ret.m_mantissa[i + bigoff + 1] >> (BIGIT_BITS - off);
+                if (off && i + bigoff + 1 < bigit_count())
+                    tmp |= ret.m_mantissa[i + bigoff + 1] >> (bigit_bits() - off);
                 ret.m_mantissa[i] = tmp;
             }
         }
@@ -469,71 +465,69 @@ template<> real real::operator *(real const &x) const
 {
     real ret;
 
-    if (m_signexp << 1 == 0 || x.m_signexp << 1 == 0)
-    {
-        ret = (m_signexp << 1 == 0) ? *this : x;
-        ret.m_signexp ^= x.m_signexp & 0x80000000u;
-        return ret;
-    }
+    /* The sign is easy to compute */
+    ret.m_sign = m_sign ^ x.m_sign;
 
-    ret.m_signexp = (m_signexp ^ x.m_signexp) & 0x80000000u;
-    int e = (m_signexp & 0x7fffffffu) - EXPONENT_BIAS
-          + (x.m_signexp & 0x7fffffffu) - EXPONENT_BIAS;
+    /* If any operand is zero, return zero. */
+    if (m_mantissa.count() == 0 || x.m_mantissa.count() == 0)
+        return ret;
+
+    ret.m_mantissa.resize(m_mantissa.count());
+    ret.m_exponent = m_exponent + x.m_exponent;
 
     /* Accumulate low order product; no need to store it, we just
      * want the carry value */
     uint64_t carry = 0, hicarry = 0, prev;
-    for (int i = 0; i < BIGIT_COUNT; i++)
+    for (int i = 0; i < bigit_count(); ++i)
     {
         for (int j = 0; j < i + 1; j++)
         {
             prev = carry;
-            carry += (uint64_t)m_mantissa[BIGIT_COUNT - 1 - j]
-                   * (uint64_t)x.m_mantissa[BIGIT_COUNT - 1 + j - i];
+            carry += (uint64_t)m_mantissa[bigit_count() - 1 - j]
+                   * (uint64_t)x.m_mantissa[bigit_count() - 1 + j - i];
             if (carry < prev)
                 hicarry++;
         }
-        carry >>= BIGIT_BITS;
-        carry |= hicarry << BIGIT_BITS;
-        hicarry >>= BIGIT_BITS;
+        carry >>= bigit_bits();
+        carry |= hicarry << bigit_bits();
+        hicarry >>= bigit_bits();
     }
 
-    for (int i = 0; i < BIGIT_COUNT; i++)
+    /* Multiply the other components */
+    for (int i = 0; i < bigit_count(); ++i)
     {
-        for (int j = i + 1; j < BIGIT_COUNT; j++)
+        for (int j = i + 1; j < bigit_count(); j++)
         {
             prev = carry;
-            carry += (uint64_t)m_mantissa[BIGIT_COUNT - 1 - j]
+            carry += (uint64_t)m_mantissa[bigit_count() - 1 - j]
                    * (uint64_t)x.m_mantissa[j - 1 - i];
             if (carry < prev)
                 hicarry++;
         }
         prev = carry;
-        carry += m_mantissa[BIGIT_COUNT - 1 - i];
-        carry += x.m_mantissa[BIGIT_COUNT - 1 - i];
+        carry += m_mantissa[bigit_count() - 1 - i];
+        carry += x.m_mantissa[bigit_count() - 1 - i];
         if (carry < prev)
             hicarry++;
-        ret.m_mantissa[BIGIT_COUNT - 1 - i] = carry & 0xffffffffu;
-        carry >>= BIGIT_BITS;
-        carry |= hicarry << BIGIT_BITS;
-        hicarry >>= BIGIT_BITS;
+        ret.m_mantissa[bigit_count() - 1 - i] = carry & 0xffffffffu;
+        carry >>= bigit_bits();
+        carry |= hicarry << bigit_bits();
+        hicarry >>= bigit_bits();
     }
 
     /* Renormalise in case we overflowed the mantissa */
     if (carry)
     {
         carry--;
-        for (int i = 0; i < BIGIT_COUNT; i++)
+        for (int i = 0; i < bigit_count(); ++i)
         {
             uint32_t tmp = (uint32_t)ret.m_mantissa[i];
-            ret.m_mantissa[i] = ((uint32_t)carry << (BIGIT_BITS - 1))
+            ret.m_mantissa[i] = ((uint32_t)carry << (bigit_bits() - 1))
                               | (tmp >> 1);
             carry = tmp & 1u;
         }
-        e++;
+        ++ret.m_exponent;
     }
-
-    ret.m_signexp |= e + EXPONENT_BIAS;
 
     return ret;
 }
@@ -569,13 +563,12 @@ template<> real const &real::operator /=(real const &x)
 
 template<> bool real::operator ==(real const &x) const
 {
-    if ((m_signexp << 1) == 0 && (x.m_signexp << 1) == 0)
+    /* If both zero, they are equal */
+    if (m_mantissa.count() == 0 && x.m_mantissa.count() == 0)
         return true;
 
-    if (m_signexp != x.m_signexp)
-        return false;
-
-    return memcmp(m_mantissa, x.m_mantissa, BIGIT_COUNT * sizeof(uint32_t)) == 0;
+    /* FIXME: handle NaN/Inf */
+    return m_exponent == x.m_exponent && m_mantissa == x.m_mantissa;
 }
 
 template<> bool real::operator !=(real const &x) const
@@ -585,18 +578,24 @@ template<> bool real::operator !=(real const &x) const
 
 template<> bool real::operator <(real const &x) const
 {
-    /* Ensure both numbers are positive */
-    if (m_signexp >> 31)
-        return (x.m_signexp >> 31) ? -*this > -x : true;
+    /* Ensure we are positive */
+    if (m_sign)
+        return -*this > -x;
 
-    if (x.m_signexp >> 31)
+    /* If x is zero or negative, we can’t be < x */
+    if (x.m_sign || x.m_mantissa.count() == 0)
         return false;
 
-    /* Compare all relevant bits */
-    if (m_signexp != x.m_signexp)
-        return m_signexp < x.m_signexp;
+    /* If we are zero, we must be < x */
+    if (m_mantissa.count() == 0)
+        return true;
 
-    for (int i = 0; i < BIGIT_COUNT; i++)
+    /* Compare exponents */
+    if (m_exponent != x.m_exponent)
+        return m_exponent < x.m_exponent;
+
+    /* Compare all relevant bits */
+    for (int i = 0; i < bigit_count(); ++i)
         if (m_mantissa[i] != x.m_mantissa[i])
             return m_mantissa[i] < x.m_mantissa[i];
 
@@ -610,18 +609,28 @@ template<> bool real::operator <=(real const &x) const
 
 template<> bool real::operator >(real const &x) const
 {
-    /* Ensure both numbers are positive */
-    if (m_signexp >> 31)
-        return (x.m_signexp >> 31) ? -*this < -x : false;
+    /* Ensure we are positive */
+    if (m_sign)
+        return -*this < -x;
 
-    if (x.m_signexp >> 31)
+    /* If x is zero, we’re > x iff we’re non-zero */
+    if (x.m_mantissa.count() == 0)
+        return m_mantissa.count() != 0;
+
+    /* If x is strictly negative, we’re > x */
+    if (x.m_sign)
         return true;
 
-    /* Compare all relevant bits */
-    if (m_signexp != x.m_signexp)
-        return m_signexp > x.m_signexp;
+    /* If we are zero, we can’t be > x */
+    if (m_mantissa.count() == 0)
+        return false;
 
-    for (int i = 0; i < BIGIT_COUNT; i++)
+    /* Compare exponents */
+    if (m_exponent != x.m_exponent)
+        return m_exponent > x.m_exponent;
+
+    /* Compare all relevant bits */
+    for (int i = 0; i < bigit_count(); ++i)
         if (m_mantissa[i] != x.m_mantissa[i])
             return m_mantissa[i] > x.m_mantissa[i];
 
@@ -640,10 +649,9 @@ template<> bool real::operator !() const
 
 template<> real::operator bool() const
 {
-    /* A real is "true" if it is non-zero (exponent is non-zero) AND
-     * not NaN (exponent is not full bits OR higher order mantissa is zero) */
-    uint32_t exponent = m_signexp << 1;
-    return exponent && (~exponent || m_mantissa[0] == 0);
+    /* A real is "true" if it is non-zero (mantissa is non-zero) AND
+     * not NaN */
+    return m_mantissa.count() && !m_nan;
 }
 
 template<> real min(real const &a, real const &b)
@@ -663,32 +671,29 @@ template<> real clamp(real const &x, real const &a, real const &b)
 
 template<> real inverse(real const &x)
 {
-    if (!(x.m_signexp << 1))
+    real ret;
+
+    /* If zero, return infinite */
+    if (!x.m_mantissa.count())
     {
-        real ret = x;
-        ret.m_signexp = x.m_signexp | 0x7fffffffu;
-        ret.m_mantissa[0] = 0;
+        ret.m_sign = x.m_sign;
+        ret.m_inf = true;
         return ret;
     }
 
     /* Use the system's float inversion to approximate 1/x */
-    union { float f; uint32_t x; } u = { 1.0f }, v = { 1.0f };
-    v.x |= x.m_mantissa[0] >> 9;
-    v.f = 1.0f / v.f;
+    union { float f; uint32_t x; } u = { 1.0f };
+    u.x |= x.m_mantissa[0] >> 9;
+    u.f = 1.0f / u.f;
 
-    real ret;
-    ret.m_mantissa[0] = v.x << 9;
-
-    uint32_t sign = x.m_signexp & 0x80000000u;
-    ret.m_signexp = sign;
-
-    int exponent = (x.m_signexp & 0x7fffffffu) + 1;
-    exponent = -exponent + (v.x >> 23) - (u.x >> 23);
-    ret.m_signexp |= (exponent - 1) & 0x7fffffffu;
+    ret.m_mantissa.resize(x.m_mantissa.count());
+    ret.m_mantissa[0] = u.x << 9;
+    ret.m_sign = x.m_sign;
+    ret.m_exponent = -x.m_exponent + (u.x >> 23) - 0x7f;
 
     /* FIXME: 1+log2(BIGIT_COUNT) steps of Newton-Raphson seems to be enough for
      * convergence, but this hasn't been checked seriously. */
-    for (int i = 1; i <= real::BIGIT_COUNT; i *= 2)
+    for (int i = 1; i <= x.bigit_count(); i *= 2)
         ret = ret * (real::R_2() - ret * x);
 
     return ret;
@@ -696,47 +701,42 @@ template<> real inverse(real const &x)
 
 template<> real sqrt(real const &x)
 {
-    /* if zero, return x */
-    if (!(x.m_signexp << 1))
+    /* if zero, return x (FIXME: negative zero?) */
+    if (!x.m_mantissa.count())
         return x;
 
     /* if negative, return NaN */
-    if (x.m_signexp >> 31)
+    if (x.m_sign)
     {
         real ret;
-        ret.m_signexp = 0x7fffffffu;
-        ret.m_mantissa[0] = 0xffffu;
+        ret.m_nan = true;
         return ret;
     }
+
+    int tweak = x.m_exponent & 1;
 
     /* Use the system's float inversion to approximate 1/sqrt(x). First
      * we construct a float in the [1..4[ range that has roughly the same
      * mantissa as our real. Its exponent is 0 or 1, depending on the
-     * partity of x. The final exponent is 0, -1 or -2. We use the final
-     * exponent and final mantissa to pre-fill the result. */
-    union { float f; uint32_t x; } u = { 1.0f }, v = { 2.0f };
-    v.x -= ((x.m_signexp & 1) << 23);
-    v.x |= x.m_mantissa[0] >> 9;
-    v.f = 1.0f / sqrtf(v.f);
+     * parity of x’s exponent. The final exponent is 0, -1 or -2. We use
+     * the final exponent and final mantissa to pre-fill the result. */
+    union { float f; uint32_t x; } u = { 1.0f };
+    u.x += tweak << 23;
+    u.x |= x.m_mantissa[0] >> 9;
+    u.f = 1.0f / sqrtf(u.f);
 
     real ret;
-    ret.m_mantissa[0] = v.x << 9;
+    ret.m_mantissa.resize(x.m_mantissa.count());
+    ret.m_mantissa[0] = u.x << 9;
 
-    uint32_t sign = x.m_signexp & 0x80000000u;
-    ret.m_signexp = sign;
+    ret.m_exponent = -(x.m_exponent - tweak) / 2 + (u.x >> 23) - 0x7f;
 
-    /* FIXME: these << 30 and << 29 should be use EXPONENT_BIAS instead */
-    uint32_t exponent = (x.m_signexp & 0x7fffffffu);
-    exponent = ((1 << 30) + (1 << 29) - 1) - (exponent + 1) / 2;
-    exponent = exponent + (v.x >> 23) - (u.x >> 23);
-    ret.m_signexp |= exponent & 0x7fffffffu;
-
-    /* FIXME: 1+log2(BIGIT_COUNT) steps of Newton-Raphson seems to be enough for
+    /* FIXME: 1+log2(bigit_count()) steps of Newton-Raphson seems to be enough for
      * convergence, but this hasn't been checked seriously. */
-    for (int i = 1; i <= real::BIGIT_COUNT; i *= 2)
+    for (int i = 1; i <= x.bigit_count(); i *= 2)
     {
         ret = ret * (real::R_3() - ret * ret * x);
-        ret.m_signexp--;
+        --ret.m_exponent;
     }
 
     return ret * x;
@@ -745,34 +745,34 @@ template<> real sqrt(real const &x)
 template<> real cbrt(real const &x)
 {
     /* if zero, return x */
-    if (!(x.m_signexp << 1))
+    if (!x.m_mantissa.count())
         return x;
+
+    int tweak = x.m_exponent % 3;
+    if (tweak < 0)
+        tweak += 3;
 
     /* Use the system's float inversion to approximate cbrt(x). First
      * we construct a float in the [1..8[ range that has roughly the same
      * mantissa as our real. Its exponent is 0, 1 or 2, depending on the
      * value of x. The final exponent is 0 or 1 (special case). We use
      * the final exponent and final mantissa to pre-fill the result. */
-    union { float f; uint32_t x; } u = { 1.0f }, v = { 1.0f };
-    v.x += ((x.m_signexp % 3) << 23);
-    v.x |= x.m_mantissa[0] >> 9;
-    v.f = powf(v.f, 0.33333333333333333f);
+    union { float f; uint32_t x; } u = { 1.0f };
+    u.x += tweak << 23;
+    u.x |= x.m_mantissa[0] >> 9;
+    u.f = powf(u.f, 0.33333333333333333f);
 
     real ret;
-    ret.m_mantissa[0] = v.x << 9;
+    ret.m_mantissa.resize(x.m_mantissa.count());
+    ret.m_mantissa[0] = u.x << 9;
+    ret.m_exponent = (x.m_exponent - tweak) / 3 + (u.x >> 23) - 0x7f;
+    ret.m_sign = x.m_sign;
 
-    uint32_t sign = x.m_signexp & 0x80000000u;
-    ret.m_signexp = sign;
-
-    int exponent = (x.m_signexp & 0x7fffffffu) - real::EXPONENT_BIAS;
-    exponent = exponent / 3 + (v.x >> 23) - (u.x >> 23);
-    ret.m_signexp |= (exponent + real::EXPONENT_BIAS) & 0x7fffffffu;
-
-    /* FIXME: 1+log2(BIGIT_COUNT) steps of Newton-Raphson seems to be enough
+    /* FIXME: 1+log2(bigit_count()) steps of Newton-Raphson seems to be enough
      * for convergence, but this hasn't been checked seriously. */
-    for (int i = 1; i <= real::BIGIT_COUNT; i *= 2)
+    real third = inverse(real::R_3());
+    for (int i = 1; i <= x.bigit_count(); i *= 2)
     {
-        static real third = inverse(real::R_3());
         ret = third * (x / (ret * ret) + (ret / 2));
     }
 
@@ -851,8 +851,7 @@ template<> real gamma(real const &x)
      * precision values in order to attain the desired accuracy. It might
      * also be useful to sort the ck values by decreasing absolute value
      * and do the addition in this order. */
-    int a = (int)ceilf(logf(2) / logf(2 * F_PI)
-                          * real::BIGIT_COUNT * real::BIGIT_BITS);
+    int a = (int)ceilf(logf(2) / logf(2 * F_PI) * x.total_bits());
 
     real ret = sqrt(real::R_PI() * 2);
     real fact_k_1 = real::R_1();
@@ -875,7 +874,7 @@ template<> real gamma(real const &x)
 template<> real fabs(real const &x)
 {
     real ret = x;
-    ret.m_signexp &= 0x7fffffffu;
+    ret.m_sign = false;
     return ret;
 }
 
@@ -891,6 +890,7 @@ template<> real fract(real const &x)
 
 template<> real degrees(real const &x)
 {
+    /* FIXME: need to recompute this for different mantissa sizes */
     static real mul = real(180) * real::R_1_PI();
 
     return x * mul;
@@ -898,6 +898,7 @@ template<> real degrees(real const &x)
 
 template<> real radians(real const &x)
 {
+    /* FIXME: need to recompute this for different mantissa sizes */
     static real mul = real::R_PI() / real(180);
 
     return x * mul;
@@ -940,31 +941,29 @@ template<> real log(real const &x)
 {
     /* Strategy for log(x): if x = 2^E*M then log(x) = E log(2) + log(M),
      * with the property that M is in [1..2[, so fast_log() applies here. */
-    real tmp = x;
-    if (x.m_signexp >> 31 || x.m_signexp == 0)
+    real tmp;
+    if (x.m_sign || x.m_mantissa.count() == 0)
     {
-        tmp.m_signexp = 0xffffffffu;
-        tmp.m_mantissa[0] = 0xffffffffu;
+        tmp.m_nan = true;
         return tmp;
     }
-    tmp.m_signexp = real::EXPONENT_BIAS;
-    return (real)(int)(x.m_signexp - real::EXPONENT_BIAS) * real::R_LN2()
-           + fast_log(tmp);
+    tmp = x;
+    tmp.m_exponent = 0;
+    return real(x.m_exponent) * real::R_LN2() + fast_log(tmp);
 }
 
 template<> real log2(real const &x)
 {
     /* Strategy for log2(x): see log(x). */
-    real tmp = x;
-    if (x.m_signexp >> 31 || x.m_signexp == 0)
+    real tmp;
+    if (x.m_sign || x.m_mantissa.count() == 0)
     {
-        tmp.m_signexp = 0xffffffffu;
-        tmp.m_mantissa[0] = 0xffffffffu;
+        tmp.m_nan = true;
         return tmp;
     }
-    tmp.m_signexp = real::EXPONENT_BIAS;
-    return (real)(int)(x.m_signexp - real::EXPONENT_BIAS)
-           + fast_log(tmp) * real::R_LOG2E();
+    tmp = x;
+    tmp.m_exponent = 0;
+    return real(x.m_exponent) + fast_log(tmp) * real::R_LOG2E();
 }
 
 template<> real log10(real const &x)
@@ -1014,7 +1013,7 @@ template<> real exp(real const &x)
     int e0 = x / real::R_LN2();
     real x0 = x - (real)e0 * real::R_LN2();
     real x1 = fast_exp_sub(x0, real::R_0());
-    x1.m_signexp += e0;
+    x1.m_exponent += e0;
     return x1;
 }
 
@@ -1024,7 +1023,7 @@ template<> real exp2(real const &x)
     int e0 = x;
     real x0 = x - (real)e0;
     real x1 = fast_exp_sub(x0 * real::R_LN2(), real::R_0());
-    x1.m_signexp += e0;
+    x1.m_exponent += e0;
     return x1;
 }
 
@@ -1056,7 +1055,7 @@ template<> real cosh(real const &x)
     return (exp(x) + exp(-x)) / 2;
 }
 
-template<> real frexp(real const &x, int *exp)
+template<> real frexp(real const &x, int64_t *exp)
 {
     if (!x)
     {
@@ -1064,18 +1063,19 @@ template<> real frexp(real const &x, int *exp)
         return x;
     }
 
+    /* FIXME: check that this works */
+    *exp = x.m_exponent;
+
     real ret = x;
-    int exponent = (ret.m_signexp & 0x7fffffffu) - real::EXPONENT_BIAS;
-    *exp = exponent + 1;
-    ret.m_signexp -= exponent + 1;
+    ret.m_exponent = 0;
     return ret;
 }
 
-template<> real ldexp(real const &x, int exp)
+template<> real ldexp(real const &x, int64_t exp)
 {
     real ret = x;
-    if (ret)
-        ret.m_signexp += exp;
+    if (ret) /* Only do something if non-zero */
+        ret.m_exponent += exp;
     return ret;
 }
 
@@ -1095,19 +1095,18 @@ template<> real nextafter(real const &x, real const &y)
         return y;
 
     /* Ensure x is positive. */
-    if (x.m_signexp >> 31)
+    if (x.m_sign)
         return -nextafter(-x, -y);
 
     /* FIXME: broken for now */
-    real ulp = ldexp(x, -real::TOTAL_BITS);
+    real ulp = ldexp(x, -x.total_bits());
     return x < y ? x + ulp : x - ulp;
 }
 
 template<> real copysign(real const &x, real const &y)
 {
     real ret = x;
-    ret.m_signexp &= 0x7fffffffu;
-    ret.m_signexp |= y.m_signexp & 0x80000000u;
+    ret.m_sign = y.m_sign;
     return ret;
 }
 
@@ -1127,16 +1126,16 @@ template<> real floor(real const &x)
         return real::R_0();
 
     real ret = x;
-    int exponent = x.m_signexp - real::EXPONENT_BIAS;
+    int64_t exponent = x.m_exponent;
 
-    for (int i = 0; i < real::BIGIT_COUNT; i++)
+    for (int i = 0; i < x.bigit_count(); ++i)
     {
         if (exponent <= 0)
             ret.m_mantissa[i] = 0;
-        else if (exponent < real::BIGIT_BITS)
-            ret.m_mantissa[i] &= ~((1 << (real::BIGIT_BITS - exponent)) - 1);
+        else if (exponent < real::bigit_bits())
+            ret.m_mantissa[i] &= ~((1 << (real::bigit_bits() - exponent)) - 1);
 
-        exponent -= real::BIGIT_BITS;
+        exponent -= real::bigit_bits();
     }
 
     return ret;
@@ -1179,7 +1178,7 @@ template<> real fmod(real const &x, real const &y)
 
 template<> real sin(real const &x)
 {
-    int switch_sign = x.m_signexp & 0x80000000u;
+    bool switch_sign = x.m_sign;
 
     real absx = fmod(fabs(x), real::R_PI() * 2);
     if (absx > real::R_PI())
@@ -1205,8 +1204,7 @@ template<> real sin(real const &x)
     ret /= fast_fact(i);
 
     /* Propagate sign */
-    if (switch_sign)
-        ret.m_signexp ^= 0x80000000u;
+    ret.m_sign ^= switch_sign;
     return ret;
 }
 
@@ -1239,7 +1237,7 @@ template<> real tan(real const &x)
     return cos(y) / sin(y);
 }
 
-static inline real asinacos(real const &x, int is_asin, int is_negative)
+static inline real asinacos(real const &x, int is_asin, bool is_negative)
 {
     /* Strategy for asin(): in [-0.5..0.5], use a Taylor series around
      * zero. In [0.5..1], use asin(x) = π/2 - 2*asin(sqrt((1-x)/2)), and
@@ -1253,7 +1251,7 @@ static inline real asinacos(real const &x, int is_asin, int is_negative)
         absx = sqrt((real::R_1() - absx) / 2);
 
     real ret = absx, xn = absx, x2 = absx * absx, fact1 = 2, fact2 = 1;
-    for (int i = 1; ; i++)
+    for (int i = 1; ; ++i)
     {
         xn *= x2;
         real mul = (real)(2 * i + 1);
@@ -1284,12 +1282,13 @@ static inline real asinacos(real const &x, int is_asin, int is_negative)
 
 template<> real asin(real const &x)
 {
-    return asinacos(x, 1, x.m_signexp >> 31);
+    /* Pass m_sign because it is private… FIXME: implement is_negative() */
+    return asinacos(x, 1, x.m_sign);
 }
 
 template<> real acos(real const &x)
 {
-    return asinacos(x, 0, x.m_signexp >> 31);
+    return asinacos(x, 0, x.m_sign);
 }
 
 template<> real atan(real const &x)
@@ -1391,7 +1390,7 @@ template<> real atan(real const &x)
     }
 
     /* Propagate sign */
-    ret.m_signexp |= (x.m_signexp & 0x80000000u);
+    ret.m_sign = x.m_sign;
     return ret;
 }
 
@@ -1399,18 +1398,14 @@ template<> real atan2(real const &y, real const &x)
 {
     if (!y)
     {
-        if ((x.m_signexp >> 31) == 0)
+        if (!x.m_sign)
             return y;
-        if (y.m_signexp >> 31)
-            return -real::R_PI();
-        return real::R_PI();
+        return y.m_sign ? -real::R_PI() : real::R_PI();
     }
 
     if (!x)
     {
-        if (y.m_signexp >> 31)
-            return -real::R_PI();
-        return real::R_PI();
+        return y.m_sign ? -real::R_PI() : real::R_PI();
     }
 
     /* FIXME: handle the Inf and NaN cases */
@@ -1480,21 +1475,21 @@ template<> void real::print(int ndigits) const
 
 template<> void real::sxprintf(char *str) const
 {
-    if (m_signexp >> 31)
+    if (m_sign)
         *str++ = '-';
     str += std::sprintf(str, "0x1.");
-    for (int i = 0; i < BIGIT_COUNT; ++i)
+    for (int i = 0; i < bigit_count(); ++i)
         str += std::sprintf(str, "%08x", m_mantissa[i]);
     while (str[-1] == '0')
         *--str = '\0';
-    str += std::sprintf(str, "p%d", (m_signexp & 0x7fffffffu) - EXPONENT_BIAS);
+    str += std::sprintf(str, "p%lld", (long long int)m_exponent);
 }
 
 template<> void real::sprintf(char *str, int ndigits) const
 {
     real x = *this;
 
-    if (x.m_signexp >> 31)
+    if (x.m_sign)
     {
         *str++ = '-';
         x = -x;
@@ -1502,7 +1497,7 @@ template<> void real::sprintf(char *str, int ndigits) const
 
     if (!x)
     {
-        std::strcpy(str, "0.0");
+        std::strcpy(str, "0");
         return;
     }
 
@@ -1525,7 +1520,7 @@ template<> void real::sprintf(char *str, int ndigits) const
     }
 
     /* Print digits */
-    for (int i = 0; i < ndigits; i++)
+    for (int i = 0; i < ndigits; ++i)
     {
         int digit = (int)floor(x);
         *str++ = '0' + digit;
@@ -1550,7 +1545,7 @@ template<> void real::sprintf(char *str, int ndigits) const
 static real load_min()
 {
     real ret = 1;
-    return ldexp(ret, 1 - real::EXPONENT_BIAS);
+    return ldexp(ret, std::numeric_limits<int64_t>::min());
 }
 
 static real load_max()
@@ -1562,10 +1557,11 @@ static real load_max()
     ret = ldexp(ret, real::TOTAL_BITS - 1) - ret;
     return ldexp(ret, real::EXPONENT_BIAS + 2 - real::TOTAL_BITS);
 #endif
-    /* Generates 0x1.ffff..ffffp1073741823 */
-    char str[150];
-    std::sprintf(str, "0x1.%llx%llx%llx%llx%llx%llx%llx%llxp%d",
-                 -1ll, -1ll, -1ll, -1ll, -1ll, -1ll, -1ll, -1ll, real::EXPONENT_BIAS);
+    /* Generates 0x1.ffff..ffffp18446744073709551615 */
+    char str[160];
+    std::sprintf(str, "0x1.%llx%llx%llx%llx%llx%llx%llx%llxp%lld",
+                 -1ll, -1ll, -1ll, -1ll, -1ll, -1ll, -1ll, -1ll,
+                 (long long int)std::numeric_limits<int64_t>::max());
     return real(str);
 }
 

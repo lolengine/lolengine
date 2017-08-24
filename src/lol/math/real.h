@@ -35,14 +35,11 @@ namespace lol
  * avoid accidental implicit conversions ("int x = 1; sqrt(x)" will never
  * call real::sqrt).
  */
-template<int N>
+template<typename T>
 class LOL_ATTR_NODISCARD Real
 {
 public:
     Real();
-    Real(Real<N> const &x);
-    Real const &operator =(Real<N> const &x);
-    ~Real();
 
     Real(float f);
     Real(double f);
@@ -60,82 +57,82 @@ public:
     LOL_ATTR_NODISCARD operator int() const;
     LOL_ATTR_NODISCARD operator unsigned int() const;
 
-    Real<N> operator +() const;
-    Real<N> operator -() const;
-    Real<N> operator +(Real<N> const &x) const;
-    Real<N> operator -(Real<N> const &x) const;
-    Real<N> operator *(Real<N> const &x) const;
-    Real<N> operator /(Real<N> const &x) const;
-    Real<N> const &operator +=(Real<N> const &x);
-    Real<N> const &operator -=(Real<N> const &x);
-    Real<N> const &operator *=(Real<N> const &x);
-    Real<N> const &operator /=(Real<N> const &x);
+    Real<T> operator +() const;
+    Real<T> operator -() const;
+    Real<T> operator +(Real<T> const &x) const;
+    Real<T> operator -(Real<T> const &x) const;
+    Real<T> operator *(Real<T> const &x) const;
+    Real<T> operator /(Real<T> const &x) const;
+    Real<T> const &operator +=(Real<T> const &x);
+    Real<T> const &operator -=(Real<T> const &x);
+    Real<T> const &operator *=(Real<T> const &x);
+    Real<T> const &operator /=(Real<T> const &x);
 
-    LOL_ATTR_NODISCARD bool operator ==(Real<N> const &x) const;
-    LOL_ATTR_NODISCARD bool operator !=(Real<N> const &x) const;
-    LOL_ATTR_NODISCARD bool operator <(Real<N> const &x) const;
-    LOL_ATTR_NODISCARD bool operator >(Real<N> const &x) const;
-    LOL_ATTR_NODISCARD bool operator <=(Real<N> const &x) const;
-    LOL_ATTR_NODISCARD bool operator >=(Real<N> const &x) const;
+    LOL_ATTR_NODISCARD bool operator ==(Real<T> const &x) const;
+    LOL_ATTR_NODISCARD bool operator !=(Real<T> const &x) const;
+    LOL_ATTR_NODISCARD bool operator <(Real<T> const &x) const;
+    LOL_ATTR_NODISCARD bool operator >(Real<T> const &x) const;
+    LOL_ATTR_NODISCARD bool operator <=(Real<T> const &x) const;
+    LOL_ATTR_NODISCARD bool operator >=(Real<T> const &x) const;
 
     LOL_ATTR_NODISCARD bool operator !() const;
     LOL_ATTR_NODISCARD operator bool() const;
 
     /* Comparison functions */
-    template<int K> friend Real<K> min(Real<K> const &a, Real<K> const &b);
-    template<int K> friend Real<K> max(Real<K> const &a, Real<K> const &b);
-    template<int K> friend Real<K> clamp(Real<K> const &x,
-                                         Real<K> const &a, Real<K> const &b);
+    template<typename U> friend Real<U> min(Real<U> const &a, Real<U> const &b);
+    template<typename U> friend Real<U> max(Real<U> const &a, Real<U> const &b);
+    template<typename U> friend Real<U> clamp(Real<U> const &x,
+                                              Real<U> const &a, Real<U> const &b);
 
     /* Trigonometric functions */
-    template<int K> friend Real<K> sin(Real<K> const &x);
-    template<int K> friend Real<K> cos(Real<K> const &x);
-    template<int K> friend Real<K> tan(Real<K> const &x);
-    template<int K> friend Real<K> asin(Real<K> const &x);
-    template<int K> friend Real<K> acos(Real<K> const &x);
-    template<int K> friend Real<K> atan(Real<K> const &x);
-    template<int K> friend Real<K> atan2(Real<K> const &y, Real<K> const &x);
+    template<typename U> friend Real<U> sin(Real<U> const &x);
+    template<typename U> friend Real<U> cos(Real<U> const &x);
+    template<typename U> friend Real<U> tan(Real<U> const &x);
+    template<typename U> friend Real<U> asin(Real<U> const &x);
+    template<typename U> friend Real<U> acos(Real<U> const &x);
+    template<typename U> friend Real<U> atan(Real<U> const &x);
+    template<typename U> friend Real<U> atan2(Real<U> const &y, Real<U> const &x);
 
     /* Hyperbolic functions */
-    template<int K> friend Real<K> sinh(Real<K> const &x);
-    template<int K> friend Real<K> cosh(Real<K> const &x);
-    template<int K> friend Real<K> tanh(Real<K> const &x);
+    template<typename U> friend Real<U> sinh(Real<U> const &x);
+    template<typename U> friend Real<U> cosh(Real<U> const &x);
+    template<typename U> friend Real<U> tanh(Real<U> const &x);
 
     /* Exponential and logarithmic functions */
-    template<int K> friend Real<K> exp(Real<K> const &x);
-    template<int K> friend Real<K> exp2(Real<K> const &x);
-    template<int K> friend Real<K> log(Real<K> const &x);
-    template<int K> friend Real<K> log2(Real<K> const &x);
-    template<int K> friend Real<K> log10(Real<K> const &x);
-    template<int K> friend Real<K> frexp(Real<K> const &x, int *exp);
-    template<int K> friend Real<K> ldexp(Real<K> const &x, int exp);
-    template<int K> friend Real<K> modf(Real<K> const &x, Real<K> *iptr);
-    template<int K> friend Real<K> nextafter(Real<K> const &x, Real<K> const &y);
+    template<typename U> friend Real<U> exp(Real<U> const &x);
+    template<typename U> friend Real<U> exp2(Real<U> const &x);
+    template<typename U> friend Real<U> log(Real<U> const &x);
+    template<typename U> friend Real<U> log2(Real<U> const &x);
+    template<typename U> friend Real<U> log10(Real<U> const &x);
+    template<typename U> friend Real<U> frexp(Real<U> const &x, int64_t *exp);
+    template<typename U> friend Real<U> ldexp(Real<U> const &x, int64_t exp);
+    template<typename U> friend Real<U> modf(Real<U> const &x, Real<U> *iptr);
+    template<typename U> friend Real<U> nextafter(Real<U> const &x, Real<U> const &y);
 
     /* Power functions */
-    template<int K> friend Real<K> inverse(Real<K> const &x);
-    template<int K> friend Real<K> sqrt(Real<K> const &x);
-    template<int K> friend Real<K> cbrt(Real<K> const &x);
-    template<int K> friend Real<K> pow(Real<K> const &x, Real<K> const &y);
-    template<int K> friend Real<K> gamma(Real<K> const &x);
+    template<typename U> friend Real<U> inverse(Real<U> const &x);
+    template<typename U> friend Real<U> sqrt(Real<U> const &x);
+    template<typename U> friend Real<U> cbrt(Real<U> const &x);
+    template<typename U> friend Real<U> pow(Real<U> const &x, Real<U> const &y);
+    template<typename U> friend Real<U> gamma(Real<U> const &x);
 
     /* Rounding, absolute value, remainder etc. */
-    template<int K> friend Real<K> ceil(Real<K> const &x);
-    template<int K> friend Real<K> copysign(Real<K> const &x, Real<K> const &y);
-    template<int K> friend Real<K> floor(Real<K> const &x);
-    template<int K> friend Real<K> fabs(Real<K> const &x);
-    template<int K> friend Real<K> round(Real<K> const &x);
-    template<int K> friend Real<K> fmod(Real<K> const &x, Real<K> const &y);
+    template<typename U> friend Real<U> ceil(Real<U> const &x);
+    template<typename U> friend Real<U> copysign(Real<U> const &x, Real<U> const &y);
+    template<typename U> friend Real<U> floor(Real<U> const &x);
+    template<typename U> friend Real<U> fabs(Real<U> const &x);
+    template<typename U> friend Real<U> round(Real<U> const &x);
+    template<typename U> friend Real<U> fmod(Real<U> const &x, Real<U> const &y);
 
     /* Functions inherited from GLSL */
-    template<int K> friend Real<K> abs(Real<K> const &x);
-    template<int K> friend Real<K> fract(Real<K> const &x);
-    template<int K> friend Real<K> degrees(Real<K> const &x);
-    template<int K> friend Real<K> radians(Real<K> const &x);
+    template<typename U> friend Real<U> abs(Real<U> const &x);
+    template<typename U> friend Real<U> fract(Real<U> const &x);
+    template<typename U> friend Real<U> degrees(Real<U> const &x);
+    template<typename U> friend Real<U> radians(Real<U> const &x);
 
     /* Additional functions */
-    template<int K> friend Real<K> franke(Real<K> const &x, Real<K> const &y);
-    template<int K> friend Real<K> peaks(Real<K> const &x, Real<K> const &y);
+    template<typename U> friend Real<U> franke(Real<U> const &x, Real<U> const &y);
+    template<typename U> friend Real<U> peaks(Real<U> const &x, Real<U> const &y);
 
     void xprint() const;
     void print(int ndigits = 150) const;
@@ -144,23 +141,23 @@ public:
 
     /* Additional operators using base C++ types */
 #define __LOL_REAL_OP_HELPER_GENERIC(op, type) \
-    inline Real<N> operator op(type x) const { return *this op (Real<N>)x; } \
-    inline Real<N> const &operator op##=(type x) { return *this = (*this op x); }
+    inline Real<T> operator op(type x) const { return *this op (Real<T>)x; } \
+    inline Real<T> const &operator op##=(type x) { return *this = (*this op x); }
 #define __LOL_REAL_OP_HELPER_FASTMULDIV(op, type) \
-    inline Real<N> operator op(type x) const \
+    inline Real<T> operator op(type x) const \
     { \
-        Real<N> tmp = *this; return tmp op##= x; \
+        Real<T> tmp = *this; return tmp op##= x; \
     } \
-    inline Real<N> const &operator op##=(type x) \
+    inline Real<T> const &operator op##=(type x) \
     { \
         /* If multiplying or dividing by a power of two, take a shortcut */ \
-        if ((m_signexp << 1) && x && !(x & (x - 1))) \
+        if (m_sign && m_exponent && x && !(x & (x - 1))) \
         { \
             while (x >>= 1) \
-                m_signexp += 1 op 2 - 1; /* 1 if op is *, -1 if op is / */ \
+                m_exponent += 1 op 2 - 1; /* 1 if op is *, -1 if op is / */ \
         } \
         else \
-            *this = *this op (Real<N>)x; \
+            *this = *this op (Real<T>)x; \
         return *this; \
     }
 #define __LOL_REAL_OP_HELPER_INT(type) \
@@ -181,59 +178,51 @@ public:
     __LOL_REAL_OP_HELPER_FLOAT(long double)
 
     /* Constants */
-    static Real<N> const& R_0();
-    static Real<N> const& R_1();
-    static Real<N> const& R_2();
-    static Real<N> const& R_3();
-    static Real<N> const& R_4();
-    static Real<N> const& R_10();
+    static Real<T> const& R_0();
+    static Real<T> const& R_1();
+    static Real<T> const& R_2();
+    static Real<T> const& R_3();
+    static Real<T> const& R_4();
+    static Real<T> const& R_10();
 
-    static Real<N> const& R_E();
-    static Real<N> const& R_LOG2E();
-    static Real<N> const& R_LOG10E();
-    static Real<N> const& R_LN2();
-    static Real<N> const& R_LN10();
-    static Real<N> const& R_PI();
-    static Real<N> const& R_PI_2();
-    static Real<N> const& R_PI_3();
-    static Real<N> const& R_PI_4();
-    static Real<N> const& R_TAU();
-    static Real<N> const& R_1_PI();
-    static Real<N> const& R_2_PI();
-    static Real<N> const& R_2_SQRTPI();
-    static Real<N> const& R_SQRT2();
-    static Real<N> const& R_SQRT3();
-    static Real<N> const& R_SQRT1_2();
+    static Real<T> const& R_E();
+    static Real<T> const& R_LOG2E();
+    static Real<T> const& R_LOG10E();
+    static Real<T> const& R_LN2();
+    static Real<T> const& R_LN10();
+    static Real<T> const& R_PI();
+    static Real<T> const& R_PI_2();
+    static Real<T> const& R_PI_3();
+    static Real<T> const& R_PI_4();
+    static Real<T> const& R_TAU();
+    static Real<T> const& R_1_PI();
+    static Real<T> const& R_2_PI();
+    static Real<T> const& R_2_SQRTPI();
+    static Real<T> const& R_SQRT2();
+    static Real<T> const& R_SQRT3();
+    static Real<T> const& R_SQRT1_2();
 
-    static Real<N> const& R_MIN();
-    static Real<N> const& R_MAX();
+    static Real<T> const& R_MIN();
+    static Real<T> const& R_MAX();
 
 private:
-    typedef uint32_t bigit_t;
-    typedef uint32_t signexp_t;
+    typedef T bigit_t;
+    typedef int64_t exponent_t;
 
-    bigit_t *m_mantissa;
-    signexp_t m_signexp;
+    array<T> m_mantissa;
+    exponent_t m_exponent;
+    bool m_sign, m_nan, m_inf;
 
 public:
-    /* XXX: changing this requires tuning real::fres (the number of
-     * Newton-Raphson iterations) and real::print (the number of printed
-     * digits) */
-    static int const BIGIT_COUNT = N;
-    static int const BIGIT_BITS = 8 * sizeof(bigit_t);
-    static int const TOTAL_BITS = BIGIT_COUNT * BIGIT_BITS;
-
-    static int const EXPONENT_BITS = 8 * sizeof(signexp_t) - 1;
-    static int const EXPONENT_BIAS = (1 << (EXPONENT_BITS - 1)) - 1;
+    static inline int bigit_bits() { return 8 * sizeof(bigit_t); }
+    inline int bigit_count() const { return m_mantissa.count(); }
+    inline int total_bits() const { return bigit_count() * bigit_bits(); }
 };
 
 /*
  * Mandatory forward declarations of template specialisations
  */
 template<> real::Real();
-template<> real::Real(real const &x);
-template<> real const &real::operator =(real const &x);
-template<> real::~Real();
 template<> real::Real(float f);
 template<> real::Real(double f);
 template<> real::Real(long double f);
@@ -267,47 +256,47 @@ template<> LOL_ATTR_NODISCARD bool real::operator >=(real const &x) const;
 template<> LOL_ATTR_NODISCARD bool real::operator !() const;
 template<> LOL_ATTR_NODISCARD real::operator bool() const;
 
-template<int K> Real<K> min(Real<K> const &a, Real<K> const &b);
-template<int K> Real<K> max(Real<K> const &a, Real<K> const &b);
-template<int K> Real<K> clamp(Real<K> const &x,
-                              Real<K> const &a, Real<K> const &b);
+template<typename U> Real<U> min(Real<U> const &a, Real<U> const &b);
+template<typename U> Real<U> max(Real<U> const &a, Real<U> const &b);
+template<typename U> Real<U> clamp(Real<U> const &x,
+                                   Real<U> const &a, Real<U> const &b);
 
-template<int K> Real<K> sin(Real<K> const &x);
-template<int K> Real<K> cos(Real<K> const &x);
-template<int K> Real<K> tan(Real<K> const &x);
-template<int K> Real<K> asin(Real<K> const &x);
-template<int K> Real<K> acos(Real<K> const &x);
-template<int K> Real<K> atan(Real<K> const &x);
-template<int K> Real<K> atan2(Real<K> const &y, Real<K> const &x);
-template<int K> Real<K> sinh(Real<K> const &x);
-template<int K> Real<K> cosh(Real<K> const &x);
-template<int K> Real<K> tanh(Real<K> const &x);
-template<int K> Real<K> exp(Real<K> const &x);
-template<int K> Real<K> exp2(Real<K> const &x);
-template<int K> Real<K> log(Real<K> const &x);
-template<int K> Real<K> log2(Real<K> const &x);
-template<int K> Real<K> log10(Real<K> const &x);
-template<int K> Real<K> frexp(Real<K> const &x, int *exp);
-template<int K> Real<K> ldexp(Real<K> const &x, int exp);
-template<int K> Real<K> modf(Real<K> const &x, Real<K> *iptr);
-template<int K> Real<K> nextafter(Real<K> const &x, Real<K> const &y);
-template<int K> Real<K> inverse(Real<K> const &x);
-template<int K> Real<K> sqrt(Real<K> const &x);
-template<int K> Real<K> cbrt(Real<K> const &x);
-template<int K> Real<K> pow(Real<K> const &x, Real<K> const &y);
-template<int K> Real<K> gamma(Real<K> const &x);
-template<int K> Real<K> ceil(Real<K> const &x);
-template<int K> Real<K> copysign(Real<K> const &x, Real<K> const &y);
-template<int K> Real<K> floor(Real<K> const &x);
-template<int K> Real<K> fabs(Real<K> const &x);
-template<int K> Real<K> round(Real<K> const &x);
-template<int K> Real<K> fmod(Real<K> const &x, Real<K> const &y);
-template<int K> Real<K> abs(Real<K> const &x);
-template<int K> Real<K> fract(Real<K> const &x);
-template<int K> Real<K> degrees(Real<K> const &x);
-template<int K> Real<K> radians(Real<K> const &x);
-template<int K> Real<K> franke(Real<K> const &x, Real<K> const &y);
-template<int K> Real<K> peaks(Real<K> const &x, Real<K> const &y);
+template<typename U> Real<U> sin(Real<U> const &x);
+template<typename U> Real<U> cos(Real<U> const &x);
+template<typename U> Real<U> tan(Real<U> const &x);
+template<typename U> Real<U> asin(Real<U> const &x);
+template<typename U> Real<U> acos(Real<U> const &x);
+template<typename U> Real<U> atan(Real<U> const &x);
+template<typename U> Real<U> atan2(Real<U> const &y, Real<U> const &x);
+template<typename U> Real<U> sinh(Real<U> const &x);
+template<typename U> Real<U> cosh(Real<U> const &x);
+template<typename U> Real<U> tanh(Real<U> const &x);
+template<typename U> Real<U> exp(Real<U> const &x);
+template<typename U> Real<U> exp2(Real<U> const &x);
+template<typename U> Real<U> log(Real<U> const &x);
+template<typename U> Real<U> log2(Real<U> const &x);
+template<typename U> Real<U> log10(Real<U> const &x);
+template<typename U> Real<U> frexp(Real<U> const &x, int64_t *exp);
+template<typename U> Real<U> ldexp(Real<U> const &x, int64_t exp);
+template<typename U> Real<U> modf(Real<U> const &x, Real<U> *iptr);
+template<typename U> Real<U> nextafter(Real<U> const &x, Real<U> const &y);
+template<typename U> Real<U> inverse(Real<U> const &x);
+template<typename U> Real<U> sqrt(Real<U> const &x);
+template<typename U> Real<U> cbrt(Real<U> const &x);
+template<typename U> Real<U> pow(Real<U> const &x, Real<U> const &y);
+template<typename U> Real<U> gamma(Real<U> const &x);
+template<typename U> Real<U> ceil(Real<U> const &x);
+template<typename U> Real<U> copysign(Real<U> const &x, Real<U> const &y);
+template<typename U> Real<U> floor(Real<U> const &x);
+template<typename U> Real<U> fabs(Real<U> const &x);
+template<typename U> Real<U> round(Real<U> const &x);
+template<typename U> Real<U> fmod(Real<U> const &x, Real<U> const &y);
+template<typename U> Real<U> abs(Real<U> const &x);
+template<typename U> Real<U> fract(Real<U> const &x);
+template<typename U> Real<U> degrees(Real<U> const &x);
+template<typename U> Real<U> radians(Real<U> const &x);
+template<typename U> Real<U> franke(Real<U> const &x, Real<U> const &y);
+template<typename U> Real<U> peaks(Real<U> const &x, Real<U> const &y);
 
 template<> real min(real const &a, real const &b);
 template<> real max(real const &a, real const &b);
@@ -328,8 +317,8 @@ template<> real exp2(real const &x);
 template<> real log(real const &x);
 template<> real log2(real const &x);
 template<> real log10(real const &x);
-template<> real frexp(real const &x, int *exp);
-template<> real ldexp(real const &x, int exp);
+template<> real frexp(real const &x, int64_t *exp);
+template<> real ldexp(real const &x, int64_t exp);
 template<> real modf(real const &x, real *iptr);
 template<> real nextafter(real const &x, real const &y);
 template<> real inverse(real const &x);

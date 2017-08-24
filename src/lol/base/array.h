@@ -141,6 +141,26 @@ public:
         return ret;
     }
 
+    bool operator==(ARRAY const &that) const
+    {
+        if (m_count != that.m_count)
+            return false;
+        for (ptrdiff_t i = 0; i < m_count; ++i)
+            if (!(m_data[i] == that[i]))
+                return false;
+        return true;
+    }
+
+    bool operator!=(ARRAY const &that) const
+    {
+        if (m_count == that.m_count)
+            return false;
+        for (ptrdiff_t i = 0; i < m_count; ++i)
+            if (!(m_data[i] != that[i]))
+                return false;
+        return true;
+    }
+
     inline element_t& operator[](ptrdiff_t n)
     {
         /* Allow array[0] even if size is zero so that people can
