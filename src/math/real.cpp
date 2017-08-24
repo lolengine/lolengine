@@ -681,14 +681,14 @@ template<> real inverse(real const &x)
     }
 
     /* Use the system's float inversion to approximate 1/x */
-    union { float f; uint32_t x; } u = { 1.0f }, v = { 1.0f };
-    v.x |= x.m_mantissa[0] >> 9;
-    v.f = 1.0f / v.f;
+    union { float f; uint32_t x; } u = { 1.0f };
+    u.x |= x.m_mantissa[0] >> 9;
+    u.f = 1.0f / u.f;
 
     ret.m_mantissa.resize(x.m_mantissa.count());
-    ret.m_mantissa[0] = v.x << 9;
+    ret.m_mantissa[0] = u.x << 9;
     ret.m_sign = x.m_sign;
-    ret.m_exponent = -x.m_exponent + (v.x >> 23) - (u.x >> 23);
+    ret.m_exponent = -x.m_exponent + (u.x >> 23) - 0x7f;
 
     /* FIXME: 1+log2(BIGIT_COUNT) steps of Newton-Raphson seems to be enough for
      * convergence, but this hasn't been checked seriously. */
@@ -712,26 +712,27 @@ template<> real sqrt(real const &x)
         return ret;
     }
 
+    int tweak = x.m_exponent & 1;
+
     /* Use the system's float inversion to approximate 1/sqrt(x). First
      * we construct a float in the [1..4[ range that has roughly the same
      * mantissa as our real. Its exponent is 0 or 1, depending on the
      * parity of x’s exponent. The final exponent is 0, -1 or -2. We use
      * the final exponent and final mantissa to pre-fill the result. */
-    union { float f; uint32_t x; } u = { 1.0f }, v = { 2.0f };
-    v.x -= ((x.m_exponent & 1) ^ 1) << 23;
-    v.x |= x.m_mantissa[0] >> 9;
-    v.f = 1.0f / sqrtf(v.f);
+    union { float f; uint32_t x; } u = { 1.0f };
+    u.x += tweak << 23;
+    u.x |= x.m_mantissa[0] >> 9;
+    u.f = 1.0f / sqrtf(u.f);
 
     real ret;
     ret.m_mantissa.resize(x.m_mantissa.count());
-    ret.m_mantissa[0] = v.x << 9;
+    ret.m_mantissa[0] = u.x << 9;
 
-    /* FIXME FIXME FIXME: this is broken */
-    ret.m_exponent = -x.m_exponent / 2 + (v.x >> 23) - (u.x >> 23);
+    ret.m_exponent = -(x.m_exponent - tweak) / 2 + (u.x >> 23) - 0x7f;
 
     /* FIXME: 1+log2(bigit_count()) steps of Newton-Raphson seems to be enough for
      * convergence, but this hasn't been checked seriously. */
-    for (int i = 1; i <= 1024 * x.bigit_count(); i *= 2)
+    for (int i = 1; i <= x.bigit_count(); i *= 2)
     {
         ret = ret * (real::R_3() - ret * ret * x);
         --ret.m_exponent;
@@ -746,20 +747,24 @@ template<> real cbrt(real const &x)
     if (!x.m_mantissa.count())
         return x;
 
+    int tweak = x.m_exponent % 3;
+    if (tweak < 0)
+        tweak += 3;
+
     /* Use the system's float inversion to approximate cbrt(x). First
      * we construct a float in the [1..8[ range that has roughly the same
      * mantissa as our real. Its exponent is 0, 1 or 2, depending on the
      * value of x. The final exponent is 0 or 1 (special case). We use
      * the final exponent and final mantissa to pre-fill the result. */
-    union { float f; uint32_t x; } u = { 1.0f }, v = { 1.0f };
-    v.x += (x.m_exponent % 3) << 23;
-    v.x |= x.m_mantissa[0] >> 9;
-    v.f = powf(v.f, 0.33333333333333333f);
+    union { float f; uint32_t x; } u = { 1.0f };
+    u.x += tweak << 23;
+    u.x |= x.m_mantissa[0] >> 9;
+    u.f = powf(u.f, 0.33333333333333333f);
 
     real ret;
     ret.m_mantissa.resize(x.m_mantissa.count());
-    ret.m_mantissa[0] = v.x << 9;
-    ret.m_exponent = x.m_exponent / 3 + (v.x >> 23) - (u.x >> 23);
+    ret.m_mantissa[0] = u.x << 9;
+    ret.m_exponent = (x.m_exponent - tweak) / 3 + (u.x >> 23) - 0x7f;
     ret.m_sign = x.m_sign;
 
     /* FIXME: 1+log2(bigit_count()) steps of Newton-Raphson seems to be enough
