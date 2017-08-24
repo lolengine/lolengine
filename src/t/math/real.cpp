@@ -251,9 +251,32 @@ lolunit_declare_fixture(real_test)
         /* 1 / 3 * 3 should be close to 1... check that it does not differ
          * by more than 2^-k where k is the number of bits in the mantissa. */
         real a = real::R_1() / real::R_3() * real::R_3();
-        real b = ldexp(real::R_1() - a, real::TOTAL_BITS);
+        real b = ldexp(real::R_1() - a, a.total_bits());
 
         lolunit_assert_lequal((double)fabs(b), 1.0);
+    }
+
+    lolunit_declare_test(sqrt_cbrt)
+    {
+        double sqrt0 = sqrt(real(0));
+        double sqrt1 = sqrt(real(1));
+        double sqrt2 = sqrt(real(2));
+        double sqrt3 = sqrt(real(3));
+        double sqrt4 = sqrt(real(4));
+        double sqrt5 = sqrt(real(5));
+        double sqrt6 = sqrt(real(6));
+        double sqrt7 = sqrt(real(7));
+        double sqrt8 = sqrt(real(8));
+
+        lolunit_assert_doubles_equal(sqrt0, sqrt(0.0), 1e-8);
+        lolunit_assert_doubles_equal(sqrt1, sqrt(1.0), 1e-8);
+        lolunit_assert_doubles_equal(sqrt2, sqrt(2.0), 1e-8);
+        lolunit_assert_doubles_equal(sqrt3, sqrt(3.0), 1e-8);
+        lolunit_assert_doubles_equal(sqrt4, sqrt(4.0), 1e-8);
+        lolunit_assert_doubles_equal(sqrt5, sqrt(5.0), 1e-8);
+        lolunit_assert_doubles_equal(sqrt6, sqrt(6.0), 1e-8);
+        lolunit_assert_doubles_equal(sqrt7, sqrt(7.0), 1e-8);
+        lolunit_assert_doubles_equal(sqrt8, sqrt(8.0), 1e-8);
     }
 
     lolunit_declare_test(real_ldexp)
