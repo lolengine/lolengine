@@ -2,11 +2,16 @@
 include $(top_srcdir)/build/autotools/common.am
 
 if BUILD_TUTORIAL
-noinst_PROGRAMS = 01_triangle 02_cube 03_noise 04_texture 05_easymesh \
-                  06_sprite 07_input 08_fbo 09_sound 11_fractal \
-                  12_voronoi 13_shader_builder 14_lol_lua 15_lolimgui \
-                  16_movie
+noinst_PROGRAMS = $(tutorials)
 endif
+
+tutorials =
+if LOL_USE_GL
+tutorials += 01_triangle 02_cube 03_noise 04_texture 05_easymesh \
+             06_sprite 07_input 08_fbo 09_sound 11_fractal \
+             12_voronoi 13_shader_builder 14_lol_lua 15_lolimgui
+endif
+tutorials += 16_movie
 
 01_triangle_SOURCES = 01_triangle.cpp 01_triangle.lolfx
 01_triangle_CPPFLAGS = $(AM_CPPFLAGS)

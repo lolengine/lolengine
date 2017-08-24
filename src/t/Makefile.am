@@ -7,9 +7,23 @@ noinst_PROGRAMS = $(testsuite)
 TESTS = $(testsuite)
 endif
 
-# Conditionally built for now because of STLport issues
-if !LOL_USE_ANDROID
-testsuite = test-base test-math test-sys test-image test-entity
+testsuite = test-base test-math
+
+if LOL_USE_GL
+testsuite += test-entity # FIXME: this should not really depend on GL
+testsuite += test-sys
+endif
+
+if LOL_USE_GDIPLUS
+testsuite += test-image
+else
+if LOL_USE_LIBPNG
+testsuite += test-image
+else
+if LOL_USE_IMLIB2
+testsuite += test-image
+endif
+endif
 endif
 
 test_base_SOURCES = test-common.cpp \

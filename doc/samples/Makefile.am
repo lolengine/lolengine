@@ -7,7 +7,10 @@ bench: benchsuite$(EXEEXT)
 	./benchsuite$(EXEEXT)
 
 if BUILD_SAMPLES
-noinst_PROGRAMS = bluenoise benchsuite btphystest nacl_phystest simplex
+noinst_PROGRAMS = bluenoise benchsuite simplex
+if LOL_USE_GL
+noinst_PROGRAMS += btphystest nacl_phystest
+endif
 endif
 
 bluenoise_SOURCES = bluenoise.cpp

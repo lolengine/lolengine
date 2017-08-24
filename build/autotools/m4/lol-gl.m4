@@ -15,10 +15,12 @@ dnl
 # ---------------------
 AC_DEFUN([LOL_AC_CHECK_OPENGL],
 [
+ac_cv_my_have_gl="no"
 ac_cv_my_have_glew="no"
 if test "${enable_gl}" != "no"; then
   LOL_AC_CHECK_OPENGL_INNER()
 fi
+AM_CONDITIONAL(LOL_USE_GL, test "${ac_cv_my_have_gl}" != "no")
 AM_CONDITIONAL(LOL_USE_GLEW, test "${ac_cv_my_have_glew}" != "no")
 ])
 
