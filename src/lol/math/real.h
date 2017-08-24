@@ -214,6 +214,8 @@ private:
     bool m_sign, m_nan, m_inf;
 
 public:
+    static int DEFAULT_BIGIT_COUNT;
+
     static inline int bigit_bits() { return 8 * sizeof(bigit_t); }
     inline int bigit_count() const { return m_mantissa.count(); }
     inline int total_bits() const { return bigit_count() * bigit_bits(); }

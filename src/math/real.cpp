@@ -77,7 +77,8 @@ LOL_CONSTANT_GETTER(R_SQRT1_2,  R_SQRT2() / 2);
  * Now carry on with the rest of the Real class.
  */
 
-#define DEFAULT_SIZE 16
+template<>
+int real::DEFAULT_BIGIT_COUNT = 16;
 
 template<> real::Real()
   : m_exponent(0),
@@ -118,7 +119,7 @@ template<> real::Real(double d)
         /* Only works with 32-bit bigits for now */
         static_assert(sizeof(bigit_t) == 4);
         m_exponent = exponent - ((1 << 10) - 1);
-        m_mantissa.resize(DEFAULT_SIZE);
+        m_mantissa.resize(DEFAULT_BIGIT_COUNT);
         m_mantissa[0] = (bigit_t)(u.x >> 20);
         m_mantissa[1] = (bigit_t)(u.x << 12);
         break;
