@@ -127,12 +127,13 @@ template<> real::Real(double d)
 
 template<> real::Real(long double f)
 {
-    /* We don’t know the long double layout, so we split it into
-     * two doubles instead. */
-    double hi = double(f);
-    double lo = double(f - (long double)hi);;
-    new(this) real(hi);
-    *this += lo;
+    /* We don’t know the long double layout, so we get rid of the
+     * exponent, then load it into a real in two steps. */
+    int exponent;
+    f = frexpl(f, &exponent);
+    new(this) real(double(f));
+    *this += double(f - (long double)*this);
+    m_exponent += exponent;
 }
 
 template<> real::operator float() const { return (float)(double)(*this); }
