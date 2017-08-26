@@ -180,6 +180,8 @@ public:
 
     __LOL_REAL_OP_HELPER_INT(int)
     __LOL_REAL_OP_HELPER_INT(unsigned int)
+    __LOL_REAL_OP_HELPER_INT(int64_t)
+    __LOL_REAL_OP_HELPER_INT(uint64_t)
     __LOL_REAL_OP_HELPER_FLOAT(float)
     __LOL_REAL_OP_HELPER_FLOAT(double)
     __LOL_REAL_OP_HELPER_FLOAT(long double)

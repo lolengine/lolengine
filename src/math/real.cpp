@@ -100,13 +100,39 @@ template<> real::Real()
 {
 }
 
-/* FIXME: 64-bit integer loading is incorrect, we lose precision. */
 template<> real::Real(int32_t i) { new(this) real((double)i); }
 template<> real::Real(uint32_t i) { new(this) real((double)i); }
-template<> real::Real(int64_t i) { new(this) real((double)i); }
-template<> real::Real(uint64_t i) { new(this) real((double)i); }
-
 template<> real::Real(float f) { new(this) real((double)f); }
+
+template<> real::Real(int64_t i)
+{
+    new(this) real((uint64_t)lol::abs(i));
+    m_sign = i < 0;
+}
+
+template<> real::Real(uint64_t i)
+{
+    new(this) real();
+    if (i)
+    {
+        /* Only works with 32-bit bigits for now */
+        static_assert(sizeof(bigit_t) == 4);
+
+        int delta = 1;
+        while ((i >> 63) == 0)
+        {
+            i <<= 1;
+            ++delta;
+        }
+        i <<= 1; /* Remove implicit one */
+
+        m_exponent = 64 - delta;
+        m_mantissa.resize(DEFAULT_BIGIT_COUNT);
+        m_mantissa[0] = (bigit_t)(i >> 32);
+        if (m_mantissa.count() > 1)
+            m_mantissa[1] = (bigit_t)i;
+    }
+}
 
 template<> real::Real(double d)
   : m_exponent(0),
@@ -838,20 +864,22 @@ template<> real pow(real const &x, real const &y)
 static real fast_fact(unsigned int x)
 {
     real ret = real::R_1();
-    unsigned int i = 1, multiplier = 1, exponent = 0;
+    uint64_t multiplier = 1;
 
-    for (;;)
+    for (unsigned int i = 1, exponent = 0;;)
     {
         if (i++ >= x)
-            /* Multiplication is a no-op if multiplier == 1 */
             return ldexp(ret * multiplier, exponent);
 
+        /* Accumulate the power of two part in the exponent */
         unsigned int tmp = i;
         while ((tmp & 1) == 0)
         {
             tmp >>= 1;
             exponent++;
         }
+
+        /* Accumulate the other factors in the multiplier */
         if (multiplier * tmp / tmp != multiplier)
         {
             ret *= multiplier;
