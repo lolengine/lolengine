@@ -38,6 +38,11 @@ static real load_min();
 static real load_max();
 static real load_pi();
 
+/* These getters do not need caching, their return values are small */
+template<> real const real::R_0() { return real(); }
+template<> real const real::R_INF() { real ret; ret.m_inf = true; return ret; }
+template<> real const real::R_NAN() { real ret; ret.m_nan = true; return ret; }
+
 #define LOL_CONSTANT_GETTER(name, value) \
     template<> real const& real::name() \
     { \
@@ -47,17 +52,16 @@ static real load_pi();
          * the value with the desired precision. */ \
         if (prev_bigit_count != DEFAULT_BIGIT_COUNT) \
         { \
-            ret = value; \
+            ret = (value); \
             prev_bigit_count = DEFAULT_BIGIT_COUNT; \
         } \
         return ret; \
     }
 
-LOL_CONSTANT_GETTER(R_0,        (real)0.0);
-LOL_CONSTANT_GETTER(R_1,        (real)1.0);
-LOL_CONSTANT_GETTER(R_2,        (real)2.0);
-LOL_CONSTANT_GETTER(R_3,        (real)3.0);
-LOL_CONSTANT_GETTER(R_10,       (real)10.0);
+LOL_CONSTANT_GETTER(R_1,        real(1.0));
+LOL_CONSTANT_GETTER(R_2,        real(2.0));
+LOL_CONSTANT_GETTER(R_3,        real(3.0));
+LOL_CONSTANT_GETTER(R_10,       real(10.0));
 
 LOL_CONSTANT_GETTER(R_MIN,      load_min());
 LOL_CONSTANT_GETTER(R_MAX,      load_max());
@@ -573,6 +577,10 @@ template<> real const &real::operator /=(real const &x)
 
 template<> bool real::operator ==(real const &x) const
 {
+    /* If NaN is involved, return false */
+    if (is_nan() || x.is_nan())
+        return false;
+
     /* If both zero, they are equal; if either is zero, they are different */
     if (is_zero() || x.is_zero())
         return is_zero() && x.is_zero();
@@ -583,11 +591,15 @@ template<> bool real::operator ==(real const &x) const
 
 template<> bool real::operator !=(real const &x) const
 {
-    return !(*this == x);
+    return !(is_nan() || x.is_nan() || *this == x);
 }
 
 template<> bool real::operator <(real const &x) const
 {
+    /* If NaN is involved, return false */
+    if (is_nan() || x.is_nan())
+        return false;
+
     /* Ensure we are positive */
     if (is_negative())
         return -*this > -x;
@@ -614,11 +626,15 @@ template<> bool real::operator <(real const &x) const
 
 template<> bool real::operator <=(real const &x) const
 {
-    return !(*this > x);
+    return !(is_nan() || x.is_nan() || *this > x);
 }
 
 template<> bool real::operator >(real const &x) const
 {
+    /* If NaN is involved, return false */
+    if (is_nan() || x.is_nan())
+        return false;
+
     /* Ensure we are positive */
     if (is_negative())
         return -*this < -x;
@@ -649,7 +665,7 @@ template<> bool real::operator >(real const &x) const
 
 template<> bool real::operator >=(real const &x) const
 {
-    return !(*this < x);
+    return !(is_nan() || x.is_nan() || *this < x);
 }
 
 template<> bool real::operator !() const
@@ -684,11 +700,7 @@ template<> real inverse(real const &x)
 
     /* If zero, return infinite */
     if (x.is_zero())
-    {
-        ret.m_sign = x.m_sign;
-        ret.m_inf = true;
-        return ret;
-    }
+        return copysign(real::R_INF(), x);
 
     /* Use the system's float inversion to approximate 1/x */
     union { float f; uint32_t x; } u = { 1.0f };
@@ -716,11 +728,7 @@ template<> real sqrt(real const &x)
 
     /* if negative, return NaN */
     if (x.is_negative())
-    {
-        real ret;
-        ret.m_nan = true;
-        return ret;
-    }
+        return real::R_NAN();
 
     int tweak = x.m_exponent & 1;
 
@@ -950,13 +958,10 @@ template<> real log(real const &x)
 {
     /* Strategy for log(x): if x = 2^E*M then log(x) = E log(2) + log(M),
      * with the property that M is in [1..2[, so fast_log() applies here. */
-    real tmp;
     if (x.is_negative() || x.is_zero())
-    {
-        tmp.m_nan = true;
-        return tmp;
-    }
-    tmp = x;
+        return real::R_NAN();
+
+    real tmp(x);
     tmp.m_exponent = 0;
     return real(x.m_exponent) * real::R_LN2() + fast_log(tmp);
 }
@@ -964,13 +969,10 @@ template<> real log(real const &x)
 template<> real log2(real const &x)
 {
     /* Strategy for log2(x): see log(x). */
-    real tmp;
     if (x.is_negative() || x.is_zero())
-    {
-        tmp.m_nan = true;
-        return tmp;
-    }
-    tmp = x;
+        return real::R_NAN();
+
+    real tmp(x);
     tmp.m_exponent = 0;
     return real(x.m_exponent) + fast_log(tmp) * real::R_LOG2E();
 }

@@ -185,7 +185,7 @@ public:
     __LOL_REAL_OP_HELPER_FLOAT(long double)
 
     /* Constants */
-    static Real<T> const& R_0();
+    static Real<T> const  R_0();
     static Real<T> const& R_1();
     static Real<T> const& R_2();
     static Real<T> const& R_3();
@@ -208,6 +208,9 @@ public:
     static Real<T> const& R_SQRT2();
     static Real<T> const& R_SQRT3();
     static Real<T> const& R_SQRT1_2();
+
+    static Real<T> const  R_INF();
+    static Real<T> const  R_NAN();
 
     static Real<T> const& R_MIN();
     static Real<T> const& R_MAX();
