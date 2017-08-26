@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
@@ -50,6 +52,10 @@ public:
     Real(uint64_t i);
 
     Real(char const *str);
+
+    LOL_ATTR_NODISCARD bool is_zero() const { return m_mantissa.count() == 0; }
+    LOL_ATTR_NODISCARD bool is_nan() const { return m_nan; }
+    LOL_ATTR_NODISCARD bool is_inf() const { return m_inf; }
 
     LOL_ATTR_NODISCARD operator float() const;
     LOL_ATTR_NODISCARD operator double() const;

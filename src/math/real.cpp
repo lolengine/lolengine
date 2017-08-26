@@ -160,7 +160,7 @@ template<> real::operator double() const
     /* Compute new exponent (FIXME: handle Inf/NaN) */
     int64_t e = m_exponent + ((1 << 10) - 1);
 
-    if (m_mantissa.count() == 0)
+    if (is_zero())
         u.x <<= 52;
     else if (e < 0) /* if exponent underflows, set to zero */
         u.x <<= 52;
@@ -297,10 +297,10 @@ template<> real real::operator -() const
 
 template<> real real::operator +(real const &x) const
 {
-    if (x.m_mantissa.count() == 0)
+    if (x.is_zero())
         return *this;
 
-    if (m_mantissa.count() == 0)
+    if (is_zero())
         return x;
 
     /* Ensure both arguments are positive. Otherwise, switch signs,
@@ -365,10 +365,10 @@ template<> real real::operator +(real const &x) const
 
 template<> real real::operator -(real const &x) const
 {
-    if (x.m_mantissa.count() == 0)
+    if (x.is_zero())
         return *this;
 
-    if (m_mantissa.count() == 0)
+    if (is_zero())
         return -x;
 
     /* Ensure both arguments are positive. Otherwise, switch signs,
@@ -478,8 +478,8 @@ template<> real real::operator *(real const &x) const
     /* The sign is easy to compute */
     ret.m_sign = m_sign ^ x.m_sign;
 
-    /* If any operand is zero, return zero. */
-    if (m_mantissa.count() == 0 || x.m_mantissa.count() == 0)
+    /* If any operand is zero, return zero. FIXME: 0 * Inf? */
+    if (is_zero() || x.is_zero())
         return ret;
 
     ret.m_mantissa.resize(m_mantissa.count());
@@ -573,9 +573,9 @@ template<> real const &real::operator /=(real const &x)
 
 template<> bool real::operator ==(real const &x) const
 {
-    /* If both zero, they are equal */
-    if (m_mantissa.count() == 0 && x.m_mantissa.count() == 0)
-        return true;
+    /* If both zero, they are equal; if either is zero, they are different */
+    if (is_zero() || x.is_zero())
+        return is_zero() && x.is_zero();
 
     /* FIXME: handle NaN/Inf */
     return m_exponent == x.m_exponent && m_mantissa == x.m_mantissa;
@@ -593,11 +593,11 @@ template<> bool real::operator <(real const &x) const
         return -*this > -x;
 
     /* If x is zero or negative, we can’t be < x */
-    if (x.m_sign || x.m_mantissa.count() == 0)
+    if (x.m_sign || x.is_zero())
         return false;
 
     /* If we are zero, we must be < x */
-    if (m_mantissa.count() == 0)
+    if (is_zero())
         return true;
 
     /* Compare exponents */
@@ -623,16 +623,16 @@ template<> bool real::operator >(real const &x) const
     if (m_sign)
         return -*this < -x;
 
-    /* If x is zero, we’re > x iff we’re non-zero */
-    if (x.m_mantissa.count() == 0)
-        return m_mantissa.count() != 0;
+    /* If x is zero, we’re > x iff we’re non-zero since we’re positive */
+    if (x.is_zero())
+        return !is_zero();
 
     /* If x is strictly negative, we’re > x */
     if (x.m_sign)
         return true;
 
     /* If we are zero, we can’t be > x */
-    if (m_mantissa.count() == 0)
+    if (is_zero())
         return false;
 
     /* Compare exponents */
@@ -659,9 +659,8 @@ template<> bool real::operator !() const
 
 template<> real::operator bool() const
 {
-    /* A real is "true" if it is non-zero (mantissa is non-zero) AND
-     * not NaN */
-    return m_mantissa.count() && !m_nan;
+    /* A real is "true" if it is non-zero AND not NaN */
+    return !is_zero() && !is_nan();
 }
 
 template<> real min(real const &a, real const &b)
@@ -684,7 +683,7 @@ template<> real inverse(real const &x)
     real ret;
 
     /* If zero, return infinite */
-    if (!x.m_mantissa.count())
+    if (x.is_zero())
     {
         ret.m_sign = x.m_sign;
         ret.m_inf = true;
@@ -712,7 +711,7 @@ template<> real inverse(real const &x)
 template<> real sqrt(real const &x)
 {
     /* if zero, return x (FIXME: negative zero?) */
-    if (!x.m_mantissa.count())
+    if (x.is_zero())
         return x;
 
     /* if negative, return NaN */
@@ -755,7 +754,7 @@ template<> real sqrt(real const &x)
 template<> real cbrt(real const &x)
 {
     /* if zero, return x */
-    if (!x.m_mantissa.count())
+    if (x.is_zero())
         return x;
 
     int tweak = x.m_exponent % 3;
@@ -952,7 +951,7 @@ template<> real log(real const &x)
     /* Strategy for log(x): if x = 2^E*M then log(x) = E log(2) + log(M),
      * with the property that M is in [1..2[, so fast_log() applies here. */
     real tmp;
-    if (x.m_sign || x.m_mantissa.count() == 0)
+    if (x.m_sign || x.is_zero())
     {
         tmp.m_nan = true;
         return tmp;
@@ -966,7 +965,7 @@ template<> real log2(real const &x)
 {
     /* Strategy for log2(x): see log(x). */
     real tmp;
-    if (x.m_sign || x.m_mantissa.count() == 0)
+    if (x.m_sign || x.is_zero())
     {
         tmp.m_nan = true;
         return tmp;
