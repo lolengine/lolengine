@@ -155,7 +155,7 @@ template<> real::operator double() const
     union { double d; uint64_t x; } u;
 
     /* Get sign */
-    u.x = (m_sign ? 1 : 0) << 11;
+    u.x = (is_negative() ? 1 : 0) << 11;
 
     /* Compute new exponent (FIXME: handle Inf/NaN) */
     int64_t e = m_exponent + ((1 << 10) - 1);
@@ -305,10 +305,10 @@ template<> real real::operator +(real const &x) const
 
     /* Ensure both arguments are positive. Otherwise, switch signs,
      * or replace + with -. */
-    if (m_sign)
+    if (is_negative())
         return -(-*this + -x);
 
-    if (x.m_sign)
+    if (x.is_negative())
         return *this - (-x);
 
     /* Ensure *this has the larger exponent (no need for the mantissa to
@@ -373,10 +373,10 @@ template<> real real::operator -(real const &x) const
 
     /* Ensure both arguments are positive. Otherwise, switch signs,
      * or replace - with +. */
-    if (m_sign)
+    if (is_negative())
         return -(-*this + x);
 
-    if (x.m_sign)
+    if (x.is_negative())
         return (*this) + (-x);
 
     /* Ensure *this is larger than x */
@@ -476,7 +476,7 @@ template<> real real::operator *(real const &x) const
     real ret;
 
     /* The sign is easy to compute */
-    ret.m_sign = m_sign ^ x.m_sign;
+    ret.m_sign = is_negative() ^ x.is_negative();
 
     /* If any operand is zero, return zero. FIXME: 0 * Inf? */
     if (is_zero() || x.is_zero())
@@ -589,11 +589,11 @@ template<> bool real::operator !=(real const &x) const
 template<> bool real::operator <(real const &x) const
 {
     /* Ensure we are positive */
-    if (m_sign)
+    if (is_negative())
         return -*this > -x;
 
     /* If x is zero or negative, we can’t be < x */
-    if (x.m_sign || x.is_zero())
+    if (x.is_negative() || x.is_zero())
         return false;
 
     /* If we are zero, we must be < x */
@@ -620,7 +620,7 @@ template<> bool real::operator <=(real const &x) const
 template<> bool real::operator >(real const &x) const
 {
     /* Ensure we are positive */
-    if (m_sign)
+    if (is_negative())
         return -*this < -x;
 
     /* If x is zero, we’re > x iff we’re non-zero since we’re positive */
@@ -628,7 +628,7 @@ template<> bool real::operator >(real const &x) const
         return !is_zero();
 
     /* If x is strictly negative, we’re > x */
-    if (x.m_sign)
+    if (x.is_negative())
         return true;
 
     /* If we are zero, we can’t be > x */
@@ -715,7 +715,7 @@ template<> real sqrt(real const &x)
         return x;
 
     /* if negative, return NaN */
-    if (x.m_sign)
+    if (x.is_negative())
     {
         real ret;
         ret.m_nan = true;
@@ -951,7 +951,7 @@ template<> real log(real const &x)
     /* Strategy for log(x): if x = 2^E*M then log(x) = E log(2) + log(M),
      * with the property that M is in [1..2[, so fast_log() applies here. */
     real tmp;
-    if (x.m_sign || x.is_zero())
+    if (x.is_negative() || x.is_zero())
     {
         tmp.m_nan = true;
         return tmp;
@@ -965,7 +965,7 @@ template<> real log2(real const &x)
 {
     /* Strategy for log2(x): see log(x). */
     real tmp;
-    if (x.m_sign || x.is_zero())
+    if (x.is_negative() || x.is_zero())
     {
         tmp.m_nan = true;
         return tmp;
@@ -1104,7 +1104,7 @@ template<> real nextafter(real const &x, real const &y)
         return y;
 
     /* Ensure x is positive. */
-    if (x.m_sign)
+    if (x.is_negative())
         return -nextafter(-x, -y);
 
     /* FIXME: broken for now */
@@ -1187,7 +1187,7 @@ template<> real fmod(real const &x, real const &y)
 
 template<> real sin(real const &x)
 {
-    bool switch_sign = x.m_sign;
+    bool switch_sign = x.is_negative();
 
     real absx = fmod(fabs(x), real::R_PI() * 2);
     if (absx > real::R_PI())
@@ -1246,7 +1246,7 @@ template<> real tan(real const &x)
     return cos(y) / sin(y);
 }
 
-static inline real asinacos(real const &x, int is_asin, bool is_negative)
+static inline real asinacos(real const &x, int is_asin)
 {
     /* Strategy for asin(): in [-0.5..0.5], use a Taylor series around
      * zero. In [0.5..1], use asin(x) = π/2 - 2*asin(sqrt((1-x)/2)), and
@@ -1272,14 +1272,14 @@ static inline real asinacos(real const &x, int is_asin, bool is_negative)
         fact2 *= (real)((i + 1) * (i + 1));
     }
 
-    if (is_negative)
+    if (x.is_negative())
         ret = -ret;
 
     if (around_zero)
         ret = is_asin ? ret : real::R_PI_2() - ret;
     else
     {
-        real adjust = is_negative ? real::R_PI() : real::R_0();
+        real adjust = x.is_negative() ? real::R_PI() : real::R_0();
         if (is_asin)
             ret = real::R_PI_2() - adjust - ret * 2;
         else
@@ -1291,13 +1291,12 @@ static inline real asinacos(real const &x, int is_asin, bool is_negative)
 
 template<> real asin(real const &x)
 {
-    /* Pass m_sign because it is private… FIXME: implement is_negative() */
-    return asinacos(x, 1, x.m_sign);
+    return asinacos(x, 1);
 }
 
 template<> real acos(real const &x)
 {
-    return asinacos(x, 0, x.m_sign);
+    return asinacos(x, 0);
 }
 
 template<> real atan(real const &x)
@@ -1407,14 +1406,14 @@ template<> real atan2(real const &y, real const &x)
 {
     if (!y)
     {
-        if (!x.m_sign)
+        if (!x.is_negative())
             return y;
-        return y.m_sign ? -real::R_PI() : real::R_PI();
+        return y.is_negative() ? -real::R_PI() : real::R_PI();
     }
 
     if (!x)
     {
-        return y.m_sign ? -real::R_PI() : real::R_PI();
+        return y.is_negative() ? -real::R_PI() : real::R_PI();
     }
 
     /* FIXME: handle the Inf and NaN cases */
@@ -1484,7 +1483,7 @@ template<> void real::print(int ndigits) const
 
 template<> void real::sxprintf(char *str) const
 {
-    if (m_sign)
+    if (is_negative())
         *str++ = '-';
     str += std::sprintf(str, "0x1.");
     for (int i = 0; i < bigit_count(); ++i)
@@ -1498,7 +1497,7 @@ template<> void real::sprintf(char *str, int ndigits) const
 {
     real x = *this;
 
-    if (x.m_sign)
+    if (x.is_negative())
     {
         *str++ = '-';
         x = -x;

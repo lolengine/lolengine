@@ -54,6 +54,7 @@ public:
     Real(char const *str);
 
     LOL_ATTR_NODISCARD bool is_zero() const { return m_mantissa.count() == 0; }
+    LOL_ATTR_NODISCARD bool is_negative() const { return m_sign; }
     LOL_ATTR_NODISCARD bool is_nan() const { return m_nan; }
     LOL_ATTR_NODISCARD bool is_inf() const { return m_inf; }
 
