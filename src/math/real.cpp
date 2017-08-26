@@ -41,7 +41,15 @@ static real load_pi();
 #define LOL_CONSTANT_GETTER(name, value) \
     template<> real const& real::name() \
     { \
-        static real const ret = value; \
+        static real ret; \
+        static int prev_bigit_count = -1; \
+        /* If the default bigit count has changed, we must recompute
+         * the value with the desired precision. */ \
+        if (prev_bigit_count != DEFAULT_BIGIT_COUNT) \
+        { \
+            ret = value; \
+            prev_bigit_count = DEFAULT_BIGIT_COUNT; \
+        } \
         return ret; \
     }
 
@@ -121,7 +129,8 @@ template<> real::Real(double d)
         m_exponent = exponent - ((1 << 10) - 1);
         m_mantissa.resize(DEFAULT_BIGIT_COUNT);
         m_mantissa[0] = (bigit_t)(u.x >> 20);
-        m_mantissa[1] = (bigit_t)(u.x << 12);
+        if (m_mantissa.count() > 1)
+            m_mantissa[1] = (bigit_t)(u.x << 12);
         break;
     }
 }
