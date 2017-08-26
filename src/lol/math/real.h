@@ -157,7 +157,7 @@ public:
     inline Real<T> const &operator op##=(type x) \
     { \
         /* If multiplying or dividing by a power of two, take a shortcut */ \
-        if (m_sign && m_exponent && x && !(x & (x - 1))) \
+        if (!is_zero() && x && !(x & (x - 1))) \
         { \
             while (x >>= 1) \
                 m_exponent += 1 op 2 - 1; /* 1 if op is *, -1 if op is / */ \
