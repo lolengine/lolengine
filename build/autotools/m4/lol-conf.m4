@@ -220,9 +220,11 @@ LOL_TRY_CXXFLAGS(-Wstrict-overflow=1, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wstrict-over
 
 dnl  Add these even though they're implicitly set, so that we can safely
 dnl  remove them from within a Makefile.
-LOL_TRY_CXXFLAGS(-Wmaybe-uninitialized, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wmaybe-uninitialized"])
+LOL_TRY_CXXFLAGS(-Wuninitialized, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wuninitialized"])
 LOL_TRY_CXXFLAGS(-Wnarrowing, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wnarrowing"])
 LOL_TRY_CXXFLAGS(-Wunused, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wunused"])
+LOL_TRY_CXXFLAGS(-Wcast-align, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wcast-align"])
+LOL_TRY_CXXFLAGS(-Wunused-parameter, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wunused-parameter"])
 LOL_TRY_CXXFLAGS(-Wstrict-aliasing, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wstrict-aliasing"])
 LOL_TRY_CXXFLAGS(-Wparentheses, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wparentheses"])
 LOL_TRY_CXXFLAGS(-Wreorder, [AM_CXXFLAGS="${AM_CXXFLAGS} -Wreorder"])

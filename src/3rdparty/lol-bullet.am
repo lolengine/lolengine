@@ -55,6 +55,7 @@ bullet_sources += \
 	bullet3/src/Bullet3Common/b3QuadWord.h \
 	bullet3/src/Bullet3Common/b3Quaternion.h \
 	bullet3/src/Bullet3Common/b3Random.h \
+	bullet3/src/Bullet3Common/b3ResizablePool.h \
 	bullet3/src/Bullet3Common/b3Scalar.h \
 	bullet3/src/Bullet3Common/b3StackAlloc.h \
 	bullet3/src/Bullet3Common/b3Transform.h \
@@ -247,6 +248,7 @@ bullet_sources += \
 bullet_sources += \
 	bullet3/src/BulletCollision/BroadphaseCollision/btAxisSweep3.cpp \
 	bullet3/src/BulletCollision/BroadphaseCollision/btAxisSweep3.h \
+	bullet3/src/BulletCollision/BroadphaseCollision/btAxisSweep3Internal.h \
 	bullet3/src/BulletCollision/BroadphaseCollision/btBroadphaseInterface.h \
 	bullet3/src/BulletCollision/BroadphaseCollision/btBroadphaseProxy.cpp \
 	bullet3/src/BulletCollision/BroadphaseCollision/btBroadphaseProxy.h \
@@ -258,8 +260,6 @@ bullet_sources += \
 	bullet3/src/BulletCollision/BroadphaseCollision/btDbvt.h \
 	bullet3/src/BulletCollision/BroadphaseCollision/btDispatcher.cpp \
 	bullet3/src/BulletCollision/BroadphaseCollision/btDispatcher.h \
-	bullet3/src/BulletCollision/BroadphaseCollision/btMultiSapBroadphase.cpp \
-	bullet3/src/BulletCollision/BroadphaseCollision/btMultiSapBroadphase.h \
 	bullet3/src/BulletCollision/BroadphaseCollision/btOverlappingPairCache.cpp \
 	bullet3/src/BulletCollision/BroadphaseCollision/btOverlappingPairCache.h \
 	bullet3/src/BulletCollision/BroadphaseCollision/btOverlappingPairCallback.h \
@@ -279,6 +279,8 @@ bullet_sources += \
 	bullet3/src/BulletCollision/CollisionDispatch/btCollisionCreateFunc.h \
 	bullet3/src/BulletCollision/CollisionDispatch/btCollisionDispatcher.cpp \
 	bullet3/src/BulletCollision/CollisionDispatch/btCollisionDispatcher.h \
+	bullet3/src/BulletCollision/CollisionDispatch/btCollisionDispatcherMt.cpp \
+	bullet3/src/BulletCollision/CollisionDispatch/btCollisionDispatcherMt.h \
 	bullet3/src/BulletCollision/CollisionDispatch/btCollisionObject.cpp \
 	bullet3/src/BulletCollision/CollisionDispatch/btCollisionObject.h \
 	bullet3/src/BulletCollision/CollisionDispatch/btCollisionObjectWrapper.h \
@@ -403,16 +405,19 @@ bullet_sources += \
 	bullet3/src/BulletCollision/Gimpact/btCompoundFromGimpact.h \
 	bullet3/src/BulletCollision/Gimpact/btContactProcessing.cpp \
 	bullet3/src/BulletCollision/Gimpact/btContactProcessing.h \
+	bullet3/src/BulletCollision/Gimpact/btContactProcessingStructs.h \
 	bullet3/src/BulletCollision/Gimpact/btGenericPoolAllocator.cpp \
 	bullet3/src/BulletCollision/Gimpact/btGenericPoolAllocator.h \
 	bullet3/src/BulletCollision/Gimpact/btGeometryOperations.h \
 	bullet3/src/BulletCollision/Gimpact/btGImpactBvh.cpp \
 	bullet3/src/BulletCollision/Gimpact/btGImpactBvh.h \
+	bullet3/src/BulletCollision/Gimpact/btGImpactBvhStructs.h \
 	bullet3/src/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.cpp \
 	bullet3/src/BulletCollision/Gimpact/btGImpactCollisionAlgorithm.h \
 	bullet3/src/BulletCollision/Gimpact/btGImpactMassUtil.h \
 	bullet3/src/BulletCollision/Gimpact/btGImpactQuantizedBvh.cpp \
 	bullet3/src/BulletCollision/Gimpact/btGImpactQuantizedBvh.h \
+	bullet3/src/BulletCollision/Gimpact/btGImpactQuantizedBvhStructs.h \
 	bullet3/src/BulletCollision/Gimpact/btGImpactShape.cpp \
 	bullet3/src/BulletCollision/Gimpact/btGImpactShape.h \
 	bullet3/src/BulletCollision/Gimpact/btQuantization.h \
@@ -516,11 +521,15 @@ bullet_sources += \
 	bullet3/src/BulletDynamics/Dynamics/btActionInterface.h \
 	bullet3/src/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.cpp \
 	bullet3/src/BulletDynamics/Dynamics/btDiscreteDynamicsWorld.h \
+	bullet3/src/BulletDynamics/Dynamics/btDiscreteDynamicsWorldMt.cpp \
+	bullet3/src/BulletDynamics/Dynamics/btDiscreteDynamicsWorldMt.h \
 	bullet3/src/BulletDynamics/Dynamics/btDynamicsWorld.h \
 	bullet3/src/BulletDynamics/Dynamics/btRigidBody.cpp \
 	bullet3/src/BulletDynamics/Dynamics/btRigidBody.h \
 	bullet3/src/BulletDynamics/Dynamics/btSimpleDynamicsWorld.cpp \
 	bullet3/src/BulletDynamics/Dynamics/btSimpleDynamicsWorld.h \
+	bullet3/src/BulletDynamics/Dynamics/btSimulationIslandManagerMt.cpp \
+	bullet3/src/BulletDynamics/Dynamics/btSimulationIslandManagerMt.h \
 	bullet3/src/BulletDynamics/Featherstone/btMultiBodyConstraint.cpp \
 	bullet3/src/BulletDynamics/Featherstone/btMultiBodyConstraint.h \
 	bullet3/src/BulletDynamics/Featherstone/btMultiBodyConstraintSolver.cpp \
@@ -530,6 +539,8 @@ bullet_sources += \
 	bullet3/src/BulletDynamics/Featherstone/btMultiBodyDynamicsWorld.h \
 	bullet3/src/BulletDynamics/Featherstone/btMultiBodyFixedConstraint.cpp \
 	bullet3/src/BulletDynamics/Featherstone/btMultiBodyFixedConstraint.h \
+	bullet3/src/BulletDynamics/Featherstone/btMultiBodyGearConstraint.cpp \
+	bullet3/src/BulletDynamics/Featherstone/btMultiBodyGearConstraint.h \
 	bullet3/src/BulletDynamics/Featherstone/btMultiBody.h \
 	bullet3/src/BulletDynamics/Featherstone/btMultiBodyJointFeedback.h \
 	bullet3/src/BulletDynamics/Featherstone/btMultiBodyJointLimitConstraint.cpp \
@@ -594,6 +605,8 @@ bullet_sources += \
 	bullet3/src/BulletSoftBody/btSoftBodyRigidBodyCollisionConfiguration.h \
 	bullet3/src/BulletSoftBody/btSoftBodySolvers.h \
 	bullet3/src/BulletSoftBody/btSoftBodySolverVertexBuffer.h \
+	bullet3/src/BulletSoftBody/btSoftMultiBodyDynamicsWorld.cpp \
+	bullet3/src/BulletSoftBody/btSoftMultiBodyDynamicsWorld.h \
 	bullet3/src/BulletSoftBody/btSoftRigidCollisionAlgorithm.cpp \
 	bullet3/src/BulletSoftBody/btSoftRigidCollisionAlgorithm.h \
 	bullet3/src/BulletSoftBody/btSoftRigidDynamicsWorld.cpp \
@@ -633,10 +646,13 @@ bullet_sources += \
 	bullet3/src/LinearMath/btQuickprof.h \
 	bullet3/src/LinearMath/btRandom.h \
 	bullet3/src/LinearMath/btScalar.h \
+	bullet3/src/LinearMath/btSerializer64.cpp \
 	bullet3/src/LinearMath/btSerializer.cpp \
 	bullet3/src/LinearMath/btSerializer.h \
 	bullet3/src/LinearMath/btSpatialAlgebra.h \
 	bullet3/src/LinearMath/btStackAlloc.h \
+	bullet3/src/LinearMath/btThreads.cpp \
+	bullet3/src/LinearMath/btThreads.h \
 	bullet3/src/LinearMath/btTransform.h \
 	bullet3/src/LinearMath/btTransformUtil.h \
 	bullet3/src/LinearMath/btVector3.cpp \
