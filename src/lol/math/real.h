@@ -108,9 +108,12 @@ public:
     /* Exponential and logarithmic functions */
     template<typename U> friend Real<U> exp(Real<U> const &x);
     template<typename U> friend Real<U> exp2(Real<U> const &x);
+    template<typename U> friend Real<U> erf(Real<U> const &x);
     template<typename U> friend Real<U> log(Real<U> const &x);
     template<typename U> friend Real<U> log2(Real<U> const &x);
     template<typename U> friend Real<U> log10(Real<U> const &x);
+
+    /* Floating-point functions */
     template<typename U> friend Real<U> frexp(Real<U> const &x, int64_t *exp);
     template<typename U> friend Real<U> ldexp(Real<U> const &x, int64_t exp);
     template<typename U> friend Real<U> modf(Real<U> const &x, Real<U> *iptr);
@@ -287,6 +290,7 @@ template<typename U> Real<U> cosh(Real<U> const &x);
 template<typename U> Real<U> tanh(Real<U> const &x);
 template<typename U> Real<U> exp(Real<U> const &x);
 template<typename U> Real<U> exp2(Real<U> const &x);
+template<typename U> Real<U> erf(Real<U> const &x);
 template<typename U> Real<U> log(Real<U> const &x);
 template<typename U> Real<U> log2(Real<U> const &x);
 template<typename U> Real<U> log10(Real<U> const &x);
@@ -328,6 +332,7 @@ template<> real cosh(real const &x);
 template<> real tanh(real const &x);
 template<> real exp(real const &x);
 template<> real exp2(real const &x);
+template<> real erf(real const &x);
 template<> real log(real const &x);
 template<> real log2(real const &x);
 template<> real log10(real const &x);

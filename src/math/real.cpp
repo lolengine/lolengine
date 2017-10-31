@@ -864,13 +864,19 @@ template<> real pow(real const &x, real const &y)
 /* A fast factorial implementation for small numbers. An optional
  * step argument allows to compute double factorials (i.e. with
  * only the odd or the even terms. */
-static real fast_fact(unsigned int x, unsigned int step = 1)
+static real fast_fact(int x, int step = 1)
 {
+    if (x < step)
+        return 1;
+
+    if (x == step)
+        return x;
+
     unsigned int start = (x + step - 1) % step + 1;
-    real ret = start ? real(start) : real(step);
+    real ret(start);
     uint64_t multiplier = 1;
 
-    for (unsigned int i = start, exponent = 0;;)
+    for (int i = start, exponent = 0;;)
     {
         if (i >= x)
             return ldexp(ret * multiplier, exponent);
@@ -1070,6 +1076,57 @@ template<> real exp2(real const &x)
     real x1 = fast_exp_sub(x0 * real::R_LN2(), real::R_0());
     x1.m_exponent += e0;
     return x1;
+}
+
+template<> real erf(real const &x)
+{
+    /* Strategy for erf(x):
+     *  - if x<0, erf(x) = -erf(-x)
+     *  - if x<7, erf(x) = sum((-1)^n×x^(2n+1)/((2n+1)×n!))/sqrt(pi/4)
+     *  - if x≥7, erf(x) = 1+exp(-x²)/(x×sqrt(pi))×sum((-1)^n×(2n-1)!!/(2x²)^n
+     *
+     * FIXME: do not compute factorials at each iteration, accumulate
+     * them instead (see fast_exp_sub).
+     * FIXME: For a potentially faster implementation, see “Expanding the
+     * Error Function erf(z)” at:
+     *  http://www.mathematica-journal.com/2014/11/on-burmanns-theorem-and-its-application-to-problems-of-linear-and-nonlinear-heat-transfer-and-diffusion/#more-39602/
+     */
+    if (x.is_negative())
+        return -erf(-x);
+
+    real sum = real::R_0();
+    real x2 = x * x;
+
+    /* FIXME: this test is inefficient; the series converges slowly for x≥1 */
+    if (x < real(7))
+    {
+        real xn = x, xmul = x2;
+        for (int n = 0;; ++n, xn *= xmul)
+        {
+            real tmp = xn / (fast_fact(n) * (2 * n + 1));
+            real newsum = (n & 1) ? sum - tmp : sum + tmp;
+            if (newsum == sum)
+                break;
+            sum = newsum;
+        }
+        return sum * real::R_2_SQRTPI();
+    }
+    else
+    {
+        real xn = real::R_1(), xmul = inverse(x2 + x2);
+        /* FIXME: this does not converge well! We need to stop at 30
+         * iterations and sacrifice some accuracy. */
+        for (int n = 0; n < 30; ++n, xn *= xmul)
+        {
+            real tmp = xn * fast_fact(n * 2 - 1, 2);
+            real newsum = (n & 1) ? sum - tmp : sum + tmp;
+            if (newsum == sum)
+                break;
+            sum = newsum;
+        }
+
+        return real::R_1() - exp(-x2) / (x * sqrt(real::R_PI())) * sum;
+    }
 }
 
 template<> real sinh(real const &x)
