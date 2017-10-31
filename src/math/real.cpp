@@ -861,15 +861,21 @@ template<> real pow(real const &x, real const &y)
     return is_odd ? exp(y * log(-x)) : -exp(y * log(-x));
 }
 
-static real fast_fact(unsigned int x)
+/* A fast factorial implementation for small numbers. An optional
+ * step argument allows to compute double factorials (i.e. with
+ * only the odd or the even terms. */
+static real fast_fact(unsigned int x, unsigned int step = 1)
 {
-    real ret = real::R_1();
+    unsigned int start = (x + step - 1) % step + 1;
+    real ret = start ? real(start) : real(step);
     uint64_t multiplier = 1;
 
-    for (unsigned int i = 1, exponent = 0;;)
+    for (unsigned int i = start, exponent = 0;;)
     {
-        if (i++ >= x)
+        if (i >= x)
             return ldexp(ret * multiplier, exponent);
+
+        i += step;
 
         /* Accumulate the power of two part in the exponent */
         unsigned int tmp = i;
