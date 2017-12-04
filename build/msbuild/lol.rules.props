@@ -8,6 +8,9 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
 
+      <!-- Use latest version of the C++ draft -->
+      <LanguageStandard>stdcpplatest</LanguageStandard>
+
       <!-- Always multiprocessor, never minimal rebuild -->
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
@@ -15,10 +18,32 @@
       <!-- We should use %(RelativeDir) here but for some reason it's an _absolute_ dir. WTF. -->
       <ObjectFileName>$(IntDir)/%(Directory)/</ObjectFileName>
 
-      <AdditionalIncludeDirectories>$(LolDir)\src;$(LolDir)\src\3rdparty\bullet3\src;$(LolDir)\tools\lolunit;$(PegtlIncludes);$(ImguiIncludes);$(BtPhysIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Platform)'=='Win32'">$(GlIncludes);$(SdlIncludes);$(FfmpegIncludes);$(AssimpIncludes);$(XinputIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <AdditionalIncludeDirectories Condition="'$(Platform)'=='x64'">$(GlIncludes);$(SdlIncludes);$(FfmpegIncludes);$(AssimpIncludes);$(XinputIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NOMINMAX;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>
+          $(LolDir)\src;
+          $(LolDir)\src\3rdparty\bullet3\src;
+          $(LolDir)\tools\lolunit;
+          $(PegtlIncludes);
+          $(ImguiIncludes);
+          $(BtPhysIncludes);
+          %(AdditionalIncludeDirectories)
+      </AdditionalIncludeDirectories>
+
+      <AdditionalIncludeDirectories Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">
+          $(GlIncludes);
+          $(SdlIncludes);
+          $(FfmpegIncludes);
+          $(AssimpIncludes);
+          $(XinputIncludes);
+          %(AdditionalIncludeDirectories)
+      </AdditionalIncludeDirectories>
+
+      <PreprocessorDefinitions>
+          NOMINMAX;
+          _CRT_SECURE_NO_WARNINGS;
+          B3_USE_CLEW;
+          LUA_ANSI;
+          %(PreprocessorDefinitions)
+      </PreprocessorDefinitions>
 
       <!-- Escape backslashes for C++, but replace \ with / on the PS4
            because the SCE VSI seems to have trouble with backslashes -->
