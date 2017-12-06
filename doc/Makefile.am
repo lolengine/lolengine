@@ -9,7 +9,9 @@ EXTRA_DIST += doxygen.cfg.in doxygen.css footer.html header.html \
 CLEANFILES += doxygen.log stamp-latex stamp-doxygen
 
 doxygen_DOX = lolengine.dox
+if BUILD_DOCUMENTATION
 man_MANS = lolengine.1
+endif
 
 if BUILD_DOCUMENTATION
 htmldoc_DATA = html/doxygen.css
@@ -56,8 +58,8 @@ if BUILD_DOCUMENTATION
 	  sed -e 's/man3lol/man3/g' -e "s/fC'\([a-zA-Z0-9]*\)'/fC\"\1\"/g" \
 	    $$man >$(DESTDIR)$(mandir)/man3/$${man##*/}; \
 	done
-endif
 	$(mkinstalldirs) $(DESTDIR)$(mandir)/man1
+endif
 
 uninstall-local:
 	rmdir $(DESTDIR)$(datadir)/doc/lolengine-dev/html 2>/dev/null || true
