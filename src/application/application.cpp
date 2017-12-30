@@ -176,7 +176,6 @@ Application::Application(char const *name, ivec2 resolution, float framerate)
 {
     SceneDisplay::Add(new ApplicationDisplay(name, resolution));
     data = new ApplicationData(name, resolution, framerate);
-    g_world.ExecLuaFile("lua/init.lua");
 }
 
 bool Application::MustTick()

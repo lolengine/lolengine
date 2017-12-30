@@ -18,6 +18,8 @@
 #include <cfloat> /* for FLT_MAX */
 
 #include <lol/engine.h>
+#include <lol/lua.h>
+
 #include "scenesetup.h"
 
 using namespace lol;

@@ -12,6 +12,7 @@
 //
 
 #include <lol/engine-internal.h>
+#include <lol/lua.h>
 
 #include <cstring>
 #include <cstdlib>

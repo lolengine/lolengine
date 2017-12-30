@@ -505,6 +505,9 @@
     <ClInclude Include="lol\extras.h">
       <Filter>lol</Filter>
     </ClInclude>
+    <ClInclude Include="lol\lua.h">
+      <Filter>lol</Filter>
+    </ClInclude>
     <ClInclude Include="lol\public.h">
       <Filter>lol</Filter>
     </ClInclude>

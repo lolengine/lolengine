@@ -15,6 +15,8 @@
 #endif
 
 #include <lol/engine.h>
+#include <lol/lua.h>
+
 #include "loldebug.h"
 #include <cstdio>
 

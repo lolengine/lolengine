@@ -40,9 +40,6 @@
     <ProjectReference Include="$(LolDir)\src\3rdparty\lol-bullet.vcxproj">
       <Project>{83d3b207-c601-4025-8f41-01dedc354661}</Project>
     </ProjectReference>
-    <ProjectReference Include="$(LolDir)\src\3rdparty\lol-lua.vcxproj">
-      <Project>{d84021ca-b233-4e0f-8a52-071b83bbccc4}</Project>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E05E23A5-67DE-42B5-98A3-E63CCE0CC0AF}</ProjectGuid>

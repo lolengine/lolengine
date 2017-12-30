@@ -17,6 +17,7 @@
 #include <cstdio>
 
 #include <lol/engine.h>
+#include <lol/lua.h>
 #include "loldebug.h"
 
 using namespace lol;

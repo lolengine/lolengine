@@ -31,6 +31,7 @@ liblol_core_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/3rdparty/bullet3/src -I$(src
 
 liblol_core_headers = \
     lol/engine-internal.h lol/engine.h lol/public.h lol/extras.h lol/legacy.h \
+    lol/lua.h \
     \
     lol/base/all.h \
     lol/base/avl_tree.h lol/base/features.h lol/base/tuple.h lol/base/types.h \

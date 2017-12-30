@@ -24,7 +24,6 @@ namespace lol
 class WorldData
 {
     friend class World;
-    lua_State *m_lua_state;
 };
 
 static WorldData g_world_data;
@@ -35,9 +34,7 @@ World g_world;
  */
 
 World::World()
-    : LuaLoader()
 {
-    g_world_data.m_lua_state = GetLuaState();
 }
 
 World::~World()

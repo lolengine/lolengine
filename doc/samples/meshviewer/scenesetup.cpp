@@ -14,6 +14,8 @@
 #endif
 
 #include <lol/engine.h>
+#include <lol/lua.h>
+
 #include "scenesetup.h"
 
 namespace lol

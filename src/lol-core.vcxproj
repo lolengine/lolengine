@@ -292,6 +292,7 @@
     <ClInclude Include="lol\image\movie.h" />
     <ClInclude Include="lol\image\pixel.h" />
     <ClInclude Include="lol\image\resource.h" />
+    <ClInclude Include="lol\lua.h" />
     <ClInclude Include="lol\math\all.h" />
     <ClInclude Include="lol\math\arraynd.h" />
     <ClInclude Include="lol\math\bigint.h" />
@@ -399,9 +400,6 @@
   <ItemGroup>
     <ProjectReference Include="3rdparty\lol-bullet.vcxproj">
       <Project>{83d3b207-c601-4025-8f41-01dedc354661}</Project>
-    </ProjectReference>
-    <ProjectReference Include="3rdparty\lol-lua.vcxproj">
-      <Project>{d84021ca-b233-4e0f-8a52-071b83bbccc4}</Project>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

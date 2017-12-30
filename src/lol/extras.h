@@ -20,9 +20,6 @@
 #include <lol/../utils.h>
 #include <lol/../numeric.h>
 
-// Lua
-#include <lol/../lolua/baselua.h>
-
 // Static classes
 #include <lol/../platform.h>
 #include <lol/../video.h>
@@ -59,7 +56,6 @@
 #include <lol/../application/application.h>
 #include <lol/../easymesh/csgbsp.h>
 #include <lol/../easymesh/easymesh.h>
-#include <lol/../easymesh/easymeshlua.h>
 
 // Managers
 #include <lol/../forge.h>

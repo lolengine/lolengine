@@ -16,6 +16,7 @@
 #endif
 
 #include <lol/engine.h>
+#include <lol/lua.h>
 
 using namespace lol;
 
