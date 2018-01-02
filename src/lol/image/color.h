@@ -337,10 +337,10 @@ public:
     /*
     * Convert colors to hex strings.
     */
-    static String HexString4Bpp(vec3 c);
-    static String HexString4Bpp(vec4 c);
-    static String HexString8Bpp(vec3 c);
-    static String HexString8Bpp(vec4 c);
+    static std::string HexString4Bpp(vec3 c);
+    static std::string HexString4Bpp(vec4 c);
+    static std::string HexString8Bpp(vec3 c);
+    static std::string HexString8Bpp(vec4 c);
 
     /*
     * Convert hex strings to colors.

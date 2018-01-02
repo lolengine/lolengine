@@ -41,6 +41,11 @@ template<> struct hash<char const *>
     uint32_t operator()(String const &s) const;
 };
 
+template<> struct hash<std::string>
+{
+    uint32_t operator()(std::string const &s) const;
+};
+
 template<> struct hash<String>
 {
     uint32_t operator()(String const &s) const;

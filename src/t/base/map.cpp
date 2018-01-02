@@ -72,12 +72,12 @@ lolunit_declare_fixture(map_test)
 
     lolunit_declare_test(map_remove_string)
     {
-        map<String, uint64_t> m;
-        array<String> a;
+        map<std::string, uint64_t> m;
+        array<std::string> a;
 
         for (int i = 0; i < 20; i++)
         {
-            a << String::format("test_str_%i", i);
+            a << format("test_str_%i", i);
             m[a.last()] = -1;
         }
         for (int i = 0; i < a.count(); i++)

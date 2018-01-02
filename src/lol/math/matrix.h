@@ -133,7 +133,7 @@ struct LOL_ATTR_NODISCARD mat_t<T, 2, 2>
     }
 
     void printf() const;
-    String tostring() const;
+    std::string tostring() const;
 
     static const mat_t<T,2,2> identity;
 
@@ -260,7 +260,7 @@ struct LOL_ATTR_NODISCARD mat_t<T, 3, 3>
     }
 
     void printf() const;
-    String tostring() const;
+    std::string tostring() const;
 
     static const mat_t<T,3,3> identity;
 
@@ -436,7 +436,7 @@ struct LOL_ATTR_NODISCARD mat_t<T, 4, 4>
     static mat_t<T,4,4> shifted_perspective(T fov_y, T screen_size, T screen_ratio_yx, T near, T far);
 
     void printf() const;
-    String tostring() const;
+    std::string tostring() const;
 
     static const mat_t<T,4,4> identity;
 

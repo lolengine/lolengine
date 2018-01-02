@@ -193,12 +193,12 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
             continue;
         }
 
-        //String::format("Joystick%d", i + 1).C()
+        //format("Joystick%d", i + 1).c_str()
         InputDeviceInternal* stick = new InputDeviceInternal(g_name_joystick(i + 1));
         for (int j = 0; j < SDL_JoystickNumAxes(sdlstick); ++j)
-            stick->AddAxis(String::format("Axis%d", j + 1).C());
+            stick->AddAxis(format("Axis%d", j + 1).c_str());
         for (int j = 0; j < SDL_JoystickNumButtons(sdlstick); ++j)
-            stick->AddKey(String::format("Button%d", j + 1).C());
+            stick->AddKey(format("Button%d", j + 1).c_str());
 
         m_data->m_joysticks.push(sdlstick, stick);
     }

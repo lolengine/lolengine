@@ -31,28 +31,28 @@ vec4 const Color::light_gray = vec4(.75f, .75f, .75f, 1);
 /*
  * Conversion from colours to hexadecimal
  */
-String Color::HexString4Bpp(vec3 c)
+std::string Color::HexString4Bpp(vec3 c)
 {
     uvec3 c2 = (uvec3)(clamp(c, 0.f, 1.f) * 255.999f);
-    return String::format("%01x%01x%01x", c2.r, c2.g, c2.b);
+    return format("%01x%01x%01x", c2.r, c2.g, c2.b);
 }
 
-String Color::HexString4Bpp(vec4 c)
+std::string Color::HexString4Bpp(vec4 c)
 {
     uvec4 c2 = (uvec4)(clamp(c, 0.f, 1.f) * 15.999f);
-    return String::format("%01x%1x%01x%01x", c2.r, c2.g, c2.b, c2.a);
+    return format("%01x%1x%01x%01x", c2.r, c2.g, c2.b, c2.a);
 }
 
-String Color::HexString8Bpp(vec3 c)
+std::string Color::HexString8Bpp(vec3 c)
 {
     uvec3 c2 = (uvec3)(clamp(c, 0.f, 1.f) * 255.999f);
-    return String::format("%02x%02x%02x", c2.r, c2.g, c2.b);
+    return format("%02x%02x%02x", c2.r, c2.g, c2.b);
 }
 
-String Color::HexString8Bpp(vec4 c)
+std::string Color::HexString8Bpp(vec4 c)
 {
     uvec4 c2 = (uvec4)(clamp(c, 0.f, 1.f) * 15.999f);
-    return String::format("%02x%2x%02x%02x", c2.r, c2.g, c2.b, c2.a);
+    return format("%02x%2x%02x%02x", c2.r, c2.g, c2.b, c2.a);
 }
 
 /*

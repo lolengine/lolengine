@@ -214,7 +214,7 @@ private:
     } \
     \
     void printf() const; \
-    class String tostring() const;
+    std::string tostring() const;
 
 /*
  * 2-element vectors

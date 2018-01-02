@@ -54,26 +54,17 @@ array<std::string> split(std::string const &s, std::string const &seps)
     return ret;
 }
 
-/*
- * XXX: deprecated
- */
-
-String String::format(char const *format, ...)
+std::string format(char const *format, ...)
 {
-    String ret;
-
     va_list ap;
     va_start(ap, format);
-    ret = String::vformat(format, ap);
+    std::string ret = vformat(format, ap);
     va_end(ap);
-
     return ret;
 }
 
-String String::vformat(char const *format, va_list ap)
+std::string vformat(char const *format, va_list ap)
 {
-    String ret;
-
     va_list ap2;
 #if defined va_copy || !defined _MSC_VER
     /* Visual Studio 2010 does not support va_copy. */
@@ -91,9 +82,8 @@ String String::vformat(char const *format, va_list ap)
     va_end(ap2);
 #endif
 
-    ((super &)ret).reserve(needed);
-    ret.m_count = needed;
-
+    std::string ret;
+    ret.resize(needed);
     vsnprintf(&ret[0], needed, format, ap);
 
     return ret;

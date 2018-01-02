@@ -30,6 +30,9 @@ array<std::string> split(std::string const &s, char sep);
 /* Split a string along multiple separators */
 array<std::string> split(std::string const &s, std::string const &seps);
 
+std::string format(char const *format, ...) LOL_ATTR_FORMAT(1, 2);
+std::string vformat(char const *format, va_list ap);
+
 } /* namespace lol */
 
 //
@@ -78,6 +81,12 @@ public:
         resize(item_count);
         memcpy(&(*this)[0], str, item_count);
         ((super &)*this)[item_count] = '\0';
+    }
+
+    /* Legacy constructor for std::string */
+    inline String(std::string const &s)
+      : String(s.c_str())
+    {
     }
 
     inline String(String const &s)
@@ -354,9 +363,6 @@ public:
 
         return res < 0;
     }
-
-    static String format(char const *format, ...) LOL_ATTR_FORMAT(1, 2);
-    static String vformat(char const *format, va_list ap);
 };
 
 inline String operator +(char c, String const &s)

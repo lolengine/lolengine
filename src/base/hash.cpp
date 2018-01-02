@@ -163,6 +163,11 @@ uint32_t hash<char const *>::operator ()(char const *s) const
     return HashCharString(s);
 }
 
+uint32_t hash<std::string>::operator ()(std::string const &s) const
+{
+    return HashCharString(&s[0]);
+}
+
 uint32_t hash<char const *>::operator ()(String const &s) const
 {
     return HashCharString(&s[0]);

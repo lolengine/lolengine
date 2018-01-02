@@ -19,7 +19,7 @@ namespace lol
 
 #define LOL_PRINTF_TOSTRING(type, ...) \
 template<> void type::printf() const        { msg::debug(__VA_ARGS__); } \
-template<> String type::tostring() const    { return String::format(__VA_ARGS__); }
+template<> std::string type::tostring() const    { return format(__VA_ARGS__); }
 
 LOL_PRINTF_TOSTRING(vec2,   "[ %6.6f %6.6f ]\n", x, y);
 LOL_PRINTF_TOSTRING(ivec2,  "[ %i %i ]\n", x, y);
@@ -38,12 +38,12 @@ template<> void mat2::printf() const
     msg::debug("  %6.6f %6.6f ]\n", p[0][1], p[1][1]);
 }
 
-template<> String mat2::tostring() const
+template<> std::string mat2::tostring() const
 {
     mat2 const &p = *this;
 
-    return String::format("[ %6.6f %6.6f\n", p[0][0], p[1][0]) +
-           String::format("  %6.6f %6.6f ]\n", p[0][1], p[1][1]);
+    return format("[ %6.6f %6.6f\n", p[0][0], p[1][0]) +
+           format("  %6.6f %6.6f ]\n", p[0][1], p[1][1]);
 }
 
 template<> void mat3::printf() const
@@ -55,13 +55,13 @@ template<> void mat3::printf() const
     msg::debug("  %6.6f %6.6f %6.6f ]\n", p[0][2], p[1][2], p[2][2]);
 }
 
-template<> String mat3::tostring() const
+template<> std::string mat3::tostring() const
 {
     mat3 const &p = *this;
 
-    return String::format("[ %6.6f %6.6f %6.6f\n", p[0][0], p[1][0], p[2][0]) +
-           String::format("  %6.6f %6.6f %6.6f\n", p[0][1], p[1][1], p[2][1]) +
-           String::format("  %6.6f %6.6f %6.6f ]\n", p[0][2], p[1][2], p[2][2]);
+    return format("[ %6.6f %6.6f %6.6f\n", p[0][0], p[1][0], p[2][0]) +
+           format("  %6.6f %6.6f %6.6f\n", p[0][1], p[1][1], p[2][1]) +
+           format("  %6.6f %6.6f %6.6f ]\n", p[0][2], p[1][2], p[2][2]);
 }
 
 template<> void mat4::printf() const
@@ -78,18 +78,18 @@ template<> void mat4::printf() const
                p[0][3], p[1][3], p[2][3], p[3][3]);
 }
 
-template<> String mat4::tostring() const
+template<> std::string mat4::tostring() const
 {
     mat4 const &p = *this;
 
-    return String::format("[ %6.6f %6.6f %6.6f %6.6f\n",
-                            p[0][0], p[1][0], p[2][0], p[3][0]) +
-           String::format("  %6.6f %6.6f %6.6f %6.6f\n",
-                            p[0][1], p[1][1], p[2][1], p[3][1]) +
-           String::format("  %6.6f %6.6f %6.6f %6.6f\n",
-                            p[0][2], p[1][2], p[2][2], p[3][2]) +
-           String::format("  %6.6f %6.6f %6.6f %6.6f ]\n",
-                            p[0][3], p[1][3], p[2][3], p[3][3]);
+    return format("[ %6.6f %6.6f %6.6f %6.6f\n",
+                  p[0][0], p[1][0], p[2][0], p[3][0]) +
+           format("  %6.6f %6.6f %6.6f %6.6f\n",
+                  p[0][1], p[1][1], p[2][1], p[3][1]) +
+           format("  %6.6f %6.6f %6.6f %6.6f\n",
+                  p[0][2], p[1][2], p[2][2], p[3][2]) +
+           format("  %6.6f %6.6f %6.6f %6.6f ]\n",
+                  p[0][3], p[1][3], p[2][3], p[3][3]);
 }
 
 } /* namespace lol */

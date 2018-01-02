@@ -20,9 +20,9 @@ static String g_name_joystick()
 {
     return String("Joystick");
 }
-static String g_name_joystick(const uint64_t num)
+static std::string g_name_joystick(const uint64_t num)
 {
-    return String::format("Joystick%d", (int)num);
+    return format("Joystick%d", (int)num);
 }
 
 #   define _SC(id, str, name) const String g_name_key_##name(#name);

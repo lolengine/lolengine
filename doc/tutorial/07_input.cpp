@@ -138,7 +138,7 @@ public:
                     m_yaw_angle += seconds * 0.2f;
             }
 
-            m_text->SetText(String::format(
+            m_text->SetText(lol::format(
                 "cursor: (%0.3f, %0.3f) - pixel (%d, %d)",
                 m_mouse->GetCursor(0).x, m_mouse->GetCursor(0).y,
                 m_mouse->GetCursorPixel(0).x, m_mouse->GetCursorPixel(0).y));
