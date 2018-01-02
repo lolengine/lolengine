@@ -31,6 +31,7 @@ tutorials += 16_movie
 
 05_easymesh_SOURCES = 05_easymesh.cpp
 05_easymesh_CPPFLAGS = $(AM_CPPFLAGS)
+05_easymesh_LDFLAGS = $(AM_LDFLAGS) @LOL_LUA_DEPS@
 05_easymesh_DEPENDENCIES = @LOL_DEPS@ @LOL_LUA_DEPS@
 
 06_sprite_SOURCES = 06_sprite.cpp 06_sprite.png
@@ -69,6 +70,7 @@ endif
 
 14_lol_lua_SOURCES = 14_lol_lua.cpp
 14_lol_lua_CPPFLAGS = $(AM_CPPFLAGS)
+14_lol_lua_LDFLAGS = $(AM_LDFLAGS) @LOL_LUA_DEPS@
 14_lol_lua_DEPENDENCIES = @LOL_DEPS@ @LOL_LUA_DEPS@
 
 15_lolimgui_SOURCES = 15_lolimgui.cpp
