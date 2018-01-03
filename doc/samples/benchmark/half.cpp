@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Benchmark program
 //
-//  Copyright © 2005—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2005—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  This program is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -26,7 +26,7 @@ static size_t const HALF_RUNS = 50;
 void bench_half(int mode)
 {
     float result[10] = { 0.0f };
-    Timer timer;
+    lol::timer timer;
 
     /* Set up tables */
     float *pf = new float[HALF_TABLE_SIZE + 1];
@@ -48,62 +48,62 @@ void bench_half(int mode)
         }
 
         /* Convert half to float (array) */
-        timer.Get();
+        timer.get();
         half::convert(pf, ph, HALF_TABLE_SIZE);
-        result[0] += timer.Get();
+        result[0] += timer.get();
 
         /* Convert half to float (fast) */
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < HALF_TABLE_SIZE; i++)
             pf[i] = (float)ph[i];
-        result[1] += timer.Get();
+        result[1] += timer.get();
 
         /* Copy float */
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < HALF_TABLE_SIZE; i++)
             pf[i] = pf[i + 1];
-        result[2] += timer.Get();
+        result[2] += timer.get();
 
         /* Add a half to every float */
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < HALF_TABLE_SIZE; i++)
             pf[i] += ph[i];
-        result[3] += timer.Get();
+        result[3] += timer.get();
 
         /* Copy half */
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < HALF_TABLE_SIZE; i++)
             ph[i] = ph[i + 1];
-        result[4] += timer.Get();
+        result[4] += timer.get();
 
         /* Change sign of every half */
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < HALF_TABLE_SIZE; i++)
             ph[i] = -ph[i];
-        result[5] += timer.Get();
+        result[5] += timer.get();
 
         /* Convert float to half (array) */
-        timer.Get();
+        timer.get();
         half::convert(ph, pf, HALF_TABLE_SIZE);
-        result[6] += timer.Get();
+        result[6] += timer.get();
 
         /* Convert float to half (fast) */
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < HALF_TABLE_SIZE; i++)
             ph[i] = (half)pf[i];
-        result[7] += timer.Get();
+        result[7] += timer.get();
 
         /* Convert float to half (accurate) */
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < HALF_TABLE_SIZE; i++)
             ph[i] = half::makeaccurate(pf[i]);
-        result[8] += timer.Get();
+        result[8] += timer.get();
 
         /* Add a float to every half */
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < HALF_TABLE_SIZE; i++)
             ph[i] += pf[i];
-        result[9] += timer.Get();
+        result[9] += timer.get();
     }
 
     delete[] pf;

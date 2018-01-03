@@ -63,7 +63,7 @@ private:
 
     /* Fixed framerate management */
     int frame, recording;
-    Timer timer;
+    timer m_timer;
     float deltatime, bias, fps;
 #if LOL_BUILD_DEBUG
     float keepalive;
@@ -240,7 +240,7 @@ void TickerData::GameThreadTick()
     }
     else
     {
-        data->deltatime = data->timer.Get();
+        data->deltatime = data->m_timer.get();
         data->bias += data->deltatime;
     }
 
@@ -540,7 +540,7 @@ void Ticker::TickDraw()
     if (frametime > data->bias + .2f)
         frametime = data->bias + .2f; /* Don't go below 5 fps */
     if (frametime > data->bias)
-        data->timer.Wait(frametime - data->bias);
+        data->m_timer.wait(frametime - data->bias);
 
     /* If recording, do not try to compensate for lag. */
     if (!data->recording)

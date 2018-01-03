@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Benchmark program
 //
-//  Copyright © 2005—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2005—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  This program is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -30,7 +30,7 @@ static size_t const TRIG_RUNS = 50;
 void bench_trig(int mode)
 {
     float result[12] = { 0.0f };
-    Timer timer;
+    lol::timer timer;
 
     /* Set up tables */
     float *pf = new float[TRIG_TABLE_SIZE];
@@ -56,59 +56,59 @@ void bench_trig(int mode)
         }
 
         /* Sin */
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
 #if __GNUC__ && !__SNC__
             pf2[i] = __builtin_sinf(pf[i]);
 #else
             pf2[i] = sinf(pf[i]);
 #endif
-        result[0] += timer.Get();
+        result[0] += timer.get();
 
         /* Fast sin */
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
 #if HAVE_FASTMATH_H && !__native_client__ && !EMSCRIPTEN
             pf2[i] = f_sinf(pf[i]);
 #else
             pf2[i] = sinf(pf[i]);
 #endif
-        result[1] += timer.Get();
+        result[1] += timer.get();
 
         /* Lol sin */
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
             pf2[i] = lol_sin(pf[i]);
-        result[2] += timer.Get();
+        result[2] += timer.get();
 
         /* Cos */
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
 #if __GNUC__ && !__SNC__
             pf2[i] = __builtin_cosf(pf[i]);
 #else
             pf2[i] = cosf(pf[i]);
 #endif
-        result[3] += timer.Get();
+        result[3] += timer.get();
 
         /* Fast cos */
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
 #if HAVE_FASTMATH_H && !__native_client__ && !EMSCRIPTEN
             pf2[i] = f_cosf(pf[i]);
 #else
             pf2[i] = cosf(pf[i]);
 #endif
-        result[4] += timer.Get();
+        result[4] += timer.get();
 
         /* Lol cos */
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
             pf2[i] = lol_cos(pf[i]);
-        result[5] += timer.Get();
+        result[5] += timer.get();
 
         /* Sin & cos */
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
         {
 #if __GNUC__ && !__SNC__
@@ -119,10 +119,10 @@ void bench_trig(int mode)
             pf3[i] = cosf(pf[i]);
 #endif
         }
-        result[6] += timer.Get();
+        result[6] += timer.get();
 
         /* Fast sin & cos */
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
         {
 #if HAVE_FASTMATH_H && !__native_client__ && !EMSCRIPTEN
@@ -133,39 +133,39 @@ void bench_trig(int mode)
             pf3[i] = cosf(pf[i]);
 #endif
         }
-        result[7] += timer.Get();
+        result[7] += timer.get();
 
         /* Lol sincos */
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
             lol_sincos(pf[i], &pf2[i], &pf3[i]);
-        result[8] += timer.Get();
+        result[8] += timer.get();
 
         /* Tan */
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
 #if __GNUC__ && !__SNC__
             pf2[i] = __builtin_tanf(pf[i]);
 #else
             pf2[i] = tanf(pf[i]);
 #endif
-        result[9] += timer.Get();
+        result[9] += timer.get();
 
         /* Fast tan */
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
 #if HAVE_FASTMATH_H && !__native_client__ && !EMSCRIPTEN
             pf2[i] = f_tanf(pf[i]);
 #else
             pf2[i] = tanf(pf[i]);
 #endif
-        result[10] += timer.Get();
+        result[10] += timer.get();
 
         /* Lol tan */
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < TRIG_TABLE_SIZE; i++)
             pf2[i] = lol_tan(pf[i]);
-        result[11] += timer.Get();
+        result[11] += timer.get();
     }
 
     delete[] pf;

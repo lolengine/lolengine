@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Benchmark program
 //
-//  Copyright © 2005—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2005—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  This program is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -26,7 +26,7 @@ static size_t const REAL_RUNS = 50;
 void bench_real(int mode)
 {
     float result[12] = { 0.0f };
-    Timer timer;
+    lol::timer timer;
 
     for (size_t run = 0; run < REAL_RUNS; run++)
     {
@@ -37,36 +37,36 @@ void bench_real(int mode)
         }
 
         real fib1 = 1.0, fib2 = 1.0;
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < REAL_TABLE_SIZE; i++)
         {
             real tmp = fib1 + fib2;
             fib1 = fib2;
             fib2 = tmp;
         }
-        result[0] += timer.Get();
+        result[0] += timer.get();
 
         real fact = 1.0;
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < REAL_TABLE_SIZE; i++)
             fact = fact * real(1.0 + i);
-        result[1] += timer.Get();
+        result[1] += timer.get();
 
         real invfact = 1.0;
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < REAL_TABLE_SIZE; i++)
             invfact = invfact / real(1.0 + i);
-        result[2] += timer.Get();
+        result[2] += timer.get();
 
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < REAL_TABLE_SIZE / 128; i++)
             (void)sin(real(0.01 * i));
-        result[3] += timer.Get() * 128;
+        result[3] += timer.get() * 128;
 
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < REAL_TABLE_SIZE / 128; i++)
             (void)exp((real)(int)(i - REAL_TABLE_SIZE / 256));
-        result[4] += timer.Get() * 128;
+        result[4] += timer.get() * 128;
     }
 
     for (size_t i = 0; i < sizeof(result) / sizeof(*result); i++)

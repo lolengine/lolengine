@@ -2,7 +2,7 @@
 //  Lol Engine — BtPhys tutorial
 //
 //  Copyright © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2012—2015 Sam Hocevar <sam@hocevar.net>
+//            © 2012—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -449,7 +449,7 @@ void BtPhysTest::TickGame(float seconds)
     for (int i = 0; i < m_physobj_list.count(); i++)
     {
         PhysicsObject* PhysObj = m_physobj_list[i].m1;
-        float &Timer = m_physobj_list[i].m2;
+        float &obj_timer = m_physobj_list[i].m2;
 
         vec3 obj_loc = PhysObj->GetPhysic()->GetTransform()[3].xyz;
 
@@ -482,15 +482,15 @@ void BtPhysTest::TickGame(float seconds)
         //Jump handling
         //if (length(PhysObj->GetPhysic()->GetLinearVelocity()) < ZERO_SPEED)
         if (lol::abs(PhysObj->GetPhysic()->GetLinearVelocity().y) < ZERO_SPEED)
-            Timer -= seconds;
+            obj_timer -= seconds;
 
-        if (Timer < .0f)
+        if (obj_timer < .0f)
         {
             PhysObj->GetPhysic()->AddImpulse(JUMP_HEIGHT *
                                              vec3(JUMP_STRAFE, 1.f, JUMP_STRAFE) *
                                              vec3(rand(-1.f, 1.f), 1.0f, rand(-1.f, 1.f)) *
                                              PhysObj->GetPhysic()->GetMass());
-            Timer = ZERO_TIME;
+            obj_timer = ZERO_TIME;
         }
     }
 

@@ -32,17 +32,17 @@ lolunit_declare_fixture(timer_test)
 
     lolunit_declare_test(timers)
     {
-        Timer timer0, timer1;
+        timer t0, t1;
 
-        timer0.Wait(1.5);
+        t0.wait(1.5);
 
-        float t0 = timer1.Poll();
-        float t1 = timer1.Get();
-        lolunit_assert_doubles_equal(t0, t1, 1e-5);
-        lolunit_assert_doubles_equal(1.5, t1, 1e-3);
+        float s0 = t1.poll();
+        float s1 = t1.get();
+        lolunit_assert_doubles_equal(s0, s1, 1e-5);
+        lolunit_assert_doubles_equal(1.5, s1, 1e-3);
 
-        timer1.Wait(1.5);
-        lolunit_assert_doubles_equal(3.0, timer0.Get(), 1e-3);
+        t1.wait(1.5);
+        lolunit_assert_doubles_equal(3.0, t0.get(), 1e-3);
     }
 };
 

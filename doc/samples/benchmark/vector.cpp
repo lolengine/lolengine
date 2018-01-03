@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Benchmark program
 //
-//  Copyright © 2005—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2005—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  This program is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -26,7 +26,7 @@ static size_t const MATRIX_RUNS = 100;
 void bench_matrix(int mode)
 {
     float result[5] = { 0.0f };
-    Timer timer;
+    lol::timer timer;
 
     /* Set up tables */
     mat4 *pm = new mat4[MATRIX_TABLE_SIZE + 1];
@@ -45,34 +45,34 @@ void bench_matrix(int mode)
         }
 
         /* Copy matrices */
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < MATRIX_TABLE_SIZE; i++)
             pm[i] = pm[i + 1];
-        result[0] += timer.Get();
+        result[0] += timer.get();
 
         /* Determinant */
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < MATRIX_TABLE_SIZE; i++)
             pf[i] = determinant(pm[i]);
-        result[1] += timer.Get();
+        result[1] += timer.get();
 
         /* Multiply matrices */
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < MATRIX_TABLE_SIZE; i++)
             pm[i] *= pm[i + 1];
-        result[2] += timer.Get();
+        result[2] += timer.get();
 
         /* Add matrices */
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < MATRIX_TABLE_SIZE; i++)
             pm[i] += pm[i + 1];
-        result[3] += timer.Get();
+        result[3] += timer.get();
 
         /* Invert matrix */
-        timer.Get();
+        timer.get();
         for (size_t i = 0; i < MATRIX_TABLE_SIZE; i++)
             pm[i] = inverse(pm[i]);
-        result[4] += timer.Get();
+        result[4] += timer.get();
     }
 
     delete[] pm;

@@ -17,37 +17,23 @@
 #include <thread>
 
 //
-// The Timer class
+// The timer class
 // ---------------
 //
 
 namespace lol
 {
 
-class Timer
+class timer
 {
 public:
-    Timer()
-    {
-        (void)get_seconds(true);
-    }
+    inline timer() { (void)get_seconds(true); }
 
-    void Reset()
-    {
-        (void)get_seconds(true);
-    }
+    inline void reset() { (void)get_seconds(true); }
+    inline float get() { return get_seconds(true); }
+    inline float poll() { return get_seconds(false); }
 
-    float Get()
-    {
-        return get_seconds(true);
-    }
-
-    float Poll()
-    {
-        return get_seconds(false);
-    }
-
-    void Wait(float seconds)
+    void wait(float seconds)
     {
         if (seconds > 0.0f)
         {

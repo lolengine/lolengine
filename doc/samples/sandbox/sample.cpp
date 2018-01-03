@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Sandbox program
 //
-//  Copyright © 2005—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2005—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  This program is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -20,7 +20,7 @@ using namespace lol;
 
 int main()
 {
-    Timer t;
+    timer t;
 
     bigint<128> x(17), y(23);
     x.print();
@@ -37,6 +37,6 @@ int main()
 
     printf("%d %d\n", (int)x, (int)y);
 
-    printf("Time: %f s\n", t.Get());
+    printf("Time: %f s\n", t.get());
 }
 

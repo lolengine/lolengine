@@ -147,9 +147,9 @@ private:
     int                 m_thread_min = 0;
     int                 m_thread_active = 0;
     array<thread*>      m_threads;
-    Timer               m_thread_added_timer;
+    timer               m_thread_added_timer;
     int                 m_thread_added = 0;
-    Timer               m_thread_removed_timer;
+    timer               m_thread_removed_timer;
     int                 m_thread_removed = 0;
 
     queue<ThreadStatus> m_statusqueue;

@@ -98,14 +98,14 @@ void BaseThreadManager::AdjustThreadCount(int count)
             //Spawn worker threads and ...
             m_threads << new thread(std::bind(&BaseThreadManager::BaseThreadWork, this, std::placeholders::_1));
             m_thread_added++;
-            m_thread_added_timer.Reset();
+            m_thread_added_timer.reset();
         }
         else
         {
             //Signal worker threads for completion and ...
             m_jobqueue.push(new ThreadJob(ThreadJobType::THREAD_STOP));
             m_thread_removed++;
-            m_thread_removed_timer.Reset();
+            m_thread_removed_timer.reset();
         }
     }
 #endif //LOL_FEATURE_THREADS
@@ -130,7 +130,7 @@ void BaseThreadManager::CleanAddedThread(bool wait)
             break;
     }
     //Assert if spawning took too much time
-    //ASSERT(!(m_thread_added > 0 && m_thread_added_timer.Poll() > 5.f));
+    //ASSERT(!(m_thread_added > 0 && m_thread_added_timer.poll() > 5.f));
 #endif //LOL_FEATURE_THREADS
 }
 
@@ -157,7 +157,7 @@ void BaseThreadManager::CleanRemovedThread(bool wait)
             break;
     }
     //Assert if stopping took too much time
-    //ASSERT(!(m_thread_removed > 0 && m_thread_removed_timer.Poll() > 5.f));
+    //ASSERT(!(m_thread_removed > 0 && m_thread_removed_timer.poll() > 5.f));
 #endif //LOL_FEATURE_THREADS
 }
 

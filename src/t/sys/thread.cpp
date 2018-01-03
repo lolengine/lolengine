@@ -39,10 +39,10 @@ lolunit_declare_fixture(thread_test)
     protected:
         virtual bool DoWork()
         {
-            Timer timer;
+            timer t;
             m_done = false;
             msg::info("%s: STARTED WORK\n", GetName());
-            timer.Wait(2.f);
+            t.wait(2.f);
             msg::info("%s: ENDED WORK\n", GetName());
             m_done = true;
             return true;

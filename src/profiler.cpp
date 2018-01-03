@@ -36,7 +36,7 @@ public:
 
 private:
     float history[HISTORY];
-    Timer timer;
+    timer m_timer;
     float avg, max;
 }
 data[Profiler::STAT_COUNT];
@@ -47,12 +47,12 @@ data[Profiler::STAT_COUNT];
 
 void Profiler::Start(int id)
 {
-    data[id].timer.Get();
+    data[id].m_timer.get();
 }
 
 void Profiler::Stop(int id)
 {
-    float seconds = data[id].timer.Get();
+    float seconds = data[id].m_timer.get();
 
     data[id].history[Ticker::GetFrameNum() % ProfilerData::HISTORY] = seconds;
     data[id].avg = 0.0f;
