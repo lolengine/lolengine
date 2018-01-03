@@ -2,6 +2,7 @@
 //  Lol Engine — EasyMesh Lua loader
 //
 //  Copyright © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//            © 2017—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -12,6 +13,8 @@
 
 #pragma once
 
+#include <string>
+
 namespace lol
 {
 
@@ -21,7 +24,7 @@ class EasyMeshLuaObject : public LuaObject
     EasyMesh m_instance;
 public:
     //-------------------------------------------------------------------------
-    EasyMeshLuaObject(String const& name);
+    EasyMeshLuaObject(std::string const& name);
     virtual ~EasyMeshLuaObject();
     EasyMesh& GetMesh() { return m_instance; }
 
@@ -137,12 +140,12 @@ public:
 
     //-------------------------------------------------------------------------
 protected:
-    static void RegisterMesh(EasyMeshLuaObject* mesh, String const& name);
+    static void RegisterMesh(EasyMeshLuaObject* mesh, std::string const& name);
 public:
-    static bool GetRegisteredMeshes(map<String, EasyMeshLuaObject*>& meshes);
+    static bool GetRegisteredMeshes(map<std::string, EasyMeshLuaObject*>& meshes);
 
 private:
-    static map<String, EasyMeshLuaObject*> m_meshes;
+    static map<std::string, EasyMeshLuaObject*> m_meshes;
 };
 
 } /* namespace lol */

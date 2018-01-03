@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -13,6 +13,8 @@
 #include <lol/engine-internal.h>
 
 #include <lolunit.h>
+
+#include <string>
 
 namespace lol
 {
@@ -31,7 +33,7 @@ lolunit_declare_fixture(enum_test)
             };
 
         protected:
-            virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+            virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
             {
                 enum_map[first] = "first";
                 enum_map[second] = "second";
@@ -42,18 +44,18 @@ lolunit_declare_fixture(enum_test)
         typedef SafeEnum<my_enum_base> my_enum;
 
         my_enum e = my_enum::first;
-        lolunit_assert(e.ToString() == "first");
+        lolunit_assert(e.tostring() == "first");
 
         e = my_enum::second;
-        lolunit_assert(e.ToString() == "second");
+        lolunit_assert(e.tostring() == "second");
 
         e = my_enum::third;
-        lolunit_assert(e.ToString() == "third");
+        lolunit_assert(e.tostring() == "third");
 
         e = my_enum(42);
-        lolunit_assert(e.ToString() != "first");
-        lolunit_assert(e.ToString() != "second");
-        lolunit_assert(e.ToString() != "third");
+        lolunit_assert(e.tostring() != "first");
+        lolunit_assert(e.tostring() != "second");
+        lolunit_assert(e.tostring() != "third");
     }
 };
 

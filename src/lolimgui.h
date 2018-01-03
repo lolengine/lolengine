@@ -1,7 +1,8 @@
 //
-//  Lol Engine — imGui integration
+//  Lol Engine
 //
 //  Copyright © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//            © 2017—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -11,6 +12,12 @@
 //
 
 #pragma once
+
+#include <string>
+
+//
+// The Imgui integration
+//
 
 #define IM_VEC2_CLASS_EXTRA ImVec2(const lol::vec2 &v) { x = v.x; y = v.y; } \
                             ImVec2(const lol::ivec2 &v) : ImVec2(lol::vec2(v)) { } \
@@ -105,7 +112,7 @@ class LolImGui : public Entity
             MAX = MOUSE_KEY_END,
         };
     protected:
-        virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+        virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
         {
             enum_map[Tab] = g_name_key_Tab;
             enum_map[LeftArrow] = g_name_key_Left;
@@ -155,7 +162,7 @@ class LolImGui : public Entity
             MAX = MOUSE_AXIS_END,
         };
     protected:
-        virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+        virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
         {
             enum_map[Scroll] = g_name_mouse_axis_scroll;
 
@@ -175,7 +182,7 @@ public:
     static void Shutdown();
 
     //-------------------------------------------------------------------------
-    static String GetClipboard();
+    static std::string GetClipboard();
 
 protected:
     virtual void TickGame(float seconds);
@@ -191,9 +198,9 @@ protected:
     {
         Uniform() { }
         Uniform(ShaderVar var) { m_var = var; }
-        operator String() { return m_var; }
-        operator ShaderVar() { return m_var; }
-        operator ShaderUniform() { return m_uniform; }
+        std::string tostring() const { return m_var.tostring(); }
+        operator ShaderVar() const { return m_var; }
+        operator ShaderUniform() const { return m_uniform; }
         //--
         ShaderVar m_var;
         ShaderUniform m_uniform;
@@ -212,7 +219,7 @@ protected:
     InputDevice* m_keyboard = nullptr;
     InputProfile m_profile;
     //map<ImGuiKey_, LolImGuiKey> m_keys;
-    String m_clipboard;
+    std::string m_clipboard;
 };
 
 //-----------------------------------------------------------------------------

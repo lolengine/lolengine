@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -12,6 +12,7 @@
 
 #include <lol/engine-internal.h>
 
+#include <string>
 #include <cstring>
 #include <cstdio>
 
@@ -76,7 +77,7 @@ class ShaderData
     friend class Shader;
 
 private:
-    String m_name;
+    std::string m_name;
 
     GLuint prog_id, vert_id, frag_id;
     // Benlitz: using a simple array could be faster since there is never more than a few attribute locations to store
@@ -86,7 +87,7 @@ private:
 
     /* Shader patcher */
     static int GetVersion();
-    static String Patch(String const &code, ShaderType type);
+    static std::string Patch(std::string const &code, ShaderType type);
 
     /* Global shader cache */
     static Shader *shaders[];
@@ -108,8 +109,8 @@ using namespace pegtl;
 struct lolfx_parser
 {
 public:
-    String m_section;
-    map<String, String> m_programs;
+    std::string m_section;
+    map<std::string, std::string> m_programs;
 
 private:
     // title <- '[' (!']')+ ']' .{eol}
@@ -155,10 +156,10 @@ private:
     struct action : nothing<RULE> {};
 
 public:
-    lolfx_parser(String const &code)
+    lolfx_parser(std::string const &code)
       : m_section("header")
     {
-        string_input<> in(code.C(), "shader");
+        string_input<> in(code, "shader");
         pegtl::parse<lolfx, action>(in, this);
     }
 };
@@ -169,7 +170,7 @@ struct lolfx_parser::action<lolfx_parser::do_title>
     template<typename INPUT>
     static void apply(INPUT const &in, lolfx_parser *that)
     {
-        that->m_section = in.string().c_str();
+        that->m_section = in.string();
     }
 };
 
@@ -179,7 +180,7 @@ struct lolfx_parser::action<lolfx_parser::code_section>
     template<typename INPUT>
     static void apply(INPUT const &in, lolfx_parser *that)
     {
-        that->m_programs[that->m_section] = in.string().c_str();
+        that->m_programs[that->m_section] = in.string();
     }
 };
 
@@ -187,18 +188,18 @@ struct lolfx_parser::action<lolfx_parser::code_section>
  * Public Shader class
  */
 
-Shader *Shader::Create(String const &name, String const &code)
+Shader *Shader::Create(std::string const &name, std::string const &code)
 {
     lolfx_parser p(code);
 
     ASSERT(p.m_programs.has_key("vert.glsl"),
-           "no vertex shader in %s", name.C());
+           "no vertex shader in %s", name.c_str());
 
     ASSERT(p.m_programs.has_key("frag.glsl"),
-           "no fragment shader in %s", name.C());
+           "no fragment shader in %s", name.c_str());
 
-    String vert = p.m_programs["vert.glsl"];
-    String frag = p.m_programs["frag.glsl"];
+    std::string vert = p.m_programs["vert.glsl"];
+    std::string frag = p.m_programs["frag.glsl"];
 
     uint32_t new_vert_crc = ShaderData::Hash(vert);
     uint32_t new_frag_crc = ShaderData::Hash(frag);
@@ -225,14 +226,14 @@ void Shader::Destroy(Shader *shader)
     UNUSED(shader);
 }
 
-Shader::Shader(String const &name,
-               String const &vert, String const &frag)
+Shader::Shader(std::string const &name,
+               std::string const &vert, std::string const &frag)
   : data(new ShaderData())
 {
     data->m_name = name;
 
     char errbuf[4096];
-    String shader_code;
+    std::string shader_code;
     GLchar const *gl_code;
     GLint status;
     GLsizei len;
@@ -242,7 +243,7 @@ Shader::Shader(String const &name,
 
     shader_code = ShaderData::Patch(vert, ShaderType::Vertex);
     data->vert_id = glCreateShader(GL_VERTEX_SHADER);
-    gl_code = shader_code.C();
+    gl_code = shader_code.c_str();
     glShaderSource(data->vert_id, 1, &gl_code, nullptr);
     glCompileShader(data->vert_id);
 
@@ -251,13 +252,13 @@ Shader::Shader(String const &name,
     if (status != GL_TRUE)
     {
         msg::error("failed to compile vertex shader %s: %s\n",
-                   name.C(), errbuf);
-        msg::error("shader source:\n%s\n", shader_code.C());
+                   name.c_str(), errbuf);
+        msg::error("shader source:\n%s\n", shader_code.c_str());
     }
     else if (len > 16)
     {
-        msg::debug("compile log for vertex shader %s: %s\n", name.C(), errbuf);
-        msg::debug("shader source:\n%s\n", shader_code.C());
+        msg::debug("compile log for vertex shader %s: %s\n", name.c_str(), errbuf);
+        msg::debug("shader source:\n%s\n", shader_code.c_str());
     }
 
     /* Compile fragment shader */
@@ -265,7 +266,7 @@ Shader::Shader(String const &name,
 
     shader_code = ShaderData::Patch(frag, ShaderType::Fragment);
     data->frag_id = glCreateShader(GL_FRAGMENT_SHADER);
-    gl_code = shader_code.C();
+    gl_code = shader_code.c_str();
     glShaderSource(data->frag_id, 1, &gl_code, nullptr);
     glCompileShader(data->frag_id);
 
@@ -274,14 +275,14 @@ Shader::Shader(String const &name,
     if (status != GL_TRUE)
     {
         msg::error("failed to compile fragment shader %s: %s\n",
-                   name.C(), errbuf);
-        msg::error("shader source:\n%s\n", shader_code.C());
+                   name.c_str(), errbuf);
+        msg::error("shader source:\n%s\n", shader_code.c_str());
     }
     else if (len > 16)
     {
         msg::debug("compile log for fragment shader %s: %s\n",
-                   name.C(), errbuf);
-        msg::debug("shader source:\n%s\n", shader_code.C());
+                   name.c_str(), errbuf);
+        msg::debug("shader source:\n%s\n", shader_code.c_str());
     }
 
     /* Create program */
@@ -294,11 +295,11 @@ Shader::Shader(String const &name,
     glGetProgramiv(data->prog_id, GL_LINK_STATUS, &status);
     if (status != GL_TRUE)
     {
-        msg::error("failed to link program %s: %s\n", name.C(), errbuf);
+        msg::error("failed to link program %s: %s\n", name.c_str(), errbuf);
     }
     else if (len > 16)
     {
-        msg::debug("link log for program %s: %s\n", name.C(), errbuf);
+        msg::debug("link log for program %s: %s\n", name.c_str(), errbuf);
     }
 
     GLint validated;
@@ -306,7 +307,7 @@ Shader::Shader(String const &name,
     glGetProgramiv(data->prog_id, GL_VALIDATE_STATUS, &validated);
     if (validated != GL_TRUE)
     {
-        msg::error("failed to validate program %s\n", name.C());
+        msg::error("failed to validate program %s\n", name.c_str());
     }
 
     GLint num_attribs;
@@ -327,16 +328,16 @@ Shader::Shader(String const &name,
         int attrib_type;
         glGetActiveAttrib(data->prog_id, i, max_len, &attrib_len, (GLint*)&attrib_size, (GLenum*)&attrib_type, name_buffer);
 
-        String attr_name(name_buffer);
+        std::string attr_name(name_buffer);
         int index = -1;
         VertexUsage usage = VertexUsage::MAX;
         for (int j = 0; j < (int)VertexUsage::MAX; ++j)
         {
-            if (attr_name.starts_with(attribute_names[j]) ||
-                attr_name.starts_with(String(attribute_names[j]).to_lower()))
+            if (starts_with(attr_name, attribute_names[j]) ||
+                starts_with(attr_name, tolower(attribute_names[j])))
             {
                 usage = VertexUsage(j);
-                char* idx_ptr = attr_name.C() + strlen(attribute_names[j]);
+                char* idx_ptr = &attr_name[0] + strlen(attribute_names[j]);
                 index = strtol(idx_ptr, nullptr, 10);
                 break;
             }
@@ -357,7 +358,7 @@ Shader::Shader(String const &name,
             if (data->attrib_locations.has_key(flags))
             {
                 msg::error("error while parsing attribute semantics in %s\n",
-                           attr_name.C());
+                           attr_name.c_str());
             }
 #endif
             data->attrib_locations[flags] = location;
@@ -386,7 +387,7 @@ ShaderAttrib Shader::GetAttribLocation(VertexUsage usage, int index) const
         if (!data->attrib_errors.has_key(ret.m_flags))
         {
             msg::error("attribute %s not found in shader %s\n",
-                       usage.ToString().C(), data->m_name.C());
+                       usage.tostring().c_str(), data->m_name.c_str());
             data->attrib_errors[ret.m_flags] = true;
         }
     }
@@ -394,9 +395,9 @@ ShaderAttrib Shader::GetAttribLocation(VertexUsage usage, int index) const
     return ret;
 }
 
-ShaderUniform Shader::GetUniformLocation(String const& uni) const
+ShaderUniform Shader::GetUniformLocation(std::string const& uni) const
 {
-    return GetUniformLocation(uni.C());
+    return GetUniformLocation(uni.c_str());
 }
 ShaderUniform Shader::GetUniformLocation(char const *uni) const
 {
@@ -572,16 +573,17 @@ int ShaderData::GetVersion()
 /*
  * Simple shader source patching for old GLSL versions.
  */
-String ShaderData::Patch(String const &code, ShaderType type)
+std::string ShaderData::Patch(std::string const &code, ShaderType type)
 {
     int ver_driver = GetVersion();
 
-    String patched_code = code;
+    std::string patched_code = code;
     if (ver_driver >= 130)
         return patched_code;
 
+    /* FIXME: use std::string instead of char * for parsing? */
     int ver_shader = 110;
-    char *parser = strstr(patched_code.C(), "#version");
+    char *parser = strstr(&patched_code[0], "#version");
     if (parser)
         ver_shader = atoi(parser + strlen("#version"));
 
@@ -590,7 +592,7 @@ String ShaderData::Patch(String const &code, ShaderType type)
     {
         /* FIXME: this isn't elegant but honestly, we don't care, this
          * whole file is going to die soon. */
-        char *p = strstr(patched_code.C(), "#version");
+        char *p = strstr(&patched_code[0], "#version");
         if (p)
         {
             p += 8;
@@ -603,10 +605,10 @@ String ShaderData::Patch(String const &code, ShaderType type)
 
     if (ver_shader > 120 && ver_driver <= 120)
     {
-        char const *end = patched_code.C() + patched_code.count() + 1;
+        char const *end = patched_code.c_str() + patched_code.length() + 1;
 
         /* Find main() */
-        parser = strstr(patched_code.C(), "main");
+        parser = strstr(&patched_code[0], "main");
         if (!parser) return patched_code;
         parser = strstr(parser, "(");
         if (!parser) return patched_code;
@@ -651,7 +653,7 @@ String ShaderData::Patch(String const &code, ShaderType type)
 
         for (char const * const *rep = main_replaces; rep[0]; rep += 2)
         {
-            char *match = strstr(patched_code.C(), rep[0]);
+            char *match = strstr(&patched_code[0], rep[0]);
             if (match && match < main)
             {
                 size_t l0 = strlen(rep[0]);
@@ -685,18 +687,18 @@ String ShaderData::Patch(String const &code, ShaderType type)
         {
             while (true)
             {
-                int index = patched_code.index_of(rep[0]);
-                if (index == INDEX_NONE)
+                size_t index = patched_code.find(rep[0]);
+                if (index == std::string::npos)
                     break;
 
                 size_t l0 = strlen(rep[0]);
                 size_t l1 = strlen(rep[1]);
                 UNUSED(l1);
 
-                String left = patched_code.sub(0, index);
-                String right = patched_code.sub(index + l0, patched_code.count() - (index + l0));
+                std::string left = patched_code.substr(0, index);
+                std::string right = patched_code.substr(index + l0, patched_code.length() - (index + l0));
 
-                patched_code = left + String(rep[1]) + right;
+                patched_code = left + std::string(rep[1]) + right;
             }
         }
     }
@@ -704,112 +706,112 @@ String ShaderData::Patch(String const &code, ShaderType type)
     return patched_code;
 }
 
-static const String g_ret = "\n";
-static const String g_eol = ";";
-static const String g_bop = "{";
-static const String g_bcl = "}";
-static const String g_tab = "    ";
+static const std::string g_ret = "\n";
+static const std::string g_eol = ";";
+static const std::string g_bop = "{";
+static const std::string g_bcl = "}";
+static const std::string g_tab = "    ";
 
 //----
-String Shader::GetVariablePrefix(const ShaderVariable variable)
+std::string Shader::GetVariablePrefix(const ShaderVariable variable)
 {
     switch (variable.ToScalar())
     {
-        case ShaderVariable::Attribute:  return String("in_");
-        case ShaderVariable::Uniform:    return String("u_");
-        case ShaderVariable::Varying:    return String("pass_");
+        case ShaderVariable::Attribute:  return "in_";
+        case ShaderVariable::Uniform:    return "u_";
+        case ShaderVariable::Varying:    return "pass_";
         case ShaderVariable::InOut:
-        default: return String();
+        default: return "";
     }
 }
 
 //----
-String Shader::GetVariableQualifier(const ShaderVariable variable)
+std::string Shader::GetVariableQualifier(const ShaderVariable variable)
 {
     switch (variable.ToScalar())
     {
-        case ShaderVariable::Attribute: return String("attribute");
-        case ShaderVariable::Uniform:   return String("uniform");
-        case ShaderVariable::Varying:   return String("varying");
+        case ShaderVariable::Attribute: return "attribute";
+        case ShaderVariable::Uniform:   return "uniform";
+        case ShaderVariable::Varying:   return "varying";
         case ShaderVariable::InOut:
-        default: return String();
+        default: return "";
     }
 }
 
 //----
-String Shader::GetFunctionQualifier(const ShaderVariable variable, const ShaderProgram program)
+std::string Shader::GetFunctionQualifier(const ShaderVariable variable, const ShaderProgram program)
 {
     switch (program.ToScalar())
     {
         case ShaderProgram::Geometry:
         {
             //TODO : L O L ----------------
-            return String();
+            return "";
         }
         case ShaderProgram::Vertex:
         {
             switch (variable.ToScalar())
             {
-                case ShaderVariable::Attribute:  return String("in");
-                case ShaderVariable::Uniform:    return String("in");
-                case ShaderVariable::Varying:    return String("inout");
-                case ShaderVariable::InOut:      return String("inout");
-                default: return String();
+                case ShaderVariable::Attribute:  return "in";
+                case ShaderVariable::Uniform:    return "in";
+                case ShaderVariable::Varying:    return "inout";
+                case ShaderVariable::InOut:      return "inout";
+                default: return "";
             }
-            return String();
+            return "";
         }
         case ShaderProgram::Pixel:
         {
             switch (variable.ToScalar())
             {
-                case ShaderVariable::Attribute:  return String("in");
-                case ShaderVariable::Uniform:    return String("in");
-                case ShaderVariable::Varying:    return String("in");
-                case ShaderVariable::InOut:      return String("inout");
-                default: return String();
+                case ShaderVariable::Attribute:  return "in";
+                case ShaderVariable::Uniform:    return "in";
+                case ShaderVariable::Varying:    return "in";
+                case ShaderVariable::InOut:      return "inout";
+                default: return "";
             }
-            return String();
+            return "";
         }
         default:
         {
-            return String();
+            return "";
         }
     }
 }
 
 //----
-String Shader::GetProgramQualifier(const ShaderProgram program)
+std::string Shader::GetProgramQualifier(const ShaderProgram program)
 {
     switch (program.ToScalar())
     {
-        case ShaderProgram::Geometry: return String(); //TODO : L O L ---------
-        case ShaderProgram::Vertex:   return String("[vert.glsl]");
-        case ShaderProgram::Pixel:    return String("[frag.glsl]");
-        default: return String();
+        case ShaderProgram::Geometry: return ""; //TODO : L O L ---------
+        case ShaderProgram::Vertex:   return "[vert.glsl]";
+        case ShaderProgram::Pixel:    return "[frag.glsl]";
+        default: return "";
     }
 }
 
 //----
-String Shader::GetProgramOutVariable(const ShaderProgram program)
+std::string Shader::GetProgramOutVariable(const ShaderProgram program)
 {
     switch (program.ToScalar())
     {
-        case ShaderProgram::Geometry: return String(); //TODO : L O L ---------
-        case ShaderProgram::Vertex:   return String("gl_Position");
-        case ShaderProgram::Pixel:    return String("gl_FragColor");
-        default: return String();
+        case ShaderProgram::Geometry: return ""; //TODO : L O L ---------
+        case ShaderProgram::Vertex:   return "gl_Position";
+        case ShaderProgram::Pixel:    return "gl_FragColor";
+        default: return "";
     }
 }
 
 //----
-String Shader::GetProgramOutVariableLocal(const ShaderProgram program)
+std::string Shader::GetProgramOutVariableLocal(const ShaderProgram program)
 {
     switch (program.ToScalar())
     {
-        case ShaderProgram::Geometry: return String(); //TODO : L O L ---------
-        case ShaderProgram::Vertex:   return String("out_position");
-        case ShaderProgram::Pixel:    return String("out_frag_color");
-        default: return String();
+        case ShaderProgram::Geometry: return ""; //TODO : L O L ---------
+        case ShaderProgram::Vertex:   return "out_position";
+        case ShaderProgram::Pixel:    return "out_frag_color";
+        default: return "";
     }
 }
 
@@ -829,70 +831,70 @@ ShaderVar ShaderVar::GetShaderOut(ShaderProgram program)
 void ShaderBlock::AddVar(ShaderVar const& var)
 {
     ShaderVariable qualifier = var.GetQualifier();
-    String type = var.GetType();
-    String name = Shader::GetVariablePrefix(qualifier) + var.m_name;
+    std::string type = var.GetType();
+    std::string name = Shader::GetVariablePrefix(qualifier) + var.m_name;
     ASSERT(!m_parameters[qualifier.ToScalar()].has_key(name));
     m_parameters[qualifier.ToScalar()][name] = type;
 }
 
 //----
-void ShaderBlock::AddCallParameters(map<String, String> const& variables, String& result)
+void ShaderBlock::AddCallParameters(map<std::string, std::string> const& variables, std::string& result)
 {
-    array<String> keys = variables.keys();
-    for (String key : keys)
+    array<std::string> keys = variables.keys();
+    for (auto const &key : keys)
     {
-        if (result.count() > 0)
+        if (result.length() > 0)
             result += ", ";
         result += key;
     }
 }
 
 //----
-void ShaderBlock::AddDefinitionParameters(const ShaderVariable type, const ShaderProgram program, map<String, String>& variables, String& result)
+void ShaderBlock::AddDefinitionParameters(const ShaderVariable type, const ShaderProgram program, map<std::string, std::string>& variables, std::string& result)
 {
-    array<String> keys = variables.keys();
-    for (String key : keys)
+    array<std::string> keys = variables.keys();
+    for (auto const &key : keys)
     {
-        if (result.count() > 0)
+        if (result.length() > 0)
             result += ", ";
         result += Shader::GetFunctionQualifier(type, program) + " ";
         result += variables[key];
-        result += String(" ");
+        result += " ";
         result += key;
     }
 }
 
 //----
-void ShaderBlock::Build(const ShaderProgram program, String& call, String& function)
+void ShaderBlock::Build(const ShaderProgram program, std::string& call, std::string& function)
 {
-    ASSERT(m_name.count());
+    ASSERT(m_name.length());
     ASSERT(m_parameters[ShaderVariable::InOut].count());
 
     //Build call in main
-    String call_name = String("Call_") + m_name;
+    std::string call_name = std::string("Call_") + m_name;
     call = call_name + "(";
-    String call_parameters;
+    std::string call_parameters;
     for (int i = 0; i < ShaderVariable::MAX; i++)
         AddCallParameters(/*(ShaderVariable)i, */m_parameters[i], call_parameters);
     call += call_parameters + ");";
 
     //Build function declaration
-    function = String("void ") + call_name + "(";
-    String def_parameters;
+    function = std::string("void ") + call_name + "(";
+    std::string def_parameters;
     for (int i = 0; i < ShaderVariable::MAX; i++)
         AddDefinitionParameters((ShaderVariable)i, program, m_parameters[i], def_parameters);
     function += def_parameters + ")" + g_ret +
         "{" + g_ret +
-        m_code_main + ((m_code_main.ends_with(g_ret)) ? (String()) : (g_ret)) +
+        m_code_main + (ends_with(m_code_main, g_ret) ? std::string() : g_ret) +
         "}";
 }
 
 //Shader Builder implementation class -----------------------------------------
-ShaderBuilder::ShaderBuilder(String const& name, String const& version)
+ShaderBuilder::ShaderBuilder(std::string const& name, std::string const& version)
     : m_name(name), m_version(version)
 {
-    ASSERT(name.count());
-    ASSERT(version.count());
+    ASSERT(name.length());
+    ASSERT(version.length());
 }
 
 //----
@@ -901,7 +903,7 @@ ShaderBuilder::~ShaderBuilder()
 }
 
 //----
-String const& ShaderBuilder::GetName()
+std::string const& ShaderBuilder::GetName()
 {
     return m_name;
 }
@@ -930,10 +932,10 @@ ShaderBuilder& ShaderBuilder::operator<<(ShaderBlock const& block)
 }
 
 //----
-String ShaderBuilder::AddSlotOutVariableLocal(const ShaderProgram program)
+std::string ShaderBuilder::AddSlotOutVariableLocal(const ShaderProgram program)
 {
     ShaderVariable var = ShaderVariable::InOut;
-    String result = Shader::GetProgramOutVariableLocal(program);
+    std::string result = Shader::GetProgramOutVariableLocal(program);
     switch (program.ToScalar())
     {
         case ShaderProgram::Geometry:
@@ -960,17 +962,17 @@ String ShaderBuilder::AddSlotOutVariableLocal(const ShaderProgram program)
 }
 
 //----
-void ShaderBuilder::MergeParameters(map<String, String>& variables, map<String, String>& merged)
+void ShaderBuilder::MergeParameters(map<std::string, std::string>& variables, map<std::string, std::string>& merged)
 {
-    array<String> keys = variables.keys();
-    for (String key : keys)
+    array<std::string> keys = variables.keys();
+    for (auto const &key : keys)
     {
         bool has_key = merged.has_key(key);
 
         //Key exists, check the type to make sure it's the same
         ASSERT(!has_key || (has_key && merged[key] == variables[key]),
             "has_key=%d, key=%s merged[key]=%s, variables[key]=%s\n",
-            (int)has_key, key.C(), merged[key].C(), variables[key].C());
+            (int)has_key, key.c_str(), merged[key].c_str(), variables[key].c_str());
 
         //does not exist, had it
         if (!has_key)
@@ -979,7 +981,7 @@ void ShaderBuilder::MergeParameters(map<String, String>& variables, map<String, 
 }
 
 //----
-void ShaderBuilder::Build(String& code)
+void ShaderBuilder::Build(std::string& code)
 {
     //Cleanup first
     for (int prog = 0; prog < ShaderProgram::MAX; prog++)
@@ -990,9 +992,9 @@ void ShaderBuilder::Build(String& code)
     for (int prog = 0; prog < ShaderProgram::MAX; prog++)
     {
         //Add default local out in merged variables
-        String out_local_var = AddSlotOutVariableLocal((ShaderProgram)prog);
+        std::string out_local_var = AddSlotOutVariableLocal((ShaderProgram)prog);
 
-        if (!out_local_var.count())
+        if (!out_local_var.length())
             continue;
 
         //Merge all variables
@@ -1004,16 +1006,16 @@ void ShaderBuilder::Build(String& code)
         code += Shader::GetProgramQualifier((ShaderProgram)prog) + g_ret;
 
         //Add actual code
-        code += String("#version ") + m_version + g_ret + g_ret;
+        code += std::string("#version ") + m_version + g_ret + g_ret;
 
         //Added shader variables
         for (int var = 0; var < ShaderVariable::InOut; var++)
         {
-            array<String> keys = m_parameters[prog][var].keys();
+            array<std::string> keys = m_parameters[prog][var].keys();
             if (keys.count())
             {
-                code += String("//- ") + Shader::GetVariableQualifier((ShaderVariable)var) + " ----" + g_ret;
-                for (String key : keys)
+                code += std::string("//- ") + Shader::GetVariableQualifier((ShaderVariable)var) + " ----" + g_ret;
+                for (auto const &key : keys)
                 {
                     code += Shader::GetVariableQualifier((ShaderVariable)var) + " ";
                     code += m_parameters[prog][var][key] + " " + key + ";" + g_ret;
@@ -1025,30 +1027,30 @@ void ShaderBuilder::Build(String& code)
         code += g_ret;
 
         //Build Blocks code and add it
-        array<String> calls;
+        array<std::string> calls;
         for (int block = 0; block < m_blocks[prog].count(); block++)
         {
-            String call;
-            String function;
+            std::string call;
+            std::string function;
             m_blocks[prog][block]->Build(ShaderProgram(prog), call, function);
             calls << call;
-            if (m_blocks[prog][block]->m_code_custom.count())
+            if (m_blocks[prog][block]->m_code_custom.length())
             {
-                code += String("//- ") + m_blocks[prog][block]->GetName() + " custom code ----" + g_ret;
+                code += std::string("//- ") + m_blocks[prog][block]->GetName() + " custom code ----" + g_ret;
                 code += m_blocks[prog][block]->m_code_custom + g_ret + g_ret;
             }
-            code += String("//- ") + m_blocks[prog][block]->GetName() + " main code ----" + g_ret;
+            code += std::string("//- ") + m_blocks[prog][block]->GetName() + " main code ----" + g_ret;
             code += function + g_ret + g_ret;
         }
 
         //Added main definition
-        code += String("//- Main ----") + g_ret +
-            String("void main(void)") + g_ret + "{" + g_ret;
+        code += std::string("//- Main ----") + g_ret +
+            "void main(void)" + g_ret + "{" + g_ret;
 
         //Add local variables
         int var = ShaderVariable::InOut;
-        array<String> keys = m_parameters[prog][var].keys();
-        for (String key : keys)
+        array<std::string> keys = m_parameters[prog][var].keys();
+        for (auto const &key : keys)
         {
             if (keys.count())
             {
@@ -1058,13 +1060,13 @@ void ShaderBuilder::Build(String& code)
         code += g_ret;
 
         //Add calls
-        code += g_tab + String("//- Calls ----") + g_ret;
-        for (String call : calls)
+        code += g_tab + "//- Calls ----" + g_ret;
+        for (auto const &call : calls)
             code += g_tab + call + g_ret;
         code += g_ret;
 
         code += g_tab + Shader::GetProgramOutVariable((ShaderProgram)prog) + " = " + out_local_var + ";" + g_ret +
-            String("}") + g_ret + g_ret;
+            "}" + g_ret + g_ret;
     }
 }
 

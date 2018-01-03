@@ -1,19 +1,23 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//            (c) 2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2013—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//            © 2017—2018 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
 
+#include <string>
+
 //
 // The Message Service class
-// ----------------
+// -------------------------
 //
 
 namespace lol
@@ -41,7 +45,7 @@ struct MessageBucketBase : public StructSafeEnum
         MAX
     };
 protected:
-    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
     {
         enum_map[AppIn] = "AppIn";
         enum_map[AppOut] = "AppOut";
@@ -64,14 +68,14 @@ typedef SafeEnum<MessageBucketBase> MessageBucket;
 //Message list container with time in it
 struct MessageList
 {
-    MessageList(time_t timestamp, const String& message)
+    MessageList(time_t timestamp, const std::string& message)
+      : m_timestamp(timestamp),
+        m_message(message)
     {
-        m_timestamp = timestamp;
-        m_message = message;
     }
 
-    time_t  m_timestamp;
-    String  m_message;
+    time_t m_timestamp;
+    std::string m_message;
 };
 
 /*
@@ -91,12 +95,11 @@ public:
     static void Destroy();
 
     //Common interactions
-    static bool Send(MessageBucket id, const String& message);
-    static bool Send(MessageBucket id, const char* message);
-    static bool FetchFirst(MessageBucket id, String& message);
-    static bool FetchFirst(MessageBucket id, String& message, time_t &timestamp);
-    static bool FetchAll(MessageBucket id, String& message);
-    static bool FetchAll(MessageBucket id, String& message, time_t &first_timestamp);
+    static bool Send(MessageBucket id, const std::string& message);
+    static bool FetchFirst(MessageBucket id, std::string& message);
+    static bool FetchFirst(MessageBucket id, std::string& message, time_t &timestamp);
+    static bool FetchAll(MessageBucket id, std::string& message);
+    static bool FetchAll(MessageBucket id, std::string& message, time_t &first_timestamp);
 
 private:
     array<array<MessageList> >  m_bucket;

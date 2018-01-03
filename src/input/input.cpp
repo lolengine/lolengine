@@ -1,14 +1,19 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2013 Benjamin Litzelmann
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2015 Benjamin Litzelmann
+//            © 2017—2018 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
+
+#include <string>
 
 #include "input/input_internal.h"
 
@@ -19,19 +24,17 @@ array<InputDevice*> InputDevice::devices;
 int InputDevice::joystick_count = 0;
 bool InputDevice::m_capturemouse;
 
-array<String> InputDevice::GetAvailableDevices()
+array<std::string> InputDevice::GetAvailableDevices()
 {
-    array<String> result;
-    for (int i = 0; i < devices.count(); ++i)
-    {
-        result.push(devices[i]->m_name);
-    }
+    array<std::string> result;
+    for (auto const &device : devices)
+        result.push(device->m_name);
     return result;
 }
 
-String InputDevice::GetText()
+std::string InputDevice::GetText()
 {
-    String ret = m_text;
+    std::string ret = m_text;
     m_text = "";
     return ret;
 }
@@ -92,7 +95,7 @@ void InputDeviceInternal::AddCursor(int index, const char* name)
 
 InputDeviceInternal* InputDeviceInternal::CreateStandardKeyboard()
 {
-    InputDeviceInternal* keyboard = new InputDeviceInternal(g_name_keyboard.C());
+    InputDeviceInternal* keyboard = new InputDeviceInternal(g_name_keyboard.c_str());
 
     /* Register all scancodes known to SDL (from the USB standard) */
 #   define _SC(id, str, name) keyboard->AddKey(id, #name);
@@ -103,20 +106,20 @@ InputDeviceInternal* InputDeviceInternal::CreateStandardKeyboard()
 
 InputDeviceInternal* InputDeviceInternal::CreateStandardMouse()
 {
-    InputDeviceInternal* mouse = new InputDeviceInternal(g_name_mouse.C());
-    mouse->AddKey(g_name_mouse_key_left.C());
-    mouse->AddKey(g_name_mouse_key_middle.C());
-    mouse->AddKey(g_name_mouse_key_right.C());
+    InputDeviceInternal* mouse = new InputDeviceInternal(g_name_mouse.c_str());
+    mouse->AddKey(g_name_mouse_key_left.c_str());
+    mouse->AddKey(g_name_mouse_key_middle.c_str());
+    mouse->AddKey(g_name_mouse_key_right.c_str());
     //Added to manage if mouse is in the screen or not.
-    mouse->AddKey(g_name_mouse_key_in_screen.C());
+    mouse->AddKey(g_name_mouse_key_in_screen.c_str());
 
-    mouse->AddAxis(g_name_mouse_axis_x.C());
-    mouse->AddAxis(g_name_mouse_axis_y.C());
-    mouse->AddAxis(g_name_mouse_axis_xpixel.C());
-    mouse->AddAxis(g_name_mouse_axis_ypixel.C());
-    mouse->AddAxis(g_name_mouse_axis_scroll.C(), .0000001f);
+    mouse->AddAxis(g_name_mouse_axis_x.c_str());
+    mouse->AddAxis(g_name_mouse_axis_y.c_str());
+    mouse->AddAxis(g_name_mouse_axis_xpixel.c_str());
+    mouse->AddAxis(g_name_mouse_axis_ypixel.c_str());
+    mouse->AddAxis(g_name_mouse_axis_scroll.c_str(), .0000001f);
 
-    mouse->AddCursor(g_name_mouse_cursor.C());
+    mouse->AddCursor(g_name_mouse_cursor.c_str());
 
     // TODO: extended button, and wheel (as axis or as buttons? or both?)
     return mouse;

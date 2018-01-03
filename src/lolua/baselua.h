@@ -1,7 +1,7 @@
 //
-//  Lol Engine — base class for Lua script loading
+//  Lol Engine
 //
-//  Copyright © 2009—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2017—2018 Sam Hocevar <sam@hocevar.net>
 //            © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -11,10 +11,16 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
+#pragma once
+
 #include "3rdparty/lua/src/lua.hpp"
 //#include "lua/luawrapper.hpp"
 
-#pragma once
+#include <string>
+
+//
+// Base Lua class for Lua script loading
+//
 
 namespace lol
 {
@@ -42,20 +48,20 @@ public:
         typedef struct ClassVarStr
         {
             ClassVarStr() { }
-            ClassVarStr(String var_name, lua_CFunction get, lua_CFunction set)
+            ClassVarStr(std::string const &var_name, lua_CFunction get, lua_CFunction set)
             {
-                m_get_name = String("Get") + var_name;
-                m_set_name = String("Set") + var_name;
+                m_get_name = std::string("Get") + var_name;
+                m_set_name = std::string("Set") + var_name;
                 m_get = get;
                 m_set = set;
             }
-            String m_get_name = "";
-            String m_set_name = "";
+            std::string m_get_name = "";
+            std::string m_set_name = "";
             lua_CFunction m_get = nullptr;
             lua_CFunction m_set = nullptr;
         } ClassVarStr;
 
-        Library(String class_name,
+        Library(std::string const &class_name,
             array<ClassMethod> const& statics,
             array<ClassMethod> const& methods,
             array<ClassVar> const& variables)
@@ -89,9 +95,9 @@ public:
                 || variables.last().set != nullptr)
                 m_variables.push(ClassVarStr());
         }
-        String m_class_name = "";
-        String m_static_name = "";
-        String m_method_name = "";
+        std::string m_class_name = "";
+        std::string m_static_name = "";
+        std::string m_method_name = "";
         array<ClassMethod> m_statics;
         array<ClassMethod> m_methods;
         array<ClassVarStr> m_variables;
@@ -172,11 +178,11 @@ public:
 
             //Add getter
             lua_pushcfunction(l, var.m_get);
-            lua_setfield(l, -2, var.m_get_name.C());
+            lua_setfield(l, -2, var.m_get_name.c_str());
 
             //Add setter
             lua_pushcfunction(l, var.m_set);
-            lua_setfield(l, -2, var.m_set_name.C());
+            lua_setfield(l, -2, var.m_set_name.c_str());
         }
 
         //Don't set it to global, but pop the stack to hide the metatable
@@ -196,11 +202,11 @@ private:
 public:
     //-------------------------------------------------------------------------
     template <typename TLuaClass>
-    static const char* GetObjectName() { return GetLibrary<TLuaClass>()->m_class_name.C(); }
+    static const char* GetObjectName() { return GetLibrary<TLuaClass>()->m_class_name.c_str(); }
     template <typename TLuaClass>
-    static const char* GetStaticName() { return GetLibrary<TLuaClass>()->m_static_name.C(); }
+    static const char* GetStaticName() { return GetLibrary<TLuaClass>()->m_static_name.c_str(); }
     template <typename TLuaClass>
-    static const char* GetMethodName() { return GetLibrary<TLuaClass>()->m_method_name.C(); }
+    static const char* GetMethodName() { return GetLibrary<TLuaClass>()->m_method_name.c_str(); }
     template <typename TLuaClass>
     static const ClassMethod* GetStaticMethods() { return GetLibrary<TLuaClass>()->m_statics.data(); }
     template <typename TLuaClass>
@@ -379,9 +385,9 @@ protected:
 
 #ifndef INNER_SAFE_ENUM
     template<typename E> SafeEnum<E> InnerDefaultSafeEnum() { return SafeEnum<E>(); }
-    template<typename E> bool InnerIsValidSafeEnum() { return InnerIsValid<String>(); }
-    template<typename E> SafeEnum<E> InnerGetSafeEnum(SafeEnum<E> value) { return FindValue<SafeEnum<E> >(InnerGet<String>(value.ToString())); }
-    template<typename E> int InnerPushSafeEnum(SafeEnum<E> value) { return InnerPush<String>(value.ToString()); }
+    template<typename E> bool InnerIsValidSafeEnum() { return InnerIsValid<std::string>(); }
+    template<typename E> SafeEnum<E> InnerGetSafeEnum(SafeEnum<E> value) { return FindValue<SafeEnum<E> >(InnerGet<std::string>(value.tostring())); }
+    template<typename E> int InnerPushSafeEnum(SafeEnum<E> value) { return InnerPush<std::string>(value.tostring()); }
 #endif //STACK_STRING
 
 #ifndef INNER_PTR
@@ -498,10 +504,10 @@ template<> inline int Stack::InnerPush<char const*>(char const* value)        { 
 
 //-----------------------------------------------------------------------------
 #ifndef STACK_STRING
-template<> inline String Stack::InnerDefault<String>()         { return String(); }
-template<> inline bool Stack::InnerIsValid<String>()           { return InnerIsValid<char const*>(); }
-template<> inline String Stack::InnerGet<String>(String value) { return String(InnerGet<char const*>(value.C())); }
-template<> inline int Stack::InnerPush<String>(String value)   { return InnerPush<char const*>(value.C()); }
+template<> inline std::string Stack::InnerDefault<std::string>()              { return ""; }
+template<> inline bool Stack::InnerIsValid<std::string>()                     { return InnerIsValid<char const*>(); }
+template<> inline std::string Stack::InnerGet<std::string>(std::string value) { return std::string(InnerGet<char const*>(value.c_str())); }
+template<> inline int Stack::InnerPush<std::string>(std::string value)        { return InnerPush<char const*>(value.c_str()); }
 #endif //STACK_STRING
 
 //-----------------------------------------------------------------------------
@@ -577,15 +583,15 @@ public:
     Loader();
     virtual ~Loader();
 
-    bool ExecLuaFile(String const &lua);
-    bool ExecLuaCode(String const &lua);
+    bool ExecLuaFile(std::string const &lua);
+    bool ExecLuaCode(std::string const &lua);
 
     //-------------------------------------------------------------------------
 #define DECLARE_LOADER_GET(T0, T1, GET_NAME) \
     template<typename T0> \
-    T1 GET_NAME(String const &name) \
+    T1 GET_NAME(std::string const &name) \
     { \
-        lua_getglobal(m_lua_state, name.C()); \
+        lua_getglobal(m_lua_state, name.c_str()); \
         auto stack = Lolua::Stack::Begin(m_lua_state, -1); \
         auto result = stack.GET_NAME<T0>(); \
         lua_pop(m_lua_state, 1); \

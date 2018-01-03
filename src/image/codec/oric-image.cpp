@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -13,6 +13,7 @@
 #include <lol/engine-internal.h>
 
 #include <cctype>
+#include <string>
 
 #include "../../image/resource-private.h"
 
@@ -37,7 +38,7 @@ public:
     virtual bool Save(char const *path, ResourceCodecData* data);
 
 private:
-    static String ReadScreen(char const *name);
+    static std::string ReadScreen(char const *name);
     static void WriteScreen(image &image, array<uint8_t> &result);
 };
 
@@ -61,11 +62,11 @@ ResourceCodecData* OricImageCodec::Load(char const *path)
         u8vec4(0xff, 0xff, 0xff, 0xff),
     };
 
-    String screen = ReadScreen(path);
-    if (screen.count() == 0)
+    std::string screen = ReadScreen(path);
+    if (screen.length() == 0)
         return nullptr;
 
-    auto data = new ResourceImageData(new image(ivec2(WIDTH, screen.count() * 6 / WIDTH)));
+    auto data = new ResourceImageData(new image(ivec2(WIDTH, screen.length() * 6 / WIDTH)));
     auto img = data->m_image;
 
     u8vec4 *pixels = img->lock<PixelFormat::RGBA_8>();
@@ -116,9 +117,9 @@ bool OricImageCodec::Save(char const *path, ResourceCodecData* data)
 
     int len = (int)strlen(path);
     if (len < 4 || path[len - 4] != '.'
-        || toupper(path[len - 3]) != 'T'
-        || toupper(path[len - 2]) != 'A'
-        || toupper(path[len - 1]) != 'P')
+        || std::toupper(path[len - 3]) != 'T'
+        || std::toupper(path[len - 2]) != 'A'
+        || std::toupper(path[len - 1]) != 'P')
         return false;
 
     array<uint8_t> result;
@@ -152,11 +153,11 @@ bool OricImageCodec::Save(char const *path, ResourceCodecData* data)
     return true;
 }
 
-String OricImageCodec::ReadScreen(char const *name)
+std::string OricImageCodec::ReadScreen(char const *name)
 {
     File f;
     f.Open(name, FileAccess::Read);
-    String data = f.ReadString();
+    std::string data = f.ReadString().C();
     f.Close();
 
     /* Skip the sync bytes */
@@ -170,17 +171,17 @@ String OricImageCodec::ReadScreen(char const *name)
     ++header;
 
     /* Skip the header, ignoring the last byte’s value */
-    if (data.sub(header, 8) != String("\x00\xff\x80\x00\xbf\x3f\xa0\x00", 8))
+    if (!starts_with(data, std::string("\x00\xff\x80\x00\xbf\x3f\xa0\x00", 8)))
         return "";
 
     /* Skip the file name, including trailing nul char */
-    data = data.sub(header + 8);
-    int filename_end = data.index_of('\0');
-    if (filename_end < 0)
-            return "";
+    data = data.substr(header + 8);
+    size_t filename_end = data.find('\0');
+    if (filename_end == std::string::npos)
+        return "";
 
     /* Read screen data */
-    return data.sub(filename_end + 1);
+    return data.substr(filename_end + 1);
 }
 
 /* Error diffusion table, similar to Floyd-Steinberg. I choose not to

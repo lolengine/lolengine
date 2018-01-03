@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //            © 2012—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -15,10 +15,12 @@
 
 //
 // Various basic convenience functions
-// ------------------
+// -----------------------------------
 //
 
 #include <lol/base/string.h>
+
+#include <string>
 
 namespace lol
 {
@@ -60,22 +62,12 @@ template< class T > inline int GetRandom(array<T> src)
 }
 
 // Gets the value for the given enum type.
-template<class T> inline T FindValue(const char* name)
+template<class T> inline T FindValue(std::string const& name)
 {
-    auto str = String(name);
-    return FindValue<T>(str);
-}
-
-template<class T> inline T FindValue(String const& name)
-{
-    String n = name;
-    n.to_lower();
+    std::string needle = tolower(name);
     for (int i = 0; i < T::Max; ++i)
-    {
-        String s = T(i).ToString().to_lower();
-        if (s.contains(n))
+        if (tolower(T(i).tostring()).find(needle) != std::string::npos)
             return T(i);
-    }
     return T::Max;
 }
 

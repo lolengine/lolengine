@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -13,6 +13,7 @@
 #include <lol/engine-internal.h>
 
 #include <cstdio>
+#include <string>
 
 #if defined(_WIN32)
 #   define WIN32_LEAN_AND_MEAN
@@ -21,6 +22,7 @@
 #endif
 
 #include <cstdarg>
+#include <cctype>
 
 namespace lol
 {
@@ -51,6 +53,34 @@ array<std::string> split(std::string const &s, std::string const &seps)
     if (start != std::string::npos)
         ret << s.substr(start);
 
+    return ret;
+}
+
+bool starts_with(std::string const &s, std::string const &prefix)
+{
+    return s.size() >= prefix.size() &&
+           s.compare(0, prefix.size(), prefix) == 0;
+}
+
+bool ends_with(std::string const &s, std::string const &suffix)
+{
+    return s.size() >= suffix.size() &&
+           s.compare(s.size() - suffix.size(), suffix.size(), suffix) == 0;
+}
+
+std::string tolower(std::string const &s)
+{
+    std::string ret;
+    std::transform(s.begin(), s.end(), std::back_inserter(ret),
+                   [](unsigned char c){ return std::tolower(c); });
+    return ret;
+}
+
+std::string toupper(std::string const &s)
+{
+    std::string ret;
+    std::transform(s.begin(), s.end(), std::back_inserter(ret),
+                   [](unsigned char c){ return std::toupper(c); });
     return ret;
 }
 

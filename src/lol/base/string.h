@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //            © 2013—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -25,11 +25,20 @@ namespace lol
 {
 
 /* Split a string along a single separator */
-array<std::string> split(std::string const &s, char sep);
+array<std::string> split(std::string const &s, char sep = '\n');
 
 /* Split a string along multiple separators */
 array<std::string> split(std::string const &s, std::string const &seps);
 
+/* Check whether a string starts or ends with a given substring */
+bool starts_with(std::string const &s, std::string const &prefix);
+bool ends_with(std::string const &s, std::string const &suffix);
+
+/* Convert a string to lowercase or uppercase */
+std::string tolower(std::string const &s);
+std::string toupper(std::string const &s);
+
+/* Format a string, printf-style */
 std::string format(char const *format, ...) LOL_ATTR_FORMAT(1, 2);
 std::string vformat(char const *format, va_list ap);
 
@@ -158,61 +167,6 @@ public:
         return String(&(*this)[start], item_count);
     }
 
-    bool contains(String const &s) const
-    {
-        return index_of(s.C()) != INDEX_NONE;
-    }
-
-    int index_of(char token) const
-    {
-        using namespace std;
-
-        char const *tmp = strchr(C(), token);
-        return tmp ? int(tmp - C()) : INDEX_NONE;
-    }
-
-    int index_of(String const& token) const { return index_of(token.C()); }
-    int index_of(char const* token) const
-    {
-        using namespace std;
-
-        char const *tmp = strstr(C(), token);
-        return tmp ? int(tmp - C()) : INDEX_NONE;
-    }
-
-    int last_index_of(char token) const
-    {
-        using namespace std;
-
-        char const *tmp = strrchr(C(), token);
-        return tmp ? int(tmp - C()) : INDEX_NONE;
-    }
-
-    int last_index_of(String const& token) const { return last_index_of(token.C()); }
-    int last_index_of(char const* token) const
-    {
-        using namespace std;
-
-        int token_len = (int)strlen(token);
-        for (int i = count() - token_len; i >= 0; --i)
-            if (strstr(C() + i, token))
-                return i;
-        return -1;
-    }
-
-    int count_occurence(String const& token) const { return last_index_of(token.C()); }
-    int count_occurence(char const* token) const
-    {
-        int count = 0;
-        const char *match = strstr(C(), token);
-        while (match)
-        {
-            count++;
-            match = strstr(match + 1, token);
-        }
-        return count;
-    }
-
     int replace(char const old_token, char const new_token,
                 bool all_occurrences = false)
     {
@@ -228,74 +182,6 @@ public:
                 break;
         }
         return res;
-    }
-
-    inline String& to_lower()
-    {
-        String ret(*this);
-        for (int i = 0; i < ret.count(); ++i)
-        {
-            if ('A' <= ret[i] && ret[i] <= 'Z')
-                ret[i] += 'a' - 'A';
-        }
-        *this = ret;
-        return *this;
-    }
-
-    inline String& to_upper()
-    {
-        String ret(*this);
-        for (int i = 0; i < ret.count(); ++i)
-        {
-            if ('a' <= ret[i] && ret[i] <= 'z')
-                ret[i] += 'A' - 'a';
-        }
-        *this = ret;
-        return *this;
-    }
-    inline String& case_change(bool case_to_upper)
-    {
-        return case_to_upper ? to_upper() : to_lower();
-    }
-
-    bool starts_with(String const &s) const
-    {
-        using namespace std;
-        return count() >= s.count()
-                && memcmp(C(), s.C(), s.count()) == 0;
-    }
-
-    bool ends_with(String const &s) const
-    {
-        using namespace std;
-        return count() >= s.count()
-                && memcmp(C() + count() - s.count(), s.C(), s.count()) == 0;
-    }
-
-    array<String> split(char c = '\n') const
-    {
-        array<String> ret;
-        for (int start = 0; start < m_count; )
-        {
-            char const *tmp = strchr(C() + start, c);
-            if (!tmp)
-            {
-                ret.push(String(C() + start));
-                break;
-            }
-            int size = int(tmp - C()) - start;
-            ret.push(String(C() + start, size));
-            start += size + 1;
-        }
-        return ret;
-    }
-
-    bool is_alpha() const
-    {
-        for (int i = 0; i < m_count; i++)
-            if (m_data[i] != '\0' && (m_data[i] < '0' || '9' < m_data[i]))
-                return false;
-        return true;
     }
 
     inline String operator +(String const &s) const

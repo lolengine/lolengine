@@ -1,7 +1,7 @@
 //
 //  Lol Engine — EasyMesh tutorial
 //
-//  Copyright © 2011—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2011—2018 Sam Hocevar <sam@hocevar.net>
 //            © 2012—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -16,6 +16,7 @@
 #endif
 
 #include <cfloat> /* for FLT_MAX */
+#include <string>
 
 #include <lol/engine.h>
 #include <lol/lua.h>
@@ -112,18 +113,18 @@ void EasyMeshViewerObject::TickDraw(float seconds, Scene &scene)
 //EasyMeshLoadJob -------------------------------------------------------------
 bool EasyMeshLoadJob::DoWork()
 {
-    map<String, EasyMeshLuaObject*> meshes;
+    map<std::string, EasyMeshLuaObject*> meshes;
     if (m_loader.ExecLuaFile(m_path) && EasyMeshLuaLoader::GetRegisteredMeshes(meshes))
     {
-        array<String> keys = meshes.keys();
-        for (String key : keys)
+        array<std::string> keys = meshes.keys();
+        for (auto const &key : keys)
             m_meshes << new EasyMeshViewerObject(key, meshes[key]->GetMesh());
     }
     return !!m_meshes.count();
 }
 
 //-----------------------------------------------------------------------------
-MeshViewerLoadJob* EasyMeshLoadJob::GetInstance(String const& path)
+MeshViewerLoadJob* EasyMeshLoadJob::GetInstance(std::string const& path)
 {
     if (Check(path))
         return new EasyMeshLoadJob(path);
@@ -242,8 +243,8 @@ void MeshViewer::Stop()
 void MeshViewer::UpdateSceneSetup(bool only_destroy)
 {
     //Delete previous setups
-    array<String> keys = m_ssetups.keys();
-    for (String key : keys)
+    array<std::string> keys = m_ssetups.keys();
+    for (auto const &key : keys)
         delete m_ssetups[key];
     m_ssetups.empty();
     if (m_ssetup_file_status)
@@ -260,15 +261,15 @@ void MeshViewer::UpdateSceneSetup(bool only_destroy)
         if (m_ssetup_loader.GetLoadedSetups(m_ssetups))
         {
             m_ssetup_file_status = m_file_check->RegisterFile(m_ssetup_file_name);
-            array<String> keys = m_ssetups.keys();
-            if (!m_ssetup_name.count() || !keys.find(m_ssetup_name))
+            array<std::string> keys = m_ssetups.keys();
+            if (!m_ssetup_name.length() || !keys.find(m_ssetup_name))
                 m_ssetup_name = keys[0];
         }
     }
 }
 
 //-----------------------------------------------------------------------------
-MeshViewerLoadJob* MeshViewer::GetLoadJob(String const& path)
+MeshViewerLoadJob* MeshViewer::GetLoadJob(std::string const& path)
 {
     MeshViewerLoadJob* job = nullptr;
     if (job = EasyMeshLoadJob::GetInstance(path)) return job;
@@ -303,15 +304,15 @@ void MeshViewer::TickGame(float seconds)
     //static float f;
     //static int mesh_idx = 0;
     //static array<char*> mesh_names_char;
-    //static array<String> mesh_names_str;
+    //static array<std::string> mesh_names_str;
 
     //Draw viewer objects
     m_menu_mesh_names_char.empty();
     m_menu_mesh_names_str.empty();
     for (ViewerObject* obj : m_objs)
         m_menu_mesh_names_str << obj->GetName();
-    for (auto str : m_menu_mesh_names_str)
-        m_menu_mesh_names_char << str.C();
+    for (auto const &str : m_menu_mesh_names_str)
+        m_menu_mesh_names_char << str.c_str();
 
     ImGuiIO& io = ImGui::GetIO();
     //CAMERA UI ---------------------------------------------------------------
@@ -382,7 +383,7 @@ void MeshViewer::TickDraw(float seconds, Scene &scene)
     if (m_menu_mesh_idx >= 0 && m_menu_mesh_idx < m_objs.count())
         m_objs[m_menu_mesh_idx]->TickDraw(seconds, scene);
 
-    m_text->SetText(String("CECI EST UN TEST\n"));
+    m_text->SetText("CECI EST UN TEST\n");
 
     //Draw gizmos & grid
     Debug::DrawGizmo(vec3::zero, vec3::axis_x, vec3::axis_y, vec3::axis_z, 10.f);
@@ -486,7 +487,7 @@ void MeshViewer::Prepare()
     m_controller = new Controller("Default");
     m_controller->SetInputCount(MAX_KEYS, MAX_AXIS);
 
-    if (InputDevice::Get(g_name_mouse.C()))
+    if (InputDevice::Get(g_name_mouse.c_str()))
     {
         m_input_usage |= (1 << IPT_MV_MOUSE);
 
@@ -498,7 +499,7 @@ void MeshViewer::Prepare()
         m_controller->GetAxis(MSEX_CAM_X).BindMouse("X");
     }
 
-    if (InputDevice::Get(g_name_keyboard.C()))
+    if (InputDevice::Get(g_name_keyboard.c_str()))
     {
         m_input_usage |= (1 << IPT_MV_KBOARD);
 
@@ -804,7 +805,7 @@ void MeshViewer::Update(float seconds)
     //--
     //Message Service
     //--
-    String mesh("");
+    std::string mesh;
     int u = 1;
     while (u-- > 0 && MessageService::FetchFirst(MessageBucket::AppIn, mesh))
     {
@@ -812,7 +813,7 @@ void MeshViewer::Update(float seconds)
         while (o-- > 0)
         {
             SceneSetup* new_ssetup = new SceneSetup();
-            if (false) //new_ssetup->Compile(mesh.C()) && new_ssetup->m_lights.count())
+            if (false) //new_ssetup->Compile(mesh.c_str()) && new_ssetup->m_lights.count())
             {
                 //Store current light datas, in World
                 array<LightData> light_datas;
@@ -866,7 +867,7 @@ void MeshViewer::Update(float seconds)
             {
                 //Create a new mesh
                 EasyMesh* em = new EasyMesh();
-                if (em->Compile(m_ssetup->m_custom_cmd[i].m2.C(), false))
+                if (em->Compile(m_ssetup->m_custom_cmd[i].m2.c_str(), false))
                 {
                     em->BD()->Cmdi() = 0;
                     if (m_mesh_id == m_meshes.count() - 1)
@@ -906,8 +907,8 @@ void MeshViewer::Update(float seconds)
         m_stream_update_time = 0.f;
 
         File f;
-        f.Open(m_file_name.C(), FileAccess::Read);
-        String cmd = f.ReadString();
+        f.Open(m_file_name.c_str(), FileAccess::Read);
+        std::string cmd = f.ReadString().C();
         f.Close();
 
         if (cmd.count()

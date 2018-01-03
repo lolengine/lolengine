@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
@@ -15,7 +17,8 @@
 // ----------------
 //
 
-#include <stdint.h>
+#include <cstdint>
+#include <string>
 
 #include "engine/entity.h"
 
@@ -57,7 +60,7 @@ struct VertexUsageBase : public StructSafeEnum
     };
 
 protected:
-    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
     {
         enum_map[Position] = "Position";
         enum_map[BlendWeight] = "BlendWeight";
@@ -99,7 +102,7 @@ struct ShaderVariableBase
         MAX
     };
 protected:
-    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
     {
         enum_map[Attribute] = "Attribute";
         enum_map[Uniform] = "Uniform";
@@ -123,7 +126,7 @@ struct ShaderProgramBase
         MAX
     };
 protected:
-    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
     {
         enum_map[Geometry] = "Geometry";
         enum_map[Vertex] = "Vertex";
@@ -198,7 +201,7 @@ struct ShaderVariableTypeBase
         MAX
     };
 protected:
-    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
     {
         enum_map[Bool] = "bool";
         enum_map[Int] = "int"; enum_map[UInt] = "uint";
@@ -312,13 +315,13 @@ class ShaderData;
 class Shader : public Entity
 {
 public:
-    static Shader *Create(String const &name, String const &code);
+    static Shader *Create(std::string const &name, std::string const &code);
     static void Destroy(Shader *shader);
 
     int GetAttribCount() const;
     ShaderAttrib GetAttribLocation(VertexUsage usage, int index) const;
 
-    ShaderUniform GetUniformLocation(String const& uni) const;
+    ShaderUniform GetUniformLocation(std::string const& uni) const;
     ShaderUniform GetUniformLocation(char const *uni) const;
     void SetUniform(ShaderUniform const &uni, int i);
     void SetUniform(ShaderUniform const &uni, ivec2 const &v);
@@ -342,19 +345,19 @@ public:
     void Unbind() const;
 
 protected:
-    Shader(String const &name, String const &vert, String const &frag);
+    Shader(std::string const &name, std::string const &vert, std::string const &frag);
     ~Shader();
 
 private:
     ShaderData *data;
 
 public:
-    static String GetVariablePrefix(const ShaderVariable variable);
-    static String GetVariableQualifier(const ShaderVariable variable);
-    static String GetFunctionQualifier(const ShaderVariable variable, const ShaderProgram program);
-    static String GetProgramQualifier(const ShaderProgram program);
-    static String GetProgramOutVariable(const ShaderProgram program);
-    static String GetProgramOutVariableLocal(const ShaderProgram program);
+    static std::string GetVariablePrefix(const ShaderVariable variable);
+    static std::string GetVariableQualifier(const ShaderVariable variable);
+    static std::string GetFunctionQualifier(const ShaderVariable variable, const ShaderProgram program);
+    static std::string GetProgramQualifier(const ShaderProgram program);
+    static std::string GetProgramOutVariable(const ShaderProgram program);
+    static std::string GetProgramOutVariableLocal(const ShaderProgram program);
 };
 
 //ShaderVar -------------------------------------------------------------------
@@ -363,31 +366,31 @@ class ShaderVar
     friend class ShaderBuilder;
     friend class ShaderBlock;
 
-protected:
 public:
     ShaderVar() { }
-    ShaderVar(ShaderVariable const& qualifier, String const& type, String const& name)
+    ShaderVar(ShaderVariable const& qualifier, std::string const& type, std::string const& name)
     {
         m_qualifier = qualifier;
         m_type = type;
         m_name = name;
     }
-    ShaderVar(ShaderVariable const& qualifier, ShaderVariableType const& type, String const& name)
-        : ShaderVar(qualifier, ShaderVariableType(type).ToString(), name)
+    ShaderVar(ShaderVariable const& qualifier, ShaderVariableType const& type, std::string const& name)
+        : ShaderVar(qualifier, ShaderVariableType(type).tostring(), name)
     { }
+
     ~ShaderVar() { }
 
-    inline operator String() const { return Shader::GetVariablePrefix(m_qualifier) + m_name; }
+    inline std::string tostring() const { return Shader::GetVariablePrefix(m_qualifier) + m_name; }
     inline ShaderVariable GetQualifier() const { return m_qualifier; }
-    inline String GetType() const { return m_type; }
-    inline String operator+(String const& value)  { return String() + *this + value; }
+    inline std::string GetType() const { return m_type; }
+    inline std::string operator+(std::string const& s) { return tostring() + s; }
 
     static ShaderVar GetShaderOut(ShaderProgram program);
 
 protected:
     ShaderVariable m_qualifier;
-    String m_type;
-    String m_name;
+    std::string m_type;
+    std::string m_name;
 };
 
 //ShaderBlock -----------------------------------------------------------------
@@ -396,28 +399,28 @@ class ShaderBlock
     friend class ShaderBuilder;
 
 protected:
-    String m_name;
+    std::string m_name;
 
     //--------------------------
     //map : <var_name, var_type>
     //--------------------------
 
     //Main shader parameters
-    map<String, String> m_parameters[ShaderVariable::MAX];
+    map<std::string, std::string> m_parameters[ShaderVariable::MAX];
 
     //Actual code
-    String m_code_main;
-    String m_code_custom;
+    std::string m_code_main;
+    std::string m_code_custom;
 
 public:
-    ShaderBlock(String const& name) : m_name(name) { }
+    ShaderBlock(std::string const& name) : m_name(name) { }
     ~ShaderBlock() { }
 
-    String const& GetName() { return m_name; }
+    std::string const& GetName() { return m_name; }
     //Sets code that will be used in the main
-    void SetMainCode(String const& code_main) { m_code_main = code_main; }
+    void SetMainCode(std::string const& code_main) { m_code_main = code_main; }
     //Sets custom code that will be put before the main -so functions-
-    void SetCustomCode(String const& code_custom) { m_code_custom = code_custom; }
+    void SetCustomCode(std::string const& code_custom) { m_code_custom = code_custom; }
     //Add parameter to the block
     void AddVar(ShaderVar const& var);
     inline ShaderBlock& operator<<(ShaderVar const& var)
@@ -427,40 +430,40 @@ public:
     }
 
 protected:
-    void AddCallParameters(map<String, String> const& variables, String& result);
-    void AddDefinitionParameters(const ShaderVariable variable, const ShaderProgram program, map<String, String>& variables, String& result);
-    void Build(const ShaderProgram program, String& call, String& function);
+    void AddCallParameters(map<std::string, std::string> const& variables, std::string& result);
+    void AddDefinitionParameters(const ShaderVariable variable, const ShaderProgram program, map<std::string, std::string>& variables, std::string& result);
+    void Build(const ShaderProgram program, std::string& call, std::string& function);
 };
 
 //Shaderbuilder ---------------------------------------------------------------
 class ShaderBuilder
 {
 protected:
-    String m_name;
-    String m_version;
+    std::string m_name;
+    std::string m_version;
     ShaderProgram m_current_program = ShaderProgram::MAX;
 
     //Blocks
     array<ShaderBlock*> m_blocks[ShaderProgram::MAX];
 
     //Final shader parameters
-    map<String, String> m_parameters[ShaderProgram::MAX][ShaderVariable::MAX];
+    map<std::string, std::string> m_parameters[ShaderProgram::MAX][ShaderVariable::MAX];
 
 public:
-    ShaderBuilder(String const& name, String const& version);
+    ShaderBuilder(std::string const& name, std::string const& version);
     ~ShaderBuilder();
 
-    String const& GetName();
+    std::string const& GetName();
     ShaderBuilder& operator<<(const ShaderProgram program);
     ShaderBuilder& operator<<(ShaderBlock* block);
     ShaderBuilder& operator<<(ShaderBlock const& block);
 
 protected:
-    String AddSlotOutVariableLocal(const ShaderProgram program);
-    void MergeParameters(map<String, String>& variables, map<String, String>& merged);
+    std::string AddSlotOutVariableLocal(const ShaderProgram program);
+    void MergeParameters(map<std::string, std::string>& variables, map<std::string, std::string>& merged);
 
 public:
-    void Build(String& code);
+    void Build(std::string& code);
 };
 
 } /* namespace lol */

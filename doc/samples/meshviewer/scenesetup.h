@@ -1,12 +1,14 @@
 //
-// Lol Engine
+//  Lol Engine — Mesh viewer
 //
-// Copyright: (c) 2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//            (c) 2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2003—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//            © 2013—2018 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
@@ -15,6 +17,8 @@
 // The Scene setup class
 // ----------------
 //
+
+#include <string>
 
 namespace lol
 {
@@ -28,7 +32,7 @@ class SceneSetup
 public:
     //CTor/DTor
     SceneSetup() : SceneSetup("default") { }
-    SceneSetup(String const& name);
+    SceneSetup(std::string const& name);
     ~SceneSetup();
 
     static char const *GetName() { return "<scenesetup>"; }
@@ -57,7 +61,7 @@ public:
             Max
         };
     protected:
-        virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+        virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
         {
             enum_map[Gizmo] = "Gizmo";
             enum_map[Light] = "Light";
@@ -84,7 +88,7 @@ protected:
             Max
         };
     protected:
-        virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+        virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
         {
             enum_map[AddLight] = "AddLight";
             enum_map[SetupScene] = "SetupScene";
@@ -95,13 +99,13 @@ protected:
 
 public:
     //--
-    String                      m_name;
-    Command                     m_last_cmd;
-    vec4                        m_clear_color;
-    array<Light *>              m_lights;
-    array<String, String>       m_custom_cmd;
-    bool                        m_show_gizmo;
-    bool                        m_show_lights;
+    std::string m_name;
+    Command m_last_cmd;
+    vec4 m_clear_color;
+    array<Light *> m_lights;
+    array<std::string, std::string> m_custom_cmd;
+    bool m_show_gizmo;
+    bool m_show_lights;
 };
 
 //-----------------------------------------------------------------------------
@@ -109,7 +113,7 @@ class SceneSetupLuaObject : public LuaObject
 {
 public:
     //-------------------------------------------------------------------------
-    SceneSetupLuaObject(String& name);
+    SceneSetupLuaObject(std::string const& name);
     virtual ~SceneSetupLuaObject();
 
     //-------------------------------------------------------------------------
@@ -159,12 +163,12 @@ public:
     //-------------------------------------------------------------------------
 protected:
     static void RegisterSetup(SceneSetup* setup);
-    static bool GetRegisteredSetups(map<String, SceneSetup*>& setups);
+    static bool GetRegisteredSetups(map<std::string, SceneSetup*>& setups);
 public:
-    bool GetLoadedSetups(map<String, SceneSetup*>& setups);
+    bool GetLoadedSetups(map<std::string, SceneSetup*>& setups);
 
 private:
-    static map<String, SceneSetup*> m_setups;
+    static map<std::string, SceneSetup*> m_setups;
 };
 
 /*

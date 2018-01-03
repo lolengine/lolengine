@@ -1,12 +1,14 @@
 //
-// Lol Engine
+//  Lol Engine — Mesh viewer
 //
-// Copyright: (c) 2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//                2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2003—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//            © 2013—2018 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #if HAVE_CONFIG_H
@@ -16,6 +18,8 @@
 #include <lol/engine.h>
 #include <lol/lua.h>
 
+#include <string>
+
 #include "scenesetup.h"
 
 namespace lol
@@ -23,7 +27,7 @@ namespace lol
 
 //-----------------------------------------------------------------------------
 //CTor/DTor
-SceneSetup::SceneSetup(String const& name)
+SceneSetup::SceneSetup(std::string const& name)
 {
     m_name = name;
     m_clear_color = vec4(vec3::zero, 1.f);
@@ -147,7 +151,7 @@ void SceneSetup::Set(SceneSetup::Display const& d, DisplayFlag const& f)
 }
 
 //-----------------------------------------------------------------------------
-SceneSetupLuaObject::SceneSetupLuaObject(String& name) : LuaObject()
+SceneSetupLuaObject::SceneSetupLuaObject(std::string const& name) : LuaObject()
 {
     m_setup = new SceneSetup(name);
     SceneSetupLuaLoader::RegisterSetup(m_setup);
@@ -163,7 +167,7 @@ SceneSetupLuaObject* SceneSetupLuaObject::New(lua_State* l, int arg_nb)
 {
     UNUSED(arg_nb);
     auto s = LuaStack::Begin(l);
-    auto n = s.Get<String>();
+    auto n = s.Get<std::string>();
     return new SceneSetupLuaObject(n);
 }
 
@@ -172,8 +176,8 @@ int SceneSetupLuaObject::AddLight(lua_State* l)
 {
     auto s = LuaStack::Begin(l);
     auto o = s.GetPtr<SceneSetupLuaObject>();
-    auto t = s.Get<String>();
-    o->m_setup->AddLight(FindValue<LightType>(t.C()));
+    auto t = s.Get<std::string>();
+    o->m_setup->AddLight(FindValue<LightType>(t));
     return s.End();
 }
 int SceneSetupLuaObject::SetupScene(lua_State* l)
@@ -260,7 +264,7 @@ const LuaObjectLibrary* SceneSetupLuaObject::GetLib()
 }
 
 //-----------------------------------------------------------------------------
-map<String, SceneSetup*> SceneSetupLuaLoader::m_setups;
+map<std::string, SceneSetup*> SceneSetupLuaLoader::m_setups;
 SceneSetupLuaLoader::SceneSetupLuaLoader() : LuaLoader()
 {
     lua_State* l = GetLuaState();
@@ -292,14 +296,14 @@ void SceneSetupLuaLoader::RegisterSetup(SceneSetup* setup)
 }
 
 //-----------------------------------------------------------------------------
-bool SceneSetupLuaLoader::GetRegisteredSetups(map<String, SceneSetup*>& setups)
+bool SceneSetupLuaLoader::GetRegisteredSetups(map<std::string, SceneSetup*>& setups)
 {
     setups = m_setups;
     return !!m_setups.count();
 }
 
 //-----------------------------------------------------------------------------
-bool SceneSetupLuaLoader::GetLoadedSetups(map<String, SceneSetup*>& setups)
+bool SceneSetupLuaLoader::GetLoadedSetups(map<std::string, SceneSetup*>& setups)
 {
     return GetRegisteredSetups(setups);
 }

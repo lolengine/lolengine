@@ -2,6 +2,7 @@
 //  Lol Engine — EasyMesh tutorial
 //
 //  Copyright © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//            © 2012—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -11,6 +12,8 @@
 //
 
 #pragma once
+
+#include <string>
 
 namespace lol
 {
@@ -90,7 +93,7 @@ struct MeshViewerKeyInputBase : public StructSafeEnum
         MAX = MSE_END,
     };
 protected:
-    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
     {
         enum_map[Exit] = g_name_key_Escape;
 
@@ -133,14 +136,14 @@ class ViewerObject
 {
 public:
     ViewerObject() { }
-    ViewerObject(String const& name) : m_name(name) { }
+    ViewerObject(std::string const& name) : m_name(name) { }
     virtual ~ViewerObject() { }
 
     virtual void TickDraw(float seconds, Scene &scene) { }
-    String GetName() { return m_name; }
+    std::string GetName() { return m_name; }
 
 protected:
-    String m_name;
+    std::string m_name;
 };
 
 //EasyMeshViewerObject --------------------------------------------------------
@@ -151,7 +154,7 @@ class EasyMeshViewerObject : public ViewerObject
 public:
     EasyMeshViewerObject()
         : ViewerObject() { }
-    EasyMeshViewerObject(String const& name, EasyMesh const& mesh)
+    EasyMeshViewerObject(std::string const& name, EasyMesh const& mesh)
         : ViewerObject(name)
     {
         Init(name, mesh);
@@ -160,7 +163,7 @@ public:
 
     virtual void TickDraw(float seconds, Scene &scene);
 
-    void Init(String const& name, EasyMesh const& mesh)
+    void Init(std::string const& name, EasyMesh const& mesh)
     {
         m_name = name;
         m_mesh = mesh;
@@ -178,7 +181,7 @@ class MeshViewerLoadJob : public ThreadJob
 
 public:
     inline MeshViewerLoadJob() : ThreadJob() { }
-    inline MeshViewerLoadJob(String const& path)
+    inline MeshViewerLoadJob(std::string const& path)
         : ThreadJob(ThreadJobType::WORK_TODO), m_path(path) { }
     virtual ~MeshViewerLoadJob() { }
 
@@ -188,7 +191,7 @@ protected:
     virtual bool DoWork() { return super::DoWork(); }
 
 protected:
-    String m_path;
+    std::string m_path;
 };
 
 //EasyMeshLoadJob -------------------------------------------------------------
@@ -199,15 +202,15 @@ class EasyMeshLoadJob : public MeshViewerLoadJob
 
 public:
     inline EasyMeshLoadJob() : MeshViewerLoadJob() { }
-    inline EasyMeshLoadJob(String const& path)
+    inline EasyMeshLoadJob(std::string const& path)
         : MeshViewerLoadJob(path) { }
     virtual ~EasyMeshLoadJob() { }
 
-    static MeshViewerLoadJob* GetInstance(String const& path);
+    static MeshViewerLoadJob* GetInstance(std::string const& path);
     virtual void RetrieveResult(class MeshViewer* app);
 
 protected:
-    static bool Check(String const& path) { return path.contains(".easymesh"); }
+    static bool Check(std::string const& path) { return path.find(".easymesh") != std::string::npos; }
     virtual bool DoWork();
 
 protected:
@@ -228,7 +231,7 @@ public:
 
     void UpdateSceneSetup(bool only_destroy = false);
 
-    MeshViewerLoadJob* GetLoadJob(String const& path);
+    MeshViewerLoadJob* GetLoadJob(std::string const& path);
     void AddViewerObj(ViewerObject* obj) { m_objs << obj; }
 
     virtual void TickGame(float seconds);
@@ -260,18 +263,18 @@ private:
     float                   m_menu_cam_fov = radians(40.f);
     vec3                    m_menu_cam_pos = vec3(20.f, 45.f, 45.f);
     int                     m_menu_mesh_idx = 0;
-    array<char*>            m_menu_mesh_names_char;
-    array<String>           m_menu_mesh_names_str;
+    array<char const *>     m_menu_mesh_names_char;
+    array<std::string>      m_menu_mesh_names_str;
 
     //Scene setup data
-    SceneSetupLuaLoader     m_ssetup_loader;
-    FileUpdateStatus*       m_ssetup_file_status = nullptr;
-    String                  m_ssetup_file_name;
-    String                  m_ssetup_name;
-    map<String, SceneSetup*> m_ssetups;
+    SceneSetupLuaLoader m_ssetup_loader;
+    FileUpdateStatus *m_ssetup_file_status = nullptr;
+    std::string m_ssetup_file_name;
+    std::string m_ssetup_name;
+    map<std::string, SceneSetup*> m_ssetups;
 
     //File data
-    String                  m_file_name;
+    std::string             m_file_name;
     FileUpdateStatus*       m_file_status;
 
     //Object data
@@ -288,47 +291,47 @@ private:
     DefaultThreadManager*   m_file_loader = nullptr;
 
     //OLD ---------------------------------------------------------------------
-    SceneSetup*             m_ssetup = nullptr;
-    array<LightData>    m_light_datas;
-    short               m_input_usage;
-    mat4                m_mat;
-    mat4                m_mat_prev;
+    SceneSetup *m_ssetup = nullptr;
+    array<LightData> m_light_datas;
+    short m_input_usage;
+    mat4 m_mat;
+    mat4 m_mat_prev;
 
     //Camera Setup
-    float               m_reset_timer;
-    float               m_fov;
-    float               m_fov_mesh;
-    float               m_fov_speed;
-    float               m_zoom;
-    float               m_zoom_mesh;
-    float               m_zoom_speed;
-    vec2                m_rot;
-    vec2                m_rot_mesh;
-    vec2                m_rot_speed;
-    vec2                m_pos;
-    vec2                m_pos_mesh;
-    vec2                m_pos_speed;
-    vec2                m_hist_scale;
-    vec2                m_hist_scale_mesh;
-    vec2                m_hist_scale_speed;
-    vec2                m_screen_offset;
+    float m_reset_timer;
+    float m_fov;
+    float m_fov_mesh;
+    float m_fov_speed;
+    float m_zoom;
+    float m_zoom_mesh;
+    float m_zoom_speed;
+    vec2 m_rot;
+    vec2 m_rot_mesh;
+    vec2 m_rot_speed;
+    vec2 m_pos;
+    vec2 m_pos_mesh;
+    vec2 m_pos_speed;
+    vec2 m_hist_scale;
+    vec2 m_hist_scale_mesh;
+    vec2 m_hist_scale_speed;
+    vec2 m_screen_offset;
 
     //Mesh update timer
-    float               m_build_timer;
-    float               m_build_time;
+    float m_build_timer;
+    float m_build_time;
 
     //Mesh infos
-    vec2                m_render_max;
-    int                 m_mesh_render;
-    int                 m_mesh_id;
-    float               m_mesh_id1;
+    vec2 m_render_max;
+    int m_mesh_render;
+    int m_mesh_id;
+    float m_mesh_id1;
     array<EasyMesh*, EasyMesh*> m_meshes;
-    array<EasyMesh*>    m_gizmos;
+    array<EasyMesh*> m_gizmos;
 
     //File data
-    array<String>       m_cmdlist;
-    float               m_stream_update_time;
-    float               m_stream_update_timer;
+    array<std::string> m_cmdlist;
+    float m_stream_update_time;
+    float m_stream_update_timer;
 
     //misc datas
     Shader *            m_texture_shader;

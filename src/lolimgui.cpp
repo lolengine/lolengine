@@ -1,7 +1,8 @@
 //
-//  imGui integration in lolengine
+//  Lol Engine
 //
 //  Copyright © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//            © 2017—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -15,6 +16,11 @@
 #include "imgui.cpp"
 
 #include <cstdio>
+#include <string>
+
+//
+// The Imgui integration
+//
 
 using namespace lol;
 
@@ -111,18 +117,18 @@ LolImGui::LolImGui()
         << out_vertex << m_ortho << in_position
         << pass_texcoord << in_texcoord
         << pass_color << in_color;
-    imgui_vertex.SetMainCode(String() +
-        Line(out_vertex + " = .5 *" + m_ortho + " * vec4(" + in_position + ", -1.0, 1.0);")
-        + Line(pass_texcoord + " = " + in_texcoord + ";")
-        + Line(pass_color + " = " + in_color + ";")
+    imgui_vertex.SetMainCode(std::string() +
+        Line(out_vertex + " = .5 *" + m_ortho.tostring() + " * vec4(" + in_position.tostring() + ", -1.0, 1.0);")
+        + Line(pass_texcoord + " = " + in_texcoord.tostring() + ";")
+        + Line(pass_color + " = " + in_color.tostring() + ";")
         );
 
     ShaderBlock imgui_pixel("imgui_pixel");
     imgui_pixel << m_texture << pass_texcoord << pass_color << out_pixel;
-    imgui_pixel.SetMainCode(String() +
-        Line(String()
-        + "vec4 col = " + pass_color + " * texture2D(" + m_texture + ", " + pass_texcoord + ");")
-        + Line(String()
+    imgui_pixel.SetMainCode(std::string() +
+        Line(std::string()
+        + "vec4 col = " + pass_color.tostring() + " * texture2D(" + m_texture.tostring() + ", " + pass_texcoord.tostring() + ");")
+        + Line(std::string()
         + "if (col.a == 0.0) discard; ")
         + Line(out_pixel + " = col;")
         );
@@ -135,12 +141,12 @@ LolImGui::LolImGui()
     InputProfile& ip = m_profile;
     ip.AddBindings<LolImGuiKey, LolImGuiKey::KEY_START, LolImGuiKey::KEY_END>(InputProfileType::Keyboard);
     //for (int i = LolImGuiKey::KEY_START; i < LolImGuiKey::KEY_END; ++i)
-    //    m_profile << InputProfile::Keyboard(i, LolImGuiKey(i).ToString());
+    //    m_profile << InputProfile::Keyboard(i, LolImGuiKey(i).tostring());
     for (int i = LolImGuiKey::MOUSE_KEY_START; i < LolImGuiKey::MOUSE_KEY_END; ++i)
-        m_profile << InputProfile::MouseKey(i, LolImGuiKey(i).ToString());
+        m_profile << InputProfile::MouseKey(i, LolImGuiKey(i).tostring());
 
     for (int i = LolImGuiAxis::MOUSE_AXIS_START; i < LolImGuiAxis::MOUSE_AXIS_END; ++i)
-        m_profile << InputProfile::MouseAxis(i, LolImGuiAxis(i).ToString());
+        m_profile << InputProfile::MouseAxis(i, LolImGuiAxis(i).tostring());
 
     Ticker::Ref(m_controller = new Controller("ImGui_Controller"));
     m_controller->Init(m_profile);
@@ -221,20 +227,20 @@ void LolImGui::Shutdown()
 }
 
 //-----------------------------------------------------------------------------
-String LolImGui::GetClipboard()
+std::string LolImGui::GetClipboard()
 {
     return g_lolimgui ? g_lolimgui->m_clipboard : "";
 }
 
 void LolImGui::SetClipboardCallback(void *data, const char* text)
 {
-    String *clipboard = (String *)data;
+    std::string *clipboard = (std::string *)data;
     *clipboard = text;
 }
 const char* LolImGui::GetClipboardCallback(void *data)
 {
-    String *clipboard = (String *)data;
-    return clipboard->C();
+    std::string *clipboard = (std::string *)data;
+    return clipboard->c_str();
 }
 
 //-----------------------------------------------------------------------------
@@ -296,10 +302,10 @@ void LolImGui::TickGame(float seconds)
     m_keyboard->SetTextInputActive(io.WantTextInput);
 
     //Update text input
-    String text = m_keyboard->GetText();
+    std::string text = m_keyboard->GetText();
     //text.case_change(io.KeyShift);
-    for (int i = 0; i < text.count(); ++i)
-        io.AddInputCharacter(text[i]);
+    for (auto ch : text)
+        io.AddInputCharacter(ch);
 
     //Update mouse
     if (m_mouse)
@@ -384,14 +390,14 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
     //Create shader
     if (!m_shader)
     {
-        String code;
+        std::string code;
         m_builder.Build(code);
 
         m_shader = Shader::Create(m_builder.GetName(), code);
         ASSERT(m_shader);
 
-        m_ortho.m_uniform = m_shader->GetUniformLocation(m_ortho.m_var);
-        m_texture.m_uniform = m_shader->GetUniformLocation(m_texture.m_var);
+        m_ortho.m_uniform = m_shader->GetUniformLocation(m_ortho.m_var.tostring());
+        m_texture.m_uniform = m_shader->GetUniformLocation(m_texture.m_var.tostring());
 
         m_attribs
             << m_shader->GetAttribLocation(VertexUsage::Position, 0)

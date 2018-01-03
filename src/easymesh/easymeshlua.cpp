@@ -2,6 +2,7 @@
 //  Lol Engine — EasyMesh Lua loader
 //
 //  Copyright © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//            © 2017—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -14,10 +15,12 @@
 #   include "config.h"
 #endif
 
-#include <cstdio>
-
 #include <lol/engine.h>
 #include <lol/lua.h>
+
+#include <cstdio>
+#include <string>
+
 #include "loldebug.h"
 
 using namespace lol;
@@ -52,23 +55,23 @@ array<EasyMeshLuaObject*>& EasyMeshLuaLoader::GetInstances()
 }
 
 //-----------------------------------------------------------------------------
-map<String, EasyMeshLuaObject*> EasyMeshLuaLoader::m_meshes;
-void EasyMeshLuaLoader::RegisterMesh(EasyMeshLuaObject* mesh, String const& name)
+map<std::string, EasyMeshLuaObject*> EasyMeshLuaLoader::m_meshes;
+void EasyMeshLuaLoader::RegisterMesh(EasyMeshLuaObject* mesh, std::string const& name)
 {
     m_meshes[name] = mesh;
 }
 
 //-----------------------------------------------------------------------------
-bool EasyMeshLuaLoader::GetRegisteredMeshes(map<String, EasyMeshLuaObject*>& meshes)
+bool EasyMeshLuaLoader::GetRegisteredMeshes(map<std::string, EasyMeshLuaObject*>& meshes)
 {
     meshes = m_meshes;
-    return !!m_meshes.count();
+    return m_meshes.count() > 0;
 }
 
 //-----------------------------------------------------------------------------
-EasyMeshLuaObject::EasyMeshLuaObject(String const& name) : LuaObject()
+EasyMeshLuaObject::EasyMeshLuaObject(std::string const& name) : LuaObject()
 {
-    if (!!name.count())
+    if (name.length() > 0)
         EasyMeshLuaLoader::RegisterMesh(this, name);
 }
 
@@ -83,7 +86,7 @@ EasyMeshLuaObject* EasyMeshLuaObject::New(lua_State* l, int arg_nb)
     UNUSED(l);
     UNUSED(arg_nb);
     LuaStack s = LuaStack::Begin(l);
-    String str = s.Get<String>("");
+    std::string str = s.Get<std::string>("");
     return new EasyMeshLuaObject(str);
 }
 

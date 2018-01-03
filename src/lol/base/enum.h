@@ -1,8 +1,8 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010-2015 Sam Hocevar <sam@hocevar.net>
-//            © 2013-2015 Guillaume Bittoun <guillaume.bittoun@gmail.com>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//            © 2013—2015 Guillaume Bittoun <guillaume.bittoun@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -15,6 +15,8 @@
 
 #include <lol/base/map.h>
 
+#include <string>
+
 namespace lol
 {
 
@@ -25,7 +27,7 @@ namespace lol
 //    {
 //    };
 //protected:
-//    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+//    virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
 //    {
 //        enum_map[] = "";
 //        return true;
@@ -38,7 +40,7 @@ struct StructSafeEnum
 {
 protected:
     /* Convert to string stuff */
-    virtual bool BuildEnumMap(map<int64_t, String>&) { return false; }
+    virtual bool BuildEnumMap(map<int64_t, std::string>&) { return false; }
 };
 //-----------------------------------------------------------------------------
 template<typename BASE, typename T = typename BASE::Type>
@@ -54,14 +56,14 @@ public:
     /* Allow conversion from int and to the underlying type */
     inline explicit SafeEnum(int i) : m_value(T(i)) {}
     inline Type ToScalar() const { return m_value; }
-    //inline class String ToString() const { return ToString(); }
+    //inline std::string tostring() const { return tostring(); }
 
     /* Convert to string stuff */
-    inline class String ToString()
+    inline std::string tostring()
     {
         /* FIXME: we all know this isn’t thread safe. But is it really
         * a big deal? */
-        static map<int64_t, String> enum_map;
+        static map<int64_t, std::string> enum_map;
         static bool ready = false;
 
         if (ready || this->BuildEnumMap(enum_map))
@@ -112,7 +114,7 @@ struct DisplayFlagBase : public StructSafeEnum
         MAX
     };
 protected:
-    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
     {
         enum_map[On] = "On";
         enum_map[Off] = "Off";

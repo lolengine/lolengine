@@ -1,14 +1,19 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2013 Benjamin Litzelmann
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2015 Benjamin Litzelmann
+//            © 2017—2018 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
+
+#include <string>
 
 namespace lol
 {
@@ -37,16 +42,16 @@ protected:
 public:
     //Binding methods ---------------------------------------------------------
     /** Bind a physical device and key */
-    void Bind(const String& device_name, const String& key_name);
+    void Bind(const std::string& device_name, const std::string& key_name);
     /** Unbind a previously bound physical device and key. Returns true if the binding was existing. */
-    bool Unbind(const String& device_name, const String& key_name);
+    bool Unbind(const std::string& device_name, const std::string& key_name);
     /* Small helpers */
-    void BindMouse(const String& key_name)                          { Bind(g_name_mouse, key_name); }
-    void BindKeyboard(const String& key_name)                       { Bind(g_name_keyboard, key_name); }
-    void BindJoystick(const uint64_t num, const String& key_name)   { Bind(g_name_joystick(num), key_name); }
-    bool UnbindMouse(const String& key_name)                        { return Unbind(g_name_mouse, key_name); }
-    bool UnbindKeyboard(const String& key_name)                     { return Unbind(g_name_keyboard, key_name); }
-    bool UnbindJoystick(const uint64_t num, const String& key_name) { return Unbind(g_name_joystick(num), key_name); }
+    void BindMouse(const std::string& key_name)                          { Bind(g_name_mouse, key_name); }
+    void BindKeyboard(const std::string& key_name)                       { Bind(g_name_keyboard, key_name); }
+    void BindJoystick(const uint64_t num, const std::string& key_name)   { Bind(g_name_joystick(num), key_name); }
+    bool UnbindMouse(const std::string& key_name)                        { return Unbind(g_name_mouse, key_name); }
+    bool UnbindKeyboard(const std::string& key_name)                     { return Unbind(g_name_keyboard, key_name); }
+    bool UnbindJoystick(const uint64_t num, const std::string& key_name) { return Unbind(g_name_joystick(num), key_name); }
     /** Clear current binding */
     void ClearBindings();
     /** Indicate wheither a physical device and key has been bound. Returns the number of bindings set. */
@@ -92,31 +97,31 @@ protected:
 public:
     //Binding methods ---------------------------------------------------------
     /** Bind a physical device and axis */
-    void Bind(const String& device_name, const String& axis_name);
+    void Bind(const std::string& device_name, const std::string& axis_name);
     /** Bind a physical device and key over this axis. The axis value will be 0 if the key is up and 1 if it's down */
-    void BindKey(const String& device_name, const String& key_name);
+    void BindKey(const std::string& device_name, const std::string& key_name);
     /** Bind physical device and keys over this axis. The axis value will be 0 if both the key are up, -1 if minkey is down, and 1 if maxkey is down */
-    void BindKeys(const String& device_name, const String& min_key_name, const String& max_key_name);
+    void BindKeys(const std::string& device_name, const std::string& min_key_name, const std::string& max_key_name);
     /** Unbind a previously bound physical device and axis. Returns true if the binding was existing. */
-    bool Unbind(const String& device_name, const String& axis_name);
+    bool Unbind(const std::string& device_name, const std::string& axis_name);
     /** Unbind a previously bound physical device and axis. Returns true if the binding was existing. */
-    bool UnbindKey(const String& device_name, const String& key_name);
+    bool UnbindKey(const std::string& device_name, const std::string& key_name);
     /** Unbind a previously bound physical device and axis. Returns true if the binding was existing. */
-    bool UnbindKeys(const String& device_name, const String& min_key_name, const String& max_key_name);
+    bool UnbindKeys(const std::string& device_name, const std::string& min_key_name, const std::string& max_key_name);
     /* Small helpers */
-    void BindMouse(const String& axis_name)                                     { Bind(g_name_mouse, axis_name); }
-    void BindMouseKey(const String& key_name)                                   { BindKey(g_name_mouse, key_name); }
-    void BindMouseKeys(const String& min_key_name, const String& max_key_name)  { BindKeys(g_name_mouse, min_key_name, max_key_name); }
-    bool UnbindMouse(const String& axis_name)                                   { return Unbind(g_name_mouse, axis_name); }
-    bool UnbindMouseKey(const String& key_name)                                 { return UnbindKey(g_name_mouse, key_name); }
-    bool UnbindMouseKeys(const String& min_key_name, const String& max_key_name){ return UnbindKeys(g_name_mouse, min_key_name, max_key_name); }
+    void BindMouse(const std::string& axis_name)                                     { Bind(g_name_mouse, axis_name); }
+    void BindMouseKey(const std::string& key_name)                                   { BindKey(g_name_mouse, key_name); }
+    void BindMouseKeys(const std::string& min_key_name, const std::string& max_key_name)  { BindKeys(g_name_mouse, min_key_name, max_key_name); }
+    bool UnbindMouse(const std::string& axis_name)                                   { return Unbind(g_name_mouse, axis_name); }
+    bool UnbindMouseKey(const std::string& key_name)                                 { return UnbindKey(g_name_mouse, key_name); }
+    bool UnbindMouseKeys(const std::string& min_key_name, const std::string& max_key_name){ return UnbindKeys(g_name_mouse, min_key_name, max_key_name); }
     /* */
-    void BindJoystick(const uint64_t num, const String& axis_name)                                     { Bind(g_name_joystick(num), axis_name); }
-    void BindJoystickKey(const uint64_t num, const String& key_name)                                   { BindKey(g_name_joystick(num), key_name); }
-    void BindJoystickKeys(const uint64_t num, const String& min_key_name, const String& max_key_name)  { BindKeys(g_name_joystick(num), min_key_name, max_key_name); }
-    bool UnbindJoystick(const uint64_t num, const String& axis_name)                                   { return Unbind(g_name_joystick(num), axis_name); }
-    bool UnbindJoystickKey(const uint64_t num, const String& key_name)                                 { return UnbindKey(g_name_joystick(num), key_name); }
-    bool UnbindJoystickKeys(const uint64_t num, const String& min_key_name, const String& max_key_name){ return UnbindKeys(g_name_joystick(num), min_key_name, max_key_name); }
+    void BindJoystick(const uint64_t num, const std::string& axis_name)                                     { Bind(g_name_joystick(num), axis_name); }
+    void BindJoystickKey(const uint64_t num, const std::string& key_name)                                   { BindKey(g_name_joystick(num), key_name); }
+    void BindJoystickKeys(const uint64_t num, const std::string& min_key_name, const std::string& max_key_name)  { BindKeys(g_name_joystick(num), min_key_name, max_key_name); }
+    bool UnbindJoystick(const uint64_t num, const std::string& axis_name)                                   { return Unbind(g_name_joystick(num), axis_name); }
+    bool UnbindJoystickKey(const uint64_t num, const std::string& key_name)                                 { return UnbindKey(g_name_joystick(num), key_name); }
+    bool UnbindJoystickKeys(const uint64_t num, const std::string& min_key_name, const std::string& max_key_name){ return UnbindKeys(g_name_joystick(num), min_key_name, max_key_name); }
     /** Clear current binding */
     void ClearBindings();
     /** Indicate wheither a physical device and axis has been bound. Returns the number of bindings set. */
@@ -150,13 +155,13 @@ private:
         friend class InputProfile;
     public:
         Key() { }
-        Key(int idx, String const& name) : m_idx(idx), m_name(name) { }
+        Key(int idx, std::string const& name) : m_idx(idx), m_name(name) { }
         Key(const Key& other) : m_idx(other.m_idx), m_name(other.m_name) { }
         ~Key() { }
         bool operator==(const Key& other) { return m_name == other.m_name; }
     private:
         int m_idx = 0;
-        String m_name;
+        std::string m_name;
     };
     //---------------------------------------------------------------------
     class Joystick
@@ -165,14 +170,14 @@ private:
         friend class InputProfile;
     public:
         Joystick() { }
-        Joystick(uint64_t joy, int idx, String const& name) : m_joy(joy), m_idx(idx), m_name(name) { }
+        Joystick(uint64_t joy, int idx, std::string const& name) : m_joy(joy), m_idx(idx), m_name(name) { }
         Joystick(const Joystick& other) : m_joy(other.m_joy), m_idx(other.m_idx), m_name(other.m_name) { }
         ~Joystick() { }
         bool operator==(const Joystick& other) { return m_name == other.m_name; }
     private:
         uint64_t m_joy = 0;
         int m_idx = 0;
-        String m_name;
+        std::string m_name;
     };
 public:
     //---------------------------------------------------------------------
@@ -182,7 +187,7 @@ public:
         friend class InputProfile;
     public:
         Keyboard() : Key() { }
-        Keyboard(int idx, String const& name) : Key(idx, name) { }
+        Keyboard(int idx, std::string const& name) : Key(idx, name) { }
         Keyboard(const Keyboard& other) : Key(other.m_idx, other.m_name) { }
     };
     //---------------------------------------------------------------------
@@ -192,7 +197,7 @@ public:
         friend class InputProfile;
     public:
         MouseKey() : Key() { }
-        MouseKey(int idx, String const& name) : Key(idx, name) { }
+        MouseKey(int idx, std::string const& name) : Key(idx, name) { }
         MouseKey(const Keyboard& other) : Key(other.m_idx, other.m_name) { }
     };
     //---------------------------------------------------------------------
@@ -202,7 +207,7 @@ public:
         friend class InputProfile;
     public:
         MouseAxis() : Key() { }
-        MouseAxis(int idx, String const& name) : Key(idx, name) { }
+        MouseAxis(int idx, std::string const& name) : Key(idx, name) { }
         MouseAxis(const Keyboard& other) : Key(other.m_idx, other.m_name) { }
     };
     //---------------------------------------------------------------------
@@ -212,7 +217,7 @@ public:
         friend class InputProfile;
     public:
         JoystickKey() : Joystick() { }
-        JoystickKey(uint64_t joy, int idx, String const& name) : Joystick(joy, idx, name) { }
+        JoystickKey(uint64_t joy, int idx, std::string const& name) : Joystick(joy, idx, name) { }
         JoystickKey(const JoystickKey& other) : Joystick(other.m_joy, other.m_idx, other.m_name) { }
     };
     //---------------------------------------------------------------------
@@ -222,7 +227,7 @@ public:
         friend class InputProfile;
     public:
         JoystickAxis() : Joystick() { }
-        JoystickAxis(uint64_t joy, int idx, String const& name) : Joystick(joy, idx, name) { }
+        JoystickAxis(uint64_t joy, int idx, std::string const& name) : Joystick(joy, idx, name) { }
         JoystickAxis(const JoystickAxis& other) : Joystick(other.m_joy, other.m_idx, other.m_name) { }
     };
 public:
@@ -326,7 +331,7 @@ public:
             MAX,
         };
     protected:
-        virtual bool BuildEnumMap(map<int64_t, String>& enum_map) { UNUSED(enum_map); return true; }
+        virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map) { UNUSED(enum_map); return true; }
     };
     typedef SafeEnum<InputTypeBase> InputType;
 
@@ -338,11 +343,11 @@ public:
         {
             switch (type.ToScalar())
             {
-            case InputType::Keyboard:/******/*this << InputProfile::Keyboard/******/(/***/i, T(i).ToString()); break;
-            case InputType::MouseKey:/******/*this << InputProfile::MouseKey/******/(/***/i, T(i).ToString()); break;
-            case InputType::JoystickKey:/***/*this << InputProfile::JoystickKey/***/(joy, i, T(i).ToString()); break;
-            case InputType::MouseAxis:/*****/*this << InputProfile::MouseAxis/*****/(/***/i, T(i).ToString()); break;
-            case InputType::JoystickAxis:/**/*this << InputProfile::JoystickAxis/**/(joy, i, T(i).ToString()); break;
+            case InputType::Keyboard:/******/*this << InputProfile::Keyboard/******/(/***/i, T(i).tostring()); break;
+            case InputType::MouseKey:/******/*this << InputProfile::MouseKey/******/(/***/i, T(i).tostring()); break;
+            case InputType::JoystickKey:/***/*this << InputProfile::JoystickKey/***/(joy, i, T(i).tostring()); break;
+            case InputType::MouseAxis:/*****/*this << InputProfile::MouseAxis/*****/(/***/i, T(i).tostring()); break;
+            case InputType::JoystickAxis:/**/*this << InputProfile::JoystickAxis/**/(joy, i, T(i).tostring()); break;
             default: break;
             }
         }
@@ -363,8 +368,8 @@ typedef InputProfile::InputType InputProfileType;
 class Controller : public Entity
 {
 public:
-    Controller(String const &name);
-    Controller(String const &name, InputProfile const& setup);
+    Controller(std::string const &name);
+    Controller(std::string const &name, InputProfile const& setup);
     virtual ~Controller();
 
     virtual void TickGame(float seconds);
@@ -413,7 +418,7 @@ public:
     float GetAxisDelta(int index) const;
 
     /** Get named controller */
-    static Controller* Get(String const &name);
+    static Controller* Get(std::string const &name);
 
 protected:
     /** Input profile system */
@@ -427,7 +432,7 @@ private:
 
     static uint32_t m_active_layer; //All active by default
     static array<Controller*> controllers;
-    String m_name;
+    std::string m_name;
     bool m_activate_nextframe;
     bool m_deactivate_nextframe;
     bool m_active;

@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //            © 2014—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -12,6 +12,8 @@
 //
 
 #include <lol/engine-internal.h>
+
+#include <string>
 
 #include <lolunit.h>
 
@@ -61,7 +63,7 @@ lolunit_declare_fixture(thread_test)
                 DONE,
             };
         protected:
-            virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+            virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
             {
                 enum_map[NOT_QUEUED] = "NOT_QUEUED";
                 enum_map[QUEUED] = "QUEUED";
@@ -99,7 +101,7 @@ lolunit_declare_fixture(thread_test)
             case UnitTestStatus::NOT_QUEUED:
                 if (!!GetDispatchCount())
                 {
-                    msg::info("%s TICKGAME %s\n", GetName(), m_status.ToString().C());
+                    msg::info("%s TICKGAME %s\n", GetName(), m_status.tostring().c_str());
                     m_status = UnitTestStatus::QUEUED;
                 }
                 break;
@@ -110,14 +112,14 @@ lolunit_declare_fixture(thread_test)
                 if (GetDispatchedCount())
 #endif
                 {
-                    msg::info("%s TICKGAME %s\n", GetName(), m_status.ToString().C());
+                    msg::info("%s TICKGAME %s\n", GetName(), m_status.tostring().c_str());
                     m_status = UnitTestStatus::RETRIEVED;
                 }
                 break;
             case UnitTestStatus::RETRIEVED:
                 if (m_job_result.count() == 4)
                 {
-                    msg::info("%s TICKGAME %s\n", GetName(), m_status.ToString().C());
+                    msg::info("%s TICKGAME %s\n", GetName(), m_status.tostring().c_str());
                     m_status = UnitTestStatus::DONE;
                 }
                 break;

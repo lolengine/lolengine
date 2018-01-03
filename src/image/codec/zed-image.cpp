@@ -1,8 +1,8 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
-//              2014 Benjamin Huet <huet.benjamin@gmail.com>
+//  Copyright © 2009—2014 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//            © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -12,6 +12,8 @@
 //
 
 #include <lol/engine-internal.h>
+
+#include <string>
 
 #include "../../image/resource-private.h"
 
@@ -38,7 +40,7 @@ DECLARE_IMAGE_CODEC(ZedImageCodec, 10)
 
 ResourceCodecData* ZedImageCodec::Load(char const *path)
 {
-    if (!lol::String(path).ends_with(".RSC"))
+    if (!ends_with(path, ".RSC"))
         return nullptr;
 
     // Compacter definition

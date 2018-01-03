@@ -1,7 +1,7 @@
 //
-//  Base Lua class for Lua script loading
+//  Lol Engine
 //
-//  Copyright © 2009—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2017—2018 Sam Hocevar <sam@hocevar.net>
 //            © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -14,9 +14,13 @@
 #include <lol/engine-internal.h>
 #include <lol/lua.h>
 
-#include <cstring>
+#include <string>
 #include <cstdlib>
-#include <ctype.h>
+#include <cctype>
+
+//
+// Base Lua class for Lua script loading
+//
 
 namespace lol
 {
@@ -36,14 +40,14 @@ class LuaBaseData
     }
 
     //Exec lua code -----------------------------------------------------------
-    static int LuaDoCode(lua_State *l, String const& s)
+    static int LuaDoCode(lua_State *l, std::string const& s)
     {
-        int status = luaL_dostring(l, s.C());
+        int status = luaL_dostring(l, s.c_str());
         if (status == 1)
         {
             auto stack = LuaStack::Begin(l, -1);
-            auto error = stack.Get<String>();
-            msg::error("Lua error %s\n", error.C());
+            auto error = stack.Get<std::string>();
+            msg::error("Lua error %s\n", error.c_str());
             lua_pop(l, 1);
         }
         return status;
@@ -65,7 +69,7 @@ class LuaBaseData
             f.Open(candidate, FileAccess::Read);
             if (f.IsValid())
             {
-                String s = f.ReadString();
+                std::string s = f.ReadString().C();
                 f.Close();
 
                 msg::debug("loading Lua file %s\n", candidate.C());
@@ -79,8 +83,8 @@ class LuaBaseData
         else if (status == 1)
         {
             stack.SetIndex(-1);
-            auto error = stack.Get<String>();
-            msg::error("Lua error %s\n", error.C());
+            auto error = stack.Get<std::string>();
+            msg::error("Lua error %s\n", error.c_str());
             lua_pop(l, 1);
         }
 
@@ -150,15 +154,15 @@ void Loader::StoreObject(lua_State* l, Object* obj)
 }
 
 //-----------------------------------------------------------------------------
-bool Loader::ExecLuaFile(String const &lua)
+bool Loader::ExecLuaFile(std::string const &lua)
 {
-    lua_pushstring(m_lua_state, lua.C());
+    lua_pushstring(m_lua_state, lua.c_str());
     int status = LuaBaseData::LuaDoFile(m_lua_state);
     return status == 0;
 }
 
 //-----------------------------------------------------------------------------
-bool Loader::ExecLuaCode(String const &lua)
+bool Loader::ExecLuaCode(std::string const &lua)
 {
     return 0 == LuaBaseData::LuaDoCode(m_lua_state, lua);
 }

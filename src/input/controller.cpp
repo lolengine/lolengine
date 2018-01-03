@@ -2,6 +2,7 @@
 //  Lol Engine
 //
 //  Copyright © 2010—2015 Benjamin Litzelmann
+//            © 2017—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -12,20 +13,22 @@
 
 #include <lol/engine-internal.h>
 
+#include <string>
+
 namespace lol
 {
 
 ///////////////////////////////////////////////////////////////////////////////
 // KeyBinding
 
-void KeyBinding::Bind(const String& device_name, const String& key_name)
+void KeyBinding::Bind(const std::string& device_name, const std::string& key_name)
 {
     const InputDevice* device = InputDevice::Get(device_name);
 
     if (!device)
     {
         msg::warn("trying to bind key to nonexistent input device %s\n",
-                  device_name.C());
+                  device_name.c_str());
         return;
     }
 
@@ -33,14 +36,14 @@ void KeyBinding::Bind(const String& device_name, const String& key_name)
     if (keyindex < 0)
     {
         msg::warn("trying to bind nonexistent key %s.%s\n",
-                  device_name.C(), key_name.C());
+                  device_name.c_str(), key_name.c_str());
         return;
     }
 
     m_keybindings.push(device, keyindex);
 }
 
-bool KeyBinding::Unbind(const String& device_name, const String& key_name)
+bool KeyBinding::Unbind(const std::string& device_name, const std::string& key_name)
 {
     for (int i = 0; i < m_keybindings.count(); ++i)
     {
@@ -64,13 +67,13 @@ void KeyBinding::ClearBindings()
 ///////////////////////////////////////////////////////////////////////////////
 // AxisBinding
 
-void AxisBinding::Bind(const String& device_name, const String& axis_name)
+void AxisBinding::Bind(const std::string& device_name, const std::string& axis_name)
 {
     const InputDevice* device = InputDevice::Get(device_name);
     if (!device)
     {
         msg::warn("trying to bind axis to nonexistent input device %s\n",
-                  device_name.C());
+                  device_name.c_str());
         return;
     }
 
@@ -78,20 +81,20 @@ void AxisBinding::Bind(const String& device_name, const String& axis_name)
     if (axisindex < 0)
     {
         msg::warn("trying to bind nonexistent axis %s.%s\n",
-                  device_name.C(), axis_name.C());
+                  device_name.c_str(), axis_name.c_str());
         return;
     }
 
     m_axisbindings.push(device, axisindex);
 }
 
-void AxisBinding::BindKey(const String& device_name, const String& key_name)
+void AxisBinding::BindKey(const std::string& device_name, const std::string& key_name)
 {
     const InputDevice* device = InputDevice::Get(device_name);
     if (!device)
     {
         msg::warn("trying to bind axis key to nonexistent input device %s\n",
-                  device_name.C());
+                  device_name.c_str());
         return;
     }
 
@@ -99,20 +102,20 @@ void AxisBinding::BindKey(const String& device_name, const String& key_name)
     if (keyindex < 0)
     {
         msg::warn("trying to bind nonexistent axis key %s.%s\n",
-                  device_name.C(), key_name.C());
+                  device_name.c_str(), key_name.c_str());
         return;
     }
 
     m_keybindings.push(device, -1, keyindex);
 }
 
-void AxisBinding::BindKeys(const String& device_name, const String& min_key_name, const String& max_key_name)
+void AxisBinding::BindKeys(const std::string& device_name, const std::string& min_key_name, const std::string& max_key_name)
 {
     const InputDevice* device = InputDevice::Get(device_name);
     if (!device)
     {
         msg::warn("trying to bind axis keys to nonexistent input device %s\n",
-                  device_name.C());
+                  device_name.c_str());
         return;
     }
 
@@ -120,7 +123,7 @@ void AxisBinding::BindKeys(const String& device_name, const String& min_key_name
     if (minkeyindex < 0)
     {
         msg::warn("trying to bind nonexistent axis key %s.%s\n",
-                  device_name.C(), min_key_name.C());
+                  device_name.c_str(), min_key_name.c_str());
         return;
     }
 
@@ -128,14 +131,14 @@ void AxisBinding::BindKeys(const String& device_name, const String& min_key_name
     if (maxkeyindex < 0)
     {
         msg::warn("trying to bind nonexistent axis key %s.%s\n",
-                  device_name.C(), max_key_name.C());
+                  device_name.c_str(), max_key_name.c_str());
         return;
     }
 
     m_keybindings.push(device, minkeyindex, maxkeyindex);
 }
 
-bool AxisBinding::Unbind(const String& device_name, const String& axis_name)
+bool AxisBinding::Unbind(const std::string& device_name, const std::string& axis_name)
 {
     for (int i = 0; i < m_keybindings.count(); ++i)
     {
@@ -151,7 +154,7 @@ bool AxisBinding::Unbind(const String& device_name, const String& axis_name)
     return false;
 }
 
-bool AxisBinding::UnbindKey(const String& device_name, const String& key_name)
+bool AxisBinding::UnbindKey(const std::string& device_name, const std::string& key_name)
 {
     for (int i = 0; i < m_keybindings.count(); ++i)
     {
@@ -167,7 +170,7 @@ bool AxisBinding::UnbindKey(const String& device_name, const String& key_name)
     return false;
 }
 
-bool AxisBinding::UnbindKeys(const String& device_name, const String& min_key_name, const String& max_key_name)
+bool AxisBinding::UnbindKeys(const std::string& device_name, const std::string& min_key_name, const std::string& max_key_name)
 {
     for (int i = 0; i < m_keybindings.count(); ++i)
     {
@@ -229,7 +232,7 @@ array<Controller*> Controller::controllers;
 uint32_t Controller::m_active_layer = ~((uint32_t)0);
 
 //-----------------------------------------------------------------------------
-Controller::Controller(String const &name)
+Controller::Controller(std::string const &name)
 {
     m_gamegroup = GAMEGROUP_INPUT;
     m_name = name;
@@ -238,12 +241,12 @@ Controller::Controller(String const &name)
     m_active = false;
     if (Get(name) != nullptr)
     {
-        msg::warn("controller “%s” has already been registered\n", name.C());
+        msg::warn("controller “%s” has already been registered\n", name.c_str());
     }
     controllers.push(this);
 }
 
-Controller::Controller(String const &name, InputProfile const& profile)
+Controller::Controller(std::string const &name, InputProfile const& profile)
     : Controller(name)
 {
     Init(profile);
@@ -342,13 +345,11 @@ float Controller::GetAxisDelta(int index) const
 }
 
 //-----------------------------------------------------------------------------
-Controller* Controller::Get(String const &name)
+Controller* Controller::Get(std::string const &name)
 {
-    for (int i = 0; i < controllers.count(); ++i)
-    {
-        if (controllers[i]->m_name == name)
-            return controllers[i];
-    }
+    for (auto controller : controllers)
+        if (controller->m_name == name)
+            return controller;
     return nullptr;
 }
 

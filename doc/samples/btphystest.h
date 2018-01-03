@@ -1,11 +1,19 @@
 //
-// BtPhysTest
+//  Lol Engine — Bullet physics test
 //
-// Copyright: (c) 2009-2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//            (c) 2012 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//            © 2012—2018 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
+
+#include <string>
 
 class CatShaderData : public GpuShaderData
 {
@@ -18,14 +26,14 @@ public:
     void SetupDefaultData();
     virtual void SetupShaderDatas(mat4 const &model);
     //--
-    virtual lol::String GetInVertexName()   { return lol::String("in_vertex");   }
-    virtual lol::String GetInNormalName()   { return lol::String("in_normal");   }
-    virtual lol::String GetInColorName()    { return lol::String("in_color");    }
-    virtual lol::String GetInTexCoordName() { return lol::String("in_texcoord"); }
+    virtual std::string GetInVertexName()   { return "in_vertex";   }
+    virtual std::string GetInNormalName()   { return "in_normal";   }
+    virtual std::string GetInColorName()    { return "in_color";    }
+    virtual std::string GetInTexCoordName() { return "in_texcoord"; }
 
-    TextureUniform   m_tex_uniform;
-    float           m_sprite_orientation;
-    float           m_sprite_flip;
+    TextureUniform m_tex_uniform;
+    float m_sprite_orientation;
+    float m_sprite_flip;
 };
 
 class BtPhysTest : public WorldEntity
@@ -62,7 +70,7 @@ private:
             KEY_MAX
         };
     protected:
-        virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+        virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
         {
             enum_map[KEY_MOVE_FORWARD] = g_name_key_Up;
             enum_map[KEY_MOVE_BACK] = g_name_key_Down;

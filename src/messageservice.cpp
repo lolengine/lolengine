@@ -1,16 +1,19 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//                2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2013—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//            © 2017—2018 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
 
+#include <string>
 #include <cstring>
 #include <cstdlib>
 #include <time.h>
@@ -24,7 +27,7 @@ extern "C"
 {
     int C_Send(const char* message) { return (int)MessageService::Send(MessageBucket::AppIn, message); }
     //NOT IMPLEMENTED
-    //bool C_FetchFirst(String& message);
+    //bool C_FetchFirst(std::string& message);
 }
 #endif //EMSCRIPTEN
 
@@ -59,31 +62,20 @@ void MessageService::Destroy()
 }
 
 //-----------------------------------------------------------------------------
-bool MessageService::Send(MessageBucket id, const String& message)
+bool MessageService::Send(MessageBucket id, const std::string& message)
 {
     if (g_messageservice)
     {
-        ASSERT(0 <= id.ToScalar() && id.ToScalar() < g_messageservice->m_bucket.count());
-        return g_messageservice->Send(id, message.C());
-    }
-    return false;
-}
-
-bool MessageService::Send(MessageBucket id, const char* message)
-{
-    if (g_messageservice)
-    {
-        ASSERT(0 <= id.ToScalar() && id.ToScalar() < g_messageservice->m_bucket.count());
         MessageService& g = *g_messageservice;
         array<MessageList>& bucket = g.m_bucket[id.ToScalar()];
-        bucket << MessageList(time(nullptr), String(message));
+        bucket << MessageList(time(nullptr), message);
         return true;
     }
     return false;
 }
 
 //----
-bool MessageService::FetchFirst(MessageBucket id, String& message)
+bool MessageService::FetchFirst(MessageBucket id, std::string& message)
 {
     if (g_messageservice)
     {
@@ -94,7 +86,7 @@ bool MessageService::FetchFirst(MessageBucket id, String& message)
     return false;
 }
 
-bool MessageService::FetchFirst(MessageBucket id, String& message, time_t& timestamp)
+bool MessageService::FetchFirst(MessageBucket id, std::string& message, time_t& timestamp)
 {
     if (g_messageservice)
     {
@@ -114,7 +106,7 @@ bool MessageService::FetchFirst(MessageBucket id, String& message, time_t& times
 }
 
 //----
-bool MessageService::FetchAll(MessageBucket id, String& message)
+bool MessageService::FetchAll(MessageBucket id, std::string& message)
 {
     if (g_messageservice)
     {
@@ -125,14 +117,14 @@ bool MessageService::FetchAll(MessageBucket id, String& message)
     return false;
 }
 
-bool MessageService::FetchAll(MessageBucket id, String& message, time_t& first_timestamp)
+bool MessageService::FetchAll(MessageBucket id, std::string& message, time_t& first_timestamp)
 {
     if (g_messageservice)
     {
         ASSERT(0 <= id.ToScalar() && id.ToScalar() < g_messageservice->m_bucket.count());
         MessageService& g = *g_messageservice;
         array<MessageList>& bucket = g.m_bucket[id.ToScalar()];
-        message = String("");
+        message = "";
 
         if (bucket.count())
         {

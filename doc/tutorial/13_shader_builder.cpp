@@ -1,7 +1,8 @@
 //
 //  Lol Engine — Shader builder tutorial
 //
-//  Copyright © 2012—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2002—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//            © 2012—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -16,11 +17,11 @@
 
 #include <lol/engine.h>
 #include "loldebug.h"
+
 #include <cstdio>
+#include <string>
 
 using namespace lol;
-
-#define Line(x) ((x) + "\n")
 
 class ShaderBuilderDemo : public WorldEntity
 {
@@ -41,7 +42,7 @@ public:
         File file;
         file.Open("13_shader_builder_export.txt", FileAccess::Write);
         //file.Open("13_shader_builder_export.txt", FileAccess::Read);
-        String code;
+        std::string code;
 
         ShaderBuilder builder("red_blue_green", "120");
         ShaderBlock nothing_vertex("NothingVertex");
@@ -60,9 +61,9 @@ public:
                         << in_color
                         << pass_color;
         nothing_vertex.AddVar(out_vertex);
-        nothing_vertex.SetMainCode(String() +
-            Line(pass_color + " = " + in_color + ";") +
-            Line(out_vertex + " = vec4(" + in_position + ", 0.f);")
+        nothing_vertex.SetMainCode(
+            pass_color.tostring() + " = " + in_color.tostring() + ";\n" +
+            out_vertex.tostring() + " = vec4(" + in_position.tostring() + ", 0.f);\n"
             );
 
         ShaderVar ambient = ShaderVar(ShaderVariable::InOut, ShaderVariableType::Vec4, "ambient");
@@ -70,34 +71,34 @@ public:
         red_pixel.AddVar(pass_color);
         red_pixel.AddVar(out_pixel);
         red_pixel.AddVar(ambient);
-        red_pixel.SetMainCode(String() +
-            out_pixel + " = " + pass_color + ";\n" +
-            out_pixel + ".r = 1.0;\n" +
+        red_pixel.SetMainCode(
+            out_pixel.tostring() + " = " + pass_color.tostring() + ";\n" +
+            out_pixel.tostring() + ".r = 1.0;\n"
             "ambient = vec4(1.0);\n"
             );
 
         green_pixel.AddVar(pass_color);
         green_pixel.AddVar(out_pixel);
         green_pixel.AddVar(ambient);
-        green_pixel.SetMainCode(String() +
-            out_pixel + " = " + pass_color + ";\n" +
-            out_pixel + ".g = 1.0;\n" +
+        green_pixel.SetMainCode(
+            out_pixel.tostring() + " = " + pass_color.tostring() + ";\n" +
+            out_pixel.tostring() + ".g = 1.0;\n"
             "ambient.r = 0.0;\n"
             );
 
         blue_pixel.AddVar(pass_color);
         blue_pixel.AddVar(out_pixel);
         blue_pixel.AddVar(ambient);
-        blue_pixel.SetCustomCode(String() +
-            "void SetAmbient(inout vec4 ambient)\n" +
-            "{\n" +
-            "    ambient = vec4(1.0, 1.0, 1.0, 1.0);\n" +
+        blue_pixel.SetCustomCode(
+            "void SetAmbient(inout vec4 ambient)\n"
+            "{\n"
+            "    ambient = vec4(1.0, 1.0, 1.0, 1.0);\n"
             "}\n");
-        blue_pixel.SetMainCode(String() +
-            out_pixel + " = " + pass_color + ";\n" +
-            out_pixel + ".b = 1.0;\n" +
+        blue_pixel.SetMainCode(
+            out_pixel.tostring() + " = " + pass_color.tostring() + ";\n" +
+            out_pixel.tostring() + ".b = 1.0;\n"
             "SetAmbient(ambient);\n" +
-            out_pixel + " *= ambient;\n"
+            out_pixel.tostring() + " *= ambient;\n"
             );
 
         builder << ShaderProgram::Vertex
@@ -109,7 +110,7 @@ public:
 
         builder.Build(code);
 
-        file.WriteString(code);
+        file.WriteString(code.c_str());
         //code = file.ReadString();
         file.Close();
 

@@ -1,7 +1,8 @@
 //
-//  Lol Engine — Shader builder tutorial
+//  Lol Engine — Imgui tutorial
 //
-//  Copyright © 2012—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2002—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//            © 2012—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -15,8 +16,11 @@
 #endif
 
 #include <lol/engine.h>
-#include "loldebug.h"
+
 #include <cstdio>
+#include <string>
+
+#include "loldebug.h"
 
 using namespace lol;
 
@@ -64,7 +68,7 @@ public:
             ImGui::Text("Scroll: %f", io.MouseWheel);
             ImGui::Text("Maj: %s", io.KeyShift ? "true" : "false");
             ImGui::Text("Ctrl: %s", io.KeyCtrl ? "true" : "false");
-            ImGui::Text("Clipboard %s", LolImGui::GetClipboard().C());
+            ImGui::Text("Clipboard %s", LolImGui::GetClipboard().c_str());
             ImGui::InputText("base input", buf, 512);
         }
         ImGui::End();
