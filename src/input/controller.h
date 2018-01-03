@@ -14,6 +14,7 @@
 #pragma once
 
 #include <string>
+#include <map>
 
 namespace lol
 {
@@ -331,7 +332,7 @@ public:
             MAX,
         };
     protected:
-        virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map) { UNUSED(enum_map); return true; }
+        virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map) { UNUSED(enum_map); return true; }
     };
     typedef SafeEnum<InputTypeBase> InputType;
 

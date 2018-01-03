@@ -13,9 +13,8 @@
 
 #pragma once
 
-#include <lol/base/map.h>
-
 #include <string>
+#include <map>
 
 namespace lol
 {
@@ -27,7 +26,7 @@ namespace lol
 //    {
 //    };
 //protected:
-//    virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
+//    virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
 //    {
 //        enum_map[] = "";
 //        return true;
@@ -40,7 +39,7 @@ struct StructSafeEnum
 {
 protected:
     /* Convert to string stuff */
-    virtual bool BuildEnumMap(map<int64_t, std::string>&) { return false; }
+    virtual bool BuildEnumMap(std::map<int64_t, std::string>&) { return false; }
 };
 //-----------------------------------------------------------------------------
 template<typename BASE, typename T = typename BASE::Type>
@@ -63,13 +62,13 @@ public:
     {
         /* FIXME: we all know this isn’t thread safe. But is it really
         * a big deal? */
-        static map<int64_t, std::string> enum_map;
+        static std::map<int64_t, std::string> enum_map;
         static bool ready = false;
 
         if (ready || this->BuildEnumMap(enum_map))
         {
             ready = true;
-            if (enum_map.has_key((int64_t)m_value))
+            if (has_key(enum_map, (int64_t)m_value))
                 return enum_map[(int64_t)m_value];
         }
         return "<invalid enum>";
@@ -114,7 +113,7 @@ struct DisplayFlagBase : public StructSafeEnum
         MAX
     };
 protected:
-    virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
     {
         enum_map[On] = "On";
         enum_map[Off] = "Off";

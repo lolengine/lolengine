@@ -1,5 +1,5 @@
 //
-//  Lol Engine — EasyMesh Lua loader
+//  Lol Engine
 //
 //  Copyright © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //            © 2017—2018 Sam Hocevar <sam@hocevar.net>
@@ -20,8 +20,13 @@
 
 #include <cstdio>
 #include <string>
+#include <map>
 
 #include "loldebug.h"
+
+//
+//  EasyMesh Lua loader
+//
 
 using namespace lol;
 
@@ -55,17 +60,17 @@ array<EasyMeshLuaObject*>& EasyMeshLuaLoader::GetInstances()
 }
 
 //-----------------------------------------------------------------------------
-map<std::string, EasyMeshLuaObject*> EasyMeshLuaLoader::m_meshes;
+std::map<std::string, EasyMeshLuaObject*> EasyMeshLuaLoader::m_meshes;
 void EasyMeshLuaLoader::RegisterMesh(EasyMeshLuaObject* mesh, std::string const& name)
 {
     m_meshes[name] = mesh;
 }
 
 //-----------------------------------------------------------------------------
-bool EasyMeshLuaLoader::GetRegisteredMeshes(map<std::string, EasyMeshLuaObject*>& meshes)
+bool EasyMeshLuaLoader::GetRegisteredMeshes(std::map<std::string, EasyMeshLuaObject*>& meshes)
 {
     meshes = m_meshes;
-    return m_meshes.count() > 0;
+    return m_meshes.size() > 0;
 }
 
 //-----------------------------------------------------------------------------

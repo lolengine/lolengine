@@ -14,6 +14,7 @@
 #pragma once
 
 #include <string>
+#include <map>
 
 //
 // The Imgui integration
@@ -112,7 +113,7 @@ class LolImGui : public Entity
             MAX = MOUSE_KEY_END,
         };
     protected:
-        virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
+        virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
         {
             enum_map[Tab] = g_name_key_Tab;
             enum_map[LeftArrow] = g_name_key_Left;
@@ -162,7 +163,7 @@ class LolImGui : public Entity
             MAX = MOUSE_AXIS_END,
         };
     protected:
-        virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
+        virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
         {
             enum_map[Scroll] = g_name_mouse_axis_scroll;
 
@@ -218,7 +219,7 @@ protected:
     InputDevice* m_mouse = nullptr;
     InputDevice* m_keyboard = nullptr;
     InputProfile m_profile;
-    //map<ImGuiKey_, LolImGuiKey> m_keys;
+    //std::map<ImGuiKey_, LolImGuiKey> m_keys;
     std::string m_clipboard;
 };
 

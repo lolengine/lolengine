@@ -14,6 +14,8 @@
 
 #pragma once
 
+#include <map>
+
 namespace lol
 {
 
@@ -29,7 +31,7 @@ struct MeshRenderBase : public StructSafeEnum
         IgnoreRender,
     };
 protected:
-    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, String>& enum_map)
     {
         enum_map[NeedData] = "NeedData";
         enum_map[NeedConvert] = "NeedConvert";

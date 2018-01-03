@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //            © 2013—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -20,6 +20,8 @@
 
 #include "engine/entity.h"
 
+#include <map>
+
 namespace lol
 {
 
@@ -35,7 +37,7 @@ struct ThreadStatusBase : public StructSafeEnum
         THREAD_STOPPED,
     };
 protected:
-    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, String>& enum_map)
     {
         enum_map[NOTHING] = "NOTHING";
         enum_map[THREAD_STARTED] = "THREAD_STARTED";
@@ -57,7 +59,7 @@ struct ThreadJobTypeBase : public StructSafeEnum
         THREAD_STOP
     };
 protected:
-    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, String>& enum_map)
     {
         enum_map[NONE]          = "NONE";
         enum_map[WORK_TODO]     = "WORK_TODO";
@@ -238,10 +240,10 @@ public:
     virtual void TreatResult(ThreadJob* result);
 
 private:
-    uint32_t                m_frame_skip = 4;
-    uint32_t                m_frame_count = 0;
-    array<ThreadJob*>       m_job_done;
-    map<String, Status*>    m_files;
+    uint32_t m_frame_skip = 4;
+    uint32_t m_frame_count = 0;
+    array<ThreadJob*> m_job_done;
+    std::map<String, Status*> m_files;
 };
 typedef FileUpdateTester::Status FileUpdateStatus;
 
@@ -267,9 +269,9 @@ protected:
     virtual void TreatResult(ThreadJob* result);
 
 private:
-    image               m_dummy_image;
-    map<String, image*> m_images;
-    array<image*>       m_loaded_images;
+    image m_dummy_image;
+    std::map<String, image*> m_images;
+    array<image*> m_loaded_images;
 };
 
 } /* namespace lol */

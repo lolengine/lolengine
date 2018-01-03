@@ -17,6 +17,7 @@
 
 #include <cfloat> /* for FLT_MAX */
 #include <string>
+#include <map>
 
 #include <lol/engine.h>
 #include <lol/lua.h>
@@ -113,14 +114,13 @@ void EasyMeshViewerObject::TickDraw(float seconds, Scene &scene)
 //EasyMeshLoadJob -------------------------------------------------------------
 bool EasyMeshLoadJob::DoWork()
 {
-    map<std::string, EasyMeshLuaObject*> meshes;
+    std::map<std::string, EasyMeshLuaObject*> meshes;
     if (m_loader.ExecLuaFile(m_path) && EasyMeshLuaLoader::GetRegisteredMeshes(meshes))
     {
-        array<std::string> keys = meshes.keys();
-        for (auto const &key : keys)
-            m_meshes << new EasyMeshViewerObject(key, meshes[key]->GetMesh());
+        for (auto const &kv : meshes)
+            m_meshes << new EasyMeshViewerObject(kv.first, kv.second->GetMesh());
     }
-    return !!m_meshes.count();
+    return m_meshes.count() > 0;
 }
 
 //-----------------------------------------------------------------------------
@@ -243,9 +243,8 @@ void MeshViewer::Stop()
 void MeshViewer::UpdateSceneSetup(bool only_destroy)
 {
     //Delete previous setups
-    array<std::string> keys = m_ssetups.keys();
-    for (auto const &key : keys)
-        delete m_ssetups[key];
+    for (auto &key : m_ssetups)
+        delete key.second;
     m_ssetups.empty();
     if (m_ssetup_file_status)
     {
@@ -261,9 +260,8 @@ void MeshViewer::UpdateSceneSetup(bool only_destroy)
         if (m_ssetup_loader.GetLoadedSetups(m_ssetups))
         {
             m_ssetup_file_status = m_file_check->RegisterFile(m_ssetup_file_name);
-            array<std::string> keys = m_ssetups.keys();
-            if (!m_ssetup_name.length() || !keys.find(m_ssetup_name))
-                m_ssetup_name = keys[0];
+            if (!m_ssetup_name.length() || !has_key(m_ssetups, m_ssetup_name))
+                m_ssetup_name = m_ssetups.begin()->first;
         }
     }
 }

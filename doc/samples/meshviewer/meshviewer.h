@@ -14,6 +14,7 @@
 #pragma once
 
 #include <string>
+#include <map>
 
 namespace lol
 {
@@ -93,7 +94,7 @@ struct MeshViewerKeyInputBase : public StructSafeEnum
         MAX = MSE_END,
     };
 protected:
-    virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
     {
         enum_map[Exit] = g_name_key_Escape;
 
@@ -271,7 +272,7 @@ private:
     FileUpdateStatus *m_ssetup_file_status = nullptr;
     std::string m_ssetup_file_name;
     std::string m_ssetup_name;
-    map<std::string, SceneSetup*> m_ssetups;
+    std::map<std::string, SceneSetup*> m_ssetups;
 
     //File data
     std::string             m_file_name;

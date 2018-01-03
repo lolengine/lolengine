@@ -19,6 +19,7 @@
 //
 
 #include <string>
+#include <map>
 
 namespace lol
 {
@@ -61,7 +62,7 @@ public:
             Max
         };
     protected:
-        virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
+        virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
         {
             enum_map[Gizmo] = "Gizmo";
             enum_map[Light] = "Light";
@@ -88,7 +89,7 @@ protected:
             Max
         };
     protected:
-        virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
+        virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
         {
             enum_map[AddLight] = "AddLight";
             enum_map[SetupScene] = "SetupScene";
@@ -163,12 +164,12 @@ public:
     //-------------------------------------------------------------------------
 protected:
     static void RegisterSetup(SceneSetup* setup);
-    static bool GetRegisteredSetups(map<std::string, SceneSetup*>& setups);
+    static bool GetRegisteredSetups(std::map<std::string, SceneSetup*>& setups);
 public:
-    bool GetLoadedSetups(map<std::string, SceneSetup*>& setups);
+    bool GetLoadedSetups(std::map<std::string, SceneSetup*>& setups);
 
 private:
-    static map<std::string, SceneSetup*> m_setups;
+    static std::map<std::string, SceneSetup*> m_setups;
 };
 
 /*

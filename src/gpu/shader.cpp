@@ -13,6 +13,7 @@
 #include <lol/engine-internal.h>
 
 #include <string>
+#include <map>
 #include <cstring>
 #include <cstdio>
 
@@ -81,8 +82,8 @@ private:
 
     GLuint prog_id, vert_id, frag_id;
     // Benlitz: using a simple array could be faster since there is never more than a few attribute locations to store
-    map<uint64_t, GLint> attrib_locations;
-    map<uint64_t, bool> attrib_errors;
+    std::map<uint64_t, GLint> attrib_locations;
+    std::map<uint64_t, bool> attrib_errors;
     uint32_t vert_crc, frag_crc;
 
     /* Shader patcher */
@@ -110,7 +111,7 @@ struct lolfx_parser
 {
 public:
     std::string m_section;
-    map<std::string, std::string> m_programs;
+    std::map<std::string, std::string> m_programs;
 
 private:
     // title <- '[' (!']')+ ']' .{eol}
@@ -192,10 +193,10 @@ Shader *Shader::Create(std::string const &name, std::string const &code)
 {
     lolfx_parser p(code);
 
-    ASSERT(p.m_programs.has_key("vert.glsl"),
+    ASSERT(has_key(p.m_programs, "vert.glsl"),
            "no vertex shader in %s", name.c_str());
 
-    ASSERT(p.m_programs.has_key("frag.glsl"),
+    ASSERT(has_key(p.m_programs, "frag.glsl"),
            "no fragment shader in %s", name.c_str());
 
     std::string vert = p.m_programs["vert.glsl"];
@@ -355,7 +356,7 @@ Shader::Shader(std::string const &name,
             flags |= (uint64_t)(uint16_t)index;
             // TODO: this is here just in case. Remove this once everything has been correctly tested
 #if _DEBUG
-            if (data->attrib_locations.has_key(flags))
+            if (has_key(data->attrib_locations, flags))
             {
                 msg::error("error while parsing attribute semantics in %s\n",
                            attr_name.c_str());
@@ -370,7 +371,7 @@ Shader::Shader(std::string const &name,
 
 int Shader::GetAttribCount() const
 {
-    return data->attrib_locations.count();
+    return data->attrib_locations.size();
 }
 
 ShaderAttrib Shader::GetAttribLocation(VertexUsage usage, int index) const
@@ -381,10 +382,10 @@ ShaderAttrib Shader::GetAttribLocation(VertexUsage usage, int index) const
 
     GLint l = -1;
 
-    if (!data->attrib_locations.try_get(ret.m_flags, l))
+    if (!try_get(data->attrib_locations, ret.m_flags, l))
     {
         /* Only spit an error once, we don’t need to flood the console. */
-        if (!data->attrib_errors.has_key(ret.m_flags))
+        if (!has_key(data->attrib_errors, ret.m_flags))
         {
             msg::error("attribute %s not found in shader %s\n",
                        usage.tostring().c_str(), data->m_name.c_str());
@@ -833,34 +834,32 @@ void ShaderBlock::AddVar(ShaderVar const& var)
     ShaderVariable qualifier = var.GetQualifier();
     std::string type = var.GetType();
     std::string name = Shader::GetVariablePrefix(qualifier) + var.m_name;
-    ASSERT(!m_parameters[qualifier.ToScalar()].has_key(name));
+    ASSERT(!has_key(m_parameters[qualifier.ToScalar()], name));
     m_parameters[qualifier.ToScalar()][name] = type;
 }
 
 //----
-void ShaderBlock::AddCallParameters(map<std::string, std::string> const& variables, std::string& result)
+void ShaderBlock::AddCallParameters(std::map<std::string, std::string> const& variables, std::string& result)
 {
-    array<std::string> keys = variables.keys();
-    for (auto const &key : keys)
+    for (auto const &key : variables)
     {
         if (result.length() > 0)
             result += ", ";
-        result += key;
+        result += key.first;
     }
 }
 
 //----
-void ShaderBlock::AddDefinitionParameters(const ShaderVariable type, const ShaderProgram program, map<std::string, std::string>& variables, std::string& result)
+void ShaderBlock::AddDefinitionParameters(const ShaderVariable type, const ShaderProgram program, std::map<std::string, std::string>& variables, std::string& result)
 {
-    array<std::string> keys = variables.keys();
-    for (auto const &key : keys)
+    for (auto const &key : variables)
     {
         if (result.length() > 0)
             result += ", ";
         result += Shader::GetFunctionQualifier(type, program) + " ";
-        result += variables[key];
+        result += key.second;
         result += " ";
-        result += key;
+        result += key.first;
     }
 }
 
@@ -868,7 +867,7 @@ void ShaderBlock::AddDefinitionParameters(const ShaderVariable type, const Shade
 void ShaderBlock::Build(const ShaderProgram program, std::string& call, std::string& function)
 {
     ASSERT(m_name.length());
-    ASSERT(m_parameters[ShaderVariable::InOut].count());
+    ASSERT(m_parameters[ShaderVariable::InOut].size());
 
     //Build call in main
     std::string call_name = std::string("Call_") + m_name;
@@ -962,21 +961,20 @@ std::string ShaderBuilder::AddSlotOutVariableLocal(const ShaderProgram program)
 }
 
 //----
-void ShaderBuilder::MergeParameters(map<std::string, std::string>& variables, map<std::string, std::string>& merged)
+void ShaderBuilder::MergeParameters(std::map<std::string, std::string>& variables, std::map<std::string, std::string>& merged)
 {
-    array<std::string> keys = variables.keys();
-    for (auto const &key : keys)
+    for (auto const &key : variables)
     {
-        bool has_key = merged.has_key(key);
+        bool has_param = has_key(merged, key.first);
 
         //Key exists, check the type to make sure it's the same
-        ASSERT(!has_key || (has_key && merged[key] == variables[key]),
-            "has_key=%d, key=%s merged[key]=%s, variables[key]=%s\n",
-            (int)has_key, key.c_str(), merged[key].c_str(), variables[key].c_str());
+        ASSERT(!has_param || (has_param && merged[key.first] == variables[key.first]),
+            "has_param=%d, key=%s merged[key]=%s, variables[key]=%s\n",
+            (int)has_param, key.first.c_str(), merged[key.first].c_str(), key.second.c_str());
 
         //does not exist, had it
-        if (!has_key)
-            merged[key] = variables[key];
+        if (!has_param)
+            merged[key.first] = key.second;
     }
 }
 
@@ -1011,11 +1009,11 @@ void ShaderBuilder::Build(std::string& code)
         //Added shader variables
         for (int var = 0; var < ShaderVariable::InOut; var++)
         {
-            array<std::string> keys = m_parameters[prog][var].keys();
-            if (keys.count())
+            array<std::string> all_keys = keys(m_parameters[prog][var]);
+            if (all_keys.count())
             {
                 code += std::string("//- ") + Shader::GetVariableQualifier((ShaderVariable)var) + " ----" + g_ret;
-                for (auto const &key : keys)
+                for (auto const &key : all_keys)
                 {
                     code += Shader::GetVariableQualifier((ShaderVariable)var) + " ";
                     code += m_parameters[prog][var][key] + " " + key + ";" + g_ret;
@@ -1049,10 +1047,10 @@ void ShaderBuilder::Build(std::string& code)
 
         //Add local variables
         int var = ShaderVariable::InOut;
-        array<std::string> keys = m_parameters[prog][var].keys();
-        for (auto const &key : keys)
+        array<std::string> all_keys = keys(m_parameters[prog][var]);
+        for (auto const &key : all_keys)
         {
-            if (keys.count())
+            if (all_keys.count())
             {
                 code += g_tab + m_parameters[prog][var][key] + " " + key + ";" + g_ret;
             }

@@ -14,6 +14,7 @@
 #pragma once
 
 #include <string>
+#include <map>
 
 //
 // The Message Service class
@@ -45,7 +46,7 @@ struct MessageBucketBase : public StructSafeEnum
         MAX
     };
 protected:
-    virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
     {
         enum_map[AppIn] = "AppIn";
         enum_map[AppOut] = "AppOut";

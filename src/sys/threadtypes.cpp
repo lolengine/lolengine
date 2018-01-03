@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //            © 2014—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -86,7 +86,7 @@ protected:
 //FileUpdateTester ------------------------------------------------------------
 FileUpdateTester::~FileUpdateTester()
 {
-    ASSERT(!m_files.count(), "Files need to be unregistered before destroying FileUpdateTester");
+    ASSERT(!m_files.size(), "Files need to be unregistered before destroying FileUpdateTester");
 }
 
 //File interface --------------------------------------------------------------
@@ -99,16 +99,16 @@ FileUpdateTester::Status* FileUpdateTester::RegisterFile(String const& path)
 
 void FileUpdateTester::UnregisterFile(String const& path)
 {
-    ASSERT(m_files.has_key(path));
+    ASSERT(has_key(m_files, path));
     delete m_files[path];
-    m_files.remove(path);
+    m_files.erase(path);
 }
 
 void FileUpdateTester::UnregisterFile(FileUpdateTester::Status*& status)
 {
     ASSERT(status);
-    array<String> keys = m_files.keys();
-    for (String key : keys)
+    array<String> all_keys = keys(m_files);
+    for (String key : all_keys)
     {
         if (m_files[key] == status)
         {
@@ -124,8 +124,8 @@ void FileUpdateTester::UnregisterFile(FileUpdateTester::Status*& status)
 void FileUpdateTester::TickGame(float seconds)
 {
     //Reset update for this frame
-    array<String> keys = m_files.keys();
-    for (String key : keys)
+    array<String> all_keys = keys(m_files);
+    for (String key : all_keys)
         m_files[key]->SetUpdated(false);
 
     super::TickGame(seconds);
@@ -217,7 +217,7 @@ void AsyncImageLoader::TreatResult(ThreadJob* result)
     if (job->GetJobType() == ThreadJobType::WORK_SUCCEEDED)
     {
         Image* src = m_images[job->GetPath()];
-        m_images.remove(job->GetPath());
+        m_images.erase(job->GetPath());
         src->Copy(job->GetImage());
         m_loaded_images.push_unique(src);
     }

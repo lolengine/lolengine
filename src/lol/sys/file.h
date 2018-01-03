@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -17,7 +17,8 @@
 // -----------------------
 //
 
-#include <stdint.h>
+#include <map>
+#include <cstdint>
 
 namespace lol
 {
@@ -31,7 +32,7 @@ struct FileAccessBase : public StructSafeEnum
         Write
     };
 protected:
-    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, String>& enum_map)
     {
         enum_map[Read]  = "Read";
         enum_map[Write] = "Write";
@@ -52,7 +53,7 @@ struct StreamTypeBase : public StructSafeEnum
         FileBinary
     };
 protected:
-    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, String>& enum_map)
     {
         enum_map[StdIn]      = "StdIn";
         enum_map[StdOut]     = "StdOut";

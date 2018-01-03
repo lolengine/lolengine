@@ -15,6 +15,7 @@
 #include <lolunit.h>
 
 #include <string>
+#include <map>
 
 namespace lol
 {
@@ -33,7 +34,7 @@ lolunit_declare_fixture(enum_test)
             };
 
         protected:
-            virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
+            virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
             {
                 enum_map[first] = "first";
                 enum_map[second] = "second";

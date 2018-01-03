@@ -17,8 +17,9 @@
 // ----------------
 //
 
-#include <cstdint>
 #include <string>
+#include <map>
+#include <cstdint>
 
 #include "engine/entity.h"
 
@@ -60,7 +61,7 @@ struct VertexUsageBase : public StructSafeEnum
     };
 
 protected:
-    virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
     {
         enum_map[Position] = "Position";
         enum_map[BlendWeight] = "BlendWeight";
@@ -102,7 +103,7 @@ struct ShaderVariableBase
         MAX
     };
 protected:
-    virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
     {
         enum_map[Attribute] = "Attribute";
         enum_map[Uniform] = "Uniform";
@@ -126,7 +127,7 @@ struct ShaderProgramBase
         MAX
     };
 protected:
-    virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
     {
         enum_map[Geometry] = "Geometry";
         enum_map[Vertex] = "Vertex";
@@ -201,7 +202,7 @@ struct ShaderVariableTypeBase
         MAX
     };
 protected:
-    virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
     {
         enum_map[Bool] = "bool";
         enum_map[Int] = "int"; enum_map[UInt] = "uint";
@@ -406,7 +407,7 @@ protected:
     //--------------------------
 
     //Main shader parameters
-    map<std::string, std::string> m_parameters[ShaderVariable::MAX];
+    std::map<std::string, std::string> m_parameters[ShaderVariable::MAX];
 
     //Actual code
     std::string m_code_main;
@@ -430,8 +431,8 @@ public:
     }
 
 protected:
-    void AddCallParameters(map<std::string, std::string> const& variables, std::string& result);
-    void AddDefinitionParameters(const ShaderVariable variable, const ShaderProgram program, map<std::string, std::string>& variables, std::string& result);
+    void AddCallParameters(std::map<std::string, std::string> const& variables, std::string& result);
+    void AddDefinitionParameters(const ShaderVariable variable, const ShaderProgram program, std::map<std::string, std::string>& variables, std::string& result);
     void Build(const ShaderProgram program, std::string& call, std::string& function);
 };
 
@@ -447,7 +448,7 @@ protected:
     array<ShaderBlock*> m_blocks[ShaderProgram::MAX];
 
     //Final shader parameters
-    map<std::string, std::string> m_parameters[ShaderProgram::MAX][ShaderVariable::MAX];
+    std::map<std::string, std::string> m_parameters[ShaderProgram::MAX][ShaderVariable::MAX];
 
 public:
     ShaderBuilder(std::string const& name, std::string const& version);
@@ -460,7 +461,7 @@ public:
 
 protected:
     std::string AddSlotOutVariableLocal(const ShaderProgram program);
-    void MergeParameters(map<std::string, std::string>& variables, map<std::string, std::string>& merged);
+    void MergeParameters(std::map<std::string, std::string>& variables, std::map<std::string, std::string>& merged);
 
 public:
     void Build(std::string& code);

@@ -14,6 +14,7 @@
 #pragma once
 
 #include <string>
+#include <map>
 
 class CatShaderData : public GpuShaderData
 {
@@ -70,7 +71,7 @@ private:
             KEY_MAX
         };
     protected:
-        virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
+        virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
         {
             enum_map[KEY_MOVE_FORWARD] = g_name_key_Up;
             enum_map[KEY_MOVE_BACK] = g_name_key_Down;

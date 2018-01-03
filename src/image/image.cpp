@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -56,8 +56,8 @@ image & image::operator =(image other)
 
 image::~image()
 {
-    for (int k : m_data->m_pixels.keys())
-        delete m_data->m_pixels[k];
+    for (auto &kv : m_data->m_pixels)
+        delete kv.second;
 
     delete m_data;
 }
@@ -129,12 +129,9 @@ void image::resize(ivec2 size)
 
     if (m_data->m_size != size)
     {
-        for (int k : m_data->m_pixels.keys())
-        {
-            delete m_data->m_pixels[k];
-            m_data->m_pixels[k] = nullptr;
-        }
-
+        for (auto &kv : m_data->m_pixels)
+            delete kv.second;
+        m_data->m_pixels.empty();
         m_data->m_format = PixelFormat::Unknown;
     }
 
@@ -177,7 +174,7 @@ void *image::lock2d_helper(PixelFormat T)
 template<typename T>
 void image::unlock2d(array2d<T> const &array)
 {
-    ASSERT(m_data->m_pixels.has_key((int)m_data->m_format));
+    ASSERT(has_key(m_data->m_pixels, (int)m_data->m_format));
     ASSERT(array.data() == m_data->m_pixels[(int)m_data->m_format]->data());
 }
 
@@ -204,7 +201,7 @@ void *image::lock()
 
 void image::unlock(void const *pixels)
 {
-    ASSERT(m_data->m_pixels.has_key((int)m_data->m_format));
+    ASSERT(has_key(m_data->m_pixels, (int)m_data->m_format));
     ASSERT(pixels == m_data->m_pixels[(int)m_data->m_format]->data());
 }
 

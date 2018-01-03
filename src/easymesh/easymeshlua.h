@@ -1,5 +1,5 @@
 //
-//  Lol Engine — EasyMesh Lua loader
+//  Lol Engine
 //
 //  Copyright © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //            © 2017—2018 Sam Hocevar <sam@hocevar.net>
@@ -14,6 +14,11 @@
 #pragma once
 
 #include <string>
+#include <map>
+
+//
+//  EasyMesh Lua loader
+//
 
 namespace lol
 {
@@ -142,10 +147,10 @@ public:
 protected:
     static void RegisterMesh(EasyMeshLuaObject* mesh, std::string const& name);
 public:
-    static bool GetRegisteredMeshes(map<std::string, EasyMeshLuaObject*>& meshes);
+    static bool GetRegisteredMeshes(std::map<std::string, EasyMeshLuaObject*>& meshes);
 
 private:
-    static map<std::string, EasyMeshLuaObject*> m_meshes;
+    static std::map<std::string, EasyMeshLuaObject*> m_meshes;
 };
 
 } /* namespace lol */

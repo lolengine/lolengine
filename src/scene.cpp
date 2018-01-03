@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //            © 2014—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -13,6 +13,7 @@
 
 #include <lol/engine-internal.h>
 
+#include <map>
 #include <cstdlib>
 
 #if defined(_WIN32)
@@ -160,8 +161,8 @@ private:
      * - Updated by entity
      * - Marked Fire&Forget
      * - Scene is destroyed */
-    map<uintptr_t, array<PrimitiveRenderer*>> m_prim_renderers;
-    static map<uintptr_t, array<PrimitiveSource*>> m_prim_sources;
+    std::map<uintptr_t, array<PrimitiveRenderer*>> m_prim_renderers;
+    static std::map<uintptr_t, array<PrimitiveSource*>> m_prim_sources;
     static mutex m_prim_mutex;
 
     Camera *m_default_cam;
@@ -196,7 +197,7 @@ private:
     m_tile_api;
 };
 uint64_t SceneData::m_used_id = 1;
-map<uintptr_t, array<PrimitiveSource*>> SceneData::m_prim_sources;
+std::map<uintptr_t, array<PrimitiveSource*>> SceneData::m_prim_sources;
 mutex SceneData::m_prim_mutex;
 
 /*
@@ -364,8 +365,7 @@ void Scene::Reset()
     ASSERT(!!data, "Trying to access a non-ready scene");
 
     /* New scenegraph: Release fire&forget primitives */
-    array<uintptr_t> keys = data->m_prim_renderers.keys();
-    for (uintptr_t key : keys)
+    for (uintptr_t key : keys(data->m_prim_renderers))
     {
         for (int idx = 0; idx < data->m_prim_renderers[key].count(); ++idx)
             if (data->m_prim_renderers[key][idx]->m_fire_and_forget)
@@ -688,8 +688,7 @@ void Scene::render_primitives()
     rc.SetDepthFunc(DepthFunc::LessOrEqual);
 
     /* new scenegraph */
-    array<uintptr_t> keys = data->m_prim_renderers.keys();
-    for (uintptr_t key : keys)
+    for (uintptr_t key : keys(data->m_prim_renderers))
     {
         for (int idx = 0; idx < data->m_prim_renderers[key].count(); ++idx)
         {

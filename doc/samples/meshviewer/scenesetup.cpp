@@ -19,6 +19,7 @@
 #include <lol/lua.h>
 
 #include <string>
+#include <map>
 
 #include "scenesetup.h"
 
@@ -264,7 +265,7 @@ const LuaObjectLibrary* SceneSetupLuaObject::GetLib()
 }
 
 //-----------------------------------------------------------------------------
-map<std::string, SceneSetup*> SceneSetupLuaLoader::m_setups;
+std::map<std::string, SceneSetup*> SceneSetupLuaLoader::m_setups;
 SceneSetupLuaLoader::SceneSetupLuaLoader() : LuaLoader()
 {
     lua_State* l = GetLuaState();
@@ -296,14 +297,14 @@ void SceneSetupLuaLoader::RegisterSetup(SceneSetup* setup)
 }
 
 //-----------------------------------------------------------------------------
-bool SceneSetupLuaLoader::GetRegisteredSetups(map<std::string, SceneSetup*>& setups)
+bool SceneSetupLuaLoader::GetRegisteredSetups(std::map<std::string, SceneSetup*>& setups)
 {
     setups = m_setups;
-    return !!m_setups.count();
+    return m_setups.size() > 0;
 }
 
 //-----------------------------------------------------------------------------
-bool SceneSetupLuaLoader::GetLoadedSetups(map<std::string, SceneSetup*>& setups)
+bool SceneSetupLuaLoader::GetLoadedSetups(std::map<std::string, SceneSetup*>& setups)
 {
     return GetRegisteredSetups(setups);
 }

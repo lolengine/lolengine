@@ -14,6 +14,7 @@
 #include <lol/engine-internal.h>
 
 #include <string>
+#include <map>
 
 #include <lolunit.h>
 
@@ -63,7 +64,7 @@ lolunit_declare_fixture(thread_test)
                 DONE,
             };
         protected:
-            virtual bool BuildEnumMap(map<int64_t, std::string>& enum_map)
+            virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
             {
                 enum_map[NOT_QUEUED] = "NOT_QUEUED";
                 enum_map[QUEUED] = "QUEUED";

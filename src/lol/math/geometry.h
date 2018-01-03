@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //            © 2010—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -20,10 +20,11 @@
 
 #include <lol/base/enum.h>
 
+#include <algorithm>
+#include <map>
 #include <cmath>
 #include <cstdio>
-#include <algorithm>
-#include <stdint.h>
+#include <cstdint>
 
 namespace lol
 {
@@ -36,7 +37,7 @@ struct AxisBase : public StructSafeEnum
         X = 0, Y, Z, MAX, XY = 2, XYZ = 3,
     };
 protected:
-    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, String>& enum_map)
     {
         enum_map[X]   = "X";
         enum_map[Y]   = "Y";
@@ -57,7 +58,7 @@ struct DirectionBase : public StructSafeEnum
         Up = 0, Down, Left, Right, MAX,
     };
 protected:
-    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, String>& enum_map)
     {
         enum_map[Up]    = "Up";
         enum_map[Down]  = "Down";
@@ -259,7 +260,7 @@ struct RayIntersectBase : public StructSafeEnum
     };
     //LOL_DECLARE_ENUM_METHODS(RayIntersectBase)
 protected:
-    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, String>& enum_map)
     {
         enum_map[Nothing] = "Nothing";
         enum_map[All] = "All";
@@ -324,7 +325,7 @@ struct PlaneIntersectionBase : public StructSafeEnum
         Back, Front, Plane,
     };
 protected:
-    virtual bool BuildEnumMap(map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, String>& enum_map)
     {
         enum_map[Back]  = "Back";
         enum_map[Front] = "Front";
