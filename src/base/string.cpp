@@ -103,9 +103,9 @@ std::string vformat(char const *format, va_list ap)
     ap2 = ap;
 #endif
 
-    /* vsnprintf() tells us how many character we need, and we need to
-     * add one for the terminating null byte. */
-    size_t needed = vsnprintf(nullptr, 0, format, ap2) + 1;
+    /* vsnprintf() tells us how many characters we need, not counting
+     * the terminating null character. */
+    size_t needed = vsnprintf(nullptr, 0, format, ap2);
 
 #if defined va_copy || !defined _MSC_VER
     /* do not call va_end() if va_copy() wasn't called. */
@@ -114,7 +114,7 @@ std::string vformat(char const *format, va_list ap)
 
     std::string ret;
     ret.resize(needed);
-    vsnprintf(&ret[0], needed, format, ap);
+    vsnprintf(&ret[0], needed + 1, format, ap);
 
     return ret;
 }
