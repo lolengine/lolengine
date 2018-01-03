@@ -84,7 +84,7 @@ private:
     // Benlitz: using a simple array could be faster since there is never more than a few attribute locations to store
     std::map<uint64_t, GLint> attrib_locations;
     std::map<uint64_t, bool> attrib_errors;
-    uint32_t vert_crc, frag_crc;
+    size_t vert_crc, frag_crc;
 
     /* Shader patcher */
     static int GetVersion();
@@ -92,12 +92,10 @@ private:
 
     /* Global shader cache */
     static Shader *shaders[];
-    static hash<char const *> Hash;
     static int nshaders;
 };
 
 Shader *ShaderData::shaders[256];
-hash<char const *> ShaderData::Hash;
 int ShaderData::nshaders = 0;
 
 /*
@@ -202,8 +200,8 @@ Shader *Shader::Create(std::string const &name, std::string const &code)
     std::string vert = p.m_programs["vert.glsl"];
     std::string frag = p.m_programs["frag.glsl"];
 
-    uint32_t new_vert_crc = ShaderData::Hash(vert);
-    uint32_t new_frag_crc = ShaderData::Hash(frag);
+    size_t new_vert_crc = std::hash<std::string>{}(vert);
+    size_t new_frag_crc = std::hash<std::string>{}(frag);
 
     for (int n = 0; n < ShaderData::nshaders; n++)
     {
@@ -240,7 +238,7 @@ Shader::Shader(std::string const &name,
     GLsizei len;
 
     /* Compile vertex shader */
-    data->vert_crc = ShaderData::Hash(vert);
+    data->vert_crc = std::hash<std::string>{}(vert);
 
     shader_code = ShaderData::Patch(vert, ShaderType::Vertex);
     data->vert_id = glCreateShader(GL_VERTEX_SHADER);
@@ -263,7 +261,7 @@ Shader::Shader(std::string const &name,
     }
 
     /* Compile fragment shader */
-    data->frag_crc = ShaderData::Hash(frag);
+    data->frag_crc = std::hash<std::string>{}(frag);
 
     shader_code = ShaderData::Patch(frag, ShaderType::Fragment);
     data->frag_id = glCreateShader(GL_FRAGMENT_SHADER);

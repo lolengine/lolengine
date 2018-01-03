@@ -20,7 +20,6 @@
 #include <lol/base/array.h>
 #include <lol/base/avl_tree.h>
 #include <lol/base/string.h>
-#include <lol/base/hash.h>
 #include <lol/base/map.h>
 #include <lol/base/enum.h>
 

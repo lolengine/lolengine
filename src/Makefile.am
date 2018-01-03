@@ -35,8 +35,8 @@ liblol_core_headers = \
     \
     lol/base/all.h \
     lol/base/avl_tree.h lol/base/features.h lol/base/tuple.h lol/base/types.h \
-    lol/base/array.h lol/base/assert.h lol/base/string.h lol/base/hash.h \
-    lol/base/map.h lol/base/enum.h lol/base/log.h \
+    lol/base/array.h lol/base/assert.h lol/base/string.h lol/base/map.h \
+    lol/base/enum.h lol/base/log.h \
     \
     lol/math/all.h \
     lol/math/functions.h lol/math/vector.h lol/math/half.h lol/math/real.h \
@@ -88,8 +88,7 @@ liblol_core_sources = \
     easymesh/shinydebuglighting.lolfx easymesh/shinydebugnormal.lolfx \
     easymesh/shinydebugUV.lolfx easymesh/shiny_SK.lolfx \
     \
-    base/assert.cpp base/hash.cpp base/log.cpp base/string.cpp \
-    base/enum.cpp \
+    base/assert.cpp base/log.cpp base/string.cpp base/enum.cpp \
     \
     math/vector.cpp math/matrix.cpp math/transform.cpp math/trig.cpp \
     math/constants.cpp math/geometry.cpp math/real.cpp math/half.cpp \

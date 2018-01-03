@@ -261,9 +261,6 @@
     <ClCompile Include="base\enum.cpp">
       <Filter>base</Filter>
     </ClCompile>
-    <ClCompile Include="base\hash.cpp">
-      <Filter>base</Filter>
-    </ClCompile>
     <ClCompile Include="base\string.cpp">
       <Filter>base</Filter>
     </ClCompile>
@@ -611,9 +608,6 @@
       <Filter>lol\base</Filter>
     </ClInclude>
     <ClInclude Include="lol\base\features.h">
-      <Filter>lol\base</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\base\hash.h">
       <Filter>lol\base</Filter>
     </ClInclude>
     <ClInclude Include="lol\base\map.h">
