@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -22,7 +22,11 @@ namespace lol
 
 /*
  * First handle explicit specialisation of our templates.
- *
+ */
+
+template<> int real::DEFAULT_BIGIT_COUNT = 16;
+
+/*
  * Initialisation order is not important because everything is
  * done on demand, but here is the dependency list anyway:
  *  - fast_log() requires R_1
@@ -89,9 +93,6 @@ LOL_CONSTANT_GETTER(R_SQRT1_2,  R_SQRT2() / 2);
  * Now carry on with the rest of the Real class.
  */
 
-template<>
-int real::DEFAULT_BIGIT_COUNT = 16;
-
 template<> real::Real()
   : m_exponent(0),
     m_sign(false),
@@ -116,7 +117,7 @@ template<> real::Real(uint64_t i)
     if (i)
     {
         /* Only works with 32-bit bigits for now */
-        static_assert(sizeof(bigit_t) == 4);
+        static_assert(sizeof(bigit_t) == 4, "bigit_t must be 32-bit");
 
         int delta = 1;
         while ((i >> 63) == 0)
@@ -155,7 +156,7 @@ template<> real::Real(double d)
         break;
     default:
         /* Only works with 32-bit bigits for now */
-        static_assert(sizeof(bigit_t) == 4);
+        static_assert(sizeof(bigit_t) == 4, "bigit_t must be 32-bit");
         m_exponent = exponent - ((1 << 10) - 1);
         m_mantissa.resize(DEFAULT_BIGIT_COUNT);
         m_mantissa[0] = (bigit_t)(u.x >> 20);
@@ -271,7 +272,7 @@ template<> real::Real(char const *str)
                 finished = true;
                 break;
             }
-            LOL_ATTR_FALLTHROUGH /* FIXME: why doesn’t this seem to work? */
+            LOL_ATTR_FALLTHROUGH;
         case 'a': case 'b': case 'c': case 'd': case 'f':
         case 'A': case 'B': case 'C': case 'D': case 'F':
         case '0': case '1': case '2': case '3': case '4':

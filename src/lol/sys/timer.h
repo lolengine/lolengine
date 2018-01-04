@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //            © 2016 Guillaume Bittoun <guillaume.bittoun@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -45,11 +45,11 @@ public:
 private:
     std::chrono::steady_clock::time_point m_tp;
 
-    float get_seconds(bool reset)
+    float get_seconds(bool do_reset)
     {
         auto tp = std::chrono::steady_clock::now(), tp0 = m_tp;
 
-        if (reset)
+        if (do_reset)
             m_tp = tp;
 
         return std::chrono::duration_cast<std::chrono::duration<float>>(tp - tp0).count();

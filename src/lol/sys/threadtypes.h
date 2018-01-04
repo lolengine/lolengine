@@ -97,7 +97,7 @@ protected:
 class BaseThreadManager : public Entity
 {
 public:
-    char const *GetName() { return "<BaseThreadManager>"; }
+    std::string GetName() const { return "<BaseThreadManager>"; }
     BaseThreadManager(int thread_max);
     BaseThreadManager(int thread_max, int thread_min);
     virtual ~BaseThreadManager();
@@ -163,7 +163,7 @@ private:
 class DefaultThreadManager : public BaseThreadManager
 {
 public:
-    char const *GetName() { return "<DefaultThreadManager>"; }
+    std::string GetName() const { return "<DefaultThreadManager>"; }
     DefaultThreadManager(int thread_max)
         : BaseThreadManager(thread_max, thread_max)
     { }
@@ -222,7 +222,7 @@ public:
         }
     };
 public:
-    char const *GetName() { return "<FileUpdateTester>"; }
+    std::string GetName() const { return "<FileUpdateTester>"; }
     FileUpdateTester(uint32_t frame_skip = 4)
         : BaseThreadManager(1)
     { m_frame_skip = frame_skip; }
@@ -252,7 +252,7 @@ typedef FileUpdateTester::Status FileUpdateStatus;
 class AsyncImageLoader : public BaseThreadManager
 {
 public:
-    char const *GetName() { return "<AsyncImageLoader>"; }
+    std::string GetName() const { return "<AsyncImageLoader>"; }
     AsyncImageLoader(int thread_max)
         : BaseThreadManager(thread_max, 0)
     {
