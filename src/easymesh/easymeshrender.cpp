@@ -2,7 +2,7 @@
 //  Lol Engine
 //
 //  Copyright © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//            © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //            © 2009—2013 Cédric Lecacheur <jordx@free.fr>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -93,9 +93,9 @@ GpuShaderData::~GpuShaderData()
 }
 
 //-----------------------------------------------------------------------------
-void GpuShaderData::AddUniform(const lol::String &new_uniform)
+void GpuShaderData::AddUniform(std::string const &new_uniform)
 {
-    m_shader_uniform.push(new_uniform, m_shader->GetUniformLocation(new_uniform.C()));
+    m_shader_uniform.push(new_uniform, m_shader->GetUniformLocation(new_uniform));
 }
 
 //-----------------------------------------------------------------------------
@@ -105,7 +105,7 @@ void GpuShaderData::AddAttribute(VertexUsage usage, int index)
 }
 
 //-----------------------------------------------------------------------------
-ShaderUniform const *GpuShaderData::GetUniform(const lol::String &uniform)
+ShaderUniform const *GpuShaderData::GetUniform(std::string const &uniform)
 {
     for (int i = 0; i < m_shader_uniform.count(); ++i)
         if (m_shader_uniform[i].m1 == uniform)
@@ -159,17 +159,18 @@ DefaultShaderData::DefaultShaderData(uint16_t vert_decl_flags, Shader* shader, b
     SetupDefaultData(with_UV);
 }
 
-static const String DefaultUniforms[8] =
+static std::string const DefaultUniforms[8] =
 {
-    String("u_lights"),
-    String("u_model"),
-    String("u_modelview"),
-    String("u_view"),
-    String("u_inv_view"),
-    String("u_proj"),
-    String("u_normalmat"),
-    String("u_damage")
+    "u_lights",
+    "u_model",
+    "u_modelview",
+    "u_view",
+    "u_inv_view",
+    "u_proj",
+    "u_normalmat",
+    "u_damage",
 };
+
 //-----------------------------------------------------------------------------
 void DefaultShaderData::StoreUniformNames()
 {

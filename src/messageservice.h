@@ -89,7 +89,7 @@ public:
     MessageService();
     ~MessageService();
 
-    static char const *GetName() { return "<messageservice>"; }
+    static std::string GetName() { return "<messageservice>"; }
 
     //Setup/Destroy
     static void Setup();

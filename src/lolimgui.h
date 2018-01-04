@@ -176,7 +176,7 @@ public:
     //-------------------------------------------------------------------------
     LolImGui();
     ~LolImGui();
-    char const *GetName() { return "<LolImGui>"; }
+    std::string GetName() const { return "<LolImGui>"; }
 
     //-------------------------------------------------------------------------
     static void Init();

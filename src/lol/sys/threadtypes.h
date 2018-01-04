@@ -80,7 +80,7 @@ class ThreadJob
 protected:
     inline ThreadJob(ThreadJobType type) : m_type(type) {}
 public:
-    char const *GetName() { return "<ThreadJob>"; }
+    std::string GetName() const { return "<ThreadJob>"; }
     inline ThreadJob() : m_type(ThreadJobType::NONE) {}
     virtual ~ThreadJob() {}
 

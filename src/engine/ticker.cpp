@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -114,7 +114,7 @@ void Ticker::Ref(Entity *entity)
     ASSERT(entity, "dereferencing nullptr entity\n");
     ASSERT(!entity->m_destroy,
            "referencing entity scheduled for destruction %s\n",
-           entity->GetName());
+           entity->GetName().c_str());
 
     if (entity->m_autorelease)
     {
@@ -139,9 +139,9 @@ int Ticker::Unref(Entity *entity)
 {
     ASSERT(entity, "dereferencing null entity\n");
     ASSERT(entity->m_ref > 0, "dereferencing unreferenced entity %s\n",
-           entity->GetName());
+           entity->GetName().c_str());
     ASSERT(!entity->m_autorelease, "dereferencing autoreleased entity %s\n",
-           entity->GetName());
+           entity->GetName().c_str());
 
     return --entity->m_ref;
 }
@@ -223,7 +223,7 @@ void TickerData::GameThreadTick()
         {
             Entity *e = data->m_list[g][i];
             msg::debug("  \\-- [%p] %s (m_ref %d, destroy %d)\n",
-                       e, e->GetName(), e->m_ref, e->m_destroy);
+                       e, e->GetName().c_str(), e->m_ref, e->m_destroy);
         }
     }
 #endif
@@ -276,7 +276,7 @@ void TickerData::GameThreadTick()
             if (e->m_ref)
             {
 #if !LOL_BUILD_RELEASE
-                msg::error("poking %s\n", e->GetName());
+                msg::error("poking %s\n", e->GetName().c_str());
 #endif
                 e->m_ref--;
                 n++;
@@ -401,14 +401,14 @@ void TickerData::GameThreadTick()
 #if !LOL_BUILD_RELEASE
                 if (e->m_tickstate != Entity::STATE_IDLE)
                     msg::error("entity %s [%p] not idle for game tick\n",
-                               e->GetName(), e);
+                               e->GetName().c_str(), e);
                 e->m_tickstate = Entity::STATE_PRETICK_GAME;
 #endif
                 e->TickGame(data->deltatime);
 #if !LOL_BUILD_RELEASE
                 if (e->m_tickstate != Entity::STATE_POSTTICK_GAME)
                     msg::error("entity %s [%p] missed super game tick\n",
-                               e->GetName(), e);
+                               e->GetName().c_str(), e);
                 e->m_tickstate = Entity::STATE_IDLE;
 #endif
             }
@@ -455,14 +455,14 @@ void TickerData::DrawThreadTick()
 #if !LOL_BUILD_RELEASE
                     if (e->m_tickstate != Entity::STATE_IDLE)
                         msg::error("entity %s [%p] not idle for draw tick\n",
-                                   e->GetName(), e);
+                                   e->GetName().c_str(), e);
                     e->m_tickstate = Entity::STATE_PRETICK_DRAW;
 #endif
                     e->TickDraw(data->deltatime, scene);
 #if !LOL_BUILD_RELEASE
                     if (e->m_tickstate != Entity::STATE_POSTTICK_DRAW)
                         msg::error("entity %s [%p] missed super draw tick\n",
-                                   e->GetName(), e);
+                                   e->GetName().c_str(), e);
                     e->m_tickstate = Entity::STATE_IDLE;
 #endif
                 }

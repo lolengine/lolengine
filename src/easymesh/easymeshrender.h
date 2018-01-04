@@ -2,7 +2,7 @@
 //  Lol Engine
 //
 //  Copyright © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//            © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //            © 2009—2013 Cédric Lecacheur <jordx@free.fr>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <string>
 #include <map>
 
 namespace lol
@@ -31,7 +32,7 @@ struct MeshRenderBase : public StructSafeEnum
         IgnoreRender,
     };
 protected:
-    virtual bool BuildEnumMap(std::map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
     {
         enum_map[NeedData] = "NeedData";
         enum_map[NeedConvert] = "NeedConvert";
@@ -81,20 +82,20 @@ public:
     GpuShaderData(uint16_t vert_decl_flags, Shader* shader, DebugRenderMode render_mode);
     virtual ~GpuShaderData();
     //--
-    void AddUniform(const lol::String &new_uniform);
+    void AddUniform(std::string const &new_uniform);
     void AddAttribute(VertexUsage usage, int index);
-    ShaderUniform const *GetUniform(const lol::String &uniform);
+    ShaderUniform const *GetUniform(std::string const &uniform);
     ShaderAttrib const *GetAttribute(VertexUsage usage, int index);
     //--
     virtual void SetupShaderDatas(mat4 const &model) { UNUSED(model); }
     //--
 
 protected:
-    uint16_t                            m_vert_decl_flags;
-    Shader*                             m_shader;
-    int                                    m_render_mode;
-    array<lol::String, ShaderUniform>   m_shader_uniform;
-    array<ShaderAttrib>                 m_shader_attrib;
+    uint16_t m_vert_decl_flags;
+    Shader *m_shader;
+    int m_render_mode;
+    array<std::string, ShaderUniform> m_shader_uniform;
+    array<ShaderAttrib> m_shader_attrib;
 };
 
 class DefaultShaderData : public GpuShaderData
@@ -109,7 +110,7 @@ public:
     void SetupDefaultData(bool with_UV);
     virtual void SetupShaderDatas(mat4 const &model);
     //--
-    array<String>   m_uniform_names;
+    array<std::string> m_uniform_names;
 };
 
 class GpuEasyMeshData

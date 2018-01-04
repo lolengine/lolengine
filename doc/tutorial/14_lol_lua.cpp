@@ -2,6 +2,7 @@
 //  Lol Engine — Lua tutorial
 //
 //  Copyright © 2014—2017 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//            © 2017—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -113,7 +114,7 @@ public:
 static int GlobalAddString(lua_State* l)
 {
     auto stack = LuaStack::Begin(l);
-    auto s = stack.Get<String>();
+    auto s = stack.Get<std::string>();
 
     s += "_added";
 
@@ -185,10 +186,10 @@ public:
         float testvalue_num = demo_loader->Get<float>("testvalue_num");
         int32_t testvalue_int = demo_loader->Get<int32_t>("testvalue_int");
         uint32_t testvalue_uint = demo_loader->Get<uint32_t>("testvalue_uint");
-        String testvalue_str = demo_loader->Get<String>("testvalue_str");
+        std::string testvalue_str = demo_loader->Get<std::string>("testvalue_str");
 
         //Grab string modified with function
-        String function_return = demo_loader->Get<String>("function_return");
+        std::string function_return = demo_loader->Get<std::string>("function_return");
 
         //Grab global values modified with DemoObject
         int32_t loluademo_return = demo_loader->Get<int32_t>("loluademo_return");
@@ -198,10 +199,10 @@ public:
 
         msg::info("Lua Vars: \
             testvalue_num: %.2f, testvalue_int: %i, testvalue_uint: %i, testvalue_str: %s.\n",
-            testvalue_num, testvalue_int, testvalue_uint, testvalue_str.C());
+            testvalue_num, testvalue_int, testvalue_uint, testvalue_str.c_str());
         msg::info("Lua Vars: \
             function_return: %s, loluademo_return: %i, loluademo_inst_return: %.2f, loluademo_getx: %i, loluademo_inst->m_x: %i.\n",
-            function_return.C(), loluademo_return, loluademo_inst_return, loluademo_getx, loluademo_inst->m_x);
+            function_return.c_str(), loluademo_return, loluademo_inst_return, loluademo_getx, loluademo_inst->m_x);
 
 #define /***/ _LOLUA_ARG_1(a00) (float)a00
 #define /***/ _LOLUA_ARG_2(a00, a01) _LOLUA_ARG_1(a00), _LOLUA_ARG_1(a01)

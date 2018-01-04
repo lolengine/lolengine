@@ -36,7 +36,7 @@ public:
     SceneSetup(std::string const& name);
     ~SceneSetup();
 
-    static char const *GetName() { return "<scenesetup>"; }
+    static std::string GetName() { return "<scenesetup>"; }
 
     //--
     bool Startup();

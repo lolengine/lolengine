@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -345,7 +345,7 @@ public:
     /*
     * Convert hex strings to colors.
     */
-    static vec4 C8BppHexString(String c);
+    static vec4 C8BppHexString(std::string const &c);
 
     /*
     * Some predefined colours

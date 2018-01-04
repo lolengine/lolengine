@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -40,13 +40,13 @@ TextureImageData* TextureImage::GetNewData()
  * Public TextureImage class
  */
 
-TextureImage::TextureImage(char const *path)
+TextureImage::TextureImage(std::string const &path)
     : m_data(GetNewData())
 {
     Init(path);
 }
 
-TextureImage::TextureImage(char const *path, image* img)
+TextureImage::TextureImage(std::string const &path, image* img)
     : m_data(GetNewData())
 {
     Init(path, img);
@@ -57,12 +57,12 @@ TextureImage::~TextureImage()
     delete m_data;
 }
 
-void TextureImage::Init(char const *path)
+void TextureImage::Init(std::string const &path)
 {
     Init(path, ResourceLoader::Load(path));
 }
 
-void TextureImage::Init(char const *path, ResourceCodecData* loaded_data)
+void TextureImage::Init(std::string const &path, ResourceCodecData* loaded_data)
 {
     //Load image if available
     auto image_data = dynamic_cast<ResourceImageData*>(loaded_data);
@@ -74,9 +74,9 @@ void TextureImage::Init(char const *path, ResourceCodecData* loaded_data)
     delete image_data;
 }
 
-void TextureImage::Init(char const *path, image* img)
+void TextureImage::Init(std::string const &path, image* img)
 {
-    m_data->m_name = String("<textureimage> ") + path;
+    m_data->m_name = "<textureimage> " + path;
 
     m_data->m_texture = nullptr;
     m_data->m_image = img;
@@ -144,9 +144,9 @@ void TextureImage::TickDraw(float seconds, Scene &scene)
 }
 
 //-----------------------------------------------------------------------------
-char const *TextureImage::GetName()
+std::string TextureImage::GetName() const
 {
-    return m_data->m_name.C();
+    return m_data->m_name;
 }
 
 void TextureImage::UpdateTexture(image* img)

@@ -1,12 +1,14 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//                     2013 Jean-Yves Lamoureux <jylam@lnxscene.org>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//                   2013 Jean-Yves Lamoureux <jylam@lnxscene.org>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -26,7 +28,7 @@ class FontData
     friend class Font;
 
 private:
-    String m_name;
+    std::string m_name;
     TileSet *tileset;
     ivec2 size;
 };
@@ -35,10 +37,10 @@ private:
  * Public Font class
  */
 
-Font::Font(char const *path)
+Font::Font(std::string const &path)
   : data(new FontData())
 {
-    data->m_name = String("<font> ") + path;
+    data->m_name = "<font> " + path;
 
     data->tileset = Tiler::Register(path, ivec2::zero, ivec2(16));
     data->size = data->tileset->GetTileSize(0);
@@ -63,17 +65,17 @@ void Font::TickDraw(float seconds, Scene &scene)
     }
 }
 
-char const *Font::GetName()
+std::string Font::GetName() const
 {
-    return data->m_name.C();
+    return data->m_name;
 }
 
-void Font::Print(Scene &scene, vec3 pos, char const *str, vec2 scale, float spacing)
+void Font::Print(Scene &scene, vec3 pos, std::string const &str, vec2 scale, float spacing)
 {
     float origin_x = pos.x;
-    while (*str)
+    for (int i = 0; i < (int)str.length(); ++i)
     {
-        uint32_t ch = (uint8_t)*str++;
+        uint32_t ch = str[i];
 
         switch (ch)
         {

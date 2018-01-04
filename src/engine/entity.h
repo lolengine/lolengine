@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -50,7 +50,7 @@ class Entity
     friend class Emcee;
 
 public:
-    virtual char const *GetName();
+    virtual std::string GetName() const;
 
     inline bool IsTicked() { return !!m_ref && !m_autorelease; }
 protected:

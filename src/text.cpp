@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -30,7 +30,7 @@ class TextData
 private:
     int m_font;
     TextAlign m_align;
-    String m_text;
+    std::string m_text;
     vec3 m_pos;
     vec2 m_scale;
     float m_spacing;
@@ -40,7 +40,7 @@ private:
  * Public Text class
  */
 
-Text::Text(String const &text, char const *font)
+Text::Text(std::string const &text, char const *font)
   : data(new TextData())
 {
     data->m_font = Forge::Register(font);
@@ -53,7 +53,7 @@ Text::Text(String const &text, char const *font)
     m_drawgroup = DRAWGROUP_HUD;
 }
 
-void Text::SetText(String const &text)
+void Text::SetText(std::string const &text)
 {
     data->m_text = text;
 }
@@ -98,7 +98,7 @@ void Text::TickDraw(float seconds, Scene &scene)
 {
     Entity::TickDraw(seconds, scene);
 
-    if (auto length = data->m_text.count())
+    if (auto length = data->m_text.length())
     {
         Font *font = Forge::GetFont(data->m_font);
         vec3 delta(0.0f);
@@ -110,7 +110,7 @@ void Text::TickDraw(float seconds, Scene &scene)
         else if (data->m_align == TextAlign::Center)
             delta.x -= 0.5f * text_width * data->m_scale.x;
 
-        font->Print(scene, data->m_pos + delta, data->m_text.C(),
+        font->Print(scene, data->m_pos + delta, data->m_text,
                            data->m_scale, data->m_spacing);
     }
 }

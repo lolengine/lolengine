@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2002—2016 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2002—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -44,7 +44,7 @@ struct getopt_private
     int m_argc;
     char * const *m_argv;
 
-    String m_optstring;
+    std::string m_optstring;
     array<optdesc> m_opts;
 };
 
@@ -90,7 +90,7 @@ int getopt::parse()
     optind = this->index;
     optarg = this->arg;
     m_private->m_opts.push(getopt_private::optdesc { nullptr, 0, nullptr, 0 });
-    ret = getopt_long(m_private->m_argc, m_private->m_argv, m_private->m_optstring.C(),
+    ret = getopt_long(m_private->m_argc, m_private->m_argv, m_private->m_optstring.c_str(),
                       (option const *)m_private->m_opts.data(), &longindex);
     this->index = optind;
     this->arg = optarg;
@@ -117,7 +117,7 @@ int getopt::parse()
         if (ret == '\0')
             return -1;
 
-        tmp = strchr(m_private->m_optstring.C(), ret);
+        tmp = strchr(m_private->m_optstring.c_str(), ret);
         if (!tmp || ret == ':')
             return '?';
 

@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -107,25 +109,25 @@ uint16_t Color::ToRGB16(vec4 c)
 /*
 * Conversion from colours to hexadecimal
 */
-vec4 Color::C8BppHexString(String s)
+vec4 Color::C8BppHexString(std::string const &s)
 {
-    String c = s[0] == '#' ? &s[1] : s;
-    uint32_t tmp = std::strtol(c.C(), nullptr, 16);
-    if (c.count() == 3)
+    std::string c = s[0] == '#' ? &s[1] : s;
+    uint32_t tmp = std::strtol(c.c_str(), nullptr, 16);
+    if (c.length() == 3)
     {
         tmp = 0x11000000u * (tmp >> 8)
             | 0x00110000u * ((tmp >> 4) & 0xf)
             | 0x00001100u * (tmp & 0xf)
             | 0x000000ffu;
     }
-    else if (c.count() == 4)
+    else if (c.length() == 4)
     {
         tmp = 0x11000000u * (tmp >> 12)
             | 0x00110000u * ((tmp >> 8) & 0xf)
             | 0x00001100u * ((tmp >> 4) & 0xf)
             | 0x00000011u * (tmp & 0xf);
     }
-    else if (c.count() == 6)
+    else if (c.length() == 6)
     {
         tmp = 0xffu | 0x100u * tmp;
     }

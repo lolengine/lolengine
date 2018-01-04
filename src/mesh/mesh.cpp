@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -104,9 +104,9 @@ void SubMesh::SetIndexBuffer(IndexBuffer* ibo)
     m_ibo = ibo;
 }
 
-void SubMesh::AddTexture(const char* name, Texture* texture)
+void SubMesh::AddTexture(std::string const &name, Texture* texture)
 {
-    m_textures.push(String(name), texture);
+    m_textures.push(name, texture);
 }
 
 void SubMesh::Render()
@@ -142,7 +142,7 @@ void SubMesh::Render()
     for (int i = 0; i < m_textures.count(); ++i)
     {
         // TODO: might be good to cache this
-        ShaderUniform u_tex = m_shader->GetUniformLocation(m_textures[i].m1.C());
+        ShaderUniform u_tex = m_shader->GetUniformLocation(m_textures[i].m1);
         m_shader->SetUniform(u_tex, m_textures[i].m2->GetTextureUniform(), i);
     }
 

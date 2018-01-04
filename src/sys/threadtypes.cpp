@@ -32,14 +32,19 @@ class FileUpdateTesterJob : public ThreadJob
 {
     friend class FileUpdateTester;
 public:
-    char const *GetName() { return "<FileUpdateTesterJob>"; }
+    std::string GetName() const { return "<FileUpdateTesterJob>"; }
+
     FileUpdateTesterJob()
-        : ThreadJob(ThreadJobType::NONE) { }
-    FileUpdateTesterJob(std::string const &path)
-        : ThreadJob(ThreadJobType::WORK_TODO)
+      : ThreadJob(ThreadJobType::NONE)
     {
-        m_path = path;
     }
+
+    FileUpdateTesterJob(std::string const &path)
+      : ThreadJob(ThreadJobType::WORK_TODO),
+        m_path(path)
+    {
+    }
+
     std::string const &GetPath() { return m_path; }
     long int GetTime()  { return m_time; }
     bool HasUpdated()   { return m_updated; }
@@ -156,7 +161,8 @@ void FileUpdateTester::TreatResult(ThreadJob* result)
 class AsyncImageJob : public ThreadJob
 {
 public:
-    char const *GetName() { return "<AsyncImageJob>"; }
+    std::string GetName() const { return "<AsyncImageJob>"; }
+
     AsyncImageJob()
       : ThreadJob(ThreadJobType::NONE)
     {

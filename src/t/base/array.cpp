@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -191,7 +191,7 @@ lolunit_declare_fixture(array_test)
 
     lolunit_declare_test(array_insert_tuple)
     {
-        array<int, float, String> b;
+        array<int, float, std::string> b;
         b.insert(0, 5, 6.f, "lol");
         lolunit_assert_equal(5, b[0].m1);
         lolunit_assert_equal(6.f, b[0].m2);

@@ -41,7 +41,7 @@ struct CSGUsageBase : public StructSafeEnum
         Xor
     };
 protected:
-    virtual bool BuildEnumMap(std::map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
     {
         enum_map[Union] = "Union";
         enum_map[Substract] = "Substract";
@@ -65,7 +65,7 @@ struct MeshTransformBase : public StructSafeEnum
         Shear
     };
 protected:
-    virtual bool BuildEnumMap(std::map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
     {
         enum_map[Taper] = "Taper";
         enum_map[Twist] = "Twist";

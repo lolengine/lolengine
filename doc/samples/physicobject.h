@@ -1,11 +1,15 @@
 //
-//  Orbital
+//  Lol Engine — Bullet physics test
 //
 //  Copyright © 2009—2013 Cédric Lecacheur <jordx@free.fr>
 //            © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2012—2015 Sam Hocevar <sam@hocevar.net>
+//            © 2012—2018 Sam Hocevar <sam@hocevar.net>
 //
-//  No licensing terms yet. All rights reserved.
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
@@ -141,13 +145,13 @@ public:
 
         if (!MeshRand.count())
         {
-            array<String> colors_base = { "#add", "#dad", "#dda", "#daa", "#ada", "#aad" };
+            array<std::string> colors_base = { "#add", "#dad", "#dda", "#daa", "#ada", "#aad" };
 
             MeshLimit << 0;
 
 #if USE_BOX
             {
-                array<String> colors = colors_base;
+                array<std::string> colors = colors_base;
                 while (colors.count())
                 {
                     EasyMesh m;
@@ -196,7 +200,7 @@ public:
             MeshRand << "[tpbn tvnc sc#aaff aq 0 0]";
 #else
             {
-                array<String> colors = colors_base;
+                array<std::string> colors = colors_base;
                 while (colors.count())
                 {
                     EasyMesh m;
@@ -220,7 +224,7 @@ public:
 
 #if USE_CONE
             {
-                array<String> colors = colors_base;
+                array<std::string> colors = colors_base;
                 while (colors.count())
                 {
                     EasyMesh m;
@@ -247,7 +251,7 @@ public:
 
 #if USE_CYLINDER
             {
-                array<String> colors = colors_base;
+                array<std::string> colors = colors_base;
                 while (colors.count())
                 {
                     EasyMesh m;
@@ -275,7 +279,7 @@ public:
 
 #if USE_CAPSULE
             {
-                array<String> colors = colors_base;
+                array<std::string> colors = colors_base;
                 while (colors.count())
                 {
                     EasyMesh m;
@@ -395,7 +399,7 @@ public:
     {
     }
 
-    char const *GetName() { return "<PhysicsObject>"; }
+    std::string GetName() const { return "<PhysicsObject>"; }
 
 protected:
     virtual void TickGame(float seconds)

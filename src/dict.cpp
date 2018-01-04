@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -64,7 +64,7 @@ Dict::~Dict()
     delete data;
 }
 
-int Dict::MakeSlot(char const *name)
+int Dict::MakeSlot(std::string const &name)
 {
     int slotid, empty = -1;
 
@@ -80,7 +80,7 @@ int Dict::MakeSlot(char const *name)
         }
         else
         {
-            char const *oldname = e->GetName();
+            char const *oldname = e->GetName().c_str();
             if (*oldname == '<')
             {
                 while (*oldname && *oldname != '>')
@@ -91,7 +91,7 @@ int Dict::MakeSlot(char const *name)
                     oldname++;
             }
 
-            if (!strcasecmp(name, oldname))
+            if (!strcasecmp(name.c_str(), oldname))
                 break;
         }
     }
@@ -137,7 +137,7 @@ void Dict::RemoveSlot(Entity *entity)
 
 #if !LOL_BUILD_RELEASE
     msg::error("removing unregistered entity %p (%s)\n",
-               entity, entity->GetName());
+               entity, entity->GetName().c_str());
 #endif
 }
 

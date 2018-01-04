@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -45,21 +45,21 @@ protected:
  * Public TileSet class
  */
 
-TileSet::TileSet(char const *path)
+TileSet::TileSet(std::string const &path)
   : TextureImage(path),
     m_tileset_data(new TileSetData()),
     m_palette(nullptr)
 {
 }
 
-TileSet::TileSet(char const *path, Image* image)
+TileSet::TileSet(std::string const &path, Image* image)
   : TextureImage(path, image),
     m_tileset_data(new TileSetData()),
     m_palette(nullptr)
 {
 }
 
-TileSet::TileSet(char const *path, Image* image, array<ivec2, ivec2>& tiles)
+TileSet::TileSet(std::string const &path, Image* image, array<ivec2, ivec2>& tiles)
   : TextureImage(path, image),
     m_tileset_data(new TileSetData()),
     m_palette(nullptr)
@@ -67,7 +67,7 @@ TileSet::TileSet(char const *path, Image* image, array<ivec2, ivec2>& tiles)
     define_tile(tiles);
 }
 
-TileSet::TileSet(char const *path, ivec2 size, ivec2 count)
+TileSet::TileSet(std::string const &path, ivec2 size, ivec2 count)
   : TileSet(path)
 {
     /* If count is valid, fix size; otherwise, fix count. */
@@ -90,7 +90,7 @@ TileSet::TileSet(char const *path, ivec2 size, ivec2 count)
     }
 }
 
-TileSet::TileSet(char const *path, Image* image, ivec2 size, ivec2 count)
+TileSet::TileSet(std::string const &path, Image* image, ivec2 size, ivec2 count)
   : TileSet(path, image)
 {
     /* If count is valid, fix size; otherwise, fix count. */
@@ -118,7 +118,7 @@ TileSet::~TileSet()
     delete m_tileset_data;
 }
 
-void TileSet::Init(char const *path, ResourceCodecData* loaded_data)
+void TileSet::Init(std::string const &path, ResourceCodecData* loaded_data)
 {
     //Load tileset if available
     auto tileset_data = dynamic_cast<ResourceTilesetData*>(loaded_data);
@@ -127,22 +127,22 @@ void TileSet::Init(char const *path, ResourceCodecData* loaded_data)
         define_tile(tileset_data->m_tiles);
     }
 
-    m_data->m_name = String("<tileset> ") + path;
+    m_data->m_name = "<tileset> " + path;
 
     super::Init(path, loaded_data);
 }
 
-void TileSet::Init(char const *path, Image* image)
+void TileSet::Init(std::string const &path, Image* image)
 {
     super::Init(path, image);
 
-    m_data->m_name = String("<tileset> ") + path;
+    m_data->m_name = "<tileset> " + path;
 }
 
 //Inherited from Entity -------------------------------------------------------
-char const *TileSet::GetName()
+std::string TileSet::GetName() const
 {
-    return m_data->m_name.C();
+    return m_data->m_name;
 }
 
 //New methods -----------------------------------------------------------------

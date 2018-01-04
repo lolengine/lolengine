@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -36,11 +38,7 @@ static TilerData * const data = &tilerdata;
  * Public Tiler class
  */
 
-TileSet *Tiler::Register(String const &path, ivec2 size, ivec2 count)
-{
-    return Tiler::Register(path.C(), size, count);
-}
-TileSet *Tiler::Register(char const *path, ivec2 size, ivec2 count)
+TileSet *Tiler::Register(std::string const &path, ivec2 size, ivec2 count)
 {
     int id = data->tilesets.MakeSlot(path);
     TileSet *tileset = (TileSet *)data->tilesets.GetEntity(id);
@@ -54,11 +52,7 @@ TileSet *Tiler::Register(char const *path, ivec2 size, ivec2 count)
     return tileset;
 }
 
-TileSet *Tiler::Register(String const &path)
-{
-    return Tiler::Register(path.C());
-}
-TileSet *Tiler::Register(char const *path)
+TileSet *Tiler::Register(std::string const &path)
 {
     int id = data->tilesets.MakeSlot(path);
     TileSet *tileset = (TileSet *)data->tilesets.GetEntity(id);
@@ -72,11 +66,7 @@ TileSet *Tiler::Register(char const *path)
     return tileset;
 }
 
-TileSet *Tiler::Register(String const &path, Image* image, ivec2 size, ivec2 count)
-{
-    return Tiler::Register(path.C(), image, size, count);
-}
-TileSet *Tiler::Register(char const *path, Image* image, ivec2 size, ivec2 count)
+TileSet *Tiler::Register(std::string const &path, Image* image, ivec2 size, ivec2 count)
 {
     int id = data->tilesets.MakeSlot(path);
     TileSet *tileset = (TileSet *)data->tilesets.GetEntity(id);
@@ -90,11 +80,7 @@ TileSet *Tiler::Register(char const *path, Image* image, ivec2 size, ivec2 count
     return tileset;
 }
 
-TileSet *Tiler::Register(String const &path, Image* image)
-{
-    return Tiler::Register(path.C(), image);
-}
-TileSet *Tiler::Register(char const *path, Image* image)
+TileSet *Tiler::Register(std::string const &path, Image* image)
 {
     int id = data->tilesets.MakeSlot(path);
     TileSet *tileset = (TileSet *)data->tilesets.GetEntity(id);

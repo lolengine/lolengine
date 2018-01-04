@@ -1,10 +1,10 @@
 //
-//  Lol Engine
+//  Lol Engine — Bullet physics test
 //
-//  Copyright © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//            © 2012—2018 Sam Hocevar <sam@hocevar.net>
 //
-//  This library is free software. It comes without any warranty, to
+//  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
 //  and/or modify it under the terms of the Do What the Fuck You Want
 //  to Public License, Version 2, as published by the WTFPL Task Force.
@@ -69,9 +69,11 @@ public:
     virtual void Jump();
 
     virtual void SetTransform(const lol::vec3& base_location, const lol::quat& base_rotation);
+
 protected:
     virtual void BaseTransformChanged(const lol::mat4& PreviousMatrix, const lol::mat4& NewMatrix);
-    virtual char const *GetName();
+    virtual std::string GetName();
+
 public:
     virtual void TickGame(float seconds);
 

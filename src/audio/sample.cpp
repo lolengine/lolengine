@@ -86,9 +86,9 @@ void sample::TickGame(float seconds)
     Entity::TickGame(seconds);
 }
 
-char const *sample::GetName()
+std::string sample::GetName() const
 {
-    return data->m_name.c_str();
+    return data->m_name;
 }
 
 void sample::play()

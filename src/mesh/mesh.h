@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine
 //
-//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -94,7 +94,7 @@ public:
     void SetVertexDeclaration(VertexDeclaration *vdecl);
     void SetVertexBuffer(int index, VertexBuffer* vbo);
     void SetIndexBuffer(IndexBuffer* ibo);
-    void AddTexture(const char* name, Texture* texture);
+    void AddTexture(std::string const &name, Texture* texture);
 
 protected:
     void Render();
@@ -105,7 +105,7 @@ protected:
     array<VertexBuffer *> m_vbos;
     IndexBuffer *m_ibo;
 
-    array<String, Texture*> m_textures;
+    array<std::string, Texture*> m_textures;
 };
 
 } /* namespace lol */

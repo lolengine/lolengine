@@ -54,7 +54,7 @@ struct MeshPrimitiveBase : public StructSafeEnum
         Lines,
     };
 protected:
-    virtual bool BuildEnumMap(std::map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
     {
         enum_map[Triangles]      = "Triangles";
         enum_map[TriangleStrips] = "TriangleStrips";

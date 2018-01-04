@@ -79,7 +79,7 @@ public:
     Light();
     ~Light();
 
-    char const *GetName() { return "<light>"; }
+    std::string GetName() const { return "<light>"; }
 
     void SetType(LightType const &type);
     LightType GetType();

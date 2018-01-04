@@ -28,9 +28,12 @@ lolunit_declare_fixture(thread_test)
     {
         friend class UnitTestThreadManager;
     public:
-        char const *GetName() { return "<UnitTestJob>"; }
-        UnitTestJob() : ThreadJob(ThreadJobType::WORK_TODO)
+        std::string GetName() const { return "<UnitTestJob>"; }
+
+        UnitTestJob()
+          : ThreadJob(ThreadJobType::WORK_TODO)
         { }
+
         bool IsDone()
         {
             return m_done;
@@ -41,9 +44,9 @@ lolunit_declare_fixture(thread_test)
         {
             timer t;
             m_done = false;
-            msg::info("%s: STARTED WORK\n", GetName());
+            msg::info("%s: STARTED WORK\n", GetName().c_str());
             t.wait(2.f);
-            msg::info("%s: ENDED WORK\n", GetName());
+            msg::info("%s: ENDED WORK\n", GetName().c_str());
             m_done = true;
             return true;
         }
@@ -76,7 +79,7 @@ lolunit_declare_fixture(thread_test)
         typedef SafeEnum<UnitTestStatusBase> UnitTestStatus;
 
     public:
-        char const *GetName() { return "<UnitTestThreadManager>"; }
+        std::string GetName() const { return "<UnitTestThreadManager>"; }
         UnitTestThreadManager() : BaseThreadManager(4, 1)
         { }
         virtual ~UnitTestThreadManager()
@@ -84,14 +87,14 @@ lolunit_declare_fixture(thread_test)
 
         void AddJob(ThreadJob* job)
         {
-            msg::info("%s DISPATCHING JOB %s\n", GetName(), job->GetName());
+            msg::info("%s DISPATCHING JOB %s\n", GetName().c_str(), job->GetName().c_str());
             DispatchJob(job);
         }
         bool GetWorkResult(array<ThreadJob*>& results)
         {
             results += m_job_result;
             m_job_result.empty();
-            msg::info("%s GETWORKRESULT (%i)\n", GetName(), results.count());
+            msg::info("%s GETWORKRESULT (%i)\n", GetName().c_str(), results.count());
             return results.count() > 0;
         }
 
@@ -102,7 +105,7 @@ lolunit_declare_fixture(thread_test)
             case UnitTestStatus::NOT_QUEUED:
                 if (!!GetDispatchCount())
                 {
-                    msg::info("%s TICKGAME %s\n", GetName(), m_status.tostring().c_str());
+                    msg::info("%s TICKGAME %s\n", GetName().c_str(), m_status.tostring().c_str());
                     m_status = UnitTestStatus::QUEUED;
                 }
                 break;
@@ -113,14 +116,14 @@ lolunit_declare_fixture(thread_test)
                 if (GetDispatchedCount())
 #endif
                 {
-                    msg::info("%s TICKGAME %s\n", GetName(), m_status.tostring().c_str());
+                    msg::info("%s TICKGAME %s\n", GetName().c_str(), m_status.tostring().c_str());
                     m_status = UnitTestStatus::RETRIEVED;
                 }
                 break;
             case UnitTestStatus::RETRIEVED:
                 if (m_job_result.count() == 4)
                 {
-                    msg::info("%s TICKGAME %s\n", GetName(), m_status.tostring().c_str());
+                    msg::info("%s TICKGAME %s\n", GetName().c_str(), m_status.tostring().c_str());
                     m_status = UnitTestStatus::DONE;
                 }
                 break;
@@ -154,10 +157,10 @@ lolunit_declare_fixture(thread_test)
 
     lolunit_declare_test(threads)
     {
-        msg::info("%s START\n", m_manager.GetName());
+        msg::info("%s START\n", m_manager.GetName().c_str());
         //Start threads manager
         m_manager.Start();
-        msg::info("%s STARTED\n", m_manager.GetName());
+        msg::info("%s STARTED\n", m_manager.GetName().c_str());
 
         UnitTestJob job[4];
         lolunit_assert_equal(0, m_manager.Test_GetDispatchCount());
@@ -190,10 +193,10 @@ lolunit_declare_fixture(thread_test)
         m_manager.GetWorkResult(results);
         lolunit_assert_equal(4, results.count());
 
-        msg::info("%s STOP\n", m_manager.GetName());
+        msg::info("%s STOP\n", m_manager.GetName().c_str());
         //Stop manager
         m_manager.Stop();
-        msg::info("%s STOPPED\n", m_manager.GetName());
+        msg::info("%s STOPPED\n", m_manager.GetName().c_str());
     }
 
     lolunit_declare_test(queue_try_push)

@@ -38,7 +38,7 @@ struct MeshBuildOperationBase : public StructSafeEnum
         All = 0xffff,
     };
 protected:
-    virtual bool BuildEnumMap(std::map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
     {
         enum_map[ScaleWinding] = "ScaleWinding";
         enum_map[CommandRecording] = "CommandRecording";
@@ -99,7 +99,7 @@ struct EasyMeshCmdTypeBase : public StructSafeEnum
         AppendCog,
     };
 protected:
-    virtual bool BuildEnumMap(std::map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
     {
         enum_map[MeshCsg] = "MeshCsg";
         enum_map[LoopStart] = "LoopStart";
@@ -160,7 +160,7 @@ struct MeshTypeBase : public StructSafeEnum
         MAX
     };
 protected:
-    virtual bool BuildEnumMap(std::map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
     {
         enum_map[Triangle] = "Triangle";
         enum_map[Quad] = "Quad";
@@ -200,7 +200,7 @@ struct TexCoordBuildTypeBase : public StructSafeEnum
         Max
     };
 protected:
-    virtual bool BuildEnumMap(std::map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
     {
         enum_map[TriangleDefault] = "TriangleDefault";
         enum_map[QuadDefault] = "QuadDefault";
@@ -235,7 +235,7 @@ struct MeshFaceTypeBase : public StructSafeEnum
         MAX
     };
 protected:
-    virtual bool BuildEnumMap(std::map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
     {
         enum_map[BoxFront] = "BoxFront";
         enum_map[QuadDefault] = "QuadDefault";
@@ -261,7 +261,7 @@ struct TexCoordPosBase : public StructSafeEnum
         TR  // Top Right
     };
 protected:
-    virtual bool BuildEnumMap(std::map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
     {
         enum_map[BL] = "BL";
         enum_map[BR] = "BR";
@@ -512,7 +512,7 @@ struct VDictTypeBase : public StructSafeEnum
         Master = -1,
     };
 protected:
-    virtual bool BuildEnumMap(std::map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
     {
         enum_map[DoesNotExist] = "DoesNotExist";
         enum_map[Alone] = "Alone";

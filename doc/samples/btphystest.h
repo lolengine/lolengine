@@ -43,7 +43,7 @@ public:
     BtPhysTest(bool editor = false);
     virtual ~BtPhysTest();
 
-    char const *GetName() { return "<BtPhysTest>"; }
+    std::string GetName() const { return "<BtPhysTest>"; }
 
 protected:
     virtual void TickGame(float seconds);
