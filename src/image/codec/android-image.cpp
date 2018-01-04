@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -13,6 +13,8 @@
 #include <lol/engine-internal.h>
 
 #if defined __ANDROID__
+
+#include <string>
 
 #include <jni.h>
 #include <android/log.h>
@@ -35,9 +37,9 @@ extern ANativeActivity *g_activity;
 class AndroidImageCodec : public ResourceCodec
 {
 public:
-    virtual char const *GetName() { return "<AndroidImageCodec>"; }
-    virtual ResourceCodecData* Load(char const *path);
-    virtual bool Save(char const *path, ResourceCodecData* data);
+    virtual std::string GetName() { return "<AndroidImageCodec>"; }
+    virtual ResourceCodecData* Load(std::string const &path);
+    virtual bool Save(std::string const &path, ResourceCodecData* data);
     virtual bool Close();
 
     virtual uint8_t *GetData() const;
@@ -50,7 +52,7 @@ private:
 
 DECLARE_IMAGE_CODEC(AndroidImageCodec, 100)
 
-ResourceCodecData* AndroidImageCodec::Load(char const *path)
+ResourceCodecData* AndroidImageCodec::Load(std::string const &path)
 {
     JNIEnv *env;
     jint res = g_activity->vm->GetEnv((void **)&env, JNI_VERSION_1_2);
@@ -64,7 +66,7 @@ ResourceCodecData* AndroidImageCodec::Load(char const *path)
     if (res < 0)
     {
 #if !LOL_BUILD_RELEASE
-        msg::error("JVM environment not found, cannot open image %s\n", path);
+        msg::error("JVM environment not found, cannot open image %s\n", path.c_str());
 #endif
         return false;
     }
@@ -73,13 +75,13 @@ ResourceCodecData* AndroidImageCodec::Load(char const *path)
 
     mid = env->GetMethodID(cls, "openImage",
                            "(Ljava/lang/String;)Landroid/graphics/Bitmap;");
-    jstring name = env->NewStringUTF(path);
+    jstring name = env->NewStringUTF(path.c_str());
     m_bmp = env->CallObjectMethod(g_activity->clazz, mid, name);
     env->DeleteLocalRef(name);
     if (!m_bmp)
     {
 #if !LOL_BUILD_RELEASE
-        msg::error("could not load %s\n", path);
+        msg::error("could not load %s\n", path.c_str());
 #endif
         return false;
     }
@@ -109,7 +111,7 @@ ResourceCodecData* AndroidImageCodec::Load(char const *path)
     return new ResourceCodecData();
 }
 
-bool AndroidImageCodec::Save(char const *path, ResourceCodecData* data)
+bool AndroidImageCodec::Save(std::string const &path, ResourceCodecData* data)
 {
     UNUSED(path, data);
 

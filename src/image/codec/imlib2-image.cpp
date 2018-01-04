@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -13,6 +13,8 @@
 #include <lol/engine-internal.h>
 
 #if defined LOL_USE_IMLIB2
+
+#include <string>
 
 #include <Imlib2.h>
 
@@ -34,21 +36,21 @@ namespace lol
 class Imlib2ImageCodec : public ResourceCodec
 {
 public:
-    virtual char const *GetName() { return "<Imlib2ImageCodec>"; }
-    virtual ResourceCodecData* Load(char const *path);
-    virtual bool Save(char const *path, ResourceCodecData* data);
+    virtual std::string GetName() { return "<Imlib2ImageCodec>"; }
+    virtual ResourceCodecData* Load(std::string const &path);
+    virtual bool Save(std::string const &path, ResourceCodecData* data);
 };
 
 /* Set priority higher than SDL because we can save in many formats. */
 DECLARE_IMAGE_CODEC(Imlib2ImageCodec, 70)
 
-ResourceCodecData *Imlib2ImageCodec::Load(char const *path)
+ResourceCodecData *Imlib2ImageCodec::Load(std::string const &path)
 {
     Imlib_Image im = nullptr;
 
-    for (auto candidate : sys::get_path_list(path))
+    for (auto const &candidate : sys::get_path_list(path))
     {
-        im = imlib_load_image(candidate.C());
+        im = imlib_load_image(candidate.c_str());
         if (im)
             break;
     }
@@ -56,7 +58,7 @@ ResourceCodecData *Imlib2ImageCodec::Load(char const *path)
     if (!im)
     {
 #if !LOL_BUILD_RELEASE
-        msg::error("could not load image %s\n", path);
+        msg::error("could not load image %s\n", path.c_str());
 #endif
         return nullptr;
     }
@@ -68,7 +70,7 @@ ResourceCodecData *Imlib2ImageCodec::Load(char const *path)
     {
         imlib_free_image();
 #if !LOL_BUILD_RELEASE
-        msg::error("could not get image data for %s\n", path);
+        msg::error("could not get image data for %s\n", path.c_str());
 #endif
         return nullptr;
     }
@@ -93,7 +95,7 @@ ResourceCodecData *Imlib2ImageCodec::Load(char const *path)
     return data;
 }
 
-bool Imlib2ImageCodec::Save(char const *path, ResourceCodecData *data)
+bool Imlib2ImageCodec::Save(std::string const &path, ResourceCodecData *data)
 {
     auto data_image = dynamic_cast<ResourceImageData*>(data);
     if (data_image == nullptr)
@@ -120,7 +122,7 @@ bool Imlib2ImageCodec::Save(char const *path, ResourceCodecData *data)
     imlib_image_put_back_data((DATA32 *)dstdata);
     image->unlock(srcdata);
 
-    imlib_save_image(path);
+    imlib_save_image(path.c_str());
     imlib_free_image();
 
     return true;

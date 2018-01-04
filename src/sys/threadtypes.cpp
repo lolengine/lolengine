@@ -35,12 +35,12 @@ public:
     char const *GetName() { return "<FileUpdateTesterJob>"; }
     FileUpdateTesterJob()
         : ThreadJob(ThreadJobType::NONE) { }
-    FileUpdateTesterJob(String path)
+    FileUpdateTesterJob(std::string const &path)
         : ThreadJob(ThreadJobType::WORK_TODO)
     {
         m_path = path;
     }
-    String& GetPath()   { return m_path; }
+    std::string const &GetPath() { return m_path; }
     long int GetTime()  { return m_time; }
     bool HasUpdated()   { return m_updated; }
     void Restart()
@@ -52,9 +52,9 @@ public:
 protected:
     virtual bool DoWork()
     {
-        array<String> pathlist = sys::get_path_list(m_path);
+        array<std::string> pathlist = sys::get_path_list(m_path);
         File f;
-        for (String path : pathlist)
+        for (auto const &path : pathlist)
         {
             f.Open(path, FileAccess::Read);
             if (f.IsValid())
@@ -77,10 +77,10 @@ protected:
     }
 
     //-----------------
-    bool        m_ready = false;
-    String      m_path = String();
-    long int    m_time = 0;
-    bool        m_updated = false;
+    bool m_ready = false;
+    std::string m_path;
+    long int m_time = 0;
+    bool m_updated = false;
 };
 
 //FileUpdateTester ------------------------------------------------------------
@@ -90,14 +90,14 @@ FileUpdateTester::~FileUpdateTester()
 }
 
 //File interface --------------------------------------------------------------
-FileUpdateTester::Status* FileUpdateTester::RegisterFile(String const& path)
+FileUpdateTester::Status* FileUpdateTester::RegisterFile(std::string const& path)
 {
     DispatchJob(new FileUpdateTesterJob(path));
     m_files[path] = new FileUpdateTester::Status();
     return m_files[path];
 }
 
-void FileUpdateTester::UnregisterFile(String const& path)
+void FileUpdateTester::UnregisterFile(std::string const& path)
 {
     ASSERT(has_key(m_files, path));
     delete m_files[path];
@@ -107,8 +107,7 @@ void FileUpdateTester::UnregisterFile(String const& path)
 void FileUpdateTester::UnregisterFile(FileUpdateTester::Status*& status)
 {
     ASSERT(status);
-    array<String> all_keys = keys(m_files);
-    for (String key : all_keys)
+    for (auto const &key : keys(m_files))
     {
         if (m_files[key] == status)
         {
@@ -123,10 +122,9 @@ void FileUpdateTester::UnregisterFile(FileUpdateTester::Status*& status)
 //-----------------------------------------------------------------------------
 void FileUpdateTester::TickGame(float seconds)
 {
-    //Reset update for this frame
-    array<String> all_keys = keys(m_files);
-    for (String key : all_keys)
-        m_files[key]->SetUpdated(false);
+    // Reset update for this frame
+    for (auto &kv : m_files)
+        kv.second->SetUpdated(false);
 
     super::TickGame(seconds);
 
@@ -160,30 +158,31 @@ class AsyncImageJob : public ThreadJob
 public:
     char const *GetName() { return "<AsyncImageJob>"; }
     AsyncImageJob()
-        : ThreadJob(ThreadJobType::NONE)
+      : ThreadJob(ThreadJobType::NONE)
     {
-        m_path = String();
     }
-    AsyncImageJob(String path)
-        : ThreadJob(ThreadJobType::WORK_TODO)
+
+    AsyncImageJob(std::string const &path)
+      : ThreadJob(ThreadJobType::WORK_TODO),
+        m_path(path)
     {
-        m_path = path;
     }
-    String const& GetPath() { return m_path; }
+
+    std::string const& GetPath() { return m_path; }
     Image const& GetImage() { return m_image; }
 
 protected:
     virtual bool DoWork()
     {
-        return m_image.load(m_path.C());
+        return m_image.load(m_path);
     }
 
-    String  m_path;
-    Image   m_image;
+    std::string m_path;
+    Image m_image;
 };
 
 //-----------------------------------------------------------------------------
-Image* AsyncImageLoader::Load(const lol::String& path)
+Image* AsyncImageLoader::Load(std::string const &path)
 {
     //Create a job
     AsyncImageJob* job = new AsyncImageJob(path);

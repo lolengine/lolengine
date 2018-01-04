@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -13,6 +13,8 @@
 #include <lol/engine-internal.h>
 
 #if defined __APPLE__ && defined __MACH__ && defined __arm__
+
+#include <string>
 
 #import <UIKit/UIKit.h>
 
@@ -28,9 +30,9 @@ namespace lol
 class IosImageCodec : public ResourceCodec
 {
 public:
-    virtual char const *GetName() { return "<IosImageCodec>"; }
-    virtual ResourceCodecData* Load(char const *path);
-    virtual bool Save(char const *path, ResourceCodecData* data);
+    virtual std::string GetName() { return "<IosImageCodec>"; }
+    virtual ResourceCodecData* Load(std::string const &path);
+    virtual bool Save(std::string const &path, ResourceCodecData* data);
 };
 
 DECLARE_IMAGE_CODEC(IosImageCodec, 100)
@@ -39,9 +41,9 @@ DECLARE_IMAGE_CODEC(IosImageCodec, 100)
  * Public Image class
  */
 
-ResourceCodecData* IosImageCodec::Load(char const *path)
+ResourceCodecData* IosImageCodec::Load(std::string const &path)
 {
-    NSString *fullpath = [NSString stringWithUTF8String:path];
+    NSString *fullpath = [NSString stringWithUTF8String:path.c_str()];
     NSArray *chunks = [fullpath componentsSeparatedByString: @"/"];
     NSString *filename = [chunks objectAtIndex: [chunks count] - 1];
     chunks = [filename componentsSeparatedByString: @"."];
@@ -52,7 +54,7 @@ ResourceCodecData* IosImageCodec::Load(char const *path)
     if (!image)
     {
 #if !LOL_BUILD_RELEASE
-        msg::error("could not load %s\n", path);
+        msg::error("could not load %s\n", path.c_str());
 #endif
         return nullptr;
     }
@@ -78,7 +80,7 @@ ResourceCodecData* IosImageCodec::Load(char const *path)
     return new ResourceCodecData();
 }
 
-bool IosImageCodec::Save(char const *path, ResourceCodecData* data)
+bool IosImageCodec::Save(std::string const &path, ResourceCodecData* data)
 {
     UNUSED(path, data);
 

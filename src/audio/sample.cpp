@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -41,7 +41,7 @@ class sample_data
     friend class sample;
 
 private:
-    String m_name;
+    std::string m_name;
 #if defined LOL_USE_SDL_MIXER
     Mix_Chunk *m_chunk;
     int m_channel;
@@ -55,12 +55,12 @@ private:
 sample::sample(char const *path)
   : data(new sample_data())
 {
-    data->m_name = String("<sample> ") + path;
+    data->m_name = std::string("<sample> ") + path;
 
 #if defined LOL_USE_SDL_MIXER
     for (auto candidate : sys::get_path_list(path))
     {
-        data->m_chunk = Mix_LoadWAV(candidate.C());
+        data->m_chunk = Mix_LoadWAV(candidate.c_str());
         if (data->m_chunk)
             break;
     }
@@ -88,7 +88,7 @@ void sample::TickGame(float seconds)
 
 char const *sample::GetName()
 {
-    return data->m_name.C();
+    return data->m_name.c_str();
 }
 
 void sample::play()

@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -21,6 +21,8 @@
 #include <lol/math/vector.h>
 #include <lol/math/geometry.h>
 #include <lol/image/pixel.h>
+
+#include <string>
 
 namespace lol
 {
@@ -66,7 +68,7 @@ public:
     image(ivec2 size);
     /* XXX: use of this ctor should be discouraged, as it will not
      * return information about a possible error. */
-    image(char const *path);
+    image(std::string const &path);
 
     /* Rule of three */
     image(image const &other);
@@ -76,8 +78,8 @@ public:
     void DummyFill();
     void Copy(uint8_t* pixels, ivec2 const& size, PixelFormat fmt);
     void Copy(image const &other);
-    bool load(char const *path);
-    bool save(char const *path);
+    bool load(std::string const &path);
+    bool save(std::string const &path);
 
     /* Low level access */
     ivec2 size() const;

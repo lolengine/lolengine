@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -36,18 +36,18 @@ namespace sys
 #   define SEPARATOR '/'
 #endif
 
-static array<String> data_dir;
+static array<std::string> data_dir;
 
 void init(int argc, char *argv[],
-          String const &projectdir,
-          String const &solutiondir,
-          String const &sourcesubdir)
+          std::string const &projectdir,
+          std::string const &solutiondir,
+          std::string const &sourcesubdir)
 {
     using namespace std;
 
-    msg::debug("project dir: “%s”\n", projectdir.C());
-    msg::debug("solution dir: “%s”\n", solutiondir.C());
-    msg::debug("source subdir: “%s”\n", sourcesubdir.C());
+    msg::debug("project dir: “%s”\n", projectdir.c_str());
+    msg::debug("solution dir: “%s”\n", solutiondir.c_str());
+    msg::debug("source subdir: “%s”\n", sourcesubdir.c_str());
 
     /*
      * Retrieve binary directory, defaulting to no directory on Android
@@ -55,9 +55,9 @@ void init(int argc, char *argv[],
      */
 
 #if __ANDROID__ || EMSCRIPTEN
-    String binarydir = "";
+    std::string binarydir = "";
 #else
-    String binarydir = ".";
+    std::string binarydir = ".";
     char *cwd = nullptr;
 
 #   if HAVE_GETCWD
@@ -78,7 +78,7 @@ void init(int argc, char *argv[],
     {
         char const *last_sep = strrchr(argv[0], SEPARATOR);
         if (last_sep)
-            binarydir = String(argv[0], last_sep - argv[0] + 1);
+            binarydir = std::string(argv[0], last_sep - argv[0] + 1);
     }
 #endif
 
@@ -89,31 +89,31 @@ void init(int argc, char *argv[],
      * add current directory in case we were launched from another place.
      */
 
-    if (!got_rootdir && projectdir.count() && solutiondir.count())
+    if (!got_rootdir && projectdir.length() && solutiondir.length())
     {
         /* This data dir is for standalone executables */
-        String rootdir = binarydir;
-        if (rootdir.count() && rootdir.last() != SEPARATOR)
+        std::string rootdir = binarydir;
+        if (rootdir.length() && rootdir.back() != SEPARATOR)
             rootdir += SEPARATOR;
         add_data_dir(rootdir);
 
         /* This data dir is for engine stuff */
         rootdir = solutiondir;
-        if (rootdir.count() && rootdir.last() != SEPARATOR)
+        if (rootdir.length() && rootdir.back() != SEPARATOR)
             rootdir += SEPARATOR;
         rootdir += "../src/"; /* FIXME: use SEPARATOR? */
         add_data_dir(rootdir);
 
         /* This data dir is for submodule support stuff */
         rootdir = solutiondir;
-        if (rootdir.count() && rootdir.last() != SEPARATOR)
+        if (rootdir.length() && rootdir.back() != SEPARATOR)
             rootdir += SEPARATOR;
         rootdir += "./lol/src/"; /* FIXME: use SEPARATOR? */
         add_data_dir(rootdir);
 
         /* This data dir is for project-specific stuff */
         rootdir = projectdir;
-        if (rootdir.count() && rootdir.last() != SEPARATOR)
+        if (rootdir.length() && rootdir.back() != SEPARATOR)
             rootdir += SEPARATOR;
         add_data_dir(rootdir);
 
@@ -128,14 +128,14 @@ void init(int argc, char *argv[],
     {
         /* First climb back the hierarchy to get to the engine root and
          * add a data dir for engine stuff. */
-        String rootdir = binarydir;
-        if (rootdir.count() && rootdir.last() != SEPARATOR)
+        std::string rootdir = binarydir;
+        if (rootdir.length() && rootdir.back() != SEPARATOR)
             rootdir += SEPARATOR;
-        for (int i = 1; i < sourcesubdir.count(); ++i)
+        for (int i = 1; i < (int)sourcesubdir.length(); ++i)
         {
             if ((sourcesubdir[i] == SEPARATOR
                   && sourcesubdir[i - 1] != SEPARATOR)
-                 || i == sourcesubdir.count() - 1)
+                 || i == (int)sourcesubdir.length() - 1)
                 rootdir += "../";
         }
         rootdir += "src/";
@@ -148,24 +148,24 @@ void init(int argc, char *argv[],
         got_rootdir = true;
     }
 
-    msg::debug("binary dir: “%s”\n", binarydir.C());
+    msg::debug("binary dir: “%s”\n", binarydir.c_str());
     for (int i = 0; i < data_dir.count(); ++i)
         msg::debug("data dir %d/%d: “%s”\n", i + 1, data_dir.count(),
-                   data_dir[i].C());
+                   data_dir[i].c_str());
 }
 
 /*
  * Data directory handling
  */
 
-void add_data_dir(String const &dir)
+void add_data_dir(std::string const &dir)
 {
     data_dir << dir;
 }
 
-array<String> get_path_list(String const &file)
+array<std::string> get_path_list(std::string const &file)
 {
-    array<String> ret;
+    array<std::string> ret;
 
     /* If not an absolute path, look through known data directories */
     if (file[0] != '/')

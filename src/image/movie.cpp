@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -29,12 +29,12 @@ namespace lol
 {
 
 #if LOL_USE_FFMPEG
-#define ERROR_TO_STRING(errnum) (error2string((errnum)).C())
-static String error2string(int errnum)
+#define ERROR_TO_STRING(errnum) (error2string((errnum)).c_str())
+static std::string error2string(int errnum)
 {
     char tmp[AV_ERROR_MAX_STRING_SIZE];
     av_strerror(errnum, tmp, AV_ERROR_MAX_STRING_SIZE);
-    return String(tmp);
+    return std::string(tmp);
 }
 
 /*static void ffmpeg_logger(void *ptr, int level, const char *fmt, va_list vl)
@@ -69,11 +69,11 @@ movie::movie(ivec2 size)
 #endif
 }
 
-bool movie::open_file(char const *filename)
+bool movie::open_file(std::string const &filename)
 {
 #if LOL_USE_FFMPEG
     /* Third argument specifies format */
-    avformat_alloc_output_context2(&m_avformat, nullptr, "gif", filename);
+    avformat_alloc_output_context2(&m_avformat, nullptr, "gif", filename.c_str());
     if (!m_avformat)
     {
         msg::debug("could not create output context");
@@ -85,10 +85,10 @@ bool movie::open_file(char const *filename)
 
     if (!(m_avformat->oformat->flags & AVFMT_NOFILE))
     {
-        int ret = avio_open(&m_avformat->pb, filename, AVIO_FLAG_WRITE);
+        int ret = avio_open(&m_avformat->pb, filename.c_str(), AVIO_FLAG_WRITE);
         if (ret < 0)
         {
-            msg::error("could not open '%s': %s\n", filename, ERROR_TO_STRING(ret));
+            msg::error("could not open '%s': %s\n", filename.c_str(), ERROR_TO_STRING(ret));
             return false;
         }
     }

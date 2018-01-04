@@ -60,26 +60,26 @@ class LuaBaseData
             return LUA_ERRFILE;
 
         auto stack = LuaStack::Begin(l);
-        char const *filename = stack.Get<char const*>();
+        std::string filename = stack.Get<std::string>();
         int status = LUA_ERRFILE;
 
         File f;
-        for (auto candidate : sys::get_path_list(filename))
+        for (auto const &candidate : sys::get_path_list(filename))
         {
             f.Open(candidate, FileAccess::Read);
             if (f.IsValid())
             {
-                std::string s = f.ReadString().C();
+                std::string s = f.ReadString();
                 f.Close();
 
-                msg::debug("loading Lua file %s\n", candidate.C());
+                msg::debug("loading Lua file %s\n", candidate.c_str());
                 status = LuaDoCode(l, s);
                 break;
             }
         }
 
         if (status == LUA_ERRFILE)
-            msg::error("could not find Lua file %s\n", filename);
+            msg::error("could not find Lua file %s\n", filename.c_str());
         else if (status == 1)
         {
             stack.SetIndex(-1);

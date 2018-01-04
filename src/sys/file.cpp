@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -30,6 +30,8 @@
 #endif
 
 #include <atomic>
+#include <string>
+#include <algorithm>
 #include <sys/stat.h>
 
 namespace lol
@@ -68,18 +70,19 @@ class FileData
         }
     }
 
-    void Open(String const &file, FileAccess mode, bool force_binary)
+    void Open(std::string const &file, FileAccess mode, bool force_binary)
     {
         m_type = (force_binary) ? (StreamType::FileBinary) : (StreamType::File);
 #if __ANDROID__
         ASSERT(g_assets);
-        m_asset = AAssetManager_open(g_assets, file.C(), AASSET_MODE_UNKNOWN);
+        m_asset = AAssetManager_open(g_assets, file.c_str(), AASSET_MODE_UNKNOWN);
 #elif HAVE_STDIO_H
         /* FIXME: no modes, no error checking, no nothing */
-        stat(file.C(), &m_stat);
-        String access = (mode == FileAccess::Write) ? ("w") : ("r");
-        if (force_binary) access += "b";
-        m_fd = fopen(file.C(), access.C());
+        stat(file.c_str(), &m_stat);
+        std::string access(mode == FileAccess::Write ? "w" : "r");
+        if (force_binary)
+            access += "b";
+        m_fd = fopen(file.c_str(), access.c_str());
 #endif
     }
 
@@ -125,11 +128,11 @@ class FileData
 #endif
     }
 
-    String ReadString()
+    std::string ReadString()
     {
         array<uint8_t> buf;
         buf.resize(BUFSIZ);
-        String ret;
+        std::string ret;
         while (IsValid())
         {
             int done = Read(&buf[0], buf.count());
@@ -137,7 +140,7 @@ class FileData
             if (done <= 0)
                 break;
 
-            int oldsize = ret.count();
+            int oldsize = ret.length();
             ret.resize(oldsize + done);
             memcpy(&ret[oldsize], &buf[0], done);
 
@@ -146,7 +149,7 @@ class FileData
         return ret;
     }
 
-    int Write(uint8_t const *buf, int count)
+    int Write(void const *buf, int count)
     {
 #if __ANDROID__
         //return AAsset_read(m_asset, buf, count);
@@ -160,11 +163,6 @@ class FileData
 #else
         return 0;
 #endif
-    }
-
-    int WriteString(const String &buf)
-    {
-        return Write((uint8_t const *)buf.C(), buf.count());
     }
 
     long int GetPosFromStart()
@@ -274,7 +272,7 @@ void File::Open(StreamType stream)
 }
 
 //--
-void File::Open(String const &file, FileAccess mode, bool force_binary)
+void File::Open(std::string const &file, FileAccess mode, bool force_binary)
 {
     m_data->Open(file, mode, force_binary);
 }
@@ -298,21 +296,21 @@ int File::Read(uint8_t *buf, int count)
 }
 
 //--
-String File::ReadString()
+std::string File::ReadString()
 {
     return m_data->ReadString();
 }
 
 //--
-int File::Write(uint8_t const *buf, int count)
+int File::Write(void const *buf, int count)
 {
     return m_data->Write(buf, count);
 }
 
 //--
-int File::WriteString(const String &buf)
+int File::Write(std::string const &buf)
 {
-    return m_data->WriteString(buf);
+    return m_data->Write(buf.c_str(), buf.length());
 }
 
 //--
@@ -355,7 +353,7 @@ class DirectoryData
 #endif
     }
 
-    void Open(String const &directory, FileAccess mode)
+    void Open(std::string const &directory, FileAccess mode)
     {
         UNUSED(mode); /* FIXME */
 
@@ -364,14 +362,14 @@ class DirectoryData
         /* FIXME: not implemented */
 #elif defined(_WIN32)
         m_directory = directory;
-        String filter = m_directory + String("*");
-        filter.replace('/', '\\', true);
+        std::string filter = m_directory + "*";
+        std::replace(filter.begin(), filter.end(), '/', '\\');
         WIN32_FIND_DATA FindFileData;
-        m_handle = FindFirstFile(filter.C(), &FindFileData);
-        stat(directory.C(), &m_stat);
+        m_handle = FindFirstFile(filter.c_str(), &FindFileData);
+        stat(directory.c_str(), &m_stat);
 #elif HAVE_STDIO_H
-        m_dd = opendir(directory.C());
-        stat(directory.C(), &m_stat);
+        m_dd = opendir(directory.c_str());
+        stat(directory.c_str(), &m_stat);
 #endif
     }
 
@@ -400,7 +398,7 @@ class DirectoryData
 #endif
     }
 
-    bool GetContentList(array<String>* files, array<String>* directories)
+    bool GetContentList(array<std::string>* files, array<std::string>* directories)
     {
         if (!IsValid())
             return false;
@@ -408,10 +406,10 @@ class DirectoryData
 #if __ANDROID__
         /* FIXME: not implemented */
 #elif defined(_WIN32)
-        String filter = m_directory + String("*");
-        filter.replace('/', '\\', true);
+        std::string filter = m_directory + "*";
+        std::replace(filter.begin(), filter.end(), '/', '\\');
         WIN32_FIND_DATA find_data;
-        HANDLE handle = FindFirstFile(filter.C(), &find_data);
+        HANDLE handle = FindFirstFile(filter.c_str(), &find_data);
         bool file_valid = (handle != INVALID_HANDLE_VALUE);
 
         while (file_valid)
@@ -422,12 +420,12 @@ class DirectoryData
                 if (find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
                 {
                     if (directories)
-                        *directories << String(std::string(find_data.cFileName).c_str());
+                        *directories << std::string(find_data.cFileName);
                 }
                 else
                 {
                     if (files)
-                        *files << String(find_data.cFileName);
+                        *files << std::string(find_data.cFileName);
                 }
             }
             //Go for next one
@@ -467,7 +465,7 @@ class DirectoryData
     /* FIXME: not implemented */
 #elif defined(_WIN32)
     HANDLE m_handle;
-    String m_directory;
+    std::string m_directory;
 #elif HAVE_STDIO_H
     DIR *m_dd;
 #endif
@@ -477,9 +475,9 @@ class DirectoryData
 };
 
 //-- DIRECTORY --
-Directory::Directory(String const &name)
+Directory::Directory(std::string const &name)
   : m_data(new DirectoryData),
-    m_name(name + String("/"))
+    m_name(name + "/")
 {
     ++m_data->m_refcount;
 }
@@ -543,9 +541,9 @@ void Directory::Close()
 }
 
 //--
-bool Directory::GetContent(array<String>* files, array<Directory>* directories)
+bool Directory::GetContent(array<std::string>* files, array<Directory>* directories)
 {
-    array<String> sfiles, sdirectories;
+    array<std::string> sfiles, sdirectories;
     bool found_some = m_data->GetContentList(&sfiles, &sdirectories);
     UNUSED(found_some);
 
@@ -561,7 +559,7 @@ bool Directory::GetContent(array<String>* files, array<Directory>* directories)
 }
 
 //--
-bool Directory::GetContent(array<String>& files, array<Directory>& directories)
+bool Directory::GetContent(array<std::string>& files, array<Directory>& directories)
 {
     return GetContent(&files, &directories);
 }
@@ -573,13 +571,13 @@ bool Directory::GetContent(array<Directory>& directories)
 }
 
 //--
-bool Directory::GetContent(array<String>& files)
+bool Directory::GetContent(array<std::string>& files)
 {
     return GetContent(&files, nullptr);
 }
 
 //--
-String Directory::GetName()
+std::string Directory::GetName()
 {
     return m_name;
 }
@@ -591,33 +589,33 @@ long int Directory::GetModificationTime()
 }
 
 //--
-String Directory::GetCurrent()
+std::string Directory::GetCurrent()
 {
-    String result;
+    std::string ret;
 #if __ANDROID__
     /* FIXME: not implemented */
 #elif defined(_WIN32)
     TCHAR buff[MAX_PATH * 2];
     GetCurrentDirectory(MAX_PATH, buff);
-    result = buff;
-    result.replace('\\', '/', true);
+    ret = buff;
+    std::replace(ret.begin(), ret.end(), '\\', '/');
 #elif HAVE_STDIO_H
     /* FIXME: not implemented */
 #endif
-    return result;
+    return ret;
 }
 
 //--
-bool Directory::SetCurrent(String directory)
+bool Directory::SetCurrent(std::string directory)
 {
 #if __ANDROID__
     /* FIXME: not implemented */
 #elif defined(_WIN32)
-    String result = directory;
-    result.replace('/', '\\', true);
-    return !!SetCurrentDirectory(result.C());
+    std::string result = directory;
+    std::replace(result.begin(), result.end(), '/', '\\');
+    return !!SetCurrentDirectory(result.c_str());
 #elif HAVE_UNISTD_H
-    chdir(directory.C());
+    chdir(directory.c_str());
 #endif
     return false;
 }

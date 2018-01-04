@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //            © 2016—2017 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -66,8 +66,8 @@ namespace lol
     class ResourceLoader
     {
     public:
-        static ResourceCodecData* Load(char const *path);
-        static bool Save(char const *path, ResourceCodecData* data);
+        static ResourceCodecData* Load(std::string const &path);
+        static bool Save(std::string const &path, ResourceCodecData* data);
     };
 
 } /* namespace lol */

@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //  Copyright © 2016—2017 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -79,7 +79,7 @@ g_resource_loader;
 * The public resource loader
 */
 
-ResourceCodecData* ResourceLoader::Load(char const *path)
+ResourceCodecData* ResourceLoader::Load(std::string const &path)
 {
     ResourceCodec* last_codec = nullptr;
     for (auto codec : g_resource_loader.m_codecs)
@@ -89,18 +89,18 @@ ResourceCodecData* ResourceLoader::Load(char const *path)
         if (data != nullptr)
         {
             msg::debug("image::load: codec %s succesfully loaded %s.\n",
-                       codec->GetName(), path);
+                       codec->GetName().c_str(), path.c_str());
             return data;
         }
     }
 
     //Log error, because we shouldn't be here
     msg::error("image::load: last codec %s, error loading resource %s.\n",
-               last_codec->GetName(), path);
+               last_codec->GetName().c_str(), path.c_str());
     return nullptr;
 }
 
-bool ResourceLoader::Save(char const *path, ResourceCodecData* data)
+bool ResourceLoader::Save(std::string const &path, ResourceCodecData* data)
 {
     ResourceCodec* last_codec = nullptr;
     for (auto codec : g_resource_loader.m_codecs)
@@ -109,14 +109,14 @@ bool ResourceLoader::Save(char const *path, ResourceCodecData* data)
         if (codec->Save(path, data))
         {
             msg::debug("image::save: codec %s succesfully saved %s.\n",
-                      codec->GetName(), path);
+                      codec->GetName().c_str(), path.c_str());
             return true;
         }
     }
 
     //Log error, because we shouldn't be here
     msg::error("image::save: last codec %s, error saving resource %s.\n",
-               last_codec->GetName(), path);
+               last_codec->GetName().c_str(), path.c_str());
     return false;
 }
 

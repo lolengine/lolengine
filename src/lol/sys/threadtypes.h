@@ -37,7 +37,7 @@ struct ThreadStatusBase : public StructSafeEnum
         THREAD_STOPPED,
     };
 protected:
-    virtual bool BuildEnumMap(std::map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
     {
         enum_map[NOTHING] = "NOTHING";
         enum_map[THREAD_STARTED] = "THREAD_STARTED";
@@ -59,7 +59,7 @@ struct ThreadJobTypeBase : public StructSafeEnum
         THREAD_STOP
     };
 protected:
-    virtual bool BuildEnumMap(std::map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
     {
         enum_map[NONE]          = "NONE";
         enum_map[WORK_TODO]     = "WORK_TODO";
@@ -229,13 +229,13 @@ public:
     virtual ~FileUpdateTester();
 
     //-------------------------------------------------------------------------
-    FileUpdateTester::Status* RegisterFile(String const& path);
+    FileUpdateTester::Status* RegisterFile(std::string const& path);
 protected:
-    void UnregisterFile(String const& path);
+    void UnregisterFile(std::string const& path);
 public:
     void UnregisterFile(FileUpdateTester::Status*& status);
     //TODO: Add directories
-    //FileUpdateTester::Status* RegisterDirectory(String const& path, bool check_files=false);
+    //FileUpdateTester::Status* RegisterDirectory(std::string const& path, bool check_files=false);
     virtual void TickGame(float seconds);
     virtual void TreatResult(ThreadJob* result);
 
@@ -243,7 +243,7 @@ private:
     uint32_t m_frame_skip = 4;
     uint32_t m_frame_count = 0;
     array<ThreadJob*> m_job_done;
-    std::map<String, Status*> m_files;
+    std::map<std::string, Status*> m_files;
 };
 typedef FileUpdateTester::Status FileUpdateStatus;
 
@@ -262,7 +262,7 @@ public:
     { }
 
     //Returns a dummy image, and start a job to load the image on a thread
-    image* Load(const lol::String& path);
+    image* Load(const std::string& path);
     bool CheckStatus(image* img);
 
 protected:
@@ -270,7 +270,7 @@ protected:
 
 private:
     image m_dummy_image;
-    std::map<String, image*> m_images;
+    std::map<std::string, image*> m_images;
     array<image*> m_loaded_images;
 };
 

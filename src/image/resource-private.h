@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //            © 2016—2017 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -24,9 +24,9 @@ namespace lol
     class ResourceCodec
     {
     public:
-        virtual char const *GetName() { return "<ResourceCodec>"; }
-        virtual ResourceCodecData* Load(char const *path) = 0;
-        virtual bool Save(char const *path, ResourceCodecData* data) = 0;
+        virtual std::string GetName() { return "<ResourceCodec>"; }
+        virtual ResourceCodecData* Load(std::string const &path) = 0;
+        virtual bool Save(std::string const &path, ResourceCodecData* data) = 0;
 
         /* TODO: this should become more fine-grained */
         int m_priority;

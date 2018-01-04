@@ -27,9 +27,9 @@ namespace lol
 class ZedImageCodec : public ResourceCodec
 {
 public:
-    virtual char const *GetName() { return "<ZedImageCodec>"; }
-    virtual ResourceCodecData* Load(char const *path);
-    virtual bool Save(char const *path, ResourceCodecData* data);
+    virtual std::string GetName() { return "<ZedImageCodec>"; }
+    virtual ResourceCodecData* Load(std::string const &path);
+    virtual bool Save(std::string const &path, ResourceCodecData* data);
 };
 
 DECLARE_IMAGE_CODEC(ZedImageCodec, 10)
@@ -38,7 +38,7 @@ DECLARE_IMAGE_CODEC(ZedImageCodec, 10)
  * Public Image class
  */
 
-ResourceCodecData* ZedImageCodec::Load(char const *path)
+ResourceCodecData* ZedImageCodec::Load(std::string const &path)
 {
     if (!ends_with(path, ".RSC"))
         return nullptr;
@@ -295,7 +295,7 @@ ResourceCodecData* ZedImageCodec::Load(char const *path)
     return data;
 }
 
-bool ZedImageCodec::Save(char const *path, ResourceCodecData* data)
+bool ZedImageCodec::Save(std::string const &path, ResourceCodecData* data)
 {
     UNUSED(path, data);
     /* FIXME: do we need to implement this? */

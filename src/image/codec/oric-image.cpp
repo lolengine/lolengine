@@ -33,12 +33,12 @@ namespace lol
 class OricImageCodec : public ResourceCodec
 {
 public:
-    virtual char const *GetName() { return "<OricImageCodec>"; }
-    virtual ResourceCodecData* Load(char const *path);
-    virtual bool Save(char const *path, ResourceCodecData* data);
+    virtual std::string GetName() { return "<OricImageCodec>"; }
+    virtual ResourceCodecData* Load(std::string const &path);
+    virtual bool Save(std::string const &path, ResourceCodecData* data);
 
 private:
-    static std::string ReadScreen(char const *name);
+    static std::string ReadScreen(std::string const &name);
     static void WriteScreen(image &image, array<uint8_t> &result);
 };
 
@@ -48,7 +48,7 @@ DECLARE_IMAGE_CODEC(OricImageCodec, 100)
  * Public Image class
  */
 
-ResourceCodecData* OricImageCodec::Load(char const *path)
+ResourceCodecData* OricImageCodec::Load(std::string const &path)
 {
     static u8vec4 const pal[8] =
     {
@@ -109,13 +109,13 @@ ResourceCodecData* OricImageCodec::Load(char const *path)
     return data;
 }
 
-bool OricImageCodec::Save(char const *path, ResourceCodecData* data)
+bool OricImageCodec::Save(std::string const &path, ResourceCodecData* data)
 {
     auto data_image = dynamic_cast<ResourceImageData*>(data);
     if (data_image == nullptr)
         return false;
 
-    int len = (int)strlen(path);
+    int len = (int)path.length();
     if (len < 4 || path[len - 4] != '.'
         || std::toupper(path[len - 3]) != 'T'
         || std::toupper(path[len - 2]) != 'A'
@@ -128,7 +128,7 @@ bool OricImageCodec::Save(char const *path, ResourceCodecData* data)
     result << 0 << 0xff << 0x80 << 0 << 0xbf << 0x3f << 0xa0 << 0;
 
     /* Add filename, except the last 4 characters */
-    for (char const *name = path; name[4]; ++name)
+    for (char const *name = path.c_str(); name[4]; ++name)
         result << (uint8_t)name[0];
     result << 0;
 
@@ -153,11 +153,11 @@ bool OricImageCodec::Save(char const *path, ResourceCodecData* data)
     return true;
 }
 
-std::string OricImageCodec::ReadScreen(char const *name)
+std::string OricImageCodec::ReadScreen(std::string const &name)
 {
     File f;
     f.Open(name, FileAccess::Read);
-    std::string data = f.ReadString().C();
+    std::string data = f.ReadString();
     f.Close();
 
     /* Skip the sync bytes */

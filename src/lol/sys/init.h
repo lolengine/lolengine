@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
@@ -15,7 +17,8 @@
 // -------------------------------
 //
 
-#include <stdint.h>
+#include <string>
+#include <cstdint>
 
 namespace lol
 {
@@ -46,12 +49,12 @@ namespace sys
 {
 
 extern void init(int argc, char *argv[],
-                 String const &projectdir = LOL_CONFIG_PROJECTDIR,
-                 String const &solutiondir = LOL_CONFIG_SOLUTIONDIR,
-                 String const &sourcesubdir = LOL_CONFIG_SOURCESUBDIR);
+                 std::string const &projectdir = LOL_CONFIG_PROJECTDIR,
+                 std::string const &solutiondir = LOL_CONFIG_SOLUTIONDIR,
+                 std::string const &sourcesubdir = LOL_CONFIG_SOURCESUBDIR);
 
-extern void add_data_dir(String const &dir);
-extern array<String> get_path_list(String const &file);
+extern void add_data_dir(std::string const &dir);
+extern array<std::string> get_path_list(std::string const &file);
 
 } /* namespace sys */
 

@@ -28,7 +28,7 @@ image::image()
 {
 }
 
-image::image(char const *path)
+image::image(std::string const &path)
   : m_data(new image_data())
 {
     load(path);
@@ -91,7 +91,7 @@ void image::DummyFill()
     load("DUMMY");
 }
 
-bool image::load(char const *path)
+bool image::load(std::string const &path)
 {
     auto resource = ResourceLoader::Load(path);
     if (resource == nullptr)
@@ -109,7 +109,7 @@ bool image::load(char const *path)
     return true;
 }
 
-bool image::save(char const *path)
+bool image::save(std::string const &path)
 {
     auto data = new ResourceImageData(new image(*this));
     auto result = ResourceLoader::Save(path, data);

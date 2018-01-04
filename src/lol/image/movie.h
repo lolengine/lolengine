@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -33,7 +33,7 @@ class movie
 public:
     movie(ivec2 size);
 
-    bool open_file(char const *filename);
+    bool open_file(std::string const &filename);
     bool push_image(image &im);
     void close();
 

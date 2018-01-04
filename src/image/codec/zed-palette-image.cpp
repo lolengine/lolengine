@@ -27,9 +27,9 @@ namespace lol
 class ZedPaletteImageCodec : public ResourceCodec
 {
 public:
-    virtual char const *GetName() { return "<ZedPaletteImageCodec>"; }
-    virtual ResourceCodecData* Load(char const *path);
-    virtual bool Save(char const *path, ResourceCodecData* data);
+    virtual std::string GetName() { return "<ZedPaletteImageCodec>"; }
+    virtual ResourceCodecData* Load(std::string const &path);
+    virtual bool Save(std::string const &path, ResourceCodecData* data);
 };
 
 DECLARE_IMAGE_CODEC(ZedPaletteImageCodec, 10)
@@ -38,7 +38,7 @@ DECLARE_IMAGE_CODEC(ZedPaletteImageCodec, 10)
  * Public Image class
  */
 
-ResourceCodecData* ZedPaletteImageCodec::Load(char const *path)
+ResourceCodecData* ZedPaletteImageCodec::Load(std::string const &path)
 {
     if (!ends_with(path, ".pal"))
         return nullptr;
@@ -83,7 +83,7 @@ ResourceCodecData* ZedPaletteImageCodec::Load(char const *path)
     return data;
 }
 
-bool ZedPaletteImageCodec::Save(char const *path, ResourceCodecData* data)
+bool ZedPaletteImageCodec::Save(std::string const &path, ResourceCodecData* data)
 {
     UNUSED(path, data);
     /* FIXME: do we need to implement this? */

@@ -32,7 +32,7 @@ struct FileAccessBase : public StructSafeEnum
         Write
     };
 protected:
-    virtual bool BuildEnumMap(std::map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
     {
         enum_map[Read]  = "Read";
         enum_map[Write] = "Write";
@@ -53,7 +53,7 @@ struct StreamTypeBase : public StructSafeEnum
         FileBinary
     };
 protected:
-    virtual bool BuildEnumMap(std::map<int64_t, String>& enum_map)
+    virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
     {
         enum_map[StdIn]      = "StdIn";
         enum_map[StdOut]     = "StdOut";
@@ -74,14 +74,14 @@ public:
     ~File();
 
     void Open(StreamType stream);
-    void Open(String const &file, FileAccess mode, bool force_binary=false);
+    void Open(std::string const &file, FileAccess mode, bool force_binary=false);
     bool IsValid() const;
     void Close();
 
     int Read(uint8_t *buf, int count);
-    String ReadString();
-    int Write(uint8_t const *buf, int count);
-    int WriteString(const String &buf);
+    std::string ReadString();
+    int Write(void const *buf, int count);
+    int Write(std::string const &buf);
     long int GetPosFromStart();
     void SetPosFromStart(long int pos);
     long int size();
@@ -94,7 +94,7 @@ private:
 class Directory
 {
 public:
-    Directory(String const &name);
+    Directory(std::string const &name);
     Directory(Directory const &that);
     Directory &operator =(Directory const &that);
     ~Directory();
@@ -104,20 +104,20 @@ public:
     void Close();
 
 private:
-    bool GetContent(array<String>* files, array<Directory>* directories);
+    bool GetContent(array<std::string>* files, array<Directory>* directories);
 public:
-    bool GetContent(array<String>& files, array<Directory>& directories);
+    bool GetContent(array<std::string>& files, array<Directory>& directories);
     bool GetContent(array<Directory>& directories);
-    bool GetContent(array<String>& files);
-    String GetName();
+    bool GetContent(array<std::string>& files);
+    std::string GetName();
     long int GetModificationTime();
 
-    static String GetCurrent();
-    static bool SetCurrent(String directory);
+    static std::string GetCurrent();
+    static bool SetCurrent(std::string directory);
 
 private:
-    class DirectoryData*    m_data;
-    String                  m_name;
+    class DirectoryData* m_data;
+    std::string m_name;
 };
 
 } /* namespace lol */

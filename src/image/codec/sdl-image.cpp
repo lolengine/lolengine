@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -25,6 +25,8 @@
 #   include <SDL_image.h>
 #endif
 
+#include <string>
+
 #include "../../image/resource-private.h"
 
 namespace lol
@@ -37,22 +39,22 @@ namespace lol
 class SdlImageCodec : public ResourceCodec
 {
 public:
-    virtual char const *GetName() { return "<SdlImageCodec>"; }
-    virtual ResourceCodecData* Load(char const *path);
-    virtual bool Save(char const *path, ResourceCodecData* data);
+    virtual std::string GetName() { return "<SdlImageCodec>"; }
+    virtual ResourceCodecData* Load(std::string const &path);
+    virtual bool Save(std::string const &path, ResourceCodecData* data);
 
     static SDL_Surface *Create32BppSurface(ivec2 size);
 };
 
 DECLARE_IMAGE_CODEC(SdlImageCodec, 50)
 
-ResourceCodecData* SdlImageCodec::Load(char const *path)
+ResourceCodecData* SdlImageCodec::Load(std::string const &path)
 {
     SDL_Surface *surface = nullptr;
 
-    for (auto candidate : sys::get_path_list(path))
+    for (auto const &candidate : sys::get_path_list(path))
     {
-        surface = IMG_Load(candidate.C());
+        surface = IMG_Load(candidate.c_str());
         if (surface)
             break;
     }
@@ -60,7 +62,7 @@ ResourceCodecData* SdlImageCodec::Load(char const *path)
     if (!surface)
     {
 #if !LOL_BUILD_RELEASE
-        msg::error("could not load image %s\n", path);
+        msg::error("could not load image %s\n", path.c_str());
 #endif
         return nullptr;
     }
@@ -86,7 +88,7 @@ ResourceCodecData* SdlImageCodec::Load(char const *path)
     return data;
 }
 
-bool SdlImageCodec::Save(char const *path, ResourceCodecData* data)
+bool SdlImageCodec::Save(std::string const &path, ResourceCodecData* data)
 {
     auto data_image = dynamic_cast<ResourceImageData*>(data);
     if (data_image == nullptr)
@@ -100,7 +102,7 @@ bool SdlImageCodec::Save(char const *path, ResourceCodecData* data)
     memcpy(surface->pixels, pixel_data, 4 * size.x * size.y);
     image->unlock(pixel_data);
 
-    int ret = SDL_SaveBMP(surface, path);
+    int ret = SDL_SaveBMP(surface, path.c_str());
     SDL_FreeSurface(surface);
 
     return ret == 0;

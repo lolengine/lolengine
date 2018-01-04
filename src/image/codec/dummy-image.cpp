@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -11,6 +11,8 @@
 //
 
 #include <lol/engine-internal.h>
+
+#include <string>
 
 #include "../../image/resource-private.h"
 
@@ -24,9 +26,9 @@ namespace lol
 class DummyImageCodec : public ResourceCodec
 {
 public:
-    virtual char const *GetName() { return "<DummyImageCodec>"; }
-    virtual ResourceCodecData* Load(char const *path);
-    virtual bool Save(char const *path, ResourceCodecData* data);
+    virtual std::string GetName() { return "<DummyImageCodec>"; }
+    virtual ResourceCodecData* Load(std::string const &path);
+    virtual bool Save(std::string const &path, ResourceCodecData* data);
 };
 
 //Priority 0 because it's supposed to be the last one
@@ -36,9 +38,9 @@ DECLARE_IMAGE_CODEC(DummyImageCodec, 0)
  * Public Image class
  */
 
-ResourceCodecData* DummyImageCodec::Load(char const *path)
+ResourceCodecData* DummyImageCodec::Load(std::string const &path)
 {
-    if (strcmp("DUMMY", path))
+    if (path == "DUMMY")
         return nullptr;
 
     auto data = new ResourceImageData(new image(ivec2(256)));
@@ -58,7 +60,7 @@ ResourceCodecData* DummyImageCodec::Load(char const *path)
     return data;
 }
 
-bool DummyImageCodec::Save(char const *path, ResourceCodecData* data)
+bool DummyImageCodec::Save(std::string const &path, ResourceCodecData* data)
 {
     UNUSED(path, data);
 

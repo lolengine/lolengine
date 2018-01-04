@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -10,21 +10,16 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
-#if HAVE_CONFIG_H
-#   include "config.h"
-#endif
+#include <lol/engine-internal.h>
+
 #if LOL_USE_GDIPLUS
+#   include <string>
 #   include <algorithm>
 using std::min;
 using std::max;
 #   include <windows.h>
 #   include <objidl.h> // for DEFINE_GUID
 #   include <gdiplus.h>
-#endif
-
-#include <lol/engine-internal.h>
-
-#if LOL_USE_GDIPLUS
 
 #include "../../image/resource-private.h"
 
@@ -38,9 +33,9 @@ namespace lol
 class GdiPlusImageCodec : public ResourceCodec
 {
 public:
-    virtual char const *GetName() { return "<GdiPlusImageCodec>"; }
-    virtual ResourceCodecData* Load(char const *path);
-    virtual bool Save(char const *path, ResourceCodecData* data);
+    virtual std::string GetName() { return "<GdiPlusImageCodec>"; }
+    virtual ResourceCodecData* Load(std::string const &path);
+    virtual bool Save(std::string const &path, ResourceCodecData* data);
 };
 
 DECLARE_IMAGE_CODEC(GdiPlusImageCodec, 100)
@@ -49,7 +44,7 @@ DECLARE_IMAGE_CODEC(GdiPlusImageCodec, 100)
  * Public Image class
  */
 
-ResourceCodecData* GdiPlusImageCodec::Load(char const *path)
+ResourceCodecData* GdiPlusImageCodec::Load(std::string const &path)
 {
     Gdiplus::Status status;
     ULONG_PTR token;
@@ -61,16 +56,16 @@ ResourceCodecData* GdiPlusImageCodec::Load(char const *path)
         return nullptr;
     }
 
-    array<String> pathlist = sys::get_path_list(path);
+    array<std::string> pathlist = sys::get_path_list(path);
     Gdiplus::Bitmap *bitmap = nullptr;
-    for (auto fullpath : pathlist)
+    for (auto const &fullpath : pathlist)
     {
         size_t len;
-        len = mbstowcs(nullptr, fullpath.C(), 0);
+        len = mbstowcs(nullptr, fullpath.c_str(), 0);
         wchar_t *wpath = new wchar_t[len + 1];
-        if (mbstowcs(wpath, fullpath.C(), len + 1) == (size_t)-1)
+        if (mbstowcs(wpath, fullpath.c_str(), len + 1) == (size_t)-1)
         {
-            msg::error("invalid image name %s\n", fullpath.C());
+            msg::error("invalid image name %s\n", fullpath.c_str());
             delete[] wpath;
             continue;
         }
@@ -85,7 +80,7 @@ ResourceCodecData* GdiPlusImageCodec::Load(char const *path)
             {
                 if (status != Gdiplus::InvalidParameter)
                     msg::error("error %d loading %s\n",
-                               status, fullpath.C());
+                               status, fullpath.c_str());
                 delete bitmap;
                 bitmap = nullptr;
             }
@@ -130,7 +125,7 @@ ResourceCodecData* GdiPlusImageCodec::Load(char const *path)
     return data;
 }
 
-bool GdiPlusImageCodec::Save(char const *path, ResourceCodecData* data)
+bool GdiPlusImageCodec::Save(std::string const &path, ResourceCodecData* data)
 {
     auto data_image = dynamic_cast<ResourceImageData*>(data);
     if (data_image == nullptr)
@@ -141,15 +136,15 @@ bool GdiPlusImageCodec::Save(char const *path, ResourceCodecData* data)
     Gdiplus::GdiplusStartup(&token, &input, nullptr);
 
     wchar_t const *fmt;
-    if (strstr(path, ".gif"))
+    if (ends_with(path, ".gif"))
         fmt = L"image/gif";
-    else if (strstr(path, ".jpg") || strstr(path, ".jpeg"))
+    else if (ends_with(path, ".jpg") || ends_with(path, ".jpeg"))
         fmt = L"image/jpeg";
-    else if (strstr(path, ".png"))
+    else if (ends_with(path, ".png"))
         fmt = L"image/png";
-    else if (strstr(path, ".tiff"))
+    else if (ends_with(path, ".tiff"))
         fmt = L"image/tiff";
-    else /* if (strstr(path, ".bmp")) */
+    else /* if (ends_with(path, ".bmp")) */
         fmt = L"image/bmp";
 
     unsigned int num = 0, encoder_size = 0;
@@ -173,11 +168,11 @@ bool GdiPlusImageCodec::Save(char const *path, ResourceCodecData* data)
     }
 
     size_t len;
-    len = mbstowcs(nullptr, path, 0);
+    len = mbstowcs(nullptr, path.c_str(), 0);
     wchar_t *wpath = new wchar_t[len + 1];
-    if (mbstowcs(wpath, path, len + 1) == (size_t)-1)
+    if (mbstowcs(wpath, path.c_str(), len + 1) == (size_t)-1)
     {
-        msg::error("could not convert GDI+ filename '%s' to widechar\n", path);
+        msg::error("could not convert GDI+ filename '%s' to widechar\n", path.c_str());
         delete[] wpath;
         delete[] codecs;
         return false;
@@ -212,7 +207,7 @@ bool GdiPlusImageCodec::Save(char const *path, ResourceCodecData* data)
 
     if (b->Save(wpath, &clsid, nullptr) != Gdiplus::Ok)
     {
-        msg::error("could not save GDI+ image '%s'\n", path);
+        msg::error("could not save GDI+ image '%s'\n", path.c_str());
         delete[] wpath;
         delete[] codecs;
         delete b;

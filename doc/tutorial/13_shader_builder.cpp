@@ -110,7 +110,7 @@ public:
 
         builder.Build(code);
 
-        file.WriteString(code.c_str());
+        file.Write(code);
         //code = file.ReadString();
         file.Close();
 
