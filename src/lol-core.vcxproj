@@ -396,7 +396,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="3rdparty\lol-bullet.vcxproj">
+    <ProjectReference Condition="'$(enable_bullet)'!='no'" Include="$(LolDir)\src\3rdparty\lol-bullet.vcxproj">
       <Project>{83d3b207-c601-4025-8f41-01dedc354661}</Project>
     </ProjectReference>
   </ItemGroup>

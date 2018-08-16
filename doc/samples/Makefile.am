@@ -9,7 +9,10 @@ bench: benchsuite$(EXEEXT)
 if BUILD_SAMPLES
 noinst_PROGRAMS = bluenoise benchsuite simplex
 if LOL_USE_GL
-noinst_PROGRAMS += btphystest nacl_phystest
+noinst_PROGRAMS += nacl_phystest
+if LOL_USE_BULLET
+noinst_PROGRAMS += btphystest
+endif
 endif
 endif
 

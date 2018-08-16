@@ -1,7 +1,10 @@
 
 include $(top_srcdir)/build/autotools/common.am
 
-noinst_LIBRARIES = liblol-bullet.a liblol-lua.a
+noinst_LIBRARIES = liblol-lua.a
+if LOL_USE_BULLET
+noinst_LIBRARIES += liblol-bullet.a
+endif
 
 # Only remove flags that were actually set, because we don't know
 # what the compiler actually accepts.

@@ -90,6 +90,8 @@ AC_ARG_ENABLE(imlib2,
   [  --enable-imlib2         build using Imlib2 (default autodetected)])
 AC_ARG_ENABLE(png,
   [  --enable-png            build using libpng (default autodetected)])
+AC_ARG_ENABLE(bullet,
+  [  --enable-bullet         build using Bullet Physics (default yes)])
 
 AC_ARG_ENABLE(test,
   [  --enable-test           build test suite (default yes)])

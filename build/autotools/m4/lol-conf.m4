@@ -81,6 +81,15 @@ if test "$ac_cv_have_getopt_long" != "no"; then
 fi
 
 
+dnl  Use Bullet Physics?
+ac_cv_my_have_bullet="no"
+if test "${enable_bullet}" != "no"; then
+  ac_cv_my_have_bullet="yes"
+  AC_DEFINE(LOL_USE_BULLET, 1, Define to 1 to use Bullet Physics)
+fi
+AM_CONDITIONAL(LOL_USE_BULLET, test "${ac_cv_my_have_bullet}" = "yes")
+
+
 dnl  Use NativeClient?
 ac_cv_my_have_nacl="no"
 AC_LANG_PUSH(C++)
