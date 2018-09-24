@@ -65,10 +65,14 @@ public:
 
         /* Compute all gradient contributions, for each of the 2^N corners
          * of the hypercube. */
-        for (int i = 0; i < (1 << N); ++i)
+        for (int i = 0; ; ++i)
         {
             /* Accumulate Perlin noise */
             ret += multiplier * dot(delta, this->get_gradient(origin));
+
+            /* Avoid buffer overflow below in origin[bit] */
+            if (i + 1 == (1 << N))
+                break;
 
             /* Don’t use the binary pattern for “i” but use its Gray code
              * “j” instead, so we know we only have one component to alter
