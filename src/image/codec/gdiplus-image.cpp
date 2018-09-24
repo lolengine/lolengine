@@ -17,7 +17,12 @@
 #   include <algorithm>
 using std::min;
 using std::max;
+#   define WIN32_LEAN_AND_MEAN 1
 #   include <windows.h>
+#   undef NEAR // avoids errors in <objidl.h>
+#   undef FAR
+#   define NEAR
+#   define FAR
 #   include <objidl.h> // for DEFINE_GUID
 #   include <gdiplus.h>
 

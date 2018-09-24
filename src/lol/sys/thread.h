@@ -31,7 +31,9 @@
  * https://connect.microsoft.com/VisualStudio/feedback/details/747145 */
 #if defined(_MSC_VER) && (_MSC_VER < 1900)
 #   define LOL_VISUAL_STUDIO_BUG_747145_WORKAROUND 1
+#   define WIN32_LEAN_AND_MEAN 1
 #   include <windows.h>
+#   undef WIN32_LEAN_AND_MEAN
 #   undef near /* Fuck Microsoft */
 #   undef far /* Fuck Microsoft again */
 #endif

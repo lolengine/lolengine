@@ -57,27 +57,27 @@ D3d9Input::D3d9Input()
         // TODO: we can put more friendly name here, such as LeftAxisX, ButtonX...
         InputDeviceInternal* stick = new InputDeviceInternal(g_name_joystick(i + 1));
 
-        stick->AddAxis(g_name_xbox_axis_left_x.C());
-        stick->AddAxis(g_name_xbox_axis_left_y.C());
-        stick->AddAxis(g_name_xbox_axis_right_x.C());
-        stick->AddAxis(g_name_xbox_axis_right_y.C());
-        stick->AddAxis(g_name_xbox_axis_left_trigger.C());
-        stick->AddAxis(g_name_xbox_axis_right_trigger.C());
+        stick->AddAxis(g_name_xbox_axis_left_x.c_str());
+        stick->AddAxis(g_name_xbox_axis_left_y.c_str());
+        stick->AddAxis(g_name_xbox_axis_right_x.c_str());
+        stick->AddAxis(g_name_xbox_axis_right_y.c_str());
+        stick->AddAxis(g_name_xbox_axis_left_trigger.c_str());
+        stick->AddAxis(g_name_xbox_axis_right_trigger.c_str());
 
-        stick->AddKey(g_name_xbox_key_dpad_up.C());
-        stick->AddKey(g_name_xbox_key_dpad_down.C());
-        stick->AddKey(g_name_xbox_key_dpad_left.C());
-        stick->AddKey(g_name_xbox_key_dpad_right.C());
-        stick->AddKey(g_name_xbox_key_start.C());
-        stick->AddKey(g_name_xbox_key_back.C());
-        stick->AddKey(g_name_xbox_key_left_thumb.C());
-        stick->AddKey(g_name_xbox_key_right_thumb.C());
-        stick->AddKey(g_name_xbox_key_left_shoulder.C());
-        stick->AddKey(g_name_xbox_key_right_shoulder.C());
-        stick->AddKey(g_name_xbox_key_a.C());
-        stick->AddKey(g_name_xbox_key_b.C());
-        stick->AddKey(g_name_xbox_key_x.C());
-        stick->AddKey(g_name_xbox_key_y.C());
+        stick->AddKey(g_name_xbox_key_dpad_up.c_str());
+        stick->AddKey(g_name_xbox_key_dpad_down.c_str());
+        stick->AddKey(g_name_xbox_key_dpad_left.c_str());
+        stick->AddKey(g_name_xbox_key_dpad_right.c_str());
+        stick->AddKey(g_name_xbox_key_start.c_str());
+        stick->AddKey(g_name_xbox_key_back.c_str());
+        stick->AddKey(g_name_xbox_key_left_thumb.c_str());
+        stick->AddKey(g_name_xbox_key_right_thumb.c_str());
+        stick->AddKey(g_name_xbox_key_left_shoulder.c_str());
+        stick->AddKey(g_name_xbox_key_right_shoulder.c_str());
+        stick->AddKey(g_name_xbox_key_a.c_str());
+        stick->AddKey(g_name_xbox_key_b.c_str());
+        stick->AddKey(g_name_xbox_key_x.c_str());
+        stick->AddKey(g_name_xbox_key_y.c_str());
 
         m_data->m_joysticks.push(i, stick);
     }
