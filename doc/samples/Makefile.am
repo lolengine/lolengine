@@ -37,7 +37,7 @@ btphystest_SOURCES = \
     front_camera_sprite.lolfx
 btphystest_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/src/3rdparty/bullet3/src \
     -DHAVE_PHYS_USE_BULLET
-btphystest_DEPENDENCIES = @LOL_DEPS@
+btphystest_DEPENDENCIES = @LOL_DEPS@ @LOL_BULLET_DEPS@
 btphystest_LDFLAGS = $(AM_LDFLAGS)
 if LOL_USE_EMSCRIPTEN
 btphystest_LDFLAGS += \
