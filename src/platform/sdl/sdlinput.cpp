@@ -12,7 +12,7 @@
 
 #include <lol/engine-internal.h>
 
-#if LOL_USE_SDL || LOL_USE_OLD_SDL
+#if LOL_USE_SDL
 #   if HAVE_SDL2_SDL_H
 #      include <SDL2/SDL.h>
 #   elif HAVE_SDL_SDL_H
@@ -39,65 +39,52 @@
 namespace lol
 {
 
-#if LOL_USE_OLD_SDL
-/* Quick and dirty for now... This is deprecated anyway. */
-static int sdl12_to_scancode(int ch, int sc)
+//-------------------------------------------------------------------------
+#define _SC(id, str, name) static const uint16_t SDLOL_##name = id;
+#include "input/keys.h"
+//-------------------------------------------------------------------------
+static bool ScanCodeIsValid(int sc)
 {
-    if (ch >= 'a' && ch <= 'z')
-        ch = ch - 'a' + 'A';
-
-#   define _SC(id, str, name) if (ch == str[0]) return id;
-#   include "input/keys.h"
-
-    return 0;
+    switch (sc)
+    {
+#define _SC(id, str, name) \
+    case id: return true;
+#include "input/keys.h"
+    default: return false;
+    }
+    return false;
 }
-#else
-    //-------------------------------------------------------------------------
-#   define _SC(id, str, name) static const uint16_t SDLOL_##name = id;
-#   include "input/keys.h"
-    //-------------------------------------------------------------------------
-    static bool ScanCodeIsValid(int sc)
+
+//-------------------------------------------------------------------------
+/* DEBUG STUFF
+static String ScanCodeToText(int sc)
+{
+    switch (sc)
     {
-        switch (sc)
-        {
-#   define _SC(id, str, name) \
-        case id: return true;
-#   include "input/keys.h"
-        default: return false;
-        }
-        return false;
+#define _SC(id, str, name) \
+    case id: return String(str);
+#include "input/keys.h"
+    default:
+        msg::error("ScanCodeToText unknown scancode %0d\n", sc);
     }
-    //-------------------------------------------------------------------------
-    /* DEBUG STUFF
-    static String ScanCodeToText(int sc)
+    return String();
+}
+*/
+//-------------------------------------------------------------------------
+/* DEBUG STUFF
+static String ScanCodeToName(int sc)
+{
+    switch (sc)
     {
-        switch (sc)
-        {
-#   define _SC(id, str, name) \
-        case id: return String(str);
-#   include "input/keys.h"
-        default:
-            msg::error("ScanCodeToText unknown scancode %0d\n", sc);
-        }
-        return String();
-    }
-    */
-    //-------------------------------------------------------------------------
-    /* DEBUG STUFF
-    static String ScanCodeToName(int sc)
-    {
-        switch (sc)
-        {
-#   define _SC(id, str, name) \
+#define _SC(id, str, name) \
         case id: return String(#name);
-#   include "input/keys.h"
-        default:
-            msg::error("ScanCodeToText unknown scancode %0d\n", sc);
-        }
-        return String();
+#include "input/keys.h"
+    default:
+        msg::error("ScanCodeToText unknown scancode %0d\n", sc);
     }
-    */
-#endif
+    return String();
+}
+*/
 
 /*
  * SDL Input implementation class
@@ -123,7 +110,7 @@ private:
         m_tick_in_draw_thread(false)
     { }
 
-#if LOL_USE_SDL || LOL_USE_OLD_SDL
+#if LOL_USE_SDL
     array<SDL_Joystick *, InputDeviceInternal *> m_joysticks;
     InputDeviceInternal *m_mouse;
     InputDeviceInternal *m_keyboard;
@@ -148,19 +135,14 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
     m_data->m_tick_in_draw_thread = true;
 #endif
 
-#if LOL_USE_OLD_SDL
-    /* Enable Unicode translation of keyboard events */
-    SDL_EnableUNICODE(1);
-#endif
-
-#if LOL_USE_SDL || LOL_USE_OLD_SDL
+#if LOL_USE_SDL
     SDL_Init(SDL_INIT_TIMER | SDL_INIT_JOYSTICK);
 #endif
 
     m_data->m_keyboard = InputDeviceInternal::CreateStandardKeyboard();
     m_data->m_mouse = InputDeviceInternal::CreateStandardMouse();
 
-#if LOL_USE_SDL || LOL_USE_OLD_SDL
+#if LOL_USE_SDL
 #   if !EMSCRIPTEN
 #       if SDL_FORCE_POLL_JOYSTICK
     SDL_JoystickEventState(SDL_QUERY);
@@ -180,8 +162,6 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
          *    it won't think there is only one trigger axis. */
 #       if LOL_USE_SDL
         char const *name = SDL_JoystickName(sdlstick);
-#       elif LOL_USE_OLD_SDL
-        char const *name = SDL_JoystickName(i);
 #       endif
         if (strstr(name, "HDAPS")
 #       if LOL_USE_XINPUT
@@ -210,7 +190,7 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
 
 SdlInput::~SdlInput()
 {
-#if (LOL_USE_SDL || LOL_USE_OLD_SDL) && !EMSCRIPTEN
+#if LOL_USE_SDL && !EMSCRIPTEN
     /* Unregister all the joysticks we added */
     while (m_data->m_joysticks.count())
     {
@@ -240,7 +220,7 @@ void SdlInput::TickDraw(float seconds, Scene &scene)
 
 void SdlInputData::Tick(float seconds)
 {
-#if LOL_USE_SDL || LOL_USE_OLD_SDL
+#if LOL_USE_SDL
     /* FIXME: maybe we should make use of this? */
     UNUSED(seconds);
 
@@ -258,12 +238,10 @@ void SdlInputData::Tick(float seconds)
 
     m_mouse->SetAxis(4, 0);
 
-#   if !LOL_USE_OLD_SDL
     if (m_keyboard->IsTextInputActive())
         SDL_StartTextInput();
     else
         SDL_StopTextInput();
-#   endif
 
     /* Handle keyboard and WM events */
     SDL_Event event;
@@ -277,12 +255,7 @@ void SdlInputData::Tick(float seconds)
 
         case SDL_KEYDOWN:
         case SDL_KEYUP:
-#   if LOL_USE_OLD_SDL
-            switch (int sc = sdl12_to_scancode(event.key.keysym.sym,
-                                               event.key.keysym.scancode))
-#   else
             switch (int sc = event.key.keysym.scancode)
-#   endif
             {
                 //Lock management
             case SDLOL_CapsLock:
@@ -314,10 +287,6 @@ void SdlInputData::Tick(float seconds)
                 }
 #   endif
             default:
-#   if LOL_USE_OLD_SDL
-                m_keyboard->SetKey(sc ? sc : event.key.keysym.scancode,
-                                   event.type == SDL_KEYDOWN);
-#   else
                 if (ScanCodeIsValid(sc))
                 {
                     //Set key updates the corresponding key
@@ -334,27 +303,15 @@ void SdlInputData::Tick(float seconds)
                     msg::error("unknown keypress (sym 0x%02x, scancode %0d)\n",
                                 event.key.keysym.sym, event.key.keysym.scancode);
                 */
-#   endif
             }
             break;
 
-#   if !LOL_USE_OLD_SDL
         //case SDL_TEXTEDITING: //TODO: handle that ?
         case SDL_TEXTINPUT:
                 m_keyboard->AddText(event.text.text);
                 break;
 
-#   endif
 
-#   if LOL_USE_OLD_SDL
-        case SDL_MOUSEBUTTONDOWN:
-        case SDL_MOUSEBUTTONUP:
-            if (event.button.button != SDL_BUTTON_WHEELUP && event.button.button != SDL_BUTTON_WHEELDOWN)
-                m_mouse->SetKey(event.button.button - 1, event.type == SDL_MOUSEBUTTONDOWN);
-            else
-                m_mouse->SetAxis(4, (event.button.button != SDL_BUTTON_WHEELUP) ? (1) : (-1));
-            break;
-#   else
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP:
             //event.button.which
@@ -378,7 +335,6 @@ void SdlInputData::Tick(float seconds)
             }
             break;
         }
-#   endif
 
 #   if !SDL_FORCE_POLL_JOYSTICK
         case SDL_JOYAXISMOTION:
@@ -400,8 +356,6 @@ void SdlInputData::Tick(float seconds)
         m_mousecapture = InputDeviceInternal::GetMouseCapture();
 #   if LOL_USE_SDL
         SDL_SetRelativeMouseMode(m_mousecapture ? SDL_TRUE : SDL_FALSE);
-#   elif LOL_USE_OLD_SDL
-        SDL_WM_GrabInput(m_mousecapture ? SDL_GRAB_ON : SDL_GRAB_OFF);
 #   endif
         mouse = (ivec2)m_app / 2;
         SdlInputData::SetMousePos(mouse);
@@ -424,14 +378,6 @@ void SdlInputData::Tick(float seconds)
         m_mouse->SetAxis(3,-(mouse.y - vprevmouse.y));
     }
 
-    //Mouse is focused, Validate the InScreen Key
-    //Hardcoded 3, not very nice.
-#   if !EMSCRIPTEN && LOL_USE_OLD_SDL
-    m_mouse->SetKey(3, !!(SDL_GetAppState() & SDL_APPMOUSEFOCUS));
-#   else
-    //Handled in PollEvent
-#   endif
-
     if (m_mousecapture)
     {
         mouse = ivec2(m_app * .5f);
@@ -450,10 +396,7 @@ ivec2 SdlInputData::GetMousePos()
 {
     ivec2 ret(-1, -1);
 
-#if LOL_USE_SDL || LOL_USE_OLD_SDL
-#   if !EMSCRIPTEN && LOL_USE_OLD_SDL
-    if (SDL_GetAppState() & SDL_APPMOUSEFOCUS)
-#   endif
+#if LOL_USE_SDL
     {
         SDL_GetMouseState(&ret.x, &ret.y);
         ret.y = Video::GetSize().y - 1 - ret.y;
@@ -464,13 +407,10 @@ ivec2 SdlInputData::GetMousePos()
 
 void SdlInputData::SetMousePos(ivec2 position)
 {
+    UNUSED(position);
 #if LOL_USE_SDL
     // FIXME: how do I warped mouse?
-    UNUSED(position);
-#elif LOL_USE_OLD_SDL
-    SDL_WarpMouse((uint16_t)position.x, (uint16_t)position.y);
-#else
-    UNUSED(position);
+    //SDL_WarpMouse((uint16_t)position.x, (uint16_t)position.y);
 #endif
 }
 

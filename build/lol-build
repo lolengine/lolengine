@@ -276,7 +276,7 @@ configure()
             ;;
         web-*)
             # We use --enable-release otherwise builds are really too slow
-            do_configure --enable-release $HOSTFLAGS $BUILDFLAGS CC=emcc CXX=em++ AR=emar RANLIB=emranlib PKG_CONFIG=/bin/false SDL_CONFIG=/bin/false ac_cv_exeext=".${platform##web-}"
+            do_configure --enable-release $HOSTFLAGS $BUILDFLAGS CC=emcc CXX=em++ AR=emar RANLIB=emranlib PKG_CONFIG=/bin/false SDL_CONFIG=/bin/false ac_cv_exeext=".${platform##web-}" CPPFLAGS="-s USE_SDL=2" CXXFLAGS="-s USE_SDL=2" CFLAGS="-s USE_SDL=2"
             ;;
         *)
             PATH="$PATH" do_configure CFLAGS="$CXXFLAGS" CXXFLAGS="$CXXFLAGS"

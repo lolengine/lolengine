@@ -22,7 +22,7 @@
 #   include "platform/nacl/nacl-app.h"
 #elif __ANDROID__
 #   include "platform/android/androidapp.h"
-#elif LOL_USE_SDL || LOL_USE_OLD_SDL
+#elif LOL_USE_SDL
 #   include "platform/sdl/sdlapp.h"
 #   include "platform/sdl/sdlinput.h"
 #elif HAVE_GLES_2X
@@ -89,7 +89,7 @@ protected:
     //NOT HANDLED YET
 #elif __ANDROID__
     //NOT HANDLED YET
-#elif LOL_USE_SDL || LOL_USE_OLD_SDL
+#elif LOL_USE_SDL
     SdlAppDisplay display;
 #elif HAVE_GLES_2X
     /* FIXME: this macro is only deactivated if we include "lolgl.h" */
@@ -149,7 +149,7 @@ class ApplicationData
     NaClApp app;
 #elif __ANDROID__
     AndroidApp app;
-#elif LOL_USE_SDL || LOL_USE_OLD_SDL
+#elif LOL_USE_SDL
     SdlApp app;
 #elif HAVE_GLES_2X
     /* FIXME: this macro is only deactivated if we include "lolgl.h" */

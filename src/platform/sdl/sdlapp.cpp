@@ -12,7 +12,7 @@
 
 #include <lol/engine-internal.h>
 
-#if LOL_USE_SDL || LOL_USE_OLD_SDL
+#if LOL_USE_SDL
 #   if HAVE_SDL2_SDL_H
 #      include <SDL2/SDL.h>
 #   elif HAVE_SDL_SDL_H
@@ -43,8 +43,6 @@ private:
 #if LOL_USE_SDL
     SDL_Window *m_window;
     SDL_GLContext m_glcontext;
-#elif LOL_USE_OLD_SDL
-    SDL_Surface *m_window;
 #endif
 };
 
@@ -54,7 +52,7 @@ private:
 SdlAppDisplay::SdlAppDisplay(char const *title, ivec2 res)
     : data(new SdlAppDisplayData())
 {
-#if LOL_USE_SDL || LOL_USE_OLD_SDL
+#if LOL_USE_SDL
     ivec2 window_size = res;
     ivec2 screen_size = res;
 
@@ -123,9 +121,6 @@ SdlAppDisplay::~SdlAppDisplay()
         SDL_GL_DeleteContext(data->m_glcontext);
         SDL_DestroyWindow(data->m_window);
     }
-#elif LOL_USE_OLD_SDL
-    if (data->m_window)
-        SDL_FreeSurface(data->m_window);
 #endif
 
     delete data;
@@ -135,16 +130,12 @@ void SdlAppDisplay::SetResolution(ivec2 resolution)
 {
 #if LOL_USE_SDL
     SDL_SetWindowSize(data->m_window, resolution.x, resolution.y);
-#elif LOL_USE_OLD_SDL
-    //Not implemented
 #endif
 }
 void SdlAppDisplay::SetPosition(ivec2 position)
 {
 #if LOL_USE_SDL
     SDL_SetWindowPosition(data->m_window, position.x, position.y);
-#elif LOL_USE_OLD_SDL
-    //Not implemented
 #endif
 }
 
@@ -160,8 +151,6 @@ void SdlAppDisplay::Disable()
 {
 #if LOL_USE_SDL
         SDL_GL_SwapWindow(data->m_window);
-#elif LOL_USE_OLD_SDL
-        SDL_GL_SwapBuffers();
 #endif
 }
 
@@ -175,8 +164,6 @@ const char* SceneDisplay::GetPhysicalName(int index)
 {
     return SDL_GetDisplayName(index);
 }
-#elif LOL_USE_OLD_SDL
-//  Not implemented
 #endif
 
 /*
@@ -190,8 +177,6 @@ private:
 #if LOL_USE_SDL
     SDL_Window *m_window;
     SDL_GLContext m_glcontext;
-#elif LOL_USE_OLD_SDL
-    SDL_Surface *m_window;
 #endif
 };
 
@@ -202,7 +187,7 @@ SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
     data(new SdlAppData())
 {
     UNUSED(title);
-#if LOL_USE_SDL || LOL_USE_OLD_SDL
+#if LOL_USE_SDL
     ivec2 window_size = res;
     ivec2 screen_size = res;
 
@@ -223,7 +208,7 @@ SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
 
 void SdlApp::ShowPointer(bool show)
 {
-#if LOL_USE_SDL || LOL_USE_OLD_SDL
+#if LOL_USE_SDL
     SDL_ShowCursor(show ? 1 : 0);
 #endif
 }
@@ -237,8 +222,6 @@ void SdlApp::Tick()
 SdlApp::~SdlApp()
 {
 #if LOL_USE_SDL
-    SDL_Quit();
-#elif LOL_USE_OLD_SDL
     SDL_Quit();
 #endif
     delete data;
