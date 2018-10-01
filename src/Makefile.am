@@ -155,6 +155,7 @@ imgui_sources = \
     lolimgui.cpp lolimgui.h \
     3rdparty/imgui/imgui_demo.cpp \
     3rdparty/imgui/imgui_draw.cpp \
+    3rdparty/imgui/imgui_widgets.cpp \
     $(NULL)
 
 if LOL_USE_NACL

@@ -27,11 +27,11 @@ using namespace lol;
 //Imgui extension ---------------------------------------------------------------------------------
 namespace ImGui
 {
-    IMGUI_API void SetNextWindowDockingAndSize(const ImVec2& size, ImGuiSetDock dock, const ImVec2& padding, ImGuiSetCond cond)
+    IMGUI_API void SetNextWindowDockingAndSize(const ImVec2& size, ImGuiSetDock dock, const ImVec2& padding, ImGuiCond cond)
     {
         SetNextWindowDockingAndSize(size, dock, ImVec4(vec2(padding).xyxy), cond);
     }
-    IMGUI_API void SetNextWindowDockingAndSize(const ImVec2& size, ImGuiSetDock dock, const ImVec4& padding, ImGuiSetCond cond)
+    IMGUI_API void SetNextWindowDockingAndSize(const ImVec2& size, ImGuiSetDock dock, const ImVec4& padding, ImGuiCond cond)
     {
         vec4 pdg = padding;
         vec2 vsz = vec2(Video::GetSize());
@@ -55,11 +55,11 @@ namespace ImGui
         ImGui::SetNextWindowSize(size, cond);
     }
 
-    IMGUI_API void SetNextWindowDocking(ImGuiSetDock dock, const ImVec2& padding, ImGuiSetCond cond)
+    IMGUI_API void SetNextWindowDocking(ImGuiSetDock dock, const ImVec2& padding, ImGuiCond cond)
     {
         SetNextWindowDocking(dock, ImVec4(vec2(padding).xyxy), cond);
     }
-    IMGUI_API void SetNextWindowDocking(ImGuiSetDock dock, const ImVec4& padding, ImGuiSetCond cond)
+    IMGUI_API void SetNextWindowDocking(ImGuiSetDock dock, const ImVec4& padding, ImGuiCond cond)
     {
         vec2 vsz = vec2(Video::GetSize());
         vec2 size = vec2();
@@ -95,6 +95,8 @@ namespace ImGui
 //-----------------------------------------------------------------------------
 LolImGui::LolImGui()
 {
+    ImGui::CreateContext();
+
     m_gamegroup = GAMEGROUP_IMGUI;
     m_drawgroup = DRAWGROUP_IMGUI;
 
@@ -168,6 +170,8 @@ LolImGui::~LolImGui()
 
     Shader::Destroy(m_shader);
     delete m_vdecl;
+
+    ImGui::DestroyContext();
 }
 
 //-----------------------------------------------------------------------------
@@ -222,8 +226,6 @@ void LolImGui::Shutdown()
         Ticker::Unref(g_lolimgui);
         g_lolimgui = nullptr;
     }
-
-    ImGui::Shutdown();
 }
 
 //-----------------------------------------------------------------------------
@@ -350,6 +352,7 @@ void LolImGui::TickDraw(float seconds, Scene &scene)
 
     scene.AddPrimitiveRenderer(this, new PrimitiveLolImGui());
 }
+
 void PrimitiveLolImGui::Render(Scene& scene, PrimitiveSource* primitive)
 {
     UNUSED(scene, primitive);
@@ -357,6 +360,7 @@ void PrimitiveLolImGui::Render(Scene& scene, PrimitiveSource* primitive)
     ImGuiIO& io = ImGui::GetIO();
     if (io.Fonts->TexID)
         ImGui::Render();
+    ImGui::EndFrame();
 }
 
 //// Data

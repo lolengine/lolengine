@@ -36,7 +36,7 @@
 #undef IM_VEC4_CLASS_EXTRA
 
 //Imgui extension ---------------------------------------------------------------------------------
-typedef int ImGuiSetDock;           // condition flags for Set*()           // enum ImGuiSetCond_
+typedef int ImGuiSetDock;           // condition flags for Set*()           // enum ImGuiCond_
 
 enum ImGuiSetDock_
 {
@@ -53,10 +53,10 @@ enum ImGuiSetDock_
 
 namespace ImGui
 {
-    IMGUI_API void SetNextWindowDockingAndSize(const ImVec2& size, ImGuiSetDock dock, const ImVec2& padding, ImGuiSetCond cond = 0);
-    IMGUI_API void SetNextWindowDockingAndSize(const ImVec2& size, ImGuiSetDock dock, const ImVec4& padding = ImVec4(0, 0, 0, 0), ImGuiSetCond cond = 0);
-    IMGUI_API void SetNextWindowDocking(ImGuiSetDock dock, const ImVec2& padding, ImGuiSetCond cond = 0);
-    IMGUI_API void SetNextWindowDocking(ImGuiSetDock dock, const ImVec4& padding = ImVec4(0, 0, 0, 0), ImGuiSetCond cond = 0);
+    IMGUI_API void SetNextWindowDockingAndSize(const ImVec2& size, ImGuiSetDock dock, const ImVec2& padding, ImGuiCond cond = 0);
+    IMGUI_API void SetNextWindowDockingAndSize(const ImVec2& size, ImGuiSetDock dock, const ImVec4& padding = ImVec4(0, 0, 0, 0), ImGuiCond cond = 0);
+    IMGUI_API void SetNextWindowDocking(ImGuiSetDock dock, const ImVec2& padding, ImGuiCond cond = 0);
+    IMGUI_API void SetNextWindowDocking(ImGuiSetDock dock, const ImVec4& padding = ImVec4(0, 0, 0, 0), ImGuiCond cond = 0);
     IMGUI_API float GetMainMenuBarHeight();
 }
 
