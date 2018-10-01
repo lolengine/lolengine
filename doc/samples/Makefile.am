@@ -38,7 +38,7 @@ btphystest_SOURCES = \
 btphystest_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/src/3rdparty/bullet3/src \
     -DHAVE_PHYS_USE_BULLET
 btphystest_DEPENDENCIES = @LOL_DEPS@ @LOL_BULLET_DEPS@
-btphystest_LDFLAGS = $(AM_LDFLAGS)
+btphystest_LDFLAGS = $(AM_LDFLAGS) @LOL_BULLET_DEPS@
 if LOL_USE_EMSCRIPTEN
 btphystest_LDFLAGS += \
     --preload-file data/CatsSheet.png \
