@@ -1,13 +1,15 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//            (c) 2013-2014 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//            (c) 2013-2014 Guillaume Bittoun <guillaume.bittoun@gmail.com>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//            © 2013—2014 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//            © 2013—2014 Guillaume Bittoun <guillaume.bittoun@gmail.com>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
@@ -19,8 +21,7 @@
 //
 
 //
-// FIXME: This file is in lol/math/ instead of lol/base/ because it
-// uses vec_t.
+// XXX: This file is in lol/math/ instead of lol/base/ because it uses vec_t.
 //
 
 #include <lol/base/array.h>
@@ -43,20 +44,20 @@ public:
     {
     }
 
-    void FillSizes(ptrdiff_t * sizes)
+    void fill_sizes(ptrdiff_t * sizes)
     {
         *sizes = max(*sizes, (ptrdiff_t)m_initializers.size());
 
         for (auto subinitializer : m_initializers)
-            subinitializer.FillSizes(sizes - 1);
+            subinitializer.fill_sizes(sizes - 1);
     }
 
-    void FillValues(T * origin, int prev, ptrdiff_t * sizes)
+    void fill_values(T * origin, int prev, ptrdiff_t * sizes)
     {
         int pos = 0;
 
         for (auto subinitializer : m_initializers)
-            subinitializer.FillValues(origin, pos++ + prev * *sizes, sizes - 1);
+            subinitializer.fill_values(origin, pos++ + prev * *sizes, sizes - 1);
     }
 
 private:
@@ -75,12 +76,12 @@ public:
     {
     }
 
-    void FillSizes(ptrdiff_t * sizes)
+    void fill_sizes(ptrdiff_t * sizes)
     {
         *sizes = max(*sizes, (ptrdiff_t)m_initializers.size());
     }
 
-    void FillValues(T * origin, int prev, ptrdiff_t * sizes)
+    void fill_values(T * origin, int prev, ptrdiff_t * sizes)
     {
         int pos = 0;
 
@@ -111,27 +112,27 @@ public:
         fix_sizes(e);
     }
 
-#if PTRDIFF_MAX > INT_MAX
-    inline arraynd(vec_t<int, N> sizes, element_t e = element_t())
+    /* Additional constructor if ptrdiff_t != int */
+    template<typename T2 = std::enable_if<!std::is_same<ptrdiff_t, int>::value, int>::type>
+    inline arraynd(vec_t<T2, N> sizes, element_t e = element_t())
     {
         m_sizes = vec_t<ptrdiff_t, N>(sizes);
         fix_sizes(e);
     }
-#endif
 
     inline arraynd(std::initializer_list<arraynd_initializer<element_t, N - 1> > initializer)
     {
         m_sizes[N - 1] = initializer.size();
 
         for (auto inner_initializer : initializer)
-            inner_initializer.FillSizes(&m_sizes[N - 2]);
+            inner_initializer.fill_sizes(&m_sizes[N - 2]);
 
         fix_sizes();
 
         int pos = 0;
 
         for (auto inner_initializer : initializer)
-            inner_initializer.FillValues(&super::operator[](0), pos++, &m_sizes[N - 2]);
+            inner_initializer.fill_values(&super::operator[](0), pos++, &m_sizes[N - 2]);
     }
 
     /* Access elements directly using an vec_t<ptrdiff_t, N> index */
@@ -149,9 +150,10 @@ public:
                    const_cast<arraynd<N, T...> const&>(*this)[pos]);
     }
 
-#if PTRDIFF_MAX > INT_MAX
-    /* Access elements directly using an ivec2, ivec3 etc. index */
-    inline element_t const & operator[](vec_t<int, N> const &pos) const
+    /* If int != ptrdiff_t, access elements directly using an ivec2,
+     * ivec3 etc. */
+    template<typename T2 = std::enable_if<!std::is_same<ptrdiff_t, int>::value, int>::type>
+    inline element_t const & operator[](vec_t<T2, N> const &pos) const
     {
         ptrdiff_t n = pos[N - 1];
         for (ptrdiff_t i = N - 2; i >= 0; --i)
@@ -159,12 +161,12 @@ public:
         return super::operator[](n);
     }
 
-    inline element_t & operator[](vec_t<int, N> const &pos)
+    template<typename T2 = std::enable_if<!std::is_same<ptrdiff_t, int>::value, int>::type>
+    inline element_t & operator[](vec_t<T2, N> const &pos)
     {
         return const_cast<element_t &>(
                    const_cast<arraynd<N, T...> const&>(*this)[pos]);
     }
-#endif
 
     /* Proxy to access slices */
     template<typename ARRAY_TYPE, int L = N - 1>
@@ -277,10 +279,6 @@ private:
 
 template<typename... T> using array2d = arraynd<2, T...>;
 template<typename... T> using array3d = arraynd<3, T...>;
-
-/* Make sure these macros exist since we use them in preprocessor tests. */
-static_assert(PTRDIFF_MAX > 0, "missing PTRDIFF_MAX");
-static_assert(INT_MAX > 0,     "missing INT_MAX");
 
 } /* namespace lol */
 

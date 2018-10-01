@@ -279,5 +279,16 @@ LOL_GENERIC_FUNC_SIGNED(double)
 LOL_GENERIC_FUNC_SIGNED(ldouble)
 #undef LOL_GENERIC_FUNC
 
+/* Some additional implementations when ptrdiff_t != int */
+#define LOL_T_PTRDIFF_T \
+    typename std::enable_if<!std::is_same<ptrdiff_t, int>::value \
+                             && std::is_same<T, ptrdiff_t>::value, T>::type
+template<typename T, typename T2 = LOL_T_PTRDIFF_T>
+LOL_ATTR_NODISCARD static inline T2 max(T x, T y) { return std::max(x, y); }
+
+template<typename T, typename T2 = LOL_T_PTRDIFF_T>
+LOL_ATTR_NODISCARD static inline T2 min(T x, T y) { return std::min(x, y); }
+#undef LOL_T_PTRDIFF_T
+
 } /* namespace lol */
 
