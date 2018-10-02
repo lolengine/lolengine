@@ -151,11 +151,10 @@ endif
 d3d9_sources = \
     platform/d3d9/d3d9input.cpp platform/d3d9/d3d9input.h
 
-imgui_sources = \
+include 3rdparty/lol-imgui.am
+
+imgui_sources += \
     lolimgui.cpp lolimgui.h \
-    3rdparty/imgui/imgui_demo.cpp \
-    3rdparty/imgui/imgui_draw.cpp \
-    3rdparty/imgui/imgui_widgets.cpp \
     $(NULL)
 
 if LOL_USE_NACL

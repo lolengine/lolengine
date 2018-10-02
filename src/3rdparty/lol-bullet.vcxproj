@@ -183,8 +183,6 @@
     <ClInclude Include="bullet3/src/Bullet3OpenCL/NarrowphaseCollision/b3ConvexPolyhedronCL.h" />
     <ClCompile Include="bullet3/src/Bullet3OpenCL/NarrowphaseCollision/b3GjkEpa.cpp" />
     <ClInclude Include="bullet3/src/Bullet3OpenCL/NarrowphaseCollision/b3GjkEpa.h" />
-    <ClCompile Include="bullet3/src/Bullet3OpenCL/NarrowphaseCollision/b3GjkPairDetector.cpp" />
-    <ClInclude Include="bullet3/src/Bullet3OpenCL/NarrowphaseCollision/b3GjkPairDetector.h" />
     <ClCompile Include="bullet3/src/Bullet3OpenCL/NarrowphaseCollision/b3OptimizedBvh.cpp" />
     <ClInclude Include="bullet3/src/Bullet3OpenCL/NarrowphaseCollision/b3OptimizedBvh.h" />
     <ClCompile Include="bullet3/src/Bullet3OpenCL/NarrowphaseCollision/b3QuantizedBvh.cpp" />
@@ -413,6 +411,8 @@
     <ClCompile Include="bullet3/src/BulletCollision/CollisionShapes/btHeightfieldTerrainShape.cpp" />
     <ClInclude Include="bullet3/src/BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h" />
     <ClInclude Include="bullet3/src/BulletCollision/CollisionShapes/btMaterial.h" />
+    <ClCompile Include="bullet3/src/BulletCollision/CollisionShapes/btMiniSDF.cpp" />
+    <ClInclude Include="bullet3/src/BulletCollision/CollisionShapes/btMiniSDF.h" />
     <ClCompile Include="bullet3/src/BulletCollision/CollisionShapes/btMinkowskiSumShape.cpp" />
     <ClInclude Include="bullet3/src/BulletCollision/CollisionShapes/btMinkowskiSumShape.h" />
     <ClCompile Include="bullet3/src/BulletCollision/CollisionShapes/btMultimaterialTriangleMeshShape.cpp" />
@@ -425,6 +425,8 @@
     <ClInclude Include="bullet3/src/BulletCollision/CollisionShapes/btPolyhedralConvexShape.h" />
     <ClCompile Include="bullet3/src/BulletCollision/CollisionShapes/btScaledBvhTriangleMeshShape.cpp" />
     <ClInclude Include="bullet3/src/BulletCollision/CollisionShapes/btScaledBvhTriangleMeshShape.h" />
+    <ClCompile Include="bullet3/src/BulletCollision/CollisionShapes/btSdfCollisionShape.cpp" />
+    <ClInclude Include="bullet3/src/BulletCollision/CollisionShapes/btSdfCollisionShape.h" />
     <ClCompile Include="bullet3/src/BulletCollision/CollisionShapes/btShapeHull.cpp" />
     <ClInclude Include="bullet3/src/BulletCollision/CollisionShapes/btShapeHull.h" />
     <ClCompile Include="bullet3/src/BulletCollision/CollisionShapes/btSphereShape.cpp" />
@@ -531,6 +533,8 @@
     <ClInclude Include="bullet3/src/BulletDynamics/Character/btCharacterControllerInterface.h" />
     <ClCompile Include="bullet3/src/BulletDynamics/Character/btKinematicCharacterController.cpp" />
     <ClInclude Include="bullet3/src/BulletDynamics/Character/btKinematicCharacterController.h" />
+    <ClCompile Include="bullet3/src/BulletDynamics/ConstraintSolver/btBatchedConstraints.cpp" />
+    <ClInclude Include="bullet3/src/BulletDynamics/ConstraintSolver/btBatchedConstraints.h" />
     <ClCompile Include="bullet3/src/BulletDynamics/ConstraintSolver/btConeTwistConstraint.cpp" />
     <ClInclude Include="bullet3/src/BulletDynamics/ConstraintSolver/btConeTwistConstraint.h" />
     <ClInclude Include="bullet3/src/BulletDynamics/ConstraintSolver/btConstraintSolver.h" />
@@ -558,6 +562,8 @@
     <ClInclude Include="bullet3/src/BulletDynamics/ConstraintSolver/btPoint2PointConstraint.h" />
     <ClCompile Include="bullet3/src/BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.cpp" />
     <ClInclude Include="bullet3/src/BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h" />
+    <ClCompile Include="bullet3/src/BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolverMt.cpp" />
+    <ClInclude Include="bullet3/src/BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolverMt.h" />
     <ClCompile Include="bullet3/src/BulletDynamics/ConstraintSolver/btSliderConstraint.cpp" />
     <ClInclude Include="bullet3/src/BulletDynamics/ConstraintSolver/btSliderConstraint.h" />
     <ClCompile Include="bullet3/src/BulletDynamics/ConstraintSolver/btSolve2LinearConstraint.cpp" />

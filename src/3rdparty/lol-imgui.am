@@ -1,12 +1,16 @@
 
+# This is included by the parent Makefile because we build it
+# directly in the lol-core library, hence the 3rdparty/ paths.
 imgui_sources = \
-    imgui/imconfig.h \
-    imgui/imgui.cpp \
-    imgui/imgui_widgets.cpp \
-    imgui/imgui.h \
-    imgui/imgui_internal.h \
-    imgui/stb_rect_pack.h \
-    imgui/stb_textedit.h \
-    imgui/stb_truetype.h \
+    3rdparty/imgui/imconfig.h \
+    3rdparty/imgui/imgui.cpp \
+    3rdparty/imgui/imgui_demo.cpp \
+    3rdparty/imgui/imgui_draw.cpp \
+    3rdparty/imgui/imgui_widgets.cpp \
+    3rdparty/imgui/imgui.h \
+    3rdparty/imgui/imgui_internal.h \
+    3rdparty/imgui/imstb_rectpack.h \
+    3rdparty/imgui/imstb_textedit.h \
+    3rdparty/imgui/imstb_truetype.h \
     $(NULL)
 

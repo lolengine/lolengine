@@ -28,6 +28,7 @@ pegtl_sources = \
     pegtl/include/tao/pegtl/contrib/uri.hpp \
     pegtl/include/tao/pegtl/cstream_input.hpp \
     pegtl/include/tao/pegtl/eol.hpp \
+    pegtl/include/tao/pegtl/eol_pair.hpp \
     pegtl/include/tao/pegtl/file_input.hpp \
     pegtl/include/tao/pegtl.hpp \
     pegtl/include/tao/pegtl/input_error.hpp \
@@ -36,7 +37,9 @@ pegtl_sources = \
     pegtl/include/tao/pegtl/internal/alnum.hpp \
     pegtl/include/tao/pegtl/internal/alpha.hpp \
     pegtl/include/tao/pegtl/internal/any.hpp \
+    pegtl/include/tao/pegtl/internal/apply0_single.hpp \
     pegtl/include/tao/pegtl/internal/apply0.hpp \
+    pegtl/include/tao/pegtl/internal/apply_single.hpp \
     pegtl/include/tao/pegtl/internal/apply.hpp \
     pegtl/include/tao/pegtl/internal/at.hpp \
     pegtl/include/tao/pegtl/internal/bof.hpp \
@@ -59,13 +62,17 @@ pegtl_sources = \
     pegtl/include/tao/pegtl/internal/dusel_mode.hpp \
     pegtl/include/tao/pegtl/internal/duseltronik.hpp \
     pegtl/include/tao/pegtl/internal/enable.hpp \
+    pegtl/include/tao/pegtl/internal/endian.hpp \
+    pegtl/include/tao/pegtl/internal/endian_gcc.hpp \
     pegtl/include/tao/pegtl/internal/eof.hpp \
     pegtl/include/tao/pegtl/internal/eolf.hpp \
     pegtl/include/tao/pegtl/internal/eol.hpp \
-    pegtl/include/tao/pegtl/internal/file_mapper.hpp \
+    pegtl/include/tao/pegtl/internal/file_mapper_posix.hpp \
+    pegtl/include/tao/pegtl/internal/file_mapper_win32.hpp \
     pegtl/include/tao/pegtl/internal/file_opener.hpp \
     pegtl/include/tao/pegtl/internal/file_reader.hpp \
     pegtl/include/tao/pegtl/internal/has_apply0.hpp \
+    pegtl/include/tao/pegtl/internal/has_apply.hpp \
     pegtl/include/tao/pegtl/internal/identifier.hpp \
     pegtl/include/tao/pegtl/internal/if_apply.hpp \
     pegtl/include/tao/pegtl/internal/if_must_else.hpp \
@@ -91,6 +98,10 @@ pegtl_sources = \
     pegtl/include/tao/pegtl/internal/pad.hpp \
     pegtl/include/tao/pegtl/internal/pad_opt.hpp \
     pegtl/include/tao/pegtl/internal/peek_char.hpp \
+    pegtl/include/tao/pegtl/internal/peek_mask_uint8.hpp \
+    pegtl/include/tao/pegtl/internal/peek_mask_uint.hpp \
+    pegtl/include/tao/pegtl/internal/peek_uint8.hpp \
+    pegtl/include/tao/pegtl/internal/peek_uint.hpp \
     pegtl/include/tao/pegtl/internal/peek_utf16.hpp \
     pegtl/include/tao/pegtl/internal/peek_utf32.hpp \
     pegtl/include/tao/pegtl/internal/peek_utf8.hpp \
@@ -99,6 +110,7 @@ pegtl_sources = \
     pegtl/include/tao/pegtl/internal/raise.hpp \
     pegtl/include/tao/pegtl/internal/range.hpp \
     pegtl/include/tao/pegtl/internal/ranges.hpp \
+    pegtl/include/tao/pegtl/internal/read_uint.hpp \
     pegtl/include/tao/pegtl/internal/rep.hpp \
     pegtl/include/tao/pegtl/internal/rep_min.hpp \
     pegtl/include/tao/pegtl/internal/rep_min_max.hpp \
@@ -114,8 +126,10 @@ pegtl_sources = \
     pegtl/include/tao/pegtl/internal/star_must.hpp \
     pegtl/include/tao/pegtl/internal/state.hpp \
     pegtl/include/tao/pegtl/internal/string.hpp \
+    pegtl/include/tao/pegtl/internal/three.hpp \
     pegtl/include/tao/pegtl/internal/trivial.hpp \
     pegtl/include/tao/pegtl/internal/try_catch_type.hpp \
+    pegtl/include/tao/pegtl/internal/two.hpp \
     pegtl/include/tao/pegtl/internal/until.hpp \
     pegtl/include/tao/pegtl/istream_input.hpp \
     pegtl/include/tao/pegtl/memory_input.hpp \
@@ -130,6 +144,10 @@ pegtl_sources = \
     pegtl/include/tao/pegtl/rules.hpp \
     pegtl/include/tao/pegtl/string_input.hpp \
     pegtl/include/tao/pegtl/tracking_mode.hpp \
+    pegtl/include/tao/pegtl/uint16.hpp \
+    pegtl/include/tao/pegtl/uint32.hpp \
+    pegtl/include/tao/pegtl/uint64.hpp \
+    pegtl/include/tao/pegtl/uint8.hpp \
     pegtl/include/tao/pegtl/utf16.hpp \
     pegtl/include/tao/pegtl/utf32.hpp \
     pegtl/include/tao/pegtl/utf8.hpp \

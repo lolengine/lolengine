@@ -28,7 +28,9 @@ EXTRA_DIST += $(imgui_sources) $(mingw_std_threads_sources) $(pegtl_sources)
 EXTRA_DIST += lol-bullet.vcxproj lol-bullet.vcxproj.filters
 EXTRA_DIST += lol-lua.vcxproj lol-lua.vcxproj.filters
 
-include lol-imgui.am
 include lol-mingw-std-threads.am
 include lol-pegtl.am
+
+# XXX: this is included by the parent Makefile instead
+#include lol-imgui.am
 

@@ -13,7 +13,7 @@
 
 #include <lol/engine-internal.h>
 
-#include "imgui.cpp"
+#include "imgui_internal.h" // needed for GImGui in GetMainMenuBarHeight()
 
 #include <cstdio>
 #include <string>

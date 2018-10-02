@@ -130,8 +130,6 @@ bullet_sources += \
 	bullet3/src/Bullet3OpenCL/NarrowphaseCollision/b3ConvexPolyhedronCL.h \
 	bullet3/src/Bullet3OpenCL/NarrowphaseCollision/b3GjkEpa.cpp \
 	bullet3/src/Bullet3OpenCL/NarrowphaseCollision/b3GjkEpa.h \
-	bullet3/src/Bullet3OpenCL/NarrowphaseCollision/b3GjkPairDetector.cpp \
-	bullet3/src/Bullet3OpenCL/NarrowphaseCollision/b3GjkPairDetector.h \
 	bullet3/src/Bullet3OpenCL/NarrowphaseCollision/b3OptimizedBvh.cpp \
 	bullet3/src/Bullet3OpenCL/NarrowphaseCollision/b3OptimizedBvh.h \
 	bullet3/src/Bullet3OpenCL/NarrowphaseCollision/b3QuantizedBvh.cpp \
@@ -362,6 +360,8 @@ bullet_sources += \
 	bullet3/src/BulletCollision/CollisionShapes/btHeightfieldTerrainShape.cpp \
 	bullet3/src/BulletCollision/CollisionShapes/btHeightfieldTerrainShape.h \
 	bullet3/src/BulletCollision/CollisionShapes/btMaterial.h \
+	bullet3/src/BulletCollision/CollisionShapes/btMiniSDF.cpp \
+	bullet3/src/BulletCollision/CollisionShapes/btMiniSDF.h \
 	bullet3/src/BulletCollision/CollisionShapes/btMinkowskiSumShape.cpp \
 	bullet3/src/BulletCollision/CollisionShapes/btMinkowskiSumShape.h \
 	bullet3/src/BulletCollision/CollisionShapes/btMultimaterialTriangleMeshShape.cpp \
@@ -374,6 +374,8 @@ bullet_sources += \
 	bullet3/src/BulletCollision/CollisionShapes/btPolyhedralConvexShape.h \
 	bullet3/src/BulletCollision/CollisionShapes/btScaledBvhTriangleMeshShape.cpp \
 	bullet3/src/BulletCollision/CollisionShapes/btScaledBvhTriangleMeshShape.h \
+	bullet3/src/BulletCollision/CollisionShapes/btSdfCollisionShape.cpp \
+	bullet3/src/BulletCollision/CollisionShapes/btSdfCollisionShape.h \
 	bullet3/src/BulletCollision/CollisionShapes/btShapeHull.cpp \
 	bullet3/src/BulletCollision/CollisionShapes/btShapeHull.h \
 	bullet3/src/BulletCollision/CollisionShapes/btSphereShape.cpp \
@@ -481,6 +483,8 @@ bullet_sources += \
 	bullet3/src/BulletDynamics/Character/btCharacterControllerInterface.h \
 	bullet3/src/BulletDynamics/Character/btKinematicCharacterController.cpp \
 	bullet3/src/BulletDynamics/Character/btKinematicCharacterController.h \
+	bullet3/src/BulletDynamics/ConstraintSolver/btBatchedConstraints.cpp \
+	bullet3/src/BulletDynamics/ConstraintSolver/btBatchedConstraints.h \
 	bullet3/src/BulletDynamics/ConstraintSolver/btConeTwistConstraint.cpp \
 	bullet3/src/BulletDynamics/ConstraintSolver/btConeTwistConstraint.h \
 	bullet3/src/BulletDynamics/ConstraintSolver/btConstraintSolver.h \
@@ -508,6 +512,8 @@ bullet_sources += \
 	bullet3/src/BulletDynamics/ConstraintSolver/btPoint2PointConstraint.h \
 	bullet3/src/BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.cpp \
 	bullet3/src/BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolver.h \
+	bullet3/src/BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolverMt.cpp \
+	bullet3/src/BulletDynamics/ConstraintSolver/btSequentialImpulseConstraintSolverMt.h \
 	bullet3/src/BulletDynamics/ConstraintSolver/btSliderConstraint.cpp \
 	bullet3/src/BulletDynamics/ConstraintSolver/btSliderConstraint.h \
 	bullet3/src/BulletDynamics/ConstraintSolver/btSolve2LinearConstraint.cpp \
