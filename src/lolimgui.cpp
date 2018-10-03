@@ -187,7 +187,7 @@ void LolImGui::TickGame(float seconds)
 
     ImGuiIO& io = ImGui::GetIO();
 
-    //Init Texture
+    // Init Texture
     if (!m_font)
     {
         // Build texture
@@ -200,22 +200,22 @@ void LolImGui::TickGame(float seconds)
 
         Ticker::Ref(m_font = new TextureImage("", image));
     }
-    //Texture has been created
+
+    // Texture has been created
     if (m_font && m_font->GetTexture())
     {
-        io.Fonts->TexID = (void *)(intptr_t)m_font;
+        io.Fonts->TexID = (void *)m_font->GetTexture();
     }
 
     // Setup display size (every frame to accommodate for window resizing)
-    vec2 video_size = vec2(0);
-    video_size = vec2(Video::GetSize());
-    io.DisplaySize = ImVec2(video_size.x, video_size.y);
+    auto video_size = vec2(Video::GetSize());
+    io.DisplaySize = video_size;
 
-    //Setup time step
+    // Setup time step
     io.DeltaTime = seconds;
     io.MouseDrawCursor = true;
 
-    //Update Keyboard
+    // Update Keyboard
     io.KeyCtrl = false;
     io.KeyShift = false;
     for (int i = LolImGuiKey::KEY_START; i < LolImGuiKey::KEY_END; ++i)
@@ -244,13 +244,13 @@ void LolImGui::TickGame(float seconds)
     for (auto ch : text)
         io.AddInputCharacter(ch);
 
-    //Update mouse
+    // Update mouse
     if (m_mouse)
     {
         vec2 cursor = m_mouse->GetCursor(0);
         cursor.y = 1.f - cursor.y;
-        cursor *= video_size;
-        io.MousePos = ImVec2(cursor.x, cursor.y);
+
+        io.MousePos = cursor * video_size;
         //msg::debug("%.2f/%.2f\n", io.MousePos.x, io.MousePos.y);
         io.MouseWheel = m_controller->GetAxisValue(LolImGuiAxis::Scroll);
 
@@ -265,7 +265,7 @@ void LolImGui::TickGame(float seconds)
                 if (m_controller->IsKeyReleased(i))
                 {
                     //msg::debug("Not focused .....\n");
-                    io.MousePos = ImVec2(-1.f, -1.f);
+                    //io.MousePos = vec2(-1.f);
                 }
                 else
                 {
@@ -314,6 +314,7 @@ void LolImGui::RenderDrawLists(ImDrawData* draw_data)
 {
     g_lolimgui->RenderDrawListsMethod(draw_data);
 }
+
 void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
 {
     if (draw_data == nullptr)
@@ -394,8 +395,8 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
         for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
         {
             const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[(int)cmd_i];
-            TextureImage* image = (TextureImage*)pcmd->TextureId;
-            if (image) image->Bind();
+            Texture* texture = (Texture*)pcmd->TextureId;
+            if (texture) texture->Bind();
 
             rc.SetScissorRect(vec4(pcmd->ClipRect.x, pcmd->ClipRect.y, pcmd->ClipRect.z, pcmd->ClipRect.w));
 
@@ -445,8 +446,6 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
             m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, pcmd->ElemCount, (const short*)idx_buffer_offset);
 
             idx_buffer_offset += pcmd->ElemCount;
-
-            if (image) image->Unbind();
         }
 
         m_vdecl->Unbind();
