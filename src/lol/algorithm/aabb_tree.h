@@ -302,7 +302,7 @@ private:
                 //Extract elements
                 array<int> elements = m_tree[leaf].m_elements;
                 elements.push_unique(AddElement(element));
-                m_tree[leaf].m_elements.empty();
+                m_tree[leaf].m_elements.clear();
                 //Add children
                 for (size_t j = 0; j < child_nb; ++j)
                     m_tree[leaf].m_children[j] = AddLeaf(leaf);
@@ -331,8 +331,8 @@ public:
     bool                FindElements(const TB& bbox, array<TE*>& elements)  { return TestLeaf(0, GetAABB(), bbox, elements); }
     void                Clear()
     {
-        m_tree.empty();
-        m_elements.empty();
+        m_tree.clear();
+        m_elements.clear();
     }
 
     //--

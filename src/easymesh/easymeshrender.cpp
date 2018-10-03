@@ -88,8 +88,8 @@ GpuShaderData::GpuShaderData(uint16_t vert_decl_flags, Shader* shader, DebugRend
 //-----------------------------------------------------------------------------
 GpuShaderData::~GpuShaderData()
 {
-    m_shader_uniform.empty();
-    m_shader_attrib.empty();
+    m_shader_uniform.clear();
+    m_shader_attrib.clear();
 }
 
 //-----------------------------------------------------------------------------
@@ -228,8 +228,8 @@ GpuEasyMeshData::GpuEasyMeshData()
 //-----------------------------------------------------------------------------
 GpuEasyMeshData::~GpuEasyMeshData()
 {
-    m_gpudatas.empty();
-    m_vdatas.empty();
+    m_gpudatas.clear();
+    m_vdatas.clear();
     if (m_ibo)
         delete m_ibo;
 }

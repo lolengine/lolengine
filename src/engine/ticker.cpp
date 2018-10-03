@@ -388,7 +388,7 @@ void TickerData::GameThreadTick()
     }
 
     data->m_todolist = data->m_todolist_delayed;
-    data->m_todolist_delayed.empty();
+    data->m_todolist_delayed.clear();
 
     /* Tick objects for the game loop */
     for (int g = Entity::GAMEGROUP_BEGIN; g < Entity::GAMEGROUP_END && !data->quit /* Stop as soon as required */; ++g)

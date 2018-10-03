@@ -982,7 +982,7 @@ void ShaderBuilder::Build(std::string& code)
     //Cleanup first
     for (int prog = 0; prog < ShaderProgram::MAX; prog++)
         for (int var = 0; var < ShaderVariable::MAX; var++)
-            m_parameters[prog][var].empty();
+            m_parameters[prog][var].clear();
 
     //Start building
     for (int prog = 0; prog < ShaderProgram::MAX; prog++)

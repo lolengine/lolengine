@@ -367,7 +367,7 @@ public:
         m_count = item_count;
     }
 
-    inline void empty()
+    inline void clear()
     {
         remove(0, m_count);
     }

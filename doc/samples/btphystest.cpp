@@ -347,10 +347,10 @@ BtPhysTest::~BtPhysTest()
         objects << m_physobj_list.last().m1;
         m_physobj_list.pop();
     }
-    m_ground_list.empty();
-    m_stairs_list.empty();
-    m_character_list.empty();
-    m_platform_list.empty();
+    m_ground_list.clear();
+    m_stairs_list.clear();
+    m_character_list.clear();
+    m_platform_list.clear();
 
     while (objects.count())
     {

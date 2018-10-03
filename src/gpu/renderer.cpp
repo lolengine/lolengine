@@ -165,7 +165,7 @@ void Renderer::DestroyAll()
 {
     for (Renderer* renderer : g_renderers)
         delete renderer;
-    g_renderers.empty();
+    g_renderers.clear();
 }
 
 /*

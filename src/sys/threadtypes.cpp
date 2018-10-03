@@ -23,7 +23,7 @@ void DefaultThreadManager::AddJob(ThreadJob* job)
 bool DefaultThreadManager::GetWorkResult(array<ThreadJob*>& results)
 {
     results += m_job_result;
-    m_job_result.empty();
+    m_job_result.clear();
     return results.count() > 0;
 }
 
@@ -140,7 +140,7 @@ void FileUpdateTester::TickGame(float seconds)
         m_frame_count = 0;
 
         DispatchJob(m_job_done);
-        m_job_done.empty();
+        m_job_done.clear();
     }
 }
 

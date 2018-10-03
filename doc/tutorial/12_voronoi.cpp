@@ -181,7 +181,7 @@ public:
                 m_cur_fbo = VoronoiFbo;
             else if (m_controller->WasKeyReleasedThisFrame(KEY_F3))
             {
-                voronoi_points.empty();
+                voronoi_points.clear();
                 if (mode == 0)
                 {
                     int i = 4;
@@ -201,7 +201,7 @@ public:
 
         if (mode == 0)
         {
-            voronoi_points.empty();
+            voronoi_points.clear();
             int maxi = 6;
             for (int i = 0; i < maxi; ++i)
             {

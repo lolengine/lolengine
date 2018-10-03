@@ -75,7 +75,7 @@ LOLFX_RESOURCE_DECLARE(shinymvtexture);
 class TargetCamera
 {
 public:
-    void EmptyTargets()             { m_targets.empty(); }
+    void EmptyTargets()             { m_targets.clear(); }
     void AddTarget(vec3 new_target) { m_targets << new_target; }
     //This considers the box usage A to B as top-left to bottom-right
     void AddTarget(box3 new_target)
@@ -136,7 +136,7 @@ void EasyMeshLoadJob::RetrieveResult(class MeshViewer* app)
 {
     for (EasyMeshViewerObject* mesh : m_meshes)
         app->AddViewerObj(mesh);
-    m_meshes.empty();
+    m_meshes.clear();
 }
 
 //MeshViewer ------------------------------------------------------------------
@@ -245,7 +245,7 @@ void MeshViewer::UpdateSceneSetup(bool only_destroy)
     //Delete previous setups
     for (auto &key : m_ssetups)
         delete key.second;
-    m_ssetups.empty();
+    m_ssetups.clear();
     if (m_ssetup_file_status)
     {
         m_file_check->UnregisterFile(m_ssetup_file_status);
@@ -305,8 +305,8 @@ void MeshViewer::TickGame(float seconds)
     //static array<std::string> mesh_names_str;
 
     //Draw viewer objects
-    m_menu_mesh_names_char.empty();
-    m_menu_mesh_names_str.empty();
+    m_menu_mesh_names_char.clear();
+    m_menu_mesh_names_str.clear();
     for (ViewerObject* obj : m_objs)
         m_menu_mesh_names_str << obj->GetName();
     for (auto const &str : m_menu_mesh_names_str)
@@ -877,7 +877,7 @@ void MeshViewer::Update(float seconds)
             }
         }
     }
-    m_ssetup->m_custom_cmd.empty();
+    m_ssetup->m_custom_cmd.clear();
 #endif //ALL_FEATURES
 
 #if HAS_WEB

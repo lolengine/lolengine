@@ -174,8 +174,8 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
                 }
             }
 #endif
-            vert_list.empty();
-            tri_list.empty();
+            vert_list.clear();
+            tri_list.clear();
         }
     }
 

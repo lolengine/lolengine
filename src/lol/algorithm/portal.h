@@ -260,7 +260,7 @@ public:
     {
         for (auto door : m_doors)
             door->DisconnectRoom(this);
-        m_doors.empty();
+        m_doors.clear();
     }
 
     PortalRoom& operator<<(class PortalDoor<TE>* door)
@@ -294,8 +294,8 @@ public:
             delete door;
         for (auto room : m_rooms)
             delete room;
-        m_doors.empty();
-        m_rooms.empty();
+        m_doors.clear();
+        m_rooms.clear();
     }
 
     //Visible room getter

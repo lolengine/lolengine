@@ -397,12 +397,12 @@ void EasyMesh::SmoothMesh(int main_pass, int split_per_main_pass, int smooth_per
 
         while (smooth_pass--)
         {
-            master_list.empty();
+            master_list.clear();
             if (vert_dict.GetMasterList(master_list))
             {
                 for (int i = 0; i < master_list.count(); i++)
                 {
-                    connected_vert.empty();
+                    connected_vert.clear();
                     if (vert_dict.FindConnectedVertices(master_list[i], m_indices, m_cursors.last().m2, connected_vert))
                     {
                         //Calculate vertices sum
@@ -421,7 +421,7 @@ void EasyMesh::SmoothMesh(int main_pass, int split_per_main_pass, int smooth_per
                         vec3 new_vert = (alpha * smooth_buf[smbuf][master_list[i] - m_cursors.last().m1] + vert_sum) / (alpha + n);
 
                         //Set all matching vertices to new value
-                        matching_ids.empty();
+                        matching_ids.clear();
                         matching_ids << master_list[i];
                         vert_dict.FindMatchingVertices(master_list[i], matching_ids);
                         for (int j = 0; j < matching_ids.count(); j++)

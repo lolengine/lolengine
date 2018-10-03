@@ -186,7 +186,7 @@ void EasyMesh::VerticesCleanup()
     //2: Remove all unused vertices
     array<VertexData> old_vert = m_vert;
     int shift = 0;
-    m_vert.empty();
+    m_vert.clear();
     for (int i = 0; i < vert_ids.count(); ++i)
     {
         //Unused vertex, update the shift quantity instead of keeping it.

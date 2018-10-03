@@ -58,7 +58,7 @@ bool SceneSetup::Shutdown(bool destroy)
             Ticker::Unref(m_lights[i]);
 
     if (destroy)
-        m_lights.empty();
+        m_lights.clear();
     return true;
 }
 

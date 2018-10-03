@@ -61,7 +61,7 @@ bool KeyBinding::Unbind(const std::string& device_name, const std::string& key_n
 
 void KeyBinding::ClearBindings()
 {
-    m_keybindings.empty();
+    m_keybindings.clear();
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -190,8 +190,8 @@ bool AxisBinding::UnbindKeys(const std::string& device_name, const std::string& 
 
 void AxisBinding::ClearBindings()
 {
-    m_axisbindings.empty();
-    m_keybindings.empty();
+    m_axisbindings.clear();
+    m_keybindings.clear();
 }
 
 float AxisBinding::RetrieveCurrentValue()
@@ -390,8 +390,8 @@ void Controller::UnbindProfile()
         if (m_joystick_idx.find(axis.m_joy) != INDEX_NONE)
             GetAxis(axis.m_idx).UnbindJoystick(axis.m_joy, axis.m_name);
     }
-    m_joystick.empty();
-    m_joystick_idx.empty();
+    m_joystick.clear();
+    m_joystick_idx.clear();
 
     m_mutex.unlock();
 }

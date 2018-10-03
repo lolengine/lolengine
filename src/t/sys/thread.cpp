@@ -93,7 +93,7 @@ lolunit_declare_fixture(thread_test)
         bool GetWorkResult(array<ThreadJob*>& results)
         {
             results += m_job_result;
-            m_job_result.empty();
+            m_job_result.clear();
             msg::info("%s GETWORKRESULT (%i)\n", GetName().c_str(), results.count());
             return results.count() > 0;
         }

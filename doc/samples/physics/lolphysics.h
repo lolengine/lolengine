@@ -49,10 +49,10 @@ struct RayCastResult
     }
     void Reset()
     {
-        m_collider_list.empty();
-        m_hit_normal_list.empty();
-        m_hit_point_list.empty();
-        m_hit_fraction_list.empty();
+        m_collider_list.clear();
+        m_hit_normal_list.clear();
+        m_hit_point_list.clear();
+        m_hit_fraction_list.clear();
     }
 
     array<EasyPhysic*>        m_collider_list;

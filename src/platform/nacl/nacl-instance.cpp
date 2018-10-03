@@ -223,7 +223,7 @@ void NaClInputData::Tick(float seconds)
             }
         }
     }
-    m_input_events.empty();
+    m_input_events.clear();
 
     /* Handle mouse input */
     if (IsViewportSizeValid())

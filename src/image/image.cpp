@@ -131,7 +131,7 @@ void image::resize(ivec2 size)
     {
         for (auto &kv : m_data->m_pixels)
             delete kv.second;
-        m_data->m_pixels.empty();
+        m_data->m_pixels.clear();
         m_data->m_format = PixelFormat::Unknown;
     }
 

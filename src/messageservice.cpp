@@ -45,7 +45,7 @@ MessageService::MessageService()
 
 MessageService::~MessageService()
 {
-    m_bucket.empty();
+    m_bucket.clear();
 }
 
 //Setup/Destroy
@@ -131,7 +131,7 @@ bool MessageService::FetchAll(MessageBucket id, std::string& message, time_t& fi
             first_timestamp = bucket[0].m_timestamp;
             for (int i = 0; i < bucket.count(); ++i)
                 message += bucket[i].m_message;
-            bucket.empty();
+            bucket.clear();
             return true;
         }
     }

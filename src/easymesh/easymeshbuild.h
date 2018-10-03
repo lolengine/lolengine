@@ -536,7 +536,7 @@ public:
     void RegisterVertex(int vert_id, vec3 vert_coord);
     void RemoveVertex(int vert_id);
     bool GetMasterList(array<int> &ret_master_list) { ret_master_list = master_list; return ret_master_list.count() > 0; }
-    void Clear() { vertex_list.empty(); }
+    void Clear() { vertex_list.clear(); }
 private:
     //<VertexId, VertexLocation, VertexMasterId>
     array<int, vec3, int>   vertex_list;

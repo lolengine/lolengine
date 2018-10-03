@@ -89,7 +89,7 @@ void SceneDisplay::DestroyAll()
 {
     for (SceneDisplay* display : m_scene_displays)
         delete display;
-    m_scene_displays.empty();
+    m_scene_displays.clear();
 }
 
 /* ------------------------------------------------ */
@@ -374,9 +374,9 @@ void Scene::Reset()
 
     for (int i = 0; i < data->m_tile_api.m_bufs.count(); i++)
         delete data->m_tile_api.m_bufs[i];
-    data->m_tile_api.m_bufs.empty();
+    data->m_tile_api.m_bufs.clear();
 
-    data->m_tile_api.m_lights.empty();
+    data->m_tile_api.m_lights.clear();
 }
 
 //---- Primitive source stuff -------------------------------------------------
@@ -446,7 +446,7 @@ void Scene::ReleaseAllPrimitiveSources(uintptr_t key)
         oldies.reserve(SceneData::m_prim_sources[key].count());
         for (PrimitiveSource* source : SceneData::m_prim_sources[key])
             oldies << source;
-        SceneData::m_prim_sources[key].empty();
+        SceneData::m_prim_sources[key].clear();
     }
     SceneData::m_prim_mutex.unlock();
 
@@ -807,7 +807,7 @@ void Scene::render_tiles() // XXX: rename to Blit()
             tiles[i].m_tileset->Unbind();
         }
 
-        tiles.empty();
+        tiles.clear();
 
         shader->Unbind();
 
@@ -888,7 +888,7 @@ void Scene::render_lines(float seconds)
     data->m_line_api.m_vdecl->Unbind();
     data->m_line_api.m_shader->Unbind();
 
-    //data->m_line_api.m_lines.empty();
+    //data->m_line_api.m_lines.clear();
     delete vb;
 }
 

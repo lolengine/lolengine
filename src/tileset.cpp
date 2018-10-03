@@ -148,7 +148,7 @@ std::string TileSet::GetName() const
 //New methods -----------------------------------------------------------------
 void TileSet::clear_all()
 {
-    m_tileset_data->m_tiles.empty();
+    m_tileset_data->m_tiles.clear();
 }
 
 int TileSet::define_tile(ibox2 rect)
