@@ -35,31 +35,6 @@
 #undef IM_VEC2_CLASS_EXTRA
 #undef IM_VEC4_CLASS_EXTRA
 
-//Imgui extension ---------------------------------------------------------------------------------
-typedef int ImGuiSetDock;           // condition flags for Set*()           // enum ImGuiCond_
-
-enum ImGuiSetDock_
-{
-    ImGuiSetDock_Center,
-    ImGuiSetDock_Top,
-    ImGuiSetDock_TopRight,
-    ImGuiSetDock_Right,
-    ImGuiSetDock_BottomRight,
-    ImGuiSetDock_Bottom,
-    ImGuiSetDock_BottomLeft,
-    ImGuiSetDock_Left,
-    ImGuiSetDock_TopLeft,
-};
-
-namespace ImGui
-{
-    IMGUI_API void SetNextWindowDockingAndSize(const ImVec2& size, ImGuiSetDock dock, const ImVec2& padding, ImGuiCond cond = 0);
-    IMGUI_API void SetNextWindowDockingAndSize(const ImVec2& size, ImGuiSetDock dock, const ImVec4& padding = ImVec4(0, 0, 0, 0), ImGuiCond cond = 0);
-    IMGUI_API void SetNextWindowDocking(ImGuiSetDock dock, const ImVec2& padding, ImGuiCond cond = 0);
-    IMGUI_API void SetNextWindowDocking(ImGuiSetDock dock, const ImVec4& padding = ImVec4(0, 0, 0, 0), ImGuiCond cond = 0);
-    IMGUI_API float GetMainMenuBarHeight();
-}
-
 //LolImGui ----------------------------------------------------------------------------------------
 namespace lol
 {
