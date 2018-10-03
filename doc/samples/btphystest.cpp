@@ -398,9 +398,9 @@ BtPhysTest::~BtPhysTest()
 
 }
 
-void BtPhysTest::TickGame(float seconds)
+void BtPhysTest::tick_game(float seconds)
 {
-    WorldEntity::TickGame(seconds);
+    WorldEntity::tick_game(seconds);
 
     if (!m_init_status)
     {
@@ -666,9 +666,9 @@ void BtPhysTest::TickGame(float seconds)
 #endif //USE_CHARACTER
 }
 
-void BtPhysTest::TickDraw(float seconds, Scene &scene)
+void BtPhysTest::tick_draw(float seconds, Scene &scene)
 {
-    WorldEntity::TickDraw(seconds, scene);
+    WorldEntity::tick_draw(seconds, scene);
 
     if (m_init_status != 2)
         return;

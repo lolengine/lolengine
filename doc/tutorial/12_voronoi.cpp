@@ -73,9 +73,9 @@ public:
         m_controller->GetKey(KEY_F3).Bind("Keyboard", "F3");
     }
 
-    virtual void TickGame(float seconds)
+    virtual void tick_game(float seconds)
     {
-        WorldEntity::TickGame(seconds);
+        WorldEntity::tick_game(seconds);
 
         {
             //Shutdown logic
@@ -95,9 +95,9 @@ public:
         m_color /= x;
     }
 
-    virtual void TickDraw(float seconds, Scene &scene)
+    virtual void tick_draw(float seconds, Scene &scene)
     {
-        WorldEntity::TickDraw(seconds, scene);
+        WorldEntity::tick_draw(seconds, scene);
 
         if (!m_ready)
         {

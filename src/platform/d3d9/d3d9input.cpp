@@ -99,9 +99,9 @@ D3d9Input::~D3d9Input()
     delete m_data;
 }
 
-void D3d9Input::TickGame(float seconds)
+void D3d9Input::tick_game(float seconds)
 {
-    Entity::TickGame(seconds);
+    Entity::tick_game(seconds);
 
 #if defined LOL_USE_XINPUT
     for (int i = 0; i < m_data->m_joysticks.count(); i++)
@@ -131,9 +131,9 @@ void D3d9Input::TickGame(float seconds)
 #endif
 }
 
-void D3d9Input::TickDraw(float seconds, Scene &scene)
+void D3d9Input::tick_draw(float seconds, Scene &scene)
 {
-    Entity::TickDraw(seconds, scene);
+    Entity::tick_draw(seconds, scene);
 }
 
 } /* namespace lol */

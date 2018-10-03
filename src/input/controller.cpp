@@ -449,9 +449,9 @@ void Controller::BindProfile(InputProfile const& setup)
 }
 
 //-----------------------------------------------------------------------------
-void Controller::TickGame(float seconds)
+void Controller::tick_game(float seconds)
 {
-    Entity::TickGame(seconds);
+    Entity::tick_game(seconds);
 
     if (m_active)
     {

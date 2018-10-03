@@ -31,7 +31,7 @@ public:
     static int Unref(Entity *entity);
 
     static void Setup(float fps);
-    static void TickDraw();
+    static void tick_draw();
     static void StartBenchmark();
     static void StopBenchmark();
     static void StartRecording();

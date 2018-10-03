@@ -132,9 +132,9 @@ std::string EasyCharacterController::GetName()
 }
 
 //Physic Tick
-void EasyCharacterController::TickGame(float seconds)
+void EasyCharacterController::tick_game(float seconds)
 {
-    Entity::TickGame(seconds);
+    Entity::tick_game(seconds);
 
     //Send final velocity in Bullet
     {

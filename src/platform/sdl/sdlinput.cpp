@@ -202,17 +202,17 @@ SdlInput::~SdlInput()
     delete m_data;
 }
 
-void SdlInput::TickGame(float seconds)
+void SdlInput::tick_game(float seconds)
 {
-    Entity::TickGame(seconds);
+    Entity::tick_game(seconds);
 
     if (!m_data->m_tick_in_draw_thread)
         m_data->Tick(seconds);
 }
 
-void SdlInput::TickDraw(float seconds, Scene &scene)
+void SdlInput::tick_draw(float seconds, Scene &scene)
 {
-    Entity::TickDraw(seconds, scene);
+    Entity::tick_draw(seconds, scene);
 
     if (m_data->m_tick_in_draw_thread)
         m_data->Tick(seconds);

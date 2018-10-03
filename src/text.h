@@ -59,7 +59,7 @@ public:
     ivec2 GetFontSize();
 
 protected:
-    virtual void TickDraw(float seconds, Scene &scene);
+    virtual void tick_draw(float seconds, Scene &scene);
 
 private:
     TextData *data;

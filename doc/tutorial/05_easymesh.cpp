@@ -93,9 +93,9 @@ public:
         Ticker::Unref(m_light2);
     }
 
-    virtual void TickGame(float seconds)
+    virtual void tick_game(float seconds)
     {
-        WorldEntity::TickGame(seconds);
+        WorldEntity::tick_game(seconds);
 
         m_angle += seconds * radians(70.0f);
         m_mat = mat4::rotate(radians(10.0f), vec3(0, 0, 1))
@@ -123,9 +123,9 @@ public:
                       * mat4::rotate(m_gears[4].m3 - 80.0f, vec3(0, 1, 0));
     }
 
-    virtual void TickDraw(float seconds, Scene &scene)
+    virtual void tick_draw(float seconds, Scene &scene)
     {
-        WorldEntity::TickDraw(seconds, scene);
+        WorldEntity::tick_draw(seconds, scene);
 
         if (!m_ready)
         {

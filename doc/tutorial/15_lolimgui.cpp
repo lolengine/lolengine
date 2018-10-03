@@ -37,9 +37,9 @@ public:
         LolImGui::Shutdown();
     }
 
-    virtual void TickGame(float seconds)
+    virtual void tick_game(float seconds)
     {
-        WorldEntity::TickGame(seconds);
+        WorldEntity::tick_game(seconds);
 
         static float f;
         static vec3 clear_color;
@@ -88,9 +88,9 @@ public:
         ImGui::End();
     }
 
-    virtual void TickDraw(float seconds, Scene &scene)
+    virtual void tick_draw(float seconds, Scene &scene)
     {
-        WorldEntity::TickDraw(seconds, scene);
+        WorldEntity::tick_draw(seconds, scene);
     }
 };
 

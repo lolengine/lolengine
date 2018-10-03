@@ -39,9 +39,9 @@ public:
         m_heightmap.resize(TEXTURE_WIDTH * 1);
     }
 
-    virtual void TickGame(float seconds)
+    virtual void tick_game(float seconds)
     {
-        WorldEntity::TickGame(seconds);
+        WorldEntity::tick_game(seconds);
 
         /* Generate a new heightmap at the beginning */
         if (m_frames == 0)
@@ -60,9 +60,9 @@ public:
         ++m_frames;
     }
 
-    virtual void TickDraw(float seconds, Scene &scene)
+    virtual void tick_draw(float seconds, Scene &scene)
     {
-        WorldEntity::TickDraw(seconds, scene);
+        WorldEntity::tick_draw(seconds, scene);
 
         /* Initialise GPU data */
         if (!m_ready)

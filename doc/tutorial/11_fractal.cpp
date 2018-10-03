@@ -166,9 +166,9 @@ public:
         return m_view.radius * m_window2world * f128cmplx(dx, dy);
     }
 
-    virtual void TickGame(float seconds)
+    virtual void tick_game(float seconds)
     {
-        WorldEntity::TickGame(seconds);
+        WorldEntity::tick_game(seconds);
 
         ivec2 mousepos = m_mouse->GetCursorPixel(0);
 
@@ -447,9 +447,9 @@ public:
         }
     }
 
-    virtual void TickDraw(float seconds, Scene &scene)
+    virtual void tick_draw(float seconds, Scene &scene)
     {
-        WorldEntity::TickDraw(seconds, scene);
+        WorldEntity::tick_draw(seconds, scene);
 
         static float const vertices[] =
         {

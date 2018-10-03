@@ -216,7 +216,7 @@ void SdlApp::ShowPointer(bool show)
 void SdlApp::Tick()
 {
     /* Tick the renderer, show the frame and clamp to desired framerate. */
-    Ticker::TickDraw();
+    Ticker::tick_draw();
 }
 
 SdlApp::~SdlApp()

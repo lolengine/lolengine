@@ -44,7 +44,7 @@ Emitter::Emitter(TileSet *tileset, vec3 gravity)
     data->nparticles = 0;
 }
 
-void Emitter::TickGame(float seconds)
+void Emitter::tick_game(float seconds)
 {
     for (int i = 0; i < data->nparticles; i++)
     {
@@ -61,12 +61,12 @@ void Emitter::TickGame(float seconds)
         }
     }
 
-    Entity::TickGame(seconds);
+    Entity::tick_game(seconds);
 }
 
-void Emitter::TickDraw(float seconds, Scene &scene)
+void Emitter::tick_draw(float seconds, Scene &scene)
 {
-    Entity::TickDraw(seconds, scene);
+    Entity::tick_draw(seconds, scene);
 
     for (int i = 0; i < data->nparticles; i++)
         scene.AddTile(data->tileset, data->particles[i],

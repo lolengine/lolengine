@@ -404,7 +404,7 @@ void TickerData::GameThreadTick()
                                e->GetName().c_str(), e);
                 e->m_tickstate = Entity::STATE_PRETICK_GAME;
 #endif
-                e->TickGame(data->deltatime);
+                e->tick_game(data->deltatime);
 #if !LOL_BUILD_RELEASE
                 if (e->m_tickstate != Entity::STATE_POSTTICK_GAME)
                     msg::error("entity %s [%p] missed super game tick\n",
@@ -458,7 +458,7 @@ void TickerData::DrawThreadTick()
                                    e->GetName().c_str(), e);
                     e->m_tickstate = Entity::STATE_PRETICK_DRAW;
 #endif
-                    e->TickDraw(data->deltatime, scene);
+                    e->tick_draw(data->deltatime, scene);
 #if !LOL_BUILD_RELEASE
                     if (e->m_tickstate != Entity::STATE_POSTTICK_DRAW)
                         msg::error("entity %s [%p] missed super draw tick\n",
@@ -510,7 +510,7 @@ void Ticker::Setup(float fps)
 #endif
 }
 
-void Ticker::TickDraw()
+void Ticker::tick_draw()
 {
 #if LOL_FEATURE_THREADS
     data->drawtick.pop();

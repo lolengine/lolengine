@@ -75,7 +75,7 @@ protected:
     virtual std::string GetName();
 
 public:
-    virtual void TickGame(float seconds);
+    virtual void tick_game(float seconds);
 
 protected:
 

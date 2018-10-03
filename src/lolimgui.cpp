@@ -181,9 +181,9 @@ const char* LolImGui::GetClipboardCallback(void *data)
 }
 
 //-----------------------------------------------------------------------------
-void LolImGui::TickGame(float seconds)
+void LolImGui::tick_game(float seconds)
 {
-    super::TickGame(seconds);
+    super::tick_game(seconds);
 
     ImGuiIO& io = ImGui::GetIO();
 
@@ -281,9 +281,9 @@ void LolImGui::TickGame(float seconds)
 }
 
 //-----------------------------------------------------------------------------
-void LolImGui::TickDraw(float seconds, Scene &scene)
+void LolImGui::tick_draw(float seconds, Scene &scene)
 {
-    super::TickDraw(seconds, scene);
+    super::tick_draw(seconds, scene);
 
     scene.AddPrimitiveRenderer(this, new PrimitiveLolImGui());
 }

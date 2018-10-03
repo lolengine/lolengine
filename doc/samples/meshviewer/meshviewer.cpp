@@ -101,7 +101,7 @@ public:
 };
 
 //EasyMeshViewerObject --------------------------------------------------------
-void EasyMeshViewerObject::TickDraw(float seconds, Scene &scene)
+void EasyMeshViewerObject::tick_draw(float seconds, Scene &scene)
 {
     switch (m_mesh.GetMeshState().ToScalar())
     {
@@ -275,9 +275,9 @@ MeshViewerLoadJob* MeshViewer::GetLoadJob(std::string const& path)
 }
 
 //-----------------------------------------------------------------------------
-void MeshViewer::TickGame(float seconds)
+void MeshViewer::tick_game(float seconds)
 {
-    super::TickGame(seconds);
+    super::tick_game(seconds);
 
     if (!m_init && Scene::IsReady()) Start();
     if (!m_init) return;
@@ -373,13 +373,13 @@ void MeshViewer::TickGame(float seconds)
 }
 
 //-----------------------------------------------------------------------------
-void MeshViewer::TickDraw(float seconds, Scene &scene)
+void MeshViewer::tick_draw(float seconds, Scene &scene)
 {
-    super::TickDraw(seconds, scene);
+    super::tick_draw(seconds, scene);
 
     //Draw viewer objects
     if (m_menu_mesh_idx >= 0 && m_menu_mesh_idx < m_objs.count())
-        m_objs[m_menu_mesh_idx]->TickDraw(seconds, scene);
+        m_objs[m_menu_mesh_idx]->tick_draw(seconds, scene);
 
     m_text->SetText("CECI EST UN TEST\n");
 

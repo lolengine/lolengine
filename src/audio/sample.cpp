@@ -81,9 +81,9 @@ sample::~sample()
     delete data;
 }
 
-void sample::TickGame(float seconds)
+void sample::tick_game(float seconds)
 {
-    Entity::TickGame(seconds);
+    Entity::tick_game(seconds);
 }
 
 std::string sample::GetName() const

@@ -78,17 +78,17 @@ Nacl_PhysTest::Nacl_PhysTest(bool editor)
     Ticker::Ref(m_light2);
 }
 
-void Nacl_PhysTest::TickGame(float seconds)
+void Nacl_PhysTest::tick_game(float seconds)
 {
-    WorldEntity::TickGame(seconds);
+    WorldEntity::tick_game(seconds);
 
     if (m_controller->IsKeyReleased(KEY_QUIT))
         Ticker::Shutdown();
 }
 
-void Nacl_PhysTest::TickDraw(float seconds, Scene &scene)
+void Nacl_PhysTest::tick_draw(float seconds, Scene &scene)
 {
-    WorldEntity::TickDraw(seconds, scene);
+    WorldEntity::tick_draw(seconds, scene);
 
     if (!m_ready)
     {

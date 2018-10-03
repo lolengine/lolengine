@@ -57,7 +57,7 @@ void Entity::InitDraw()
 {
 }
 
-void Entity::TickGame(float seconds)
+void Entity::tick_game(float seconds)
 {
     UNUSED(seconds);
 #if !LOL_BUILD_RELEASE
@@ -67,7 +67,7 @@ void Entity::TickGame(float seconds)
 #endif
 }
 
-void Entity::TickDraw(float seconds, Scene &scene)
+void Entity::tick_draw(float seconds, Scene &scene)
 {
     UNUSED(seconds, scene);
 #if !LOL_BUILD_RELEASE

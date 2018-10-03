@@ -50,9 +50,9 @@ DebugFps::DebugFps(int x, int y)
 #endif
 }
 
-void DebugFps::TickGame(float seconds)
+void DebugFps::tick_game(float seconds)
 {
-    Entity::TickGame(seconds);
+    Entity::tick_game(seconds);
 
     char buf[1024];
 

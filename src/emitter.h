@@ -32,8 +32,8 @@ public:
     void AddParticle(int id, vec3 pos, vec3 vel);
 
 protected:
-    virtual void TickGame(float seconds);
-    virtual void TickDraw(float seconds, Scene &scene);
+    virtual void tick_game(float seconds);
+    virtual void tick_draw(float seconds, Scene &scene);
 
 private:
     EmitterData *data;

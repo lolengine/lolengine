@@ -98,7 +98,7 @@ lolunit_declare_fixture(thread_test)
             return results.count() > 0;
         }
 
-        virtual void TickGame(float seconds)
+        virtual void tick_game(float seconds)
         {
             switch (m_status.ToScalar())
             {
@@ -134,7 +134,7 @@ lolunit_declare_fixture(thread_test)
 #if !LOL_BUILD_RELEASE
             m_tickstate = STATE_PRETICK_GAME;
 #endif
-            super::TickGame(seconds);
+            super::tick_game(seconds);
         }
         bool IsDone() { return m_status == UnitTestStatus::DONE; }
         int Test_GetDispatchCount() { return GetDispatchCount(); }
@@ -170,7 +170,7 @@ lolunit_declare_fixture(thread_test)
         bool dispatch_check = true;
         while (!m_manager.IsDone())
         {
-            m_manager.TickGame(1.f / 60.f);
+            m_manager.tick_game(1.f / 60.f);
             if (dispatch_check)
             {
                 lolunit_assert_equal(0, m_manager.Test_GetDispatchCount());

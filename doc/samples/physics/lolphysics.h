@@ -109,9 +109,9 @@ public:
         m_dynamics_world = new btDiscreteDynamicsWorld(m_dispatcher, m_broadphase, m_solver, m_collision_configuration);
     }
 
-    virtual void TickGame(float seconds)
+    virtual void tick_game(float seconds)
     {
-        Entity::TickGame(seconds);
+        Entity::tick_game(seconds);
 
         //step the simulation
         if (m_dynamics_world)

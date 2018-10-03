@@ -36,7 +36,7 @@ public:
 protected:
     /* Inherited from Entity */
     virtual std::string GetName() const;
-    virtual void TickGame(float seconds);
+    virtual void tick_game(float seconds);
 
 public:
     /* New methods */

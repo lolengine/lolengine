@@ -140,7 +140,7 @@ public:
     ViewerObject(std::string const& name) : m_name(name) { }
     virtual ~ViewerObject() { }
 
-    virtual void TickDraw(float seconds, Scene &scene) { }
+    virtual void tick_draw(float seconds, Scene &scene) { }
     std::string GetName() { return m_name; }
 
 protected:
@@ -162,7 +162,7 @@ public:
     }
     virtual ~EasyMeshViewerObject() { }
 
-    virtual void TickDraw(float seconds, Scene &scene);
+    virtual void tick_draw(float seconds, Scene &scene);
 
     void Init(std::string const& name, EasyMesh const& mesh)
     {
@@ -235,8 +235,8 @@ public:
     MeshViewerLoadJob* GetLoadJob(std::string const& path);
     void AddViewerObj(ViewerObject* obj) { m_objs << obj; }
 
-    virtual void TickGame(float seconds);
-    virtual void TickDraw(float seconds, Scene &scene);
+    virtual void tick_game(float seconds);
+    virtual void tick_draw(float seconds, Scene &scene);
 
     bool KeyReleased(MVKeyboardList index);
     bool KeyPressed(MVKeyboardList index);

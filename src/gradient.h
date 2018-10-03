@@ -33,8 +33,8 @@ public:
     std::string GetName() const { return "<gradient>"; }
 
 protected:
-    virtual void TickGame(float seconds);
-    virtual void TickDraw(float seconds, Scene &scene);
+    virtual void tick_game(float seconds);
+    virtual void tick_draw(float seconds, Scene &scene);
 
 private:
     GradientData *data;

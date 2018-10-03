@@ -54,9 +54,9 @@ Font::~Font()
     delete data;
 }
 
-void Font::TickDraw(float seconds, Scene &scene)
+void Font::tick_draw(float seconds, Scene &scene)
 {
-    Entity::TickDraw(seconds, scene);
+    Entity::tick_draw(seconds, scene);
 
     if (data->tileset->GetTexture())
     {

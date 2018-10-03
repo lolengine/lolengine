@@ -373,7 +373,7 @@ public:
     Controller(std::string const &name, InputProfile const& setup);
     virtual ~Controller();
 
-    virtual void TickGame(float seconds);
+    virtual void tick_game(float seconds);
 
     /** Activate the controller on next frame */
     void Activate();

@@ -59,14 +59,14 @@ DebugRecord::DebugRecord(std::string const &path, float fps)
     m_drawgroup = DRAWGROUP_CAPTURE;
 }
 
-void DebugRecord::TickGame(float seconds)
+void DebugRecord::tick_game(float seconds)
 {
-    Entity::TickGame(seconds);
+    Entity::tick_game(seconds);
 }
 
-void DebugRecord::TickDraw(float seconds, Scene &scene)
+void DebugRecord::tick_draw(float seconds, Scene &scene)
 {
-    Entity::TickDraw(seconds, scene);
+    Entity::tick_draw(seconds, scene);
 
     ivec2 size = Video::GetSize();
 

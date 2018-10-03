@@ -232,14 +232,14 @@ float Camera::GetFOVForHeightAndDistance(float distance, float height) const
     return 2.f * lol::atan(height * .5f / distance);
 }
 
-void Camera::TickGame(float seconds)
+void Camera::tick_game(float seconds)
 {
-    WorldEntity::TickGame(seconds);
+    WorldEntity::tick_game(seconds);
 }
 
-void Camera::TickDraw(float seconds, Scene &scene)
+void Camera::tick_draw(float seconds, Scene &scene)
 {
-    WorldEntity::TickDraw(seconds, scene);
+    WorldEntity::tick_draw(seconds, scene);
 }
 
 } /* namespace lol */

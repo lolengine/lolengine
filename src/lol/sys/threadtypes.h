@@ -132,7 +132,7 @@ protected:
     //Base thread work function
     void BaseThreadWork(thread* inst);
 
-    virtual void TickGame(float seconds);
+    virtual void tick_game(float seconds);
     //Default behaviour : delete the job result
     virtual void TreatResult(ThreadJob* result) { delete(result); }
 
@@ -236,7 +236,7 @@ public:
     void UnregisterFile(FileUpdateTester::Status*& status);
     //TODO: Add directories
     //FileUpdateTester::Status* RegisterDirectory(std::string const& path, bool check_files=false);
-    virtual void TickGame(float seconds);
+    virtual void tick_game(float seconds);
     virtual void TreatResult(ThreadJob* result);
 
 private:

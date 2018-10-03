@@ -33,7 +33,7 @@ public:
 protected:
     /* Inherited from Entity */
     virtual std::string GetName() const;
-    virtual void TickDraw(float seconds, Scene &scene);
+    virtual void tick_draw(float seconds, Scene &scene);
 
 public:
     /* New methods */

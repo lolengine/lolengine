@@ -62,8 +62,8 @@ protected:
     virtual void InitGame();
     virtual void InitDraw();
 
-    virtual void TickGame(float seconds);
-    virtual void TickDraw(float seconds, class Scene &scene);
+    virtual void tick_game(float seconds);
+    virtual void tick_draw(float seconds, class Scene &scene);
 
     enum
     {

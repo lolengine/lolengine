@@ -159,7 +159,7 @@ void NaClInstance::DrawSelf()
         return;
 
     m_opengl_ctx->MakeContextCurrent(this);
-    Ticker::TickDraw();
+    Ticker::tick_draw();
     m_opengl_ctx->FlushContext();
 }
 

@@ -238,9 +238,9 @@ void BaseThreadManager::BaseThreadWork(thread* inst)
 }
 
 //-----------------------------------------------------------------------------
-void BaseThreadManager::TickGame(float seconds)
+void BaseThreadManager::tick_game(float seconds)
 {
-    Entity::TickGame(seconds);
+    Entity::tick_game(seconds);
 
     //Start if needed
     Start();

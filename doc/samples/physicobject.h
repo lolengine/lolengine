@@ -402,14 +402,14 @@ public:
     std::string GetName() const { return "<PhysicsObject>"; }
 
 protected:
-    virtual void TickGame(float seconds)
+    virtual void tick_game(float seconds)
     {
-        WorldEntity::TickGame(seconds);
+        WorldEntity::tick_game(seconds);
     }
 
-    virtual void TickDraw(float seconds, Scene &scene)
+    virtual void tick_draw(float seconds, Scene &scene)
     {
-        WorldEntity::TickDraw(seconds, scene);
+        WorldEntity::tick_draw(seconds, scene);
 
 #if CAT_MODE
         if (!m_is_phys || m_custom_shader)

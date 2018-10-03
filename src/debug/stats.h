@@ -29,7 +29,7 @@ public:
     virtual ~DebugStats();
 
 protected:
-    virtual void TickGame(float seconds);
+    virtual void tick_game(float seconds);
 
 private:
     DebugStatsData *data;

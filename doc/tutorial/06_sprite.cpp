@@ -53,7 +53,7 @@ public:
         Ticker::Unref(m_camera);
     }
 
-    virtual void TickGame(float seconds)
+    virtual void tick_game(float seconds)
     {
         for (int i = 0; i < SPRITE_COUNT; ++i)
         {
@@ -63,12 +63,12 @@ public:
                 m_sprites[i].m1.y = (float)rand(-96, -48);
         }
 
-        WorldEntity::TickGame(seconds);
+        WorldEntity::tick_game(seconds);
     }
 
-    virtual void TickDraw(float seconds, Scene &scene)
+    virtual void tick_draw(float seconds, Scene &scene)
     {
-        WorldEntity::TickDraw(seconds, scene);
+        WorldEntity::tick_draw(seconds, scene);
 
         if (!m_ready)
         {

@@ -163,7 +163,7 @@ void lol::AndroidAppData::DrawFrame()
     if (!m_display)
         return;
 
-    Ticker::TickDraw();
+    Ticker::tick_draw();
 
     eglSwapBuffers(m_display, m_surface);
 }

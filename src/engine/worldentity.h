@@ -40,8 +40,8 @@ protected:
     WorldEntity();
     virtual ~WorldEntity();
 
-    virtual void TickGame(float seconds);
-    virtual void TickDraw(float seconds, Scene &scene);
+    virtual void tick_game(float seconds);
+    virtual void tick_draw(float seconds, Scene &scene);
 };
 
 } /* namespace lol */

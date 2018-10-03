@@ -37,14 +37,14 @@ Sprite::Sprite(TileSet *tileset, int id)
     data->id = id;
 }
 
-void Sprite::TickGame(float seconds)
+void Sprite::tick_game(float seconds)
 {
-    Entity::TickGame(seconds);
+    Entity::tick_game(seconds);
 }
 
-void Sprite::TickDraw(float seconds, Scene &scene)
+void Sprite::tick_draw(float seconds, Scene &scene)
 {
-    Entity::TickDraw(seconds, scene);
+    Entity::tick_draw(seconds, scene);
 
     scene.AddTile(data->tileset, data->id, m_position, vec2(1.0f), 0.0f);
 }

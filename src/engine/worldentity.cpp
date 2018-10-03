@@ -39,14 +39,14 @@ std::string WorldEntity::GetName() const
     return "<worldentity>";
 }
 
-void WorldEntity::TickGame(float seconds)
+void WorldEntity::tick_game(float seconds)
 {
-    Entity::TickGame(seconds);
+    Entity::tick_game(seconds);
 }
 
-void WorldEntity::TickDraw(float seconds, Scene &scene)
+void WorldEntity::tick_draw(float seconds, Scene &scene)
 {
-    Entity::TickDraw(seconds, scene);
+    Entity::tick_draw(seconds, scene);
 }
 
 } /* namespace lol */

@@ -50,7 +50,7 @@ protected:
     virtual void Init(std::string const &path, image* img);
 
 protected:
-    virtual void TickDraw(float seconds, Scene &scene);
+    virtual void tick_draw(float seconds, Scene &scene);
 
 public:
     /* Inherited from Entity */

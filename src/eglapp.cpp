@@ -273,7 +273,7 @@ void EglApp::ShowPointer(bool show)
 void EglApp::Tick()
 {
     /* Tick the renderer, show the frame and clamp to desired framerate. */
-    Ticker::TickDraw();
+    Ticker::tick_draw();
 #if defined LOL_USE_EGL && !defined __ANDROID__
     eglSwapBuffers(data->egl_dpy, data->egl_surf);
 #endif

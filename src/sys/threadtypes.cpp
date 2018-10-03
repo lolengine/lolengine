@@ -125,13 +125,13 @@ void FileUpdateTester::UnregisterFile(FileUpdateTester::Status*& status)
 }
 
 //-----------------------------------------------------------------------------
-void FileUpdateTester::TickGame(float seconds)
+void FileUpdateTester::tick_game(float seconds)
 {
     // Reset update for this frame
     for (auto &kv : m_files)
         kv.second->SetUpdated(false);
 
-    super::TickGame(seconds);
+    super::tick_game(seconds);
 
     if (!GetDispatchCount() && m_job_done.count())
     {

@@ -87,9 +87,9 @@ void TextureImage::Init(std::string const &path, image* img)
     m_drawgroup = DRAWGROUP_TEXTURE;
 }
 
-void TextureImage::TickDraw(float seconds, Scene &scene)
+void TextureImage::tick_draw(float seconds, Scene &scene)
 {
-    super::TickDraw(seconds, scene);
+    super::tick_draw(seconds, scene);
 
     if (IsDestroying())
     {

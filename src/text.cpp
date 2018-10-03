@@ -94,9 +94,9 @@ ivec2 Text::GetFontSize()
     return font->GetSize();
 }
 
-void Text::TickDraw(float seconds, Scene &scene)
+void Text::tick_draw(float seconds, Scene &scene)
 {
-    Entity::TickDraw(seconds, scene);
+    Entity::tick_draw(seconds, scene);
 
     if (auto length = data->m_text.length())
     {

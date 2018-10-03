@@ -60,14 +60,14 @@ vec4 Light::GetColor()
     return m_color;
 }
 
-void Light::TickGame(float seconds)
+void Light::tick_game(float seconds)
 {
-    WorldEntity::TickGame(seconds);
+    WorldEntity::tick_game(seconds);
 }
 
-void Light::TickDraw(float seconds, Scene &scene)
+void Light::tick_draw(float seconds, Scene &scene)
 {
-    WorldEntity::TickDraw(seconds, scene);
+    WorldEntity::tick_draw(seconds, scene);
 
     scene.AddLight(this);
 }
