@@ -35,7 +35,7 @@ class LuaBaseData
     {
         char const *message = lua_tostring(l, -1);
         msg::error("%s\n", message);
-        DebugAbort();
+        debug::abort();
         return 0;
     }
 

@@ -26,7 +26,10 @@
 namespace lol
 {
 
-void DumpStack()
+namespace debug
+{
+
+void dump_stack()
 {
 #if EMSCRIPTEN
     /* This would require demangling but we don't care yet. */
@@ -82,6 +85,8 @@ void DumpStack()
     free(callstack);
 #endif
 }
+
+} /* namespace debug */
 
 } /* namespace lol */
 

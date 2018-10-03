@@ -27,23 +27,28 @@
 namespace lol
 {
 
-static inline void Abort()
+static inline void abort()
 {
     //*(uint32_t *)nullptr = 0xdead;
     std::abort();
 }
 
-extern void DumpStack();
-
 /* FIXME: see http://stackoverflow.com/q/3596781/111461 for discussions
  * on implementing __debugbreak() on POSIX systems. */
-static inline void DebugAbort()
+namespace debug
 {
-    lol::DumpStack();
+
+extern void dump_stack();
+
+static inline void abort()
+{
+    dump_stack();
 #if defined _WIN32
     __debugbreak();
 #endif
-    lol::Abort();
+    lol::abort();
+}
+
 }
 
 #define LOL_CALL(macro, args) macro args
@@ -141,7 +146,7 @@ static inline void DebugAbort()
             LOL_CALL(LOL_CAT(LOL_ERROR_, LOL_CALL(LOL_COUNT_TO_3, \
                                                   (__VA_ARGS__))), \
                      (__VA_ARGS__)); \
-            lol::DebugAbort(); \
+            lol::debug::abort(); \
         }
 #endif
 
