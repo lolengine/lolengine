@@ -35,7 +35,7 @@ LolImGui::LolImGui()
     m_gamegroup = GAMEGROUP_IMGUI;
     m_drawgroup = DRAWGROUP_IMGUI;
 
-    //Build shader code -------------------------------------------------------
+    // Build shader code -------------------------------------------------------
     ShaderVar out_vertex = ShaderVar::GetShaderOut(ShaderProgram::Vertex);
     ShaderVar out_pixel = ShaderVar::GetShaderOut(ShaderProgram::Pixel);
 
@@ -54,27 +54,29 @@ LolImGui::LolImGui()
         << out_vertex << m_ortho << in_position
         << pass_texcoord << in_texcoord
         << pass_color << in_color;
-    imgui_vertex.SetMainCode(std::string() +
-        Line(out_vertex + " = .5 *" + m_ortho.tostring() + " * vec4(" + in_position.tostring() + ", -1.0, 1.0);")
-        + Line(pass_texcoord + " = " + in_texcoord.tostring() + ";")
-        + Line(pass_color + " = " + in_color.tostring() + ";")
-        );
+    imgui_vertex.SetMainCode(lol::format(
+        "%s = .5 * %s * vec4(%s, -1.0, 1.0);\n" "%s = %s;\n" "%s = %s;\n",
+        out_vertex.tostring().c_str(),
+        m_ortho.tostring().c_str(),
+        in_position.tostring().c_str(),
+        pass_texcoord.tostring().c_str(),
+        in_texcoord.tostring().c_str(),
+        pass_color.tostring().c_str(),
+        in_color.tostring().c_str()));
 
     ShaderBlock imgui_pixel("imgui_pixel");
     imgui_pixel << m_texture << pass_texcoord << pass_color << out_pixel;
-    imgui_pixel.SetMainCode(std::string() +
-        Line(std::string()
-        + "vec4 col = " + pass_color.tostring() + " * texture2D(" + m_texture.tostring() + ", " + pass_texcoord.tostring() + ");")
-        + Line(std::string()
-        + "if (col.a == 0.0) discard; ")
-        + Line(out_pixel + " = col;")
-        );
+    imgui_pixel.SetMainCode(lol::format(
+        "vec4 col = %s * texture2D(%s, %s);\n" "if (col.a == 0.0) discard;\n" "%s = col;\n",
+        pass_color.tostring().c_str(),
+        m_texture.tostring().c_str(),
+        pass_texcoord.tostring().c_str(),
+        out_pixel.tostring().c_str()));
 
-    m_builder
-        << ShaderProgram::Vertex << imgui_vertex
-        << ShaderProgram::Pixel << imgui_pixel;
+    m_builder << ShaderProgram::Vertex << imgui_vertex
+              << ShaderProgram::Pixel << imgui_pixel;
 
-    //Input Setup -------------------------------------------------------------
+    // Input Setup -------------------------------------------------------------
     InputProfile& ip = m_profile;
     ip.AddBindings<LolImGuiKey, LolImGuiKey::KEY_START, LolImGuiKey::KEY_END>(InputProfileType::Keyboard);
     //for (int i = LolImGuiKey::KEY_START; i < LolImGuiKey::KEY_END; ++i)
@@ -292,9 +294,7 @@ void PrimitiveLolImGui::Render(Scene& scene, PrimitiveSource* primitive)
 {
     UNUSED(scene, primitive);
 
-    ImGuiIO& io = ImGui::GetIO();
-    if (io.Fonts->TexID)
-        ImGui::Render();
+    ImGui::Render();
     ImGui::EndFrame();
 }
 
@@ -327,7 +327,7 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
         * mat4::scale(vec3::axis_x - vec3::axis_y - vec3::axis_z)
         * mat4::translate(-size.x * .5f * alpha, -size.y * .5f * alpha, 0.f);
 
-    //Create shader
+    // Create shader
     if (!m_shader)
     {
         std::string code;
@@ -351,7 +351,7 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
                 VertexUsage::Color));
     }
 
-    //Do not render without shader
+    // Do not render without shader
     if (!m_shader)
         return;
 
@@ -361,14 +361,14 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
     rc.SetScissorMode(ScissorMode::Enabled);
 
     m_shader->Bind();
+
+    // Register uniforms
+    m_shader->SetUniform(m_ortho, ortho);
+
     for (int n = 0; n < draw_data->CmdListsCount; n++)
     {
-        const ImDrawList* cmd_list = draw_data->CmdLists[n];
-        /*const unsigned char* vtx_buffer = (const unsigned char*)&cmd_list->VtxBuffer.front();*/
-
-        //Register uniforms
-        m_shader->SetUniform(m_ortho, ortho);
-        m_shader->SetUniform(m_texture, m_font->GetTexture()->GetTextureUniform(), 0);
+        auto const &command_list = *draw_data->CmdLists[n];
+        /*const unsigned char* vtx_buffer = (const unsigned char*)&command_list.VtxBuffer.front();*/
 
         struct Vertex
         {
@@ -376,29 +376,32 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
             u8vec4 color;
         };
 
-        VertexBuffer* vbo = new VertexBuffer(cmd_list->VtxBuffer.Size * sizeof(ImDrawVert));
+        VertexBuffer* vbo = new VertexBuffer(command_list.VtxBuffer.Size * sizeof(ImDrawVert));
         ImDrawVert *vert = (ImDrawVert *)vbo->Lock(0, 0);
-        memcpy(vert, cmd_list->VtxBuffer.Data, cmd_list->VtxBuffer.Size * sizeof(ImDrawVert));
+        memcpy(vert, command_list.VtxBuffer.Data, command_list.VtxBuffer.Size * sizeof(ImDrawVert));
         vbo->Unlock();
 
-        IndexBuffer *ibo = new IndexBuffer(cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx));
+        IndexBuffer *ibo = new IndexBuffer(command_list.IdxBuffer.Size * sizeof(ImDrawIdx));
         ImDrawIdx *indices = (ImDrawIdx *)ibo->Lock(0, 0);
-        memcpy(indices, cmd_list->IdxBuffer.Data, cmd_list->IdxBuffer.Size * sizeof(ImDrawIdx));
+        memcpy(indices, command_list.IdxBuffer.Data, command_list.IdxBuffer.Size * sizeof(ImDrawIdx));
         ibo->Unlock();
 
-        m_font->Bind();
         ibo->Bind();
         m_vdecl->Bind();
         m_vdecl->SetStream(vbo, m_attribs[0], m_attribs[1], m_attribs[2]);
 
         const ImDrawIdx* idx_buffer_offset = 0;
-        for (int cmd_i = 0; cmd_i < cmd_list->CmdBuffer.Size; cmd_i++)
+        for (int cmd_i = 0; cmd_i < command_list.CmdBuffer.Size; cmd_i++)
         {
-            const ImDrawCmd* pcmd = &cmd_list->CmdBuffer[(int)cmd_i];
-            Texture* texture = (Texture*)pcmd->TextureId;
-            if (texture) texture->Bind();
+            auto const &command = command_list.CmdBuffer[cmd_i];
+            Texture* texture = (Texture*)command.TextureId;
+            if (texture)
+            {
+                texture->Bind();
+                m_shader->SetUniform(m_texture, texture->GetTextureUniform(), 0);
+            }
 
-            rc.SetScissorRect(vec4(pcmd->ClipRect.x, pcmd->ClipRect.y, pcmd->ClipRect.z, pcmd->ClipRect.w));
+            rc.SetScissorRect(command.ClipRect);
 
 #ifdef SHOW_IMGUI_DEBUG
             //-----------------------------------------------------------------
@@ -420,7 +423,7 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
             for (int i = 0; i < 4; ++i)
                 Debug::DrawLine(pos[i], pos[(i + 1) % 4], Color::white);
             ImDrawVert* buf = vert;
-            for (uint16_t i = 0; i < pcmd->ElemCount; i += 3)
+            for (uint16_t i = 0; i < command.ElemCount; i += 3)
             {
                 uint16_t ib = indices[idx_buffer_offset_i + i];
                 vec2 pos[3];
@@ -435,7 +438,7 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
                 Debug::DrawLine((off + vec3(pos[1], 0.f)) / mod, (off + vec3(pos[2], 0.f)) / mod, col[1]);
                 Debug::DrawLine((off + vec3(pos[2], 0.f)) / mod, (off + vec3(pos[0], 0.f)) / mod, col[2]);
             }
-            idx_buffer_offset_i += pcmd->ElemCount;
+            idx_buffer_offset_i += command.ElemCount;
 
             //-----------------------------------------------------------------
             //<\Debug render> -------------------------------------------------
@@ -443,14 +446,13 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
 #endif //SHOW_IMGUI_DEBUG
             //Debug::DrawLine(vec2::zero, vec2::axis_x /*, Color::green*/);
 
-            m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, pcmd->ElemCount, (const short*)idx_buffer_offset);
+            m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, command.ElemCount, (const short*)idx_buffer_offset);
 
-            idx_buffer_offset += pcmd->ElemCount;
+            idx_buffer_offset += command.ElemCount;
         }
 
         m_vdecl->Unbind();
         ibo->Unbind();
-        m_font->Unbind();
 
         delete vbo;
         delete ibo;
