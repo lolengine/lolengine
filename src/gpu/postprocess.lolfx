@@ -23,6 +23,11 @@ uniform sampler2D u_buffer;
 uniform sampler2D u_prev_buffer;
 uniform sampler2D u_prev_final;
 
+// Persistence settings:
+//  x: persistence of backbuffer (default 0)
+//  y: persistence of whites in render buffer (default 0)
+uniform vec3 u_persistence;
+
 in vec2 pass_position;
 out vec4 out_color;
 
@@ -35,10 +40,10 @@ void main(void)
     vec4 prev_color = vec4(texture2D(u_prev_buffer, texcoords).rgb, 1.0);
 
     /* (do stuff with color here) */
-    vec4 final_color = mix(color, prev_color, 0.01);
+    vec4 final_color = mix(color, prev_color, u_persistence.x);
 
     /* Blend final color with previous frame’s final color */
     vec4 prev_final_color = vec4(texture2D(u_prev_final, texcoords).rgb, 1.0);
-    out_color = mix(final_color, prev_final_color, vec4(0.5) + 0.3 * (prev_final_color - final_color));
+    out_color = mix(final_color, prev_final_color, u_persistence.y * (vec4(1.6666) + prev_final_color - final_color));
 }
 
