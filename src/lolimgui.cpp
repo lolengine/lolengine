@@ -158,6 +158,8 @@ io.AddInputCharacter((unsigned short)c);
 
 void LolImGui::Shutdown()
 {
+    ImGui::EndFrame();
+
     if (g_lolimgui)
     {
         Ticker::Unref(g_lolimgui);
