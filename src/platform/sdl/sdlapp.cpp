@@ -84,28 +84,6 @@ SdlAppDisplay::SdlAppDisplay(char const *title, ivec2 res)
     SDL_GetWindowSize(data->m_window, &res.x, &res.y);
 
     data->m_glcontext = SDL_GL_CreateContext(data->m_window);
-#else
-    const SDL_VideoInfo* vidinfo = SDL_GetVideoInfo();
-    screen_size = ivec2(vidinfo->current_w, vidinfo->current_h);
-
-    SDL_WM_SetCaption(title, nullptr);
-
-    SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
-    SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 16);
-
-    // TODO: when implementing fullscreen, be sure to overwrite screen_w
-    // and screen_h with the value of vidinfo after the call to
-    // SDL_SetVideoMode.
-    data->m_window = SDL_SetVideoMode(res.x, res.y, 0, SDL_OPENGL);
-
-    if (!data->m_window)
-    {
-        msg::error("cannot create rendering window: %s\n", SDL_GetError());
-        SDL_Quit();
-        exit(EXIT_FAILURE);
-    }
-
-    res = ivec2(data->m_window->w, data->m_window->h);
 #endif
 
     /* Initialise everything */
