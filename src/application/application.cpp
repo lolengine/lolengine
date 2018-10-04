@@ -41,7 +41,7 @@ public:
     virtual ~null_display() {}
 
 protected:
-    void SetResolution(ivec2) {}
+    void set_resolution(ivec2) {}
     void SetPosition(ivec2) {}
 
     void Enable() {}
@@ -63,28 +63,11 @@ class ApplicationDisplayData
 {
     friend class ApplicationDisplay;
 
-    ApplicationDisplayData(char const *name, ivec2 resolution)
-        : display(name, resolution)
+    ApplicationDisplayData(char const *name, ivec2 res)
+        : display(name, res)
     { }
 
 protected:
-    void SetResolution(ivec2 resolution)
-    {
-        display.SetResolution(resolution);
-    }
-    void SetPosition(ivec2 position)
-    {
-        display.SetPosition(position);
-    }
-    void Enable()
-    {
-        display.Enable();
-    }
-    void Disable()
-    {
-        display.Disable();
-    }
-
 #if __native_client__
     //NOT HANDLED YET
 #elif __ANDROID__
@@ -99,9 +82,9 @@ protected:
 #endif
 };
 
-ApplicationDisplay::ApplicationDisplay(char const *name, ivec2 resolution)
+ApplicationDisplay::ApplicationDisplay(char const *name, ivec2 res)
 {
-    data = new ApplicationDisplayData(name, resolution);
+    data = new ApplicationDisplayData(name, res);
 }
 
 ApplicationDisplay::~ApplicationDisplay()
@@ -109,29 +92,35 @@ ApplicationDisplay::~ApplicationDisplay()
     delete data;
 }
 
-void ApplicationDisplay::SetResolution(ivec2 resolution)
+ivec2 ApplicationDisplay::resolution() const
 {
-    super::SetResolution(resolution);
-
-    data->SetResolution(resolution);
+    return data->display.resolution();
 }
+
+void ApplicationDisplay::set_resolution(ivec2 res)
+{
+    super::set_resolution(res);
+
+    data->display.set_resolution(res);
+}
+
 void ApplicationDisplay::SetPosition(ivec2 position)
 {
     super::SetPosition(position);
 
-    data->SetPosition(position);
+    data->display.SetPosition(position);
 }
 
 void ApplicationDisplay::Enable()
 {
     super::Enable();
 
-    data->Enable();
+    data->display.Enable();
 }
 
 void ApplicationDisplay::Disable()
 {
-    data->Disable();
+    data->display.Disable();
 
     super::Disable();
 }
@@ -141,8 +130,8 @@ class ApplicationData
 {
     friend class Application;
 
-    ApplicationData(char const *name, ivec2 resolution, float framerate)
-        : app(name, resolution, framerate)
+    ApplicationData(char const *name, ivec2 res, float framerate)
+        : app(name, res, framerate)
     { }
 
 #if __native_client__
@@ -172,10 +161,11 @@ static void AppCallback()
  * Public Application class
  */
 
-Application::Application(char const *name, ivec2 resolution, float framerate)
+Application::Application(char const *name, ivec2 res, float framerate)
 {
-    SceneDisplay::Add(new ApplicationDisplay(name, resolution));
-    data = new ApplicationData(name, resolution, framerate);
+    auto app_display = new ApplicationDisplay(name, res);
+    SceneDisplay::Add(app_display);
+    data = new ApplicationData(name, app_display->resolution(), framerate);
 }
 
 bool Application::MustTick()

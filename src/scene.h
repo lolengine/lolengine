@@ -68,7 +68,9 @@ public:
     virtual ~SceneDisplay() { }
 
     /* pos/size/... methods */
-    virtual void SetResolution(ivec2 resolution) { UNUSED(resolution); }
+    virtual void set_resolution(ivec2 resolution) { UNUSED(resolution); }
+    virtual ivec2 resolution() const { return ivec2(0); }
+
     virtual void SetPosition(ivec2 position) { UNUSED(position); }
 
     /* TODO: Should that be there or in Video ? */

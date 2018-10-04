@@ -54,7 +54,6 @@ SdlAppDisplay::SdlAppDisplay(char const *title, ivec2 res)
 {
 #if LOL_USE_SDL
     ivec2 window_size = res;
-    ivec2 screen_size = res;
 
     /* Initialise SDL */
     if (!SDL_WasInit(0))
@@ -66,15 +65,16 @@ SdlAppDisplay::SdlAppDisplay(char const *title, ivec2 res)
         }
     }
 
-#if LOL_USE_SDL
     /* This seems to fix the swap context bug.
      * However, perfs warning have been may occur. */
     SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
 
-    data->m_window = SDL_CreateWindow(title, SDL_WINDOWPOS_UNDEFINED,
-        SDL_WINDOWPOS_UNDEFINED,
-        window_size.x, window_size.y,
-        SDL_WINDOW_OPENGL);
+    int flags = SDL_WINDOW_OPENGL;
+    if (window_size == ivec2(0))
+        flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+    data->m_window = SDL_CreateWindow(title,
+        SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+        window_size.x, window_size.y, flags);
     if (!data->m_window)
     {
         msg::error("cannot create rendering window: %s\n", SDL_GetError());
@@ -84,7 +84,6 @@ SdlAppDisplay::SdlAppDisplay(char const *title, ivec2 res)
     SDL_GetWindowSize(data->m_window, &res.x, &res.y);
 
     data->m_glcontext = SDL_GL_CreateContext(data->m_window);
-#endif
 
     /* Initialise everything */
     Video::Setup(res); //TODO ?? Should it be here ?
@@ -104,12 +103,22 @@ SdlAppDisplay::~SdlAppDisplay()
     delete data;
 }
 
-void SdlAppDisplay::SetResolution(ivec2 resolution)
+ivec2 SdlAppDisplay::resolution() const
+{
+    ivec2 ret(0);
+#if LOL_USE_SDL
+    SDL_GetWindowSize(data->m_window, &ret.x, &ret.y);
+#endif
+    return ret;
+}
+
+void SdlAppDisplay::set_resolution(ivec2 resolution)
 {
 #if LOL_USE_SDL
     SDL_SetWindowSize(data->m_window, resolution.x, resolution.y);
 #endif
 }
+
 void SdlAppDisplay::SetPosition(ivec2 position)
 {
 #if LOL_USE_SDL

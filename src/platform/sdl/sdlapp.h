@@ -25,13 +25,16 @@ class SdlAppDisplayData;
 
 class SdlAppDisplay
 {
-    friend class ApplicationDisplayData;
+    friend class ApplicationDisplay;
+
 public:
     SdlAppDisplay(char const *title, ivec2 resolution);
     virtual ~SdlAppDisplay();
 
 protected:
-    void SetResolution(ivec2 resolution);
+    virtual void set_resolution(ivec2 resolution);
+    virtual ivec2 resolution() const;
+
     void SetPosition(ivec2 position);
 
     void Enable();

@@ -31,7 +31,9 @@ public:
     virtual ~ApplicationDisplay();
 
     /* pos/size/... methods */
-    virtual void SetResolution(ivec2 resolution);
+    virtual void set_resolution(ivec2 resolution);
+    virtual ivec2 resolution() const;
+
     virtual void SetPosition(ivec2 position);
 
 protected:
