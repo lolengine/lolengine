@@ -12,8 +12,8 @@
 
 #include <lol/engine-internal.h>
 
-#include <cstring>
 #include <cstdlib>
+#include <regex>
 
 #if defined _WIN32
 #   define strcasecmp _stricmp
@@ -80,18 +80,11 @@ int Dict::MakeSlot(std::string const &name)
         }
         else
         {
-            char const *oldname = e->GetName().c_str();
-            if (*oldname == '<')
-            {
-                while (*oldname && *oldname != '>')
-                    oldname++;
-                while (*oldname == '>')
-                    oldname++;
-                while (*oldname == ' ')
-                    oldname++;
-            }
+            auto oldname = e->GetName();
+            if (oldname[0] == '<')
+                oldname = std::regex_replace(oldname, std::regex("<[^>]*> *"), "");
 
-            if (!strcasecmp(name.c_str(), oldname))
+            if (oldname == name)
                 break;
         }
     }
