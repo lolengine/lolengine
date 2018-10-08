@@ -28,9 +28,9 @@ static LolImGui* g_lolimgui = nullptr;
 #define Line(s) ((s) + "\n")
 
 //-----------------------------------------------------------------------------
-LolImGui::LolImGui()
+LolImGui::LolImGui(ImFontAtlas *shared_font_atlas)
 {
-    ImGui::CreateContext();
+    ImGui::CreateContext(shared_font_atlas);
 
     m_gamegroup = GAMEGROUP_IMGUI;
     m_drawgroup = DRAWGROUP_IMGUI;
@@ -113,9 +113,9 @@ LolImGui::~LolImGui()
 }
 
 //-----------------------------------------------------------------------------
-void LolImGui::Init()
+void LolImGui::Init(ImFontAtlas *shared_font_atlas)
 {
-    Ticker::Ref(g_lolimgui = new LolImGui());
+    Ticker::Ref(g_lolimgui = new LolImGui(shared_font_atlas));
 
     ImGuiIO& io = ImGui::GetIO();
     //ImFont* font0 = io.Fonts->AddFontDefault();

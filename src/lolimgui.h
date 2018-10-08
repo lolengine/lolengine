@@ -149,12 +149,12 @@ class LolImGui : public Entity
 
 public:
     //-------------------------------------------------------------------------
-    LolImGui();
+    LolImGui(ImFontAtlas *shared_font_atlas);
     ~LolImGui();
     std::string GetName() const { return "<LolImGui>"; }
 
     //-------------------------------------------------------------------------
-    static void Init();
+    static void Init(ImFontAtlas *shared_font_atlas = nullptr);
     static void Shutdown();
 
     //-------------------------------------------------------------------------
