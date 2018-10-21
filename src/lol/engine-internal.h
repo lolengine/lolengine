@@ -38,3 +38,8 @@
 #include <lol/extras.h>
 #include <lol/legacy.h>
 
+#if defined _WIN32
+#   undef near /* Fuck Microsoft */
+#   undef far /* Fuck Microsoft again */
+#endif
+
