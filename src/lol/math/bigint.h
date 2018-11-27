@@ -25,7 +25,7 @@
 namespace lol
 {
 
-/* This is OUR namespace. Don't let Windows headers fuck with it. */
+/* This is OUR namespace. Don't let Windows headers mess with it. */
 #undef min
 #undef max
 

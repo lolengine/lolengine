@@ -42,6 +42,7 @@
     <ClCompile Include="math\interp.cpp" />
     <ClCompile Include="math\matrix.cpp" />
     <ClCompile Include="math\noise\simplex.cpp" />
+    <ClCompile Include="math\numbers.cpp" />
     <ClCompile Include="math\polynomial.cpp" />
     <ClCompile Include="math\quat.cpp" />
     <ClCompile Include="math\rand.cpp" />

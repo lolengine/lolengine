@@ -29,7 +29,7 @@
 namespace lol
 {
 
-/* This is OUR namespace. Don't let Windows headers fuck with it. */
+/* This is OUR namespace. Don't let Windows headers mess with it. */
 #undef min
 #undef max
 
@@ -256,7 +256,8 @@ LOL_ATTR_NODISCARD static inline ldouble round(ldouble x) { return std::round(x)
     LOL_ATTR_NODISCARD static inline T min(T x, T y) { return std::min(x, y); } \
     LOL_ATTR_NODISCARD static inline T max(T x, T y) { return std::max(x, y); } \
     LOL_ATTR_NODISCARD static inline T clamp(T x, T y, T z) { return min(max(x, y), z); } \
-    LOL_ATTR_NODISCARD static inline T saturate(T x) { return min(max(x, (T)0), (T)1); }
+    LOL_ATTR_NODISCARD static inline T saturate(T x) { return min(max(x, (T)0), (T)1); } \
+    LOL_ATTR_NODISCARD static inline T gcd(T x, T y) { return y == (T)0 ? lol::abs(x) : lol::gcd(y, lol::fmod(x, y)); }
 
 #define LOL_GENERIC_FUNC_SIGNED(T) \
     LOL_GENERIC_FUNC(T) \
