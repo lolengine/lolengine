@@ -29,6 +29,13 @@ lolunit_declare_fixture(gcd_test)
         lolunit_assert_equal(18913, lol::gcd(624129, 2061517));
     }
 
+    lolunit_declare_test(gcd_double)
+    {
+        lolunit_assert_equal(2.0, lol::gcd(4.0, 6.0));
+        lolunit_assert_equal(2.5, lol::gcd(5.0, 7.5));
+        lolunit_assert_equal(0.125, lol::gcd(4.625, 75.0));
+    }
+
     lolunit_declare_test(gcd_negative)
     {
         lolunit_assert_equal(2, lol::gcd(4, -6));

@@ -33,7 +33,6 @@
   <ItemGroup>
     <ClCompile Include="benchmark\half.cpp" />
     <ClCompile Include="benchmark\real.cpp" />
-    <ClCompile Include="benchmark\trig.cpp" />
     <ClCompile Include="benchmark\vector.cpp" />
     <ClCompile Include="benchsuite.cpp" />
   </ItemGroup>

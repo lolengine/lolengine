@@ -161,7 +161,6 @@
     <ClCompile Include="math\matrix.cpp" />
     <ClCompile Include="math\real.cpp" />
     <ClCompile Include="math\transform.cpp" />
-    <ClCompile Include="math\trig.cpp" />
     <ClCompile Include="math\vector.cpp" />
     <ClCompile Include="mesh\mesh.cpp" />
     <ClCompile Include="mesh\primitivemesh.cpp" />

@@ -21,7 +21,6 @@
 using namespace lol;
 
 void bench_real(int mode);
-void bench_trig(int mode);
 void bench_matrix(int mode);
 void bench_half(int mode);
 
@@ -33,21 +32,6 @@ int main(int argc, char **argv)
     msg::info(" High precision floats\n");
     msg::info("-----------------------\n");
     bench_real(1);
-
-    msg::info("--------------------------\n");
-    msg::info(" Trigonometry [-1e5, 1e5]\n");
-    msg::info("--------------------------\n");
-    bench_trig(1);
-
-    msg::info("------------------------\n");
-    msg::info(" Trigonometry [-pi, pi]\n");
-    msg::info("------------------------\n");
-    bench_trig(2);
-
-    msg::info("----------------------------\n");
-    msg::info(" Trigonometry [-1e-2, 1e-2]\n");
-    msg::info("----------------------------\n");
-    bench_trig(3);
 
     msg::info("----------------------------\n");
     msg::info(" Float matrices [-2.0, 2.0]\n");

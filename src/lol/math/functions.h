@@ -172,17 +172,6 @@ LOL_ATTR_NODISCARD static inline ldouble lerp(ldouble const &a, ldouble const &b
     return mix(a, b, x);
 }
 
-/* These accelerated functions will be merged into the above, one day */
-LOL_ATTR_NODISCARD double lol_sin(double);
-LOL_ATTR_NODISCARD double lol_cos(double);
-LOL_ATTR_NODISCARD double lol_tan(double);
-void lol_sincos(double, double*, double*);
-void lol_sincos(float, float*, float*);
-LOL_ATTR_NODISCARD double lol_asin(double);
-LOL_ATTR_NODISCARD double lol_acos(double);
-LOL_ATTR_NODISCARD double lol_atan(double);
-LOL_ATTR_NODISCARD double lol_atan2(double, double);
-
 /* C++ doesn't define abs() and fmod() for all types; we add these for
  * convenience to avoid adding complexity to vector.h. */
 LOL_ATTR_NODISCARD static inline int8_t abs(int8_t x) { return std::abs(x); }

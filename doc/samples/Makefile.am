@@ -21,8 +21,7 @@ bluenoise_CPPFLAGS = $(AM_CPPFLAGS)
 bluenoise_DEPENDENCIES = @LOL_DEPS@
 
 benchsuite_SOURCES = benchsuite.cpp \
-    benchmark/vector.cpp benchmark/half.cpp benchmark/trig.cpp \
-    benchmark/real.cpp
+    benchmark/vector.cpp benchmark/half.cpp benchmark/real.cpp
 benchsuite_CPPFLAGS = $(AM_CPPFLAGS)
 benchsuite_DEPENDENCIES = @LOL_DEPS@
 
