@@ -35,12 +35,14 @@ namespace lol
 class null_display
 {
     friend class ApplicationDisplayData;
+    friend class ApplicationDisplay;
 
 public:
     null_display(char const *, ivec2) {}
     virtual ~null_display() {}
 
 protected:
+    ivec2 resolution() const { return ivec2(0); }
     void set_resolution(ivec2) {}
     void SetPosition(ivec2) {}
 
