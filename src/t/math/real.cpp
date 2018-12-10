@@ -21,53 +21,6 @@ namespace lol
 
 lolunit_declare_fixture(real_test)
 {
-    lolunit_declare_test(constants)
-    {
-        double a0 = real::R_0();
-        double a1 = real::R_1();
-        double a2 = real::R_2();
-        double a10 = real::R_10();
-
-        lolunit_assert_equal(a0, 0.0);
-        lolunit_assert_equal(a1, 1.0);
-        lolunit_assert_equal(a2, 2.0);
-        lolunit_assert_equal(a10, 10.0);
-
-        double b1 = log(real::R_E());
-        double b2 = log2(real::R_2());
-        lolunit_assert_equal(b1, 1.0);
-        lolunit_assert_equal(b2, 1.0);
-
-        double c1 = exp(inverse(real::R_LOG2E()));
-        double c2 = log(exp2(real::R_LOG2E()));
-        lolunit_assert_equal(c1, 2.0);
-        lolunit_assert_equal(c2, 1.0);
-
-        double d1 = exp(inverse(real::R_LOG10E()));
-        lolunit_assert_equal(d1, 10.0);
-
-        double e1 = exp(real::R_LN2());
-        lolunit_assert_equal(e1, 2.0);
-
-        double f1 = exp(real::R_LN10());
-        lolunit_assert_equal(f1, 10.0);
-
-        double g1 = sin(real::R_PI());
-        double g2 = cos(real::R_PI());
-        lolunit_assert_doubles_equal(g1, 0.0, 1e-100);
-        lolunit_assert_equal(g2, -1.0);
-
-        double h1 = sin(real::R_PI_2());
-        double h2 = cos(real::R_PI_2());
-        lolunit_assert_equal(h1, 1.0);
-        lolunit_assert_doubles_equal(h2, 0.0, 1e-100);
-
-        double i1 = sin(real::R_PI_4()) * sin(real::R_PI_4());
-        double i2 = cos(real::R_PI_4()) * cos(real::R_PI_4());
-        lolunit_assert_equal(i1, 0.5);
-        lolunit_assert_equal(i2, 0.5);
-    }
-
     lolunit_declare_test(float_to_real)
     {
         float a1 = real(0.0f);
@@ -116,6 +69,113 @@ lolunit_declare_fixture(real_test)
 
         // 64 bits means our precision is better than double
         lolunit_assert_greater(ok_bits, 64);
+    }
+
+    lolunit_declare_test(uint32_to_real)
+    {
+        uint32_t a = 0;
+        uint32_t b = 1;
+        uint32_t c = UINT32_MAX;
+        uint32_t d = UINT32_MAX ^ (UINT32_MAX >> 1);
+        uint32_t e = UINT32_MAX ^ (UINT32_MAX >> 1) ^ 1;
+
+        lolunit_assert_equal(a, (uint32_t)(real)a);
+        lolunit_assert_equal(b, (uint32_t)(real)b);
+        lolunit_assert_equal(c, (uint32_t)(real)c);
+        lolunit_assert_equal(d, (uint32_t)(real)d);
+        lolunit_assert_equal(e, (uint32_t)(real)e);
+    }
+
+    lolunit_declare_test(int32_to_real)
+    {
+        int32_t a = 0;
+        int32_t b = 1;
+        int32_t c = -1;
+        int32_t d = INT32_MIN;
+        int32_t e = INT32_MAX;
+
+        lolunit_assert_equal(a, (int32_t)(real)a);
+        lolunit_assert_equal(b, (int32_t)(real)b);
+        lolunit_assert_equal(c, (int32_t)(real)c);
+        lolunit_assert_equal(d, (int32_t)(real)d);
+        lolunit_assert_equal(e, (int32_t)(real)e);
+    }
+
+    lolunit_declare_test(uint64_to_real)
+    {
+        uint64_t a = 0;
+        uint64_t b = 1;
+        uint64_t c = UINT64_MAX;
+        uint64_t d = UINT64_MAX ^ (UINT64_MAX >> 1);
+        uint64_t e = UINT64_MAX ^ (UINT64_MAX >> 1) ^ 1;
+
+        lolunit_assert_equal(a, (uint64_t)(real)a);
+        lolunit_assert_equal(b, (uint64_t)(real)b);
+        lolunit_assert_equal(c, (uint64_t)(real)c);
+        lolunit_assert_equal(d, (uint64_t)(real)d);
+        lolunit_assert_equal(e, (uint64_t)(real)e);
+    }
+
+    lolunit_declare_test(int64_to_real)
+    {
+        int64_t a = 0;
+        int64_t b = 1;
+        int64_t c = -1;
+        int64_t d = INT64_MIN;
+        int64_t e = INT64_MAX;
+
+        lolunit_assert_equal(a, (int64_t)(real)a);
+        lolunit_assert_equal(b, (int64_t)(real)b);
+        lolunit_assert_equal(c, (int64_t)(real)c);
+        lolunit_assert_equal(d, (int64_t)(real)d);
+        lolunit_assert_equal(e, (int64_t)(real)e);
+    }
+
+    lolunit_declare_test(constants)
+    {
+        double a0 = real::R_0();
+        double a1 = real::R_1();
+        double a2 = real::R_2();
+        double a10 = real::R_10();
+
+        lolunit_assert_equal(a0, 0.0);
+        lolunit_assert_equal(a1, 1.0);
+        lolunit_assert_equal(a2, 2.0);
+        lolunit_assert_equal(a10, 10.0);
+
+        double b1 = log(real::R_E());
+        double b2 = log2(real::R_2());
+        lolunit_assert_equal(b1, 1.0);
+        lolunit_assert_equal(b2, 1.0);
+
+        double c1 = exp(inverse(real::R_LOG2E()));
+        double c2 = log(exp2(real::R_LOG2E()));
+        lolunit_assert_equal(c1, 2.0);
+        lolunit_assert_equal(c2, 1.0);
+
+        double d1 = exp(inverse(real::R_LOG10E()));
+        lolunit_assert_equal(d1, 10.0);
+
+        double e1 = exp(real::R_LN2());
+        lolunit_assert_equal(e1, 2.0);
+
+        double f1 = exp(real::R_LN10());
+        lolunit_assert_equal(f1, 10.0);
+
+        double g1 = sin(real::R_PI());
+        double g2 = cos(real::R_PI());
+        lolunit_assert_doubles_equal(g1, 0.0, 1e-100);
+        lolunit_assert_equal(g2, -1.0);
+
+        double h1 = sin(real::R_PI_2());
+        double h2 = cos(real::R_PI_2());
+        lolunit_assert_equal(h1, 1.0);
+        lolunit_assert_doubles_equal(h2, 0.0, 1e-100);
+
+        double i1 = sin(real::R_PI_4()) * sin(real::R_PI_4());
+        double i2 = cos(real::R_PI_4()) * cos(real::R_PI_4());
+        lolunit_assert_equal(i1, 0.5);
+        lolunit_assert_equal(i2, 0.5);
     }
 
     lolunit_declare_test(init)
