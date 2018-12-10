@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -19,7 +19,8 @@
 
 #include <lol/base/types.h>
 
-#include <stdint.h>
+#include <cstdint>
+#include <vector>
 
 namespace lol
 {
@@ -56,7 +57,7 @@ public:
 
     Real(char const *str);
 
-    LOL_ATTR_NODISCARD bool is_zero() const { return m_mantissa.count() == 0; }
+    LOL_ATTR_NODISCARD bool is_zero() const { return m_mantissa.size() == 0; }
     LOL_ATTR_NODISCARD bool is_negative() const { return m_sign; }
     LOL_ATTR_NODISCARD bool is_nan() const { return m_nan; }
     LOL_ATTR_NODISCARD bool is_inf() const { return m_inf; }
@@ -226,7 +227,7 @@ public:
     static Real<T> const& R_MAX();
 
 private:
-    array<T> m_mantissa;
+    std::vector<T> m_mantissa;
     exponent_t m_exponent = 0;
     bool m_sign = false, m_nan = false, m_inf = false;
 
@@ -234,7 +235,7 @@ public:
     static int DEFAULT_BIGIT_COUNT;
 
     static inline int bigit_bits() { return 8 * sizeof(bigit_t); }
-    inline int bigit_count() const { return m_mantissa.count(); }
+    inline int bigit_count() const { return m_mantissa.size(); }
     inline int total_bits() const { return bigit_count() * bigit_bits(); }
 };
 

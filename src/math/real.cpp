@@ -122,7 +122,7 @@ template<> real::Real(uint64_t i)
         m_exponent = 64 - delta;
         m_mantissa.resize(DEFAULT_BIGIT_COUNT);
         m_mantissa[0] = (bigit_t)(i >> 32);
-        if (m_mantissa.count() > 1)
+        if (bigit_count() > 1)
             m_mantissa[1] = (bigit_t)i;
     }
 }
@@ -148,7 +148,7 @@ template<> real::Real(double d)
         m_exponent = exponent - ((1 << 10) - 1);
         m_mantissa.resize(DEFAULT_BIGIT_COUNT);
         m_mantissa[0] = (bigit_t)(u.x >> 20);
-        if (m_mantissa.count() > 1)
+        if (bigit_count() > 1)
             m_mantissa[1] = (bigit_t)(u.x << 12);
         break;
     }
@@ -209,10 +209,10 @@ template<> real::operator double() const
 
         /* Store mantissa if necessary */
         u.x <<= 32;
-        if (m_mantissa.count() > 0)
+        if (bigit_count() > 0)
             u.x |= m_mantissa[0];
         u.x <<= 20;
-        if (m_mantissa.count() > 1)
+        if (bigit_count() > 1)
         {
             u.x |= m_mantissa[1] >> 12;
             /* Rounding */
@@ -361,7 +361,7 @@ template<> real real::operator +(real const &x) const
         return *this;
 
     real ret;
-    ret.m_mantissa.resize(m_mantissa.count());
+    ret.m_mantissa.resize(bigit_count());
     ret.m_exponent = m_exponent;
 
     uint64_t carry = 0;
@@ -428,7 +428,7 @@ template<> real real::operator -(real const &x) const
         return *this;
 
     real ret;
-    ret.m_mantissa.resize(m_mantissa.count());
+    ret.m_mantissa.resize(bigit_count());
     ret.m_exponent = m_exponent;
 
     /* int64_t instead of uint64_t to preserve sign through shifts */
@@ -517,7 +517,7 @@ template<> real real::operator *(real const &x) const
     if (is_zero() || x.is_zero())
         return ret;
 
-    ret.m_mantissa.resize(m_mantissa.count());
+    ret.m_mantissa.resize(bigit_count());
     ret.m_exponent = m_exponent + x.m_exponent;
 
     /* Accumulate low order product; no need to store it, we just
@@ -738,7 +738,7 @@ template<> real inverse(real const &x)
     u.x |= x.m_mantissa[0] >> 9;
     u.f = 1.0f / u.f;
 
-    ret.m_mantissa.resize(x.m_mantissa.count());
+    ret.m_mantissa.resize(x.bigit_count());
     ret.m_mantissa[0] = u.x << 9;
     ret.m_sign = x.m_sign;
     ret.m_exponent = -x.m_exponent + (u.x >> 23) - 0x7f;
@@ -774,7 +774,7 @@ template<> real sqrt(real const &x)
     u.f = 1.0f / sqrtf(u.f);
 
     real ret;
-    ret.m_mantissa.resize(x.m_mantissa.count());
+    ret.m_mantissa.resize(x.bigit_count());
     ret.m_mantissa[0] = u.x << 9;
 
     ret.m_exponent = -(x.m_exponent - tweak) / 2 + (u.x >> 23) - 0x7f;
@@ -811,7 +811,7 @@ template<> real cbrt(real const &x)
     u.f = powf(u.f, 1.f / 3);
 
     real ret;
-    ret.m_mantissa.resize(x.m_mantissa.count());
+    ret.m_mantissa.resize(x.bigit_count());
     ret.m_mantissa[0] = u.x << 9;
     ret.m_exponent = (x.m_exponent - tweak) / 3 + (u.x >> 23) - 0x7f;
     ret.m_sign = x.m_sign;
