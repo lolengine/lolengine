@@ -41,7 +41,10 @@ template<typename T>
 class LOL_ATTR_NODISCARD Real
 {
 public:
-    Real();
+    typedef T bigit_t;
+    typedef int64_t exponent_t;
+
+    Real() = default;
 
     Real(float f);
     Real(double f);
@@ -61,8 +64,10 @@ public:
     LOL_ATTR_NODISCARD operator float() const;
     LOL_ATTR_NODISCARD operator double() const;
     LOL_ATTR_NODISCARD operator long double() const;
-    LOL_ATTR_NODISCARD operator int() const;
-    LOL_ATTR_NODISCARD operator unsigned int() const;
+    LOL_ATTR_NODISCARD operator int32_t() const;
+    LOL_ATTR_NODISCARD operator uint32_t() const;
+    LOL_ATTR_NODISCARD operator int64_t() const;
+    LOL_ATTR_NODISCARD operator uint64_t() const;
 
     Real<T> operator +() const;
     Real<T> operator -() const;
@@ -114,8 +119,8 @@ public:
     template<typename U> friend Real<U> log10(Real<U> const &x);
 
     /* Floating-point functions */
-    template<typename U> friend Real<U> frexp(Real<U> const &x, int64_t *exp);
-    template<typename U> friend Real<U> ldexp(Real<U> const &x, int64_t exp);
+    template<typename U> friend Real<U> frexp(Real<U> const &x, typename Real<U>::exponent_t *exp);
+    template<typename U> friend Real<U> ldexp(Real<U> const &x, typename Real<U>::exponent_t exp);
     template<typename U> friend Real<U> modf(Real<U> const &x, Real<U> *iptr);
     template<typename U> friend Real<U> nextafter(Real<U> const &x, Real<U> const &y);
 
@@ -221,12 +226,9 @@ public:
     static Real<T> const& R_MAX();
 
 private:
-    typedef T bigit_t;
-    typedef int64_t exponent_t;
-
     array<T> m_mantissa;
-    exponent_t m_exponent;
-    bool m_sign, m_nan, m_inf;
+    exponent_t m_exponent = 0;
+    bool m_sign = false, m_nan = false, m_inf = false;
 
 public:
     static int DEFAULT_BIGIT_COUNT;
@@ -239,7 +241,6 @@ public:
 /*
  * Mandatory forward declarations of template specialisations
  */
-template<> real::Real();
 template<> real::Real(float f);
 template<> real::Real(double f);
 template<> real::Real(long double f);
@@ -252,8 +253,10 @@ template<> real::Real(char const *str);
 template<> LOL_ATTR_NODISCARD real::operator float() const;
 template<> LOL_ATTR_NODISCARD real::operator double() const;
 template<> LOL_ATTR_NODISCARD real::operator long double() const;
-template<> LOL_ATTR_NODISCARD real::operator int() const;
-template<> LOL_ATTR_NODISCARD real::operator unsigned int() const;
+template<> LOL_ATTR_NODISCARD real::operator int32_t() const;
+template<> LOL_ATTR_NODISCARD real::operator uint32_t() const;
+template<> LOL_ATTR_NODISCARD real::operator int64_t() const;
+template<> LOL_ATTR_NODISCARD real::operator uint64_t() const;
 template<> real real::operator +() const;
 template<> real real::operator -() const;
 template<> real real::operator +(real const &x) const;
@@ -294,8 +297,8 @@ template<typename U> Real<U> erf(Real<U> const &x);
 template<typename U> Real<U> log(Real<U> const &x);
 template<typename U> Real<U> log2(Real<U> const &x);
 template<typename U> Real<U> log10(Real<U> const &x);
-template<typename U> Real<U> frexp(Real<U> const &x, int64_t *exp);
-template<typename U> Real<U> ldexp(Real<U> const &x, int64_t exp);
+template<typename U> Real<U> frexp(Real<U> const &x, typename Real<U>::exponent_t *exp);
+template<typename U> Real<U> ldexp(Real<U> const &x, typename Real<U>::exponent_t exp);
 template<typename U> Real<U> modf(Real<U> const &x, Real<U> *iptr);
 template<typename U> Real<U> nextafter(Real<U> const &x, Real<U> const &y);
 template<typename U> Real<U> inverse(Real<U> const &x);
@@ -336,8 +339,8 @@ template<> real erf(real const &x);
 template<> real log(real const &x);
 template<> real log2(real const &x);
 template<> real log10(real const &x);
-template<> real frexp(real const &x, int64_t *exp);
-template<> real ldexp(real const &x, int64_t exp);
+template<> real frexp(real const &x, real::exponent_t *exp);
+template<> real ldexp(real const &x, real::exponent_t exp);
 template<> real modf(real const &x, real *iptr);
 template<> real nextafter(real const &x, real const &y);
 template<> real inverse(real const &x);

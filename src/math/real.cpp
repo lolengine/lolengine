@@ -93,14 +93,6 @@ LOL_CONSTANT_GETTER(R_SQRT1_2,  R_SQRT2() / 2);
  * Now carry on with the rest of the Real class.
  */
 
-template<> real::Real()
-  : m_exponent(0),
-    m_sign(false),
-    m_nan(false),
-    m_inf(false)
-{
-}
-
 template<> real::Real(int32_t i) { new(this) real((double)i); }
 template<> real::Real(uint32_t i) { new(this) real((double)i); }
 template<> real::Real(float f) { new(this) real((double)f); }
@@ -136,10 +128,6 @@ template<> real::Real(uint64_t i)
 }
 
 template<> real::Real(double d)
-  : m_exponent(0),
-    m_sign(false),
-    m_nan(false),
-    m_inf(false)
 {
     union { double d; uint64_t x; } u = { d };
 
@@ -177,9 +165,24 @@ template<> real::Real(long double f)
     m_exponent += exponent;
 }
 
-template<> real::operator float() const { return (float)(double)(*this); }
-template<> real::operator int() const { return (int)(double)(*this); }
-template<> real::operator unsigned() const { return (unsigned)(double)(*this); }
+template<> real::operator float() const { return (float)(double)*this; }
+template<> real::operator int32_t() const { return (int32_t)(double)floor(*this); }
+template<> real::operator uint32_t() const { return (uint32_t)(double)floor(*this); }
+
+template<> real::operator uint64_t() const
+{
+    uint32_t msb = (uint32_t)ldexp(*this, -32);
+    uint64_t ret = ((uint64_t)msb << 32)
+                 | (uint32_t)(*this - ldexp((real)msb, 32));
+    return ret;
+}
+
+template<> real::operator int64_t() const
+{
+    /* If number is positive, convert it to uint64_t first. If it is
+     * negative, switch its sign first. */
+    return is_negative() ? -(int64_t)-*this : (int64_t)(uint64_t)*this;
+}
 
 template<> real::operator double() const
 {
@@ -233,7 +236,7 @@ template<> real::operator long double() const
 template<> real::Real(char const *str)
 {
     real ret = 0;
-    int exponent = 0;
+    exponent_t exponent = 0;
     bool hex = false, comma = false, nonzero = false, negative = false, finished = false;
 
     for (char const *p = str; *p && !finished; p++)
@@ -414,11 +417,11 @@ template<> real real::operator -(real const &x) const
     if (*this < x)
         return -(x - *this);
 
-    int64_t e1 = m_exponent;
-    int64_t e2 = x.m_exponent;
+    exponent_t e1 = m_exponent;
+    exponent_t e2 = x.m_exponent;
 
-    int64_t bigoff = (e1 - e2) / bigit_bits();
-    int64_t off = e1 - e2 - bigoff * bigit_bits();
+    exponent_t bigoff = (e1 - e2) / bigit_bits();
+    exponent_t off = e1 - e2 - bigoff * bigit_bits();
 
     /* FIXME: ensure we have the same number of bigits */
     if (bigoff > bigit_count())
@@ -429,7 +432,7 @@ template<> real real::operator -(real const &x) const
     ret.m_exponent = m_exponent;
 
     /* int64_t instead of uint64_t to preserve sign through shifts */
-    int64_t carry = 0;
+    exponent_t carry = 0;
     for (int i = 0; i < bigoff; ++i)
     {
         carry -= x.m_mantissa[bigit_count() - 1 - i];
@@ -438,8 +441,8 @@ template<> real real::operator -(real const &x) const
         carry |= carry << bigit_bits();
     }
     if (bigoff < bigit_count())
-        carry -= x.m_mantissa[bigit_count() - 1 - bigoff] & (((int64_t)1 << off) - 1);
-    carry /= (int64_t)1 << off;
+        carry -= x.m_mantissa[bigit_count() - 1 - bigoff] & (((exponent_t)1 << off) - 1);
+    carry /= (exponent_t)1 << off;
 
     for (int i = bigit_count(); i--; )
     {
@@ -452,7 +455,7 @@ template<> real real::operator -(real const &x) const
         else if (i - bigoff == 0)
             carry -= (uint64_t)1 << (bigit_bits() - off);
 
-        ret.m_mantissa[i] = (uint32_t)carry;
+        ret.m_mantissa[i] = (bigit_t)carry;
         carry >>= bigit_bits();
         carry |= carry << bigit_bits();
     }
@@ -473,7 +476,8 @@ template<> real real::operator -(real const &x) const
                 continue;
             }
 
-            for (uint32_t tmp = ret.m_mantissa[i]; tmp < 0x80000000u; tmp <<= 1)
+            /* “~tmp > tmp” checks that the MSB is not set */
+            for (bigit_t tmp = ret.m_mantissa[i]; ~tmp > tmp; tmp <<= 1)
                 off++;
             break;
         }
@@ -489,7 +493,7 @@ template<> real real::operator -(real const &x) const
 
             for (int i = 0; i < bigit_count(); ++i)
             {
-                uint32_t tmp = 0;
+                bigit_t tmp = 0;
                 if (i + bigoff < bigit_count())
                     tmp |= ret.m_mantissa[i + bigoff] << off;
                 if (off && i + bigoff + 1 < bigit_count())
@@ -550,7 +554,7 @@ template<> real real::operator *(real const &x) const
         carry += x.m_mantissa[bigit_count() - 1 - i];
         if (carry < prev)
             hicarry++;
-        ret.m_mantissa[bigit_count() - 1 - i] = carry & 0xffffffffu;
+        ret.m_mantissa[bigit_count() - 1 - i] = carry & ~(bigit_t)0;
         carry >>= bigit_bits();
         carry |= hicarry << bigit_bits();
         hicarry >>= bigit_bits();
@@ -562,8 +566,8 @@ template<> real real::operator *(real const &x) const
         carry--;
         for (int i = 0; i < bigit_count(); ++i)
         {
-            uint32_t tmp = (uint32_t)ret.m_mantissa[i];
-            ret.m_mantissa[i] = ((uint32_t)carry << (bigit_bits() - 1))
+            bigit_t tmp = ret.m_mantissa[i];
+            ret.m_mantissa[i] = ((bigit_t)carry << (bigit_bits() - 1))
                               | (tmp >> 1);
             carry = tmp & 1u;
         }
@@ -729,7 +733,7 @@ template<> real inverse(real const &x)
     if (x.is_zero())
         return copysign(real::R_INF(), x);
 
-    /* Use the system's float inversion to approximate 1/x */
+    /* Use the system’s float inversion to approximate 1/x */
     union { float f; uint32_t x; } u = { 1.0f };
     u.x |= x.m_mantissa[0] >> 9;
     u.f = 1.0f / u.f;
@@ -739,8 +743,8 @@ template<> real inverse(real const &x)
     ret.m_sign = x.m_sign;
     ret.m_exponent = -x.m_exponent + (u.x >> 23) - 0x7f;
 
-    /* FIXME: 1+log2(BIGIT_COUNT) steps of Newton-Raphson seems to be enough for
-     * convergence, but this hasn't been checked seriously. */
+    /* FIXME: 1+log2(bigit_count) steps of Newton-Raphson seems to be enough for
+     * convergence, but this hasn’t been checked seriously. */
     for (int i = 1; i <= x.bigit_count(); i *= 2)
         ret = ret * (real::R_2() - ret * x);
 
@@ -759,7 +763,7 @@ template<> real sqrt(real const &x)
 
     int tweak = x.m_exponent & 1;
 
-    /* Use the system's float inversion to approximate 1/sqrt(x). First
+    /* Use the system’s float inversion to approximate 1/sqrt(x). First
      * we construct a float in the [1..4[ range that has roughly the same
      * mantissa as our real. Its exponent is 0 or 1, depending on the
      * parity of x’s exponent. The final exponent is 0, -1 or -2. We use
@@ -776,7 +780,7 @@ template<> real sqrt(real const &x)
     ret.m_exponent = -(x.m_exponent - tweak) / 2 + (u.x >> 23) - 0x7f;
 
     /* FIXME: 1+log2(bigit_count()) steps of Newton-Raphson seems to be enough for
-     * convergence, but this hasn't been checked seriously. */
+     * convergence, but this hasn’t been checked seriously. */
     for (int i = 1; i <= x.bigit_count(); i *= 2)
     {
         ret = ret * (real::R_3() - ret * ret * x);
@@ -796,7 +800,7 @@ template<> real cbrt(real const &x)
     if (tweak < 0)
         tweak += 3;
 
-    /* Use the system's float inversion to approximate cbrt(x). First
+    /* Use the system’s float inversion to approximate cbrt(x). First
      * we construct a float in the [1..8[ range that has roughly the same
      * mantissa as our real. Its exponent is 0, 1 or 2, depending on the
      * value of x. The final exponent is 0 or 1 (special case). We use
@@ -804,7 +808,7 @@ template<> real cbrt(real const &x)
     union { float f; uint32_t x; } u = { 1.0f };
     u.x += tweak << 23;
     u.x |= x.m_mantissa[0] >> 9;
-    u.f = powf(u.f, 0.33333333333333333f);
+    u.f = powf(u.f, 1.f / 3);
 
     real ret;
     ret.m_mantissa.resize(x.m_mantissa.count());
@@ -813,7 +817,7 @@ template<> real cbrt(real const &x)
     ret.m_sign = x.m_sign;
 
     /* FIXME: 1+log2(bigit_count()) steps of Newton-Raphson seems to be enough
-     * for convergence, but this hasn't been checked seriously. */
+     * for convergence, but this hasn’t been checked seriously. */
     real third = inverse(real::R_3());
     for (int i = 1; i <= x.bigit_count(); i *= 2)
     {
@@ -832,7 +836,7 @@ template<> real pow(real const &x, real const &y)
         return real::R_0();
 
     /* Small integer exponent: use exponentiation by squaring */
-    int int_y = (int)y;
+    int64_t int_y = (int64_t)y;
     if (y == (real)int_y)
     {
         real ret = real::R_1();
@@ -904,7 +908,7 @@ static real fast_fact(int x, int step = 1)
 
 template<> real gamma(real const &x)
 {
-    /* We use Spouge's formula. FIXME: precision is far from acceptable,
+    /* We use Spouge’s formula. FIXME: precision is far from acceptable,
      * especially with large values. We need to compute this with higher
      * precision values in order to attain the desired accuracy. It might
      * also be useful to sort the ck values by decreasing absolute value
@@ -1028,7 +1032,7 @@ static real fast_exp_sub(real const &x, real const &y)
     /* This fast exp method is tuned to work on the [-1..1] range and
      * no effort whatsoever was made to improve convergence outside this
      * domain of validity. The argument y is used for cases where we
-     * don't want the leading 1 in the Taylor series. */
+     * don’t want the leading 1 in the Taylor series. */
     real ret = real::R_1() - y, xn = x;
     int i = 1;
 
@@ -1049,9 +1053,9 @@ template<> real exp(real const &x)
     /* Strategy for exp(x): the Taylor series does not converge very fast
      * with large positive or negative values.
      *
-     * However, we know that the result is going to be in the form M*2^E,
-     * where M is the mantissa and E the exponent. We first try to predict
-     * a value for E, which is approximately log2(exp(x)) = x / log(2).
+     * However, since the result is going to be in the form M*2^E, we first
+     * try to predict a value for E, which is approximately:
+     *  E ≈ log2(exp(x)) = x / log(2)
      *
      * Let E0 be an integer close to x / log(2). We need to find a value x0
      * such that exp(x) = 2^E0 * exp(x0). We get x0 = x - E0 log(2).
@@ -1062,7 +1066,7 @@ template<> real exp(real const &x)
      *  real x1 = exp(x0)
      *  return x1 * 2^E0
      */
-    int e0 = x / real::R_LN2();
+    real::exponent_t e0 = x / real::R_LN2();
     real x0 = x - (real)e0 * real::R_LN2();
     real x1 = fast_exp_sub(x0, real::R_0());
     x1.m_exponent += e0;
@@ -1072,7 +1076,7 @@ template<> real exp(real const &x)
 template<> real exp2(real const &x)
 {
     /* Strategy for exp2(x): see strategy in exp(). */
-    int e0 = x;
+    real::exponent_t e0 = x;
     real x0 = x - (real)e0;
     real x1 = fast_exp_sub(x0 * real::R_LN2(), real::R_0());
     x1.m_exponent += e0;
@@ -1083,8 +1087,8 @@ template<> real erf(real const &x)
 {
     /* Strategy for erf(x):
      *  - if x<0, erf(x) = -erf(-x)
-     *  - if x<7, erf(x) = sum((-1)^n×x^(2n+1)/((2n+1)×n!))/sqrt(pi/4)
-     *  - if x≥7, erf(x) = 1+exp(-x²)/(x×sqrt(pi))×sum((-1)^n×(2n-1)!!/(2x²)^n
+     *  - if x<7, erf(x) = sum((-1)^n·x^(2n+1)/((2n+1)·n!))/sqrt(π/4)
+     *  - if x≥7, erf(x) = 1+exp(-x²)/(x·sqrt(π))·sum((-1)^n·(2n-1)!!/(2x²)^n
      *
      * FIXME: do not compute factorials at each iteration, accumulate
      * them instead (see fast_exp_sub).
@@ -1158,7 +1162,7 @@ template<> real cosh(real const &x)
     return (exp(x) + exp(-x)) / 2;
 }
 
-template<> real frexp(real const &x, int64_t *exp)
+template<> real frexp(real const &x, real::exponent_t *exp)
 {
     if (!x)
     {
@@ -1174,7 +1178,7 @@ template<> real frexp(real const &x, int64_t *exp)
     return ret;
 }
 
-template<> real ldexp(real const &x, int64_t exp)
+template<> real ldexp(real const &x, real::exponent_t exp)
 {
     real ret = x;
     if (ret) /* Only do something if non-zero */
@@ -1229,7 +1233,7 @@ template<> real floor(real const &x)
         return real::R_0();
 
     real ret = x;
-    int64_t exponent = x.m_exponent;
+    real::exponent_t exponent = x.m_exponent;
 
     for (int i = 0; i < x.bigit_count(); ++i)
     {
@@ -1253,10 +1257,9 @@ template<> real ceil(real const &x)
     if (x < -real::R_0())
         return -floor(-x);
     real ret = floor(x);
-    if (x == ret)
-        return ret;
-    else
-        return ret + real::R_1();
+    if (ret < x)
+        ret += real::R_1();
+    return ret;
 }
 
 template<> real round(real const &x)
@@ -1647,7 +1650,7 @@ template<> void real::sprintf(char *str, int ndigits) const
 static real load_min()
 {
     real ret = 1;
-    return ldexp(ret, std::numeric_limits<int64_t>::min());
+    return ldexp(ret, std::numeric_limits<real::exponent_t>::min());
 }
 
 static real load_max()
@@ -1669,7 +1672,7 @@ static real load_max()
 
 static real load_pi()
 {
-    /* Approximate Pi using Machin's formula: 16*atan(1/5)-4*atan(1/239) */
+    /* Approximate π using Machin’s formula: 16*atan(1/5)-4*atan(1/239) */
     real ret = 0, x0 = 5, x1 = 239;
     real const m0 = -x0 * x0, m1 = -x1 * x1, r16 = 16, r4 = 4;
 
