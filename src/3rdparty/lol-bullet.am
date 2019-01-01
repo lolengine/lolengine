@@ -560,6 +560,8 @@ bullet_sources += \
 	bullet3/src/BulletDynamics/Featherstone/btMultiBodySliderConstraint.cpp \
 	bullet3/src/BulletDynamics/Featherstone/btMultiBodySliderConstraint.h \
 	bullet3/src/BulletDynamics/Featherstone/btMultiBodySolverConstraint.h \
+	bullet3/src/BulletDynamics/Featherstone/btMultiBodySphericalJointMotor.cpp \
+	bullet3/src/BulletDynamics/Featherstone/btMultiBodySphericalJointMotor.h \
 	bullet3/src/BulletDynamics/MLCPSolvers/btDantzigLCP.cpp \
 	bullet3/src/BulletDynamics/MLCPSolvers/btDantzigLCP.h \
 	bullet3/src/BulletDynamics/MLCPSolvers/btDantzigSolver.h \

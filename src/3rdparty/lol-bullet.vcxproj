@@ -610,6 +610,8 @@
     <ClCompile Include="bullet3/src/BulletDynamics/Featherstone/btMultiBodySliderConstraint.cpp" />
     <ClInclude Include="bullet3/src/BulletDynamics/Featherstone/btMultiBodySliderConstraint.h" />
     <ClInclude Include="bullet3/src/BulletDynamics/Featherstone/btMultiBodySolverConstraint.h" />
+    <ClCompile Include="bullet3/src/BulletDynamics/Featherstone/btMultiBodySphericalJointMotor.cpp" />
+    <ClInclude Include="bullet3/src/BulletDynamics/Featherstone/btMultiBodySphericalJointMotor.h" />
     <ClCompile Include="bullet3/src/BulletDynamics/MLCPSolvers/btDantzigLCP.cpp" />
     <ClInclude Include="bullet3/src/BulletDynamics/MLCPSolvers/btDantzigLCP.h" />
     <ClInclude Include="bullet3/src/BulletDynamics/MLCPSolvers/btDantzigSolver.h" />
