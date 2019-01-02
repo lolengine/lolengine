@@ -148,13 +148,13 @@ static image ResizeBresenham(image &src, ivec2 size)
     array<vec4> aline, line;
     aline.resize(size.x);
     line.resize(size.x);
-    memset(line.data(), 0, line.bytes());
+    memset((void *)line.data(), 0, line.bytes());
 
     int remy = 0;
 
     for (int y = 0, y0 = 0; y < size.y; y++)
     {
-        memset(aline.data(), 0, aline.bytes());
+        memset((void *)aline.data(), 0, aline.bytes());
 
         for (int toty = 0; toty < oldsize.y; )
         {

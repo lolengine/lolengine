@@ -131,7 +131,7 @@ array2d<float> image::kernel::blue_noise(ivec2 size, ivec2 gsize)
 
     /* Generate an array with about 10% random dots */
     int const ndots = (size.x * size.y + 9) / 10;
-    memset(dots.data(), 0, dots.bytes());
+    memset((void *)dots.data(), 0, dots.bytes());
     for (int n = 0; n < ndots; )
     {
         ivec2 pos(lol::rand(size.x), lol::rand(size.y));

@@ -338,7 +338,7 @@ static uint8_t bestmove(ivec3 const *in, u8vec2 bgfg,
 
     int besterror = 0x7ffffff;
     uint8_t bestcommand = 0x10;
-    memcpy(bestrgb, nop_rgb, sizeof(bestrgb));
+    memcpy((void *)bestrgb, nop_rgb, sizeof(bestrgb));
 
     for (uint8_t command : command_list)
     {
@@ -461,13 +461,13 @@ static uint8_t bestmove(ivec3 const *in, u8vec2 bgfg,
         {
             besterror = curerror + suberror;
             bestcommand = command;
-            memcpy(bestrgb, rgb, sizeof(bestrgb));
+            memcpy((void *)bestrgb, rgb, sizeof(bestrgb));
         }
     }
 
     *error = besterror;
     if (out)
-        memcpy(out, bestrgb, sizeof(bestrgb));
+        memcpy((void *)out, bestrgb, sizeof(bestrgb));
 
     return bestcommand;
 }
@@ -483,8 +483,8 @@ void OricImageCodec::WriteScreen(image &img, array<uint8_t> &result)
     src.resize(size + ivec2(1));
     dst.resize(size + ivec2(1));
 
-    memset(src.data(), 0, src.bytes());
-    memset(dst.data(), 0, dst.bytes());
+    memset((void *)src.data(), 0, src.bytes());
+    memset((void *)dst.data(), 0, dst.bytes());
 
     /* Import pixels into our custom format */
     for (int y = 0; y < size.y; y++)

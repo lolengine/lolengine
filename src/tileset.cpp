@@ -250,8 +250,8 @@ void TileSet::BlitTile(uint32_t id, mat4 model, vec3 *vertex, vec2 *texture)
     }
     else
     {
-        memset(vertex, 0, 6 * sizeof(vec3));
-        memset(texture, 0, 6 * sizeof(vec2));
+        memset((void *)vertex, 0, 6 * sizeof(vec3));
+        memset((void *)texture, 0, 6 * sizeof(vec2));
     }
 }
 
