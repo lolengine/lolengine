@@ -119,18 +119,19 @@ if test "${enable_gl}" != "no"; then
     AC_DEFINE(LOL_USE_EGL, 1, Define to 1 to use libegl)
     EGL_LIBS="${EGL_LIBS} -lX11"
   fi
-  AC_CHECK_LIB(EGL, main,
-   [ac_cv_my_have_egl="yes"
-    AC_DEFINE(LOL_USE_EGL, 1, Define to 1 to use libegl)
-    EGL_LIBS="-lEGL"])
-  dnl  Raspberry Pi is different, check for it with extra libs; also we
-  dnl  look for a different function to bypass autoconf caching
-  AC_CHECK_LIB(EGL, eglGetDisplay,
-   [ac_cv_my_have_egl="yes"
-    AC_DEFINE(LOL_USE_EGL, 1, Define to 1 to use libegl)
-    EGL_LIBS="-lEGL -lvcos -lvchiq_arm -lbcm_host -lGLESv2"],
-   [:],
-   [-lvcos -lvchiq_arm -lbcm_host -lGLESv2])
+  AC_CHECK_HEADERS(EGL/egl.h,
+   [AC_CHECK_LIB(EGL, eglInitialize,
+     [ac_cv_my_have_egl="yes"
+      AC_DEFINE(LOL_USE_EGL, 1, Define to 1 to use libegl)
+      EGL_LIBS="-lEGL"])
+    dnl  Raspberry Pi is different, check for it with extra libs; also we
+    dnl  look for a different function to bypass autoconf caching
+    AC_CHECK_LIB(EGL, eglGetDisplay,
+     [ac_cv_my_have_egl="yes"
+      AC_DEFINE(LOL_USE_EGL, 1, Define to 1 to use libegl)
+      EGL_LIBS="-lEGL -lvcos -lvchiq_arm -lbcm_host -lGLESv2"],
+     [:],
+     [-lvcos -lvchiq_arm -lbcm_host -lGLESv2])])
 fi
 AM_CONDITIONAL(LOL_USE_EGL, test "${ac_cv_my_have_egl}" != "no")
 

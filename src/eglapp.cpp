@@ -20,8 +20,10 @@
 #       include <X11/Xatom.h>
 #       include <X11/Xutil.h>
 #   endif
-#   include <EGL/egl.h>
-#   include <EGL/eglext.h>
+#   if defined HAVE_EGL_EGL_H
+#       include <EGL/egl.h>
+#       include <EGL/eglext.h>
+#   endif
 #endif
 
 #if LOL_USE_SDL
