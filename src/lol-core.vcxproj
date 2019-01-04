@@ -83,7 +83,6 @@
     <ClCompile Include="application\application.cpp" />
     <ClCompile Include="audio\audio.cpp" />
     <ClCompile Include="audio\sample.cpp" />
-    <ClCompile Include="audio\sampler.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="base\assert.cpp" />
     <ClCompile Include="base\enum.cpp" />
@@ -93,7 +92,6 @@
     <ClCompile Include="debug\lines.cpp" />
     <ClCompile Include="debug\record.cpp" />
     <ClCompile Include="debug\stats.cpp" />
-    <ClCompile Include="dict.cpp" />
     <ClCompile Include="easymesh\csgbsp.cpp" />
     <ClCompile Include="easymesh\easymesh.cpp" />
     <ClCompile Include="easymesh\easymeshbuild.cpp" />
@@ -111,7 +109,6 @@
     <ClCompile Include="engine\worldentity.cpp" />
     <ClCompile Include="emitter.cpp" />
     <ClCompile Include="font.cpp" />
-    <ClCompile Include="forge.cpp" />
     <ClCompile Include="gpu\framebuffer.cpp" />
     <ClCompile Include="gpu\indexbuffer.cpp" />
     <ClCompile Include="gpu\lolfx.cpp" />
@@ -216,7 +213,6 @@
     <ClCompile Include="sys\threadtypes.cpp" />
     <ClCompile Include="text.cpp" />
     <ClCompile Include="textureimage.cpp" />
-    <ClCompile Include="tiler.cpp" />
     <ClCompile Include="tileset.cpp" />
     <ClCompile Include="video.cpp" />
   </ItemGroup>
@@ -227,7 +223,6 @@
     <ClInclude Include="debug\fps.h" />
     <ClInclude Include="debug\record.h" />
     <ClInclude Include="debug\stats.h" />
-    <ClInclude Include="dict.h" />
     <ClInclude Include="easymesh\csgbsp.h" />
     <ClInclude Include="easymesh\easymesh.h" />
     <ClInclude Include="easymesh\easymeshbuild.h" />
@@ -240,7 +235,6 @@
     <ClInclude Include="engine\worldentity.h" />
     <ClInclude Include="engine\world.h" />
     <ClInclude Include="font.h" />
-    <ClInclude Include="forge.h" />
     <ClInclude Include="gradient.h" />
     <ClInclude Include="image\image-private.h" />
     <ClInclude Include="image\resource-private.h" />
@@ -260,7 +254,6 @@
     <ClInclude Include="lol\audio\all.h" />
     <ClInclude Include="lol\audio\audio.h" />
     <ClInclude Include="lol\audio\sample.h" />
-    <ClInclude Include="lol\audio\sampler.h" />
     <ClInclude Include="lol\base\all.h" />
     <ClInclude Include="lol\base\array.h" />
     <ClInclude Include="lol\base\assert.h" />
@@ -368,7 +361,6 @@
     <ClInclude Include="text.h" />
     <ClInclude Include="textureimage-private.h" />
     <ClInclude Include="textureimage.h" />
-    <ClInclude Include="tiler.h" />
     <ClInclude Include="tileset.h" />
     <ClInclude Include="utils.h" />
     <ClInclude Include="video.h" />

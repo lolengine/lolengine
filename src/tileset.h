@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -41,15 +41,21 @@ class TileSet : public TextureImage
     typedef TextureImage super;
 
 public:
-    TileSet(std::string const &path);
-    TileSet(std::string const &path, image* img);
-    TileSet(std::string const &path, image* img, array<ivec2, ivec2>& tiles);
+    static TileSet *create(std::string const &path);
+    static TileSet *create(std::string const &path, image* img);
+    static TileSet *create(std::string const &path, image* img, array<ivec2, ivec2>& tiles);
 
     /* Old style: path to PNG file */
-    TileSet(std::string const &path, ivec2 size, ivec2 count);
-    TileSet(std::string const &path, image* img, ivec2 size, ivec2 count);
+    static TileSet *create(std::string const &path, ivec2 size, ivec2 count);
+    static TileSet *create(std::string const &path, image* img, ivec2 size, ivec2 count);
+
+    static void destroy(TileSet *);
 
     virtual ~TileSet();
+
+private:
+    TileSet(std::string const &path);
+    TileSet(std::string const &path, image *img);
 
 protected:
     virtual void Init(std::string const &path, ResourceCodecData* loaded_data);

@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -12,6 +12,7 @@
 
 #include <lol/engine-internal.h>
 
+#include <map>
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
@@ -26,6 +27,9 @@
 
 namespace lol
 {
+
+/* The tileset cache */
+static entity_dict<TileSet> tileset_cache;
 
 /*
  * TileSet implementation class
@@ -45,6 +49,95 @@ protected:
  * Public TileSet class
  */
 
+TileSet *TileSet::create(std::string const &path)
+{
+    auto ret = tileset_cache.get(path);
+    return ret ? ret : tileset_cache.set(path, new TileSet(path));
+}
+
+TileSet *TileSet::create(std::string const &path, image* img)
+{
+    auto ret = tileset_cache.get(path);
+    return ret ? ret : tileset_cache.set(path, new TileSet(path, img));
+}
+
+TileSet *TileSet::create(std::string const &path, image* img, array<ivec2, ivec2>& tiles)
+{
+    auto ret = tileset_cache.get(path);
+    if (!ret)
+    {
+        ret = tileset_cache.set(path, new TileSet(path, img));
+        ret->define_tile(tiles);
+    }
+    return ret;
+}
+
+TileSet *TileSet::create(std::string const &path, ivec2 size, ivec2 count)
+{
+    auto ret = tileset_cache.get(path);
+    if (!ret)
+    {
+        ret = tileset_cache.set(path, new TileSet(path));
+
+        /* If count is valid, fix size; otherwise, fix count. */
+        if (count.x > 0 && count.y > 0)
+        {
+            size = ret->m_data->m_image_size / count;
+        }
+        else
+        {
+            if (size.x <= 0 || size.y <= 0)
+                size = ivec2(32, 32);
+            count = max(ivec2(1, 1), ret->m_data->m_image_size / size);
+        }
+
+        for (int j = 0; j < count.y; ++j)
+        for (int i = 0; i < count.x; ++i)
+        {
+            ret->define_tile(ibox2(size * ivec2(i, j),
+                                   size * ivec2(i + 1, j + 1)));
+        }
+    }
+
+    return ret;
+}
+
+TileSet *TileSet::create(std::string const &path, image* img, ivec2 size, ivec2 count)
+{
+    auto ret = tileset_cache.get(path);
+    if (!ret)
+    {
+        ret = tileset_cache.set(path, new TileSet(path, img));
+
+        /* If count is valid, fix size; otherwise, fix count. */
+        if (count.x > 0 && count.y > 0)
+        {
+            size = ret->m_data->m_image_size / count;
+        }
+        else
+        {
+            if (size.x <= 0 || size.y <= 0)
+                size = ivec2(32, 32);
+            count = max(ivec2(1, 1), ret->m_data->m_image_size / size);
+        }
+
+        for (int j = 0; j < count.y; ++j)
+        for (int i = 0; i < count.x; ++i)
+        {
+            ret->define_tile(ibox2(size * ivec2(i, j),
+                                   size * ivec2(i + 1, j + 1)));
+        }
+    }
+
+    return ret;
+}
+
+void TileSet::destroy(TileSet *tileset)
+{
+    // FIXME: decrement!
+    tileset_cache.erase(tileset);
+}
+
 TileSet::TileSet(std::string const &path)
   : TextureImage(path),
     m_tileset_data(new TileSetData()),
@@ -52,65 +145,11 @@ TileSet::TileSet(std::string const &path)
 {
 }
 
-TileSet::TileSet(std::string const &path, Image* image)
-  : TextureImage(path, image),
+TileSet::TileSet(std::string const &path, image *img)
+  : TextureImage(path, img),
     m_tileset_data(new TileSetData()),
     m_palette(nullptr)
 {
-}
-
-TileSet::TileSet(std::string const &path, Image* image, array<ivec2, ivec2>& tiles)
-  : TextureImage(path, image),
-    m_tileset_data(new TileSetData()),
-    m_palette(nullptr)
-{
-    define_tile(tiles);
-}
-
-TileSet::TileSet(std::string const &path, ivec2 size, ivec2 count)
-  : TileSet(path)
-{
-    /* If count is valid, fix size; otherwise, fix count. */
-    if (count.x > 0 && count.y > 0)
-    {
-        size = m_data->m_image_size / count;
-    }
-    else
-    {
-        if (size.x <= 0 || size.y <= 0)
-            size = ivec2(32, 32);
-        count = max(ivec2(1, 1), m_data->m_image_size / size);
-    }
-
-    for (int j = 0; j < count.y; ++j)
-    for (int i = 0; i < count.x; ++i)
-    {
-        define_tile(ibox2(size * ivec2(i, j),
-                          size * ivec2(i + 1, j + 1)));
-    }
-}
-
-TileSet::TileSet(std::string const &path, Image* image, ivec2 size, ivec2 count)
-  : TileSet(path, image)
-{
-    /* If count is valid, fix size; otherwise, fix count. */
-    if (count.x > 0 && count.y > 0)
-    {
-        size = m_data->m_image_size / count;
-    }
-    else
-    {
-        if (size.x <= 0 || size.y <= 0)
-            size = ivec2(32, 32);
-        count = max(ivec2(1, 1), m_data->m_image_size / size);
-    }
-
-    for (int j = 0; j < count.y; ++j)
-    for (int i = 0; i < count.x; ++i)
-    {
-        define_tile(ibox2(size * ivec2(i, j),
-                          size * ivec2(i + 1, j + 1)));
-    }
 }
 
 TileSet::~TileSet()

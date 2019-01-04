@@ -8,10 +8,9 @@ noinst_LIBRARIES = liblol-core.a
 EXTRA_DIST += lol-core.vcxproj lol-core.vcxproj.filter
 
 liblol_core_a_SOURCES = \
-    tiler.cpp tiler.h dict.cpp dict.h lolgl.h \
-    scene.cpp scene.h font.cpp font.h \
+    lolgl.h scene.cpp scene.h font.cpp font.h \
     textureimage.cpp textureimage.h textureimage-private.h \
-    tileset.cpp tileset.h forge.cpp forge.h video.cpp video.h \
+    tileset.cpp tileset.h video.cpp video.h \
     profiler.cpp profiler.h text.cpp text.h emitter.cpp emitter.h \
     numeric.h utils.h messageservice.cpp messageservice.h \
     gradient.cpp gradient.h gradient.lolfx \
@@ -52,7 +51,7 @@ liblol_core_headers = \
     lol/algorithm/sort.h lol/algorithm/portal.h lol/algorithm/aabb_tree.h \
     \
     lol/audio/all.h \
-    lol/audio/audio.h lol/audio/sampler.h lol/audio/sample.h \
+    lol/audio/audio.h lol/audio/sample.h \
     \
     lol/sys/all.h \
     lol/sys/init.h lol/sys/file.h lol/sys/getopt.h lol/sys/thread.h \
@@ -99,7 +98,7 @@ liblol_core_sources = \
     gpu/framebuffer.cpp gpu/texture.cpp gpu/renderer.cpp \
     gpu/rendercontext.cpp \
     \
-    audio/audio.cpp audio/sampler.cpp audio/sample.cpp \
+    audio/audio.cpp audio/sample.cpp \
     \
     input/input.cpp input/input.h input/input_internal.h input/keys.h \
     input/controller.cpp input/controller.h \
@@ -119,7 +118,7 @@ liblol_core_sources = \
     sys/init.cpp sys/file.cpp sys/hacks.cpp \
     sys/thread.cpp sys/threadtypes.cpp sys/getopt.cpp \
     \
-	image/resource.cpp image/resource-private.h \
+    image/resource.cpp image/resource-private.h \
     image/image.cpp image/image-private.h image/kernel.cpp image/pixel.cpp \
     image/crop.cpp image/resample.cpp image/noise.cpp image/combine.cpp \
     image/codec/gdiplus-image.cpp image/codec/imlib2-image.cpp \

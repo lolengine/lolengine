@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -32,6 +32,9 @@
 namespace lol
 {
 
+/* The sample cache */
+static entity_dict<sample> sample_cache;
+
 /*
  * sample implementation class
  */
@@ -52,7 +55,19 @@ private:
  * Public sample class
  */
 
-sample::sample(char const *path)
+sample *sample::create(std::string const &path)
+{
+    auto ret = sample_cache.get(path);
+    return ret ? ret : sample_cache.set(path, new sample(path));
+}
+
+void sample::destroy(sample *s)
+{
+    // FIXME: decrement!
+    sample_cache.erase(s);
+}
+
+sample::sample(std::string const &path)
   : data(new sample_data())
 {
     data->m_name = std::string("<sample> ") + path;
@@ -66,7 +81,7 @@ sample::sample(char const *path)
     }
     if (!data->m_chunk)
     {
-        msg::error("could not load sample %s: %s\n", path, Mix_GetError());
+        msg::error("could not load sample %s: %s\n", path.c_str(), Mix_GetError());
     }
     data->m_channel = -1;
 #endif

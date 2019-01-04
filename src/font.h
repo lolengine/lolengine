@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -27,10 +27,13 @@ class FontData;
 class Font : public Entity
 {
 public:
+    static Font *create(std::string const &path);
+    static void destroy(Font *);
+
+protected:
     Font(std::string const &path);
     ~Font();
 
-protected:
     /* Inherited from Entity */
     virtual std::string GetName() const;
     virtual void tick_draw(float seconds, Scene &scene);

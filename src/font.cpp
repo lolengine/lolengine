@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //                   2013 Jean-Yves Lamoureux <jylam@lnxscene.org>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -18,6 +18,9 @@
 
 namespace lol
 {
+
+/* The font cache */
+static entity_dict<Font> font_cache;
 
 /*
  * Font implementation class
@@ -37,12 +40,24 @@ private:
  * Public Font class
  */
 
+Font *Font::create(std::string const &path)
+{
+    auto ret = font_cache.get(path);
+    return ret ? ret : font_cache.set(path, new Font(path));
+}
+
+void Font::destroy(Font *f)
+{
+    // FIXME: decrement!
+    font_cache.erase(f);
+}
+
 Font::Font(std::string const &path)
   : data(new FontData())
 {
     data->m_name = "<font> " + path;
 
-    data->tileset = Tiler::Register(path, ivec2::zero, ivec2(16));
+    data->tileset = TileSet::create(path, ivec2::zero, ivec2(16));
     data->size = data->tileset->GetTileSize(0);
 
     m_drawgroup = DRAWGROUP_TEXTURE;
@@ -50,7 +65,7 @@ Font::Font(std::string const &path)
 
 Font::~Font()
 {
-    Tiler::Deregister(data->tileset);
+    TileSet::destroy(data->tileset);
     delete data;
 }
 

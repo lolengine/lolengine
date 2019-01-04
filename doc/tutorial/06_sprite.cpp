@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Sprite tutorial
 //
-//  Copyright © 2011—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2011—2019 Sam Hocevar <sam@hocevar.net>
 //            © 2012 Daniel Stephens (artwork)
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -31,7 +31,7 @@ public:
         scene.PushCamera(m_camera);
         Ticker::Ref(m_camera);
 
-        m_tileset = Tiler::Register("06_sprite.png");
+        m_tileset = TileSet::create("06_sprite.png");
         for (int i = 0; i < FRAME_COUNT; ++i)
             m_tileset->define_tile(ibox2(i * 24, 376, 24 + i * 24, 24 + 376));
 
@@ -46,7 +46,7 @@ public:
 
     ~SpriteTutorial()
     {
-        Tiler::Deregister(m_tileset);
+        TileSet::destroy(m_tileset);
 
         Scene& scene = Scene::GetScene();
         scene.PopCamera(m_camera);

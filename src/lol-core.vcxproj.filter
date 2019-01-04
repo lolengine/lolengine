@@ -204,13 +204,7 @@
     <ClCompile Include="audio\sample.cpp">
       <Filter>audio</Filter>
     </ClCompile>
-    <ClCompile Include="audio\sampler.cpp">
-      <Filter>audio</Filter>
-    </ClCompile>
     <ClCompile Include="camera.cpp">
-      <Filter>...</Filter>
-    </ClCompile>
-    <ClCompile Include="dict.cpp">
       <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="eglapp.cpp">
@@ -220,9 +214,6 @@
       <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="font.cpp">
-      <Filter>...</Filter>
-    </ClCompile>
-    <ClCompile Include="forge.cpp">
       <Filter>...</Filter>
     </ClCompile>
     <ClCompile Include="gradient.cpp">
@@ -391,9 +382,6 @@
     <ClCompile Include="sys\threadtypes.cpp">
       <Filter>sys</Filter>
     </ClCompile>
-    <ClCompile Include="tiler.cpp">
-      <Filter>tileset</Filter>
-    </ClCompile>
     <ClCompile Include="tileset.cpp">
       <Filter>tileset</Filter>
     </ClCompile>
@@ -532,9 +520,6 @@
     <ClInclude Include="camera.h">
       <Filter>...</Filter>
     </ClInclude>
-    <ClInclude Include="dict.h">
-      <Filter>...</Filter>
-    </ClInclude>
     <ClInclude Include="eglapp.h">
       <Filter>...</Filter>
     </ClInclude>
@@ -542,9 +527,6 @@
       <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="font.h">
-      <Filter>...</Filter>
-    </ClInclude>
-    <ClInclude Include="forge.h">
       <Filter>...</Filter>
     </ClInclude>
     <ClInclude Include="gradient.h">
@@ -590,9 +572,6 @@
       <Filter>lol\audio</Filter>
     </ClInclude>
     <ClInclude Include="lol\audio\sample.h">
-      <Filter>lol\audio</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\audio\sampler.h">
       <Filter>lol\audio</Filter>
     </ClInclude>
     <ClInclude Include="lol\base\array.h">
@@ -760,9 +739,6 @@
     </ClInclude>
     <ClInclude Include="lol\sys\threadtypes.h">
       <Filter>lol\sys</Filter>
-    </ClInclude>
-    <ClInclude Include="tiler.h">
-      <Filter>tileset</Filter>
     </ClInclude>
     <ClInclude Include="tileset.h">
       <Filter>tileset</Filter>

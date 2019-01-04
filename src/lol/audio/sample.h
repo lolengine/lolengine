@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -30,10 +30,13 @@ class sample_data;
 class sample : public Entity
 {
 public:
-    sample(char const *path);
-    virtual ~sample();
+    static sample *create(std::string const &path);
+    static void destroy(sample *s);
 
 protected:
+    sample(std::string const &path);
+    virtual ~sample();
+
     /* Inherited from Entity */
     virtual std::string GetName() const;
     virtual void tick_game(float seconds);

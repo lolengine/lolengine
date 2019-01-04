@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -46,7 +46,6 @@ class Entity
     friend class Scene;
     friend class Ticker;
     friend class TickerData;
-    friend class Dict;
     friend class Emcee;
 
 public:
@@ -148,6 +147,32 @@ private:
 private:
     int m_ref, m_autorelease, m_destroy;
     uint64_t m_scene_mask = 0;
+};
+
+template<typename T> struct entity_dict
+{
+    T *get(std::string const &key)
+    {
+        auto it = m_cache1.find(key);
+        return it != m_cache1.end() ? it->second : nullptr;
+    }
+
+    T *set(std::string const &key, T *entity)
+    {
+        m_cache1[key] = entity;
+        m_cache2[entity] = key;
+        return entity;
+    }
+
+    void erase(T *entity)
+    {
+        // FIXME: temporary; we need Ticker::Ref etc.
+        m_cache1.erase(m_cache2[entity]);
+        m_cache2.erase(entity);
+    }
+
+    std::map<std::string, T*> m_cache1;
+    std::map<T*, std::string> m_cache2;
 };
 
 } /* namespace lol */
