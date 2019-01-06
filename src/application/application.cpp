@@ -53,7 +53,10 @@ protected:
 class null_app
 {
 public:
-    null_app(char const *, ivec2, float) {}
+    null_app(char const *, ivec2, float)
+    {
+        ASSERT(false, "no display library (SDL, EGL…) available");
+    }
     virtual ~null_app() {}
 
     void ShowPointer(bool) {}
