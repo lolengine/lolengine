@@ -90,19 +90,6 @@ fi
 AM_CONDITIONAL(LOL_USE_BULLET, test "${ac_cv_my_have_bullet}" = "yes")
 
 
-dnl  Use NativeClient?
-ac_cv_my_have_nacl="no"
-AC_LANG_PUSH(C++)
-AC_CHECK_HEADERS(ppapi/cpp/instance.h,
- [ac_cv_my_have_nacl="yes"
-  LOL_LIBS="${LOL_LIBS} -lnosys"
-  if test "${ac_cv_my_build_mode}" = "xrelease"; then
-    LOL_TRY_CXXFLAGS(-s, [AM_CXXFLAGS="${AM_CXXFLAGS} -s"])
-  fi])
-AC_LANG_POP(C++)
-AM_CONDITIONAL(LOL_USE_NACL, test "${ac_cv_my_have_nacl}" != "no")
-
-
 dnl  Use Android? FIXME: super hacks!
 ac_cv_my_have_android="no"
 AC_CHECK_LIB(log, __android_log_vprint,

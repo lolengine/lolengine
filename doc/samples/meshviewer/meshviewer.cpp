@@ -29,7 +29,7 @@ using namespace lol;
 static int const TEXTURE_WIDTH = 256;
 
 //Basic build defines ---------------------------------------------------------
-#define     HAS_WEB             (__native_client__ || EMSCRIPTEN)
+#define     HAS_WEB             (EMSCRIPTEN)
 #define     HAS_INPUT           (_WIN32 && !HAS_WEB)
 
 //Basic config defines --------------------------------------------------------

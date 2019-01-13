@@ -18,9 +18,7 @@
 
 #include "lolgl.h"
 
-#if __native_client__
-#   include "platform/nacl/nacl-app.h"
-#elif __ANDROID__
+#if __ANDROID__
 #   include "platform/android/androidapp.h"
 #elif LOL_USE_SDL
 #   include "platform/sdl/sdlapp.h"
@@ -73,9 +71,7 @@ class ApplicationDisplayData
     { }
 
 protected:
-#if __native_client__
-    //NOT HANDLED YET
-#elif __ANDROID__
+#if __ANDROID__
     //NOT HANDLED YET
 #elif LOL_USE_SDL
     SdlAppDisplay display;
@@ -139,9 +135,7 @@ class ApplicationData
         : app(name, res, framerate)
     { }
 
-#if __native_client__
-    NaClApp app;
-#elif __ANDROID__
+#if __ANDROID__
     AndroidApp app;
 #elif LOL_USE_SDL
     SdlApp app;

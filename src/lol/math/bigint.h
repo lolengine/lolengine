@@ -29,9 +29,6 @@ namespace lol
 #undef min
 #undef max
 
-/* Avoid issues with NaCl headers */
-#undef log2
-
 /*
  * A bigint stores its digits in an array of integers. The MSB of the
  * integers are unused. The highest used bit is the sign bit.

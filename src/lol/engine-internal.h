@@ -22,10 +22,8 @@
 #   include "config.h"
 #endif
 
-/* If using NaCl or Android, override main() with our version */
-#if __native_client__
-#   define main lol_nacl_main
-#elif __ANDROID__
+/* If using Android, override main() with our version */
+#if __ANDROID__
 #   define main lol_android_main
 #endif
 

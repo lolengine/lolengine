@@ -799,7 +799,6 @@ INPUT                  = .. \
                          ../src/platform \
                          ../src/platform/android \
                          ../src/platform/d3d9 \
-                         ../src/platform/nacl \
                          ../src/platform/sdl \
                          ../src/platform/xbox \
                          ../src/thread

@@ -189,21 +189,6 @@ fi
 append ""
 
 #
-# Google NaCl SDK
-#
-
-append "[pepper]"
-if [ "$family" != "windows" ]; then
-    if [ -f "$NACL_SDK_ROOT/README" ]; then
-        pepper_version=$(sed -ne 's/Version: //p' "$NACL_SDK_ROOT/README")
-        if [ "x$pepper_version" != "x" ]; then
-            append "version = $pepper_version"
-        fi
-    fi
-fi
-append ""
-
-#
 # Raspberry Pi cross-compiler
 #
 

@@ -51,12 +51,7 @@ public:
 
         /* Window size decides the world aspect ratio. For instance, 640×480
          * will be mapped to (-0.66,-0.5) - (0.66,0.5). */
-#if !defined __native_client__
         m_window_size = Video::GetSize();
-#else
-        /* FIXME: it's illegal to call this on the game thread! */
-        m_window_size = ivec2(640, 480);
-#endif
         if (m_window_size.y < m_window_size.x)
             m_window2world = 0.5 / m_window_size.y;
         else
@@ -98,14 +93,9 @@ public:
             uint8_t red   = (uint8_t)(rgb.r * 256);
             uint8_t green = (uint8_t)(rgb.g * 256);
             uint8_t blue  = (uint8_t)(rgb.b * 256);
-#if defined __native_client__
-            m_palette.push(u8vec4(red, green, blue, 255));
-#else
             m_palette.push(u8vec4(blue, green, red, 255));
-#endif
         }
 
-#if !defined __native_client__
         m_zoomtext = new Text("", "data/font/ascii.png");
         m_zoomtext->SetPos(vec3(5, (float)m_window_size.y - 15, 1));
         Ticker::Ref(m_zoomtext);
@@ -117,7 +107,6 @@ public:
         m_mousetext = new Text("", "data/font/ascii.png");
         m_mousetext->SetPos(vec3(5, (float)m_window_size.y - 43, 1));
         Ticker::Ref(m_mousetext);
-#endif
 
         m_position = vec3::zero;
         m_aabb.aa = m_position;
@@ -143,11 +132,9 @@ public:
             m_donequeue.pop();
 #endif
 
-#if !defined __native_client__
         Ticker::Unref(m_centertext);
         Ticker::Unref(m_mousetext);
         Ticker::Unref(m_zoomtext);
-#endif
     }
 
     inline f128cmplx TexelToWorldOffset(vec2 texel)
@@ -299,7 +286,6 @@ public:
             m_zoom_settings[i][1] -= 0.5f * (1.0f - m_zoom_settings[i][2]);
         }
 
-#if !defined __native_client__
         char buf[256];
         std::sprintf(buf, "center: ");
         m_view.center.x.sprintf(buf + strlen(buf), 30);
@@ -313,7 +299,6 @@ public:
         m_mousetext->SetText(buf);
         std::sprintf(buf, "[%s] zoom: %g", m_julia ? "Julia" : "Mandelbrot", 1.0 / m_view.radius);
         m_zoomtext->SetText(buf);
-#endif
 
         if (m_dirty[m_frame])
         {
@@ -590,10 +575,8 @@ private:
     queue<int> m_spawnqueue, m_jobqueue, m_donequeue;
 #endif
 
-#if !defined __native_client__
     /* Debug information */
     Text *m_centertext, *m_mousetext, *m_zoomtext;
-#endif
 };
 
 int main(int argc, char **argv)

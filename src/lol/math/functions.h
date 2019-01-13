@@ -180,8 +180,8 @@ LOL_ATTR_NODISCARD static inline int16_t abs(int16_t x) { return std::abs(x); }
 LOL_ATTR_NODISCARD static inline uint16_t abs(uint16_t x) { return x; }
 LOL_ATTR_NODISCARD static inline int32_t abs(int32_t x) { return std::abs(x); }
 LOL_ATTR_NODISCARD static inline uint32_t abs(uint32_t x) { return x; }
-#if defined __native_client__ || defined __ANDROID__
-/* The pepper 19 toolchain doesn't provide abs() for long long int. */
+#if defined __ANDROID__
+/* The Android toolchain doesn't provide abs() for int64_t. */
 LOL_ATTR_NODISCARD static inline int64_t abs(int64_t x) { return x > 0 ? x : -x; }
 #else
 LOL_ATTR_NODISCARD static inline int64_t abs(int64_t x) { return std::abs(x); }

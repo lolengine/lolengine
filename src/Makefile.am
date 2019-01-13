@@ -21,7 +21,6 @@ liblol_core_a_SOURCES = \
     $(liblol_core_sources) \
     \
     $(imgui_sources) \
-    $(nacl_sources) \
     $(sdl_sources) \
     $(d3d9_sources) \
     $(android_sources)
@@ -155,15 +154,6 @@ include 3rdparty/lol-imgui.am
 imgui_sources += \
     lolimgui.cpp lolimgui.h \
     $(NULL)
-
-if LOL_USE_NACL
-nacl_sources = \
-    platform/nacl/nacl-app.cpp platform/nacl/nacl-app.h \
-    platform/nacl/nacl-instance.cpp platform/nacl/nacl-instance.h \
-    platform/nacl/nacl-module.cpp \
-    platform/nacl/opengl_context.cpp platform/nacl/opengl_context.h \
-    platform/nacl/opengl_context_ptrs.h
-endif
 
 android_sources = \
     image/codec/android-image.cpp \

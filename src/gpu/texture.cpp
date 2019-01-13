@@ -64,7 +64,7 @@ Texture::Texture(ivec2 size, PixelFormat format)
         { 0, 0, 0, 0 }, /* Unknown */
 
         /* FIXME: this is all mixed up for the RGBA/ARGB combinations */
-#if defined __native_client__ || defined HAVE_GLES_2X
+#if defined HAVE_GLES_2X
         { GL_LUMINANCE, GL_LUMINANCE, GL_UNSIGNED_BYTE, 1 },
         { GL_RGB, GL_RGB, GL_UNSIGNED_BYTE, 3 },
         { GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, 4 },

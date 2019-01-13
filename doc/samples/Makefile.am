@@ -9,7 +9,6 @@ bench: benchsuite$(EXEEXT)
 if BUILD_SAMPLES
 noinst_PROGRAMS = bluenoise benchsuite simplex
 if LOL_USE_GL
-noinst_PROGRAMS += nacl_phystest
 if LOL_USE_BULLET
 noinst_PROGRAMS += btphystest
 endif
@@ -43,13 +42,6 @@ btphystest_LDFLAGS += \
     --preload-file data/CatsSheet.png \
     -s TOTAL_MEMORY=$(shell expr 32 '*' 1024 '*' 1024)
 endif
-
-nacl_phystest_SOURCES = \
-    nacl_phystest.cpp nacl_phystest.h
-nacl_phystest_CPPFLAGS = $(AM_CPPFLAGS) -I$(top_srcdir)/src/3rdparty/bullet3/src \
-    -DHAVE_PHYS_USE_BULLET
-nacl_phystest_DEPENDENCIES = @LOL_DEPS@
-nacl_phystest_LDFLAGS = $(AM_LDFLAGS)
 
 simplex_SOURCES = simplex.cpp
 simplex_CPPFLAGS = $(AM_CPPFLAGS)

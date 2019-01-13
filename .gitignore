@@ -82,11 +82,9 @@ doc/samples/benchsuite
 doc/samples/bluenoise
 doc/samples/btphystest
 doc/samples/meshviewer/meshviewer
-doc/samples/nacl_phystest
 doc/samples/sandbox/sample
 doc/samples/math/pi
 doc/samples/math/poly
-doc/samples/nacl_phystest
 doc/samples/simplex
 doc/tutorial/01_triangle
 doc/tutorial/02_cube

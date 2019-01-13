@@ -29,9 +29,6 @@ namespace lol
 #undef min
 #undef max
 
-/* Avoid issues with NaCl headers */
-#undef log2
-
 /*
  * The base class for reals. The only real reason for making this a template
  * class is so we can have implicit constructors ("real x = 1" works) but

@@ -195,12 +195,6 @@ namespace lol
 }
 
 
-/* XXX: workaround for a compilation bug in NaCl headers */
-#if defined __native_client__
-#   define typeid(x) (*(type_info*)nullptr)
-#endif
-
-
 /* XXX: workaround for X11 headers that try to #define these */
 #undef Always
 #define Always Always
