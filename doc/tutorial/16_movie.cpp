@@ -1,7 +1,7 @@
 //
 //  Lol Engine — GIF encoding sample
 //
-//  Copyright © 2016 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2016—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -27,6 +27,9 @@ int main(int argc, char **argv)
     if (!movie.open_file("16_movie.gif"))
         return EXIT_FAILURE;
 
+    // Use 4D Perlin noise
+    lol::perlin_noise<4> noise;
+
     for (int i = 0; i < 256; ++i)
     {
         lol::image im(size);
@@ -35,9 +38,16 @@ int main(int argc, char **argv)
         for (int y = 0; y < size.y; ++y)
         for (int x = 0; x < size.x; ++x)
         {
-            data[x][y].r = x * i / 2;
-            data[x][y].g = x / 4 * 4 * y / 16 + i;
-            data[x][y].b = y + i;
+            float alpha = lol::F_TAU * i / 256;
+            float beta = lol::F_TAU * i / 256;
+            lol::vec4 p(2.f * x / (float)size.x + cos(alpha),
+                        2.f * x / (float)size.x + sin(alpha),
+                        2.f * y / (float)size.y + cos(beta),
+                        2.f * y / (float)size.y + sin(beta));
+
+            data[x][y].r = 128 * (noise.eval(p) + 1 + lol::rand(0.1f));
+            data[x][y].g = 128 * (noise.eval(p.zyxw) + 1 + lol::rand(0.1f));
+            data[x][y].b = 128 * (noise.eval(p.ywxz) + 1 + lol::rand(0.1f));
         }
         im.unlock2d(data);
 
