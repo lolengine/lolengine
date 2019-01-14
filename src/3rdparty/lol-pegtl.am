@@ -45,7 +45,7 @@ pegtl_sources = \
     pegtl/include/tao/pegtl/internal/bof.hpp \
     pegtl/include/tao/pegtl/internal/bol.hpp \
     pegtl/include/tao/pegtl/internal/bump_help.hpp \
-    pegtl/include/tao/pegtl/internal/bump_impl.hpp \
+    pegtl/include/tao/pegtl/internal/bump.hpp \
     pegtl/include/tao/pegtl/internal/bytes.hpp \
     pegtl/include/tao/pegtl/internal/control.hpp \
     pegtl/include/tao/pegtl/internal/cr_crlf_eol.hpp \
@@ -79,7 +79,6 @@ pegtl_sources = \
     pegtl/include/tao/pegtl/internal/if_must.hpp \
     pegtl/include/tao/pegtl/internal/if_then_else.hpp \
     pegtl/include/tao/pegtl/internal/input_pair.hpp \
-    pegtl/include/tao/pegtl/internal/integer_sequence.hpp \
     pegtl/include/tao/pegtl/internal/istream_reader.hpp \
     pegtl/include/tao/pegtl/internal/istring.hpp \
     pegtl/include/tao/pegtl/internal/iterator.hpp \
@@ -111,13 +110,13 @@ pegtl_sources = \
     pegtl/include/tao/pegtl/internal/range.hpp \
     pegtl/include/tao/pegtl/internal/ranges.hpp \
     pegtl/include/tao/pegtl/internal/read_uint.hpp \
+    pegtl/include/tao/pegtl/internal/rematch.hpp \
     pegtl/include/tao/pegtl/internal/rep.hpp \
     pegtl/include/tao/pegtl/internal/rep_min.hpp \
     pegtl/include/tao/pegtl/internal/rep_min_max.hpp \
     pegtl/include/tao/pegtl/internal/rep_opt.hpp \
     pegtl/include/tao/pegtl/internal/require.hpp \
     pegtl/include/tao/pegtl/internal/result_on_found.hpp \
-    pegtl/include/tao/pegtl/internal/rule_conjunction.hpp \
     pegtl/include/tao/pegtl/internal/rules.hpp \
     pegtl/include/tao/pegtl/internal/seq.hpp \
     pegtl/include/tao/pegtl/internal/skip_control.hpp \
