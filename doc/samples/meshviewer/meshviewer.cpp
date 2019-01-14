@@ -1,7 +1,7 @@
 //
 //  Lol Engine — EasyMesh tutorial
 //
-//  Copyright © 2011—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2011—2019 Sam Hocevar <sam@hocevar.net>
 //            © 2012—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -946,7 +946,7 @@ void MeshViewer::Draw(float seconds, Scene &scene)
         m_texture_shader->SetUniform(m_texture_uni, m_default_texture->GetTexture(), 0);
 #endif //!HAS_WEB && WITH_TEXTURE
 
-    Renderer::Get()->SetClearColor(m_ssetup->m_clear_color);
+    scene.get_renderer()->SetClearColor(m_ssetup->m_clear_color);
 
     for (int i = 0; i < m_gizmos.count(); ++i)
     {
@@ -1057,7 +1057,7 @@ void MeshViewer::Draw(float seconds, Scene &scene)
                 mat4 new_proj = mat_obj_offset * mat_count_offset * mat_align * mat_count_scale * save_proj;
                 m_camera->SetProjection(new_proj);
                 m_meshes[i].m1->Render(scene, m_mat);
-                Renderer::Get()->Clear(ClearMask::Depth);
+                scene.get_renderer()->Clear(ClearMask::Depth);
             }
             m_camera->SetProjection(save_proj);
 #else

@@ -1,7 +1,8 @@
 //
 //  Lol Engine — Voronoi diagram tutorial
 //
-//  Copyright © 2011—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//  Copyright © 2015—2019 Sam Hocevar <sam@hocevar.net>
+//            © 2011—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -143,10 +144,10 @@ public:
 
                 m_fbos.last().m1->Bind();
                 {
-                    RenderContext rc;
+                    RenderContext rc(scene.get_renderer());
                     rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
                     rc.SetClearDepth(1.f);
-                    Renderer::Get()->Clear(ClearMask::Color | ClearMask::Depth);
+                    scene.get_renderer()->Clear(ClearMask::Color | ClearMask::Depth);
                 }
                 m_fbos.last().m1->Unbind();
             }
@@ -154,10 +155,10 @@ public:
             temp_buffer = new Framebuffer(Video::GetSize());
             temp_buffer->Bind();
             {
-                RenderContext rc;
+                RenderContext rc(scene.get_renderer());
                 rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
                 rc.SetClearDepth(1.f);
-                Renderer::Get()->Clear(ClearMask::Color | ClearMask::Depth);
+                scene.get_renderer()->Clear(ClearMask::Color | ClearMask::Depth);
             }
             temp_buffer->Unbind();
 
@@ -218,10 +219,10 @@ public:
 
         temp_buffer->Bind();
         {
-            RenderContext rc;
+            RenderContext rc(scene.get_renderer());
             rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
             rc.SetClearDepth(1.f);
-            Renderer::Get()->Clear(ClearMask::Color | ClearMask::Depth);
+            scene.get_renderer()->Clear(ClearMask::Color | ClearMask::Depth);
         }
         temp_buffer->Unbind();
 
@@ -248,10 +249,10 @@ public:
 
             m_fbos[f].m1->Bind();
             {
-                RenderContext rc;
+                RenderContext rc(scene.get_renderer());
                 rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
                 rc.SetClearDepth(1.f);
-                Renderer::Get()->Clear(ClearMask::Color | ClearMask::Depth);
+                scene.get_renderer()->Clear(ClearMask::Color | ClearMask::Depth);
             }
             m_fbos[f].m1->Unbind();
 
@@ -274,7 +275,7 @@ public:
 
                 dst_buf->Bind();
                 /* FIXME: we should just disable depth test in the shader */
-                Renderer::Get()->Clear(ClearMask::Depth);
+                scene.get_renderer()->Clear(ClearMask::Depth);
                 m_fbos[f].m2->Bind();
 
                 int i = 0;
@@ -293,7 +294,7 @@ public:
             }
         }
 
-        Renderer::Get()->Clear(ClearMask::Color | ClearMask::Depth);
+        scene.get_renderer()->Clear(ClearMask::Color | ClearMask::Depth);
 
         //FRAME BUFFER DRAW
         m_timer -= seconds;
@@ -302,10 +303,10 @@ public:
             //m_timer = 1.0f;
             m_fbos[m_cur_fbo].m1->Bind();
             {
-                RenderContext rc;
+                RenderContext rc(scene.get_renderer());
                 rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
                 rc.SetClearDepth(1.f);
-                Renderer::Get()->Clear(ClearMask::Color | ClearMask::Depth);
+                scene.get_renderer()->Clear(ClearMask::Color | ClearMask::Depth);
             }
             m_fbos[m_cur_fbo].m1->Unbind();
 
@@ -336,7 +337,7 @@ public:
 
                 dst_buf->Bind();
                 /* FIXME: we should just disable depth test in the shader */
-                Renderer::Get()->Clear(ClearMask::Depth);
+                scene.get_renderer()->Clear(ClearMask::Depth);
                 shader->Bind();
 
                 int i = 0;

@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Input tutorial
 //
-//  Copyright © 2011—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2011—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -191,7 +191,7 @@ public:
             m_ready = true;
         }
 
-        Renderer::Get()->SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        scene.get_renderer()->SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
         m_shader->Bind();
         m_vdecl->SetStream(m_vbo, m_coord, m_color);

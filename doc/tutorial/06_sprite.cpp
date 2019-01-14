@@ -72,7 +72,7 @@ public:
 
         if (!m_ready)
         {
-            Renderer::Get()->SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
+            scene.get_renderer()->SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
             m_ready = true;
         }
 

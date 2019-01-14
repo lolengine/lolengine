@@ -2,7 +2,7 @@
 //  Lol Engine
 //
 //  Copyright © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2017—2018 Sam Hocevar <sam@hocevar.net>
+//            © 2017—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -357,7 +357,7 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
     if (!m_shader)
         return;
 
-    RenderContext rc;
+    RenderContext rc(Scene::GetScene(0).get_renderer());
     rc.SetCullMode(CullMode::Disabled);
     rc.SetDepthFunc(DepthFunc::Disabled);
     rc.SetScissorMode(ScissorMode::Enabled);

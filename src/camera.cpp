@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //            © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -30,8 +30,8 @@ Camera::Camera()
     m_gamegroup = GAMEGROUP_CAMERA;
     m_drawgroup = DRAWGROUP_CAMERA;
 
-    //Arbitrary values when g_renderer is not ready.
-    ivec2 screen_size = (Renderer::GetCount()) ? (Video::GetSize()) : (ivec2(800, 600));
+    //Arbitrary values when scene renderer is not ready.
+    ivec2 screen_size = (Scene::GetCount()) ? (Video::GetSize()) : (ivec2(800, 600));
     m_fov = radians(45.f);
     m_near = -1000.f;
     m_far = 1000.f;

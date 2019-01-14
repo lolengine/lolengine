@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -373,8 +373,9 @@ void Framebuffer::Bind()
     /* FIXME: this should be done in the RenderContext object
      * instead, maybe by getting rid of Framebuffer::Bind() and
      * creating RenderContext::SetFramebuffer() instead. */
-    m_data->m_saved_viewport = Renderer::Get()->GetViewport();
-    Renderer::Get()->SetViewport(ibox2(ivec2::zero, m_data->m_size));
+    auto *renderer = Scene::GetScene(0).get_renderer();
+    m_data->m_saved_viewport = renderer->GetViewport();
+    renderer->SetViewport(ibox2(ivec2::zero, m_data->m_size));
     m_data->m_bound = true;
 }
 
@@ -388,7 +389,8 @@ void Framebuffer::Unbind()
     glBindFramebufferOES(GL_FRAMEBUFFER_OES, 0);
 #endif
 
-    Renderer::Get()->SetViewport(m_data->m_saved_viewport);
+    auto *renderer = Scene::GetScene(0).get_renderer();
+    renderer->SetViewport(m_data->m_saved_viewport);
     m_data->m_bound = false;
 }
 

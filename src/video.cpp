@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine
 //
-//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -41,8 +41,6 @@ DebugRenderMode VideoData::render_mode = DebugRenderMode::Default;
 
 void Video::Setup(ivec2 size)
 {
-    //g_renderer = new Renderer(size);
-    Renderer::AddNew(size);
     Scene::AddNew(size);
 
     /* Initialise reasonable scene default properties */
@@ -90,10 +88,6 @@ DebugRenderMode Video::GetDebugRenderMode()
 void Video::Destroy()
 {
     Scene::DestroyAll();
-    Renderer::DestroyAll();
-
-    //delete g_renderer;
-    //g_renderer = nullptr;
 }
 
 void Video::Capture(uint32_t *buffer)
@@ -128,7 +122,7 @@ void Video::Capture(uint32_t *buffer)
 
 ivec2 Video::GetSize()
 {
-    return Renderer::Get()->GetViewport().extent();
+    return Scene::GetScene(0).get_renderer()->GetViewport().extent();
 }
 
 } /* namespace lol */

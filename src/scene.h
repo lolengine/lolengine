@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //            © 2014—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -24,6 +24,7 @@
 #include "light.h"
 #include "camera.h"
 #include "mesh/mesh.h"
+#include <lol/gpu/renderer.h>
 
 #define LOL_MAX_LIGHT_COUNT 8
 
@@ -127,6 +128,8 @@ public:
     void SetTileCam(int cam_idx);
 
     void Reset();
+
+    Renderer *get_renderer() { return m_renderer; }
 
     /* ============================== */
 #   define _KEY_IDX (uintptr_t)key /* TOUKY: I don't like that. hash should be fixed to handle these custom stuff */
@@ -257,6 +260,7 @@ private:
     void render_lines(float seconds);
 
     SceneData *data;
+    Renderer *m_renderer;
 };
 
 } /* namespace lol */

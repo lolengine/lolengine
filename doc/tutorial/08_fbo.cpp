@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Framebuffer Object tutorial
 //
-//  Copyright © 2012—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2012—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -76,10 +76,10 @@ public:
             m_fbo->Bind();
 
             {
-                RenderContext rc;
+                RenderContext rc(scene.get_renderer());
                 rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
                 rc.SetClearDepth(1.f);
-                Renderer::Get()->Clear(ClearMask::Color | ClearMask::Depth);
+                scene.get_renderer()->Clear(ClearMask::Color | ClearMask::Depth);
             }
 
             m_fbo->Unbind();
@@ -90,7 +90,7 @@ public:
         }
 
         /* FIXME: we should just disable depth test in the shader */
-        RenderContext rc;
+        RenderContext rc(scene.get_renderer());
         rc.SetDepthFunc(DepthFunc::Disabled);
 
         /* FIXME: this no longer works because we don’t restore the

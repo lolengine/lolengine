@@ -1,7 +1,7 @@
 //
 //  Lol Engine — EasyMesh tutorial
 //
-//  Copyright © 2011—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2011—2019 Sam Hocevar <sam@hocevar.net>
 //            © 2012—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -129,7 +129,7 @@ public:
 
         if (!m_ready)
         {
-            Renderer::Get()->SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
+            scene.get_renderer()->SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
             /* Upload vertex data to GPU */
             for (int i = 0; i < m_gears.count(); i++)

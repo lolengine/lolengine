@@ -2,7 +2,7 @@
 //  Lol Engine — BtPhys tutorial
 //
 //  Copyright © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2012—2018 Sam Hocevar <sam@hocevar.net>
+//            © 2012—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -404,7 +404,7 @@ void BtPhysTest::tick_game(float seconds)
 
     if (!m_init_status)
     {
-        if (Renderer::GetCount())
+        if (Scene::GetCount())
             InitApp();
         return;
     }

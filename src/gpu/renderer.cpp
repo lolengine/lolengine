@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -29,13 +29,6 @@
 
 namespace lol
 {
-
-/*
- * The global g_renderers object, initialised by Video::Setup
- */
-
-//Renderer *g_renderer = nullptr;
-array<Renderer*> g_renderers;
 
 /*
  * Private RendererData class
@@ -140,32 +133,6 @@ void Renderer::Clear(ClearMask mask)
     if (mask & ClearMask::Stencil)
         m |= GL_STENCIL_BUFFER_BIT;
     glClear(m);
-}
-
-/*
-* Renderer static
-*/
-
-void Renderer::AddNew(ivec2 size)
-{
-    g_renderers << new Renderer(size);
-}
-
-int Renderer::GetCount()
-{
-    return g_renderers.count();
-}
-
-Renderer* Renderer::Get(int index)
-{
-    return g_renderers[index];
-}
-
-void Renderer::DestroyAll()
-{
-    for (Renderer* renderer : g_renderers)
-        delete renderer;
-    g_renderers.clear();
 }
 
 /*

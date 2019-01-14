@@ -2,7 +2,7 @@
 //  Lol Engine
 //
 //  Copyright © 2013—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2017—2018 Sam Hocevar <sam@hocevar.net>
+//            © 2017—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -32,7 +32,7 @@ extern "C"
 #endif //EMSCRIPTEN
 
 /*
- * The global g_renderer object, initialised by Video::Init
+ * The global g_messageservice object, initialised by MessageService::Setup()
  */
 MessageService *g_messageservice = nullptr;
 

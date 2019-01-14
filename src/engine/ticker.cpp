@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -430,7 +430,7 @@ void TickerData::DrawThreadTick()
 
         /* Enable display */
         scene.EnableDisplay();
-        Renderer::Get(idx)->Clear(ClearMask::All);
+        scene.get_renderer()->Clear(ClearMask::All);
 
         scene.pre_render(data->deltatime);
 

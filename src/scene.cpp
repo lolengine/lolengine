@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //            © 2014—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -206,6 +206,8 @@ mutex SceneData::m_prim_mutex;
 Scene::Scene(ivec2 size)
   : data(new SceneData())
 {
+    m_renderer = new Renderer(size);
+
     data->m_renderbuffer[0] = new Framebuffer(size);
     data->m_renderbuffer[1] = new Framebuffer(size);
     data->m_renderbuffer[2] = new Framebuffer(size);
@@ -260,6 +262,7 @@ Scene::~Scene()
     delete data->m_line_api.m_vdecl;
     delete data->m_tile_api.m_vdecl;
     delete data;
+    delete m_renderer;
 }
 
 //-----------------------------------------------------------------------------
@@ -595,14 +598,14 @@ void Scene::pre_render(float)
     }
 
     {
-        RenderContext rc;
+        RenderContext rc(m_renderer);
         if (do_pp)
         {
             rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
             rc.SetClearDepth(1.f);
         }
 
-        Renderer::Get()->Clear(ClearMask::Color | ClearMask::Depth);
+        m_renderer->Clear(ClearMask::Color | ClearMask::Depth);
     }
 }
 
@@ -629,10 +632,10 @@ void Scene::post_render(float)
 
         data->m_renderbuffer[3]->Bind();
 
-        RenderContext rc;
+        RenderContext rc(m_renderer);
         rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
         rc.SetClearDepth(1.f);
-        Renderer::Get()->Clear(ClearMask::Color | ClearMask::Depth);
+        m_renderer->Clear(ClearMask::Color | ClearMask::Depth);
 
         /* Execute post process */
         data->m_pp.m_shader[1]->Bind();
@@ -653,10 +656,10 @@ void Scene::post_render(float)
 
         data->m_pp.m_shader[0]->Bind();
 
-        RenderContext rc;
+        RenderContext rc(m_renderer);
         rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
         rc.SetClearDepth(1.f);
-        Renderer::Get()->Clear(ClearMask::Color | ClearMask::Depth);
+        m_renderer->Clear(ClearMask::Color | ClearMask::Depth);
 
         /* Blit final image to screen */
         data->m_pp.m_shader[0]->SetUniform(data->m_pp.m_buffer_uni[0][0], data->m_renderbuffer[3]->GetTextureUniform(), 3);
@@ -683,7 +686,7 @@ void Scene::render_primitives()
     ASSERT(!!data, "Trying to access a non-ready scene");
 
     /* FIXME: Temp fix for mesh having no render context*/
-    RenderContext rc;
+    RenderContext rc(m_renderer);
     rc.SetCullMode(CullMode::Clockwise);
     rc.SetDepthFunc(DepthFunc::LessOrEqual);
 
@@ -703,7 +706,7 @@ void Scene::render_tiles() // XXX: rename to Blit()
 {
     ASSERT(!!data, "Trying to access a non-ready scene");
 
-    RenderContext rc;
+    RenderContext rc(m_renderer);
 
     /* Early test if nothing needs to be rendered */
     if (!data->m_tile_api.m_tiles.count() && !data->m_tile_api.m_palettes.count())
@@ -827,7 +830,7 @@ void Scene::render_lines(float seconds)
 {
     ASSERT(!!data, "Trying to access a non-ready scene");
 
-    RenderContext rc;
+    RenderContext rc(m_renderer);
 
     if (!data->m_line_api.m_lines.count())
         return;
