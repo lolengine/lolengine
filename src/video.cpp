@@ -120,6 +120,11 @@ void Video::Capture(uint32_t *buffer)
 #endif
 }
 
+void Video::Resize(ivec2 size)
+{
+    Scene::GetScene(0).resize(size);
+}
+
 ivec2 Video::GetSize()
 {
     return Scene::GetScene(0).get_renderer()->GetViewport().extent();

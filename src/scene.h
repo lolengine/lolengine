@@ -250,6 +250,8 @@ public:
     void EnableDisplay();
     void DisableDisplay();
 
+    void resize(ivec2 size);
+
     void pre_render(float seconds);
     void render(float seconds);
     void post_render(float seconds);
@@ -258,6 +260,8 @@ private:
     void render_primitives();
     void render_tiles();
     void render_lines(float seconds);
+
+    ivec2 m_size, m_wanted_size;
 
     SceneData *data;
     Renderer *m_renderer;

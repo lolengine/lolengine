@@ -204,14 +204,15 @@ mutex SceneData::m_prim_mutex;
  * Public Scene class
  */
 Scene::Scene(ivec2 size)
-  : data(new SceneData())
+  : m_size(size),
+    m_wanted_size(size),
+    data(new SceneData()),
+    m_renderer(new Renderer(size))
 {
-    m_renderer = new Renderer(size);
-
-    data->m_renderbuffer[0] = new Framebuffer(size);
-    data->m_renderbuffer[1] = new Framebuffer(size);
-    data->m_renderbuffer[2] = new Framebuffer(size);
-    data->m_renderbuffer[3] = new Framebuffer(size);
+    data->m_renderbuffer[0] = new Framebuffer(m_size);
+    data->m_renderbuffer[1] = new Framebuffer(m_size);
+    data->m_renderbuffer[2] = new Framebuffer(m_size);
+    data->m_renderbuffer[3] = new Framebuffer(m_size);
     data->m_pp.m_shader[0] = Shader::Create(LOLFX_RESOURCE_NAME(gpu_blit));
     data->m_pp.m_shader[1] = Shader::Create(LOLFX_RESOURCE_NAME(gpu_postprocess));
     data->m_pp.m_coord[0] = data->m_pp.m_shader[0]->GetAttribLocation(VertexUsage::Position, 0);
@@ -232,7 +233,7 @@ Scene::Scene(ivec2 size)
 
     /* Create a default orthographic camera, in case the user doesn’t. */
     data->m_default_cam = new Camera();
-    mat4 proj = mat4::ortho(0.f, (float)size.x, 0.f, (float)size.y, -1000.f, 1000.f);
+    mat4 proj = mat4::ortho(0.f, (float)m_size.x, 0.f, (float)m_size.y, -1000.f, 1000.f);
     data->m_default_cam->SetProjection(proj);
     PushCamera(data->m_default_cam);
 
@@ -246,6 +247,11 @@ Scene::Scene(ivec2 size)
     data->m_line_api.m_vdecl = new VertexDeclaration(VertexStream<vec4,vec4>(VertexUsage::Position, VertexUsage::Color));
 
     data->m_line_api.m_debug_mask = 1;
+}
+
+void Scene::resize(ivec2 size)
+{
+    m_wanted_size = size;
 }
 
 //-----------------------------------------------------------------------------
@@ -590,6 +596,23 @@ static bool do_pp = true;
 void Scene::pre_render(float)
 {
     gpu_marker("Pre Render");
+
+    // Handle resize event
+    if (m_size != m_wanted_size)
+    {
+        m_size = m_wanted_size;
+        delete data->m_renderbuffer[0];
+        delete data->m_renderbuffer[1];
+        delete data->m_renderbuffer[2];
+        delete data->m_renderbuffer[3];
+        data->m_renderbuffer[0] = new Framebuffer(m_size);
+        data->m_renderbuffer[1] = new Framebuffer(m_size);
+        data->m_renderbuffer[2] = new Framebuffer(m_size);
+        data->m_renderbuffer[3] = new Framebuffer(m_size);
+
+        mat4 proj = mat4::ortho(0.f, (float)m_size.x, 0.f, (float)m_size.y, -1000.f, 1000.f);
+        data->m_default_cam->SetProjection(proj);
+    }
 
     /* First render into the offline buffer */
     if (do_pp)

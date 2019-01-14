@@ -45,7 +45,7 @@ public:
         m_ready(false)
     {
         m_camera = new Camera();
-        m_camera->SetProjection(mat4::perspective(radians(30.f), 960.f, 600.f, .1f, 1000.f));
+        m_camera->SetProjection(mat4::perspective(radians(30.f), 640.f, 480.f, .1f, 1000.f));
         m_camera->SetView(mat4::lookat(vec3(-15.f, 5.f, 0.f),
             vec3(0.f, -1.f, 0.f),
             vec3(0.f, 1.f, 0.f)));

@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -69,7 +69,7 @@ SdlAppDisplay::SdlAppDisplay(char const *title, ivec2 res)
      * However, perfs warning have been may occur. */
     SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
 
-    int flags = SDL_WINDOW_OPENGL;
+    int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
     if (window_size == ivec2(0))
         flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
     data->m_window = SDL_CreateWindow(title,

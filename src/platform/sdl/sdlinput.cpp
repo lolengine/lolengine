@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -331,6 +331,9 @@ void SdlInputData::Tick(float seconds)
                 case SDL_WINDOWEVENT_LEAVE:
                 case SDL_WINDOWEVENT_FOCUS_LOST:
                     m_mouse->SetKey(3, false);
+                    break;
+                case SDL_WINDOWEVENT_RESIZED:
+                    Video::Resize(ivec2(event.window.data1, event.window.data2));
                     break;
             }
             break;
