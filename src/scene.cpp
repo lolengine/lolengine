@@ -56,7 +56,7 @@ static array<SceneDisplay*> m_scene_displays;
 
 static inline void gpu_marker(char const *message)
 {
-#if LOL_USE_GLEW
+#if LOL_USE_GLEW && defined glStringMarkerGREMEDY
     if (GLEW_GREMEDY_string_marker)
         glStringMarkerGREMEDY(0, message);
 #else

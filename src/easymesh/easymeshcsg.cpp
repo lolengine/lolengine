@@ -1,13 +1,15 @@
 //
-// EasyMesh-Csg: The code belonging to CSG operations
+//  EasyMesh-Csg: The code belonging to CSG operations
 //
-// Copyright: (c) 2010-2015 Sam Hocevar <sam@hocevar.net>
-//            (c) 2009-2015 Cédric Lecacheur <jordx@free.fr>
-//            (c) 2009-2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//            © 2009—2015 Cédric Lecacheur <jordx@free.fr>
+//            © 2009—2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -179,9 +181,10 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
         }
     }
 
-    for (int i = 0; i < m_vert.count(); i++)
-        if (length(m_vert[i].m_normal) < 1.0f)
-            i = i;
+//    FIXME: what was this code for?
+//    for (int i = 0; i < m_vert.count(); i++)
+//        if (length(m_vert[i].m_normal) < 1.0f)
+//            i = i;
 
     int dir = 1;
     for (int i = 0; i >= 0 && i < triangle_to_kill.count() - 1; i += dir)

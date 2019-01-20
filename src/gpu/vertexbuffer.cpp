@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -253,7 +253,7 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attribs[])
                  || tlut[type_index].type == GL_DOUBLE
                  || tlut[type_index].type == GL_BYTE
                  || tlut[type_index].type == GL_UNSIGNED_BYTE
-#if defined LOL_USE_GLEW && !defined __APPLE__
+#if defined LOL_USE_GLEW && defined glVertexAttribIPointer && !defined __APPLE__
                  /* If this is not available, don't use it */
                  || !glVertexAttribIPointer
 #endif
@@ -267,7 +267,7 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attribs[])
                                       tlut[type_index].type, normalize,
                                       stride, (GLvoid const *)(uintptr_t)offset);
             }
-#if defined GL_VERSION_3_0
+#if defined GL_VERSION_3_0 && !(defined LOL_USE_GLEW && !defined glVertexAttribIPointer)
             else
             {
                 glVertexAttribIPointer((GLint)reg, tlut[type_index].size,

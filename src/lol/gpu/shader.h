@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -274,7 +274,7 @@ struct ShaderUniform
 public:
     inline ShaderUniform() : flags(0) {}
 
-private:
+protected:
     uintptr_t frag, vert;
     /* FIXME: do we really need this to indicate which locations are valid? */
     uint32_t flags;

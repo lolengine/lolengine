@@ -1,12 +1,14 @@
 //
-// EasyMesh-Csg: The code belonging to CSG operations
+//  EasyMesh-Csg: The code belonging to CSG operations
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//            (c) 2010-2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//            © 2010—2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -507,7 +509,9 @@ int CsgBsp::TestTriangleToTree(vec3 const &tri_p0, vec3 const &tri_p1, vec3 cons
             int k = 0;
             if (res_nb[LEAF_BACK] && res_nb[LEAF_FRONT])
             {
+#if 0
                 res_total = res_total;
+#endif
                 tri_list[i].m1 = LEAF_BACK;
 #if 0
                 tri_to_process.push( array< int >(), tri_list[i].m2, tri_list[i].m3, tri_list[i].m4, 0);
