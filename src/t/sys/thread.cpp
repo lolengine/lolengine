@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //            © 2014—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -23,130 +23,6 @@ namespace lol
 
 lolunit_declare_fixture(thread_test)
 {
-    //FileUpdateTesterJob ---------------------------------------------------------
-    class UnitTestJob : public ThreadJob
-    {
-        friend class UnitTestThreadManager;
-    public:
-        std::string GetName() const { return "<UnitTestJob>"; }
-
-        UnitTestJob()
-          : ThreadJob(ThreadJobType::WORK_TODO)
-        { }
-
-        bool IsDone()
-        {
-            return m_done;
-        }
-
-    protected:
-        virtual bool DoWork()
-        {
-            timer t;
-            m_done = false;
-            msg::info("%s: STARTED WORK\n", GetName().c_str());
-            t.wait(2.f);
-            msg::info("%s: ENDED WORK\n", GetName().c_str());
-            m_done = true;
-            return true;
-        }
-        bool m_done = false;
-    };
-    //Unit test thread manager
-    class UnitTestThreadManager : public BaseThreadManager
-    {
-        typedef BaseThreadManager super;
-
-        struct UnitTestStatusBase : public StructSafeEnum
-        {
-            enum Type
-            {
-                NOT_QUEUED,
-                QUEUED,
-                RETRIEVED,
-                DONE,
-            };
-        protected:
-            virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
-            {
-                enum_map[NOT_QUEUED] = "NOT_QUEUED";
-                enum_map[QUEUED] = "QUEUED";
-                enum_map[RETRIEVED] = "RETRIEVED";
-                enum_map[DONE] = "DONE";
-                return true;
-            }
-        };
-        typedef SafeEnum<UnitTestStatusBase> UnitTestStatus;
-
-    public:
-        std::string GetName() const { return "<UnitTestThreadManager>"; }
-        UnitTestThreadManager() : BaseThreadManager(4, 1)
-        { }
-        virtual ~UnitTestThreadManager()
-        { }
-
-        void AddJob(ThreadJob* job)
-        {
-            msg::info("%s DISPATCHING JOB %s\n", GetName().c_str(), job->GetName().c_str());
-            DispatchJob(job);
-        }
-        bool GetWorkResult(array<ThreadJob*>& results)
-        {
-            results += m_job_result;
-            m_job_result.clear();
-            msg::info("%s GETWORKRESULT (%i)\n", GetName().c_str(), results.count());
-            return results.count() > 0;
-        }
-
-        virtual void tick_game(float seconds)
-        {
-            switch (m_status.ToScalar())
-            {
-            case UnitTestStatus::NOT_QUEUED:
-                if (!!GetDispatchCount())
-                {
-                    msg::info("%s TICKGAME %s\n", GetName().c_str(), m_status.tostring().c_str());
-                    m_status = UnitTestStatus::QUEUED;
-                }
-                break;
-            case UnitTestStatus::QUEUED:
-#if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
-                if (!GetDispatchedCount())
-#else //LOL_FEATURE_THREADS
-                if (GetDispatchedCount())
-#endif
-                {
-                    msg::info("%s TICKGAME %s\n", GetName().c_str(), m_status.tostring().c_str());
-                    m_status = UnitTestStatus::RETRIEVED;
-                }
-                break;
-            case UnitTestStatus::RETRIEVED:
-                if (m_job_result.count() == 4)
-                {
-                    msg::info("%s TICKGAME %s\n", GetName().c_str(), m_status.tostring().c_str());
-                    m_status = UnitTestStatus::DONE;
-                }
-                break;
-            default:
-                break;
-            }
-            //Debug error fix-up
-#if !LOL_BUILD_RELEASE
-            m_tickstate = STATE_PRETICK_GAME;
-#endif
-            super::tick_game(seconds);
-        }
-        bool IsDone() { return m_status == UnitTestStatus::DONE; }
-        int Test_GetDispatchCount() { return GetDispatchCount(); }
-        int Test_GetDispatchedCount() { return GetDispatchedCount(); }
-
-    protected:
-        virtual void TreatResult(ThreadJob* result) { m_job_result << result; }
-        array<ThreadJob*> m_job_result;
-        UnitTestStatus m_status;
-    };
-    UnitTestThreadManager m_manager;
-
     void setup()
     {
     }

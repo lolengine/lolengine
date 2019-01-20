@@ -61,7 +61,7 @@ static int const TEXTURE_WIDTH = 256;
 #define     HST_CLAMP           1.f
 
 #define     WITH_TEXTURE        0
-
+#define     WITH_THREAD_MANAGER 0 // FIXME: this was removed from Lol Engine
 
 #define     HAS_KBOARD          (m_input_usage & (1<<IPT_MV_KBOARD))
 #define     HAS_MOUSE           (m_input_usage & (1<<IPT_MV_MOUSE))
@@ -163,7 +163,9 @@ void MeshViewer::Start()
 
     //Threads setup
     m_entities << (m_file_check = new FileUpdateTester());
+#if WITH_THREAD_MANAGER
     m_entities << (m_file_loader = new DefaultThreadManager(4, 0));
+#endif
 
     //Scene setup
     m_ssetup_file_name = "../data/meshviewer.init.lua";
@@ -171,7 +173,9 @@ void MeshViewer::Start()
 
     //Mesh file
     m_file_status = m_file_check->RegisterFile(m_file_name);
+#if WITH_THREAD_MANAGER
     m_file_loader->AddJob(GetLoadJob(m_file_name));
+#endif
 
     //Camera setup
     m_camera = new Camera();
@@ -233,7 +237,9 @@ void MeshViewer::Stop()
     m_camera = nullptr;
     m_controller = nullptr;
     m_file_check = nullptr;
+#if WITH_THREAD_MANAGER
     m_file_loader = nullptr;
+#endif
 
     /** ----- Init is needed ----- **/
     m_init = false;
@@ -345,15 +351,19 @@ void MeshViewer::tick_game(float seconds)
     //Check file update
     ASSERT(m_file_status);
     //if (false) //DEBUG
+#if WITH_THREAD_MANAGER
     //m_file_status->GetTime()
     if (m_file_status->HasUpdated())
         m_file_loader->AddJob(GetLoadJob(m_file_name));
+#endif
 
     //Check work done
     //if (false) //DEBUG
     {
         array<ThreadJob*> result;
+#if WITH_THREAD_MANAGER
         m_file_loader->GetWorkResult(result);
+#endif
         if (result.count())
         {
             for (ThreadJob* job : result)

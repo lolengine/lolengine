@@ -303,9 +303,6 @@
     <ClCompile Include="image\codec\zed-palette-image.cpp">
       <Filter>image\codec</Filter>
     </ClCompile>
-    <ClCompile Include="sys\thread.cpp">
-      <Filter>sys</Filter>
-    </ClCompile>
     <ClCompile Include="image\filter\colors.cpp">
       <Filter>image\filter</Filter>
     </ClCompile>
@@ -365,9 +362,6 @@
     </ClCompile>
     <ClCompile Include="lolua\baselua.cpp">
       <Filter>lolua</Filter>
-    </ClCompile>
-    <ClCompile Include="sys\threadtypes.cpp">
-      <Filter>sys</Filter>
     </ClCompile>
     <ClCompile Include="tileset.cpp">
       <Filter>tileset</Filter>
@@ -711,9 +705,6 @@
     </ClInclude>
     <ClInclude Include="lolua\baselua.h">
       <Filter>lolua</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\sys\threadtypes.h">
-      <Filter>lol\sys</Filter>
     </ClInclude>
     <ClInclude Include="tileset.h">
       <Filter>tileset</Filter>
