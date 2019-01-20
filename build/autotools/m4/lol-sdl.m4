@@ -37,7 +37,6 @@ dnl    LOL_USE_SDL         -- whether SDL v2 was found
 dnl    LOL_USE_SDL_IMAGE   -- whether SDL_image was found
 dnl    LOL_USE_SDL_MIXER   -- whether SDL_mixer was found
 dnl    HAVE_SDL_H      -- whether to include <SDL.h>
-dnl    HAVE_SDL_SDL_H  -- whether to include <SDL/SDL.h>
 dnl    HAVE_SDL2_SDL_H -- whether to include <SDL2/SDL.h>
 dnl  Generated automake conditionals:
 dnl    LOL_USE_SDL         -- whether SDL v2 was found
@@ -75,12 +74,12 @@ if test "x${ac_cv_my_have_sdl}" = xno; then
   save_LIBS="${LIBS}"
   CPPFLAGS="${CPPFLAGS} ${SDL_CFLAGS}"
   LIBS="${LIBS} ${SDL_LIBS}"
-  AC_CHECK_HEADERS(SDL.h SDL/SDL.h SDL2/SDL.h,
+  AC_CHECK_HEADERS(SDL.h SDL2/SDL.h,
    [ac_cv_my_have_sdl="yes"])
   if test "x${ac_cv_my_have_sdl}" != xno; then
-    AC_CHECK_HEADERS(SDL_mixer.h SDL/SDL_mixer.h SDL2/SDL_mixer.h,
+    AC_CHECK_HEADERS(SDL_mixer.h SDL2/SDL_mixer.h,
      [ac_cv_my_have_sdl_mixer="yes"])
-    AC_CHECK_HEADERS(SDL_image.h SDL/SDL_image.h SDL2/SDL_image.h,
+    AC_CHECK_HEADERS(SDL_image.h SDL2/SDL_image.h,
      [ac_cv_my_have_sdl_image="yes"])
     AC_CHECK_LIB(SDL2, main,
      [SDL_LIBS="${SDL_LIBS} -lSDL2"],

@@ -17,13 +17,10 @@
 #include <cstring>
 
 #if LOL_USE_SDL_MIXER
-#   if HAVE_SDL_SDL_H
-#       include <SDL/SDL.h>
-#       include <SDL/SDL_mixer.h>
-#   elif HAVE_SDL2_SDL_H
+#   if HAVE_SDL2_SDL_H
 #       include <SDL2/SDL.h>
 #       include <SDL2/SDL_mixer.h>
-#   else
+#   elif HAVE_SDL_H
 #       include <SDL.h>
 #       include <SDL_mixer.h>
 #   endif

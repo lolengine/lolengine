@@ -29,9 +29,7 @@
 #if LOL_USE_SDL
 #   if HAVE_SDL2_SDL_H
 #      include <SDL2/SDL.h>
-#   elif HAVE_SDL_SDL_H
-#      include <SDL/SDL.h>
-#   else
+#   elif HAVE_SDL_H
 #      include <SDL.h>
 #   endif
 #endif

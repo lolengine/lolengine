@@ -14,13 +14,10 @@
 
 #if LOL_USE_SDL_IMAGE
 
-#if HAVE_SDL_SDL_H
-#   include <SDL/SDL.h>
-#   include <SDL/SDL_image.h>
-#elif HAVE_SDL2_SDL_H
+#if HAVE_SDL2_SDL_H
 #   include <SDL2/SDL.h>
 #   include <SDL2/SDL_image.h>
-#else
+#elif HAVE_SDL_H
 #   include <SDL.h>
 #   include <SDL_image.h>
 #endif
