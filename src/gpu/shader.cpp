@@ -705,12 +705,6 @@ std::string ShaderData::Patch(std::string const &code, ShaderType type)
     return patched_code;
 }
 
-static const std::string g_ret = "\n";
-static const std::string g_eol = ";";
-static const std::string g_bop = "{";
-static const std::string g_bcl = "}";
-static const std::string g_tab = "    ";
-
 //----
 std::string Shader::GetVariablePrefix(const ShaderVariable variable)
 {
@@ -880,9 +874,8 @@ void ShaderBlock::Build(const ShaderProgram program, std::string& call, std::str
     std::string def_parameters;
     for (int i = 0; i < ShaderVariable::MAX; i++)
         AddDefinitionParameters((ShaderVariable)i, program, m_parameters[i], def_parameters);
-    function += def_parameters + ")" + g_ret +
-        "{" + g_ret +
-        m_code_main + (ends_with(m_code_main, g_ret) ? std::string() : g_ret) +
+    function += def_parameters + ")\n{\n"
+        + m_code_main + (ends_with(m_code_main, "\n") ? std::string() : "\n") +
         "}";
 }
 
@@ -977,8 +970,10 @@ void ShaderBuilder::MergeParameters(std::map<std::string, std::string>& variable
 }
 
 //----
-void ShaderBuilder::Build(std::string& code)
+std::string ShaderBuilder::Build()
 {
+    std::string code;
+
     //Cleanup first
     for (int prog = 0; prog < ShaderProgram::MAX; prog++)
         for (int var = 0; var < ShaderVariable::MAX; var++)
@@ -999,10 +994,13 @@ void ShaderBuilder::Build(std::string& code)
                 MergeParameters(m_blocks[prog][block]->m_parameters[var], m_parameters[prog][var]);
 
         //Actually write code
-        code += Shader::GetProgramQualifier((ShaderProgram)prog) + g_ret;
+        code += Shader::GetProgramQualifier((ShaderProgram)prog) + "\n";
 
         //Add actual code
-        code += std::string("#version ") + m_version + g_ret + g_ret;
+        code += std::string("#version ") + m_version + "\n\n";
+
+        // Safety for GLES
+        code += "#if defined GL_ES\nprecision mediump float;\n#endif\n";
 
         //Added shader variables
         for (int var = 0; var < ShaderVariable::InOut; var++)
@@ -1010,17 +1008,17 @@ void ShaderBuilder::Build(std::string& code)
             array<std::string> all_keys = keys(m_parameters[prog][var]);
             if (all_keys.count())
             {
-                code += std::string("//- ") + Shader::GetVariableQualifier((ShaderVariable)var) + " ----" + g_ret;
+                code += std::string("//- ") + Shader::GetVariableQualifier((ShaderVariable)var) + " ----\n";
                 for (auto const &key : all_keys)
                 {
                     code += Shader::GetVariableQualifier((ShaderVariable)var) + " ";
-                    code += m_parameters[prog][var][key] + " " + key + ";" + g_ret;
+                    code += m_parameters[prog][var][key] + " " + key + ";\n";
                 }
                 if (var + 1 < ShaderVariable::InOut)
-                    code += g_ret;
+                    code += "\n";
             }
         }
-        code += g_ret;
+        code += "\n";
 
         //Build Blocks code and add it
         array<std::string> calls;
@@ -1032,16 +1030,15 @@ void ShaderBuilder::Build(std::string& code)
             calls << call;
             if (m_blocks[prog][block]->m_code_custom.length())
             {
-                code += std::string("//- ") + m_blocks[prog][block]->GetName() + " custom code ----" + g_ret;
-                code += m_blocks[prog][block]->m_code_custom + g_ret + g_ret;
+                code += std::string("//- ") + m_blocks[prog][block]->GetName() + " custom code ----\n";
+                code += m_blocks[prog][block]->m_code_custom + "\n\n";
             }
-            code += std::string("//- ") + m_blocks[prog][block]->GetName() + " main code ----" + g_ret;
-            code += function + g_ret + g_ret;
+            code += std::string("//- ") + m_blocks[prog][block]->GetName() + " main code ----\n";
+            code += function + "\n\n";
         }
 
         //Added main definition
-        code += std::string("//- Main ----") + g_ret +
-            "void main(void)" + g_ret + "{" + g_ret;
+        code += "//- Main ----\nvoid main(void)\n{\n";
 
         //Add local variables
         int var = ShaderVariable::InOut;
@@ -1050,20 +1047,21 @@ void ShaderBuilder::Build(std::string& code)
         {
             if (all_keys.count())
             {
-                code += g_tab + m_parameters[prog][var][key] + " " + key + ";" + g_ret;
+                code += "    " + m_parameters[prog][var][key] + " " + key + ";\n";
             }
         }
-        code += g_ret;
+        code += "\n";
 
         //Add calls
-        code += g_tab + "//- Calls ----" + g_ret;
+        code += "//- Calls ----\n";
         for (auto const &call : calls)
-            code += g_tab + call + g_ret;
-        code += g_ret;
+            code += "    " + call + "\n";
+        code += "\n";
 
-        code += g_tab + Shader::GetProgramOutVariable((ShaderProgram)prog) + " = " + out_local_var + ";" + g_ret +
-            "}" + g_ret + g_ret;
+        code += "    " + Shader::GetProgramOutVariable((ShaderProgram)prog) + " = " + out_local_var + ";\n}\n\n";
     }
+
+    return code;
 }
 
 } /* namespace lol */

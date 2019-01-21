@@ -24,9 +24,6 @@ using namespace lol;
 
 static LolImGui* g_lolimgui = nullptr;
 
-//LolImGui ----------------------------------------------------------------------------------------
-#define Line(s) ((s) + "\n")
-
 //-----------------------------------------------------------------------------
 LolImGui::LolImGui(ImFontAtlas *shared_font_atlas)
 {
@@ -332,8 +329,7 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
     // Create shader
     if (!m_shader)
     {
-        std::string code;
-        m_builder.Build(code);
+        std::string code = m_builder.Build();
 
         m_shader = Shader::Create(m_builder.GetName(), code);
         ASSERT(m_shader);

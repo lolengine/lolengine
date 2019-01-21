@@ -464,7 +464,7 @@ protected:
     void MergeParameters(std::map<std::string, std::string>& variables, std::map<std::string, std::string>& merged);
 
 public:
-    void Build(std::string& code);
+    std::string Build();
 };
 
 } /* namespace lol */
