@@ -19,6 +19,9 @@
 #      include <SDL.h>
 #   endif
 #endif
+#if HAVE_EMSCRIPTEN_HTML5_H
+#   include <emscripten/html5.h>
+#endif
 
 #include "sdlinput.h"
 
@@ -28,7 +31,7 @@
  * there is no SDL display (eg. on the Raspberry Pi). */
 #define SDL_FORCE_POLL_JOYSTICK 1
 
-#if EMSCRIPTEN
+#if __EMSCRIPTEN__
 #   define MOUSE_SPEED_MOD 10.f
 #else
 #   define MOUSE_SPEED_MOD 100.f
@@ -133,6 +136,9 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
     m_data->m_tick_in_draw_thread = true;
 #endif
 
+#if __EMSCRIPTEN__
+    emscripten_sample_gamepad_data();
+#endif
 #if LOL_USE_SDL
     SDL_Init(SDL_INIT_TIMER | SDL_INIT_JOYSTICK);
 #endif
@@ -141,7 +147,8 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
     m_data->m_mouse = InputDeviceInternal::CreateStandardMouse();
 
 #if LOL_USE_SDL
-#   if !EMSCRIPTEN
+    // XXX: another option is to properly handle gamepad support
+#   if !__EMSCRIPTEN__
 #       if SDL_FORCE_POLL_JOYSTICK
     SDL_JoystickEventState(SDL_QUERY);
 #       else
@@ -180,7 +187,7 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
 
         m_data->m_joysticks.push(sdlstick, stick);
     }
-#   endif //EMSCRIPTEN
+#   endif // __EMSCRIPTEN__
 #endif
 
     m_gamegroup = GAMEGROUP_INPUT;
@@ -188,7 +195,7 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
 
 SdlInput::~SdlInput()
 {
-#if LOL_USE_SDL && !EMSCRIPTEN
+#if LOL_USE_SDL && !__EMSCRIPTEN__
     /* Unregister all the joysticks we added */
     while (m_data->m_joysticks.count())
     {
@@ -223,7 +230,7 @@ void SdlInputData::Tick(float seconds)
     UNUSED(seconds);
 
     /* Pump all joystick events because no event is coming to us. */
-#   if SDL_FORCE_POLL_JOYSTICK && !EMSCRIPTEN
+#   if SDL_FORCE_POLL_JOYSTICK && !__EMSCRIPTEN__
     SDL_JoystickUpdate();
     for (int j = 0; j < m_joysticks.count(); j++)
     {

@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine
 //
-//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -147,7 +147,7 @@ class ApplicationData
 #endif
 };
 
-#if EMSCRIPTEN
+#if __EMSCRIPTEN__
 static Application *g_app;
 
 static void AppCallback()
@@ -179,7 +179,7 @@ void Application::Tick()
 
 void Application::Run()
 {
-#if EMSCRIPTEN
+#if __EMSCRIPTEN__
     g_app = this;
     emscripten_set_main_loop(AppCallback, 0, 1);
 #else

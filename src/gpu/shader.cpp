@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -312,7 +312,7 @@ Shader::Shader(std::string const &name,
     GLint num_attribs;
     glGetProgramiv(data->prog_id, GL_ACTIVE_ATTRIBUTES, &num_attribs);
 
-#if EMSCRIPTEN //WebGL doesn't support GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, so chose a default size value.
+#if __EMSCRIPTEN__ // WebGL doesn't support GL_ACTIVE_ATTRIBUTE_MAX_LENGTH, so chose a default size value.
     GLint max_len = 256;
 #else
     GLint max_len;

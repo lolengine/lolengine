@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine
 //
-//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -20,8 +20,9 @@
 #define GL_GLEXT_PROTOTYPES
 
 /* Prefer GLES on browsers */
-#if defined EMSCRIPTEN
+#if defined __EMSCRIPTEN__
 #   undef HAVE_GL_2X
+#   undef LOL_USE_GLEW
 #endif
 
 /* Only define one GL platform */

@@ -22,14 +22,14 @@ namespace lol
 {
 
 // This is needed to map MessageService::Send() to the JS when building the HTML.
-#if EMSCRIPTEN
+#if __EMSCRIPTEN__
 extern "C"
 {
     int C_Send(const char* message) { return (int)MessageService::Send(MessageBucket::AppIn, message); }
     //NOT IMPLEMENTED
     //bool C_FetchFirst(std::string& message);
 }
-#endif //EMSCRIPTEN
+#endif // __EMSCRIPTEN__
 
 /*
  * The global g_messageservice object, initialised by MessageService::Setup()

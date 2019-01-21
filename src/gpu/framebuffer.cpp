@@ -248,15 +248,15 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
 {
     m_data->m_size = size;
     m_data->m_bound = false;
-#if GL_VERSION_1_1
-    GLenum internal_format = fbo_format.GetFormat();
-    GLenum format = fbo_format.GetFormatOrder();
-    GLenum depth = GL_DEPTH_COMPONENT;
-#elif GL_ES_VERSION_2_0
+#if GL_ES_VERSION_2_0
     /* In OpenGL ES, internal format and format must match. */
     GLenum internal_format = fbo_format.GetFormat();
     GLenum format = fbo_format.GetFormat();
     GLenum depth = GL_DEPTH_COMPONENT16; /* for WebGL */
+#elif GL_VERSION_1_1
+    GLenum internal_format = fbo_format.GetFormat();
+    GLenum format = fbo_format.GetFormatOrder();
+    GLenum depth = GL_DEPTH_COMPONENT;
 #else
     /* In OpenGL ES, internal format and format must match. */
     GLenum internal_format = fbo_format.GetFormat();

@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -19,7 +19,7 @@
 #   include <execinfo.h>
 #endif
 
-#if EMSCRIPTEN
+#if HAVE_EMSCRIPTEN_H
 #   include <emscripten.h>
 #endif
 
@@ -31,7 +31,7 @@ namespace debug
 
 void dump_stack()
 {
-#if EMSCRIPTEN
+#if __EMSCRIPTEN__
     /* This would require demangling but we don't care yet. */
     msg::debug("%s\n", emscripten_run_script_string("(new Error).stack"));
 #elif HAVE_CXA_DEMANGLE && HAVE_BACKTRACE_SYMBOLS

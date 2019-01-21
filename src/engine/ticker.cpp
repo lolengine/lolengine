@@ -532,7 +532,7 @@ void Ticker::tick_draw()
     /* Clamp FPS */
     Profiler::Stop(Profiler::STAT_TICK_BLIT);
 
-#if !EMSCRIPTEN
+#if !__EMSCRIPTEN__
     /* If framerate is fixed, force wait time to 1/FPS. Otherwise, set wait
      * time to 0. */
     float frametime = data->fps ? 1.f / data->fps : 0.f;
