@@ -175,7 +175,7 @@ dnl  Are we building using Emscripten?
 ac_cv_my_have_emscripten="no"
 AC_CHECK_HEADERS(emscripten.h,
  [ac_cv_my_have_emscripten="yes"
-  AC_CHECK_HEADERS(html5/emscripten.h)
+  AC_CHECK_HEADERS(emscripten/html5.h)
   dnl  XXX: activate this if memory heap is too small
   #AM_CXXFLAGS="${AM_CXXFLAGS} -s ALLOW_MEMORY_GROWTH=1"
   dnl  HACK: until emcc properly adds these to EMSDK_OPTS
