@@ -206,13 +206,13 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attribs[])
         for (int i = 0; i < m_count; i++)
             if (m_streams[i].index == m_streams[attr_index].index)
             {
-                /* Remember the register used for this stream */
-                m_streams[i].reg = reg;
-
                 stride += m_streams[i].size;
                 if (i < attr_index)
                     offset += m_streams[i].size;
             }
+
+        /* Remember the register used for this stream */
+        m_streams[attr_index].reg = reg;
 
         /* Finally, we need to retrieve the type of the data */
 #if !defined GL_DOUBLE
@@ -247,7 +247,7 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attribs[])
             type_index = 0;
 
 
-        if (reg != 0xffffffff)
+        if (reg != 0xffffffffu)
         {
             if (tlut[type_index].type == GL_FLOAT
                  || tlut[type_index].type == GL_DOUBLE
