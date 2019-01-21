@@ -31,50 +31,6 @@ lolunit_declare_fixture(thread_test)
     {
     }
 
-    lolunit_declare_test(threads)
-    {
-        msg::info("%s START\n", m_manager.GetName().c_str());
-        //Start threads manager
-        m_manager.Start();
-        msg::info("%s STARTED\n", m_manager.GetName().c_str());
-
-        UnitTestJob job[4];
-        lolunit_assert_equal(0, m_manager.Test_GetDispatchCount());
-        m_manager.AddJob(&job[0]);
-        lolunit_assert_equal(1, m_manager.Test_GetDispatchCount());
-        lolunit_assert_equal(false, job[0].IsDone());
-        bool dispatch_check = true;
-        while (!m_manager.IsDone())
-        {
-            m_manager.tick_game(1.f / 60.f);
-            if (dispatch_check)
-            {
-                lolunit_assert_equal(0, m_manager.Test_GetDispatchCount());
-#if !defined(LOL_FEATURE_THREADS) || !LOL_FEATURE_THREADS
-                lolunit_assert_equal(0, m_manager.Test_GetDispatchedCount());
-#else //LOL_FEATURE_THREADS
-                lolunit_assert_equal(1, m_manager.Test_GetDispatchedCount());
-#endif
-                m_manager.AddJob(&job[1]);
-                m_manager.AddJob(&job[2]);
-                m_manager.AddJob(&job[3]);
-                dispatch_check = false;
-            }
-        }
-        lolunit_assert_equal(true, job[0].IsDone());
-        lolunit_assert_equal(true, job[1].IsDone());
-        lolunit_assert_equal(true, job[2].IsDone());
-        lolunit_assert_equal(true, job[3].IsDone());
-        array<ThreadJob*> results;
-        m_manager.GetWorkResult(results);
-        lolunit_assert_equal(4, results.count());
-
-        msg::info("%s STOP\n", m_manager.GetName().c_str());
-        //Stop manager
-        m_manager.Stop();
-        msg::info("%s STOPPED\n", m_manager.GetName().c_str());
-    }
-
     lolunit_declare_test(queue_try_push)
     {
         queue<int, 1> q;
