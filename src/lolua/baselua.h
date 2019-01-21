@@ -13,8 +13,11 @@
 
 #pragma once
 
-#include "3rdparty/lua/src/lua.hpp"
-//#include "lua/luawrapper.hpp"
+extern "C" {
+#include "3rdparty/lua/lua.h"
+#include "3rdparty/lua/lualib.h"
+#include "3rdparty/lua/lauxlib.h"
+}
 
 #include <string>
 

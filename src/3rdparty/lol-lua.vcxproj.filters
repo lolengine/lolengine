@@ -10,9 +10,6 @@
     <ClCompile Include="lbaselib.c">
       <Filter>upstream</Filter>
     </ClCompile>
-    <ClCompile Include="lbitlib.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
     <ClCompile Include="lcode.c">
       <Filter>upstream</Filter>
     </ClCompile>
@@ -102,9 +99,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="lzio.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
     <ClInclude Include="lapi.h">
       <Filter>upstream</Filter>
     </ClInclude>
@@ -129,6 +123,9 @@
     <ClInclude Include="lgc.h">
       <Filter>upstream</Filter>
     </ClInclude>
+    <ClInclude Include="ljumptab.h">
+      <Filter>upstream</Filter>
+    </ClInclude>
     <ClInclude Include="llex.h">
       <Filter>upstream</Filter>
     </ClInclude>
@@ -142,6 +139,9 @@
       <Filter>upstream</Filter>
     </ClInclude>
     <ClInclude Include="lopcodes.h">
+      <Filter>upstream</Filter>
+    </ClInclude>
+    <ClInclude Include="lopnames.h">
       <Filter>upstream</Filter>
     </ClInclude>
     <ClInclude Include="lparser.h">
@@ -162,13 +162,7 @@
     <ClInclude Include="ltm.h">
       <Filter>upstream</Filter>
     </ClInclude>
-    <ClInclude Include="lutf8lib.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
     <ClInclude Include="lua.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="lua.hpp">
       <Filter>upstream</Filter>
     </ClInclude>
     <ClInclude Include="luaconf.h">
@@ -180,7 +174,13 @@
     <ClInclude Include="lundump.h">
       <Filter>upstream</Filter>
     </ClInclude>
+    <ClInclude Include="lutf8lib.h">
+      <Filter>upstream</Filter>
+    </ClInclude>
     <ClInclude Include="lvm.h">
+      <Filter>upstream</Filter>
+    </ClInclude>
+    <ClInclude Include="lzio.h">
       <Filter>upstream</Filter>
     </ClInclude>
   </ItemGroup>

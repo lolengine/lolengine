@@ -1,43 +1,43 @@
 
+# excluded : ltest.c ltest.h lua.c
 lua_sources = \
-    lua/src/lapi.c lua/src/lapi.h \
-    lua/src/lauxlib.c lua/src/lauxlib.h \
-    lua/src/lbaselib.c \
-    lua/src/lbitlib.c \
-    lua/src/lcode.c lua/src/lcode.h \
-    lua/src/lcorolib.c \
-    lua/src/lctype.c lua/src/lctype.h \
-    lua/src/ldblib.c \
-    lua/src/ldebug.c lua/src/ldebug.h \
-    lua/src/ldo.c lua/src/ldo.h \
-    lua/src/ldump.c \
-    lua/src/lfunc.c lua/src/lfunc.h \
-    lua/src/lgc.c lua/src/lgc.h \
-    lua/src/linit.c \
-    lua/src/liolib.c \
-    lua/src/llex.c lua/src/llex.h \
-    lua/src/llimits.h \
-    lua/src/lmathlib.c \
-    lua/src/lmem.c lua/src/lmem.h \
-    lua/src/loadlib.c \
-    lua/src/lobject.c lua/src/lobject.h \
-    lua/src/lopcodes.c lua/src/lopcodes.h \
-    lua/src/loslib.c \
-    lua/src/lparser.c lua/src/lparser.h \
-    lua/src/lstate.c lua/src/lstate.h \
-    lua/src/lstring.c lua/src/lstring.h \
-    lua/src/lstrlib.c \
-    lua/src/lprefix.h \
-    lua/src/ltable.c lua/src/ltable.h \
-    lua/src/ltablib.c \
-    lua/src/ltm.c lua/src/ltm.h \
-    lua/src/lutf8lib.c \
-    lua/src/luaconf.h \
-    lua/src/lua.h \
-    lua/src/lualib.h \
-    lua/src/lundump.c lua/src/lundump.h \
-    lua/src/lvm.c lua/src/lvm.h \
-    lua/src/lzio.c lua/src/lzio.h
-
-lua_sources += lua/src/lua.hpp
+    lua/lapi.c lua/lapi.h \
+    lua/lauxlib.c lua/lauxlib.h \
+    lua/lbaselib.c \
+    lua/lcode.c lua/lcode.h \
+    lua/lcorolib.c \
+    lua/lctype.c lua/lctype.h \
+    lua/ldblib.c \
+    lua/ldebug.c lua/ldebug.h \
+    lua/ldo.c lua/ldo.h \
+    lua/ldump.c \
+    lua/lfunc.c lua/lfunc.h \
+    lua/lgc.c lua/lgc.h \
+    lua/linit.c \
+    lua/liolib.c \
+    lua/ljumptab.h \
+    lua/llex.c lua/llex.h \
+    lua/llimits.h \
+    lua/lmathlib.c \
+    lua/lmem.c lua/lmem.h \
+    lua/loadlib.c \
+    lua/lobject.c lua/lobject.h \
+    lua/lopcodes.c lua/lopcodes.h \
+    lua/lopnames.h \
+    lua/loslib.c \
+    lua/lparser.c lua/lparser.h \
+    lua/lprefix.h \
+    lua/lstate.c lua/lstate.h \
+    lua/lstring.c lua/lstring.h \
+    lua/lstrlib.c \
+    lua/ltable.c lua/ltable.h \
+    lua/ltablib.c \
+    lua/ltm.c lua/ltm.h \
+    lua/luaconf.h \
+    lua/lua.h \
+    lua/lualib.h \
+    lua/lundump.c lua/lundump.h \
+    lua/lutf8lib.c \
+    lua/lvm.c lua/lvm.h \
+    lua/lzio.c lua/lzio.h
 
