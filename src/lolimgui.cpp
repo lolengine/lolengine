@@ -181,6 +181,23 @@ const char* LolImGui::GetClipboardCallback(void *data)
     return clipboard->c_str();
 }
 
+void LolImGui::refresh_fonts()
+{
+    if (g_lolimgui->m_font)
+        Ticker::Unref(g_lolimgui->m_font);
+
+    // Build texture
+    unsigned char* pixels;
+    ivec2 size;
+    ImGuiIO& io = ImGui::GetIO();
+    io.Fonts->GetTexDataAsRGBA32(&pixels, &size.x, &size.y);
+
+    Image* image = new Image();
+    image->Copy(pixels, size, PixelFormat::RGBA_8);
+
+    Ticker::Ref(g_lolimgui->m_font = new TextureImage("", image));
+}
+
 //-----------------------------------------------------------------------------
 void LolImGui::tick_game(float seconds)
 {
@@ -191,15 +208,7 @@ void LolImGui::tick_game(float seconds)
     // Init Texture
     if (!m_font)
     {
-        // Build texture
-        unsigned char* pixels;
-        ivec2 size;
-        io.Fonts->GetTexDataAsRGBA32(&pixels, &size.x, &size.y);
-
-        Image* image = new Image();
-        image->Copy(pixels, size, PixelFormat::RGBA_8);
-
-        Ticker::Ref(m_font = new TextureImage("", image));
+        refresh_fonts();
     }
 
     // Texture has been created

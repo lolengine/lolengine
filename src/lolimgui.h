@@ -160,6 +160,8 @@ public:
     //-------------------------------------------------------------------------
     static std::string GetClipboard();
 
+    static void refresh_fonts();
+
 protected:
     virtual void tick_game(float seconds);
     virtual void tick_draw(float seconds, Scene &scene);
