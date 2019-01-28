@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -28,16 +28,6 @@
 
 namespace lol
 {
-
-#if !LOL_FEATURE_CXX11_CONSTEXPR
-#   define constexpr /* */
-#endif
-
-#if !LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
-#   define _____ const
-#else
-#   define _____ /* */
-#endif
 
 /*
  * Magic vector swizzling
@@ -70,7 +60,6 @@ struct LOL_ATTR_NODISCARD vec_t
 
     /* Disable all default constructors and destructors; this object
      * is only intended to exist as part of a union. */
-#if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
     vec_t() = delete;
     vec_t(vec_t<T, N, SWIZZLE> const &) = delete;
     ~vec_t() = delete;
@@ -88,7 +77,6 @@ struct LOL_ATTR_NODISCARD vec_t
         /* Pass by value in case this == &that */
         return *this = (vec_t<T,N>)that;
     }
-#endif
 
     inline T& operator[](size_t n)
     {
@@ -286,8 +274,8 @@ struct LOL_ATTR_NODISCARD vec_t<T,2>
 
 #if !_DOXYGEN_SKIP_ME
         vec_t<T, 2, 9000> const xx, rr, ss/**/, ww;
-        vec_t<T, 2, 9001> _____ xy, rg, st, rt, wh;
-        vec_t<T, 2, 9010> _____ yx, gr, ts, tr, hw;
+        vec_t<T, 2, 9001> const xy, rg, st, rt, wh;
+        vec_t<T, 2, 9010> const yx, gr, ts, tr, hw;
         vec_t<T, 2, 9011> const yy, gg, tt/**/, hh;
 
         vec_t<T, 3, 90000> const xxx, rrr, sss /**/, www;
@@ -326,9 +314,7 @@ static_assert(sizeof(i16vec2) == 4, "sizeof(i16vec2) == 4");
 static_assert(sizeof(ivec2) == 8, "sizeof(ivec2) == 8");
 static_assert(sizeof(i64vec2) == 16, "sizeof(i64vec2) == 16");
 
-#if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
 static_assert(sizeof(f16vec2) == 4, "sizeof(f16vec2) == 4");
-#endif
 static_assert(sizeof(vec2) == 8, "sizeof(vec2) == 8");
 static_assert(sizeof(dvec2) == 16, "sizeof(dvec2) == 16");
 
@@ -443,13 +429,13 @@ struct LOL_ATTR_NODISCARD vec_t<T,3>
 
 #if !_DOXYGEN_SKIP_ME
         vec_t<T, 2, 9000> const xx, rr, ss/**/, ww;
-        vec_t<T, 2, 9001> _____ xy, rg, st, rt, wh;
-        vec_t<T, 2, 9002> _____ xz, rb, sp, rp, wd;
-        vec_t<T, 2, 9010> _____ yx, gr, ts, tr, hw;
+        vec_t<T, 2, 9001> const xy, rg, st, rt, wh;
+        vec_t<T, 2, 9002> const xz, rb, sp, rp, wd;
+        vec_t<T, 2, 9010> const yx, gr, ts, tr, hw;
         vec_t<T, 2, 9011> const yy, gg, tt/**/, hh;
-        vec_t<T, 2, 9012> _____ yz, gb, tp/**/, hd;
-        vec_t<T, 2, 9020> _____ zx, br, ps, pr, dw;
-        vec_t<T, 2, 9021> _____ zy, bg, pt/**/, dh;
+        vec_t<T, 2, 9012> const yz, gb, tp/**/, hd;
+        vec_t<T, 2, 9020> const zx, br, ps, pr, dw;
+        vec_t<T, 2, 9021> const zy, bg, pt/**/, dh;
         vec_t<T, 2, 9022> const zz, bb, pp/**/, dd;
 
         vec_t<T, 3, 90000> const xxx, rrr, sss /**/, www;
@@ -457,23 +443,23 @@ struct LOL_ATTR_NODISCARD vec_t<T,3>
         vec_t<T, 3, 90002> const xxz, rrb, ssp, rrp, wwd;
         vec_t<T, 3, 90010> const xyx, rgr, sts, rtr, whw;
         vec_t<T, 3, 90011> const xyy, rgg, stt, rtt, whh;
-        vec_t<T, 3, 90012> _____ xyz, rgb, stp, rtp, whd;
+        vec_t<T, 3, 90012> const xyz, rgb, stp, rtp, whd;
         vec_t<T, 3, 90020> const xzx, rbr, sps, rpr, wdw;
-        vec_t<T, 3, 90021> _____ xzy, rbg, spt, rpt, wdh;
+        vec_t<T, 3, 90021> const xzy, rbg, spt, rpt, wdh;
         vec_t<T, 3, 90022> const xzz, rbb, spp, rpp, wdd;
         vec_t<T, 3, 90100> const yxx, grr, tss, trr, hww;
         vec_t<T, 3, 90101> const yxy, grg, tst, trt, hwh;
-        vec_t<T, 3, 90102> _____ yxz, grb, tsp, trp, hwd;
+        vec_t<T, 3, 90102> const yxz, grb, tsp, trp, hwd;
         vec_t<T, 3, 90110> const yyx, ggr, tts, ttr, hhw;
         vec_t<T, 3, 90111> const yyy, ggg, ttt /**/, hhh;
         vec_t<T, 3, 90112> const yyz, ggb, ttp /**/, hhd;
-        vec_t<T, 3, 90120> _____ yzx, gbr, tps, tpr, hdw;
+        vec_t<T, 3, 90120> const yzx, gbr, tps, tpr, hdw;
         vec_t<T, 3, 90121> const yzy, gbg, tpt /**/, hdh;
         vec_t<T, 3, 90122> const yzz, gbb, tpp /**/, hdd;
         vec_t<T, 3, 90200> const zxx, brr, pss, prr, dww;
-        vec_t<T, 3, 90201> _____ zxy, brg, pst, prt, dwh;
+        vec_t<T, 3, 90201> const zxy, brg, pst, prt, dwh;
         vec_t<T, 3, 90202> const zxz, brb, psp, prp, dwd;
-        vec_t<T, 3, 90210> _____ zyx, bgr, pts, ptr, dhw;
+        vec_t<T, 3, 90210> const zyx, bgr, pts, ptr, dhw;
         vec_t<T, 3, 90211> const zyy, bgg, ptt /**/, dhh;
         vec_t<T, 3, 90212> const zyz, bgb, ptp /**/, dhd;
         vec_t<T, 3, 90220> const zzx, bbr, pps, ppr, ddw;
@@ -572,9 +558,7 @@ static_assert(sizeof(i16vec3) == 6, "sizeof(i16vec3) == 6");
 static_assert(sizeof(ivec3) == 12, "sizeof(ivec3) == 12");
 static_assert(sizeof(i64vec3) == 24, "sizeof(i64vec3) == 24");
 
-#if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
 static_assert(sizeof(f16vec3) == 6, "sizeof(f16vec3) == 6");
-#endif
 static_assert(sizeof(vec3) == 12, "sizeof(vec3) == 12");
 static_assert(sizeof(dvec3) == 24, "sizeof(dvec3) == 24");
 
@@ -663,20 +647,20 @@ struct LOL_ATTR_NODISCARD vec_t<T,4>
 
 #if !_DOXYGEN_SKIP_ME
         vec_t<T,2,9000> const xx, rr, ss;
-        vec_t<T,2,9001> _____ xy, rg, st;
-        vec_t<T,2,9002> _____ xz, rb, sp;
-        vec_t<T,2,9003> _____ xw, ra, sq;
-        vec_t<T,2,9010> _____ yx, gr, ts;
+        vec_t<T,2,9001> const xy, rg, st;
+        vec_t<T,2,9002> const xz, rb, sp;
+        vec_t<T,2,9003> const xw, ra, sq;
+        vec_t<T,2,9010> const yx, gr, ts;
         vec_t<T,2,9011> const yy, gg, tt;
-        vec_t<T,2,9012> _____ yz, gb, tp;
-        vec_t<T,2,9013> _____ yw, ga, tq;
-        vec_t<T,2,9020> _____ zx, br, ps;
-        vec_t<T,2,9021> _____ zy, bg, pt;
+        vec_t<T,2,9012> const yz, gb, tp;
+        vec_t<T,2,9013> const yw, ga, tq;
+        vec_t<T,2,9020> const zx, br, ps;
+        vec_t<T,2,9021> const zy, bg, pt;
         vec_t<T,2,9022> const zz, bb, pp;
-        vec_t<T,2,9023> _____ zw, ba, pq;
-        vec_t<T,2,9030> _____ wx, ar, qs;
-        vec_t<T,2,9031> _____ wy, ag, qt;
-        vec_t<T,2,9032> _____ wz, ab, qp;
+        vec_t<T,2,9023> const zw, ba, pq;
+        vec_t<T,2,9030> const wx, ar, qs;
+        vec_t<T,2,9031> const wy, ag, qt;
+        vec_t<T,2,9032> const wz, ab, qp;
         vec_t<T,2,9033> const ww, aa, qq;
 
         vec_t<T,3,90000> const xxx, rrr, sss;
@@ -685,58 +669,58 @@ struct LOL_ATTR_NODISCARD vec_t<T,4>
         vec_t<T,3,90003> const xxw, rra, ssq;
         vec_t<T,3,90010> const xyx, rgr, sts;
         vec_t<T,3,90011> const xyy, rgg, stt;
-        vec_t<T,3,90012> _____ xyz, rgb, stp;
-        vec_t<T,3,90013> _____ xyw, rga, stq;
+        vec_t<T,3,90012> const xyz, rgb, stp;
+        vec_t<T,3,90013> const xyw, rga, stq;
         vec_t<T,3,90020> const xzx, rbr, sps;
-        vec_t<T,3,90021> _____ xzy, rbg, spt;
+        vec_t<T,3,90021> const xzy, rbg, spt;
         vec_t<T,3,90022> const xzz, rbb, spp;
-        vec_t<T,3,90023> _____ xzw, rba, spq;
+        vec_t<T,3,90023> const xzw, rba, spq;
         vec_t<T,3,90030> const xwx, rar, sqs;
-        vec_t<T,3,90031> _____ xwy, rag, sqt;
-        vec_t<T,3,90032> _____ xwz, rab, sqp;
+        vec_t<T,3,90031> const xwy, rag, sqt;
+        vec_t<T,3,90032> const xwz, rab, sqp;
         vec_t<T,3,90033> const xww, raa, sqq;
         vec_t<T,3,90100> const yxx, grr, tss;
         vec_t<T,3,90101> const yxy, grg, tst;
-        vec_t<T,3,90102> _____ yxz, grb, tsp;
-        vec_t<T,3,90103> _____ yxw, gra, tsq;
+        vec_t<T,3,90102> const yxz, grb, tsp;
+        vec_t<T,3,90103> const yxw, gra, tsq;
         vec_t<T,3,90110> const yyx, ggr, tts;
         vec_t<T,3,90111> const yyy, ggg, ttt;
         vec_t<T,3,90112> const yyz, ggb, ttp;
         vec_t<T,3,90113> const yyw, gga, ttq;
-        vec_t<T,3,90120> _____ yzx, gbr, tps;
+        vec_t<T,3,90120> const yzx, gbr, tps;
         vec_t<T,3,90121> const yzy, gbg, tpt;
         vec_t<T,3,90122> const yzz, gbb, tpp;
-        vec_t<T,3,90123> _____ yzw, gba, tpq;
-        vec_t<T,3,90130> _____ ywx, gar, tqs;
+        vec_t<T,3,90123> const yzw, gba, tpq;
+        vec_t<T,3,90130> const ywx, gar, tqs;
         vec_t<T,3,90131> const ywy, gag, tqt;
-        vec_t<T,3,90132> _____ ywz, gab, tqp;
+        vec_t<T,3,90132> const ywz, gab, tqp;
         vec_t<T,3,90133> const yww, gaa, tqq;
         vec_t<T,3,90200> const zxx, brr, pss;
-        vec_t<T,3,90201> _____ zxy, brg, pst;
+        vec_t<T,3,90201> const zxy, brg, pst;
         vec_t<T,3,90202> const zxz, brb, psp;
-        vec_t<T,3,90203> _____ zxw, bra, psq;
-        vec_t<T,3,90210> _____ zyx, bgr, pts;
+        vec_t<T,3,90203> const zxw, bra, psq;
+        vec_t<T,3,90210> const zyx, bgr, pts;
         vec_t<T,3,90211> const zyy, bgg, ptt;
         vec_t<T,3,90212> const zyz, bgb, ptp;
-        vec_t<T,3,90213> _____ zyw, bga, ptq;
+        vec_t<T,3,90213> const zyw, bga, ptq;
         vec_t<T,3,90220> const zzx, bbr, pps;
         vec_t<T,3,90221> const zzy, bbg, ppt;
         vec_t<T,3,90222> const zzz, bbb, ppp;
         vec_t<T,3,90223> const zzw, bba, ppq;
-        vec_t<T,3,90230> _____ zwx, bar, pqs;
-        vec_t<T,3,90231> _____ zwy, bag, pqt;
+        vec_t<T,3,90230> const zwx, bar, pqs;
+        vec_t<T,3,90231> const zwy, bag, pqt;
         vec_t<T,3,90232> const zwz, bab, pqp;
         vec_t<T,3,90233> const zww, baa, pqq;
         vec_t<T,3,90300> const wxx, arr, qss;
-        vec_t<T,3,90301> _____ wxy, arg, qst;
-        vec_t<T,3,90302> _____ wxz, arb, qsp;
+        vec_t<T,3,90301> const wxy, arg, qst;
+        vec_t<T,3,90302> const wxz, arb, qsp;
         vec_t<T,3,90303> const wxw, ara, qsq;
-        vec_t<T,3,90310> _____ wyx, agr, qts;
+        vec_t<T,3,90310> const wyx, agr, qts;
         vec_t<T,3,90311> const wyy, agg, qtt;
-        vec_t<T,3,90312> _____ wyz, agb, qtp;
+        vec_t<T,3,90312> const wyz, agb, qtp;
         vec_t<T,3,90313> const wyw, aga, qtq;
-        vec_t<T,3,90320> _____ wzx, abr, qps;
-        vec_t<T,3,90321> _____ wzy, abg, qpt;
+        vec_t<T,3,90320> const wzx, abr, qps;
+        vec_t<T,3,90321> const wzy, abg, qpt;
         vec_t<T,3,90322> const wzz, abb, qpp;
         vec_t<T,3,90323> const wzw, aba, qpq;
         vec_t<T,3,90330> const wwx, aar, qqs;
@@ -771,10 +755,10 @@ struct LOL_ATTR_NODISCARD vec_t<T,4>
         vec_t<T,4,900120> const xyzx, rgbr, stps;
         vec_t<T,4,900121> const xyzy, rgbg, stpt;
         vec_t<T,4,900122> const xyzz, rgbb, stpp;
-        vec_t<T,4,900123> _____ xyzw, rgba, stpq;
+        vec_t<T,4,900123> const xyzw, rgba, stpq;
         vec_t<T,4,900130> const xywx, rgar, stqs;
         vec_t<T,4,900131> const xywy, rgag, stqt;
-        vec_t<T,4,900132> _____ xywz, rgab, stqp;
+        vec_t<T,4,900132> const xywz, rgab, stqp;
         vec_t<T,4,900133> const xyww, rgaa, stqq;
         vec_t<T,4,900200> const xzxx, rbrr, spss;
         vec_t<T,4,900201> const xzxy, rbrg, spst;
@@ -783,13 +767,13 @@ struct LOL_ATTR_NODISCARD vec_t<T,4>
         vec_t<T,4,900210> const xzyx, rbgr, spts;
         vec_t<T,4,900211> const xzyy, rbgg, sptt;
         vec_t<T,4,900212> const xzyz, rbgb, sptp;
-        vec_t<T,4,900213> _____ xzyw, rbga, sptq;
+        vec_t<T,4,900213> const xzyw, rbga, sptq;
         vec_t<T,4,900220> const xzzx, rbbr, spps;
         vec_t<T,4,900221> const xzzy, rbbg, sppt;
         vec_t<T,4,900222> const xzzz, rbbb, sppp;
         vec_t<T,4,900223> const xzzw, rbba, sppq;
         vec_t<T,4,900230> const xzwx, rbar, spqs;
-        vec_t<T,4,900231> _____ xzwy, rbag, spqt;
+        vec_t<T,4,900231> const xzwy, rbag, spqt;
         vec_t<T,4,900232> const xzwz, rbab, spqp;
         vec_t<T,4,900233> const xzww, rbaa, spqq;
         vec_t<T,4,900300> const xwxx, rarr, sqss;
@@ -798,10 +782,10 @@ struct LOL_ATTR_NODISCARD vec_t<T,4>
         vec_t<T,4,900303> const xwxw, rara, sqsq;
         vec_t<T,4,900310> const xwyx, ragr, sqts;
         vec_t<T,4,900311> const xwyy, ragg, sqtt;
-        vec_t<T,4,900312> _____ xwyz, ragb, sqtp;
+        vec_t<T,4,900312> const xwyz, ragb, sqtp;
         vec_t<T,4,900313> const xwyw, raga, sqtq;
         vec_t<T,4,900320> const xwzx, rabr, sqps;
-        vec_t<T,4,900321> _____ xwzy, rabg, sqpt;
+        vec_t<T,4,900321> const xwzy, rabg, sqpt;
         vec_t<T,4,900322> const xwzz, rabb, sqpp;
         vec_t<T,4,900323> const xwzw, raba, sqpq;
         vec_t<T,4,900330> const xwwx, raar, sqqs;
@@ -819,10 +803,10 @@ struct LOL_ATTR_NODISCARD vec_t<T,4>
         vec_t<T,4,901020> const yxzx, grbr, tsps;
         vec_t<T,4,901021> const yxzy, grbg, tspt;
         vec_t<T,4,901022> const yxzz, grbb, tspp;
-        vec_t<T,4,901023> _____ yxzw, grba, tspq;
+        vec_t<T,4,901023> const yxzw, grba, tspq;
         vec_t<T,4,901030> const yxwx, grar, tsqs;
         vec_t<T,4,901031> const yxwy, grag, tsqt;
-        vec_t<T,4,901032> _____ yxwz, grab, tsqp;
+        vec_t<T,4,901032> const yxwz, grab, tsqp;
         vec_t<T,4,901033> const yxww, graa, tsqq;
         vec_t<T,4,901100> const yyxx, ggrr, ttss;
         vec_t<T,4,901101> const yyxy, ggrg, ttst;
@@ -843,7 +827,7 @@ struct LOL_ATTR_NODISCARD vec_t<T,4>
         vec_t<T,4,901200> const yzxx, gbrr, tpss;
         vec_t<T,4,901201> const yzxy, gbrg, tpst;
         vec_t<T,4,901202> const yzxz, gbrb, tpsp;
-        vec_t<T,4,901203> _____ yzxw, gbra, tpsq;
+        vec_t<T,4,901203> const yzxw, gbra, tpsq;
         vec_t<T,4,901210> const yzyx, gbgr, tpts;
         vec_t<T,4,901211> const yzyy, gbgg, tptt;
         vec_t<T,4,901212> const yzyz, gbgb, tptp;
@@ -852,19 +836,19 @@ struct LOL_ATTR_NODISCARD vec_t<T,4>
         vec_t<T,4,901221> const yzzy, gbbg, tppt;
         vec_t<T,4,901222> const yzzz, gbbb, tppp;
         vec_t<T,4,901223> const yzzw, gbba, tppq;
-        vec_t<T,4,901230> _____ yzwx, gbar, tpqs;
+        vec_t<T,4,901230> const yzwx, gbar, tpqs;
         vec_t<T,4,901231> const yzwy, gbag, tpqt;
         vec_t<T,4,901232> const yzwz, gbab, tpqp;
         vec_t<T,4,901233> const yzww, gbaa, tpqq;
         vec_t<T,4,901300> const ywxx, garr, tqss;
         vec_t<T,4,901301> const ywxy, garg, tqst;
-        vec_t<T,4,901302> _____ ywxz, garb, tqsp;
+        vec_t<T,4,901302> const ywxz, garb, tqsp;
         vec_t<T,4,901303> const ywxw, gara, tqsq;
         vec_t<T,4,901310> const ywyx, gagr, tqts;
         vec_t<T,4,901311> const ywyy, gagg, tqtt;
         vec_t<T,4,901312> const ywyz, gagb, tqtp;
         vec_t<T,4,901313> const ywyw, gaga, tqtq;
-        vec_t<T,4,901320> _____ ywzx, gabr, tqps;
+        vec_t<T,4,901320> const ywzx, gabr, tqps;
         vec_t<T,4,901321> const ywzy, gabg, tqpt;
         vec_t<T,4,901322> const ywzz, gabb, tqpp;
         vec_t<T,4,901323> const ywzw, gaba, tqpq;
@@ -879,19 +863,19 @@ struct LOL_ATTR_NODISCARD vec_t<T,4>
         vec_t<T,4,902010> const zxyx, brgr, psts;
         vec_t<T,4,902011> const zxyy, brgg, pstt;
         vec_t<T,4,902012> const zxyz, brgb, pstp;
-        vec_t<T,4,902013> _____ zxyw, brga, pstq;
+        vec_t<T,4,902013> const zxyw, brga, pstq;
         vec_t<T,4,902020> const zxzx, brbr, psps;
         vec_t<T,4,902021> const zxzy, brbg, pspt;
         vec_t<T,4,902022> const zxzz, brbb, pspp;
         vec_t<T,4,902023> const zxzw, brba, pspq;
         vec_t<T,4,902030> const zxwx, brar, psqs;
-        vec_t<T,4,902031> _____ zxwy, brag, psqt;
+        vec_t<T,4,902031> const zxwy, brag, psqt;
         vec_t<T,4,902032> const zxwz, brab, psqp;
         vec_t<T,4,902033> const zxww, braa, psqq;
         vec_t<T,4,902100> const zyxx, bgrr, ptss;
         vec_t<T,4,902101> const zyxy, bgrg, ptst;
         vec_t<T,4,902102> const zyxz, bgrb, ptsp;
-        vec_t<T,4,902103> _____ zyxw, bgra, ptsq;
+        vec_t<T,4,902103> const zyxw, bgra, ptsq;
         vec_t<T,4,902110> const zyyx, bggr, ptts;
         vec_t<T,4,902111> const zyyy, bggg, pttt;
         vec_t<T,4,902112> const zyyz, bggb, pttp;
@@ -900,7 +884,7 @@ struct LOL_ATTR_NODISCARD vec_t<T,4>
         vec_t<T,4,902121> const zyzy, bgbg, ptpt;
         vec_t<T,4,902122> const zyzz, bgbb, ptpp;
         vec_t<T,4,902123> const zyzw, bgba, ptpq;
-        vec_t<T,4,902130> _____ zywx, bgar, ptqs;
+        vec_t<T,4,902130> const zywx, bgar, ptqs;
         vec_t<T,4,902131> const zywy, bgag, ptqt;
         vec_t<T,4,902132> const zywz, bgab, ptqp;
         vec_t<T,4,902133> const zyww, bgaa, ptqq;
@@ -921,10 +905,10 @@ struct LOL_ATTR_NODISCARD vec_t<T,4>
         vec_t<T,4,902232> const zzwz, bbab, ppqp;
         vec_t<T,4,902233> const zzww, bbaa, ppqq;
         vec_t<T,4,902300> const zwxx, barr, pqss;
-        vec_t<T,4,902301> _____ zwxy, barg, pqst;
+        vec_t<T,4,902301> const zwxy, barg, pqst;
         vec_t<T,4,902302> const zwxz, barb, pqsp;
         vec_t<T,4,902303> const zwxw, bara, pqsq;
-        vec_t<T,4,902310> _____ zwyx, bagr, pqts;
+        vec_t<T,4,902310> const zwyx, bagr, pqts;
         vec_t<T,4,902311> const zwyy, bagg, pqtt;
         vec_t<T,4,902312> const zwyz, bagb, pqtp;
         vec_t<T,4,902313> const zwyw, baga, pqtq;
@@ -942,10 +926,10 @@ struct LOL_ATTR_NODISCARD vec_t<T,4>
         vec_t<T,4,903003> const wxxw, arra, qssq;
         vec_t<T,4,903010> const wxyx, argr, qsts;
         vec_t<T,4,903011> const wxyy, argg, qstt;
-        vec_t<T,4,903012> _____ wxyz, argb, qstp;
+        vec_t<T,4,903012> const wxyz, argb, qstp;
         vec_t<T,4,903013> const wxyw, arga, qstq;
         vec_t<T,4,903020> const wxzx, arbr, qsps;
-        vec_t<T,4,903021> _____ wxzy, arbg, qspt;
+        vec_t<T,4,903021> const wxzy, arbg, qspt;
         vec_t<T,4,903022> const wxzz, arbb, qspp;
         vec_t<T,4,903023> const wxzw, arba, qspq;
         vec_t<T,4,903030> const wxwx, arar, qsqs;
@@ -954,13 +938,13 @@ struct LOL_ATTR_NODISCARD vec_t<T,4>
         vec_t<T,4,903033> const wxww, araa, qsqq;
         vec_t<T,4,903100> const wyxx, agrr, qtss;
         vec_t<T,4,903101> const wyxy, agrg, qtst;
-        vec_t<T,4,903102> _____ wyxz, agrb, qtsp;
+        vec_t<T,4,903102> const wyxz, agrb, qtsp;
         vec_t<T,4,903103> const wyxw, agra, qtsq;
         vec_t<T,4,903110> const wyyx, aggr, qtts;
         vec_t<T,4,903111> const wyyy, aggg, qttt;
         vec_t<T,4,903112> const wyyz, aggb, qttp;
         vec_t<T,4,903113> const wyyw, agga, qttq;
-        vec_t<T,4,903120> _____ wyzx, agbr, qtps;
+        vec_t<T,4,903120> const wyzx, agbr, qtps;
         vec_t<T,4,903121> const wyzy, agbg, qtpt;
         vec_t<T,4,903122> const wyzz, agbb, qtpp;
         vec_t<T,4,903123> const wyzw, agba, qtpq;
@@ -969,10 +953,10 @@ struct LOL_ATTR_NODISCARD vec_t<T,4>
         vec_t<T,4,903132> const wywz, agab, qtqp;
         vec_t<T,4,903133> const wyww, agaa, qtqq;
         vec_t<T,4,903200> const wzxx, abrr, qpss;
-        vec_t<T,4,903201> _____ wzxy, abrg, qpst;
+        vec_t<T,4,903201> const wzxy, abrg, qpst;
         vec_t<T,4,903202> const wzxz, abrb, qpsp;
         vec_t<T,4,903203> const wzxw, abra, qpsq;
-        vec_t<T,4,903210> _____ wzyx, abgr, qpts;
+        vec_t<T,4,903210> const wzyx, abgr, qpts;
         vec_t<T,4,903211> const wzyy, abgg, qptt;
         vec_t<T,4,903212> const wzyz, abgb, qptp;
         vec_t<T,4,903213> const wzyw, abga, qptq;
@@ -1011,9 +995,7 @@ static_assert(sizeof(i16vec4) == 8, "sizeof(i16vec4) == 8");
 static_assert(sizeof(ivec4) == 16, "sizeof(ivec4) == 16");
 static_assert(sizeof(i64vec4) == 32, "sizeof(i64vec4) == 32");
 
-#if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
 static_assert(sizeof(f16vec4) == 8, "sizeof(f16vec4) == 8");
-#endif
 static_assert(sizeof(vec4) == 16, "sizeof(vec4) == 16");
 static_assert(sizeof(dvec4) == 32, "sizeof(dvec4) == 32");
 
@@ -1384,10 +1366,6 @@ template<typename T>
 vec_t<T,4> const vec_t<T,4>::axis_z = vec_t<T,4>(T(0), T(0), T(1), T(0));
 template<typename T>
 vec_t<T,4> const vec_t<T,4>::axis_w = vec_t<T,4>(T(0), T(0), T(0), T(1));
-
-#if !LOL_FEATURE_CXX11_CONSTEXPR
-#undef constexpr
-#endif
 
 } /* namespace lol */
 

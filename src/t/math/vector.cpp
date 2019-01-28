@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -268,7 +268,6 @@ lolunit_declare_fixture(vector_test)
         lolunit_assert(va == vb);
     }
 
-#if !LOL_FEATURE_VISUAL_STUDIO_THAT_FUCKING_PIECE_OF_SHIT_COMPILER
     lolunit_declare_test(vector_iterator)
     {
         vec4 v4(1.125f, 1.25f, 1.375f, 1.25f);
@@ -304,7 +303,6 @@ lolunit_declare_fixture(vector_test)
             lolunit_assert_less(x, 1.5f);
         }
     }
-#endif
 };
 
 } /* namespace lol */

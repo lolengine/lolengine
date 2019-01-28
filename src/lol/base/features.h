@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -22,28 +22,18 @@
  */
 
 #define LOL_FEATURE_THREADS 1
-#define LOL_FEATURE_VISUAL_STUDIO_THAT_FUCKING_PIECE_OF_SHIT_COMPILER 0
 
 #if defined EMSCRIPTEN
 #   undef LOL_FEATURE_THREADS
 #endif
-
-/* Use this to disable code that causes compiler crashes. */
-#if defined _MSC_VER
-#   undef LOL_FEATURE_VISUAL_STUDIO_THAT_FUCKING_PIECE_OF_SHIT_COMPILER
-#   define LOL_FEATURE_VISUAL_STUDIO_THAT_FUCKING_PIECE_OF_SHIT_COMPILER 1
-#endif
-
 
 /*
  * Check for C++11 and later features.
  */
 
 /* These features aren't necessarily supported by all compilers */
-#undef LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
 #undef LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS
 #undef LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
-#undef LOL_FEATURE_CXX11_CONSTEXPR
 #undef LOL_FEATURE_CXX11_ISNAN /* FIXME: is this the right place? */
 #undef LOL_FEATURE_CXX11_NULLPTR
 #undef LOL_FEATURE_CXX11_TEMPLATE_ALIASES
@@ -64,15 +54,14 @@
 
 /* Features supported by GCC */
 #if defined __GNUC__
-#   define LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS 1
-#   define LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS 1
-#   if defined(__GXX_EXPERIMENTAL_CXX0X) || __cplusplus >= 201103L
-#       define LOL_FEATURE_CXX11_CONSTEXPR 1
-#       define LOL_FEATURE_CXX11_ISNAN 1
-#       define LOL_FEATURE_CXX11_ARRAY_INITIALIZERS 1
-#       define LOL_FEATURE_CXX11_NULLPTR 1
-#       define LOL_FEATURE_CXX11_SFINAE_FOR_CTORS 1
+#   if !defined(__GXX_EXPERIMENTAL_CXX0X) && __cplusplus < 201103L
+#       error "sorry, this version of GCC does not support constexpr"
 #   endif
+#   define LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS 1
+#   define LOL_FEATURE_CXX11_ISNAN 1
+#   define LOL_FEATURE_CXX11_ARRAY_INITIALIZERS 1
+#   define LOL_FEATURE_CXX11_NULLPTR 1
+#   define LOL_FEATURE_CXX11_SFINAE_FOR_CTORS 1
 #   if (__GNUC__ * 100 + __GNUC_MINOR__) >= 470
 #       define LOL_FEATURE_CXX11_TEMPLATE_ALIASES 1
 #   endif
@@ -80,11 +69,10 @@
 
 /* Features supported by Clang */
 #if !defined __GNUC__ && defined __has_feature
-#   define LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS 1
 #   define LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS 1
 #   define LOL_FEATURE_CXX11_ARRAY_INITIALIZERS 1
-#   if __has_feature(cxx_constexpr)
-#       define LOL_FEATURE_CXX11_CONSTEXPR 1
+#   if !__has_feature(cxx_constexpr)
+#       error "sorry, this version of clang does not support constexpr"
 #   endif
 #   define LOL_FEATURE_CXX11_ISNAN 1
 #   if __has_feature(cxx_nullptr)
@@ -96,21 +84,15 @@
 
 /* Features supported by Visual Studio */
 #if defined _MSC_VER
+#   if _MSC_VER < 1910
+#       error "sorry, Visual Studio 2017 or later is needed"
+#   endif
 #   define LOL_FEATURE_CXX11_TEMPLATE_ALIASES 1
 #   define LOL_FEATURE_CXX11_ISNAN 1
-#   if _MSC_VER >= 1900 /* 2015 CTP (not too bad) */
-#       define LOL_FEATURE_CXX11_NULLPTR 1
-#       define LOL_FEATURE_CXX11_SFINAE_FOR_CTORS 1
-#       define LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS 1
-#   endif
-#   if _MSC_VER < 1800 /* 2012 or older (ugly piece of shit) */
-#       error "sorry, Visual Studio 2013 or later is needed"
-#   endif
-    /* Supported in VS 2015 but causes massive warning output */
-#   undef LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
-    /* Still unsupported as of VS 2015 (TODO: check VS2017) */
-#   undef LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
-#   undef LOL_FEATURE_CXX11_CONSTEXPR
+#   define LOL_FEATURE_CXX11_NULLPTR 1
+#   define LOL_FEATURE_CXX11_SFINAE_FOR_CTORS 1
+#   define LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS 1
+#   define LOL_FEATURE_CXX11_ARRAY_INITIALIZERS 1
 #endif
 
 

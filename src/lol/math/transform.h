@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -21,10 +21,6 @@
 
 namespace lol
 {
-
-#if !LOL_FEATURE_CXX11_CONSTEXPR
-#   define constexpr /* */
-#endif
 
 /*
  * 2-element transforms: complex numbers
@@ -496,10 +492,6 @@ static inline sqt_t<T> operator /(sqt_t<T> const &x, sqt_t<T> const &y)
 {
     return x * inverse(y);
 }
-
-#if !LOL_FEATURE_CXX11_CONSTEXPR
-#undef constexpr
-#endif
 
 } /* namespace lol */
 

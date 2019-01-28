@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -31,10 +31,6 @@
 
 namespace lol
 {
-
-#if !LOL_FEATURE_CXX11_CONSTEXPR
-#   define constexpr /* */
-#endif
 
 /*
  * The generic “mat_t” type, which is fixed-size
@@ -153,9 +149,7 @@ private:
 };
 
 static_assert(sizeof(imat2) == 16, "sizeof(imat2) == 16");
-#if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
 static_assert(sizeof(f16mat2) == 8, "sizeof(f16mat2) == 8");
-#endif
 static_assert(sizeof(mat2) == 16, "sizeof(mat2) == 16");
 static_assert(sizeof(dmat2) == 32, "sizeof(dmat2) == 32");
 
@@ -280,9 +274,7 @@ private:
 };
 
 static_assert(sizeof(imat3) == 36, "sizeof(imat3) == 36");
-#if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
 static_assert(sizeof(f16mat3) == 18, "sizeof(f16mat3) == 18");
-#endif
 static_assert(sizeof(mat3) == 36, "sizeof(mat3) == 36");
 static_assert(sizeof(dmat3) == 72, "sizeof(dmat3) == 72");
 
@@ -456,9 +448,7 @@ private:
 };
 
 static_assert(sizeof(imat4) == 64, "sizeof(imat4) == 64");
-#if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
 static_assert(sizeof(f16mat4) == 32, "sizeof(f16mat4) == 32");
-#endif
 static_assert(sizeof(mat4) == 64, "sizeof(mat4) == 64");
 static_assert(sizeof(dmat4) == 128, "sizeof(dmat4) == 128");
 
@@ -845,10 +835,6 @@ template<typename T>
 mat_t<T,3,3> const mat_t<T,3,3>::identity = mat_t<T,3,3>((T)1);
 template<typename T>
 mat_t<T,4,4> const mat_t<T,4,4>::identity = mat_t<T,4,4>((T)1);
-
-#if !LOL_FEATURE_CXX11_CONSTEXPR
-#undef constexpr
-#endif
 
 } /* namespace lol */
 

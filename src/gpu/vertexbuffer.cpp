@@ -221,9 +221,7 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attribs[])
         static struct { GLint size; GLenum type; } const tlut[] =
         {
             { 0, 0 },
-#if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
             { 0, 0 }, { 0, 0 }, { 0, 0 }, { 0, 0 }, /* half */
-#endif
             { 1, GL_FLOAT }, { 2, GL_FLOAT }, { 3, GL_FLOAT },
                 { 4, GL_FLOAT }, /* float */
             { 1, GL_DOUBLE }, { 2, GL_DOUBLE }, { 3, GL_DOUBLE },
@@ -316,9 +314,7 @@ VertexStreamBase VertexDeclaration::GetStream(int index) const
             case VertexStreamBase::Type##T: stream.AddStream<T>(n++, m_streams[i].usage); break;
 
             __T(void)
-#if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
             __T(half)     __T(f16vec2) __T(f16vec3) __T(f16vec4)
-#endif
             __T(float)    __T(vec2)    __T(vec3)    __T(vec4)
             __T(double)   __T(dvec2)   __T(dvec3)   __T(dvec4)
             __T(int8_t)   __T(i8vec2)  __T(i8vec3)  __T(i8vec4)

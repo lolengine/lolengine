@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -23,7 +23,6 @@ lolunit_declare_fixture(build_features)
     {
         lolunit_assert_equal(sizeof(half), 2);
 
-#if LOL_FEATURE_CXX11_UNRESTRICTED_UNIONS
         lolunit_assert_equal(sizeof(f16vec2), 4);
         lolunit_assert_equal(sizeof(f16vec3), 6);
         lolunit_assert_equal(sizeof(f16vec4), 8);
@@ -31,7 +30,6 @@ lolunit_declare_fixture(build_features)
         lolunit_assert_equal(sizeof(f16mat2), 8);
         lolunit_assert_equal(sizeof(f16mat3), 18);
         lolunit_assert_equal(sizeof(f16mat4), 32);
-#endif
     }
 
     lolunit_declare_test(float_type_sizes)
