@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2004—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2004—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -37,7 +37,7 @@ image image::dither_dbs() const
     for (int j = 0; j < NN; j++)
         for (int i = 0; i < NN; i++)
         {
-            vec2 v = vec2(i - N, j - N);
+            vec2 v = vec2((float)(i - N), (float)(j - N));
             ker[i][j] = exp(-sqlength(v / 1.6f) / 2.f)
                       + exp(-sqlength(v / 0.6f) / 2.f);
             t += ker[i][j];

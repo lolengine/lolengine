@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -111,7 +111,7 @@ void msg::helper(MessageType type, char const *fmt, va_list ap)
 
     array<WCHAR> widechar;
     widechar.resize(buf.length() + 1);
-    MultiByteToWideChar(CP_UTF8, 0, buf.c_str(), buf.length() + 1, widechar.data(), widechar.count());
+    MultiByteToWideChar(CP_UTF8, 0, buf.c_str(), (int)buf.length() + 1, widechar.data(), widechar.count());
     OutputDebugStringW(widechar.data());
 #   else
     fprintf(stderr, "%s: ", prefix[(int)type]);

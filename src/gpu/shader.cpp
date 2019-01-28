@@ -369,7 +369,7 @@ Shader::Shader(std::string const &name,
 
 int Shader::GetAttribCount() const
 {
-    return data->attrib_locations.size();
+    return (int)data->attrib_locations.size();
 }
 
 ShaderAttrib Shader::GetAttribLocation(VertexUsage usage, int index) const

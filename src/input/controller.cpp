@@ -2,7 +2,7 @@
 //  Lol Engine
 //
 //  Copyright © 2010—2015 Benjamin Litzelmann
-//            © 2017—2018 Sam Hocevar <sam@hocevar.net>
+//            © 2017—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -32,7 +32,7 @@ void KeyBinding::Bind(const std::string& device_name, const std::string& key_nam
         return;
     }
 
-    int keyindex = device->GetKeyIndex(key_name);
+    int keyindex = (int)device->GetKeyIndex(key_name);
     if (keyindex < 0)
     {
         msg::warn("trying to bind nonexistent key %s.%s\n",
@@ -77,7 +77,7 @@ void AxisBinding::Bind(const std::string& device_name, const std::string& axis_n
         return;
     }
 
-    int axisindex = device->GetAxisIndex(axis_name);
+    int axisindex = (int)device->GetAxisIndex(axis_name);
     if (axisindex < 0)
     {
         msg::warn("trying to bind nonexistent axis %s.%s\n",
@@ -98,7 +98,7 @@ void AxisBinding::BindKey(const std::string& device_name, const std::string& key
         return;
     }
 
-    int keyindex = device->GetKeyIndex(key_name);
+    int keyindex = (int)device->GetKeyIndex(key_name);
     if (keyindex < 0)
     {
         msg::warn("trying to bind nonexistent axis key %s.%s\n",
@@ -119,7 +119,7 @@ void AxisBinding::BindKeys(const std::string& device_name, const std::string& mi
         return;
     }
 
-    int minkeyindex = device->GetKeyIndex(min_key_name);
+    int minkeyindex = (int)device->GetKeyIndex(min_key_name);
     if (minkeyindex < 0)
     {
         msg::warn("trying to bind nonexistent axis key %s.%s\n",
@@ -127,7 +127,7 @@ void AxisBinding::BindKeys(const std::string& device_name, const std::string& mi
         return;
     }
 
-    int maxkeyindex = device->GetKeyIndex(max_key_name);
+    int maxkeyindex = (int)device->GetKeyIndex(max_key_name);
     if (maxkeyindex < 0)
     {
         msg::warn("trying to bind nonexistent axis key %s.%s\n",

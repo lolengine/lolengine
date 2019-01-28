@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -111,7 +111,7 @@ void SubMesh::AddTexture(std::string const &name, Texture* texture)
 
 void SubMesh::Render()
 {
-    int vertex_count = 0;
+    size_t vertex_count = 0;
 
     for (int i = 0; i < m_vbos.count(); ++i)
     {
@@ -148,7 +148,7 @@ void SubMesh::Render()
 
     m_ibo->Bind();
     m_vdecl->Bind();
-    m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, m_ibo->GetSize() / sizeof(uint16_t));
+    m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, (int)(m_ibo->GetSize() / sizeof(uint16_t)));
     m_vdecl->Unbind();
     m_ibo->Unbind();
 }

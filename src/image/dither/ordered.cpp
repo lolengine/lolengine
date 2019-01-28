@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2004—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2004—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -33,7 +33,7 @@ image image::dither_halftone(float radius, float angle) const
      * like crap. So we create a kernel PRECISION times larger, and ask
      * the ditherer to scale it by 1/PRECISION. */
     float const PRECISION = 4.f;
-    int k = (radius * PRECISION * lol::sqrt(2.f) + 0.5f);
+    int k = (int)std::round(radius * PRECISION * lol::sqrt(2.f));
     array2d<float> ker = image::kernel::halftone(ivec2(k, k));
 
     return dither_helper(*this, ker, 1.f / PRECISION, angle + F_PI / 4.f);

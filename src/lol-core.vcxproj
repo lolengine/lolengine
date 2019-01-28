@@ -85,7 +85,6 @@
     <ClCompile Include="audio\sample.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="base\assert.cpp" />
-    <ClCompile Include="base\enum.cpp" />
     <ClCompile Include="base\log.cpp" />
     <ClCompile Include="base\string.cpp" />
     <ClCompile Include="debug\fps.cpp" />
@@ -152,7 +151,6 @@
     <ClCompile Include="light.cpp" />
     <ClCompile Include="lolimgui.cpp" />
     <ClCompile Include="lolua\baselua.cpp" />
-    <ClCompile Include="math\constants.cpp" />
     <ClCompile Include="math\geometry.cpp" />
     <ClCompile Include="math\half.cpp" />
     <ClCompile Include="math\matrix.cpp" />

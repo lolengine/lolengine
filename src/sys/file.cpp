@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -140,7 +140,7 @@ class FileData
             if (done <= 0)
                 break;
 
-            int oldsize = ret.length();
+            size_t oldsize = ret.length();
             ret.resize(oldsize + done);
             memcpy(&ret[oldsize], &buf[0], done);
 
@@ -159,7 +159,7 @@ class FileData
         if (done <= 0)
             return -1;
 
-        return done;
+        return (int)done;
 #else
         return 0;
 #endif
@@ -310,7 +310,7 @@ int File::Write(void const *buf, int count)
 //--
 int File::Write(std::string const &buf)
 {
-    return m_data->Write(buf.c_str(), buf.length());
+    return m_data->Write(buf.c_str(), (int)buf.length());
 }
 
 //--

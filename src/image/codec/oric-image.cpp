@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -66,7 +66,7 @@ ResourceCodecData* OricImageCodec::Load(std::string const &path)
     if (screen.length() == 0)
         return nullptr;
 
-    auto data = new ResourceImageData(new image(ivec2(WIDTH, screen.length() * 6 / WIDTH)));
+    auto data = new ResourceImageData(new image(ivec2(WIDTH, (int)screen.length() * 6 / WIDTH)));
     auto img = data->m_image;
 
     u8vec4 *pixels = img->lock<PixelFormat::RGBA_8>();

@@ -545,7 +545,7 @@ void Renderer::SetScissorRect(vec4 rect)
     m_data->m_scissor_rect = rect;
     if (m_data->m_scissor_mode == ScissorMode::Enabled)
     {
-        glScissor((int)rect.x, (int)Video::GetSize().y - rect.w, (int)(rect.z - rect.x), (int)(rect.w - rect.y));
+        glScissor((int)rect.x, (int)(Video::GetSize().y - rect.w), (int)(rect.z - rect.x), (int)(rect.w - rect.y));
         //glScissor((int)rect.x, (int)rect.y, (int)(rect.z - rect.x), (int)(rect.w - rect.y));
     }
 }

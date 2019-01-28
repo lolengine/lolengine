@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2004—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2004—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -223,7 +223,7 @@ void image::set_format(PixelFormat fmt)
     /* Lossless conversions: u8 to float */
     else if (old_fmt == PixelFormat::Y_8 && fmt == PixelFormat::Y_F32)
     {
-        float *src = (float *)m_data->m_pixels[(int)old_fmt]->data();
+        uint8_t *src = (uint8_t *)m_data->m_pixels[(int)old_fmt]->data();
         float *dest = (float *)m_data->m_pixels[(int)fmt]->data();
 
         for (int n = 0; n < count; ++n)
@@ -231,7 +231,7 @@ void image::set_format(PixelFormat fmt)
     }
     else if (old_fmt == PixelFormat::Y_8 && fmt == PixelFormat::RGB_F32)
     {
-        float *src = (float *)m_data->m_pixels[(int)old_fmt]->data();
+        uint8_t *src = (uint8_t *)m_data->m_pixels[(int)old_fmt]->data();
         vec3 *dest = (vec3 *)m_data->m_pixels[(int)fmt]->data();
 
         for (int n = 0; n < count; ++n)
@@ -255,7 +255,7 @@ void image::set_format(PixelFormat fmt)
     }
     else if (old_fmt == PixelFormat::Y_8 && fmt == PixelFormat::RGBA_F32)
     {
-        float *src = (float *)m_data->m_pixels[(int)old_fmt]->data();
+        uint8_t *src = (uint8_t *)m_data->m_pixels[(int)old_fmt]->data();
         vec4 *dest = (vec4 *)m_data->m_pixels[(int)fmt]->data();
 
         for (int n = 0; n < count; ++n)

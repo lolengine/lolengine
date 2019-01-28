@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2004—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2004—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -110,7 +110,7 @@ array2d<float> image::kernel::blue_noise(ivec2 size, ivec2 gsize)
 
     auto best = [&] (float val, float mul) -> ivec2
     {
-        float maxval = -size.x * size.y;
+        float maxval = -(float)(size.x * size.y);
         ivec2 coord(0, 0);
         for (int y = 0; y < size.y; ++y)
         for (int x = 0; x < size.x; ++x)

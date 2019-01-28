@@ -243,9 +243,6 @@
     <ClCompile Include="base\assert.cpp">
       <Filter>base</Filter>
     </ClCompile>
-    <ClCompile Include="base\enum.cpp">
-      <Filter>base</Filter>
-    </ClCompile>
     <ClCompile Include="base\string.cpp">
       <Filter>base</Filter>
     </ClCompile>
@@ -287,9 +284,6 @@
     </ClCompile>
     <ClCompile Include="MessageService.cpp">
       <Filter>...</Filter>
-    </ClCompile>
-    <ClCompile Include="math\constants.cpp">
-      <Filter>math</Filter>
     </ClCompile>
     <ClCompile Include="easymesh\easymeshrender.cpp">
       <Filter>easymesh</Filter>
