@@ -480,8 +480,7 @@ void Scene::ReleasePrimitiveRenderer(int index, uintptr_t key)
 
 void Scene::ReleaseAllPrimitiveRenderers(uintptr_t key)
 {
-    for (auto& renderer : data->m_prim_renderers[key])
-        renderer = nullptr;
+    data->m_prim_renderers[key].clear();
 }
 
 //-----------------------------------------------------------------------------
@@ -689,8 +688,10 @@ void Scene::render_primitives()
         for (int idx = 0; idx < data->m_prim_renderers[key].count(); ++idx)
         {
             /* TODO: Not sure if thread compliant */
+            std::shared_ptr<PrimitiveSource> source;
             if (idx < SceneData::m_prim_sources[key].count())
-                data->m_prim_renderers[key][idx]->Render(*this, SceneData::m_prim_sources[key][idx]);
+                source = SceneData::m_prim_sources[key][idx];
+            data->m_prim_renderers[key][idx]->Render(*this, source);
         }
     }
 }
