@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -219,7 +221,7 @@ half::operator float() const
     return u.f;
 }
 
-size_t half::convert(half *dst, float const *src, size_t nelem)
+void half::convert(half *dst, float const *src, size_t nelem)
 {
     for (size_t i = 0; i < nelem; i++)
     {
@@ -227,11 +229,9 @@ size_t half::convert(half *dst, float const *src, size_t nelem)
         u.f = *src++;
         *dst++ = makebits(float_to_half_nobranch(u.x));
     }
-
-    return nelem;
 }
 
-size_t half::convert(float *dst, half const *src, size_t nelem)
+void half::convert(float *dst, half const *src, size_t nelem)
 {
     for (size_t i = 0; i < nelem; i++)
     {
@@ -242,8 +242,6 @@ size_t half::convert(float *dst, half const *src, size_t nelem)
         u.x = half_to_float_nobranch((*src++).bits);
         *dst++ = u.f;
     }
-
-    return nelem;
 }
 
 } /* namespace lol */
