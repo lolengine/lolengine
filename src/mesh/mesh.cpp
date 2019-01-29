@@ -61,13 +61,10 @@ SubMesh::SubMesh(std::shared_ptr<Shader> shader, std::shared_ptr<VertexDeclarati
     m_shader(shader),
     m_vdecl(vdecl)
 {
-    Ticker::Ref(m_shader.get());
 }
 
 SubMesh::~SubMesh()
 {
-    Ticker::Unref(m_shader.get());
-    // TODO: cleanup
 }
 
 void SubMesh::SetMeshPrimitive(MeshPrimitive mesh_primitive)
@@ -77,9 +74,7 @@ void SubMesh::SetMeshPrimitive(MeshPrimitive mesh_primitive)
 
 void SubMesh::SetShader(std::shared_ptr<Shader> shader)
 {
-    Ticker::Unref(m_shader.get());
     m_shader = shader;
-    Ticker::Ref(m_shader.get());
 }
 
 std::shared_ptr<Shader> SubMesh::GetShader()

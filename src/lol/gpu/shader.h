@@ -314,7 +314,7 @@ private:
 class ShaderData;
 
 //Shader ----------------------------------------------------------------------
-class Shader : public Entity
+class Shader
 {
 public:
     static std::shared_ptr<Shader> Create(std::string const &name, std::string const &code);
