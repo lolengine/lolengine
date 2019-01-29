@@ -143,7 +143,7 @@ private:
     SceneDisplay* m_display = nullptr;
 
     /** Render buffers: where to render to. */
-    Framebuffer *m_renderbuffer[4];
+    std::shared_ptr<Framebuffer> m_renderbuffer[4];
 
     struct postprocess
     {
@@ -210,10 +210,8 @@ Scene::Scene(ivec2 size)
     data(std::make_unique<SceneData>()),
     m_renderer(std::make_shared<Renderer>(size))
 {
-    data->m_renderbuffer[0] = new Framebuffer(m_size);
-    data->m_renderbuffer[1] = new Framebuffer(m_size);
-    data->m_renderbuffer[2] = new Framebuffer(m_size);
-    data->m_renderbuffer[3] = new Framebuffer(m_size);
+    for (int i = 0; i < 4; ++i)
+        data->m_renderbuffer[i] = std::make_shared<Framebuffer>(m_size);
     data->m_pp.m_shader[0] = Shader::Create(LOLFX_RESOURCE_NAME(gpu_blit));
     data->m_pp.m_shader[1] = Shader::Create(LOLFX_RESOURCE_NAME(gpu_postprocess));
     data->m_pp.m_coord[0] = data->m_pp.m_shader[0]->GetAttribLocation(VertexUsage::Position, 0);
@@ -579,14 +577,8 @@ void Scene::pre_render(float)
     if (m_size != m_wanted_size)
     {
         m_size = m_wanted_size;
-        delete data->m_renderbuffer[0];
-        delete data->m_renderbuffer[1];
-        delete data->m_renderbuffer[2];
-        delete data->m_renderbuffer[3];
-        data->m_renderbuffer[0] = new Framebuffer(m_size);
-        data->m_renderbuffer[1] = new Framebuffer(m_size);
-        data->m_renderbuffer[2] = new Framebuffer(m_size);
-        data->m_renderbuffer[3] = new Framebuffer(m_size);
+        for (int i = 0; i < 4; ++i)
+            data->m_renderbuffer[i] = std::make_shared<Framebuffer>(m_size);
 
         mat4 proj = mat4::ortho(0.f, (float)m_size.x, 0.f, (float)m_size.y, -1000.f, 1000.f);
         data->m_default_cam->SetProjection(proj);
@@ -599,11 +591,11 @@ void Scene::pre_render(float)
     }
 
     {
-        RenderContext rc(m_renderer);
+        render_context rc(m_renderer);
         if (do_pp)
         {
-            rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
-            rc.SetClearDepth(1.f);
+            rc.clear_color(vec4(0.f, 0.f, 0.f, 1.f));
+            rc.clear_depth(1.f);
         }
 
         m_renderer->Clear(ClearMask::Color | ClearMask::Depth);
@@ -633,9 +625,9 @@ void Scene::post_render(float)
 
         data->m_renderbuffer[3]->Bind();
 
-        RenderContext rc(m_renderer);
-        rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
-        rc.SetClearDepth(1.f);
+        render_context rc(m_renderer);
+        rc.clear_color(vec4(0.f, 0.f, 0.f, 1.f));
+        rc.clear_depth(1.f);
         m_renderer->Clear(ClearMask::Color | ClearMask::Depth);
 
         /* Execute post process */
@@ -657,9 +649,9 @@ void Scene::post_render(float)
 
         data->m_pp.m_shader[0]->Bind();
 
-        RenderContext rc(m_renderer);
-        rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
-        rc.SetClearDepth(1.f);
+        render_context rc(m_renderer);
+        rc.clear_color(vec4(0.f, 0.f, 0.f, 1.f));
+        rc.clear_depth(1.f);
         m_renderer->Clear(ClearMask::Color | ClearMask::Depth);
 
         /* Blit final image to screen */
@@ -687,9 +679,9 @@ void Scene::render_primitives()
     ASSERT(!!data, "Trying to access a non-ready scene");
 
     /* FIXME: Temp fix for mesh having no render context*/
-    RenderContext rc(m_renderer);
-    rc.SetCullMode(CullMode::Clockwise);
-    rc.SetDepthFunc(DepthFunc::LessOrEqual);
+    render_context rc(m_renderer);
+    rc.cull_mode(CullMode::Clockwise);
+    rc.depth_func(DepthFunc::LessOrEqual);
 
     /* new scenegraph */
     for (uintptr_t key : keys(data->m_prim_renderers))
@@ -708,7 +700,7 @@ void Scene::render_tiles() // XXX: rename to Blit()
 {
     ASSERT(!!data, "Trying to access a non-ready scene");
 
-    RenderContext rc(m_renderer);
+    render_context rc(m_renderer);
 
     /* Early test if nothing needs to be rendered */
     if (!data->m_tile_api.m_tiles.count() && !data->m_tile_api.m_palettes.count())
@@ -716,12 +708,12 @@ void Scene::render_tiles() // XXX: rename to Blit()
 
     /* FIXME: we disable culling for now because we don’t have a reliable
      * way to know which side is facing the camera. */
-    rc.SetCullMode(CullMode::Disabled);
+    rc.cull_mode(CullMode::Disabled);
 
-    rc.SetDepthFunc(DepthFunc::LessOrEqual);
-    rc.SetBlendFunc(BlendFunc::SrcAlpha, BlendFunc::OneMinusSrcAlpha);
-    rc.SetBlendEquation(BlendEquation::Add, BlendEquation::Max);
-    rc.SetAlphaFunc(AlphaFunc::GreaterOrEqual, 0.01f);
+    rc.depth_func(DepthFunc::LessOrEqual);
+    rc.blend_func(BlendFunc::SrcAlpha, BlendFunc::OneMinusSrcAlpha);
+    rc.blend_equation(BlendEquation::Add, BlendEquation::Max);
+    rc.alpha_func(AlphaFunc::GreaterOrEqual, 0.01f);
 
 #if (defined LOL_USE_GLEW || defined HAVE_GL_2X) && !defined HAVE_GLES_2X
     glEnable(GL_TEXTURE_2D);
@@ -832,15 +824,15 @@ void Scene::render_lines(float seconds)
 {
     ASSERT(!!data, "Trying to access a non-ready scene");
 
-    RenderContext rc(m_renderer);
+    render_context rc(m_renderer);
 
     if (!data->m_line_api.m_lines.count())
         return;
 
-    rc.SetDepthFunc(DepthFunc::LessOrEqual);
-    rc.SetBlendFunc(BlendFunc::SrcAlpha, BlendFunc::OneMinusSrcAlpha);
-    rc.SetBlendEquation(BlendEquation::Add, BlendEquation::Max);
-    rc.SetAlphaFunc(AlphaFunc::GreaterOrEqual, 0.01f);
+    rc.depth_func(DepthFunc::LessOrEqual);
+    rc.blend_func(BlendFunc::SrcAlpha, BlendFunc::OneMinusSrcAlpha);
+    rc.blend_equation(BlendEquation::Add, BlendEquation::Max);
+    rc.alpha_func(AlphaFunc::GreaterOrEqual, 0.01f);
 
     int linecount = (int)data->m_line_api.m_lines.count();
 

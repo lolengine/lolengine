@@ -146,9 +146,9 @@ public:
 
                 m_fbos.last().m1->Bind();
                 {
-                    RenderContext rc(scene.get_renderer());
-                    rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
-                    rc.SetClearDepth(1.f);
+                    render_context rc(scene.get_renderer());
+                    rc.clear_color(vec4(0.f, 0.f, 0.f, 1.f));
+                    rc.clear_depth(1.f);
                     scene.get_renderer()->Clear(ClearMask::Color | ClearMask::Depth);
                 }
                 m_fbos.last().m1->Unbind();
@@ -157,9 +157,9 @@ public:
             temp_buffer = std::make_shared<Framebuffer>(Video::GetSize());
             temp_buffer->Bind();
             {
-                RenderContext rc(scene.get_renderer());
-                rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
-                rc.SetClearDepth(1.f);
+                render_context rc(scene.get_renderer());
+                rc.clear_color(vec4(0.f, 0.f, 0.f, 1.f));
+                rc.clear_depth(1.f);
                 scene.get_renderer()->Clear(ClearMask::Color | ClearMask::Depth);
             }
             temp_buffer->Unbind();
@@ -221,9 +221,9 @@ public:
 
         temp_buffer->Bind();
         {
-            RenderContext rc(scene.get_renderer());
-            rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
-            rc.SetClearDepth(1.f);
+            render_context rc(scene.get_renderer());
+            rc.clear_color(vec4(0.f, 0.f, 0.f, 1.f));
+            rc.clear_depth(1.f);
             scene.get_renderer()->Clear(ClearMask::Color | ClearMask::Depth);
         }
         temp_buffer->Unbind();
@@ -251,9 +251,9 @@ public:
 
             m_fbos[f].m1->Bind();
             {
-                RenderContext rc(scene.get_renderer());
-                rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
-                rc.SetClearDepth(1.f);
+                render_context rc(scene.get_renderer());
+                rc.clear_color(vec4(0.f, 0.f, 0.f, 1.f));
+                rc.clear_depth(1.f);
                 scene.get_renderer()->Clear(ClearMask::Color | ClearMask::Depth);
             }
             m_fbos[f].m1->Unbind();
@@ -304,9 +304,9 @@ public:
             //m_timer = 1.0f;
             m_fbos[m_cur_fbo].m1->Bind();
             {
-                RenderContext rc(scene.get_renderer());
-                rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
-                rc.SetClearDepth(1.f);
+                render_context rc(scene.get_renderer());
+                rc.clear_color(vec4(0.f, 0.f, 0.f, 1.f));
+                rc.clear_depth(1.f);
                 scene.get_renderer()->Clear(ClearMask::Color | ClearMask::Depth);
             }
             m_fbos[m_cur_fbo].m1->Unbind();

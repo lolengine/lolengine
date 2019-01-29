@@ -47,7 +47,7 @@ private:
 
 class RenderContextData
 {
-    friend class RenderContext;
+    friend class render_context;
 
 private:
     tracked_var<ibox2> m_viewport;
@@ -66,16 +66,16 @@ private:
 };
 
 /*
- * Public RenderContext class
+ * Public render_context class
  */
 
-RenderContext::RenderContext(std::shared_ptr<Renderer> renderer)
+render_context::render_context(std::shared_ptr<Renderer> renderer)
   : m_renderer(renderer),
     m_data(std::make_unique<RenderContextData>())
 {
 }
 
-RenderContext::~RenderContext()
+render_context::~render_context()
 {
     if (m_data->m_viewport.is_dirty())
         m_renderer->SetViewport(m_data->m_viewport.get());
@@ -110,7 +110,7 @@ RenderContext::~RenderContext()
         m_renderer->SetScissorMode(m_data->m_scissor_mode.get());
 }
 
-void RenderContext::SetViewport(ibox2 viewport)
+void render_context::viewport(ibox2 viewport)
 {
     if (!m_data->m_viewport.is_dirty())
         m_data->m_viewport.set(m_renderer->GetViewport());
@@ -118,12 +118,12 @@ void RenderContext::SetViewport(ibox2 viewport)
     m_renderer->SetViewport(viewport);
 }
 
-ibox2 RenderContext::GetViewport()
+ibox2 render_context::viewport()
 {
     return m_renderer->GetViewport();
 }
 
-void RenderContext::SetClearColor(vec4 color)
+void render_context::clear_color(vec4 color)
 {
     if (!m_data->m_clear_color.is_dirty())
         m_data->m_clear_color.set(m_renderer->GetClearColor());
@@ -131,12 +131,12 @@ void RenderContext::SetClearColor(vec4 color)
     m_renderer->SetClearColor(color);
 }
 
-vec4 RenderContext::GetClearColor()
+vec4 render_context::clear_color()
 {
     return m_renderer->GetClearColor();
 }
 
-void RenderContext::SetClearDepth(float depth)
+void render_context::clear_depth(float depth)
 {
     if (!m_data->m_clear_depth.is_dirty())
         m_data->m_clear_depth.set(m_renderer->GetClearDepth());
@@ -144,12 +144,12 @@ void RenderContext::SetClearDepth(float depth)
     m_renderer->SetClearDepth(depth);
 }
 
-float RenderContext::GetClearDepth()
+float render_context::clear_depth()
 {
     return m_renderer->GetClearDepth();
 }
 
-void RenderContext::SetAlphaFunc(AlphaFunc func, float alpha)
+void render_context::alpha_func(AlphaFunc func, float alpha)
 {
     if (!m_data->m_alpha_func.is_dirty())
         m_data->m_alpha_func.set(m_renderer->GetAlphaFunc());
@@ -159,17 +159,17 @@ void RenderContext::SetAlphaFunc(AlphaFunc func, float alpha)
     m_renderer->SetAlphaFunc(func, alpha);
 }
 
-AlphaFunc RenderContext::GetAlphaFunc()
+AlphaFunc render_context::alpha_func()
 {
     return m_renderer->GetAlphaFunc();
 }
 
-float RenderContext::GetAlphaValue()
+float render_context::alpha_value()
 {
     return m_renderer->GetAlphaValue();
 }
 
-void RenderContext::SetBlendEquation(BlendEquation rgb, BlendEquation alpha)
+void render_context::blend_equation(BlendEquation rgb, BlendEquation alpha)
 {
     if (!m_data->m_blend_rgb.is_dirty())
         m_data->m_blend_rgb.set(m_renderer->GetBlendEquationRgb());
@@ -179,17 +179,17 @@ void RenderContext::SetBlendEquation(BlendEquation rgb, BlendEquation alpha)
     m_renderer->SetBlendEquation(rgb, alpha);
 }
 
-BlendEquation RenderContext::GetBlendEquationRgb()
+BlendEquation render_context::blend_equation_rgb()
 {
     return m_renderer->GetBlendEquationRgb();
 }
 
-BlendEquation RenderContext::GetBlendEquationAlpha()
+BlendEquation render_context::blend_equation_alpha()
 {
     return m_renderer->GetBlendEquationAlpha();
 }
 
-void RenderContext::SetBlendFunc(BlendFunc src, BlendFunc dst)
+void render_context::blend_func(BlendFunc src, BlendFunc dst)
 {
     if (!m_data->m_blend_src.is_dirty())
         m_data->m_blend_src.set(m_renderer->GetBlendFuncSrc());
@@ -199,17 +199,17 @@ void RenderContext::SetBlendFunc(BlendFunc src, BlendFunc dst)
     m_renderer->SetBlendFunc(src, dst);
 }
 
-BlendFunc RenderContext::GetBlendFuncSrc()
+BlendFunc render_context::blend_func_src()
 {
     return m_renderer->GetBlendFuncSrc();
 }
 
-BlendFunc RenderContext::GetBlendFuncDst()
+BlendFunc render_context::blend_func_dst()
 {
     return m_renderer->GetBlendFuncDst();
 }
 
-void RenderContext::SetDepthFunc(DepthFunc func)
+void render_context::depth_func(DepthFunc func)
 {
     if (!m_data->m_depth_func.is_dirty())
         m_data->m_depth_func.set(m_renderer->GetDepthFunc());
@@ -217,12 +217,12 @@ void RenderContext::SetDepthFunc(DepthFunc func)
     m_renderer->SetDepthFunc(func);
 }
 
-DepthFunc RenderContext::GetDepthFunc()
+DepthFunc render_context::depth_func()
 {
     return m_renderer->GetDepthFunc();
 }
 
-void RenderContext::SetDepthMask(DepthMask mask)
+void render_context::depth_mask(DepthMask mask)
 {
     if (!m_data->m_depth_mask.is_dirty())
         m_data->m_depth_mask.set(m_renderer->GetDepthMask());
@@ -230,12 +230,12 @@ void RenderContext::SetDepthMask(DepthMask mask)
     m_renderer->SetDepthMask(mask);
 }
 
-DepthMask RenderContext::GetDepthMask()
+DepthMask render_context::depth_mask()
 {
     return m_renderer->GetDepthMask();
 }
 
-void RenderContext::SetCullMode(CullMode mode)
+void render_context::cull_mode(CullMode mode)
 {
     if (!m_data->m_cull_mode.is_dirty())
         m_data->m_cull_mode.set(m_renderer->GetCullMode());
@@ -243,12 +243,12 @@ void RenderContext::SetCullMode(CullMode mode)
     m_renderer->SetCullMode(mode);
 }
 
-CullMode RenderContext::GetCullMode()
+CullMode render_context::cull_mode()
 {
     return m_renderer->GetCullMode();
 }
 
-void RenderContext::SetPolygonMode(PolygonMode mode)
+void render_context::polygon_mode(PolygonMode mode)
 {
     if (!m_data->m_polygon_mode.is_dirty())
         m_data->m_polygon_mode.set(m_renderer->GetPolygonMode());
@@ -256,12 +256,12 @@ void RenderContext::SetPolygonMode(PolygonMode mode)
     m_renderer->SetPolygonMode(mode);
 }
 
-PolygonMode RenderContext::GetPolygonMode()
+PolygonMode render_context::polygon_mode()
 {
     return m_renderer->GetPolygonMode();
 }
 
-void RenderContext::SetScissorMode(ScissorMode mode)
+void render_context::scissor_mode(ScissorMode mode)
 {
     if (!m_data->m_scissor_mode.is_dirty())
         m_data->m_scissor_mode.set(m_renderer->GetScissorMode());
@@ -269,7 +269,7 @@ void RenderContext::SetScissorMode(ScissorMode mode)
     m_renderer->SetScissorMode(mode);
 }
 
-void RenderContext::SetScissorRect(vec4 rect)
+void render_context::scissor_rect(vec4 rect)
 {
     if (!m_data->m_scissor_rect.is_dirty())
         m_data->m_scissor_rect.set(m_renderer->GetScissorRect());
@@ -277,12 +277,12 @@ void RenderContext::SetScissorRect(vec4 rect)
     m_renderer->SetScissorRect(rect);
 }
 
-ScissorMode RenderContext::GetScissorMode()
+ScissorMode render_context::scissor_mode()
 {
     return m_renderer->GetScissorMode();
 }
 
-vec4 RenderContext::GetScissorRect()
+vec4 render_context::scissor_rect()
 {
     return m_renderer->GetScissorRect();
 }

@@ -78,9 +78,9 @@ public:
             m_fbo->Bind();
 
             {
-                RenderContext rc(scene.get_renderer());
-                rc.SetClearColor(vec4(0.f, 0.f, 0.f, 1.f));
-                rc.SetClearDepth(1.f);
+                render_context rc(scene.get_renderer());
+                rc.clear_color(vec4(0.f, 0.f, 0.f, 1.f));
+                rc.clear_depth(1.f);
                 scene.get_renderer()->Clear(ClearMask::Color | ClearMask::Depth);
             }
 
@@ -92,8 +92,8 @@ public:
         }
 
         /* FIXME: we should just disable depth test in the shader */
-        RenderContext rc(scene.get_renderer());
-        rc.SetDepthFunc(DepthFunc::Disabled);
+        render_context rc(scene.get_renderer());
+        rc.depth_func(DepthFunc::Disabled);
 
         /* FIXME: this no longer works because we don’t restore the
          * actually bound framebuffer. */

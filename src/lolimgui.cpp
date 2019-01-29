@@ -361,10 +361,10 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
     if (!m_shader)
         return;
 
-    RenderContext rc(Scene::GetScene(0).get_renderer());
-    rc.SetCullMode(CullMode::Disabled);
-    rc.SetDepthFunc(DepthFunc::Disabled);
-    rc.SetScissorMode(ScissorMode::Enabled);
+    render_context rc(Scene::GetScene(0).get_renderer());
+    rc.cull_mode(CullMode::Disabled);
+    rc.depth_func(DepthFunc::Disabled);
+    rc.scissor_mode(ScissorMode::Enabled);
 
     m_shader->Bind();
 
@@ -407,7 +407,7 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
                 m_shader->SetUniform(m_texture, texture->GetTextureUniform(), 0);
             }
 
-            rc.SetScissorRect(command.ClipRect);
+            rc.scissor_rect(command.ClipRect);
 
 #ifdef SHOW_IMGUI_DEBUG
             //-----------------------------------------------------------------

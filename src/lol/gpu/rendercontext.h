@@ -26,40 +26,40 @@ namespace lol
 
 class RenderContextData;
 
-class RenderContext
+class render_context
 {
 public:
-    RenderContext(std::shared_ptr<Renderer> renderer);
-    ~RenderContext();
+    render_context(std::shared_ptr<Renderer> renderer);
+    ~render_context();
 
-    void SetViewport(ibox2 viewport);
-    void SetClearColor(vec4 color);
-    void SetClearDepth(float depth);
-    void SetAlphaFunc(AlphaFunc func, float alpha);
-    void SetBlendEquation(BlendEquation rgb, BlendEquation alpha);
-    void SetBlendFunc(BlendFunc src, BlendFunc dst);
-    void SetDepthFunc(DepthFunc func);
-    void SetDepthMask(DepthMask mask);
-    void SetCullMode(CullMode mode);
-    void SetPolygonMode(PolygonMode mode);
-    void SetScissorMode(ScissorMode mode);
-    void SetScissorRect(vec4 rect);
+    void viewport(ibox2 viewport);
+    void clear_color(vec4 color);
+    void clear_depth(float depth);
+    void alpha_func(AlphaFunc func, float alpha);
+    void blend_equation(BlendEquation rgb, BlendEquation alpha);
+    void blend_func(BlendFunc src, BlendFunc dst);
+    void depth_func(DepthFunc func);
+    void depth_mask(DepthMask mask);
+    void cull_mode(CullMode mode);
+    void polygon_mode(PolygonMode mode);
+    void scissor_mode(ScissorMode mode);
+    void scissor_rect(vec4 rect);
 
-    ibox2 GetViewport();
-    vec4 GetClearColor();
-    float GetClearDepth();
-    AlphaFunc GetAlphaFunc();
-    float GetAlphaValue();
-    BlendEquation GetBlendEquationRgb();
-    BlendEquation GetBlendEquationAlpha();
-    BlendFunc GetBlendFuncSrc();
-    BlendFunc GetBlendFuncDst();
-    DepthFunc GetDepthFunc();
-    DepthMask GetDepthMask();
-    CullMode GetCullMode();
-    PolygonMode GetPolygonMode();
-    ScissorMode GetScissorMode();
-    vec4 GetScissorRect();
+    ibox2 viewport();
+    vec4 clear_color();
+    float clear_depth();
+    AlphaFunc alpha_func();
+    float alpha_value();
+    BlendEquation blend_equation_rgb();
+    BlendEquation blend_equation_alpha();
+    BlendFunc blend_func_src();
+    BlendFunc blend_func_dst();
+    DepthFunc depth_func();
+    DepthMask depth_mask();
+    CullMode cull_mode();
+    PolygonMode polygon_mode();
+    ScissorMode scissor_mode();
+    vec4 scissor_rect();
 
 private:
     std::shared_ptr<Renderer> m_renderer;
