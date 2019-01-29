@@ -107,21 +107,21 @@ public:
             m_coord = m_shader->GetAttribLocation(VertexUsage::Position, 0);
             m_color = m_shader->GetAttribLocation(VertexUsage::Color, 0);
 
-            m_vdecl =
-              new VertexDeclaration(VertexStream<vec3,vec3>(VertexUsage::Position,
+            m_vdecl = std::make_shared<VertexDeclaration>(
+                                    VertexStream<vec3,vec3>(VertexUsage::Position,
                                                             VertexUsage::Color));
 
-            m_vbo = new VertexBuffer(m_mesh.bytes());
+            m_vbo = std::make_shared<VertexBuffer>(m_mesh.bytes());
             void *mesh = m_vbo->Lock(0, 0);
             memcpy(mesh, &m_mesh[0], m_mesh.bytes());
             m_vbo->Unlock();
 
-            m_lines_ibo = new IndexBuffer(m_lines_indices.bytes());
+            m_lines_ibo = std::make_shared<IndexBuffer>(m_lines_indices.bytes());
             void *indices = m_lines_ibo->Lock(0, 0);
             memcpy(indices, &m_lines_indices[0], m_lines_indices.bytes());
             m_lines_ibo->Unlock();
 
-            m_faces_ibo = new IndexBuffer(m_faces_indices.bytes());
+            m_faces_ibo = std::make_shared<IndexBuffer>(m_faces_indices.bytes());
             indices = m_faces_ibo->Lock(0, 0);
             memcpy(indices, &m_faces_indices[0], m_faces_indices.bytes());
             m_faces_ibo->Unlock();
@@ -156,12 +156,12 @@ private:
     array<vec3,vec3> m_mesh;
     array<uint16_t> m_lines_indices, m_faces_indices;
 
-    Shader *m_shader;
+    std::shared_ptr<Shader> m_shader;
     ShaderAttrib m_coord, m_color;
     ShaderUniform m_mvp;
-    VertexDeclaration *m_vdecl;
-    VertexBuffer *m_vbo;
-    IndexBuffer *m_lines_ibo, *m_faces_ibo;
+    std::shared_ptr<VertexDeclaration> m_vdecl;
+    std::shared_ptr<VertexBuffer> m_vbo;
+    std::shared_ptr<IndexBuffer> m_lines_ibo, m_faces_ibo;
 
     bool m_ready;
 };

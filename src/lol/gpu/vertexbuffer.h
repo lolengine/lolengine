@@ -214,20 +214,22 @@ public:
     void DrawIndexedElements(MeshPrimitive type, int count, const short* skip = nullptr, short typeSize = 2);
 
     void Unbind();
-    void SetStream(VertexBuffer *vb, ShaderAttrib attr1,
-                                     ShaderAttrib attr2 = ShaderAttrib(),
-                                     ShaderAttrib attr3 = ShaderAttrib(),
-                                     ShaderAttrib attr4 = ShaderAttrib(),
-                                     ShaderAttrib attr5 = ShaderAttrib(),
-                                     ShaderAttrib attr6 = ShaderAttrib(),
-                                     ShaderAttrib attr7 = ShaderAttrib(),
-                                     ShaderAttrib attr8 = ShaderAttrib(),
-                                     ShaderAttrib attr9 = ShaderAttrib(),
-                                     ShaderAttrib attr10 = ShaderAttrib(),
-                                     ShaderAttrib attr11 = ShaderAttrib(),
-                                     ShaderAttrib attr12 = ShaderAttrib());
+    void SetStream(std::shared_ptr<VertexBuffer> vb,
+                   ShaderAttrib attr1,
+                   ShaderAttrib attr2 = ShaderAttrib(),
+                   ShaderAttrib attr3 = ShaderAttrib(),
+                   ShaderAttrib attr4 = ShaderAttrib(),
+                   ShaderAttrib attr5 = ShaderAttrib(),
+                   ShaderAttrib attr6 = ShaderAttrib(),
+                   ShaderAttrib attr7 = ShaderAttrib(),
+                   ShaderAttrib attr8 = ShaderAttrib(),
+                   ShaderAttrib attr9 = ShaderAttrib(),
+                   ShaderAttrib attr10 = ShaderAttrib(),
+                   ShaderAttrib attr11 = ShaderAttrib(),
+                   ShaderAttrib attr12 = ShaderAttrib());
 
-    void SetStream(VertexBuffer *vb, ShaderAttrib attribs[]);
+    void SetStream(std::shared_ptr<VertexBuffer> vb,
+                   ShaderAttrib attribs[]);
 
     int GetStreamCount() const;
 

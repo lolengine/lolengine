@@ -16,6 +16,8 @@
 
 #include <lol/engine.h>
 
+#include <memory>
+
 using namespace lol;
 
 LOLFX_RESOURCE_DECLARE(08_fbo);
@@ -65,14 +67,14 @@ public:
             m_uni_color = m_shader->GetUniformLocation("u_color");
             m_uni_texture = m_shader->GetUniformLocation("u_texture");
 
-            m_vdecl = new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position));
+            m_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec2>(VertexUsage::Position));
 
-            m_vbo = new VertexBuffer(m_vertices.bytes());
+            m_vbo = std::make_shared<VertexBuffer>(m_vertices.bytes());
             void *vertices = m_vbo->Lock(0, 0);
             memcpy(vertices, &m_vertices[0], m_vertices.bytes());
             m_vbo->Unlock();
 
-            m_fbo = new Framebuffer(Video::GetSize());
+            m_fbo = std::make_shared<Framebuffer>(Video::GetSize());
             m_fbo->Bind();
 
             {
@@ -120,12 +122,12 @@ public:
 
 private:
     array<vec2> m_vertices;
-    Shader *m_shader;
+    std::shared_ptr<Shader> m_shader;
     ShaderAttrib m_coord;
     ShaderUniform m_uni_flag, m_uni_point, m_uni_color, m_uni_texture;
-    VertexDeclaration *m_vdecl;
-    VertexBuffer *m_vbo;
-    Framebuffer *m_fbo;
+    std::shared_ptr<VertexDeclaration> m_vdecl;
+    std::shared_ptr<VertexBuffer> m_vbo;
+    std::shared_ptr<Framebuffer> m_fbo;
     double m_time;
     vec3 m_hotspot, m_color;
     bool m_ready;

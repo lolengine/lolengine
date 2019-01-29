@@ -1,14 +1,18 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
+
+#include <memory>
 
 LOLFX_RESOURCE_DECLARE(gradient);
 
@@ -24,9 +28,9 @@ class GradientData
     friend class Gradient;
 
 private:
-    Shader *shader;
-    VertexDeclaration *m_vdecl;
-    VertexBuffer *m_vbo, *m_cbo;
+    std::shared_ptr<Shader> shader;
+    std::shared_ptr<VertexDeclaration> m_vdecl;
+    std::shared_ptr<VertexBuffer> m_vbo, m_cbo;
 };
 
 /*
@@ -34,14 +38,12 @@ private:
  */
 
 Gradient::Gradient(vec3 aa, vec3 bb)
-  : data(new GradientData())
+  : data(std::make_unique<GradientData>())
 {
     /* FIXME: this should not be hardcoded */
     m_position = aa;
     m_aabb.aa = aa;
     m_aabb.bb = bb;
-
-    data->shader = nullptr;
 }
 
 void Gradient::tick_game(float seconds)
@@ -71,11 +73,12 @@ void Gradient::tick_draw(float seconds, Scene &scene)
     {
         data->shader = Shader::Create(LOLFX_RESOURCE_NAME(gradient));
 
-        data->m_vbo = new VertexBuffer(sizeof(vertex));
-        data->m_cbo = new VertexBuffer(sizeof(color));
+        data->m_vbo = std::make_shared<VertexBuffer>(sizeof(vertex));
+        data->m_cbo = std::make_shared<VertexBuffer>(sizeof(color));
 
-        data->m_vdecl = new VertexDeclaration(VertexStream<vec3>(VertexUsage::Position),
-                                              VertexStream<vec4>(VertexUsage::Color));
+        data->m_vdecl = std::make_shared<VertexDeclaration>
+                            (VertexStream<vec3>(VertexUsage::Position),
+                             VertexStream<vec4>(VertexUsage::Color));
     }
 
     mat4 model_matrix = mat4(1.0f);
@@ -115,8 +118,6 @@ void Gradient::tick_draw(float seconds, Scene &scene)
 
 Gradient::~Gradient()
 {
-    /* FIXME: destroy shader */
-    delete data;
 }
 
 } /* namespace lol */

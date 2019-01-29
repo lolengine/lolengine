@@ -150,18 +150,19 @@ void VertexDeclaration::Unbind()
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
-                                                    ShaderAttrib attr2,
-                                                    ShaderAttrib attr3,
-                                                    ShaderAttrib attr4,
-                                                    ShaderAttrib attr5,
-                                                    ShaderAttrib attr6,
-                                                    ShaderAttrib attr7,
-                                                    ShaderAttrib attr8,
-                                                    ShaderAttrib attr9,
-                                                    ShaderAttrib attr10,
-                                                    ShaderAttrib attr11,
-                                                    ShaderAttrib attr12)
+void VertexDeclaration::SetStream(std::shared_ptr<VertexBuffer> vb,
+                                  ShaderAttrib attr1,
+                                  ShaderAttrib attr2,
+                                  ShaderAttrib attr3,
+                                  ShaderAttrib attr4,
+                                  ShaderAttrib attr5,
+                                  ShaderAttrib attr6,
+                                  ShaderAttrib attr7,
+                                  ShaderAttrib attr8,
+                                  ShaderAttrib attr9,
+                                  ShaderAttrib attr10,
+                                  ShaderAttrib attr11,
+                                  ShaderAttrib attr12)
 {
     ShaderAttrib attribs[12] = { attr1, attr2, attr3, attr4, attr5, attr6,
                            attr7, attr8, attr9, attr10, attr11, attr12 };
@@ -169,7 +170,7 @@ void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attr1,
     SetStream(vb, attribs);
 }
 
-void VertexDeclaration::SetStream(VertexBuffer *vb, ShaderAttrib attribs[])
+void VertexDeclaration::SetStream(std::shared_ptr<VertexBuffer> vb, ShaderAttrib attribs[])
 {
     if (!vb->m_data->m_size)
         return;

@@ -14,6 +14,8 @@
 
 #include <lol/gpu/renderer.h>
 
+#include <memory>
+
 //
 // The RenderContext class
 // -----------------------
@@ -27,7 +29,7 @@ class RenderContextData;
 class RenderContext
 {
 public:
-    RenderContext(Renderer *renderer);
+    RenderContext(std::shared_ptr<Renderer> renderer);
     ~RenderContext();
 
     void SetViewport(ibox2 viewport);
@@ -60,8 +62,8 @@ public:
     vec4 GetScissorRect();
 
 private:
-    Renderer *m_renderer;
-    RenderContextData *m_data;
+    std::shared_ptr<Renderer> m_renderer;
+    std::unique_ptr<RenderContextData> m_data;
 };
 
 } /* namespace lol */

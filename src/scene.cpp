@@ -109,7 +109,7 @@ void SceneDisplay::Disable()
 
 void PrimitiveSource::Render(Scene& scene) { UNUSED(scene); }
 
-void PrimitiveRenderer::Render(Scene& scene, PrimitiveSource* primitive)
+void PrimitiveRenderer::Render(Scene& scene, std::shared_ptr<PrimitiveSource> primitive)
 {
     UNUSED(scene);
     UNUSED(primitive);
@@ -123,7 +123,7 @@ class SceneData
 {
     friend class Scene;
 
-private:
+public:
     SceneData()
     {
         /* TODO: FIX THAT */
@@ -132,6 +132,7 @@ private:
         m_used_id = m_used_id << 1;
     }
 
+private:
     /* Mask ID */
     /* TODO: Do a mask class that handles more than 64 slots */
     static uint64_t m_used_id;
@@ -146,9 +147,9 @@ private:
 
     struct postprocess
     {
-        Shader *m_shader[2];
-        VertexBuffer *m_vbo = nullptr;
-        VertexDeclaration *m_vdecl = nullptr;
+        std::shared_ptr<Shader> m_shader[2];
+        std::shared_ptr<VertexBuffer> m_vbo;
+        std::shared_ptr<VertexDeclaration> m_vdecl;
         ShaderUniform m_buffer_uni[2][3];
         ShaderAttrib m_coord[2];
     }
@@ -161,8 +162,8 @@ private:
      * - Updated by entity
      * - Marked Fire&Forget
      * - Scene is destroyed */
-    std::map<uintptr_t, array<PrimitiveRenderer*>> m_prim_renderers;
-    static std::map<uintptr_t, array<PrimitiveSource*>> m_prim_sources;
+    std::map<uintptr_t, array<std::shared_ptr<PrimitiveRenderer>>> m_prim_renderers;
+    static std::map<uintptr_t, array<std::shared_ptr<PrimitiveSource>>> m_prim_sources;
     static mutex m_prim_mutex;
 
     Camera *m_default_cam;
@@ -175,8 +176,8 @@ private:
         //vec4 m_color;
         array<vec3, vec3, vec4, float, int, bool, bool> m_lines;
         int /*m_mask,*/ m_debug_mask;
-        Shader *m_shader;
-        VertexDeclaration *m_vdecl;
+        std::shared_ptr<Shader> m_shader;
+        std::shared_ptr<VertexDeclaration> m_vdecl;
     }
     m_line_api;
 
@@ -188,16 +189,16 @@ private:
         array<Tile> m_palettes;
         array<Light *> m_lights;
 
-        Shader *m_shader;
-        Shader *m_palette_shader;
+        std::shared_ptr<Shader> m_shader;
+        std::shared_ptr<Shader> m_palette_shader;
 
-        VertexDeclaration *m_vdecl;
-        array<VertexBuffer *> m_bufs;
+        std::shared_ptr<VertexDeclaration> m_vdecl;
+        array<std::shared_ptr<VertexBuffer>> m_bufs;
     }
     m_tile_api;
 };
 uint64_t SceneData::m_used_id = 1;
-std::map<uintptr_t, array<PrimitiveSource*>> SceneData::m_prim_sources;
+std::map<uintptr_t, array<std::shared_ptr<PrimitiveSource>>> SceneData::m_prim_sources;
 mutex SceneData::m_prim_mutex;
 
 /*
@@ -206,8 +207,8 @@ mutex SceneData::m_prim_mutex;
 Scene::Scene(ivec2 size)
   : m_size(size),
     m_wanted_size(size),
-    data(new SceneData()),
-    m_renderer(new Renderer(size))
+    data(std::make_unique<SceneData>()),
+    m_renderer(std::make_shared<Renderer>(size))
 {
     data->m_renderbuffer[0] = new Framebuffer(m_size);
     data->m_renderbuffer[1] = new Framebuffer(m_size);
@@ -217,7 +218,7 @@ Scene::Scene(ivec2 size)
     data->m_pp.m_shader[1] = Shader::Create(LOLFX_RESOURCE_NAME(gpu_postprocess));
     data->m_pp.m_coord[0] = data->m_pp.m_shader[0]->GetAttribLocation(VertexUsage::Position, 0);
     data->m_pp.m_coord[1] = data->m_pp.m_shader[1]->GetAttribLocation(VertexUsage::Position, 0);
-    data->m_pp.m_vdecl = new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position));
+    data->m_pp.m_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec2>(VertexUsage::Position));
     data->m_pp.m_buffer_uni[0][0] = data->m_pp.m_shader[0]->GetUniformLocation("u_buffer");
     data->m_pp.m_buffer_uni[1][0] = data->m_pp.m_shader[1]->GetUniformLocation("u_buffer");
     data->m_pp.m_buffer_uni[1][1] = data->m_pp.m_shader[1]->GetUniformLocation("u_prev_buffer");
@@ -226,7 +227,7 @@ Scene::Scene(ivec2 size)
     array<vec2> quad { vec2( 1.0,  1.0), vec2(-1.0, -1.0), vec2( 1.0, -1.0),
                        vec2(-1.0, -1.0), vec2( 1.0,  1.0), vec2(-1.0,  1.0), };
 
-    data->m_pp.m_vbo = new VertexBuffer(quad.bytes());
+    data->m_pp.m_vbo = std::make_shared<VertexBuffer>(quad.bytes());
     void *vertices = data->m_pp.m_vbo->Lock(0, 0);
     memcpy(vertices, quad.data(), quad.bytes());
     data->m_pp.m_vbo->Unlock();
@@ -240,11 +241,11 @@ Scene::Scene(ivec2 size)
     data->m_tile_api.m_cam = -1;
     data->m_tile_api.m_shader = 0;
     data->m_tile_api.m_palette_shader = 0;
-    data->m_tile_api.m_vdecl = new VertexDeclaration(VertexStream<vec3>(VertexUsage::Position),
-                                                     VertexStream<vec2>(VertexUsage::TexCoord));
+    data->m_tile_api.m_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec3>(VertexUsage::Position),
+                                                                   VertexStream<vec2>(VertexUsage::TexCoord));
 
     data->m_line_api.m_shader = 0;
-    data->m_line_api.m_vdecl = new VertexDeclaration(VertexStream<vec4,vec4>(VertexUsage::Position, VertexUsage::Color));
+    data->m_line_api.m_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec4,vec4>(VertexUsage::Position, VertexUsage::Color));
 
     data->m_line_api.m_debug_mask = 1;
 }
@@ -264,11 +265,6 @@ Scene::~Scene()
     /* FIXME: also, make sure we do not add code to Reset() that will
      * reallocate stuff */
     Reset();
-
-    delete data->m_line_api.m_vdecl;
-    delete data->m_tile_api.m_vdecl;
-    delete data;
-    delete m_renderer;
 }
 
 //-----------------------------------------------------------------------------
@@ -381,10 +377,7 @@ void Scene::Reset()
                 ReleasePrimitiveRenderer(idx--, key);
     }
 
-    for (int i = 0; i < data->m_tile_api.m_bufs.count(); i++)
-        delete data->m_tile_api.m_bufs[i];
     data->m_tile_api.m_bufs.clear();
-
     data->m_tile_api.m_lights.clear();
 }
 
@@ -400,7 +393,7 @@ int Scene::HasPrimitiveSource(uintptr_t key)
     return count;
 }
 
-int Scene::AddPrimitiveSource(uintptr_t key, PrimitiveSource* source)
+int Scene::AddPrimitiveSource(uintptr_t key, std::shared_ptr<PrimitiveSource> source)
 {
     int count;
     SceneData::m_prim_mutex.lock();
@@ -412,12 +405,14 @@ int Scene::AddPrimitiveSource(uintptr_t key, PrimitiveSource* source)
     return count;
 }
 
-void Scene::SetPrimitiveSource(int index, uintptr_t key, PrimitiveSource* source)
+void Scene::SetPrimitiveSource(int index, uintptr_t key, std::shared_ptr<PrimitiveSource> source)
 {
     ASSERT(source);
     ASSERT(index >= 0);
 
-    PrimitiveSource* old = nullptr;
+    // Keep reference to old source until AFTER we release the lock
+    std::shared_ptr<PrimitiveSource> old;
+
     SceneData::m_prim_mutex.lock();
     {
         if (index < SceneData::m_prim_sources[key].count())
@@ -427,14 +422,11 @@ void Scene::SetPrimitiveSource(int index, uintptr_t key, PrimitiveSource* source
         SceneData::m_prim_sources[key][index] = source;
     }
     SceneData::m_prim_mutex.unlock();
-
-    // Delete old AFTER having released the lock
-    delete old;
 }
 
 void Scene::ReleasePrimitiveSource(int index, uintptr_t key)
 {
-    PrimitiveSource* old = nullptr;
+    std::shared_ptr<PrimitiveSource> old;
     SceneData::m_prim_mutex.lock();
     {
         ASSERT(0 <= index && index < SceneData::m_prim_sources[key].count());
@@ -442,26 +434,21 @@ void Scene::ReleasePrimitiveSource(int index, uintptr_t key)
         SceneData::m_prim_sources[key].remove(index);
     }
     SceneData::m_prim_mutex.unlock();
-
-    // Delete old AFTER having released the lock
-    delete old;
 }
 
 void Scene::ReleaseAllPrimitiveSources(uintptr_t key)
 {
-    array<PrimitiveSource*> oldies;
+    // Delete oldies AFTER having released the lock
+    array<std::shared_ptr<PrimitiveSource>> oldies;
+
     SceneData::m_prim_mutex.lock();
     {
         oldies.reserve(SceneData::m_prim_sources[key].count());
-        for (PrimitiveSource* source : SceneData::m_prim_sources[key])
+        for (auto source : SceneData::m_prim_sources[key])
             oldies << source;
         SceneData::m_prim_sources[key].clear();
     }
     SceneData::m_prim_mutex.unlock();
-
-    // Delete oldies AFTER having released the lock
-    for (PrimitiveSource* old : oldies)
-        delete old;
 }
 
 //---- Primitive renderer stuff -----------------------------------------------
@@ -470,23 +457,18 @@ int Scene::HasPrimitiveRenderer(uintptr_t key)
     return data->m_prim_renderers[key].count();
 }
 
-void Scene::AddPrimitiveRenderer(uintptr_t key, PrimitiveRenderer* renderer)
+void Scene::AddPrimitiveRenderer(uintptr_t key, std::shared_ptr<PrimitiveRenderer> renderer)
 {
     renderer->m_fire_and_forget = true;
     data->m_prim_renderers[key].push(renderer);
 }
 
-void Scene::SetPrimitiveRenderer(int index, uintptr_t key, PrimitiveRenderer* renderer)
+void Scene::SetPrimitiveRenderer(int index, uintptr_t key, std::shared_ptr<PrimitiveRenderer> renderer)
 {
     ASSERT(renderer);
     ASSERT(index >= 0);
 
-    if (index < data->m_prim_renderers[key].count())
-    {
-        ASSERT(data->m_prim_renderers[key][index]);
-        delete data->m_prim_renderers[key][index];
-    }
-    else
+    if (index >= data->m_prim_renderers[key].count())
         data->m_prim_renderers[key].resize(index + 1);
     data->m_prim_renderers[key][index] = renderer;
 }
@@ -495,17 +477,13 @@ void Scene::ReleasePrimitiveRenderer(int index, uintptr_t key)
 {
     ASSERT(0 <= index && index < data->m_prim_renderers[key].count());
 
-    delete data->m_prim_renderers[key][index];
     data->m_prim_renderers[key].remove(index);
 }
 
 void Scene::ReleaseAllPrimitiveRenderers(uintptr_t key)
 {
-    for (PrimitiveRenderer*& renderer : data->m_prim_renderers[key])
-    {
-        delete renderer;
+    for (auto& renderer : data->m_prim_renderers[key])
         renderer = nullptr;
-    }
 }
 
 //-----------------------------------------------------------------------------
@@ -719,7 +697,8 @@ void Scene::render_primitives()
         for (int idx = 0; idx < data->m_prim_renderers[key].count(); ++idx)
         {
             /* TODO: Not sure if thread compliant */
-            data->m_prim_renderers[key][idx]->Render(*this, idx < SceneData::m_prim_sources[key].count() ? SceneData::m_prim_sources[key][idx] : nullptr);
+            if (idx < SceneData::m_prim_sources[key].count())
+                data->m_prim_renderers[key][idx]->Render(*this, SceneData::m_prim_sources[key][idx]);
         }
     }
 }
@@ -755,8 +734,8 @@ void Scene::render_tiles() // XXX: rename to Blit()
 
     for (int p = 0; p < 2; p++)
     {
-        Shader *shader      = (p == 0) ? data->m_tile_api.m_shader : data->m_tile_api.m_palette_shader;
-        array<Tile>& tiles  = (p == 0) ? data->m_tile_api.m_tiles : data->m_tile_api.m_palettes;
+        auto shader = (p == 0) ? data->m_tile_api.m_shader : data->m_tile_api.m_palette_shader;
+        auto &tiles  = (p == 0) ? data->m_tile_api.m_tiles : data->m_tile_api.m_palettes;
 
         if (tiles.count() == 0)
             continue;
@@ -787,9 +766,9 @@ void Scene::render_tiles() // XXX: rename to Blit()
                     break;
 
             /* Create a vertex array object */
-            VertexBuffer *vb1 = new VertexBuffer(6 * (n - i) * sizeof(vec3));
+            auto vb1 = std::make_shared<VertexBuffer>(6 * (n - i) * sizeof(vec3));
             vec3 *vertex = (vec3 *)vb1->Lock(0, 0);
-            VertexBuffer *vb2 = new VertexBuffer(6 * (n - i) * sizeof(vec2));
+            auto vb2 = std::make_shared<VertexBuffer>(6 * (n - i) * sizeof(vec2));
             vec2 *texture = (vec2 *)vb2->Lock(0, 0);
 
             data->m_tile_api.m_bufs.push(vb1);
@@ -889,7 +868,7 @@ void Scene::render_lines(float seconds)
             linecount--;
         }
     }
-    VertexBuffer *vb = new VertexBuffer(buff.bytes());
+    auto vb = std::make_shared<VertexBuffer>(buff.bytes());
     float *vertex = (float *)vb->Lock(0, 0);
     memcpy(vertex, buff.data(), buff.bytes());
     vb->Unlock();
@@ -915,7 +894,6 @@ void Scene::render_lines(float seconds)
     data->m_line_api.m_shader->Unbind();
 
     //data->m_line_api.m_lines.clear();
-    delete vb;
 }
 
 } /* namespace lol */

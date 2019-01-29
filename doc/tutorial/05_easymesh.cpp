@@ -137,7 +137,7 @@ public:
 
 #if USE_CUSTOM_SHADER
             /* Custom Shader: Init the shader */
-            Shader *custom_shader = Shader::Create(LOLFX_RESOURCE_NAME(easymesh_shiny));
+            auto custom_shader = Shader::Create(LOLFX_RESOURCE_NAME(easymesh_shiny));
             // any other shader stuf here (Get uniform, mostly, and set texture)
 
             for (int i = 0; i < m_gears.count(); i++)
@@ -154,7 +154,6 @@ public:
     }
 
 private:
-    Shader* m_custom_shader;
     array<EasyMesh, mat4, float> m_gears;
     float m_angle;
     mat4 m_mat;

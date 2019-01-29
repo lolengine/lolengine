@@ -1,15 +1,18 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
 
+#include <memory>
 #include <cstring>
 #include <cstdlib>
 
@@ -20,7 +23,7 @@ namespace lol
  * Primitive class
  */
 
-PrimitiveMesh::PrimitiveMesh(SubMesh *submesh, mat4 const &matrix)
+PrimitiveMesh::PrimitiveMesh(std::shared_ptr<SubMesh> submesh, mat4 const &matrix)
   : m_submesh(submesh),
     m_matrix(matrix)
 {
@@ -30,12 +33,12 @@ PrimitiveMesh::~PrimitiveMesh()
 {
 }
 
-void PrimitiveMesh::Render(Scene& scene, PrimitiveSource* primitive)
+void PrimitiveMesh::Render(Scene& scene, std::shared_ptr<PrimitiveSource> primitive)
 {
     /* TODO: this should be the main entry for rendering of all
     * primitives found in the scene graph. When we have one. */
 
-    Shader *shader = nullptr;
+    std::shared_ptr<Shader> shader;
     ShaderUniform u_model, u_modelview, u_normalmat, uni_tex, uni_texsize;
     ShaderAttrib a_pos, a_tex;
 

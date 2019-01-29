@@ -69,9 +69,9 @@ private:
  * Public RenderContext class
  */
 
-RenderContext::RenderContext(Renderer *renderer)
+RenderContext::RenderContext(std::shared_ptr<Renderer> renderer)
   : m_renderer(renderer),
-    m_data(new RenderContextData())
+    m_data(std::make_unique<RenderContextData>())
 {
 }
 
@@ -108,8 +108,6 @@ RenderContext::~RenderContext()
 
     if (m_data->m_scissor_mode.is_dirty())
         m_renderer->SetScissorMode(m_data->m_scissor_mode.get());
-
-    delete m_data;
 }
 
 void RenderContext::SetViewport(ibox2 viewport)

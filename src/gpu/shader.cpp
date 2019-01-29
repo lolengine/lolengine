@@ -13,7 +13,9 @@
 #include <lol/engine-internal.h>
 
 #include <string>
+#include <memory>
 #include <map>
+#include <set>
 #include <cstring>
 #include <cstdio>
 
@@ -89,14 +91,10 @@ private:
     /* Shader patcher */
     static int GetVersion();
     static std::string Patch(std::string const &code, ShaderType type);
-
-    /* Global shader cache */
-    static Shader *shaders[];
-    static int nshaders;
 };
 
-Shader *ShaderData::shaders[256];
-int ShaderData::nshaders = 0;
+/* Global shader cache */
+static std::set<std::shared_ptr<Shader>> g_shaders;
 
 /*
  * LolFx parser
@@ -187,7 +185,7 @@ struct lolfx_parser::action<lolfx_parser::code_section>
  * Public Shader class
  */
 
-Shader *Shader::Create(std::string const &name, std::string const &code)
+std::shared_ptr<Shader> Shader::Create(std::string const &name, std::string const &code)
 {
     lolfx_parser p(code);
 
@@ -203,31 +201,22 @@ Shader *Shader::Create(std::string const &name, std::string const &code)
     size_t new_vert_crc = std::hash<std::string>{}(vert);
     size_t new_frag_crc = std::hash<std::string>{}(frag);
 
-    for (int n = 0; n < ShaderData::nshaders; n++)
+    for (auto shader : g_shaders)
     {
-        if (ShaderData::shaders[n]->data->vert_crc == new_vert_crc
-             && ShaderData::shaders[n]->data->frag_crc == new_frag_crc)
-        {
-            return ShaderData::shaders[n];
-        }
+        if (shader->data->vert_crc == new_vert_crc
+             && shader->data->frag_crc == new_frag_crc)
+            return shader;
     }
 
-    Shader *ret = new Shader(name, vert, frag);
-    ShaderData::shaders[ShaderData::nshaders] = ret;
-    ShaderData::nshaders++;
-
+    // FIXME: the cache never expires!
+    auto ret = std::make_shared<Shader>(name, vert, frag);
+    g_shaders.insert(ret);
     return ret;
-}
-
-void Shader::Destroy(Shader *shader)
-{
-    /* XXX: do nothing! the shader should remain in cache */
-    UNUSED(shader);
 }
 
 Shader::Shader(std::string const &name,
                std::string const &vert, std::string const &frag)
-  : data(new ShaderData())
+  : data(std::make_unique<ShaderData>())
 {
     data->m_name = name;
 
@@ -515,8 +504,6 @@ Shader::~Shader()
     glDeleteShader(data->vert_id);
     glDeleteShader(data->frag_id);
     glDeleteProgram(data->prog_id);
-
-    delete data;
 }
 
 /* Try to detect shader compiler features */

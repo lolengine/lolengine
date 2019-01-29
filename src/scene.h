@@ -18,7 +18,8 @@
 // ---------------
 //
 
-#include <stdint.h>
+#include <memory>
+#include <cstdint>
 
 #include "tileset.h"
 #include "light.h"
@@ -51,7 +52,7 @@ class PrimitiveRenderer
 public:
     PrimitiveRenderer() { }
     virtual ~PrimitiveRenderer() { }
-    virtual void Render(Scene& scene, PrimitiveSource* primitive);
+    virtual void Render(Scene& scene, std::shared_ptr<PrimitiveSource> primitive);
 
 private:
     bool m_fire_and_forget = false;
@@ -129,15 +130,15 @@ public:
 
     void Reset();
 
-    Renderer *get_renderer() { return m_renderer; }
+    std::shared_ptr<Renderer> get_renderer() { return m_renderer; }
 
     /* ============================== */
 #   define _KEY_IDX (uintptr_t)key /* TOUKY: I don't like that. hash should be fixed to handle these custom stuff */
     /* ============================== */
 private:
     int HasPrimitiveSource(uintptr_t key);
-    int AddPrimitiveSource(uintptr_t key, class PrimitiveSource* source);
-    void SetPrimitiveSource(int index, uintptr_t key, class PrimitiveSource* source);
+    int AddPrimitiveSource(uintptr_t key, std::shared_ptr<class PrimitiveSource> source);
+    void SetPrimitiveSource(int index, uintptr_t key, std::shared_ptr<class PrimitiveSource> source);
     void ReleasePrimitiveSource(int index, uintptr_t key);
     void ReleaseAllPrimitiveSources(uintptr_t key);
 public:
@@ -152,7 +153,7 @@ public:
     /* Add a primitive sources linked to the given entity
      * Returns the slot number */
     template <typename T>
-    int AddPrimitiveSource(T* key, class PrimitiveSource* source)
+    int AddPrimitiveSource(T* key, std::shared_ptr<class PrimitiveSource> source)
     {
         ASSERT(key);
         return AddPrimitiveSource(_KEY_IDX, source);
@@ -161,7 +162,7 @@ public:
      * Deletes the old one
      * The slot is kept even if source == nullptr */
     template <typename T>
-    void SetPrimitiveSource(int index, T* key, class PrimitiveSource* source)
+    void SetPrimitiveSource(int index, T* key, std::shared_ptr<class PrimitiveSource> source)
     {
         ASSERT(key);
         SetPrimitiveSource(index, _KEY_IDX, source);
@@ -184,8 +185,8 @@ public:
 private:
     int HasPrimitiveRenderer(uintptr_t key);
 
-    void AddPrimitiveRenderer(uintptr_t key, class PrimitiveRenderer* renderer);
-    void SetPrimitiveRenderer(int index, uintptr_t key, class PrimitiveRenderer* renderer);
+    void AddPrimitiveRenderer(uintptr_t key, std::shared_ptr<class PrimitiveRenderer> renderer);
+    void SetPrimitiveRenderer(int index, uintptr_t key, std::shared_ptr<class PrimitiveRenderer> renderer);
     void ReleasePrimitiveRenderer(int index, uintptr_t key);
     void ReleaseAllPrimitiveRenderers(uintptr_t key);
 public:
@@ -201,7 +202,7 @@ public:
      * The primitive is considered as Fire&Forget and
      * will be destroyed at the end of the frame */
     template <typename T>
-    void AddPrimitiveRenderer(T* key, class PrimitiveRenderer* renderer)
+    void AddPrimitiveRenderer(T* key, std::shared_ptr<class PrimitiveRenderer> renderer)
     {
         ASSERT(key);
         AddPrimitiveRenderer(_KEY_IDX, renderer);
@@ -210,7 +211,7 @@ public:
      * Deletes the old one
      * Will assert if renderer == nullptr */
     template <typename T>
-    void SetPrimitiveRenderer(int index, T* key, class PrimitiveRenderer* renderer)
+    void SetPrimitiveRenderer(int index, T* key, std::shared_ptr<class PrimitiveRenderer> renderer)
     {
         ASSERT(key && renderer);
         SetPrimitiveRenderer(index, _KEY_IDX, renderer);
@@ -263,8 +264,8 @@ private:
 
     ivec2 m_size, m_wanted_size;
 
-    SceneData *data;
-    Renderer *m_renderer;
+    std::unique_ptr<SceneData> data;
+    std::shared_ptr<Renderer> m_renderer;
 };
 
 } /* namespace lol */

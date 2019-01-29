@@ -12,6 +12,7 @@
 
 #include <lol/engine-internal.h>
 
+#include <memory>
 #include <cstring>
 #include <cstdlib>
 
@@ -34,38 +35,38 @@ void Mesh::Render(Scene& scene, mat4 const &matrix)
 {
     //if (scene.HasPrimitiveRenderer(this) < m_submeshes.count())
     {
-        for (int i = 0; i < m_submeshes.count(); ++i)
-            scene.AddPrimitiveRenderer(this, new PrimitiveMesh(m_submeshes[i], matrix));
+        for (auto submesh : m_submeshes)
+            scene.AddPrimitiveRenderer(this, std::make_shared<PrimitiveMesh>(submesh, matrix));
     }
 }
 
 void Mesh::Render()
 {
-    for (int i = 0; i < m_submeshes.count(); ++i)
-        m_submeshes[i]->Render();
+    for (auto submesh : m_submeshes)
+        submesh->Render();
 }
 
-void Mesh::SetMaterial(Shader *shader)
+void Mesh::SetMaterial(std::shared_ptr<Shader> shader)
 {
-    for (int i = 0; i < m_submeshes.count(); ++i)
-        m_submeshes[i]->SetShader(shader);
+    for (auto submesh : m_submeshes)
+        submesh->SetShader(shader);
 }
 
 /*
  * SubMesh class
  */
 
-SubMesh::SubMesh(Shader *shader, VertexDeclaration *vdecl)
+SubMesh::SubMesh(std::shared_ptr<Shader> shader, std::shared_ptr<VertexDeclaration> vdecl)
   : m_mesh_prim(MeshPrimitive::Triangles),
     m_shader(shader),
     m_vdecl(vdecl)
 {
-    Ticker::Ref(m_shader);
+    Ticker::Ref(m_shader.get());
 }
 
 SubMesh::~SubMesh()
 {
-    Ticker::Unref(m_shader);
+    Ticker::Unref(m_shader.get());
     // TODO: cleanup
 }
 
@@ -74,24 +75,24 @@ void SubMesh::SetMeshPrimitive(MeshPrimitive mesh_primitive)
     m_mesh_prim = mesh_primitive;
 }
 
-void SubMesh::SetShader(Shader *shader)
+void SubMesh::SetShader(std::shared_ptr<Shader> shader)
 {
-    Ticker::Unref(m_shader);
+    Ticker::Unref(m_shader.get());
     m_shader = shader;
-    Ticker::Ref(m_shader);
+    Ticker::Ref(m_shader.get());
 }
 
-Shader *SubMesh::GetShader()
+std::shared_ptr<Shader> SubMesh::GetShader()
 {
     return m_shader;
 }
 
-void SubMesh::SetVertexDeclaration(VertexDeclaration *vdecl)
+void SubMesh::SetVertexDeclaration(std::shared_ptr<VertexDeclaration> vdecl)
 {
     m_vdecl = vdecl;
 }
 
-void SubMesh::SetVertexBuffer(int index, VertexBuffer* vbo)
+void SubMesh::SetVertexBuffer(int index, std::shared_ptr<VertexBuffer> vbo)
 {
     while (index >= m_vbos.count())
         m_vbos.push(nullptr);
@@ -99,12 +100,12 @@ void SubMesh::SetVertexBuffer(int index, VertexBuffer* vbo)
     m_vbos[index] = vbo;
 }
 
-void SubMesh::SetIndexBuffer(IndexBuffer* ibo)
+void SubMesh::SetIndexBuffer(std::shared_ptr<IndexBuffer> ibo)
 {
     m_ibo = ibo;
 }
 
-void SubMesh::AddTexture(std::string const &name, Texture* texture)
+void SubMesh::AddTexture(std::string const &name, std::shared_ptr<Texture> texture)
 {
     m_textures.push(name, texture);
 }

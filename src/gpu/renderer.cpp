@@ -116,7 +116,6 @@ Renderer::Renderer(ivec2 size)
 
 Renderer::~Renderer()
 {
-    delete m_data;
 }
 
 /*

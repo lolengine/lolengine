@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Graphing tutorial
 //
-//  Copyright © 2012—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2012—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -67,15 +67,15 @@ public:
         /* Initialise GPU data */
         if (!m_ready)
         {
-            m_texture = new Texture(ivec2(TEXTURE_WIDTH, 1), PixelFormat::Y_8);
+            m_texture = std::make_shared<Texture>(ivec2(TEXTURE_WIDTH, 1), PixelFormat::Y_8);
 
             m_shader = Shader::Create(LOLFX_RESOURCE_NAME(04_texture));
             m_coord = m_shader->GetAttribLocation(VertexUsage::Position, 0);
             m_texture_uni = m_shader->GetUniformLocation("u_texture");
 
-            m_vdecl = new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position));
+            m_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec2>(VertexUsage::Position));
 
-            m_vbo = new VertexBuffer(m_vertices.bytes());
+            m_vbo = std::make_shared<VertexBuffer>(m_vertices.bytes());
             void *vertices = m_vbo->Lock(0, 0);
             memcpy(vertices, &m_vertices[0], m_vertices.bytes());
             m_vbo->Unlock();
@@ -99,12 +99,12 @@ public:
 
 private:
     array<vec2> m_vertices;
-    Texture *m_texture;
-    Shader *m_shader;
+    std::shared_ptr<Texture> m_texture;
+    std::shared_ptr<Shader> m_shader;
     ShaderAttrib m_coord;
     ShaderUniform m_texture_uni;
-    VertexDeclaration *m_vdecl;
-    VertexBuffer *m_vbo;
+    std::shared_ptr<VertexDeclaration> m_vdecl;
+    std::shared_ptr<VertexBuffer> m_vbo;
     array<uint8_t> m_heightmap;
     int m_frames;
     bool m_ready;
@@ -116,7 +116,6 @@ int main(int argc, char **argv)
 
     Application app("Tutorial 4: Texture", ivec2(1280, 720), 60.0f);
 
-//new DebugFps(50, 50);
     new TextureDemo();
 
     app.Run();

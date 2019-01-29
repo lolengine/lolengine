@@ -2,7 +2,7 @@
 //  Lol Engine
 //
 //  Copyright © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//            © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //            © 2009—2013 Cédric Lecacheur <jordx@free.fr>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -29,10 +29,10 @@ LOLFX_RESOURCE_DECLARE(easymesh_shiny_SK);
 void EasyMesh::MeshConvert()
 {
     /* Default material */
-    Shader *shader = Shader::Create(LOLFX_RESOURCE_NAME(easymesh_shiny));
+    auto shader = Shader::Create(LOLFX_RESOURCE_NAME(easymesh_shiny));
 
     /* Push index buffer to GPU */
-    IndexBuffer *ibo = new IndexBuffer(m_indices.count() * sizeof(uint16_t));
+    auto ibo = std::make_shared<IndexBuffer>(m_indices.count() * sizeof(uint16_t));
     uint16_t *indices = (uint16_t *)ibo->Lock(0, 0);
     for (int i = 0; i < m_indices.count(); ++i)
         indices[i] = m_indices[i];
@@ -46,13 +46,13 @@ void EasyMesh::MeshConvert()
         vec4 texcoord;
     };
 
-    VertexDeclaration *vdecl = new VertexDeclaration(
+    auto vdecl = std::make_shared<VertexDeclaration>(
         VertexStream<vec3, vec3, u8vec4, vec4>(VertexUsage::Position,
                                                VertexUsage::Normal,
                                                VertexUsage::Color,
                                                VertexUsage::TexCoord));
 
-    VertexBuffer *vbo = new VertexBuffer(m_vert.count() * sizeof(Vertex));
+    auto vbo = std::make_shared<VertexBuffer>(m_vert.count() * sizeof(Vertex));
     Vertex *vert = (Vertex *)vbo->Lock(0, 0);
     for (int i = 0; i < m_vert.count(); ++i)
     {
@@ -64,9 +64,9 @@ void EasyMesh::MeshConvert()
     vbo->Unlock();
 
     /* Reference our new data in our submesh */
-    m_submeshes.push(new SubMesh(shader, vdecl));
-    m_submeshes.last()->SetIndexBuffer(ibo);
-    m_submeshes.last()->SetVertexBuffer(0, vbo);
+    m_submeshes.push_back(std::make_shared<SubMesh>(shader, vdecl));
+    m_submeshes.back()->SetIndexBuffer(ibo);
+    m_submeshes.back()->SetVertexBuffer(0, vbo);
 
     m_state = MeshRender::CanRender;
 }
@@ -78,11 +78,11 @@ GpuShaderData::GpuShaderData()
 }
 
 //-----------------------------------------------------------------------------
-GpuShaderData::GpuShaderData(uint16_t vert_decl_flags, Shader* shader, DebugRenderMode render_mode)
+GpuShaderData::GpuShaderData(uint16_t vert_decl_flags, std::shared_ptr<Shader> shader, DebugRenderMode render_mode)
+  : m_render_mode(render_mode),
+    m_shader(shader),
+    m_vert_decl_flags(vert_decl_flags)
 {
-    m_render_mode = render_mode;
-    m_shader = shader;
-    m_vert_decl_flags = vert_decl_flags;
 }
 
 //-----------------------------------------------------------------------------
@@ -152,7 +152,7 @@ DefaultShaderData::DefaultShaderData(DebugRenderMode render_mode)
 }
 
 //-----------------------------------------------------------------------------
-DefaultShaderData::DefaultShaderData(uint16_t vert_decl_flags, Shader* shader, bool with_UV)
+DefaultShaderData::DefaultShaderData(uint16_t vert_decl_flags, std::shared_ptr<Shader> shader, bool with_UV)
     : GpuShaderData(vert_decl_flags, shader, DebugRenderMode::Default)
 {
     StoreUniformNames();
@@ -222,16 +222,13 @@ GpuEasyMeshData::GpuEasyMeshData()
 {
     m_vertexcount = 0;
     m_indexcount = 0;
-    m_ibo = nullptr;
 }
 
 //-----------------------------------------------------------------------------
 GpuEasyMeshData::~GpuEasyMeshData()
 {
-    m_gpudatas.clear();
-    m_vdatas.clear();
-    if (m_ibo)
-        delete m_ibo;
+    m_gpudata.clear();
+    m_vdata.clear();
 }
 
 #define BUILD_VFLAG(bool_value, flag_value, check_flag) \
@@ -245,7 +242,7 @@ GpuEasyMeshData::~GpuEasyMeshData()
     count_value += (int)bool_value;
 
 //-----------------------------------------------------------------------------
-void GpuEasyMeshData::AddGpuData(GpuShaderData* gpudata, EasyMesh* src_mesh)
+void GpuEasyMeshData::AddGpuData(std::shared_ptr<GpuShaderData> gpudata, std::shared_ptr<EasyMesh> src_mesh)
 {
     uint16_t vflags = gpudata->m_vert_decl_flags;
 
@@ -273,7 +270,7 @@ void GpuEasyMeshData::AddGpuData(GpuShaderData* gpudata, EasyMesh* src_mesh)
             indexlist << src_mesh->m_indices[i + 2];
         }
 
-        m_ibo = new IndexBuffer(indexlist.bytes());
+        m_ibo = std::make_shared<IndexBuffer>(indexlist.bytes());
         void *indices = m_ibo->Lock(0, 0);
         memcpy(indices, &indexlist[0], indexlist.bytes());
         m_ibo->Unlock();
@@ -282,26 +279,26 @@ void GpuEasyMeshData::AddGpuData(GpuShaderData* gpudata, EasyMesh* src_mesh)
     }
 
     //init to a minimum of gpudata->m_render_mode size
-    if (m_gpudatas.count() <= gpudata->m_render_mode)
+    if (m_gpudata.count() <= gpudata->m_render_mode)
     {
-        int i = m_gpudatas.count();
+        int i = m_gpudata.count();
         int max = gpudata->m_render_mode + 1;
-        m_gpudatas.reserve(max);
+        m_gpudata.reserve(max);
         for (; i < max; i++)
-            m_gpudatas << nullptr;
+            m_gpudata.push(nullptr);
     }
-    m_gpudatas[gpudata->m_render_mode] = gpudata;
+    m_gpudata[gpudata->m_render_mode] = gpudata;
 }
 
 //-----------------------------------------------------------------------------
-void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
+void GpuEasyMeshData::SetupVertexData(uint16_t vflags, std::shared_ptr<EasyMesh> src_mesh)
 {
-    for (int i = 0; i < m_vdatas.count(); ++i)
-        if (m_vdatas[i].m1 == vflags)
+    for (int i = 0; i < m_vdata.count(); ++i)
+        if (m_vdata[i].m1 == vflags)
             return;
 
-    VertexDeclaration* new_vdecl = nullptr;
-    VertexBuffer* new_vbo = nullptr;
+    std::shared_ptr<VertexDeclaration> new_vdecl;
+    std::shared_ptr<VertexBuffer> new_vbo;
     void *vbo_data = nullptr;
     int vbo_bytes = 0;
 
@@ -309,7 +306,7 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
     vbo_data = &vertexlist[0]; \
     vbo_bytes = vertexlist.bytes(); \
     m_vertexcount = vertexlist.count(); \
-    new_vbo = new VertexBuffer(vbo_bytes); \
+    new_vbo = std::make_shared<VertexBuffer>(vbo_bytes); \
     void *mesh = new_vbo->Lock(0, 0); \
     memcpy(mesh, vbo_data, vbo_bytes); \
     new_vbo->Unlock();
@@ -326,7 +323,7 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
 
     if (flagnb == 5 && has_position && has_normal && has_color && has_texcoord && has_texcoordExt)
     {
-        new_vdecl = new VertexDeclaration(
+        new_vdecl = std::make_shared<VertexDeclaration>(
                          VertexStream<vec3,vec3,u8vec4,vec4>(
                           VertexUsage::Position,
                           VertexUsage::Normal,
@@ -343,7 +340,7 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
     }
     else if (flagnb == 4 && has_position && has_normal && has_color && has_texcoord)
     {
-        new_vdecl = new VertexDeclaration(
+        new_vdecl = std::make_shared<VertexDeclaration>(
                          VertexStream<vec3,vec3,u8vec4,vec2>(
                           VertexUsage::Position,
                           VertexUsage::Normal,
@@ -360,7 +357,7 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
     }
     else if (flagnb == 4 && has_position && has_color && has_texcoord && has_texcoordExt)
     {
-        new_vdecl = new VertexDeclaration(VertexStream<vec3,vec4,vec4>(VertexUsage::Position, VertexUsage::Color, VertexUsage::TexCoord));
+        new_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec3,vec4,vec4>(VertexUsage::Position, VertexUsage::Color, VertexUsage::TexCoord));
 
         array<vec3, vec4, vec4> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.count(); i++)
@@ -369,7 +366,7 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
     }
     else if (flagnb == 3 && has_position && has_normal && has_color)
     {
-        new_vdecl = new VertexDeclaration(
+        new_vdecl = std::make_shared<VertexDeclaration>(
                          VertexStream<vec3,vec3,u8vec4>(
                           VertexUsage::Position,
                           VertexUsage::Normal,
@@ -384,7 +381,7 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
     }
     else if (flagnb == 3 && has_position && has_texcoord && has_texcoordExt)
     {
-        new_vdecl = new VertexDeclaration(VertexStream<vec3,vec4>(VertexUsage::Position, VertexUsage::TexCoord));
+        new_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec3,vec4>(VertexUsage::Position, VertexUsage::TexCoord));
 
         array<vec3, vec4> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.count(); i++)
@@ -393,7 +390,7 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
     }
     else if (flagnb == 2 && has_position && has_texcoord)
     {
-        new_vdecl = new VertexDeclaration(VertexStream<vec3,vec2>(VertexUsage::Position, VertexUsage::TexCoord));
+        new_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec3,vec2>(VertexUsage::Position, VertexUsage::TexCoord));
 
         array<vec3, vec2> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.count(); i++)
@@ -402,7 +399,7 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
     }
     else if (flagnb == 2 && has_position && has_color)
     {
-        new_vdecl = new VertexDeclaration(VertexStream<vec3,u8vec4>(VertexUsage::Position, VertexUsage::Color));
+        new_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec3,u8vec4>(VertexUsage::Position, VertexUsage::Color));
 
         array<vec3, u8vec4> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.count(); i++)
@@ -412,27 +409,27 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, EasyMesh* src_mesh)
     else
         ASSERT(0, "no Vertex Declaration combination for 0x%04x", vflags);
 
-    m_vdatas.push(vflags, new_vdecl, new_vbo);
+    m_vdata.push(vflags, new_vdecl, new_vbo);
 }
 
 //-----------------------------------------------------------------------------
 void GpuEasyMeshData::RenderMeshData(mat4 const &model, int render_mode)
 {
-    ASSERT(0 <= render_mode && render_mode < m_gpudatas.count(), "render mode is not in the defined range");
-    ASSERT(m_gpudatas[render_mode], "gpu datas for this render mode don't exist");
-    GpuShaderData& gpu_sd = *(m_gpudatas[render_mode]);
+    ASSERT(0 <= render_mode && render_mode < m_gpudata.count(), "render mode is not in the defined range");
+    ASSERT(m_gpudata[render_mode], "gpu datas for this render mode don't exist");
+    GpuShaderData& gpu_sd = *(m_gpudata[render_mode]);
 
     int vdecl_idx = 0;
-    for (; vdecl_idx < m_vdatas.count(); ++vdecl_idx)
-        if (m_vdatas[vdecl_idx].m1 == gpu_sd.m_vert_decl_flags)
+    for (; vdecl_idx < m_vdata.count(); ++vdecl_idx)
+        if (m_vdata[vdecl_idx].m1 == gpu_sd.m_vert_decl_flags)
             break;
 
-    if (vdecl_idx >= m_vdatas.count())
+    if (vdecl_idx >= m_vdata.count())
         return;
 
-    uint16_t vflags = m_vdatas[vdecl_idx].m1;
-    VertexDeclaration* vdecl = m_vdatas[vdecl_idx].m2;
-    VertexBuffer* vbo = m_vdatas[vdecl_idx].m3;
+    uint16_t vflags = m_vdata[vdecl_idx].m1;
+    auto vdecl = m_vdata[vdecl_idx].m2;
+    auto vbo = m_vdata[vdecl_idx].m3;
 
     gpu_sd.m_shader->Bind();
     gpu_sd.SetupShaderDatas(model);

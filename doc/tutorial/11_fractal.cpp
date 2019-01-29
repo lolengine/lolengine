@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Fractal tutorial
 //
-//  Copyright © 2011—2016 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2011—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -14,6 +14,7 @@
 #   include "config.h"
 #endif
 
+#include <memory>
 #include <cstring>
 #include <cstdio>
 
@@ -460,8 +461,8 @@ public:
         {
             /* Create a texture of half the width and twice the height
              * so that we can upload four different subimages each frame. */
-            m_texture = new Texture(ivec2(m_size.x / 2, m_size.y * 2),
-                                    PixelFormat::RGBA_8);
+            m_texture = std::make_shared<Texture>(ivec2(m_size.x / 2, m_size.y * 2),
+                                                  PixelFormat::RGBA_8);
 
             /* Ensure the texture data is complete at least once, otherwise
              * uploading subimages will not work. */
@@ -476,11 +477,11 @@ public:
             m_screenuni = m_shader->GetUniformLocation("u_screen_size");
             m_zoomuni = m_shader->GetUniformLocation("u_zoom_settings");
 
-            m_vdecl =
-              new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position),
+            m_vdecl = std::make_shared<VertexDeclaration>(
+                                    VertexStream<vec2>(VertexUsage::Position),
                                     VertexStream<vec2>(VertexUsage::TexCoord));
-            m_vbo = new VertexBuffer(sizeof(vertices));
-            m_tbo = new VertexBuffer(sizeof(texcoords));
+            m_vbo = std::make_shared<VertexBuffer>(sizeof(vertices));
+            m_tbo = std::make_shared<VertexBuffer>(sizeof(texcoords));
 
             void *tmp = m_vbo->Lock(0, 0);
             memcpy(tmp, vertices, sizeof(vertices));
@@ -537,13 +538,13 @@ private:
     dvec2 m_texel2world;
     array<u8vec4> m_pixels, m_palette;
 
-    Shader *m_shader;
+    std::shared_ptr<Shader> m_shader;
     ShaderAttrib m_vertexattrib, m_texattrib;
     ShaderUniform m_texuni, m_texeluni, m_screenuni, m_zoomuni;
 
-    VertexDeclaration *m_vdecl;
-    VertexBuffer *m_vbo, *m_tbo;
-    Texture *m_texture;
+    std::shared_ptr<VertexDeclaration> m_vdecl;
+    std::shared_ptr<VertexBuffer> m_vbo, m_tbo;
+    std::shared_ptr<Texture> m_texture;
 
     int m_frame, m_slices, m_dirty[4];
     bool m_ready, m_drag;

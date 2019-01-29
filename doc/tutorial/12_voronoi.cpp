@@ -15,6 +15,8 @@
 #   include "config.h"
 #endif
 
+#include <memory>
+
 #include <lol/engine.h>
 #include "loldebug.h"
 
@@ -102,9 +104,9 @@ public:
 
         if (!m_ready)
         {
-            m_vdecl = new VertexDeclaration(VertexStream<vec2>(VertexUsage::Position));
+            m_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec2>(VertexUsage::Position));
 
-            m_vbo = new VertexBuffer(m_vertices.bytes());
+            m_vbo = std::make_shared<VertexBuffer>(m_vertices.bytes());
             void *vertices = m_vbo->Lock(0, 0);
             memcpy(vertices, &m_vertices[0], m_vertices.bytes());
             m_vbo->Unlock();
@@ -115,7 +117,7 @@ public:
 
             for (int i = 0; i < MaxFboType; ++i)
             {
-                m_fbos.push(new Framebuffer(Video::GetSize()), 0, array<ShaderUniform>(), array<ShaderAttrib>() );
+                m_fbos.push(std::make_shared<Framebuffer>(Video::GetSize()), 0, array<ShaderUniform>(), array<ShaderAttrib>() );
 
                 if (i == SrcVoronoiFbo)
                 {
@@ -152,7 +154,7 @@ public:
                 m_fbos.last().m1->Unbind();
             }
 
-            temp_buffer = new Framebuffer(Video::GetSize());
+            temp_buffer = std::make_shared<Framebuffer>(Video::GetSize());
             temp_buffer->Bind();
             {
                 RenderContext rc(scene.get_renderer());
@@ -259,8 +261,7 @@ public:
             int buf = voronoi_points.count() % 2;
             for (int j = 0; j < voronoi_points.count(); ++j)
             {
-                Framebuffer *dst_buf;
-                Framebuffer *src_buf;
+                std::shared_ptr<Framebuffer> dst_buf, src_buf;
 
                 if (buf)
                 {
@@ -314,9 +315,8 @@ public:
             int buf = 0;
             while (1)
             {
-                Framebuffer *dst_buf;
-                Framebuffer *src_buf;
-                Shader *shader;
+                std::shared_ptr<Framebuffer> dst_buf, src_buf;
+                std::shared_ptr<Shader> shader;
 
                 if (curres == ivec2::zero)
                     shader = m_screen_shader;
@@ -385,15 +385,15 @@ private:
     Controller* m_controller;
     array<vec3, vec2> voronoi_points;
     array<vec2> m_vertices;
-    Shader *m_screen_shader;
+    std::shared_ptr<Shader> m_screen_shader;
     ShaderAttrib m_screen_coord;
     ShaderUniform m_screen_texture;
 
-    VertexDeclaration *m_vdecl;
-    VertexBuffer *m_vbo;
+    std::shared_ptr<VertexDeclaration> m_vdecl;
+    std::shared_ptr<VertexBuffer> m_vbo;
 
-    array<Framebuffer *, Shader *, array<ShaderUniform>, array<ShaderAttrib> > m_fbos;
-    Framebuffer *temp_buffer;
+    array<std::shared_ptr<Framebuffer>, std::shared_ptr<Shader>, array<ShaderUniform>, array<ShaderAttrib> > m_fbos;
+    std::shared_ptr<Framebuffer> temp_buffer;
 
     int mode;
     int m_cur_fbo;

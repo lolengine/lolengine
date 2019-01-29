@@ -103,7 +103,6 @@ LolImGui::~LolImGui()
     Ticker::Unref(m_font);
     m_font = nullptr;
 
-    Shader::Destroy(m_shader);
     delete m_vdecl;
 
     ImGui::DestroyContext();
@@ -295,10 +294,10 @@ void LolImGui::tick_draw(float seconds, Scene &scene)
 {
     super::tick_draw(seconds, scene);
 
-    scene.AddPrimitiveRenderer(this, new PrimitiveLolImGui());
+    scene.AddPrimitiveRenderer(this, std::make_shared<PrimitiveLolImGui>());
 }
 
-void PrimitiveLolImGui::Render(Scene& scene, PrimitiveSource* primitive)
+void PrimitiveLolImGui::Render(Scene& scene, std::shared_ptr<PrimitiveSource> primitive)
 {
     UNUSED(scene, primitive);
 
@@ -383,12 +382,12 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
             u8vec4 color;
         };
 
-        VertexBuffer* vbo = new VertexBuffer(command_list.VtxBuffer.Size * sizeof(ImDrawVert));
+        auto vbo = std::make_shared<VertexBuffer>(command_list.VtxBuffer.Size * sizeof(ImDrawVert));
         ImDrawVert *vert = (ImDrawVert *)vbo->Lock(0, 0);
         memcpy(vert, command_list.VtxBuffer.Data, command_list.VtxBuffer.Size * sizeof(ImDrawVert));
         vbo->Unlock();
 
-        IndexBuffer *ibo = new IndexBuffer(command_list.IdxBuffer.Size * sizeof(ImDrawIdx));
+        auto ibo = std::make_shared<IndexBuffer>(command_list.IdxBuffer.Size * sizeof(ImDrawIdx));
         ImDrawIdx *indices = (ImDrawIdx *)ibo->Lock(0, 0);
         memcpy(indices, command_list.IdxBuffer.Data, command_list.IdxBuffer.Size * sizeof(ImDrawIdx));
         ibo->Unlock();
@@ -460,9 +459,6 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
 
         m_vdecl->Unbind();
         ibo->Unbind();
-
-        delete vbo;
-        delete ibo;
     }
 
     m_shader->Unbind();

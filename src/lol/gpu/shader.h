@@ -19,6 +19,7 @@
 
 #include <string>
 #include <map>
+#include <memory>
 #include <cstdint>
 
 #include "engine/entity.h"
@@ -316,8 +317,7 @@ class ShaderData;
 class Shader : public Entity
 {
 public:
-    static Shader *Create(std::string const &name, std::string const &code);
-    static void Destroy(Shader *shader);
+    static std::shared_ptr<Shader> Create(std::string const &name, std::string const &code);
 
     int GetAttribCount() const;
     ShaderAttrib GetAttribLocation(VertexUsage usage, int index) const;
@@ -345,12 +345,11 @@ public:
     void Bind() const;
     void Unbind() const;
 
-protected:
     Shader(std::string const &name, std::string const &vert, std::string const &frag);
     ~Shader();
 
 private:
-    ShaderData *data;
+    std::unique_ptr<ShaderData> data;
 
 public:
     static std::string GetVariablePrefix(const ShaderVariable variable);

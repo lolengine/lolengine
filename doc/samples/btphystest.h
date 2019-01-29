@@ -2,7 +2,7 @@
 //  Lol Engine — Bullet physics test
 //
 //  Copyright © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2012—2018 Sam Hocevar <sam@hocevar.net>
+//            © 2012—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -13,6 +13,7 @@
 
 #pragma once
 
+#include <memory>
 #include <string>
 #include <map>
 
@@ -22,7 +23,7 @@ class CatShaderData : public GpuShaderData
 
 public:
     //---
-    CatShaderData(uint32_t vert_decl_flags, Shader* shader);
+    CatShaderData(uint32_t vert_decl_flags, std::shared_ptr<Shader> shader);
     //---
     void SetupDefaultData();
     virtual void SetupShaderDatas(mat4 const &model);
@@ -89,7 +90,7 @@ private:
 
 
     TileSet*                        m_cat_texture;
-    Shader*                         m_cat_shader;
+    std::shared_ptr<Shader>         m_cat_shader;
     CatShaderData*                  m_cat_sdata;
     Camera*                         m_camera;
     Controller*                     m_controller;

@@ -721,7 +721,7 @@ void BtPhysTest::tick_draw(float seconds, Scene &scene)
 //-----------------------------------------------------------------------------
 // CShaderData
 //-----------------------------------------------------------------------------
-CatShaderData::CatShaderData(uint32_t vert_decl_flags, Shader* shader)
+CatShaderData::CatShaderData(uint32_t vert_decl_flags, std::shared_ptr<Shader> shader)
     : GpuShaderData(vert_decl_flags, shader, DebugRenderMode::Default)
 {
     m_sprite_orientation = .0f;

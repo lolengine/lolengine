@@ -114,8 +114,8 @@ public:
         //code = file.ReadString();
         file.Close();
 
-        Shader* shader = Shader::Create(builder.GetName(), code);
-        Shader::Destroy(shader);
+        std::shared_ptr<Shader> shader = Shader::Create(builder.GetName(), code);
+        shader = nullptr;
 
         Ticker::Shutdown();
     }

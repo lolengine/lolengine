@@ -2,7 +2,7 @@
 //  Lol Engine
 //
 //  Copyright © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2017—2018 Sam Hocevar <sam@hocevar.net>
+//            © 2017—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -15,6 +15,7 @@
 
 #include <string>
 #include <map>
+#include <memory>
 
 //
 // The Imgui integration
@@ -186,7 +187,7 @@ protected:
     //-------------------------------------------------------------------------
     TextureImage* m_font = nullptr;
     ShaderBuilder m_builder = ShaderBuilder("imgui_shader", "120");
-    Shader* m_shader = nullptr;
+    std::shared_ptr<Shader> m_shader = nullptr;
     Uniform m_ortho;
     Uniform m_texture;
     array<ShaderAttrib> m_attribs;
@@ -205,7 +206,7 @@ class PrimitiveLolImGui : public PrimitiveRenderer
 {
 public:
     PrimitiveLolImGui() { }
-    virtual void Render(Scene& scene, PrimitiveSource* primitive);
+    virtual void Render(Scene& scene, std::shared_ptr<PrimitiveSource> primitive);
 };
 
 //bool        ImGui_ImplGlfw_Init(GLFWwindow* window, bool install_callbacks);

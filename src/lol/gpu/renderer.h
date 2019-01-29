@@ -134,14 +134,11 @@ enum class ScissorMode : uint8_t
 
 class Renderer
 {
-private:
-    /* Only the Scene class can create a renderer for now. */
-    friend class Scene;
-
+public:
+    // FIXME: only the Scene class should be allowed to create a renderer
     Renderer(ivec2 size);
     ~Renderer();
 
-public:
     void Clear(ClearMask mask);
 
     void SetViewport(ibox2 viewport);
@@ -185,7 +182,7 @@ public:
     vec4 GetScissorRect() const;
 
 private:
-    RendererData *m_data;
+    std::unique_ptr<RendererData> m_data;
 };
 
 } /* namespace lol */

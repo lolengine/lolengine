@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -16,6 +16,9 @@
 // The Mesh class
 // --------------
 //
+
+#include <vector>
+#include <memory>
 
 #include <lol/gpu/vertexbuffer.h>
 #include <lol/gpu/indexbuffer.h>
@@ -59,7 +62,7 @@ public:
 
     /* FIXME: this should eventually take a “material” as argument, which
      * may behave differently between submeshes. */
-    void SetMaterial(Shader *shader);
+    void SetMaterial(std::shared_ptr<Shader> shader);
 
     //TODO: Not sure about the name
     void Render(Scene& scene, mat4 const &matrix);
@@ -68,7 +71,7 @@ protected:
     void Render();
 
 public:
-    array<class SubMesh *> m_submeshes;
+    std::vector<std::shared_ptr<class SubMesh>> m_submeshes;
 };
 
 /*
@@ -85,27 +88,27 @@ class SubMesh
     friend class Mesh;
 
 public:
-    SubMesh(Shader *shader, VertexDeclaration* vdecl);
+    SubMesh(std::shared_ptr<Shader> shader, std::shared_ptr<VertexDeclaration> vdecl);
     ~SubMesh();
 
     void SetMeshPrimitive(MeshPrimitive mesh_primitive);
-    void SetShader(Shader *shader);
-    Shader *GetShader();
-    void SetVertexDeclaration(VertexDeclaration *vdecl);
-    void SetVertexBuffer(int index, VertexBuffer* vbo);
-    void SetIndexBuffer(IndexBuffer* ibo);
-    void AddTexture(std::string const &name, Texture* texture);
+    void SetShader(std::shared_ptr<Shader> shader);
+    std::shared_ptr<Shader> GetShader();
+    void SetVertexDeclaration(std::shared_ptr<VertexDeclaration> vdecl);
+    void SetVertexBuffer(int index, std::shared_ptr<VertexBuffer> vbo);
+    void SetIndexBuffer(std::shared_ptr<IndexBuffer> ibo);
+    void AddTexture(std::string const &name, std::shared_ptr<Texture> texture);
 
 protected:
     void Render();
 
     MeshPrimitive m_mesh_prim;
-    Shader *m_shader;
-    VertexDeclaration* m_vdecl;
-    array<VertexBuffer *> m_vbos;
-    IndexBuffer *m_ibo;
+    std::shared_ptr<Shader> m_shader;
+    std::shared_ptr<VertexDeclaration> m_vdecl;
+    array<std::shared_ptr<VertexBuffer>> m_vbos;
+    std::shared_ptr<IndexBuffer> m_ibo;
 
-    array<std::string, Texture*> m_textures;
+    array<std::string, std::shared_ptr<Texture>> m_textures;
 };
 
 } /* namespace lol */
