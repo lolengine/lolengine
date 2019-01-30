@@ -1,8 +1,8 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2017—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2017—2019 Sam Hocevar <sam@hocevar.net>
+//            © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -21,31 +21,43 @@
 // The Imgui integration
 //
 
-#define IM_VEC2_CLASS_EXTRA ImVec2(const lol::vec2 &v) { x = v.x; y = v.y; } \
-                            ImVec2(const lol::ivec2 &v) : ImVec2(lol::vec2(v)) { } \
-                            operator lol::vec2() const { return lol::vec2(x, y); } \
-                            operator lol::ivec2() const { return lol::ivec2(lol::vec2(x, y)); }
+#define IM_VEC2_CLASS_EXTRA \
+    ImVec2(const lol::vec2 &v) { x = v.x; y = v.y; } \
+    ImVec2(const lol::ivec2 &v) : ImVec2(lol::vec2(v)) { } \
+    operator lol::vec2() const { return lol::vec2(x, y); } \
+    operator lol::ivec2() const { return lol::ivec2(lol::vec2(x, y)); }
 
-#define IM_VEC4_CLASS_EXTRA ImVec4(const lol::vec4 &v) { x = v.x; y = v.y; z = v.z; w = v.w; } \
-                            ImVec4(const lol::ivec4 &v) : ImVec4(lol::vec4(v)) { } \
-                            operator lol::vec4() const { return lol::vec4(x, y, z, w); } \
-                            operator lol::ivec4() const { return lol::ivec4(lol::vec4(x, y, z, w)); }
+#define IM_VEC4_CLASS_EXTRA \
+    ImVec4(const lol::vec4 &v) { x = v.x; y = v.y; z = v.z; w = v.w; } \
+    ImVec4(const lol::ivec4 &v) : ImVec4(lol::vec4(v)) { } \
+    operator lol::vec4() const { return lol::vec4(x, y, z, w); } \
+    operator lol::ivec4() const { return lol::ivec4(lol::vec4(x, y, z, w)); }
 
 #include "imgui.h"
 
 #undef IM_VEC2_CLASS_EXTRA
 #undef IM_VEC4_CLASS_EXTRA
 
-//LolImGui ----------------------------------------------------------------------------------------
 namespace lol
 {
 
-class LolImGui : public Entity
+class gui : public Entity
 {
+public:
+    gui(ImFontAtlas *shared_font_atlas);
+    ~gui();
+    std::string GetName() const { return "<gui>"; }
+
+    static void init(ImFontAtlas *shared_font_atlas = nullptr);
+    static void shutdown();
+    static std::string clipboard();
+    static void refresh_fonts();
+
+private:
     typedef Entity super;
 
     //ImGuiKeyBase ------------------------------------------------------------
-    struct LolImGuiKeyBase : public StructSafeEnum
+    struct key_base : public StructSafeEnum
     {
         enum Type
         {
@@ -63,17 +75,9 @@ class LolImGui : public Entity
             Enter,
             Escape,
 
-            A,
-            C,
-            V,
-            X,
-            Y,
-            Z,
+            A, C, V, X, Y, Z,
 
-            LShift,
-            RShift,
-            LCtrl,
-            RCtrl,
+            LShift, RShift, LCtrl, RCtrl,
 
             KEY_END,
 
@@ -88,6 +92,7 @@ class LolImGui : public Entity
 
             MAX = MOUSE_KEY_END,
         };
+
     protected:
         virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
         {
@@ -123,10 +128,10 @@ class LolImGui : public Entity
             return true;
         }
     };
-    typedef SafeEnum<LolImGuiKeyBase> LolImGuiKey;
+    typedef SafeEnum<key_base> key_enum;
 
     //ImGuiKeyBase ------------------------------------------------------------
-    struct LolImGuiAxisBase : public StructSafeEnum
+    struct axis_base : public StructSafeEnum
     {
         enum Type
         {
@@ -146,32 +151,17 @@ class LolImGui : public Entity
             return true;
         }
     };
-    typedef SafeEnum<LolImGuiAxisBase> LolImGuiAxis;
-
-public:
-    //-------------------------------------------------------------------------
-    LolImGui(ImFontAtlas *shared_font_atlas);
-    ~LolImGui();
-    std::string GetName() const { return "<LolImGui>"; }
-
-    //-------------------------------------------------------------------------
-    static void Init(ImFontAtlas *shared_font_atlas = nullptr);
-    static void Shutdown();
-
-    //-------------------------------------------------------------------------
-    static std::string GetClipboard();
-
-    static void refresh_fonts();
+    typedef SafeEnum<axis_base> axis_enum;
 
 protected:
     virtual void tick_game(float seconds);
     virtual void tick_draw(float seconds, Scene &scene);
 
-    static void SetClipboardCallback(void *data, const char* text);
-    static const char* GetClipboardCallback(void *data);
+    static void static_set_clipboard(void *data, const char* text);
+    static const char* static_get_clipboard(void *data);
 
-    static void RenderDrawLists(ImDrawData* draw_data);
-    void RenderDrawListsMethod(ImDrawData* draw_data);
+    static void static_render_draw_lists(ImDrawData* draw_data);
+    void render_draw_lists(ImDrawData* draw_data);
 
     struct Uniform
     {
@@ -191,39 +181,20 @@ protected:
     Uniform m_ortho;
     Uniform m_texture;
     array<ShaderAttrib> m_attribs;
-    VertexDeclaration* m_vdecl = nullptr;
-    IndexBuffer* m_ibuff = nullptr;
+    std::shared_ptr<VertexDeclaration> m_vdecl;
     Controller* m_controller = nullptr;
     InputDevice* m_mouse = nullptr;
     InputDevice* m_keyboard = nullptr;
     InputProfile m_profile;
-    //std::map<ImGuiKey_, LolImGuiKey> m_keys;
+    //std::map<ImGuiKey_, key_enum> m_keys;
     std::string m_clipboard;
+
+    class primitive : public PrimitiveRenderer
+    {
+    public:
+        primitive() { }
+        virtual void Render(Scene& scene, std::shared_ptr<PrimitiveSource> primitive);
+    };
 };
-
-//-----------------------------------------------------------------------------
-class PrimitiveLolImGui : public PrimitiveRenderer
-{
-public:
-    PrimitiveLolImGui() { }
-    virtual void Render(Scene& scene, std::shared_ptr<PrimitiveSource> primitive);
-};
-
-//bool        ImGui_ImplGlfw_Init(GLFWwindow* window, bool install_callbacks);
-//void        ImGui_ImplGlfw_Shutdown();
-//void        ImGui_ImplGlfw_NewFrame();
-//
-//// Use if you want to reset your rendering device without losing ImGui state.
-//void        ImGui_ImplGlfw_InvalidateDeviceObjects();
-//bool        ImGui_ImplGlfw_CreateDeviceObjects();
-//
-//// GLFW callbacks (installed by default if you enable 'install_callbacks' during initialization)
-//// Provided here if you want to chain callbacks.
-//// You can also handle inputs yourself and use those as a reference.
-//void        ImGui_ImplGlfw_MouseButtonCallback(GLFWwindow* window, int button, int action, int mods);
-//void        ImGui_ImplGlfw_ScrollCallback(GLFWwindow* window, double xoffset, double yoffset);
-//void        ImGui_ImplGlFw_KeyCallback(GLFWwindow* window, int key, int scancode, int action, int mods);
-//void        ImGui_ImplGlfw_CharCallback(GLFWwindow* window, unsigned int c);
-
 
 } /* namespace lol */

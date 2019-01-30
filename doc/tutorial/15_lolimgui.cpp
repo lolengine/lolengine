@@ -1,8 +1,8 @@
 //
-//  Lol Engine — Imgui tutorial
+//  Lol Engine — Dear ImGui tutorial
 //
-//  Copyright © 2002—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2012—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2012—2019 Sam Hocevar <sam@hocevar.net>
+//            © 2002—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -29,12 +29,12 @@ class LolImGuiDemo : public WorldEntity
 public:
     LolImGuiDemo()
     {
-        LolImGui::Init();
+        gui::init();
     }
 
     ~LolImGuiDemo()
     {
-        LolImGui::Shutdown();
+        gui::shutdown();
     }
 
     virtual void tick_game(float seconds)
@@ -68,7 +68,7 @@ public:
             ImGui::Text("Scroll: %f", io.MouseWheel);
             ImGui::Text("Maj: %s", io.KeyShift ? "true" : "false");
             ImGui::Text("Ctrl: %s", io.KeyCtrl ? "true" : "false");
-            ImGui::Text("Clipboard %s", LolImGui::GetClipboard().c_str());
+            ImGui::Text("Clipboard %s", gui::clipboard().c_str());
             ImGui::InputText("base input", buf, 512);
         }
         ImGui::End();
@@ -98,7 +98,7 @@ int main(int argc, char **argv)
 {
     sys::init(argc, argv);
 
-    Application app("Tutorial 15: LolImGui", ivec2(800, 600), 60.0f);
+    Application app("Tutorial 15: ImGui", ivec2(800, 600), 60.0f);
 
     new LolImGuiDemo();
 

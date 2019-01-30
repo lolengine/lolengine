@@ -1,8 +1,8 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2017—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2017—2019 Sam Hocevar <sam@hocevar.net>
+//            © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -22,10 +22,10 @@
 
 using namespace lol;
 
-static LolImGui* g_lolimgui = nullptr;
+static gui* g_gui = nullptr;
 
 //-----------------------------------------------------------------------------
-LolImGui::LolImGui(ImFontAtlas *shared_font_atlas)
+gui::gui(ImFontAtlas *shared_font_atlas)
 {
     ImGui::CreateContext(shared_font_atlas);
 
@@ -75,14 +75,14 @@ LolImGui::LolImGui(ImFontAtlas *shared_font_atlas)
 
     // Input Setup -------------------------------------------------------------
     InputProfile& ip = m_profile;
-    ip.AddBindings<LolImGuiKey, LolImGuiKey::KEY_START, LolImGuiKey::KEY_END>(InputProfileType::Keyboard);
-    //for (int i = LolImGuiKey::KEY_START; i < LolImGuiKey::KEY_END; ++i)
-    //    m_profile << InputProfile::Keyboard(i, LolImGuiKey(i).tostring());
-    for (int i = LolImGuiKey::MOUSE_KEY_START; i < LolImGuiKey::MOUSE_KEY_END; ++i)
-        m_profile << InputProfile::MouseKey(i, LolImGuiKey(i).tostring());
+    ip.AddBindings<key_enum, key_enum::KEY_START, key_enum::KEY_END>(InputProfileType::Keyboard);
+    //for (int i = key_enum::KEY_START; i < key_enum::KEY_END; ++i)
+    //    m_profile << InputProfile::Keyboard(i, key_enum(i).tostring());
+    for (int i = key_enum::MOUSE_KEY_START; i < key_enum::MOUSE_KEY_END; ++i)
+        m_profile << InputProfile::MouseKey(i, key_enum(i).tostring());
 
-    for (int i = LolImGuiAxis::MOUSE_AXIS_START; i < LolImGuiAxis::MOUSE_AXIS_END; ++i)
-        m_profile << InputProfile::MouseAxis(i, LolImGuiAxis(i).tostring());
+    for (int i = axis_enum::MOUSE_AXIS_START; i < axis_enum::MOUSE_AXIS_END; ++i)
+        m_profile << InputProfile::MouseAxis(i, axis_enum(i).tostring());
 
     Ticker::Ref(m_controller = new Controller("ImGui_Controller"));
     m_controller->Init(m_profile);
@@ -97,49 +97,47 @@ LolImGui::LolImGui(ImFontAtlas *shared_font_atlas)
 
 }
 
-LolImGui::~LolImGui()
+gui::~gui()
 {
     ImGui::GetIO().Fonts->TexID = nullptr;
     Ticker::Unref(m_font);
     m_font = nullptr;
 
-    delete m_vdecl;
-
     ImGui::DestroyContext();
 }
 
 //-----------------------------------------------------------------------------
-void LolImGui::Init(ImFontAtlas *shared_font_atlas)
+void gui::init(ImFontAtlas *shared_font_atlas)
 {
-    Ticker::Ref(g_lolimgui = new LolImGui(shared_font_atlas));
+    Ticker::Ref(g_gui = new gui(shared_font_atlas));
 
     ImGuiIO& io = ImGui::GetIO();
     //ImFont* font0 = io.Fonts->AddFontDefault();
 
     // Keyboard mapping. ImGui will use those indices to peek into the io.KeyDown[] array.
-    io.KeyMap[ImGuiKey_Tab]         = LolImGuiKey::Tab;
-    io.KeyMap[ImGuiKey_LeftArrow]   = LolImGuiKey::LeftArrow;
-    io.KeyMap[ImGuiKey_RightArrow]  = LolImGuiKey::RightArrow;
-    io.KeyMap[ImGuiKey_UpArrow]     = LolImGuiKey::UpArrow;
-    io.KeyMap[ImGuiKey_DownArrow]   = LolImGuiKey::DownArrow;
-    io.KeyMap[ImGuiKey_Home]        = LolImGuiKey::Home;
-    io.KeyMap[ImGuiKey_End]         = LolImGuiKey::End;
-    io.KeyMap[ImGuiKey_Delete]      = LolImGuiKey::Delete;
-    io.KeyMap[ImGuiKey_Backspace]   = LolImGuiKey::Backspace;
-    io.KeyMap[ImGuiKey_Enter]       = LolImGuiKey::Enter;
-    io.KeyMap[ImGuiKey_Escape]      = LolImGuiKey::Escape;
-    io.KeyMap[ImGuiKey_A]           = LolImGuiKey::A;
-    io.KeyMap[ImGuiKey_C]           = LolImGuiKey::C;
-    io.KeyMap[ImGuiKey_V]           = LolImGuiKey::V;
-    io.KeyMap[ImGuiKey_X]           = LolImGuiKey::X;
-    io.KeyMap[ImGuiKey_Y]           = LolImGuiKey::Y;
-    io.KeyMap[ImGuiKey_Z]           = LolImGuiKey::Z;
+    io.KeyMap[ImGuiKey_Tab]         = key_enum::Tab;
+    io.KeyMap[ImGuiKey_LeftArrow]   = key_enum::LeftArrow;
+    io.KeyMap[ImGuiKey_RightArrow]  = key_enum::RightArrow;
+    io.KeyMap[ImGuiKey_UpArrow]     = key_enum::UpArrow;
+    io.KeyMap[ImGuiKey_DownArrow]   = key_enum::DownArrow;
+    io.KeyMap[ImGuiKey_Home]        = key_enum::Home;
+    io.KeyMap[ImGuiKey_End]         = key_enum::End;
+    io.KeyMap[ImGuiKey_Delete]      = key_enum::Delete;
+    io.KeyMap[ImGuiKey_Backspace]   = key_enum::Backspace;
+    io.KeyMap[ImGuiKey_Enter]       = key_enum::Enter;
+    io.KeyMap[ImGuiKey_Escape]      = key_enum::Escape;
+    io.KeyMap[ImGuiKey_A]           = key_enum::A;
+    io.KeyMap[ImGuiKey_C]           = key_enum::C;
+    io.KeyMap[ImGuiKey_V]           = key_enum::V;
+    io.KeyMap[ImGuiKey_X]           = key_enum::X;
+    io.KeyMap[ImGuiKey_Y]           = key_enum::Y;
+    io.KeyMap[ImGuiKey_Z]           = key_enum::Z;
 
-    //Func pointer
-    io.RenderDrawListsFn = LolImGui::RenderDrawLists;
-    io.SetClipboardTextFn = LolImGui::SetClipboardCallback;
-    io.GetClipboardTextFn = LolImGui::GetClipboardCallback;
-    io.ClipboardUserData = &g_lolimgui->m_clipboard;
+    // Func pointer
+    io.RenderDrawListsFn = gui::static_render_draw_lists;
+    io.SetClipboardTextFn = gui::static_set_clipboard;
+    io.GetClipboardTextFn = gui::static_get_clipboard;
+    io.ClipboardUserData = &g_gui->m_clipboard;
 }
 
 /* CALLBACKS
@@ -152,38 +150,38 @@ io.AddInputCharacter((unsigned short)c);
 
 */
 
-void LolImGui::Shutdown()
+void gui::shutdown()
 {
     ImGui::EndFrame();
 
-    if (g_lolimgui)
+    if (g_gui)
     {
-        Ticker::Unref(g_lolimgui);
-        g_lolimgui = nullptr;
+        Ticker::Unref(g_gui);
+        g_gui = nullptr;
     }
 }
 
 //-----------------------------------------------------------------------------
-std::string LolImGui::GetClipboard()
+std::string gui::clipboard()
 {
-    return g_lolimgui ? g_lolimgui->m_clipboard : "";
+    return g_gui ? g_gui->m_clipboard : "";
 }
 
-void LolImGui::SetClipboardCallback(void *data, const char* text)
+void gui::static_set_clipboard(void *data, const char* text)
 {
     std::string *clipboard = (std::string *)data;
     *clipboard = text;
 }
-const char* LolImGui::GetClipboardCallback(void *data)
+const char* gui::static_get_clipboard(void *data)
 {
     std::string *clipboard = (std::string *)data;
     return clipboard->c_str();
 }
 
-void LolImGui::refresh_fonts()
+void gui::refresh_fonts()
 {
-    if (g_lolimgui->m_font)
-        Ticker::Unref(g_lolimgui->m_font);
+    if (g_gui->m_font)
+        Ticker::Unref(g_gui->m_font);
 
     // Build texture
     unsigned char* pixels;
@@ -194,11 +192,11 @@ void LolImGui::refresh_fonts()
     Image* image = new Image();
     image->Copy(pixels, size, PixelFormat::RGBA_8);
 
-    Ticker::Ref(g_lolimgui->m_font = new TextureImage("", image));
+    Ticker::Ref(g_gui->m_font = new TextureImage("", image));
 }
 
 //-----------------------------------------------------------------------------
-void LolImGui::tick_game(float seconds)
+void gui::tick_game(float seconds)
 {
     super::tick_game(seconds);
 
@@ -227,20 +225,20 @@ void LolImGui::tick_game(float seconds)
     // Update Keyboard
     io.KeyCtrl = false;
     io.KeyShift = false;
-    for (int i = LolImGuiKey::KEY_START; i < LolImGuiKey::KEY_END; ++i)
+    for (int i = key_enum::KEY_START; i < key_enum::KEY_END; ++i)
     {
         switch (i)
         {
-        default:
-            io.KeysDown[i] = m_controller->IsKeyPressed(i);
-            break;
-        case LolImGuiKey::LShift:
-        case LolImGuiKey::RShift:
+        case key_enum::LShift:
+        case key_enum::RShift:
             io.KeyShift = (io.KeyShift || m_controller->IsKeyPressed(i));
             break;
-        case LolImGuiKey::LCtrl:
-        case LolImGuiKey::RCtrl:
+        case key_enum::LCtrl:
+        case key_enum::RCtrl:
             io.KeyCtrl = (io.KeyCtrl || m_controller->IsKeyPressed(i));
+            break;
+        default:
+            io.KeysDown[i] = m_controller->IsKeyPressed(i);
             break;
         }
     }
@@ -261,16 +259,16 @@ void LolImGui::tick_game(float seconds)
 
         io.MousePos = cursor * video_size;
         //msg::debug("%.2f/%.2f\n", io.MousePos.x, io.MousePos.y);
-        io.MouseWheel = m_controller->GetAxisValue(LolImGuiAxis::Scroll);
+        io.MouseWheel = m_controller->GetAxisValue(axis_enum::Scroll);
 
-        for (int i = LolImGuiKey::MOUSE_KEY_START; i < LolImGuiKey::MOUSE_KEY_END; ++i)
+        for (int i = key_enum::MOUSE_KEY_START; i < key_enum::MOUSE_KEY_END; ++i)
         {
             switch (i)
             {
             default:
-                io.MouseDown[i - LolImGuiKey::MOUSE_KEY_START] = m_controller->IsKeyPressed(i);
+                io.MouseDown[i - key_enum::MOUSE_KEY_START] = m_controller->IsKeyPressed(i);
                 break;
-            case LolImGuiKey::Focus:
+            case key_enum::Focus:
                 if (m_controller->IsKeyReleased(i))
                 {
                     //msg::debug("Not focused .....\n");
@@ -290,14 +288,14 @@ void LolImGui::tick_game(float seconds)
 }
 
 //-----------------------------------------------------------------------------
-void LolImGui::tick_draw(float seconds, Scene &scene)
+void gui::tick_draw(float seconds, Scene &scene)
 {
     super::tick_draw(seconds, scene);
 
-    scene.AddPrimitiveRenderer(this, std::make_shared<PrimitiveLolImGui>());
+    scene.AddPrimitiveRenderer(this, std::make_shared<primitive>());
 }
 
-void PrimitiveLolImGui::Render(Scene& scene, std::shared_ptr<PrimitiveSource> primitive)
+void gui::primitive::Render(Scene& scene, std::shared_ptr<PrimitiveSource> primitive)
 {
     UNUSED(scene, primitive);
 
@@ -317,12 +315,12 @@ void PrimitiveLolImGui::Render(Scene& scene, std::shared_ptr<PrimitiveSource> pr
 // If text or lines are blurry when integrating ImGui in your engine:
 // - in your Render function, try translating your projection matrix by (0.5f,0.5f) or (0.375f,0.375f)
 //-------------------------------------------------------------------------
-void LolImGui::RenderDrawLists(ImDrawData* draw_data)
+void gui::static_render_draw_lists(ImDrawData* draw_data)
 {
-    g_lolimgui->RenderDrawListsMethod(draw_data);
+    g_gui->render_draw_lists(draw_data);
 }
 
-void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
+void gui::render_draw_lists(ImDrawData* draw_data)
 {
     if (draw_data == nullptr)
         return;
@@ -337,20 +335,17 @@ void LolImGui::RenderDrawListsMethod(ImDrawData* draw_data)
     // Create shader
     if (!m_shader)
     {
-        std::string code = m_builder.Build();
-
-        m_shader = Shader::Create(m_builder.GetName(), code);
+        m_shader = Shader::Create(m_builder.GetName(), m_builder.Build());
         ASSERT(m_shader);
 
         m_ortho.m_uniform = m_shader->GetUniformLocation(m_ortho.m_var.tostring());
         m_texture.m_uniform = m_shader->GetUniformLocation(m_texture.m_var.tostring());
 
-        m_attribs
-            << m_shader->GetAttribLocation(VertexUsage::Position, 0)
-            << m_shader->GetAttribLocation(VertexUsage::TexCoord, 0)
-            << m_shader->GetAttribLocation(VertexUsage::Color, 0);
+        m_attribs << m_shader->GetAttribLocation(VertexUsage::Position, 0)
+                  << m_shader->GetAttribLocation(VertexUsage::TexCoord, 0)
+                  << m_shader->GetAttribLocation(VertexUsage::Color, 0);
 
-        m_vdecl = new VertexDeclaration(
+        m_vdecl = std::make_shared<VertexDeclaration>(
             VertexStream<vec2, vec2, u8vec4>(
                 VertexUsage::Position,
                 VertexUsage::TexCoord,
