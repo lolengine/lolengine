@@ -276,13 +276,6 @@ void Controller::ClearProfile()
     UnbindProfile();
 }
 
-//Init mode 2: By hand, key/axis by key/axis ----------------------------------
-void Controller::SetInputCount(int nb_keys, int nb_axis)
-{
-    m_keys.resize(nb_keys);
-    m_axis.resize(nb_axis);
-}
-
 //Layer mask stuff ------------------------------------------------------------
 void Controller::SetLayerMask(uint32_t layer_mask)
 {
@@ -302,46 +295,48 @@ KeyBinding& Controller::GetKey(int index)
 {
     return m_keys[index];
 }
-KeyBinding const& Controller::GetKey(int index) const
-{
-    return m_keys[index];
-}
+
 AxisBinding& Controller::GetAxis(int index)
 {
     return m_axis[index];
 }
-AxisBinding const& Controller::GetAxis(int index) const
-{
-    return m_axis[index];
-}
 
-//Key methods: should not go directly to binding ------------------------------
+// Key methods: should not go directly to binding
 bool Controller::IsKeyPressed(int index) const
 {
-//#error do something better IsLayerActive()
-    return GetKey(index).IsPressed();
+    auto key = m_keys.find(index);
+    return key != m_keys.end() && key->second.IsPressed();
 }
+
 bool Controller::IsKeyReleased(int index) const
 {
-    return GetKey(index).IsReleased();
+    auto key = m_keys.find(index);
+    return key != m_keys.end() && key->second.IsReleased();
 }
+
 bool Controller::WasKeyPressedThisFrame(int index) const
 {
-    return GetKey(index).WasPressedThisFrame();
+    auto key = m_keys.find(index);
+    return key != m_keys.end() && key->second.WasPressedThisFrame();
 }
+
 bool Controller::WasKeyReleasedThisFrame(int index) const
 {
-    return GetKey(index).WasReleasedThisFrame();
+    auto key = m_keys.find(index);
+    return key != m_keys.end() && key->second.WasReleasedThisFrame();
 }
 
 //Axis methods: should not go directly to binding -----------------------------
 float Controller::GetAxisValue(int index) const
 {
-    return GetAxis(index).GetValue();
+    auto axis = m_axis.find(index);
+    return axis != m_axis.end() ? axis->second.GetValue() : 0.f;
 }
+
 float Controller::GetAxisDelta(int index) const
 {
-    return GetAxis(index).GetDelta();
+    auto axis = m_axis.find(index);
+    return axis != m_axis.end() ? axis->second.GetDelta() : 0.f;
 }
 
 //-----------------------------------------------------------------------------
@@ -403,10 +398,7 @@ void Controller::BindProfile(InputProfile const& setup)
     m_mutex.lock();
     m_profile = setup;
 
-    m_keys.resize(m_profile.GetKeyCount());
-    m_axis.resize(m_profile.GetAxisCount());
-
-    //Keyboard
+    // Keyboard
     m_keyboard = InputDevice::GetKeyboard();
     if (m_keyboard)
     {
@@ -414,7 +406,7 @@ void Controller::BindProfile(InputProfile const& setup)
             GetKey(key.m_idx).BindKeyboard(key.m_name);
     }
 
-    //Mouse
+    // Mouse
     m_mouse = InputDevice::GetMouse();
     if (m_mouse)
     {
@@ -424,7 +416,7 @@ void Controller::BindProfile(InputProfile const& setup)
             GetAxis(axis.m_idx).BindMouse(axis.m_name);
     }
 
-    //Joystick
+    // Joystick
     for (uint64_t joy_idx : m_profile.m_joystick)
     {
         class InputDevice* joystick = InputDevice::GetJoystick(joy_idx);
@@ -455,11 +447,11 @@ void Controller::tick_game(float seconds)
 
     if (m_active)
     {
-        for (int i = 0; i < m_keys.count(); ++i)
-            m_keys[i].Update();
+        for (auto &kv : m_keys)
+            kv.second.Update();
 
-        for (int i = 0; i < m_axis.count(); ++i)
-            m_axis[i].Update();
+        for (auto &kv : m_axis)
+            kv.second.Update();
     }
 
     if (m_activate_nextframe)

@@ -386,9 +386,6 @@ public:
     void Init(InputProfile const& profile);
     void ClearProfile();
 
-    /** Init mode 2: By hand, key/axis by key/axis */
-    void SetInputCount(int nb_keys, int nb_axis);
-
     /** layer mask stuff */
     void SetLayerMask(uint32_t layer_mask);
     uint32_t GetLayerMask();
@@ -427,11 +424,11 @@ protected:
     void BindProfile(InputProfile const& setup);
 
 private:
-    uint32_t m_layer_mask = 1; //plugged on the first by default
-    array<KeyBinding> m_keys;
-    array<AxisBinding> m_axis;
+    uint32_t m_layer_mask = 1; // plugged on the first by default
+    std::map<int, KeyBinding> m_keys;
+    std::map<int, AxisBinding> m_axis;
 
-    static uint32_t m_active_layer; //All active by default
+    static uint32_t m_active_layer; // All active by default
     static array<Controller*> controllers;
     std::string m_name;
     bool m_activate_nextframe;

@@ -165,9 +165,7 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
          *  - HDAPS, it's not a real joystick.
          *  - X360 controllers, Xinput handles them better since
          *    it won't think there is only one trigger axis. */
-#       if LOL_USE_SDL
         char const *name = SDL_JoystickName(sdlstick);
-#       endif
         if (strstr(name, "HDAPS")
 #       if LOL_USE_XINPUT
              || strstr(name, "XBOX 360 For Windows")
@@ -302,6 +300,17 @@ void SdlInputData::Tick(float seconds)
                         (int)m_keyboard, ScanCodeToText(sc).C(), ScanCodeToName(sc).C(),
                         event.type == SDL_KEYDOWN ? "up" : "down", event.key.repeat);
                     */
+
+                    // These are arguably text input characters, too.
+                    if (event.type == SDL_KEYDOWN && m_keyboard->IsTextInputActive())
+                    {
+                        switch (sc)
+                        {
+                        case SDLOL_Return: m_keyboard->AddText("\n"); break;
+                        case SDLOL_Tab: m_keyboard->AddText("\t"); break;
+                        case SDLOL_Backspace: m_keyboard->AddText("\x08"); break;
+                        }
+                    }
                 }
                 /* DEBUG STUFF
                 else
