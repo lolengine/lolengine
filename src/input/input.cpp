@@ -60,7 +60,7 @@ void InputDeviceInternal::AddKey(int index, const char* name)
         m_keys.push(false);
     }
 
-    m_keynames.last() = name;
+    m_keynames[index] = name;
 }
 
 void InputDeviceInternal::AddAxis(int index, const char* name, float sensitivity)
@@ -74,9 +74,9 @@ void InputDeviceInternal::AddAxis(int index, const char* name, float sensitivity
         m_axis.push(0.0f, 1.0f);
     }
 
-    m_axisnames.last() = name;
-    m_axis.last().m1 = 0.0f;
-    m_axis.last().m2 = sensitivity;
+    m_axisnames[index] = name;
+    m_axis[index].m1 = 0.0f;
+    m_axis[index].m2 = sensitivity;
 }
 
 void InputDeviceInternal::AddCursor(int index, const char* name)
@@ -90,7 +90,7 @@ void InputDeviceInternal::AddCursor(int index, const char* name)
         m_cursors.push(vec2::zero, ivec2::zero);
     }
 
-    m_cursornames.last() = name;
+    m_cursornames[index] = name;
 }
 
 InputDeviceInternal* InputDeviceInternal::CreateStandardKeyboard()
