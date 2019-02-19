@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -209,17 +209,17 @@ int32_t lol::AndroidAppData::HandleInput(AInputEvent* event)
         pos.y = m_wanted_resolution.y - 1 - pos.y;
         m_mouse->SetCursor(0, vec2(pos) / vec2(m_wanted_resolution), pos);
         // Note: 100.0f is an arbitrary value that makes it feel about the same than an xbox controller joystick
-        m_mouse->SetAxis(0, (pos.x - m_prev_pos.x) / max_screen_size * 100.f);
+        m_mouse->internal_set_axis(0, (pos.x - m_prev_pos.x) / max_screen_size * 100.f);
         // Unlike SDL, no need to negate Y axis
-        m_mouse->SetAxis(1, (pos.y - m_prev_pos.y) / max_screen_size * -100.f);
+        m_mouse->internal_set_axis(1, (pos.y - m_prev_pos.y) / max_screen_size * -100.f);
         m_prev_pos = pos;
         switch (AKeyEvent_getAction(event) & AMOTION_EVENT_ACTION_MASK)
         {
         case AMOTION_EVENT_ACTION_DOWN:
-            m_mouse->SetKey(0, true);
+            m_mouse->internal_set_key(0, true);
             break;
         case AMOTION_EVENT_ACTION_UP:
-            m_mouse->SetKey(0, false);
+            m_mouse->internal_set_key(0, false);
             break;
         }
         return 1;

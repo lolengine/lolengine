@@ -1,8 +1,8 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Benjamin Litzelmann
-//            © 2017—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2017—2019 Sam Hocevar <sam@hocevar.net>
+//            © 2010—2015 Benjamin Litzelmann
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -47,17 +47,18 @@ public:
         AddCursor(-1, name);
     }
 
-    void SetKey(int id, bool state)
+    /* Internal functions for the platform-specific drivers. */
+    void internal_set_key(int id, bool state)
     {
         m_keys[id] = state;
     }
 
-    void AddText(std::string const &text)
+    void internal_add_text(std::string const &text)
     {
         m_text += text;
     }
 
-    void SetAxis(int id, float value)
+    void internal_set_axis(int id, float value)
     {
         m_axis[id].m1 = value;
     }

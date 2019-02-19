@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine
 //
-//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -110,12 +110,12 @@ void D3d9Input::tick_game(float seconds)
         if (XInputGetState(m_data->m_joysticks[i].m1, &state) != ERROR_SUCCESS)
             continue;
 
-        m_data->m_joysticks[i].m2->SetAxis(0, (float)state.Gamepad.sThumbLX / 32768.f);
-        m_data->m_joysticks[i].m2->SetAxis(1, -(float)state.Gamepad.sThumbLY / 32768.f);
-        m_data->m_joysticks[i].m2->SetAxis(2, (float)state.Gamepad.sThumbRX / 32768.f);
-        m_data->m_joysticks[i].m2->SetAxis(3, -(float)state.Gamepad.sThumbRY / 32768.f);
-        m_data->m_joysticks[i].m2->SetAxis(4, (float)state.Gamepad.bLeftTrigger / 32768.f);
-        m_data->m_joysticks[i].m2->SetAxis(5, (float)state.Gamepad.bRightTrigger / 32768.f);
+        m_data->m_joysticks[i].m2->internal_set_axis(0, (float)state.Gamepad.sThumbLX / 32768.f);
+        m_data->m_joysticks[i].m2->internal_set_axis(1, -(float)state.Gamepad.sThumbLY / 32768.f);
+        m_data->m_joysticks[i].m2->internal_set_axis(2, (float)state.Gamepad.sThumbRX / 32768.f);
+        m_data->m_joysticks[i].m2->internal_set_axis(3, -(float)state.Gamepad.sThumbRY / 32768.f);
+        m_data->m_joysticks[i].m2->internal_set_axis(4, (float)state.Gamepad.bLeftTrigger / 32768.f);
+        m_data->m_joysticks[i].m2->internal_set_axis(5, (float)state.Gamepad.bRightTrigger / 32768.f);
 
         for (int b = 0; b < 16; b++)
         {
@@ -125,7 +125,7 @@ void D3d9Input::tick_game(float seconds)
 
             int key_index = (1 << b) > XINPUT_GAMEPAD_RIGHT_SHOULDER ? b - 2 : b;
 
-            m_data->m_joysticks[i].m2->SetKey(key_index, ((uint16_t)(state.Gamepad.wButtons) >> b) & 1);
+            m_data->m_joysticks[i].m2->internal_set_key(key_index, ((uint16_t)(state.Gamepad.wButtons) >> b) & 1);
         }
     }
 #endif

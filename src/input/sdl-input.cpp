@@ -39,21 +39,8 @@
 namespace lol
 {
 
-//-------------------------------------------------------------------------
 #define _SC(id, str, name) static const uint16_t SDLOL_##name = id;
 #include "input/keys.h"
-//-------------------------------------------------------------------------
-static bool ScanCodeIsValid(int sc)
-{
-    switch (sc)
-    {
-#define _SC(id, str, name) \
-    case id: return true;
-#include "input/keys.h"
-    default: return false;
-    }
-    return false;
-}
 
 //-------------------------------------------------------------------------
 /* DEBUG STUFF
@@ -232,13 +219,13 @@ void SdlInputData::Tick(float seconds)
     for (int j = 0; j < m_joysticks.count(); j++)
     {
         for (int i = 0; i < SDL_JoystickNumButtons(m_joysticks[j].m1); i++)
-            m_joysticks[j].m2->SetKey(i, SDL_JoystickGetButton(m_joysticks[j].m1, i) != 0);
+            m_joysticks[j].m2->internal_set_key(i, SDL_JoystickGetButton(m_joysticks[j].m1, i) != 0);
         for (int i = 0; i < SDL_JoystickNumAxes(m_joysticks[j].m1); i++)
-            m_joysticks[j].m2->SetAxis(i, (float)SDL_JoystickGetAxis(m_joysticks[j].m1, i) / 32768.f);
+            m_joysticks[j].m2->internal_set_axis(i, (float)SDL_JoystickGetAxis(m_joysticks[j].m1, i) / 32768.f);
     }
 #   endif
 
-    m_mouse->SetAxis(4, 0);
+    m_mouse->internal_set_axis(4, 0);
 
     if (m_keyboard->IsTextInputActive())
         SDL_StartTextInput();
@@ -259,7 +246,7 @@ void SdlInputData::Tick(float seconds)
         case SDL_KEYUP:
             switch (int sc = event.key.keysym.scancode)
             {
-                //Lock management
+            //Lock management
             case SDLOL_CapsLock:
             case SDLOL_ScrollLock:
             case SDLOL_NumLockClear:
@@ -280,7 +267,7 @@ void SdlInputData::Tick(float seconds)
                         sc2 = SDLOL_NumLockClearStatus;
                         break;
                     }
-                    m_keyboard->SetKey(sc2, !m_keyboard->GetKey(sc2));
+                    m_keyboard->internal_set_key(sc2, !m_keyboard->GetKey(sc2));
                     /* DEBUG STUFF
                     msg::debug("Repeat: 0x%02x : %s/%s/%s/%i\n",
                         (int)m_keyboard, ScanCodeToText(sc2).C(), ScanCodeToName(sc2).C(),
@@ -289,38 +276,24 @@ void SdlInputData::Tick(float seconds)
                 }
 #   endif
             default:
-                if (ScanCodeIsValid(sc))
-                {
-                    // Set key updates the corresponding key
-                    m_keyboard->SetKey(sc, event.type == SDL_KEYDOWN);
-
-                    /* DEBUG STUFF
-                    msg::debug("Repeat: 0x%02x : %s/%s/%s/%i\n",
-                        (int)m_keyboard, ScanCodeToText(sc).C(), ScanCodeToName(sc).C(),
-                        event.type == SDL_KEYDOWN ? "up" : "down", event.key.repeat);
-                    */
-                }
-                /* DEBUG STUFF
-                else
-                    msg::error("unknown keypress (sym 0x%02x, scancode %0d)\n",
-                                event.key.keysym.sym, event.key.keysym.scancode);
-                */
+                // Set key updates the corresponding key
+                m_keyboard->internal_set_key(sc, event.type == SDL_KEYDOWN);
+                break;
             }
             break;
 
-        //case SDL_TEXTEDITING: //TODO: handle that ?
+        //case SDL_TEXTEDITING: //TODO: handle that?
         case SDL_TEXTINPUT:
-                m_keyboard->AddText(event.text.text);
+                m_keyboard->internal_add_text(event.text.text);
                 break;
-
 
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP:
             //event.button.which
-            m_mouse->SetKey(event.button.button - 1, event.type == SDL_MOUSEBUTTONDOWN);
+            m_mouse->internal_set_key(event.button.button - 1, event.type == SDL_MOUSEBUTTONDOWN);
             break;
         case SDL_MOUSEWHEEL:
-            m_mouse->SetAxis(4, (float)event.button.y);
+            m_mouse->internal_set_axis(4, (float)event.button.y);
             break;
         case SDL_WINDOWEVENT:
         {
@@ -328,11 +301,11 @@ void SdlInputData::Tick(float seconds)
             {
                 case SDL_WINDOWEVENT_ENTER:
                 case SDL_WINDOWEVENT_FOCUS_GAINED:
-                    m_mouse->SetKey(3, true);
+                    m_mouse->internal_set_key(3, true);
                     break;
                 case SDL_WINDOWEVENT_LEAVE:
                 case SDL_WINDOWEVENT_FOCUS_LOST:
-                    m_mouse->SetKey(3, false);
+                    m_mouse->internal_set_key(3, false);
                     break;
                 case SDL_WINDOWEVENT_RESIZED:
                     Video::Resize(ivec2(event.window.data1, event.window.data2));
@@ -343,12 +316,12 @@ void SdlInputData::Tick(float seconds)
 
 #   if !SDL_FORCE_POLL_JOYSTICK
         case SDL_JOYAXISMOTION:
-            m_joysticks[event.jaxis.which].m2->SetAxis(event.jaxis.axis, (float)event.jaxis.value / 32768.f);
+            m_joysticks[event.jaxis.which].m2->internal_set_axis(event.jaxis.axis, (float)event.jaxis.value / 32768.f);
             break;
 
         case SDL_JOYBUTTONUP:
         case SDL_JOYBUTTONDOWN:
-            m_joysticks[event.jbutton.which].m2->SetKey(event.jbutton.button, event.jbutton.state);
+            m_joysticks[event.jbutton.which].m2->internal_set_key(event.jbutton.button, event.jbutton.state);
             break;
 #   endif
         }
@@ -375,12 +348,12 @@ void SdlInputData::Tick(float seconds)
         vec2 vprevmouse = vec2(m_prevmouse);
         m_mouse->SetCursor(0, vmouse / m_app, mouse);
         // Note: 100.0f is an arbitrary value that makes it feel about the same than an xbox controller joystick
-        m_mouse->SetAxis(0, (mouse.x - vprevmouse.x) * MOUSE_SPEED_MOD / max_screen_size);
+        m_mouse->internal_set_axis(0, (mouse.x - vprevmouse.x) * MOUSE_SPEED_MOD / max_screen_size);
         // Y Axis is also negated to match the usual joystick Y axis (negatives values are for the upper direction)
-        m_mouse->SetAxis(1,-(mouse.y - vprevmouse.y) * MOUSE_SPEED_MOD / max_screen_size);
+        m_mouse->internal_set_axis(1,-(mouse.y - vprevmouse.y) * MOUSE_SPEED_MOD / max_screen_size);
         //Pixel movement
-        m_mouse->SetAxis(2, (mouse.x - vprevmouse.x));
-        m_mouse->SetAxis(3,-(mouse.y - vprevmouse.y));
+        m_mouse->internal_set_axis(2, (mouse.x - vprevmouse.x));
+        m_mouse->internal_set_axis(3,-(mouse.y - vprevmouse.y));
     }
 
     if (m_mousecapture)
