@@ -292,7 +292,7 @@ void SdlInputData::Tick(float seconds)
             default:
                 if (ScanCodeIsValid(sc))
                 {
-                    //Set key updates the corresponding key
+                    // Set key updates the corresponding key
                     m_keyboard->SetKey(sc, event.type == SDL_KEYDOWN);
 
                     /* DEBUG STUFF
@@ -300,17 +300,6 @@ void SdlInputData::Tick(float seconds)
                         (int)m_keyboard, ScanCodeToText(sc).C(), ScanCodeToName(sc).C(),
                         event.type == SDL_KEYDOWN ? "up" : "down", event.key.repeat);
                     */
-
-                    // These are arguably text input characters, too.
-                    if (event.type == SDL_KEYDOWN && m_keyboard->IsTextInputActive())
-                    {
-                        switch (sc)
-                        {
-                        case SDLOL_Return: m_keyboard->AddText("\n"); break;
-                        case SDLOL_Tab: m_keyboard->AddText("\t"); break;
-                        case SDLOL_Backspace: m_keyboard->AddText("\x08"); break;
-                        }
-                    }
                 }
                 /* DEBUG STUFF
                 else
