@@ -124,5 +124,7 @@ tools/vslol/obj/*/*
 tools/vslol/obj/*/*/*
 tools/vslol/obj/*/*/*
 tools/vslol/*.suo
+# ImGui cruft
+imgui.ini
 # Built stuff
 binaries/
