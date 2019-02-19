@@ -1,8 +1,8 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Benjamin Litzelmann
-//            © 2017—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2017—2019 Sam Hocevar <sam@hocevar.net>
+//            © 2010—2015 Benjamin Litzelmann
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -318,40 +318,10 @@ public:
         return *this;
     }
 
-    //BindingType -------------------------------------------------------------
-    struct InputTypeBase : public StructSafeEnum
+    void register_default_keys()
     {
-        enum Type
-        {
-            Keyboard = 0,
-            MouseKey,
-            JoystickKey,
-            MouseAxis,
-            JoystickAxis,
-
-            MAX,
-        };
-    protected:
-        virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map) { UNUSED(enum_map); return true; }
-    };
-    typedef SafeEnum<InputTypeBase> InputType;
-
-    //Template helper ---------------------------------------------------------
-    template <typename T, int N_BEGIN, int N_END>
-    void AddBindings(InputType const& type, uint64_t joy = 0)
-    {
-        for (int i = N_BEGIN; i < N_END; ++i)
-        {
-            switch (type.ToScalar())
-            {
-            case InputType::Keyboard:/******/*this << InputProfile::Keyboard/******/(/***/i, T(i).tostring()); break;
-            case InputType::MouseKey:/******/*this << InputProfile::MouseKey/******/(/***/i, T(i).tostring()); break;
-            case InputType::JoystickKey:/***/*this << InputProfile::JoystickKey/***/(joy, i, T(i).tostring()); break;
-            case InputType::MouseAxis:/*****/*this << InputProfile::MouseAxis/*****/(/***/i, T(i).tostring()); break;
-            case InputType::JoystickAxis:/**/*this << InputProfile::JoystickAxis/**/(joy, i, T(i).tostring()); break;
-            default: break;
-            }
-        }
+#define _SC(id, str, name) *this << InputProfile::Keyboard(id, #name);
+#include "input/keys.inc"
     }
 
 private:
@@ -362,7 +332,6 @@ private:
     array<JoystickKey>  m_joystick_keys;
     array<JoystickAxis> m_joystick_axis;
 };
-typedef InputProfile::InputType InputProfileType;
 
 //-----------------------------------------------------------------------------
 //TODO: Add mask|layer system to prevent several controllers from interfering with another. (input overlay in menus)

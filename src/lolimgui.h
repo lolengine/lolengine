@@ -56,103 +56,6 @@ public:
 private:
     typedef Entity super;
 
-    //ImGuiKeyBase ------------------------------------------------------------
-    struct key_base : public StructSafeEnum
-    {
-        enum Type
-        {
-            KEY_START,
-
-            Tab = KEY_START,
-            LeftArrow,
-            RightArrow,
-            UpArrow,
-            DownArrow,
-            Home,
-            End,
-            Delete,
-            Backspace,
-            Enter,
-            Escape,
-
-            A, C, V, X, Y, Z,
-
-            LShift, RShift, LCtrl, RCtrl,
-
-            KEY_END,
-
-            MOUSE_KEY_START = KEY_END,
-
-            LeftClick = MOUSE_KEY_START,
-            RightClick,
-            MiddleClick,
-            Focus,
-
-            MOUSE_KEY_END,
-
-            MAX = MOUSE_KEY_END,
-        };
-
-    protected:
-        virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
-        {
-            enum_map[Tab] = g_name_key_Tab;
-            enum_map[LeftArrow] = g_name_key_Left;
-            enum_map[RightArrow] = g_name_key_Right;
-            enum_map[UpArrow] = g_name_key_Up;
-            enum_map[DownArrow] = g_name_key_Down;
-            enum_map[Home] = g_name_key_Home;
-            enum_map[End] = g_name_key_End;
-            enum_map[Delete] = g_name_key_Delete;
-            enum_map[Backspace] = g_name_key_Backspace;
-            enum_map[Enter] = g_name_key_Return;
-            enum_map[Escape] = g_name_key_Escape;
-
-            enum_map[A] = g_name_key_A;
-            enum_map[C] = g_name_key_C;
-            enum_map[V] = g_name_key_V;
-            enum_map[X] = g_name_key_X;
-            enum_map[Y] = g_name_key_Y;
-            enum_map[Z] = g_name_key_Z;
-
-            enum_map[LShift] = g_name_key_LShift;
-            enum_map[RShift] = g_name_key_RShift;
-            enum_map[LCtrl] = g_name_key_LCtrl;
-            enum_map[RCtrl] = g_name_key_RCtrl;
-
-            enum_map[LeftClick] = g_name_mouse_key_left;
-            enum_map[RightClick] = g_name_mouse_key_right;
-            enum_map[MiddleClick] = g_name_mouse_key_middle;
-            enum_map[Focus] = g_name_mouse_key_in_screen;
-
-            return true;
-        }
-    };
-    typedef SafeEnum<key_base> key_enum;
-
-    //ImGuiKeyBase ------------------------------------------------------------
-    struct axis_base : public StructSafeEnum
-    {
-        enum Type
-        {
-            MOUSE_AXIS_START = 0,
-
-            Scroll = MOUSE_AXIS_START,
-
-            MOUSE_AXIS_END,
-
-            MAX = MOUSE_AXIS_END,
-        };
-    protected:
-        virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
-        {
-            enum_map[Scroll] = g_name_mouse_axis_scroll;
-
-            return true;
-        }
-    };
-    typedef SafeEnum<axis_base> axis_enum;
-
 protected:
     virtual void tick_game(float seconds);
     virtual void tick_draw(float seconds, Scene &scene);
@@ -186,7 +89,6 @@ protected:
     InputDevice* m_mouse = nullptr;
     InputDevice* m_keyboard = nullptr;
     InputProfile m_profile;
-    //std::map<ImGuiKey_, key_enum> m_keys;
     std::string m_clipboard;
 
     class primitive : public PrimitiveRenderer

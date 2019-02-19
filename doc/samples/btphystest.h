@@ -1,8 +1,8 @@
 //
 //  Lol Engine — Bullet physics test
 //
-//  Copyright © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2012—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2012—2019 Sam Hocevar <sam@hocevar.net>
+//            © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -74,14 +74,14 @@ private:
     protected:
         virtual bool BuildEnumMap(std::map<int64_t, std::string>& enum_map)
         {
-            enum_map[KEY_MOVE_FORWARD] = g_name_key_Up;
-            enum_map[KEY_MOVE_BACK] = g_name_key_Down;
-            enum_map[KEY_MOVE_LEFT] = g_name_key_Left;
-            enum_map[KEY_MOVE_RIGHT] = g_name_key_Right;
-            enum_map[KEY_MOVE_UP] = g_name_key_PageUp;
-            enum_map[KEY_MOVE_DOWN] = g_name_key_PageDown;
-            enum_map[KEY_MOVE_JUMP] = g_name_key_Space;
-            enum_map[KEY_QUIT] = g_name_key_Escape;
+            enum_map[KEY_MOVE_FORWARD] = input::key_to_name(input::key::SC_Up);
+            enum_map[KEY_MOVE_BACK] = input::key_to_name(input::key::SC_Down);
+            enum_map[KEY_MOVE_LEFT] = input::key_to_name(input::key::SC_Left);
+            enum_map[KEY_MOVE_RIGHT] = input::key_to_name(input::key::SC_Right);
+            enum_map[KEY_MOVE_UP] = input::key_to_name(input::key::SC_PageUp);
+            enum_map[KEY_MOVE_DOWN] = input::key_to_name(input::key::SC_PageDown);
+            enum_map[KEY_MOVE_JUMP] = input::key_to_name(input::key::SC_Space);
+            enum_map[KEY_QUIT] = input::key_to_name(input::key::SC_Escape);
 
             return true;
         }

@@ -666,7 +666,7 @@
     <ClInclude Include="lol\image\movie.h">
       <Filter>lol\image</Filter>
     </ClInclude>
-    <ClInclude Include="input\keys.h">
+    <ClInclude Include="input\keys.inc">
       <Filter>input</Filter>
     </ClInclude>
     <ClInclude Include="input\controller.h">

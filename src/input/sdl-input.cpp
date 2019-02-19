@@ -39,9 +39,6 @@
 namespace lol
 {
 
-#define _SC(id, str, name) static const uint16_t SDLOL_##name = id;
-#include "input/keys.h"
-
 //-------------------------------------------------------------------------
 /* DEBUG STUFF
 static String ScanCodeToText(int sc)
@@ -50,7 +47,7 @@ static String ScanCodeToText(int sc)
     {
 #define _SC(id, str, name) \
     case id: return String(str);
-#include "input/keys.h"
+#include "input/keys.inc"
     default:
         msg::error("ScanCodeToText unknown scancode %0d\n", sc);
     }
@@ -65,7 +62,7 @@ static String ScanCodeToName(int sc)
     {
 #define _SC(id, str, name) \
         case id: return String(#name);
-#include "input/keys.h"
+#include "input/keys.inc"
     default:
         msg::error("ScanCodeToText unknown scancode %0d\n", sc);
     }
@@ -95,9 +92,8 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
     m_keyboard = InputDeviceInternal::CreateStandardKeyboard();
     m_mouse = InputDeviceInternal::CreateStandardMouse();
 
-#if LOL_USE_SDL
-    // XXX: another option is to properly handle gamepad support
-#   if !__EMSCRIPTEN__
+    // XXX: another option for emscripten is to properly support gamepads
+#if LOL_USE_SDL && !__EMSCRIPTEN__
     SDL_JoystickEventState(SDL_FORCE_POLL_JOYSTICK ? SDL_QUERY : SDL_ENABLE);
 
     /* Register all the joysticks we can find, and let the input
@@ -130,7 +126,6 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
 
         m_joysticks.push(sdlstick, stick);
     }
-#   endif // __EMSCRIPTEN__
 #endif
 
     m_gamegroup = GAMEGROUP_INPUT;
@@ -204,35 +199,33 @@ void SdlInput::tick(float seconds)
         case SDL_KEYUP:
             switch (int sc = event.key.keysym.scancode)
             {
-            //Lock management
-            case SDLOL_CapsLock:
-            case SDLOL_ScrollLock:
-            case SDLOL_NumLockClear:
-#   if defined SDLOL_CapsLock && defined SDLOL_ScrollLock && defined SDLOL_NumLockClear
-                //Update status on key down only
+            // Lock management
+            case (int)input::key::SC_CapsLock:
+            case (int)input::key::SC_ScrollLock:
+            case (int)input::key::SC_NumLockClear:
+                // Update status on key down only
                 if (event.type == SDL_KEYDOWN)
                 {
                     int sc2 = sc;
                     switch (sc)
                     {
-                    case SDLOL_CapsLock:
-                        sc2 = SDLOL_CapsLockStatus;
+                    case (int)input::key::SC_CapsLock:
+                        sc2 = (int)input::key::SC_CapsLockStatus;
                         break;
-                    case SDLOL_ScrollLock:
-                        sc2 = SDLOL_ScrollLockStatus;
+                    case (int)input::key::SC_ScrollLock:
+                        sc2 = (int)input::key::SC_ScrollLockStatus;
                         break;
-                    case SDLOL_NumLockClear:
-                        sc2 = SDLOL_NumLockClearStatus;
+                    case (int)input::key::SC_NumLockClear:
+                        sc2 = (int)input::key::SC_NumLockClearStatus;
                         break;
                     }
-                    m_keyboard->internal_set_key(sc2, !m_keyboard->GetKey(sc2));
+                    m_keyboard->internal_set_key(sc2, !m_keyboard->key((int)sc2));
                     /* DEBUG STUFF
                     msg::debug("Repeat: 0x%02x : %s/%s/%s/%i\n",
                         (int)m_keyboard, ScanCodeToText(sc2).C(), ScanCodeToName(sc2).C(),
                         m_keyboard->GetKey(sc2) ? "up" : "down", event.key.repeat);
                     */
                 }
-#   endif
             default:
                 // Set key updates the corresponding key
                 m_keyboard->internal_set_key(sc, event.type == SDL_KEYDOWN);

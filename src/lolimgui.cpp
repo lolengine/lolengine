@@ -22,6 +22,22 @@
 
 using namespace lol;
 
+namespace
+{
+    enum key_enum
+    {
+        LeftClick = 300,
+        RightClick,
+        MiddleClick,
+        Focus,
+    };
+
+    enum axis_enum
+    {
+        Scroll,
+    };
+}
+
 static gui* g_gui = nullptr;
 
 //-----------------------------------------------------------------------------
@@ -74,27 +90,19 @@ gui::gui(ImFontAtlas *shared_font_atlas)
               << ShaderProgram::Pixel << imgui_pixel;
 
     // Input Setup -------------------------------------------------------------
-    InputProfile& ip = m_profile;
-    ip.AddBindings<key_enum, key_enum::KEY_START, key_enum::KEY_END>(InputProfileType::Keyboard);
-    //for (int i = key_enum::KEY_START; i < key_enum::KEY_END; ++i)
-    //    m_profile << InputProfile::Keyboard(i, key_enum(i).tostring());
-    for (int i = key_enum::MOUSE_KEY_START; i < key_enum::MOUSE_KEY_END; ++i)
-        m_profile << InputProfile::MouseKey(i, key_enum(i).tostring());
+    m_profile.register_default_keys();
 
-    for (int i = axis_enum::MOUSE_AXIS_START; i < axis_enum::MOUSE_AXIS_END; ++i)
-        m_profile << InputProfile::MouseAxis(i, axis_enum(i).tostring());
+    m_profile << InputProfile::MouseKey(key_enum::LeftClick, g_name_mouse_key_left);
+    m_profile << InputProfile::MouseKey(key_enum::RightClick, g_name_mouse_key_right);
+    m_profile << InputProfile::MouseKey(key_enum::MiddleClick, g_name_mouse_key_middle);
+    m_profile << InputProfile::MouseKey(key_enum::Focus, g_name_mouse_key_in_screen);
+
+    m_profile << InputProfile::MouseAxis(axis_enum::Scroll, g_name_mouse_axis_scroll);
 
     Ticker::Ref(m_controller = new Controller("ImGui_Controller"));
     m_controller->Init(m_profile);
     m_mouse = InputDevice::GetMouse();
     m_keyboard = InputDevice::GetKeyboard();
-
-    //m_controller->Get
-    //#   define KB InputProfile::Keyboard
-//    m_profile
-//        << InputProfile::Keyboard(idx, g_name_key_Left);
-//#   undef KB
-
 }
 
 gui::~gui()
@@ -114,24 +122,25 @@ void gui::init(ImFontAtlas *shared_font_atlas)
     ImGuiIO& io = ImGui::GetIO();
     //ImFont* font0 = io.Fonts->AddFontDefault();
 
-    // Keyboard mapping. ImGui will use those indices to peek into the io.KeyDown[] array.
-    io.KeyMap[ImGuiKey_Tab]         = key_enum::Tab;
-    io.KeyMap[ImGuiKey_LeftArrow]   = key_enum::LeftArrow;
-    io.KeyMap[ImGuiKey_RightArrow]  = key_enum::RightArrow;
-    io.KeyMap[ImGuiKey_UpArrow]     = key_enum::UpArrow;
-    io.KeyMap[ImGuiKey_DownArrow]   = key_enum::DownArrow;
-    io.KeyMap[ImGuiKey_Home]        = key_enum::Home;
-    io.KeyMap[ImGuiKey_End]         = key_enum::End;
-    io.KeyMap[ImGuiKey_Delete]      = key_enum::Delete;
-    io.KeyMap[ImGuiKey_Backspace]   = key_enum::Backspace;
-    io.KeyMap[ImGuiKey_Enter]       = key_enum::Enter;
-    io.KeyMap[ImGuiKey_Escape]      = key_enum::Escape;
-    io.KeyMap[ImGuiKey_A]           = key_enum::A;
-    io.KeyMap[ImGuiKey_C]           = key_enum::C;
-    io.KeyMap[ImGuiKey_V]           = key_enum::V;
-    io.KeyMap[ImGuiKey_X]           = key_enum::X;
-    io.KeyMap[ImGuiKey_Y]           = key_enum::Y;
-    io.KeyMap[ImGuiKey_Z]           = key_enum::Z;
+    // Keyboard mapping; these are the only ones ImGui cares about, the
+    // rest is just handled by the application.
+    io.KeyMap[ImGuiKey_Tab]         = (int)input::key::SC_Tab;
+    io.KeyMap[ImGuiKey_LeftArrow]   = (int)input::key::SC_Left;
+    io.KeyMap[ImGuiKey_RightArrow]  = (int)input::key::SC_Right;
+    io.KeyMap[ImGuiKey_UpArrow]     = (int)input::key::SC_Up;
+    io.KeyMap[ImGuiKey_DownArrow]   = (int)input::key::SC_Down;
+    io.KeyMap[ImGuiKey_Home]        = (int)input::key::SC_Home;
+    io.KeyMap[ImGuiKey_End]         = (int)input::key::SC_End;
+    io.KeyMap[ImGuiKey_Delete]      = (int)input::key::SC_Delete;
+    io.KeyMap[ImGuiKey_Backspace]   = (int)input::key::SC_Backspace;
+    io.KeyMap[ImGuiKey_Enter]       = (int)input::key::SC_Return;
+    io.KeyMap[ImGuiKey_Escape]      = (int)input::key::SC_Escape;
+    io.KeyMap[ImGuiKey_A]           = (int)input::key::SC_A;
+    io.KeyMap[ImGuiKey_C]           = (int)input::key::SC_C;
+    io.KeyMap[ImGuiKey_V]           = (int)input::key::SC_V;
+    io.KeyMap[ImGuiKey_X]           = (int)input::key::SC_X;
+    io.KeyMap[ImGuiKey_Y]           = (int)input::key::SC_Y;
+    io.KeyMap[ImGuiKey_Z]           = (int)input::key::SC_Z;
 
     // Func pointer
     io.RenderDrawListsFn = gui::static_render_draw_lists;
@@ -223,25 +232,13 @@ void gui::tick_game(float seconds)
     io.MouseDrawCursor = true;
 
     // Update Keyboard
-    io.KeyCtrl = false;
-    io.KeyShift = false;
-    for (int i = key_enum::KEY_START; i < key_enum::KEY_END; ++i)
-    {
-        switch (i)
-        {
-        case key_enum::LShift:
-        case key_enum::RShift:
-            io.KeyShift = (io.KeyShift || m_controller->IsKeyPressed(i));
-            break;
-        case key_enum::LCtrl:
-        case key_enum::RCtrl:
-            io.KeyCtrl = (io.KeyCtrl || m_controller->IsKeyPressed(i));
-            break;
-        default:
-            io.KeysDown[i] = m_controller->IsKeyPressed(i);
-            break;
-        }
-    }
+    io.KeyCtrl = m_controller->IsKeyPressed((int)input::key::SC_LCtrl)
+              || m_controller->IsKeyPressed((int)input::key::SC_RCtrl);
+    io.KeyShift = m_controller->IsKeyPressed((int)input::key::SC_LShift)
+               || m_controller->IsKeyPressed((int)input::key::SC_RShift);
+
+    for (input::key k : input::all_keys())
+        io.KeysDown[(int)k] = m_controller->IsKeyPressed((int)k);
 
     m_keyboard->SetTextInputActive(io.WantTextInput);
 
@@ -261,26 +258,10 @@ void gui::tick_game(float seconds)
         //msg::debug("%.2f/%.2f\n", io.MousePos.x, io.MousePos.y);
         io.MouseWheel = m_controller->GetAxisValue(axis_enum::Scroll);
 
-        for (int i = key_enum::MOUSE_KEY_START; i < key_enum::MOUSE_KEY_END; ++i)
-        {
-            switch (i)
-            {
-            default:
-                io.MouseDown[i - key_enum::MOUSE_KEY_START] = m_controller->IsKeyPressed(i);
-                break;
-            case key_enum::Focus:
-                if (m_controller->IsKeyReleased(i))
-                {
-                    //msg::debug("Not focused .....\n");
-                    //io.MousePos = vec2(-1.f);
-                }
-                else
-                {
-                    //msg::debug("Focused !!\n");
-                }
-                break;
-            }
-        }
+        io.MouseDown[0] = m_controller->IsKeyPressed(key_enum::LeftClick);
+        io.MouseDown[1] = m_controller->IsKeyPressed(key_enum::RightClick);
+        io.MouseDown[2] = m_controller->IsKeyPressed(key_enum::MiddleClick);
+        // FIXME: handle key_enum::Focus?
     }
 
     // Start the frame

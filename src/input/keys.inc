@@ -1,8 +1,8 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2013 Benjamin Litzelmann
-//            © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//            © 2010—2013 Benjamin Litzelmann
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -15,7 +15,7 @@
  * name and, if possible, a string representation. */
 
 #if !defined _SC
-#   error scancode.h included without the _SC macro
+#   error keys.inc included without the _SC macro
 #endif
 
 _SC(0, "", Unknown)
@@ -285,7 +285,7 @@ _SC(282, "", Sleep)
 _SC(283, "", App1)
 _SC(284, "", App2)
 
-//Custom Lock management
+/* Custom Lock management */
 _SC(285, "", CapsLockStatus)
 _SC(286, "", ScrollLockStatus)
 _SC(287, "", NumLockClearStatus)

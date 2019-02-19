@@ -1,8 +1,8 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Benjamin Litzelmann
-//            © 2017—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2017—2019 Sam Hocevar <sam@hocevar.net>
+//            © 2010—2015 Benjamin Litzelmann
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -14,11 +14,48 @@
 #include <lol/engine-internal.h>
 
 #include <string>
+#include <map>
 
 #include "input/input_internal.h"
 
 namespace lol
 {
+
+// Lookup tables for scancode and key name lookups
+static std::vector<input::key> g_all_keys
+{
+#define _SC(code, str, name) input::key::SC_##name,
+#include "input/keys.inc"
+};
+
+static std::map<input::key, std::string> g_key_to_name
+{
+#define _SC(code, str, name) { input::key::SC_##name, #name },
+#include "input/keys.inc"
+};
+
+static std::map<std::string, input::key> g_name_to_key
+{
+#define _SC(code, str, name) { #name, input::key::SC_##name },
+#include "input/keys.inc"
+};
+
+std::vector<input::key> const &input::all_keys()
+{
+    return g_all_keys;
+}
+
+std::string const &input::key_to_name(input::key k)
+{
+    auto it = g_key_to_name.find(k);
+    return it == g_key_to_name.end() ? "Unknown" : it->second;
+}
+
+input::key input::name_to_key(std::string const &name)
+{
+    auto it = g_name_to_key.find(name);
+    return it == g_name_to_key.end() ? key::SC_Unknown : it->second;
+}
 
 array<InputDevice*> InputDevice::devices;
 int InputDevice::joystick_count = 0;
@@ -99,7 +136,7 @@ InputDeviceInternal* InputDeviceInternal::CreateStandardKeyboard()
 
     /* Register all scancodes known to SDL (from the USB standard) */
 #   define _SC(id, str, name) keyboard->AddKey(id, #name);
-#   include "input/keys.h"
+#   include "input/keys.inc"
 
     return keyboard;
 }

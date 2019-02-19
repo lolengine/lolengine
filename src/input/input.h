@@ -1,8 +1,8 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Benjamin Litzelmann
-//            © 2017—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2017—2019 Sam Hocevar <sam@hocevar.net>
+//            © 2010—2015 Benjamin Litzelmann
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -14,9 +14,24 @@
 #pragma once
 
 #include <string>
+#include <vector>
 
 namespace lol
 {
+
+class input
+{
+public:
+    enum class key : uint16_t
+    {
+#define _SC(id, str, name) SC_##name = id,
+#include "input/keys.inc"
+    };
+
+    static std::vector<key> const &all_keys();
+    static std::string const &key_to_name(key k);
+    static key name_to_key(std::string const &name);
+};
 
 const std::string g_name_max("MAX");
 const std::string g_name_mouse("Mouse");
@@ -28,10 +43,7 @@ static std::string g_name_joystick(const uint64_t num)
     return format("Joystick%d", (int)num);
 }
 
-#   define _SC(id, str, name) const std::string g_name_key_##name(#name);
-#   include "input/keys.h"
-
-//Mouse default buttons/axis
+// Mouse default buttons/axis
 const std::string g_name_mouse_key_left("Left");
 const std::string g_name_mouse_key_middle("Middle");
 const std::string g_name_mouse_key_right("Right");
@@ -43,7 +55,7 @@ const std::string g_name_mouse_axis_ypixel("YPixel");
 const std::string g_name_mouse_axis_scroll("Scroll");
 const std::string g_name_mouse_cursor("Cursor");
 
-//Xbox default buttons/axis
+// Xbox default buttons/axis
 const std::string g_name_xbox_key_dpad_up("DPadUp");
 const std::string g_name_xbox_key_dpad_down("DPadDown");
 const std::string g_name_xbox_key_dpad_left("DPadLeft");

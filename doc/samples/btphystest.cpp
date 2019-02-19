@@ -1,8 +1,8 @@
 //
 //  Lol Engine — BtPhys tutorial
 //
-//  Copyright © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2012—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2012—2019 Sam Hocevar <sam@hocevar.net>
+//            © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -77,26 +77,10 @@ void BtPhysTest::InitApp()
     m_loc_dp = .0f;
 #endif //CAT_MODE
 
-#if 1 //HAS_INPUT
-    InputProfile& ip = m_profile;
-    ip.AddBindings<BtPhysTestKeyInput, BtPhysTestKeyInput::KEY_START, BtPhysTestKeyInput::KEY_MAX>(InputProfileType::Keyboard);
-
+    m_profile.register_default_keys();
     m_controller = new Controller("Default");
     m_controller->Init(m_profile);
     Ticker::Ref(m_controller);
-#else
-    /* Register an input controller for the keyboard */
-    m_controller = new Controller("Default");
-    m_controller->SetInputCount(KEY_MAX, 0);
-    m_controller->GetKey(KEY_MOVE_FORWARD).Bind("Keyboard", "Up");
-    m_controller->GetKey(KEY_MOVE_BACK).Bind("Keyboard", "Down");
-    m_controller->GetKey(KEY_MOVE_LEFT).Bind("Keyboard", "Left");
-    m_controller->GetKey(KEY_MOVE_RIGHT).Bind("Keyboard", "Right");
-    m_controller->GetKey(KEY_MOVE_JUMP).Bind("Keyboard", "Space");
-    m_controller->GetKey(KEY_MOVE_UP).Bind("Keyboard", "PageUp");
-    m_controller->GetKey(KEY_MOVE_DOWN).Bind("Keyboard", "PageDown");
-    m_controller->GetKey(KEY_QUIT).Bind("Keyboard", "Escape");
-#endif
 
     /* Create a camera that matches the settings of XNA BtPhysTest */
     m_camera = new Camera();
@@ -417,7 +401,7 @@ void BtPhysTest::tick_game(float seconds)
     auto context = Debug::DrawContext::New(Color::white, 1.f);
     Debug::DrawGrid(vec3::zero, vec3::axis_x, vec3::axis_y, vec3::axis_z, 10.f);
 
-    if (m_controller->WasKeyReleasedThisFrame(BtPhysTestKeyInput::KEY_QUIT))
+    if (m_controller->WasKeyReleasedThisFrame((int)input::key::SC_Escape))
         Ticker::Shutdown();
 
     m_loop_value += seconds;
@@ -601,15 +585,15 @@ void BtPhysTest::tick_game(float seconds)
             mat4 CtlrMx = Character->GetTransform();
 
             vec3 movement(0.f);
-            movement.z = (m_controller->IsKeyPressed(KEY_MOVE_RIGHT) ? 1.f : 0.f)
-                - (m_controller->IsKeyPressed(KEY_MOVE_LEFT) ? 1.f : 0.f);
-            movement.x = (m_controller->IsKeyPressed(KEY_MOVE_FORWARD) ? 1.f : 0.f)
-                - (m_controller->IsKeyPressed(KEY_MOVE_BACK) ? 1.f : 0.f);
-            movement.y = (m_controller->IsKeyPressed(KEY_MOVE_UP) ? 1.f : 0.f)
-                - (m_controller->IsKeyPressed(KEY_MOVE_DOWN) ? 1.f : 0.f);
+            movement.z = (m_controller->IsKeyPressed(input::key::SC_Right) ? 1.f : 0.f)
+                - (m_controller->IsKeyPressed(input::key::SC_Left) ? 1.f : 0.f);
+            movement.x = (m_controller->IsKeyPressed(input::key::SC_Up) ? 1.f : 0.f)
+                - (m_controller->IsKeyPressed(input::key::SC_Down) ? 1.f : 0.f);
+            movement.y = (m_controller->IsKeyPressed(input::key::SC_PageUp) ? 1.f : 0.f)
+                - (m_controller->IsKeyPressed(input::key::SC_PageDown) ? 1.f : 0.f);
             vec3 CharMove = movement * seconds * vec3(4.f, 10.f, 4.f);
 
-            if (m_controller->WasKeyReleasedThisFrame(KEY_MOVE_JUMP))
+            if (m_controller->WasKeyReleasedThisFrame(input::key::SC_Space))
                 Character->Jump();
             Character->SetMovementForFrame(CharMove);
 

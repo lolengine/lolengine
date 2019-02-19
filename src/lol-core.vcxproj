@@ -208,7 +208,7 @@
     <ClInclude Include="input\controller.h" />
     <ClInclude Include="input\input.h" />
     <ClInclude Include="input\input_internal.h" />
-    <ClInclude Include="input\keys.h" />
+    <ClInclude Include="input\keys.inc" />
     <ClInclude Include="input\sdl-input.h">
       <ExcludedFromBuild Condition="'$(enable_sdl)'=='no'">true</ExcludedFromBuild>
     </ClInclude>
