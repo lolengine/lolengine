@@ -74,52 +74,15 @@ static String ScanCodeToName(int sc)
 */
 
 /*
- * SDL Input implementation class
- */
-
-class SdlInputData
-{
-    friend class SdlInput;
-
-private:
-    void Tick(float seconds);
-
-    static ivec2 GetMousePos();
-    static void SetMousePos(ivec2 position);
-
-    SdlInputData(int app_w, int app_h, int screen_w, int screen_h)
-      : m_mouse(nullptr),
-        m_keyboard(nullptr),
-        m_prevmouse(ivec2::zero),
-        m_app(vec2((float)app_w, (float)app_h)),
-        m_screen(vec2((float)screen_w, (float)screen_h)),
-        m_mousecapture(false),
-        m_tick_in_draw_thread(false)
-    { }
-
-#if LOL_USE_SDL
-    array<SDL_Joystick *, InputDeviceInternal *> m_joysticks;
-    InputDeviceInternal *m_mouse;
-    InputDeviceInternal *m_keyboard;
-#endif // LOL_USE_SDL
-
-    ivec2 m_prevmouse;
-    vec2 m_app;
-    vec2 m_screen;
-
-    bool m_mousecapture;
-    bool m_tick_in_draw_thread;
-};
-
-/*
  * Public SdlInput class
  */
 
 SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
-  : m_data(new SdlInputData(app_w, app_h, screen_w, screen_h))
+  : m_app(vec2((float)app_w, (float)app_h)),
+    m_screen(vec2((float)screen_w, (float)screen_h))
 {
 #if _WIN32
-    m_data->m_tick_in_draw_thread = true;
+    m_tick_in_draw_thread = true;
 #endif
 
 #if __EMSCRIPTEN__
@@ -129,17 +92,13 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
     SDL_Init(SDL_INIT_TIMER | SDL_INIT_JOYSTICK);
 #endif
 
-    m_data->m_keyboard = InputDeviceInternal::CreateStandardKeyboard();
-    m_data->m_mouse = InputDeviceInternal::CreateStandardMouse();
+    m_keyboard = InputDeviceInternal::CreateStandardKeyboard();
+    m_mouse = InputDeviceInternal::CreateStandardMouse();
 
 #if LOL_USE_SDL
     // XXX: another option is to properly handle gamepad support
 #   if !__EMSCRIPTEN__
-#       if SDL_FORCE_POLL_JOYSTICK
-    SDL_JoystickEventState(SDL_QUERY);
-#       else
-    SDL_JoystickEventState(SDL_ENABLE);
-#       endif //SDL_FORCE_POLL_JOYSTICK
+    SDL_JoystickEventState(SDL_FORCE_POLL_JOYSTICK ? SDL_QUERY : SDL_ENABLE);
 
     /* Register all the joysticks we can find, and let the input
      * system decide what it wants to track. */
@@ -169,7 +128,7 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
         for (int j = 0; j < SDL_JoystickNumButtons(sdlstick); ++j)
             stick->AddKey(format("Button%d", j + 1).c_str());
 
-        m_data->m_joysticks.push(sdlstick, stick);
+        m_joysticks.push(sdlstick, stick);
     }
 #   endif // __EMSCRIPTEN__
 #endif
@@ -181,33 +140,32 @@ SdlInput::~SdlInput()
 {
 #if LOL_USE_SDL && !__EMSCRIPTEN__
     /* Unregister all the joysticks we added */
-    while (m_data->m_joysticks.count())
+    while (m_joysticks.count())
     {
-        SDL_JoystickClose(m_data->m_joysticks[0].m1);
-        delete m_data->m_joysticks[0].m2;
-        m_data->m_joysticks.remove(0);
+        SDL_JoystickClose(m_joysticks[0].m1);
+        delete m_joysticks[0].m2;
+        m_joysticks.remove(0);
     }
 #endif
-    delete m_data;
 }
 
 void SdlInput::tick_game(float seconds)
 {
     Entity::tick_game(seconds);
 
-    if (!m_data->m_tick_in_draw_thread)
-        m_data->Tick(seconds);
+    if (!m_tick_in_draw_thread)
+        tick(seconds);
 }
 
 void SdlInput::tick_draw(float seconds, Scene &scene)
 {
     Entity::tick_draw(seconds, scene);
 
-    if (m_data->m_tick_in_draw_thread)
-        m_data->Tick(seconds);
+    if (m_tick_in_draw_thread)
+        tick(seconds);
 }
 
-void SdlInputData::Tick(float seconds)
+void SdlInput::tick(float seconds)
 {
 #if LOL_USE_SDL
     /* FIXME: maybe we should make use of this? */
@@ -328,15 +286,18 @@ void SdlInputData::Tick(float seconds)
     }
 
     /* Handle mouse input */
-    ivec2 mouse = SdlInputData::GetMousePos();
+    ivec2 mouse(-1, -1);
+    SDL_GetMouseState(&mouse.x, &mouse.y);
+    mouse.y = Video::GetSize().y - 1 - mouse.y;
+
     if (InputDeviceInternal::GetMouseCapture() != m_mousecapture)
     {
         m_mousecapture = InputDeviceInternal::GetMouseCapture();
-#   if LOL_USE_SDL
         SDL_SetRelativeMouseMode(m_mousecapture ? SDL_TRUE : SDL_FALSE);
-#   endif
-        mouse = (ivec2)m_app / 2;
-        SdlInputData::SetMousePos(mouse);
+        mouse = ivec2(m_app * .5f);
+
+        // FIXME: how do I warped mouse?
+        //SDL_WarpMouse((uint16_t)mouse.x, (uint16_t)mouse.y);
         //SDL_ShowCursor(m_mousecapture ? SDL_DISABLE : SDL_ENABLE);
     }
 
@@ -359,7 +320,7 @@ void SdlInputData::Tick(float seconds)
     if (m_mousecapture)
     {
         mouse = ivec2(m_app * .5f);
-        SdlInputData::SetMousePos(mouse);
+        //SDL_WarpMouse((uint16_t)mouse.x, (uint16_t)mouse.y);
     }
 
     m_prevmouse = mouse;
@@ -367,29 +328,6 @@ void SdlInputData::Tick(float seconds)
 #else
     UNUSED(seconds);
 #endif //LOL_USE_SDL
-}
-
-// NOTE: these two functions are pointless now and could be inlined directly
-ivec2 SdlInputData::GetMousePos()
-{
-    ivec2 ret(-1, -1);
-
-#if LOL_USE_SDL
-    {
-        SDL_GetMouseState(&ret.x, &ret.y);
-        ret.y = Video::GetSize().y - 1 - ret.y;
-    }
-#endif
-    return ret;
-}
-
-void SdlInputData::SetMousePos(ivec2 position)
-{
-    UNUSED(position);
-#if LOL_USE_SDL
-    // FIXME: how do I warped mouse?
-    //SDL_WarpMouse((uint16_t)position.x, (uint16_t)position.y);
-#endif
 }
 
 } /* namespace lol */

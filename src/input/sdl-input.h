@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
@@ -17,10 +19,16 @@
 
 #include "engine/entity.h"
 
+#if LOL_USE_SDL
+#   if HAVE_SDL2_SDL_H
+#      include <SDL2/SDL.h>
+#   elif HAVE_SDL_H
+#      include <SDL.h>
+#   endif
+#endif
+
 namespace lol
 {
-
-class SdlInputData;
 
 class SdlInput : public Entity
 {
@@ -36,7 +44,18 @@ protected:
     virtual void tick_draw(float seconds, Scene &scene);
 
 private:
-    SdlInputData *m_data;
+    void tick(float seconds);
+
+    array<SDL_Joystick *, class InputDeviceInternal *> m_joysticks;
+    InputDeviceInternal *m_mouse = nullptr;
+    InputDeviceInternal *m_keyboard = nullptr;
+
+    ivec2 m_prevmouse = ivec2::zero;
+    vec2 m_app;
+    vec2 m_screen;
+
+    bool m_mousecapture = false;
+    bool m_tick_in_draw_thread = false;
 };
 
 } /* namespace lol */

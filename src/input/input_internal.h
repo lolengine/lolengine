@@ -47,6 +47,17 @@ public:
         AddCursor(-1, name);
     }
 
+    void SetCursor(int id, vec2 const & position, ivec2 const & pixel)
+    {
+        m_cursors[id].m1 = position;
+        m_cursors[id].m2 = pixel;
+    }
+
+    ivec2 GetCursorPixelPos(int id)
+    {
+        return m_cursors[id].m2;
+    }
+
     /* Internal functions for the platform-specific drivers. */
     void internal_set_key(int id, bool state)
     {
@@ -61,17 +72,6 @@ public:
     void internal_set_axis(int id, float value)
     {
         m_axis[id].m1 = value;
-    }
-
-    void SetCursor(int id, vec2 const & position, ivec2 const & pixel)
-    {
-        m_cursors[id].m1 = position;
-        m_cursors[id].m2 = pixel;
-    }
-
-    ivec2 GetCursorPixelPos(int id)
-    {
-        return m_cursors[id].m2;
     }
 
     static bool GetMouseCapture()
