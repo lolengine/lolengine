@@ -52,29 +52,29 @@ void InputDevice::SetTextInputActive(bool status)
 void InputDeviceInternal::AddKey(int index, const char* name)
 {
     if (index == -1)
-        index = m_keynames.count();
+        index = (int)m_key_names.size();
 
-    while (index >= m_keynames.count())
+    while (index >= (int)m_key_names.size())
     {
-        m_keynames.push(name);
-        m_keys.push(false);
+        m_key_names.push_back(name);
+        m_keys.push_back(false);
     }
 
-    m_keynames[index] = name;
+    m_key_names[index] = name;
 }
 
 void InputDeviceInternal::AddAxis(int index, const char* name, float sensitivity)
 {
     if (index == -1)
-        index = m_axisnames.count();
+        index = (int)m_axis_names.size();
 
-    while (index >= m_axisnames.count())
+    while (index >= (int)m_axis_names.size())
     {
-        m_axisnames.push(name);
+        m_axis_names.push_back(name);
         m_axis.push(0.0f, 1.0f);
     }
 
-    m_axisnames[index] = name;
+    m_axis_names[index] = name;
     m_axis[index].m1 = 0.0f;
     m_axis[index].m2 = sensitivity;
 }
@@ -82,15 +82,15 @@ void InputDeviceInternal::AddAxis(int index, const char* name, float sensitivity
 void InputDeviceInternal::AddCursor(int index, const char* name)
 {
     if (index == -1)
-        index = m_cursornames.count();
+        index = (int)m_cursor_names.size();
 
-    while (index >= m_cursornames.count())
+    while (index >= (int)m_cursor_names.size())
     {
-        m_cursornames.push(name);
+        m_cursor_names.push_back(name);
         m_cursors.push(vec2::zero, ivec2::zero);
     }
 
-    m_cursornames[index] = name;
+    m_cursor_names[index] = name;
 }
 
 InputDeviceInternal* InputDeviceInternal::CreateStandardKeyboard()

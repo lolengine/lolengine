@@ -211,10 +211,10 @@ float AxisBinding::RetrieveCurrentValue()
     for (int i = 0; i < m_keybindings.count(); ++i)
     {
         float value = 0.0f;
-        m_keybindings[i].m1->GetKey(m_keybindings[i].m2);
-        value += m_keybindings[i].m1->GetKey(m_keybindings[i].m3) ? 1.0f : 0.0f;
+        m_keybindings[i].m1->key(m_keybindings[i].m2);
+        value += m_keybindings[i].m1->key(m_keybindings[i].m3) ? 1.0f : 0.0f;
         if (m_keybindings[i].m2 != -1)
-            value += m_keybindings[i].m1->GetKey(m_keybindings[i].m2) ? -1.0f : 0.0f;
+            value += m_keybindings[i].m1->key(m_keybindings[i].m2) ? -1.0f : 0.0f;
 
         if (value > max_positive)
             max_positive = value;

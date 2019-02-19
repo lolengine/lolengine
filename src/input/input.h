@@ -77,27 +77,30 @@ public:
     /** Gets the index of the corresponding key, needed to call GetKey */
     ptrdiff_t GetKeyIndex(std::string const &name) const
     {
-        return GetItemIndex(name, m_keynames);
+        return GetItemIndex(name, m_key_names);
     }
 
     /** Gets the index of the corresponding axis, needed to call GetAxis */
     ptrdiff_t GetAxisIndex(std::string const &name) const
     {
-        return GetItemIndex(name, m_axisnames);
+        return GetItemIndex(name, m_axis_names);
     }
 
     /** Gets the index of the corresponding cursor, needed to call GetCursor */
     ptrdiff_t GetCursorIndex(std::string const &name) const
     {
-        return GetItemIndex(name, m_cursornames);
+        return GetItemIndex(name, m_cursor_names);
     }
 
-    /** Gets the current state of the given key, true being pressed and
+    /** Get the names of all available keys on this device */
+    std::vector<std::string> const& key_names() const { return m_key_names; }
+
+    /** Get the current state of all keys */
+    std::vector<bool> const &keys() const { return m_keys; }
+
+    /** Get the current state of the given key, true being pressed and
       * false being released */
-    bool GetKey(ptrdiff_t index) const
-    {
-        return m_keys[index];
-    }
+    bool key(ptrdiff_t index) const { return m_keys[index]; }
 
     /** Gets the latest contents of text input. */
     std::string GetText();
@@ -141,20 +144,15 @@ public:
         return m_axis[index].m2;
     }
 
-    /** Gets a list of the name of all available keys in this device */
-    const array<std::string>& GetAllKeys() const
-    {
-        return m_keynames;
-    }
     /** Gets a list of the name of all available axis in this device */
-    const array<std::string>& GetAllAxis() const
+    const std::vector<std::string>& GetAllAxis() const
     {
-        return m_axisnames;
+        return m_axis_names;
     }
     /** Gets a list of the name of all available cursors in this device */
-    const array<std::string>& GetAllCursors() const
+    const std::vector<std::string>& GetAllCursors() const
     {
-        return m_cursornames;
+        return m_cursor_names;
     }
 
     /** Gets a list of the name of all available input devices */
@@ -195,12 +193,12 @@ protected:
 
     std::string m_name;
 
-    array<std::string> m_keynames;
-    array<std::string> m_axisnames;
-    array<std::string> m_cursornames;
+    std::vector<std::string> m_key_names;
+    std::vector<std::string> m_axis_names;
+    std::vector<std::string> m_cursor_names;
 
     /** Key states (pressed/released) */
-    array<bool> m_keys;
+    std::vector<bool> m_keys;
 
     /** Text input state */
     std::string m_text;
@@ -238,13 +236,11 @@ private:
     static int joystick_count;
 
     template <typename... T>
-    ptrdiff_t GetItemIndex(std::string const &name, const array<std::string, T...>& a) const
+    size_t GetItemIndex(std::string const &name, std::vector<std::string, T...> const& a) const
     {
-        for (int i = 0; i < a.count(); ++i)
-        {
+        for (size_t i = 0; i < a.size(); ++i)
             if (a[i] == name)
                 return i;
-        }
         return -1;
     }
 

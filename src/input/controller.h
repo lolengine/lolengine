@@ -66,7 +66,7 @@ protected:
         m_current = false;
         for (int i = 0; i < m_keybindings.count(); ++i)
         {
-            m_current = m_current || m_keybindings[i].m1->GetKey(m_keybindings[i].m2);
+            m_current = m_current || m_keybindings[i].m1->key(m_keybindings[i].m2);
         }
     }
 
