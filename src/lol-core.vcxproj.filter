@@ -120,11 +120,11 @@
     <ClCompile Include="debug\stats.cpp">
       <Filter>debug</Filter>
     </ClCompile>
-    <ClCompile Include="platform\sdl\sdlapp.cpp">
-      <Filter>platform\sdl</Filter>
+    <ClCompile Include="application\sdl-app.cpp">
+      <Filter>application</Filter>
     </ClCompile>
-    <ClCompile Include="platform\sdl\sdlinput.cpp">
-      <Filter>platform\sdl</Filter>
+    <ClCompile Include="input\sdl-input.cpp">
+      <Filter>input</Filter>
     </ClCompile>
     <ClCompile Include="math\half.cpp">
       <Filter>math</Filter>
@@ -396,11 +396,11 @@
     <ClInclude Include="debug\stats.h">
       <Filter>debug</Filter>
     </ClInclude>
-    <ClInclude Include="platform\sdl\sdlinput.h">
-      <Filter>platform\sdl</Filter>
+    <ClInclude Include="input\sdl-input.h">
+      <Filter>input</Filter>
     </ClInclude>
-    <ClInclude Include="platform\sdl\sdlapp.h">
-      <Filter>platform\sdl</Filter>
+    <ClInclude Include="application\sdl-app.h">
+      <Filter>application</Filter>
     </ClInclude>
     <ClInclude Include="lol\algorithm\all.h">
       <Filter>lol\algorithm</Filter>

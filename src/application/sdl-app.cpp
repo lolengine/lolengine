@@ -21,8 +21,8 @@
 #endif
 
 #include "lolgl.h"
-#include "platform/sdl/sdlapp.h"
-#include "platform/sdl/sdlinput.h"
+#include "application/sdl-app.h"
+#include "input/sdl-input.h"
 #if LOL_USE_XINPUT
 #   include "platform/d3d9/d3d9input.h"
 #endif

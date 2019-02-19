@@ -21,8 +21,7 @@
 #if __ANDROID__
 #   include "platform/android/androidapp.h"
 #elif LOL_USE_SDL
-#   include "platform/sdl/sdlapp.h"
-#   include "platform/sdl/sdlinput.h"
+#   include "application/sdl-app.h"
 #elif HAVE_GLES_2X
 #   include "eglapp.h"
 #endif

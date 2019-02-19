@@ -23,9 +23,8 @@
 #   include <emscripten/html5.h>
 #endif
 
-#include "sdlinput.h"
-
 #include "input/input_internal.h"
+#include "input/sdl-input.h"
 
 /* We force joystick polling because no events are received when
  * there is no SDL display (eg. on the Raspberry Pi). */

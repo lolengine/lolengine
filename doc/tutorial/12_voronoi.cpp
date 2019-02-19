@@ -67,7 +67,6 @@ public:
         m_timer = -1.0f;
         mode = 0;
         m_controller = new Controller("Default");
-        m_controller->SetInputCount(KEY_MAX, 0);
         m_controller->GetKey(KEY_ESC).Bind("Keyboard", "Escape");
         m_controller->GetKey(KEY_PUSH).Bind("Keyboard", "p");
         m_controller->GetKey(KEY_POP).Bind("Keyboard", "o");

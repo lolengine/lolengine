@@ -27,18 +27,11 @@
 #endif
 
 #if LOL_USE_SDL
-#   if HAVE_SDL2_SDL_H
-#      include <SDL2/SDL.h>
-#   elif HAVE_SDL_H
-#      include <SDL.h>
-#   endif
+#   include "input/sdl-input.h"
 #endif
 
 #include "lolgl.h"
 #include "eglapp.h"
-#if LOL_USE_SDL
-#   include "platform/sdl/sdlinput.h"
-#endif
 
 namespace lol
 {

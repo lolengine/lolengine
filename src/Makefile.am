@@ -141,8 +141,8 @@ liblol_core_sources = \
 
 if LOL_USE_SDL
 sdl_sources = \
-    platform/sdl/sdlapp.cpp platform/sdl/sdlapp.h \
-    platform/sdl/sdlinput.cpp platform/sdl/sdlinput.h
+    application/sdl-app.cpp application/sdl-app.h \
+    input/sdl-input.cpp input/sdl-input.h
 endif
 
 d3d9_sources = \

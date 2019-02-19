@@ -81,6 +81,9 @@
     <ClCompile Include="3rdparty\imgui\imgui_draw.cpp" />
     <ClCompile Include="3rdparty\imgui\imgui_widgets.cpp" />
     <ClCompile Include="application\application.cpp" />
+    <ClCompile Include="application\sdl-app.cpp">
+      <ExcludedFromBuild Condition="'$(enable_sdl)'=='no'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="audio\audio.cpp" />
     <ClCompile Include="audio\sample.cpp" />
     <ClCompile Include="camera.cpp" />
@@ -148,6 +151,9 @@
     <ClCompile Include="image\resource.cpp" />
     <ClCompile Include="input\controller.cpp" />
     <ClCompile Include="input\input.cpp" />
+    <ClCompile Include="input\sdl-input.cpp">
+      <ExcludedFromBuild Condition="'$(enable_sdl)'=='no'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="light.cpp" />
     <ClCompile Include="lolimgui.cpp" />
     <ClCompile Include="lolua\baselua.cpp" />
@@ -162,12 +168,6 @@
     <ClCompile Include="messageservice.cpp" />
     <ClCompile Include="platform.cpp" />
     <ClCompile Include="platform\d3d9\d3d9input.cpp" />
-    <ClCompile Include="platform\sdl\sdlapp.cpp">
-      <ExcludedFromBuild Condition="'$(enable_sdl)'=='no'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="platform\sdl\sdlinput.cpp">
-      <ExcludedFromBuild Condition="'$(enable_sdl)'=='no'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="profiler.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="sprite.cpp" />
@@ -182,6 +182,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\application.h" />
+    <ClInclude Include="application\sdl-app.h">
+      <ExcludedFromBuild Condition="'$(enable_sdl)'=='no'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="camera.h" />
     <ClInclude Include="commandstack.h" />
     <ClInclude Include="debug\fps.h" />
@@ -206,6 +209,9 @@
     <ClInclude Include="input\input.h" />
     <ClInclude Include="input\input_internal.h" />
     <ClInclude Include="input\keys.h" />
+    <ClInclude Include="input\sdl-input.h">
+      <ExcludedFromBuild Condition="'$(enable_sdl)'=='no'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="light.h" />
     <ClInclude Include="loldebug.h" />
     <ClInclude Include="lolgl.h" />
@@ -280,12 +286,6 @@
     <ClInclude Include="numeric.h" />
     <ClInclude Include="platform.h" />
     <ClInclude Include="platform\d3d9\d3d9input.h" />
-    <ClInclude Include="platform\sdl\sdlapp.h">
-      <ExcludedFromBuild Condition="'$(enable_sdl)'=='no'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="platform\sdl\sdlinput.h">
-      <ExcludedFromBuild Condition="'$(enable_sdl)'=='no'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="profiler.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="sprite.h" />
