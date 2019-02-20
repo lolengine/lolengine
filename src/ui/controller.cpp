@@ -59,11 +59,6 @@ bool KeyBinding::Unbind(const std::string& device_name, const std::string& key_n
     return false;
 }
 
-void KeyBinding::ClearBindings()
-{
-    m_keybindings.clear();
-}
-
 ///////////////////////////////////////////////////////////////////////////////
 // AxisBinding
 
@@ -186,12 +181,6 @@ bool AxisBinding::UnbindKeys(const std::string& device_name, const std::string& 
     }
     return false;
 
-}
-
-void AxisBinding::ClearBindings()
-{
-    m_axisbindings.clear();
-    m_keybindings.clear();
 }
 
 float AxisBinding::RetrieveCurrentValue()

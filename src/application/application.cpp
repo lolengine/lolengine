@@ -19,11 +19,11 @@
 #include "lolgl.h"
 
 #if __ANDROID__
-#   include "platform/android/androidapp.h"
+#   include "application/android-app.h"
 #elif LOL_USE_SDL
 #   include "application/sdl-app.h"
 #elif HAVE_GLES_2X
-#   include "eglapp.h"
+#   include "application/egl-app.h"
 #endif
 
 namespace lol

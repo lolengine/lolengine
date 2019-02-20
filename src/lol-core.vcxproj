@@ -81,6 +81,7 @@
     <ClCompile Include="3rdparty\imgui\imgui_draw.cpp" />
     <ClCompile Include="3rdparty\imgui\imgui_widgets.cpp" />
     <ClCompile Include="application\application.cpp" />
+    <ClCompile Include="application\egl-app.cpp" />
     <ClCompile Include="application\sdl-app.cpp">
       <ExcludedFromBuild Condition="'$(enable_sdl)'=='no'">true</ExcludedFromBuild>
     </ClCompile>
@@ -104,7 +105,6 @@
     <ClCompile Include="easymesh\easymeshprimitive.cpp" />
     <ClCompile Include="easymesh\easymeshrender.cpp" />
     <ClCompile Include="easymesh\easymeshtransform.cpp" />
-    <ClCompile Include="eglapp.cpp" />
     <ClCompile Include="engine\entity.cpp" />
     <ClCompile Include="engine\ticker.cpp" />
     <ClCompile Include="engine\world.cpp" />
@@ -149,13 +149,7 @@
     <ClCompile Include="image\pixel.cpp" />
     <ClCompile Include="image\resample.cpp" />
     <ClCompile Include="image\resource.cpp" />
-    <ClCompile Include="input\controller.cpp" />
-    <ClCompile Include="input\input.cpp" />
-    <ClCompile Include="input\sdl-input.cpp">
-      <ExcludedFromBuild Condition="'$(enable_sdl)'=='no'">true</ExcludedFromBuild>
-    </ClCompile>
     <ClCompile Include="light.cpp" />
-    <ClCompile Include="lolimgui.cpp" />
     <ClCompile Include="lolua\baselua.cpp" />
     <ClCompile Include="math\geometry.cpp" />
     <ClCompile Include="math\half.cpp" />
@@ -167,7 +161,6 @@
     <ClCompile Include="mesh\primitivemesh.cpp" />
     <ClCompile Include="messageservice.cpp" />
     <ClCompile Include="platform.cpp" />
-    <ClCompile Include="platform\d3d9\d3d9input.cpp" />
     <ClCompile Include="profiler.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="sprite.cpp" />
@@ -178,10 +171,18 @@
     <ClCompile Include="text.cpp" />
     <ClCompile Include="textureimage.cpp" />
     <ClCompile Include="tileset.cpp" />
+    <ClCompile Include="ui\controller.cpp" />
+    <ClCompile Include="ui\d3d9-input.cpp" />
+    <ClCompile Include="ui\gui.cpp" />
+    <ClCompile Include="ui\input.cpp" />
+    <ClCompile Include="ui\sdl-input.cpp">
+      <ExcludedFromBuild Condition="'$(enable_sdl)'=='no'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="video.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\application.h" />
+    <ClInclude Include="application\egl-app.h" />
     <ClInclude Include="application\sdl-app.h">
       <ExcludedFromBuild Condition="'$(enable_sdl)'=='no'">true</ExcludedFromBuild>
     </ClInclude>
@@ -195,7 +196,6 @@
     <ClInclude Include="easymesh\easymeshbuild.h" />
     <ClInclude Include="easymesh\easymeshlua.h" />
     <ClInclude Include="easymesh\easymeshrender.h" />
-    <ClInclude Include="eglapp.h" />
     <ClInclude Include="emitter.h" />
     <ClInclude Include="engine\entity.h" />
     <ClInclude Include="engine\ticker.h" />
@@ -205,17 +205,9 @@
     <ClInclude Include="gradient.h" />
     <ClInclude Include="image\image-private.h" />
     <ClInclude Include="image\resource-private.h" />
-    <ClInclude Include="input\controller.h" />
-    <ClInclude Include="input\input.h" />
-    <ClInclude Include="input\input_internal.h" />
-    <ClInclude Include="input\keys.inc" />
-    <ClInclude Include="input\sdl-input.h">
-      <ExcludedFromBuild Condition="'$(enable_sdl)'=='no'">true</ExcludedFromBuild>
-    </ClInclude>
     <ClInclude Include="light.h" />
     <ClInclude Include="loldebug.h" />
     <ClInclude Include="lolgl.h" />
-    <ClInclude Include="lolimgui.h" />
     <ClInclude Include="lolua\baselua.h" />
     <ClInclude Include="lol\algorithm\aabb_tree.h" />
     <ClInclude Include="lol\algorithm\all.h" />
@@ -285,7 +277,6 @@
     <ClInclude Include="messageservice.h" />
     <ClInclude Include="numeric.h" />
     <ClInclude Include="platform.h" />
-    <ClInclude Include="platform\d3d9\d3d9input.h" />
     <ClInclude Include="profiler.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="sprite.h" />
@@ -293,6 +284,15 @@
     <ClInclude Include="textureimage-private.h" />
     <ClInclude Include="textureimage.h" />
     <ClInclude Include="tileset.h" />
+    <ClInclude Include="ui\controller.h" />
+    <ClInclude Include="ui\d3d9-input.h" />
+    <ClInclude Include="ui\gui.h" />
+    <ClInclude Include="ui\input.h" />
+    <ClInclude Include="ui\input_internal.h" />
+    <ClInclude Include="ui\keys.inc" />
+    <ClInclude Include="ui\sdl-input.h">
+      <ExcludedFromBuild Condition="'$(enable_sdl)'=='no'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="utils.h" />
     <ClInclude Include="video.h" />
   </ItemGroup>

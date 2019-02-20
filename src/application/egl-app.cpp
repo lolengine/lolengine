@@ -27,11 +27,11 @@
 #endif
 
 #if LOL_USE_SDL
-#   include "input/sdl-input.h"
+#   include "ui/sdl-input.h"
 #endif
 
 #include "lolgl.h"
-#include "eglapp.h"
+#include "application/egl-app.h"
 
 namespace lol
 {

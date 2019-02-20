@@ -16,7 +16,7 @@
 #include <string>
 #include <map>
 
-#include "input/input_internal.h"
+#include "ui/input_internal.h"
 
 namespace lol
 {
@@ -25,19 +25,19 @@ namespace lol
 static std::vector<input::key> g_all_keys
 {
 #define _SC(code, str, name) input::key::SC_##name,
-#include "input/keys.inc"
+#include "ui/keys.inc"
 };
 
 static std::map<input::key, std::string> g_key_to_name
 {
 #define _SC(code, str, name) { input::key::SC_##name, #name },
-#include "input/keys.inc"
+#include "ui/keys.inc"
 };
 
 static std::map<std::string, input::key> g_name_to_key
 {
 #define _SC(code, str, name) { #name, input::key::SC_##name },
-#include "input/keys.inc"
+#include "ui/keys.inc"
 };
 
 std::vector<input::key> const &input::all_keys()
@@ -136,7 +136,7 @@ InputDeviceInternal* InputDeviceInternal::CreateStandardKeyboard()
 
     /* Register all scancodes known to SDL (from the USB standard) */
 #   define _SC(id, str, name) keyboard->AddKey(id, #name);
-#   include "input/keys.inc"
+#   include "ui/keys.inc"
 
     return keyboard;
 }

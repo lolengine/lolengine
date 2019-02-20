@@ -23,8 +23,8 @@
 #   include <emscripten/html5.h>
 #endif
 
-#include "input/input_internal.h"
-#include "input/sdl-input.h"
+#include "ui/input_internal.h"
+#include "ui/sdl-input.h"
 
 /* We force joystick polling because no events are received when
  * there is no SDL display (eg. on the Raspberry Pi). */
@@ -47,7 +47,7 @@ static String ScanCodeToText(int sc)
     {
 #define _SC(id, str, name) \
     case id: return String(str);
-#include "input/keys.inc"
+#include "ui/keys.inc"
     default:
         msg::error("ScanCodeToText unknown scancode %0d\n", sc);
     }
@@ -62,7 +62,7 @@ static String ScanCodeToName(int sc)
     {
 #define _SC(id, str, name) \
         case id: return String(#name);
-#include "input/keys.inc"
+#include "ui/keys.inc"
     default:
         msg::error("ScanCodeToText unknown scancode %0d\n", sc);
     }

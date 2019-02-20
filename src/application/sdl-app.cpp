@@ -22,9 +22,9 @@
 
 #include "lolgl.h"
 #include "application/sdl-app.h"
-#include "input/sdl-input.h"
+#include "ui/sdl-input.h"
 #if LOL_USE_XINPUT
-#   include "platform/d3d9/d3d9input.h"
+#   include "ui/d3d9-input.h"
 #endif
 
 namespace lol

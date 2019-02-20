@@ -20,12 +20,32 @@
 
 #include <lol/engine-internal.h>
 
-#include "d3d9input.h"
-
-#include "input/input_internal.h"
+#include "ui/d3d9-input.h"
+#include "ui/input_internal.h"
 
 namespace lol
 {
+
+static const std::string g_name_xbox_key_dpad_up("DPadUp");
+static const std::string g_name_xbox_key_dpad_down("DPadDown");
+static const std::string g_name_xbox_key_dpad_left("DPadLeft");
+static const std::string g_name_xbox_key_dpad_right("DPadRight");
+static const std::string g_name_xbox_key_left_thumb("LeftThumb");
+static const std::string g_name_xbox_key_right_thumb("RightThumb");
+static const std::string g_name_xbox_key_left_shoulder("LeftShoulder");
+static const std::string g_name_xbox_key_right_shoulder("Rightshoulder");
+static const std::string g_name_xbox_key_a("A");
+static const std::string g_name_xbox_key_b("B");
+static const std::string g_name_xbox_key_x("X");
+static const std::string g_name_xbox_key_y("Y");
+static const std::string g_name_xbox_key_start("Start");
+static const std::string g_name_xbox_key_back("Back");
+static const std::string g_name_xbox_axis_left_x("Axis1");
+static const std::string g_name_xbox_axis_left_y("Axis2");
+static const std::string g_name_xbox_axis_right_x("Axis3");
+static const std::string g_name_xbox_axis_right_y("Axis4");
+static const std::string g_name_xbox_axis_left_trigger("Axis5");
+static const std::string g_name_xbox_axis_right_trigger("Axis6");
 
 /*
  * D3d9 Input implementation class

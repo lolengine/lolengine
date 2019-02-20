@@ -25,7 +25,7 @@ public:
     enum class key : uint16_t
     {
 #define _SC(id, str, name) SC_##name = id,
-#include "input/keys.inc"
+#include "ui/keys.inc"
     };
 
     static std::vector<key> const &all_keys();
@@ -33,7 +33,6 @@ public:
     static key name_to_key(std::string const &name);
 };
 
-const std::string g_name_max("MAX");
 const std::string g_name_mouse("Mouse");
 const std::string g_name_keyboard("Keyboard");
 
@@ -54,28 +53,6 @@ const std::string g_name_mouse_axis_xpixel("XPixel");
 const std::string g_name_mouse_axis_ypixel("YPixel");
 const std::string g_name_mouse_axis_scroll("Scroll");
 const std::string g_name_mouse_cursor("Cursor");
-
-// Xbox default buttons/axis
-const std::string g_name_xbox_key_dpad_up("DPadUp");
-const std::string g_name_xbox_key_dpad_down("DPadDown");
-const std::string g_name_xbox_key_dpad_left("DPadLeft");
-const std::string g_name_xbox_key_dpad_right("DPadRight");
-const std::string g_name_xbox_key_left_thumb("LeftThumb");
-const std::string g_name_xbox_key_right_thumb("RightThumb");
-const std::string g_name_xbox_key_left_shoulder("LeftShoulder");
-const std::string g_name_xbox_key_right_shoulder("Rightshoulder");
-const std::string g_name_xbox_key_a("A");
-const std::string g_name_xbox_key_b("B");
-const std::string g_name_xbox_key_x("X");
-const std::string g_name_xbox_key_y("Y");
-const std::string g_name_xbox_key_start("Start");
-const std::string g_name_xbox_key_back("Back");
-const std::string g_name_xbox_axis_left_x("Axis1");
-const std::string g_name_xbox_axis_left_y("Axis2");
-const std::string g_name_xbox_axis_right_x("Axis3");
-const std::string g_name_xbox_axis_right_y("Axis4");
-const std::string g_name_xbox_axis_left_trigger("Axis5");
-const std::string g_name_xbox_axis_right_trigger("Axis6");
 
 class InputDevice
 {

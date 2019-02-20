@@ -53,10 +53,6 @@ public:
     bool UnbindMouse(const std::string& key_name)                        { return Unbind(g_name_mouse, key_name); }
     bool UnbindKeyboard(const std::string& key_name)                     { return Unbind(g_name_keyboard, key_name); }
     bool UnbindJoystick(const uint64_t num, const std::string& key_name) { return Unbind(g_name_joystick(num), key_name); }
-    /** Clear current binding */
-    void ClearBindings();
-    /** Indicate wheither a physical device and key has been bound. Returns the number of bindings set. */
-    int IsBound() const { return m_keybindings.count(); }
 
 protected:
     /** Update the binding value. Called internally by the controller, once per frame */
@@ -110,29 +106,17 @@ public:
     /** Unbind a previously bound physical device and axis. Returns true if the binding was existing. */
     bool UnbindKeys(const std::string& device_name, const std::string& min_key_name, const std::string& max_key_name);
     /* Small helpers */
-    void BindMouse(const std::string& axis_name)                                     { Bind(g_name_mouse, axis_name); }
-    void BindMouseKey(const std::string& key_name)                                   { BindKey(g_name_mouse, key_name); }
-    void BindMouseKeys(const std::string& min_key_name, const std::string& max_key_name)  { BindKeys(g_name_mouse, min_key_name, max_key_name); }
-    bool UnbindMouse(const std::string& axis_name)                                   { return Unbind(g_name_mouse, axis_name); }
-    bool UnbindMouseKey(const std::string& key_name)                                 { return UnbindKey(g_name_mouse, key_name); }
-    bool UnbindMouseKeys(const std::string& min_key_name, const std::string& max_key_name){ return UnbindKeys(g_name_mouse, min_key_name, max_key_name); }
+    void BindMouse(const std::string& axis_name)   { Bind(g_name_mouse, axis_name); }
+    bool UnbindMouse(const std::string& axis_name) { return Unbind(g_name_mouse, axis_name); }
     /* */
-    void BindJoystick(const uint64_t num, const std::string& axis_name)                                     { Bind(g_name_joystick(num), axis_name); }
-    void BindJoystickKey(const uint64_t num, const std::string& key_name)                                   { BindKey(g_name_joystick(num), key_name); }
-    void BindJoystickKeys(const uint64_t num, const std::string& min_key_name, const std::string& max_key_name)  { BindKeys(g_name_joystick(num), min_key_name, max_key_name); }
-    bool UnbindJoystick(const uint64_t num, const std::string& axis_name)                                   { return Unbind(g_name_joystick(num), axis_name); }
-    bool UnbindJoystickKey(const uint64_t num, const std::string& key_name)                                 { return UnbindKey(g_name_joystick(num), key_name); }
-    bool UnbindJoystickKeys(const uint64_t num, const std::string& min_key_name, const std::string& max_key_name){ return UnbindKeys(g_name_joystick(num), min_key_name, max_key_name); }
-    /** Clear current binding */
-    void ClearBindings();
-    /** Indicate wheither a physical device and axis has been bound. Returns the number of bindings set. */
-    int IsBound() const { return m_axisbindings.count() + m_keybindings.count(); }
+    void BindJoystick(const uint64_t num, const std::string& axis_name)   { Bind(g_name_joystick(num), axis_name); }
+    bool UnbindJoystick(const uint64_t num, const std::string& axis_name) { return Unbind(g_name_joystick(num), axis_name); }
 
 protected:
     void Update()
     {
         m_previous = m_current;
-        m_current = IsBound() ? RetrieveCurrentValue() : 0.0f;
+        m_current = RetrieveCurrentValue();
     }
     float RetrieveCurrentValue();
 
@@ -321,7 +305,7 @@ public:
     void register_default_keys()
     {
 #define _SC(id, str, name) *this << InputProfile::Keyboard(id, #name);
-#include "input/keys.inc"
+#include "ui/keys.inc"
     }
 
 private:

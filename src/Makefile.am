@@ -69,10 +69,9 @@ liblol_core_headers = \
 
 liblol_core_sources = \
     application/application.cpp application/application.h \
+    application/egl-app.cpp application/egl-app.h \
     \
     lolua/baselua.cpp lolua/baselua.h \
-    \
-    eglapp.cpp eglapp.h \
     \
     commandstack.h \
     easymesh/easymeshbuild.cpp easymesh/easymeshbuild.h \
@@ -99,8 +98,9 @@ liblol_core_sources = \
     \
     audio/audio.cpp audio/sample.cpp \
     \
-    input/input.cpp input/input.h input/input_internal.h input/keys.inc \
-    input/controller.cpp input/controller.h \
+    ui/input.cpp ui/input.h ui/input_internal.h ui/keys.inc \
+    ui/controller.cpp ui/controller.h \
+    ui/gui.cpp ui/gui.h \
     \
     gpu/default-material.lolfx \
     gpu/empty-material.lolfx \
@@ -142,19 +142,15 @@ liblol_core_sources = \
 if LOL_USE_SDL
 sdl_sources = \
     application/sdl-app.cpp application/sdl-app.h \
-    input/sdl-input.cpp input/sdl-input.h
+    ui/sdl-input.cpp ui/sdl-input.h
 endif
 
 d3d9_sources = \
-    platform/d3d9/d3d9input.cpp platform/d3d9/d3d9input.h
+    ui/d3d9-input.cpp ui/d3d9-input.h
 
 include 3rdparty/lol-imgui.am
 
-imgui_sources += \
-    lolimgui.cpp lolimgui.h \
-    $(NULL)
-
 android_sources = \
     image/codec/android-image.cpp \
-    platform/android/androidapp.cpp platform/android/androidapp.h
+    application/android-app.cpp application/android-app.h
 

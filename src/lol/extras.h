@@ -27,10 +27,6 @@
 #include <lol/../profiler.h>
 #include <lol/../messageservice.h>
 
-// Input
-#include <lol/../input/input.h>
-#include <lol/../input/controller.h>
-
 // Engine
 #include <lol/../engine/ticker.h>
 #include <lol/../engine/world.h>
@@ -47,7 +43,11 @@
 #include <lol/../text.h>
 #include <lol/../textureimage.h>
 #include <lol/../tileset.h>
-#include <lol/../lolimgui.h>
+
+// UI
+#include <lol/../ui/input.h>
+#include <lol/../ui/controller.h>
+#include <lol/../ui/gui.h>
 
 // Other objects
 #include <lol/../mesh/mesh.h>

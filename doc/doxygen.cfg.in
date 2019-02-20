@@ -790,18 +790,17 @@ INPUT                  = .. \
                          ../src/easymesh \
                          ../src/gpu \
                          ../src/image \
-                         ../src/input \
                          ../src/lol \
                          ../src/lol/math \
                          ../src/lol/core \
-                         ../src/ath \
+                         ../src/math \
                          ../src/mesh \
                          ../src/platform \
                          ../src/platform/android \
-                         ../src/platform/d3d9 \
                          ../src/platform/sdl \
                          ../src/platform/xbox \
-                         ../src/thread
+                         ../src/thread \
+                         ../src/ui
 
 # This tag can be used to specify the character encoding of the source files
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding. Doxygen uses

@@ -27,9 +27,8 @@ extern "C" {
 #include <android_native_app_glue.c>
 }
 
-#include "androidapp.h"
-
-#include "input/input_internal.h"
+#include "application/android-app.h"
+#include "ui/input_internal.h"
 
 using namespace lol;
 
@@ -107,7 +106,7 @@ private:
  */
 int lol::AndroidAppData::CreateDisplay()
 {
-    /* FIXME: there is a lot of code common to eglapp.cpp here. */
+    /* FIXME: there is a lot of code common to egl-app.cpp here. */
     const EGLint attribs[] =
     {
         EGL_SURFACE_TYPE, EGL_WINDOW_BIT,

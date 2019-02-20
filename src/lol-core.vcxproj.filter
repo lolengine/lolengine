@@ -22,7 +22,7 @@
     <Filter Include="image\codec">
       <UniqueIdentifier>{123803f1-1722-4421-8245-098667654cda}</UniqueIdentifier>
     </Filter>
-    <Filter Include="input">
+    <Filter Include="ui">
       <UniqueIdentifier>{94992c0e-ebc5-4185-b766-323b06547dcf}</UniqueIdentifier>
     </Filter>
     <Filter Include="lol">
@@ -76,9 +76,6 @@
     <Filter Include="platform\xbox">
       <UniqueIdentifier>{317cb5cc-5dcc-4e14-be90-40a125a2e2ec}</UniqueIdentifier>
     </Filter>
-    <Filter Include="platform\d3d9">
-      <UniqueIdentifier>{a914e15d-3201-467a-a9c9-d7c5244b13ee}</UniqueIdentifier>
-    </Filter>
     <Filter Include="image\dither">
       <UniqueIdentifier>{63e63eea-c96e-4d37-81f6-f3f17e18b751}</UniqueIdentifier>
     </Filter>
@@ -123,8 +120,8 @@
     <ClCompile Include="application\sdl-app.cpp">
       <Filter>application</Filter>
     </ClCompile>
-    <ClCompile Include="input\sdl-input.cpp">
-      <Filter>input</Filter>
+    <ClCompile Include="ui\sdl-input.cpp">
+      <Filter>ui</Filter>
     </ClCompile>
     <ClCompile Include="math\half.cpp">
       <Filter>math</Filter>
@@ -189,11 +186,11 @@
     <ClCompile Include="gpu\indexbuffer.cpp">
       <Filter>gpu</Filter>
     </ClCompile>
-    <ClCompile Include="input\input.cpp">
-      <Filter>input</Filter>
+    <ClCompile Include="ui\input.cpp">
+      <Filter>ui</Filter>
     </ClCompile>
-    <ClCompile Include="platform\d3d9\d3d9input.cpp">
-      <Filter>platform\d3d9</Filter>
+    <ClCompile Include="ui\d3d9-input.cpp">
+      <Filter>ui</Filter>
     </ClCompile>
     <ClCompile Include="audio\audio.cpp">
       <Filter>audio</Filter>
@@ -204,8 +201,8 @@
     <ClCompile Include="camera.cpp">
       <Filter>...</Filter>
     </ClCompile>
-    <ClCompile Include="eglapp.cpp">
-      <Filter>...</Filter>
+    <ClCompile Include="application\egl-app.cpp">
+      <Filter>application</Filter>
     </ClCompile>
     <ClCompile Include="emitter.cpp">
       <Filter>...</Filter>
@@ -279,8 +276,8 @@
     <ClCompile Include="debug\lines.cpp">
       <Filter>debug</Filter>
     </ClCompile>
-    <ClCompile Include="input\controller.cpp">
-      <Filter>input</Filter>
+    <ClCompile Include="ui\controller.cpp">
+      <Filter>ui</Filter>
     </ClCompile>
     <ClCompile Include="MessageService.cpp">
       <Filter>...</Filter>
@@ -375,7 +372,9 @@
     <ClCompile Include="textureimage.cpp">
       <Filter>tileset</Filter>
     </ClCompile>
-    <ClCompile Include="lolimgui.cpp" />
+    <ClCompile Include="ui\gui.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
     <ClCompile Include="mesh\primitivemesh.cpp">
       <Filter>mesh</Filter>
     </ClCompile>
@@ -396,8 +395,8 @@
     <ClInclude Include="debug\stats.h">
       <Filter>debug</Filter>
     </ClInclude>
-    <ClInclude Include="input\sdl-input.h">
-      <Filter>input</Filter>
+    <ClInclude Include="ui\sdl-input.h">
+      <Filter>ui</Filter>
     </ClInclude>
     <ClInclude Include="application\sdl-app.h">
       <Filter>application</Filter>
@@ -486,17 +485,17 @@
     <ClInclude Include="platform\xbox\xboxinput.h">
       <Filter>platform\xbox</Filter>
     </ClInclude>
-    <ClInclude Include="input\input.h">
-      <Filter>input</Filter>
+    <ClInclude Include="ui\input.h">
+      <Filter>ui</Filter>
     </ClInclude>
-    <ClInclude Include="platform\d3d9\d3d9input.h">
-      <Filter>platform\d3d9</Filter>
+    <ClInclude Include="ui\d3d9-input.h">
+      <Filter>ui</Filter>
     </ClInclude>
     <ClInclude Include="camera.h">
       <Filter>...</Filter>
     </ClInclude>
-    <ClInclude Include="eglapp.h">
-      <Filter>...</Filter>
+    <ClInclude Include="application\egl-app.h">
+      <Filter>application</Filter>
     </ClInclude>
     <ClInclude Include="emitter.h">
       <Filter>...</Filter>
@@ -666,14 +665,14 @@
     <ClInclude Include="lol\image\movie.h">
       <Filter>lol\image</Filter>
     </ClInclude>
-    <ClInclude Include="input\keys.inc">
-      <Filter>input</Filter>
+    <ClInclude Include="ui\keys.inc">
+      <Filter>ui</Filter>
     </ClInclude>
-    <ClInclude Include="input\controller.h">
-      <Filter>input</Filter>
+    <ClInclude Include="ui\controller.h">
+      <Filter>ui</Filter>
     </ClInclude>
-    <ClInclude Include="input\input_internal.h">
-      <Filter>input</Filter>
+    <ClInclude Include="ui\input_internal.h">
+      <Filter>ui</Filter>
     </ClInclude>
     <ClInclude Include="utils.h">
       <Filter>...</Filter>
@@ -721,7 +720,9 @@
     <ClInclude Include="textureimage-private.h">
       <Filter>tileset</Filter>
     </ClInclude>
-    <ClInclude Include="lolimgui.h" />
+    <ClInclude Include="ui\gui.h">
+      <Filter>ui</Filter>
+    </ClInclude>
     <ClInclude Include="mesh\primitivemesh.h">
       <Filter>mesh</Filter>
     </ClInclude>
