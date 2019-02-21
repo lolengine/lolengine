@@ -44,7 +44,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "03_noise", "doc\tutorial\03
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "04_texture", "doc\tutorial\04_texture.vcxproj", "{834852DB-EDB6-4FD0-BCF9-45CD01126962}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "12_Voronoi", "doc\tutorial\12_Voronoi.vcxproj", "{6BF81B39-EDC2-4227-9982-C2D8ABEA95AF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "12_voronoi", "doc\tutorial\12_voronoi.vcxproj", "{6BF81B39-EDC2-4227-9982-C2D8ABEA95AF}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "07_input", "doc\tutorial\07_input.vcxproj", "{572E5B9C-7E19-489C-BD8A-E8401CFBBC47}"
 EndProject
@@ -56,9 +56,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "13_shader_builder", "doc\tu
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{B6297FF2-63D0-41EE-BE13-EFF720C9B0FA}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "15_lolimgui", "doc\tutorial\15_lolimgui.vcxproj", "{81C83B42-D00A-4FA3-9A3D-80F9D46524BF}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "15_gui", "doc\tutorial\15_gui.vcxproj", "{81C83B42-D00A-4FA3-9A3D-80F9D46524BF}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "14_lol_lua", "doc\tutorial\14_lol_lua.vcxproj", "{31B96262-1C41-43B9-BA38-27AA385B05DB}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "14_lua", "doc\tutorial\14_lua.vcxproj", "{31B96262-1C41-43B9-BA38-27AA385B05DB}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "16_movie", "doc\tutorial\16_movie.vcxproj", "{5F5714D0-1C3D-4522-A409-214C5A2951AA}"
 EndProject

@@ -39,7 +39,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="15_lolimgui.cpp" />
+    <ClCompile Include="15_gui.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{81C83B42-D00A-4FA3-9A3D-80F9D46524BF}</ProjectGuid>

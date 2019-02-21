@@ -42,10 +42,10 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="14_lol_lua.cpp" />
+    <ClCompile Include="14_lua.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="14_lol_lua.lua">
+    <None Include="14_lua.lua">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
     </None>
   </ItemGroup>

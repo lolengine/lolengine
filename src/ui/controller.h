@@ -359,7 +359,7 @@ protected:
 
 private:
     uint32_t m_layer_mask = 1; // plugged on the first by default
-    std::map<int, KeyBinding> m_keys;
+    std::map<int, KeyBinding> m_key_bindings;
     std::map<int, AxisBinding> m_axis;
 
     static uint32_t m_active_layer; // All active by default

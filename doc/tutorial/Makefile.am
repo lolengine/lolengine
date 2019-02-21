@@ -9,7 +9,7 @@ tutorials =
 if LOL_USE_GL
 tutorials += 01_triangle 02_cube 03_noise 04_texture 05_easymesh \
              06_sprite 07_input 08_fbo 09_sound 11_fractal \
-             12_voronoi 13_shader_builder 14_lol_lua 15_lolimgui
+             12_voronoi 13_shader_builder 14_lua 15_gui
 endif
 tutorials += 16_movie
 
@@ -68,14 +68,14 @@ endif
 13_shader_builder_CPPFLAGS = $(AM_CPPFLAGS)
 13_shader_builder_DEPENDENCIES = @LOL_DEPS@
 
-14_lol_lua_SOURCES = 14_lol_lua.cpp
-14_lol_lua_CPPFLAGS = $(AM_CPPFLAGS)
-14_lol_lua_LDFLAGS = $(AM_LDFLAGS) @LOL_LUA_DEPS@
-14_lol_lua_DEPENDENCIES = @LOL_DEPS@ @LOL_LUA_DEPS@
+14_lua_SOURCES = 14_lua.cpp
+14_lua_CPPFLAGS = $(AM_CPPFLAGS)
+14_lua_LDFLAGS = $(AM_LDFLAGS) @LOL_LUA_DEPS@
+14_lua_DEPENDENCIES = @LOL_DEPS@ @LOL_LUA_DEPS@
 
-15_lolimgui_SOURCES = 15_lolimgui.cpp
-15_lolimgui_CPPFLAGS = $(AM_CPPFLAGS)
-15_lolimgui_DEPENDENCIES = @LOL_DEPS@
+15_gui_SOURCES = 15_gui.cpp
+15_gui_CPPFLAGS = $(AM_CPPFLAGS)
+15_gui_DEPENDENCIES = @LOL_DEPS@
 
 16_movie_SOURCES = 16_movie.cpp
 16_movie_CPPFLAGS = $(AM_CPPFLAGS)

@@ -282,7 +282,7 @@ bool Controller::IsLayerActive()
 //GetKeys/Axis stuff ----------------------------------------------------------
 KeyBinding& Controller::GetKey(int index)
 {
-    return m_keys[index];
+    return m_key_bindings[index];
 }
 
 AxisBinding& Controller::GetAxis(int index)
@@ -293,26 +293,26 @@ AxisBinding& Controller::GetAxis(int index)
 // Key methods: should not go directly to binding
 bool Controller::IsKeyPressed(int index) const
 {
-    auto key = m_keys.find(index);
-    return key != m_keys.end() && key->second.IsPressed();
+    auto key = m_key_bindings.find(index);
+    return key != m_key_bindings.end() && key->second.IsPressed();
 }
 
 bool Controller::IsKeyReleased(int index) const
 {
-    auto key = m_keys.find(index);
-    return key != m_keys.end() && key->second.IsReleased();
+    auto key = m_key_bindings.find(index);
+    return key != m_key_bindings.end() && key->second.IsReleased();
 }
 
 bool Controller::WasKeyPressedThisFrame(int index) const
 {
-    auto key = m_keys.find(index);
-    return key != m_keys.end() && key->second.WasPressedThisFrame();
+    auto key = m_key_bindings.find(index);
+    return key != m_key_bindings.end() && key->second.WasPressedThisFrame();
 }
 
 bool Controller::WasKeyReleasedThisFrame(int index) const
 {
-    auto key = m_keys.find(index);
-    return key != m_keys.end() && key->second.WasReleasedThisFrame();
+    auto key = m_key_bindings.find(index);
+    return key != m_key_bindings.end() && key->second.WasReleasedThisFrame();
 }
 
 //Axis methods: should not go directly to binding -----------------------------
@@ -436,7 +436,7 @@ void Controller::tick_game(float seconds)
 
     if (m_active)
     {
-        for (auto &kv : m_keys)
+        for (auto &kv : m_key_bindings)
             kv.second.Update();
 
         for (auto &kv : m_axis)
