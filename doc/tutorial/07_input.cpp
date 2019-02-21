@@ -51,7 +51,7 @@ public:
         }
 #       else
         m_profile
-            << InputProfile::Keyboard(KEY_MANUAL_ROTATION, "Space")
+            << InputProfile::KeyboardKey(KEY_MANUAL_ROTATION, "Space")
             << InputProfile::MouseKey(KEY_DRAG_MESH, "Left")
             << InputProfile::JoystickAxis(1, AXIS_PITCH, "Axis2")
             << InputProfile::JoystickAxis(1, AXIS_YAW, "Axis1")

@@ -166,14 +166,12 @@ private:
     };
 public:
     //---------------------------------------------------------------------
-    class Keyboard : public Key
+    class KeyboardKey : public Key
     {
         friend class Controller;
         friend class InputProfile;
     public:
-        Keyboard() : Key() { }
-        Keyboard(int idx, std::string const& name) : Key(idx, name) { }
-        Keyboard(const Keyboard& other) : Key(other.m_idx, other.m_name) { }
+        KeyboardKey(int idx, std::string const& name) : Key(idx, name) { }
     };
     //---------------------------------------------------------------------
     class MouseKey : public Key
@@ -181,9 +179,7 @@ public:
         friend class Controller;
         friend class InputProfile;
     public:
-        MouseKey() : Key() { }
         MouseKey(int idx, std::string const& name) : Key(idx, name) { }
-        MouseKey(const Keyboard& other) : Key(other.m_idx, other.m_name) { }
     };
     //---------------------------------------------------------------------
     class MouseAxis : public Key
@@ -191,9 +187,7 @@ public:
         friend class Controller;
         friend class InputProfile;
     public:
-        MouseAxis() : Key() { }
         MouseAxis(int idx, std::string const& name) : Key(idx, name) { }
-        MouseAxis(const Keyboard& other) : Key(other.m_idx, other.m_name) { }
     };
     //---------------------------------------------------------------------
     class JoystickKey : public Joystick
@@ -201,9 +195,7 @@ public:
         friend class Controller;
         friend class InputProfile;
     public:
-        JoystickKey() : Joystick() { }
         JoystickKey(uint64_t joy, int idx, std::string const& name) : Joystick(joy, idx, name) { }
-        JoystickKey(const JoystickKey& other) : Joystick(other.m_joy, other.m_idx, other.m_name) { }
     };
     //---------------------------------------------------------------------
     class JoystickAxis : public Joystick
@@ -211,22 +203,11 @@ public:
         friend class Controller;
         friend class InputProfile;
     public:
-        JoystickAxis() : Joystick() { }
         JoystickAxis(uint64_t joy, int idx, std::string const& name) : Joystick(joy, idx, name) { }
-        JoystickAxis(const JoystickAxis& other) : Joystick(other.m_joy, other.m_idx, other.m_name) { }
     };
 public:
-    InputProfile() { }
-    InputProfile(const InputProfile& other)
-    {
-        m_keys = other.m_keys;
-        m_mouse_keys = other.m_mouse_keys;
-        m_mouse_axis = other.m_mouse_axis;
-        m_joystick = other.m_joystick;
-        m_joystick_keys = other.m_joystick_keys;
-        m_joystick_axis = other.m_joystick_axis;
-    }
-    virtual ~InputProfile() { }
+    InputProfile() = default;
+    virtual ~InputProfile() = default;
 
     bool IsEmpty() const
     {
@@ -241,12 +222,12 @@ public:
         return m_mouse_axis.count() + m_joystick_axis.count();
     }
     //Keys --------------------------------------------------------------------
-    InputProfile& operator<<(InputProfile::Keyboard const& binding)
+    InputProfile& operator<<(InputProfile::KeyboardKey const& binding)
     {
         m_keys.push_unique(binding);
         return *this;
     }
-    InputProfile& operator<<(array<InputProfile::Keyboard> const& bindings)
+    InputProfile& operator<<(array<InputProfile::KeyboardKey> const& bindings)
     {
         m_keys += bindings;
         return *this;
@@ -304,12 +285,12 @@ public:
 
     void register_default_keys()
     {
-#define _SC(id, str, name) *this << InputProfile::Keyboard(id, #name);
+#define _SC(id, str, name) *this << InputProfile::KeyboardKey(id, #name);
 #include "ui/keys.inc"
     }
 
 private:
-    array<Keyboard>     m_keys;
+    array<KeyboardKey>  m_keys;
     array<MouseKey>     m_mouse_keys;
     array<MouseAxis>    m_mouse_axis;
     array<uint64_t>     m_joystick;

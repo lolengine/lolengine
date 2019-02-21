@@ -46,7 +46,7 @@ public:
         m_profile << InputProfile::MouseKey(0, "Left")
                   << InputProfile::MouseKey(1, "Right")
                   << InputProfile::MouseKey(2, "Middle")
-                  << InputProfile::Keyboard(3, "Space");
+                  << InputProfile::KeyboardKey(3, "Space");
         m_controller->Init(m_profile);
         m_mouse = InputDevice::GetMouse();
 

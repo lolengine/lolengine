@@ -348,7 +348,7 @@ void Controller::UnbindProfile()
     //Keyboard
     if (m_keyboard)
     {
-        for (InputProfile::Keyboard& key : m_profile.m_keys)
+        for (InputProfile::KeyboardKey& key : m_profile.m_keys)
             GetKey(key.m_idx).UnbindKeyboard(key.m_name);
         m_keyboard = nullptr;
     }
@@ -391,7 +391,7 @@ void Controller::BindProfile(InputProfile const& setup)
     m_keyboard = InputDevice::GetKeyboard();
     if (m_keyboard)
     {
-        for (InputProfile::Keyboard& key : m_profile.m_keys)
+        for (InputProfile::KeyboardKey& key : m_profile.m_keys)
             GetKey(key.m_idx).BindKeyboard(key.m_name);
     }
 

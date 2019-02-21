@@ -29,7 +29,7 @@ public:
             val = -1;
 
         m_controller = new Controller("Default");
-        m_profile << InputProfile::Keyboard(0, "Space")
+        m_profile << InputProfile::KeyboardKey(0, "Space")
                   << InputProfile::MouseKey(1, "Left");
         m_controller->Init(m_profile);
         m_mouse = InputDevice::GetMouse();
