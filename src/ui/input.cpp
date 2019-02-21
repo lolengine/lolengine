@@ -93,7 +93,7 @@ void InputDeviceInternal::AddKey(int index, const char* name)
 
     while (index >= (int)m_key_names.size())
     {
-        m_key_names.push_back(name);
+        m_key_names.push_back("");
         m_keys.push_back(false);
     }
 
@@ -107,7 +107,7 @@ void InputDeviceInternal::AddAxis(int index, const char* name, float sensitivity
 
     while (index >= (int)m_axis_names.size())
     {
-        m_axis_names.push_back(name);
+        m_axis_names.push_back("");
         m_axis.push(0.0f, 1.0f);
     }
 
@@ -123,7 +123,7 @@ void InputDeviceInternal::AddCursor(int index, const char* name)
 
     while (index >= (int)m_cursor_names.size())
     {
-        m_cursor_names.push_back(name);
+        m_cursor_names.push_back("");
         m_cursors.push(vec2::zero, ivec2::zero);
     }
 
