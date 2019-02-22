@@ -18,6 +18,7 @@
 // Helper functions to set up the audio device.
 //
 
+#include <unordered_set>
 #include <functional>
 
 namespace lol
@@ -38,6 +39,7 @@ public:
 
 private:
     audio() {}
+    static std::unordered_set<std::shared_ptr<struct audio_streamer>> m_streamers;
 };
 
 } /* namespace lol */

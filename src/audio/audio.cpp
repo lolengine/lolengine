@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine
 //
-//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -11,6 +11,9 @@
 //
 
 #include <lol/engine-internal.h>
+
+#include <unordered_set>
+#include <functional>
 
 #if LOL_USE_SDL_MIXER
 #   if HAVE_SDL2_SDL_H
@@ -30,99 +33,86 @@ struct audio_streamer
     int m_channel;
     std::function<void(void *, int)> m_callback;
 #if defined LOL_USE_SDL_MIXER
-    array<uint8_t> m_empty; // SDL keeps a reference to this
+    std::vector<uint8_t> m_empty; // SDL keeps a reference to this
     Mix_Chunk *m_chunk;
 #endif
 };
 
-array<audio_streamer *> g_streamers;
+std::unordered_set<std::shared_ptr<audio_streamer>> audio::m_streamers;
 
  /*
  * Public audio class
  */
 
+#if defined LOL_USE_SDL_MIXER
 void audio::init()
 {
-#if defined LOL_USE_SDL_MIXER
     Mix_OpenAudio(22050, AUDIO_S16, 2, 1024);
     set_channels(8);
-#endif
 }
 
 void audio::set_channels(int channels)
 {
-#if defined LOL_USE_SDL_MIXER
     Mix_AllocateChannels(channels);
-#else
-    UNUSED(channels);
-#endif
 }
 
 void audio::set_volume(int channel, int volume)
 {
-#if defined LOL_USE_SDL_MIXER
     Mix_Volume(channel, volume);
-#else
-    UNUSED(channel, volume);
-#endif
 }
 
 void audio::mute_all()
 {
-#if defined LOL_USE_SDL_MIXER
-    Mix_Volume(-1,0);
-#endif
+    Mix_Volume(-1, 0);
 }
 
 void audio::unmute_all()
 {
-#if defined LOL_USE_SDL_MIXER
-    Mix_Volume(-1,MIX_MAX_VOLUME);
-#endif
+    Mix_Volume(-1, MIX_MAX_VOLUME);
 }
 
 int audio::start_streaming(std::function<void(void *, int)> const &f)
 {
-#if defined LOL_USE_SDL_MIXER
     static auto trampoline = [](int, void *stream, int bytes, void *udata)
     {
         auto s = (audio_streamer *)udata;
         s->m_callback(stream, bytes);
     };
 
-    audio_streamer *s = new audio_streamer();
-    g_streamers.push(s);
+    std::shared_ptr<audio_streamer> s = std::make_shared<audio_streamer>();
+    m_streamers.insert(s);
 
     s->m_empty.resize(1024);
-    s->m_chunk = Mix_QuickLoad_RAW(s->m_empty.data(), s->m_empty.bytes());
+    s->m_chunk = Mix_QuickLoad_RAW(s->m_empty.data(), s->m_empty.size() * sizeof(uint8_t));
     s->m_channel = Mix_PlayChannel(-1, s->m_chunk, -1);
     s->m_callback = f;
-    Mix_RegisterEffect(s->m_channel, trampoline, nullptr, s);
+    Mix_RegisterEffect(s->m_channel, trampoline, nullptr, s.get());
 
     return s->m_channel;
-#else
-    UNUSED(f);
-    return -1;
-#endif
 }
 
-void audio::stop_streaming(int channel)
+void audio::stop_streaming(int stream)
 {
-#if defined LOL_USE_SDL_MIXER
-    for (int i = 0; i < g_streamers.count(); ++i)
+    for (auto streamer : m_streamers)
     {
-        if (g_streamers[i]->m_channel == channel)
+        if (streamer->m_channel == stream)
         {
-            Mix_HaltChannel(channel);
-            delete g_streamers[i];
-            g_streamers.remove(i);
-            return;
+            Mix_HaltChannel(stream);
+            m_streamers.erase(streamer);
+            break;
         }
     }
-#else
-    UNUSED(channel);
-#endif
 }
+
+#else
+void audio::init() {}
+void audio::set_channels(int) {}
+void audio::set_volume(int, int) {}
+void audio::mute_all() {}
+void audio::unmute_all() {}
+int audio::start_streaming(std::function<void(void *, int)> const &) { return -1; }
+void audio::stop_streaming(int) {}
+#endif
 
 } /* namespace lol */
 
