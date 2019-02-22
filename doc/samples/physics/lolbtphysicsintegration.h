@@ -1,8 +1,8 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2009—2013 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2009—2019 Sam Hocevar <sam@hocevar.net>
+//            © 2010—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  This library is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -24,11 +24,8 @@ namespace lol
 // Override Gamegroups names for Physic-usage
 // "_ENT_" means that this is a group for Entities that use EasyPhysic primitives.
 // "_EZP_" means that this is a group for EasyPhysic primitives.
-#define GAMEGROUP_ENT_INPUT         GAMEGROUP_INPUT
-#define GAMEGROUP_ENT_PLATFORM      GAMEGROUP_ENTITY
-#define GAMEGROUP_ENT_MAIN          GAMEGROUP_OTHER_1
-#define GAMEGROUP_EZP_CHAR_CTRLR    GAMEGROUP_OTHER_2
-#define GAMEGROUP_SIMULATION        GAMEGROUP_OTHER_3
+#define GAMEGROUP_EZP_CHAR_CTRLR    tickable::group::game::other_2
+#define GAMEGROUP_SIMULATION        tickable::group::game::other_3
 
 #define LOL2BT_UNIT 1.0f
 #define BT2LOL_UNIT 1.0f

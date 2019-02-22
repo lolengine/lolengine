@@ -13,7 +13,7 @@
 #include <lol/engine-internal.h>
 
 #include <cstdlib>
-#include <stdint.h>
+#include <cstdint>
 #include <functional>
 
 namespace lol
@@ -25,7 +25,7 @@ namespace lol
 
 static class TickerData
 {
-    friend class Ticker;
+    friend class ticker;
 
 public:
     TickerData() :
@@ -57,8 +57,8 @@ public:
 private:
     /* Entity management */
     array<Entity *> m_todolist, m_todolist_delayed, m_autolist;
-    array<Entity *> m_list[Entity::ALLGROUP_END];
-    array<int> m_scenes[Entity::ALLGROUP_END];
+    array<Entity *> m_list[(int)tickable::group::all::end];
+    array<int> m_scenes[(int)tickable::group::all::end];
     int nentities;
 
     /* Fixed framerate management */
@@ -214,10 +214,10 @@ void TickerData::GameThreadTick()
 
 #if 0
     msg::debug("-------------------------------------\n");
-    for (int g = 0; g < Entity::ALLGROUP_END; ++g)
+    for (int g = 0; g < (int)tickable::group::all::end; ++g)
     {
         msg::debug("%s Group %d\n",
-                   (g < Entity::GAMEGROUP_END) ? "Game" : "Draw", g);
+                   (g < (int)tickable::group::game::end) ? "Game" : "Draw", g);
 
         for (int i = 0; i < data->m_list[g].count(); ++i)
         {
@@ -269,7 +269,7 @@ void TickerData::GameThreadTick()
         int n = 0;
         data->panic = 2 * (data->panic + 1);
 
-        for (int g = 0; g < Entity::ALLGROUP_END && n < data->panic; ++g)
+        for (int g = 0; g < (int)tickable::group::all::end && n < data->panic; ++g)
         for (int i = 0; i < data->m_list[g].count() && n < data->panic; ++i)
         {
             Entity * e = data->m_list[g][i];
@@ -297,13 +297,13 @@ void TickerData::GameThreadTick()
      * in the tick lists can be marked for destruction. */
     array<Entity*> destroy_list;
     bool do_reserve = true;
-    for (int g = 0; g < Entity::ALLGROUP_END; ++g)
+    for (int g = 0; g < (int)tickable::group::all::end; ++g)
     {
         for (int i = data->m_list[g].count(); i--;)
         {
             Entity *e = data->m_list[g][i];
 
-            if (e->m_destroy && g < Entity::GAMEGROUP_END)
+            if (e->m_destroy && g < (int)tickable::group::game::end)
             {
                 /* Game tick list:
                 * If entity is to be destroyed, remove it */
@@ -328,7 +328,7 @@ void TickerData::GameThreadTick()
                     if (Scene::GetScene(j).IsRelevant(e))
                         removal_count++;
                     //Update scene index
-                    data->m_scenes[e->m_drawgroup][j] -= removal_count;
+                    data->m_scenes[(int)e->m_drawgroup][j] -= removal_count;
                 }
                 if (do_reserve)
                 {
@@ -339,7 +339,7 @@ void TickerData::GameThreadTick()
             }
             else
             {
-                if (e->m_ref <= 0 && g >= Entity::DRAWGROUP_BEGIN)
+                if (e->m_ref <= 0 && g >= (int)tickable::group::draw::begin)
                     e->m_destroy = 1;
             }
         }
@@ -363,11 +363,11 @@ void TickerData::GameThreadTick()
         }
 
         data->m_todolist.remove(-1);
-        data->m_list[e->m_gamegroup].push(e);
-        if (e->m_drawgroup != Entity::DRAWGROUP_NONE)
+        data->m_list[(int)e->m_gamegroup].push(e);
+        if (e->m_drawgroup != tickable::group::draw::none)
         {
-            if (data->m_scenes[e->m_drawgroup].count() < Scene::GetCount())
-                data->m_scenes[e->m_drawgroup].resize(Scene::GetCount());
+            if (data->m_scenes[(int)e->m_drawgroup].count() < Scene::GetCount())
+                data->m_scenes[(int)e->m_drawgroup].resize(Scene::GetCount());
 
             int added_count = 0;
             for (int i = 0; i < Scene::GetCount(); i++)
@@ -375,11 +375,11 @@ void TickerData::GameThreadTick()
                 //If entity is concerned by this scene, add it in the list
                 if (Scene::GetScene(i).IsRelevant(e))
                 {
-                    data->m_list[e->m_drawgroup].insert(e, data->m_scenes[e->m_drawgroup][i]);
+                    data->m_list[(int)e->m_drawgroup].insert(e, data->m_scenes[(int)e->m_drawgroup][i]);
                     added_count++;
                 }
                 //Update scene index
-                data->m_scenes[e->m_drawgroup][i] += added_count;
+                data->m_scenes[(int)e->m_drawgroup][i] += added_count;
             }
         }
 
@@ -391,7 +391,7 @@ void TickerData::GameThreadTick()
     data->m_todolist_delayed.clear();
 
     /* Tick objects for the game loop */
-    for (int g = Entity::GAMEGROUP_BEGIN; g < Entity::GAMEGROUP_END && !data->quit /* Stop as soon as required */; ++g)
+    for (int g = (int)tickable::group::game::begin; g < (int)tickable::group::game::end && !data->quit /* Stop as soon as required */; ++g)
     {
         for (int i = 0; i < data->m_list[g].count() && !data->quit /* Stop as soon as required */; ++i)
         {
@@ -435,11 +435,11 @@ void TickerData::DrawThreadTick()
         scene.pre_render(data->deltatime);
 
         /* Tick objects for the draw loop */
-        for (int g = Entity::DRAWGROUP_BEGIN; g < Entity::DRAWGROUP_END && !data->quit /* Stop as soon as required */; ++g)
+        for (int g = (int)tickable::group::draw::begin; g < (int)tickable::group::draw::end && !data->quit /* Stop as soon as required */; ++g)
         {
             switch (g)
             {
-            case Entity::DRAWGROUP_BEGIN:
+            case (int)tickable::group::draw::begin:
                 scene.Reset();
                 break;
             default:

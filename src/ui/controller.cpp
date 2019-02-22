@@ -1,8 +1,8 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Benjamin Litzelmann
-//            © 2017—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2017—2019 Sam Hocevar <sam@hocevar.net>
+//            © 2010—2015 Benjamin Litzelmann
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -223,7 +223,7 @@ static uint32_t g_active_layer = ~((uint32_t)0);
 //-----------------------------------------------------------------------------
 Controller::Controller(std::string const &name)
 {
-    m_gamegroup = GAMEGROUP_INPUT;
+    m_gamegroup = tickable::group::game::input;
     m_name = name;
     m_activate_nextframe = true;
     m_deactivate_nextframe = false;

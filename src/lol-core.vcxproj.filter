@@ -31,6 +31,9 @@
     <Filter Include="lol\algorithm">
       <UniqueIdentifier>{39f6f872-186f-48af-8e87-bcceb06b1b21}</UniqueIdentifier>
     </Filter>
+    <Filter Include="lol\engine">
+      <UniqueIdentifier>{a20b47c1-a0f8-4a02-a7a8-6da2ccd8bb02}</UniqueIdentifier>
+    </Filter>
     <Filter Include="lol\image">
       <UniqueIdentifier>{f25b3187-b24c-469a-b038-5a968eaa83f6}</UniqueIdentifier>
     </Filter>
@@ -360,6 +363,9 @@
     <ClCompile Include="engine\entity.cpp">
       <Filter>engine</Filter>
     </ClCompile>
+    <ClCompile Include="engine\tickable.cpp">
+      <Filter>engine</Filter>
+    </ClCompile>
     <ClCompile Include="engine\ticker.cpp">
       <Filter>engine</Filter>
     </ClCompile>
@@ -655,6 +661,12 @@
     </ClInclude>
     <ClInclude Include="lol\debug\lines.h">
       <Filter>lol\debug</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\engine\all.h">
+      <Filter>lol\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\engine\tickable.h">
+      <Filter>lol\engine</Filter>
     </ClInclude>
     <ClInclude Include="lol\image\image.h">
       <Filter>lol\image</Filter>

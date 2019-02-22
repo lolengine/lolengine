@@ -20,7 +20,9 @@
 // Ticker class for the ticking logic and the linked list implementation.
 //
 
-#include <stdint.h>
+#include <cstdint>
+
+#include <lol/engine/tickable.h>
 
 namespace lol
 {
@@ -44,7 +46,7 @@ struct InitState
 class Entity
 {
     friend class Scene;
-    friend class Ticker;
+    friend class ticker;
     friend class TickerData;
     friend class Emcee;
 
@@ -64,58 +66,6 @@ protected:
     virtual void tick_game(float seconds);
     virtual void tick_draw(float seconds, class Scene &scene);
 
-    enum
-    {
-        GAMEGROUP_BEGIN = 0, // must be the first element
-
-        GAMEGROUP_INPUT,     // input should be polled before everything else
-        GAMEGROUP_IMGUI,     // debug update needs to be called before the rest for init purposes
-        GAMEGROUP_APP,       // main application update
-        GAMEGROUP_ENTITY,    // default entity update
-        // ----------------- // split entity update:
-        GAMEGROUP_PLAYER,    // player updates before AI to ensure player actions is prevalent
-        GAMEGROUP_AI,        // AI update
-        GAMEGROUP_OTHER_0,   // other misc updates here
-        GAMEGROUP_OTHER_1,   //  (same)
-        GAMEGROUP_OTHER_2,   //  (same)
-        GAMEGROUP_OTHER_3,   //  (same)
-        // ----------------- // primitives updates
-        GAMEGROUP_MESH,      // update Mesh/Animation to ensure correct sync with PLY/AI
-        GAMEGROUP_FX,        // update FX/other to ensure correct sync with WorldPos and Meshes
-        GAMEGROUP_LIGHT,     // update after FX because it could some
-        GAMEGROUP_CAMERA,    // update camera at the end of the frame, once everything is settled
-        GAMEGROUP_STATS,     // stats update
-
-        GAMEGROUP_END        // must be the last element
-    }
-    m_gamegroup;
-
-    enum
-    {
-        DRAWGROUP_BEGIN = GAMEGROUP_END,
-
-        DRAWGROUP_CAMERA,   // update camera first for rendering
-        DRAWGROUP_TEXTURE,  // texture
-        DRAWGROUP_LIGHT,    //
-        DRAWGROUP_WORLD,    // other misc updates here
-        DRAWGROUP_ENTITY,   //
-        DRAWGROUP_FX,       //
-        DRAWGROUP_OTHER_0,  // other misc updates here
-        DRAWGROUP_OTHER_1,  //  (same)
-        DRAWGROUP_OTHER_2,  //  (same)
-        DRAWGROUP_OTHER_3,  //  (same)
-        DRAWGROUP_APP,      // main application Draw
-        DRAWGROUP_HUD,
-        DRAWGROUP_IMGUI,
-        DRAWGROUP_CAPTURE,
-
-        DRAWGROUP_END,      // must be the next-to-last element
-        DRAWGROUP_NONE,     // this group is for non draw-ticked
-    }
-    m_drawgroup;
-
-    static int const ALLGROUP_END = DRAWGROUP_END;
-
     /* The initialisation state */
     InitState m_initstate;
 
@@ -130,6 +80,9 @@ protected:
     }
     m_tickstate;
 #endif
+
+    tickable::group::game m_gamegroup;
+    tickable::group::draw m_drawgroup;
 
     // Emcee begin
 private:

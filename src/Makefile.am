@@ -52,6 +52,9 @@ liblol_core_headers = \
     lol/audio/all.h \
     lol/audio/audio.h lol/audio/sample.h \
     \
+    lol/engine/all.h \
+    lol/engine/tickable.h \
+    \
     lol/sys/all.h \
     lol/sys/init.h lol/sys/file.h lol/sys/getopt.h lol/sys/thread.h \
     lol/sys/threadtypes.h lol/sys/timer.h \
@@ -130,7 +133,7 @@ liblol_core_sources = \
     image/filter/dilate.cpp image/filter/median.cpp image/filter/yuv.cpp \
     image/movie.cpp \
     \
-    engine/ticker.cpp engine/ticker.h \
+    engine/tickable.cpp engine/ticker.cpp engine/ticker.h \
     engine/entity.cpp engine/entity.h \
     engine/world.cpp engine/world.h \
     engine/worldentity.cpp engine/worldentity.h \

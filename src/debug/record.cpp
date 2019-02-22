@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -56,7 +56,7 @@ DebugRecord::DebugRecord(std::string const &path, float fps)
     m_data->m_sequence = nullptr;
 #endif
 
-    m_drawgroup = DRAWGROUP_CAPTURE;
+    m_drawgroup = tickable::group::draw::capture;
 }
 
 void DebugRecord::tick_game(float seconds)

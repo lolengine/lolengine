@@ -103,7 +103,7 @@ D3d9Input::D3d9Input()
     }
 #endif
 
-    m_gamegroup = GAMEGROUP_INPUT;
+    m_gamegroup = tickable::group::game::input;
 }
 
 D3d9Input::~D3d9Input()

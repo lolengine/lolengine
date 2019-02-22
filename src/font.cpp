@@ -60,7 +60,7 @@ Font::Font(std::string const &path)
     data->tileset = TileSet::create(path, ivec2::zero, ivec2(16));
     data->size = data->tileset->GetTileSize(0);
 
-    m_drawgroup = DRAWGROUP_TEXTURE;
+    m_drawgroup = tickable::group::draw::texture;
 }
 
 Font::~Font()

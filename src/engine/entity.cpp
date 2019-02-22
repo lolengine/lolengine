@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -29,8 +29,8 @@ Entity::Entity() :
 #if !LOL_BUILD_RELEASE
     m_tickstate = STATE_IDLE;
 #endif
-    m_gamegroup = GAMEGROUP_ENTITY;
-    m_drawgroup = DRAWGROUP_ENTITY;
+    m_gamegroup = tickable::group::game::entity;
+    m_drawgroup = tickable::group::draw::entity;
     /* FIXME: is this a problem? because the object can
      * be ticked before the constructor is finished! */
     Ticker::Register(this);

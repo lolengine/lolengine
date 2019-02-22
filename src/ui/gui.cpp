@@ -45,8 +45,8 @@ gui::gui(ImFontAtlas *shared_font_atlas)
 {
     ImGui::CreateContext(shared_font_atlas);
 
-    m_gamegroup = GAMEGROUP_IMGUI;
-    m_drawgroup = DRAWGROUP_IMGUI;
+    m_gamegroup = tickable::group::game::gui;
+    m_drawgroup = tickable::group::draw::gui;
 
     // Build shader code -------------------------------------------------------
     ShaderVar out_vertex = ShaderVar::GetShaderOut(ShaderProgram::Vertex);

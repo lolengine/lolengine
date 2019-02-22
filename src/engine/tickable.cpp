@@ -10,20 +10,24 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
-#pragma once
+#include <lol/engine-internal.h>
 
-//
-// The main header
-// ———————————————
-//
+#include <cstdlib>
+#include <cstdint>
+#include <functional>
 
-#include <lol/base/all.h>
-#include <lol/math/all.h>
-#include <lol/algorithm/all.h>
-#include <lol/image/all.h>
-#include <lol/sys/all.h>
-#include <lol/audio/all.h>
-#include <lol/gpu/all.h>
-#include <lol/debug/all.h>
-#include <lol/engine/all.h>
+namespace lol
+{
+
+//auto p = tickable::create<tickable>();
+
+tickable::tickable()
+{
+}
+
+tickable::~tickable()
+{
+}
+
+} /* namespace lol */
 

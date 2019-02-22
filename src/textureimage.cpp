@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -12,8 +12,8 @@
 
 #include <lol/engine-internal.h>
 
-#include <cstdlib>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 
 #if defined _WIN32
@@ -84,7 +84,7 @@ void TextureImage::Init(std::string const &path, image* img)
     m_data->m_texture_size = ivec2(PotUp(m_data->m_image_size.x),
                                    PotUp(m_data->m_image_size.y));
 
-    m_drawgroup = DRAWGROUP_TEXTURE;
+    m_drawgroup = tickable::group::draw::texture;
 }
 
 void TextureImage::tick_draw(float seconds, Scene &scene)

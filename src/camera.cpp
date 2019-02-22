@@ -27,8 +27,8 @@ namespace lol
 
 Camera::Camera()
 {
-    m_gamegroup = GAMEGROUP_CAMERA;
-    m_drawgroup = DRAWGROUP_CAMERA;
+    m_gamegroup = tickable::group::game::camera;
+    m_drawgroup = tickable::group::draw::camera;
 
     //Arbitrary values when scene renderer is not ready.
     ivec2 screen_size = (Scene::GetCount()) ? (Video::GetSize()) : (ivec2(800, 600));

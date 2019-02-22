@@ -12,18 +12,5 @@
 
 #pragma once
 
-//
-// The main header
-// ———————————————
-//
-
-#include <lol/base/all.h>
-#include <lol/math/all.h>
-#include <lol/algorithm/all.h>
-#include <lol/image/all.h>
-#include <lol/sys/all.h>
-#include <lol/audio/all.h>
-#include <lol/gpu/all.h>
-#include <lol/debug/all.h>
-#include <lol/engine/all.h>
+#include <lol/engine/tickable.h>
 

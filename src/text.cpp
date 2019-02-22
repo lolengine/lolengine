@@ -50,7 +50,7 @@ Text::Text(std::string const &text, char const *font)
     data->m_scale = vec2(1.f);
     data->m_spacing = 0.f;
 
-    m_drawgroup = DRAWGROUP_HUD;
+    m_drawgroup = tickable::group::draw::entity;
 }
 
 void Text::SetText(std::string const &text)

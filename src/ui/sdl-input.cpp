@@ -128,7 +128,7 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
     }
 #endif
 
-    m_gamegroup = GAMEGROUP_INPUT;
+    m_gamegroup = tickable::group::game::input;
 }
 
 SdlInput::~SdlInput()

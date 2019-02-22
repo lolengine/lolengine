@@ -106,6 +106,7 @@
     <ClCompile Include="easymesh\easymeshrender.cpp" />
     <ClCompile Include="easymesh\easymeshtransform.cpp" />
     <ClCompile Include="engine\entity.cpp" />
+    <ClCompile Include="engine\tickable.cpp" />
     <ClCompile Include="engine\ticker.cpp" />
     <ClCompile Include="engine\world.cpp" />
     <ClCompile Include="engine\worldentity.cpp" />
@@ -228,6 +229,8 @@
     <ClInclude Include="lol\base\tuple.h" />
     <ClInclude Include="lol\debug\all.h" />
     <ClInclude Include="lol\debug\lines.h" />
+    <ClInclude Include="lol\engine\all.h" />
+    <ClInclude Include="lol\engine\tickable.h" />
     <ClInclude Include="lol\engine.h" />
     <ClInclude Include="lol\engine-internal.h" />
     <ClInclude Include="lol\extras.h" />
