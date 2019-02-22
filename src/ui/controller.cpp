@@ -228,9 +228,9 @@ Controller::Controller(std::string const &name)
     m_activate_nextframe = true;
     m_deactivate_nextframe = false;
     m_active = false;
-	if (g_controllers[name])
+    if (g_controllers[name])
         msg::warn("controller “%s” has already been registered\n", name.c_str());
-	g_controllers[name] = this;
+    g_controllers[name] = this;
 }
 
 Controller::Controller(std::string const &name, InputProfile const& profile)
@@ -242,8 +242,8 @@ Controller::Controller(std::string const &name, InputProfile const& profile)
 Controller::~Controller()
 {
     ClearProfile();
-	if (g_controllers[m_name] == this)
-		g_controllers.erase(m_name);
+    if (g_controllers[m_name] == this)
+        g_controllers.erase(m_name);
 }
 
 //Init mode 1: Input profile system -------------------------------------------
