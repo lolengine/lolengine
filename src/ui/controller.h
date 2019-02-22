@@ -23,11 +23,6 @@ namespace lol
 class KeyBinding
 {
     friend class Controller;
-public:
-    KeyBinding()
-      : m_current(false),
-        m_previous(false)
-    {}
 
 protected:
     //Status methods ----------------------------------------------------------
@@ -61,28 +56,21 @@ protected:
         m_previous = m_current;
         m_current = false;
         for (int i = 0; i < m_keybindings.count(); ++i)
-        {
             m_current = m_current || m_keybindings[i].m1->key(m_keybindings[i].m2);
-        }
     }
 
     /** m1 is the InputDevice, m2 is the key index on the InputDevice */
     array<const InputDevice*, int> m_keybindings;
     /** Value at the previous frame */
-    bool m_current;
+    bool m_current = false;
     /** Value at the current frame */
-    bool m_previous;
+    bool m_previous = false;
 };
 
 //-----------------------------------------------------------------------------
 class AxisBinding
 {
     friend class Controller;
-public:
-    AxisBinding()
-      : m_current(0.0f),
-        m_previous(0.0f)
-    {}
 
 protected:
     //Status methods ----------------------------------------------------------
@@ -120,20 +108,20 @@ protected:
     }
     float RetrieveCurrentValue();
 
-    /** m1 is the InputDevice, m2 is the axis index on the InputDevice, m3 and m4 are an optional key indices to bind one or two keys over the axis */
+    /** m1 is the InputDevice, m2 is the axis index on the InputDevice */
     array<const InputDevice*, int> m_axisbindings;
     /** m1 is the InputDevice, m2 is the key index on the InputDevice for the negative value, m3 is the key index on the InputDevice for the positive value. Only one key is required to bind key over axis. */
     array<const InputDevice*, int, int> m_keybindings;
-    float m_current;
-    float m_previous;
+    float m_current = 0.0f;
+    float m_previous = 0.0f;
 };
 
 //-------------------------------------------------------------------------
 class InputProfile
 {
     friend class Controller;
+
 private:
-    //---------------------------------------------------------------------
     class Key
     {
         friend class Controller;
@@ -148,7 +136,7 @@ private:
         int m_idx = 0;
         std::string m_name;
     };
-    //---------------------------------------------------------------------
+
     class Joystick
     {
         friend class Controller;
@@ -164,8 +152,8 @@ private:
         int m_idx = 0;
         std::string m_name;
     };
+
 public:
-    //---------------------------------------------------------------------
     class KeyboardKey : public Key
     {
         friend class Controller;
@@ -173,7 +161,7 @@ public:
     public:
         KeyboardKey(int idx, std::string const& name) : Key(idx, name) { }
     };
-    //---------------------------------------------------------------------
+
     class MouseKey : public Key
     {
         friend class Controller;
@@ -181,7 +169,7 @@ public:
     public:
         MouseKey(int idx, std::string const& name) : Key(idx, name) { }
     };
-    //---------------------------------------------------------------------
+
     class MouseAxis : public Key
     {
         friend class Controller;
@@ -189,7 +177,7 @@ public:
     public:
         MouseAxis(int idx, std::string const& name) : Key(idx, name) { }
     };
-    //---------------------------------------------------------------------
+
     class JoystickKey : public Joystick
     {
         friend class Controller;
@@ -197,7 +185,7 @@ public:
     public:
         JoystickKey(uint64_t joy, int idx, std::string const& name) : Joystick(joy, idx, name) { }
     };
-    //---------------------------------------------------------------------
+
     class JoystickAxis : public Joystick
     {
         friend class Controller;
@@ -205,6 +193,7 @@ public:
     public:
         JoystickAxis(uint64_t joy, int idx, std::string const& name) : Joystick(joy, idx, name) { }
     };
+
 public:
     InputProfile() = default;
     virtual ~InputProfile() = default;
@@ -349,9 +338,6 @@ public:
     /** Gets the current delta value of this axis */
     float GetAxisDelta(int index) const;
 
-    /** Get named controller */
-    static Controller* Get(std::string const &name);
-
 protected:
     /** Input profile system */
     void UnbindProfile();
@@ -360,10 +346,8 @@ protected:
 private:
     uint32_t m_layer_mask = 1; // plugged on the first by default
     std::map<int, KeyBinding> m_key_bindings;
-    std::map<int, AxisBinding> m_axis;
+    std::map<int, AxisBinding> m_axis_bindings;
 
-    static uint32_t m_active_layer; // All active by default
-    static array<Controller*> controllers;
     std::string m_name;
     bool m_activate_nextframe;
     bool m_deactivate_nextframe;
@@ -374,7 +358,7 @@ private:
     class InputProfile m_profile;
     class InputDevice* m_keyboard = nullptr;
     class InputDevice* m_mouse = nullptr;
-    array<class InputDevice*> m_joystick;
+    array<class InputDevice*> m_joysticks;
     array<uint64_t> m_joystick_idx;
 };
 

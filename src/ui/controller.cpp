@@ -217,8 +217,8 @@ float AxisBinding::RetrieveCurrentValue()
 ///////////////////////////////////////////////////////////////////////////////
 // Controller
 
-array<Controller*> Controller::controllers;
-uint32_t Controller::m_active_layer = ~((uint32_t)0);
+static std::map<std::string, Controller*> g_controllers;
+static uint32_t g_active_layer = ~((uint32_t)0);
 
 //-----------------------------------------------------------------------------
 Controller::Controller(std::string const &name)
@@ -228,11 +228,9 @@ Controller::Controller(std::string const &name)
     m_activate_nextframe = true;
     m_deactivate_nextframe = false;
     m_active = false;
-    if (Get(name) != nullptr)
-    {
+	if (g_controllers[name])
         msg::warn("controller “%s” has already been registered\n", name.c_str());
-    }
-    controllers.push(this);
+	g_controllers[name] = this;
 }
 
 Controller::Controller(std::string const &name, InputProfile const& profile)
@@ -244,14 +242,8 @@ Controller::Controller(std::string const &name, InputProfile const& profile)
 Controller::~Controller()
 {
     ClearProfile();
-    for (int i = 0; i < controllers.count(); ++i)
-    {
-        if (controllers[i] == this)
-        {
-            controllers.remove(i);
-            break;
-        }
-    }
+	if (g_controllers[m_name] == this)
+		g_controllers.erase(m_name);
 }
 
 //Init mode 1: Input profile system -------------------------------------------
@@ -276,7 +268,7 @@ uint32_t Controller::GetLayerMask()
 }
 bool Controller::IsLayerActive()
 {
-    return !!(m_layer_mask & m_active_layer);
+    return !!(m_layer_mask & g_active_layer);
 }
 
 //GetKeys/Axis stuff ----------------------------------------------------------
@@ -287,7 +279,7 @@ KeyBinding& Controller::GetKey(int index)
 
 AxisBinding& Controller::GetAxis(int index)
 {
-    return m_axis[index];
+    return m_axis_bindings[index];
 }
 
 // Key methods: should not go directly to binding
@@ -318,23 +310,14 @@ bool Controller::WasKeyReleasedThisFrame(int index) const
 //Axis methods: should not go directly to binding -----------------------------
 float Controller::GetAxisValue(int index) const
 {
-    auto axis = m_axis.find(index);
-    return axis != m_axis.end() ? axis->second.GetValue() : 0.f;
+    auto axis = m_axis_bindings.find(index);
+    return axis != m_axis_bindings.end() ? axis->second.GetValue() : 0.f;
 }
 
 float Controller::GetAxisDelta(int index) const
 {
-    auto axis = m_axis.find(index);
-    return axis != m_axis.end() ? axis->second.GetDelta() : 0.f;
-}
-
-//-----------------------------------------------------------------------------
-Controller* Controller::Get(std::string const &name)
-{
-    for (auto controller : controllers)
-        if (controller->m_name == name)
-            return controller;
-    return nullptr;
+    auto axis = m_axis_bindings.find(index);
+    return axis != m_axis_bindings.end() ? axis->second.GetDelta() : 0.f;
 }
 
 //Input profile system --------------------------------------------------------
@@ -374,7 +357,7 @@ void Controller::UnbindProfile()
         if (m_joystick_idx.find(axis.m_joy) != INDEX_NONE)
             GetAxis(axis.m_idx).UnbindJoystick(axis.m_joy, axis.m_name);
     }
-    m_joystick.clear();
+    m_joysticks.clear();
     m_joystick_idx.clear();
 
     m_mutex.unlock();
@@ -411,7 +394,7 @@ void Controller::BindProfile(InputProfile const& setup)
         class InputDevice* joystick = InputDevice::GetJoystick(joy_idx);
         if (joystick)
         {
-            m_joystick << joystick;
+            m_joysticks << joystick;
             m_joystick_idx << joy_idx;
         }
     }
@@ -439,7 +422,7 @@ void Controller::tick_game(float seconds)
         for (auto &kv : m_key_bindings)
             kv.second.Update();
 
-        for (auto &kv : m_axis)
+        for (auto &kv : m_axis_bindings)
             kv.second.Update();
     }
 
@@ -471,12 +454,12 @@ array<Controller*> Controller::DeactivateAll()
 {
     array<Controller*> result;
 
-    for (int i = 0; i < controllers.count(); ++i)
+    for (auto it : g_controllers)
     {
-        if (controllers[i]->m_active || controllers[i]->m_activate_nextframe)
+        if (it.second->m_active || it.second->m_activate_nextframe)
         {
-            result.push(controllers[i]);
-            controllers[i]->Deactivate();
+            result.push(it.second);
+            it.second->Deactivate();
         }
     }
 
