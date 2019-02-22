@@ -20,25 +20,21 @@
 //
 
 #include <cstdint>
+#include <memory>
 
 namespace lol
 {
 
-class game_tickable
-{
-    virtual void tick_game(float seconds) = 0;
-};
-
-class draw_tickable
-{
-    virtual void tick_draw(float seconds, class Scene &scene) = 0;
-};
-
-class tickable : public std::enable_shared_from_this<tickable>
+class tickable
 {
 public:
     tickable();
     virtual ~tickable();
+
+    virtual void init();
+    virtual void fini();
+    virtual void tick_game(float seconds);
+    virtual void tick_draw(float seconds, class Scene &scene);
 
     // Auto-registering factory
     template<typename T>

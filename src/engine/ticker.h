@@ -18,9 +18,10 @@
 // The ticker is a static class that registers entities and ticks them.
 //
 
-#include <cstdint>
+#include <lol/engine/tickable.h>
 
-#include "engine/entity.h"
+#include <cstdint>
+#include <memory>
 
 namespace lol
 {
@@ -28,9 +29,13 @@ namespace lol
 class ticker
 {
 public:
-    static void Register(Entity *entity);
-    static void Ref(Entity *entity);
-    static int Unref(Entity *entity);
+    static void add(std::shared_ptr<tickable> entity);
+    static void remove(std::shared_ptr<tickable> entity);
+
+    // The old API
+    static void Register(class Entity *entity);
+    static void Ref(class Entity *entity);
+    static int Unref(class Entity *entity);
 
     static void Setup(float fps);
     static void tick_draw();
@@ -40,9 +45,9 @@ public:
     static void StopRecording();
     static int GetFrameNum();
 
-    static void SetState(Entity *entity, uint32_t state);
-    static void SetStateWhenMatch(Entity *entity, uint32_t state,
-                                  Entity *other_entity, uint32_t other_state);
+    static void SetState(class Entity *entity, uint32_t state);
+    static void SetStateWhenMatch(class Entity *entity, uint32_t state,
+                                  class Entity *other_entity, uint32_t other_state);
 
     static void Shutdown();
     static int Finished();
@@ -51,6 +56,7 @@ private:
     ticker() {}
 };
 
+// The old API
 typedef ticker Ticker;
 
 } /* namespace lol */

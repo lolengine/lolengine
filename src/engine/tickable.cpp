@@ -29,5 +29,21 @@ tickable::~tickable()
 {
 }
 
+void tickable::init()
+{
+}
+
+void tickable::fini()
+{
+}
+
+void tickable::tick_game(float seconds)
+{
+}
+
+void tickable::tick_draw(float seconds, class Scene &scene)
+{
+}
+
 } /* namespace lol */
 
