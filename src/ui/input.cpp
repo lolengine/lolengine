@@ -15,11 +15,19 @@
 
 #include <string>
 #include <map>
+#include <memory>
 
-#include "ui/input_internal.h"
+#include "ui/input.h"
 
 namespace lol
 {
+
+std::shared_ptr<input> input::get()
+{
+    static auto instance = new input();
+    static auto shared_instance = std::shared_ptr<input>(instance);
+    return shared_instance;
+}
 
 // Lookup tables for scancode and key name lookups
 static std::vector<input::key> g_all_keys
@@ -47,8 +55,9 @@ std::vector<input::key> const &input::all_keys()
 
 std::string const &input::key_to_name(input::key k)
 {
+    static std::string unknown("Unknown");
     auto it = g_key_to_name.find(k);
-    return it == g_key_to_name.end() ? "Unknown" : it->second;
+    return it == g_key_to_name.end() ? unknown : it->second;
 }
 
 input::key input::name_to_key(std::string const &name)
@@ -58,8 +67,6 @@ input::key input::name_to_key(std::string const &name)
 }
 
 array<InputDevice*> InputDevice::devices;
-int InputDevice::joystick_count = 0;
-bool InputDevice::m_capturemouse;
 
 array<std::string> InputDevice::GetAvailableDevices()
 {
@@ -86,7 +93,7 @@ void InputDevice::SetTextInputActive(bool status)
     m_input_active = status;
 }
 
-void InputDeviceInternal::AddKey(int index, const char* name)
+void InputDevice::AddKey(int index, const char* name)
 {
     if (index == -1)
         index = (int)m_key_names.size();
@@ -100,7 +107,7 @@ void InputDeviceInternal::AddKey(int index, const char* name)
     m_key_names[index] = name;
 }
 
-void InputDeviceInternal::AddAxis(int index, const char* name, float sensitivity)
+void InputDevice::AddAxis(int index, const char* name, float sensitivity)
 {
     if (index == -1)
         index = (int)m_axis_names.size();
@@ -116,7 +123,7 @@ void InputDeviceInternal::AddAxis(int index, const char* name, float sensitivity
     m_axis[index].m2 = sensitivity;
 }
 
-void InputDeviceInternal::AddCursor(int index, const char* name)
+void InputDevice::AddCursor(int index, const char* name)
 {
     if (index == -1)
         index = (int)m_cursor_names.size();
@@ -130,9 +137,9 @@ void InputDeviceInternal::AddCursor(int index, const char* name)
     m_cursor_names[index] = name;
 }
 
-InputDeviceInternal* InputDeviceInternal::CreateStandardKeyboard()
+InputDevice* InputDevice::CreateStandardKeyboard()
 {
-    InputDeviceInternal* keyboard = new InputDeviceInternal(g_name_keyboard.c_str());
+    InputDevice* keyboard = new InputDevice(g_name_keyboard.c_str());
 
     /* Register all scancodes known to SDL (from the USB standard) */
 #   define _SC(id, str, name) keyboard->AddKey(id, #name);
@@ -141,9 +148,9 @@ InputDeviceInternal* InputDeviceInternal::CreateStandardKeyboard()
     return keyboard;
 }
 
-InputDeviceInternal* InputDeviceInternal::CreateStandardMouse()
+InputDevice* InputDevice::CreateStandardMouse()
 {
-    InputDeviceInternal* mouse = new InputDeviceInternal(g_name_mouse.c_str());
+    InputDevice* mouse = new InputDevice(g_name_mouse.c_str());
     mouse->AddKey(g_name_mouse_key_left.c_str());
     mouse->AddKey(g_name_mouse_key_middle.c_str());
     mouse->AddKey(g_name_mouse_key_right.c_str());

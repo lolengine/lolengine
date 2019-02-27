@@ -28,7 +28,7 @@ extern "C" {
 }
 
 #include "application/android-app.h"
-#include "ui/input_internal.h"
+#include "ui/input.h"
 
 using namespace lol;
 
@@ -84,7 +84,7 @@ public:
     /* FIXME: we need proper unproject or at least screen space events!! */
     ivec2 m_wanted_resolution;
 
-    InputDeviceInternal* m_mouse;
+    InputDevice* m_mouse;
 
     SavedState m_state;
 
@@ -344,7 +344,7 @@ lol::AndroidApp::AndroidApp(char const *title, ivec2 res, float fps)
     Ticker::Setup(fps);
 
     m_data->m_wanted_resolution = res;
-    m_data->m_mouse = InputDeviceInternal::CreateStandardMouse();
+    m_data->m_mouse = InputDevice::CreateStandardMouse();
 }
 
 void lol::AndroidApp::ShowPointer(bool show)

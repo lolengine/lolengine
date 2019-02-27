@@ -15,6 +15,7 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 namespace lol
 {
@@ -22,6 +23,10 @@ namespace lol
 class input
 {
 public:
+    static std::shared_ptr<input> get();
+
+    // Keyboard API
+
     enum class key : uint16_t
     {
 #define _SC(id, str, name) SC_##name = id,
@@ -31,6 +36,24 @@ public:
     static std::vector<key> const &all_keys();
     static std::string const &key_to_name(key k);
     static key name_to_key(std::string const &name);
+
+    // Internal keyboard API (TODO: move to input device class?)
+
+    void internal_set_key(key k, bool state);
+    void internal_add_text(std::string const &text);
+
+    // Mouse API
+
+    /** Gets and sets whether the mouse cursor should be captured. */
+    void mouse_capture(bool value) { m_mouse_capture = value; }
+    bool mouse_capture() const { return m_mouse_capture; }
+
+    // Joystick API
+
+private:
+    input() = default;
+
+    bool m_mouse_capture = false;
 };
 
 const std::string g_name_mouse("Mouse");
@@ -57,6 +80,25 @@ const std::string g_name_mouse_cursor("Cursor");
 class InputDevice
 {
 public:
+    InputDevice(std::string const &name)
+      : m_name(name),
+        m_input_active(false)
+    {
+        devices.push_unique(this);
+    }
+
+    ~InputDevice()
+    {
+        for (int i = 0; i < devices.count(); ++i)
+        {
+            if (devices[i] == this)
+            {
+                devices.remove(i);
+                return;
+            }
+        }
+    }
+
     /** Gets the name of this input device */
     const std::string& GetName() const
     {
@@ -162,20 +204,65 @@ public:
     {
         return GetDevice(g_name_mouse);
     }
-    static int GetJoystickCount()
-    {
-        return joystick_count;
-    }
     static InputDevice* GetJoystick(const uint64_t num)
     {
         return GetDevice(g_name_joystick(num));
     }
 
-    /** Sets whether the mouse cursor should be captured. */
-    static void CaptureMouse(bool activated)
+public:
+    /** Internal functions that allow to construct an InputDevice
+      * dynamically, when the keys, axis and cursors are not known at
+      * compile time. */
+    void AddKey(int id, char const * name);
+
+    inline void AddKey(char const * name)
     {
-        m_capturemouse = activated;
+        AddKey(-1, name);
     }
+
+    void AddAxis(int id, char const * name, float sensitivity = 1.0f);
+
+    inline void AddAxis(char const * name, float sensitivity = 1.0f)
+    {
+        AddAxis(-1, name, sensitivity);
+    }
+
+    void AddCursor(int id, char const * name);
+
+    inline void AddCursor(char const * name)
+    {
+        AddCursor(-1, name);
+    }
+
+    void SetCursor(int id, vec2 const & position, ivec2 const & pixel)
+    {
+        m_cursors[id].m1 = position;
+        m_cursors[id].m2 = pixel;
+    }
+
+    ivec2 GetCursorPixelPos(int id)
+    {
+        return m_cursors[id].m2;
+    }
+
+    /* Internal functions for the platform-specific drivers. */
+    void internal_set_key(int id, bool state)
+    {
+        m_keys[id] = state;
+    }
+
+    void internal_add_text(std::string const &text)
+    {
+        m_text += text;
+    }
+
+    void internal_set_axis(int id, float value)
+    {
+        m_axis[id].m1 = value;
+    }
+
+    static InputDevice* CreateStandardKeyboard();
+    static InputDevice* CreateStandardMouse();
 
 protected:
     // TODO: hide all of this in a InputDeviceData?
@@ -199,30 +286,8 @@ protected:
     /** Cursor position */
     array<vec2, ivec2> m_cursors;
 
-    static bool m_capturemouse;
-
-    InputDevice(std::string const &name)
-      : m_name(name),
-        m_input_active(false)
-    {
-        devices.push_unique(this);
-    }
-
-    ~InputDevice()
-    {
-        for (int i = 0; i < devices.count(); ++i)
-        {
-            if (devices[i] == this)
-            {
-                devices.remove(i);
-                return;
-            }
-        }
-    }
-
 private:
     static array<InputDevice*> devices;
-    static int joystick_count;
 
     template <typename... T>
     size_t GetItemIndex(std::string const &name, std::vector<std::string, T...> const& a) const
@@ -235,10 +300,6 @@ private:
 
     static InputDevice* GetDevice(std::string const &name)
     {
-        //Count the device types. TODO: Multi mouse/keyboard
-        if (name.find(g_name_joystick()) != std::string::npos)
-            ++joystick_count;
-
         for (int i = 0; i < devices.count(); ++i)
         {
             if (devices[i]->m_name == name)

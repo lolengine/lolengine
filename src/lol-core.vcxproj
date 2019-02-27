@@ -291,7 +291,6 @@
     <ClInclude Include="ui\d3d9-input.h" />
     <ClInclude Include="ui\gui.h" />
     <ClInclude Include="ui\input.h" />
-    <ClInclude Include="ui\input_internal.h" />
     <ClInclude Include="ui\keys.inc" />
     <ClInclude Include="ui\sdl-input.h">
       <ExcludedFromBuild Condition="'$(enable_sdl)'=='no'">true</ExcludedFromBuild>

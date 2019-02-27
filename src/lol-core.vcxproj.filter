@@ -683,9 +683,6 @@
     <ClInclude Include="ui\controller.h">
       <Filter>ui</Filter>
     </ClInclude>
-    <ClInclude Include="ui\input_internal.h">
-      <Filter>ui</Filter>
-    </ClInclude>
     <ClInclude Include="utils.h">
       <Filter>...</Filter>
     </ClInclude>

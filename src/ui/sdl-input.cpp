@@ -23,8 +23,8 @@
 #   include <emscripten/html5.h>
 #endif
 
-#include "ui/input_internal.h"
 #include "ui/sdl-input.h"
+#include "ui/input.h"
 
 /* We force joystick polling because no events are received when
  * there is no SDL display (eg. on the Raspberry Pi). */
@@ -89,8 +89,8 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
     SDL_Init(SDL_INIT_TIMER | SDL_INIT_JOYSTICK);
 #endif
 
-    m_keyboard = InputDeviceInternal::CreateStandardKeyboard();
-    m_mouse = InputDeviceInternal::CreateStandardMouse();
+    m_keyboard = InputDevice::CreateStandardKeyboard();
+    m_mouse = InputDevice::CreateStandardMouse();
 
     // XXX: another option for emscripten is to properly support gamepads
 #if LOL_USE_SDL && !__EMSCRIPTEN__
@@ -118,7 +118,7 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
         }
 
         //format("Joystick%d", i + 1).c_str()
-        InputDeviceInternal* stick = new InputDeviceInternal(g_name_joystick(i + 1));
+        InputDevice* stick = new InputDevice(g_name_joystick(i + 1));
         for (int j = 0; j < SDL_JoystickNumAxes(sdlstick); ++j)
             stick->AddAxis(format("Axis%d", j + 1).c_str());
         for (int j = 0; j < SDL_JoystickNumButtons(sdlstick); ++j)
@@ -283,9 +283,9 @@ void SdlInput::tick(float seconds)
     SDL_GetMouseState(&mouse.x, &mouse.y);
     mouse.y = Video::GetSize().y - 1 - mouse.y;
 
-    if (InputDeviceInternal::GetMouseCapture() != m_mousecapture)
+    if (input::get()->mouse_capture() != m_mousecapture)
     {
-        m_mousecapture = InputDeviceInternal::GetMouseCapture();
+        m_mousecapture = input::get()->mouse_capture();
         SDL_SetRelativeMouseMode(m_mousecapture ? SDL_TRUE : SDL_FALSE);
         mouse = ivec2(m_app * .5f);
 

@@ -21,7 +21,7 @@
 #include <lol/engine-internal.h>
 
 #include "ui/d3d9-input.h"
-#include "ui/input_internal.h"
+#include "ui/input.h"
 
 namespace lol
 {
@@ -57,7 +57,7 @@ class D3d9InputData
 
 private:
 #if defined LOL_USE_XINPUT
-    array<int, InputDeviceInternal*> m_joysticks;
+    array<int, InputDevice*> m_joysticks;
 #endif // LOL_USE_XINPUT
 };
 
@@ -75,7 +75,7 @@ D3d9Input::D3d9Input()
         if (XInputGetState(i, &state) != ERROR_SUCCESS)
             continue;
         // TODO: we can put more friendly name here, such as LeftAxisX, ButtonX...
-        InputDeviceInternal* stick = new InputDeviceInternal(g_name_joystick(i + 1));
+        InputDevice* stick = new InputDevice(g_name_joystick(i + 1));
 
         stick->AddAxis(g_name_xbox_axis_left_x.c_str());
         stick->AddAxis(g_name_xbox_axis_left_y.c_str());
