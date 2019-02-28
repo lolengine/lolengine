@@ -20,42 +20,6 @@
 namespace lol
 {
 
-class input
-{
-public:
-    static std::shared_ptr<input> get();
-
-    // Keyboard API
-
-    enum class key : uint16_t
-    {
-#define _SC(id, str, name) SC_##name = id,
-#include "ui/keys.inc"
-    };
-
-    static std::vector<key> const &all_keys();
-    static std::string const &key_to_name(key k);
-    static key name_to_key(std::string const &name);
-
-    // Internal keyboard API (TODO: move to input device class?)
-
-    void internal_set_key(key k, bool state);
-    void internal_add_text(std::string const &text);
-
-    // Mouse API
-
-    /** Gets and sets whether the mouse cursor should be captured. */
-    void mouse_capture(bool value) { m_mouse_capture = value; }
-    bool mouse_capture() const { return m_mouse_capture; }
-
-    // Joystick API
-
-private:
-    input() = default;
-
-    bool m_mouse_capture = false;
-};
-
 const std::string g_name_mouse("Mouse");
 const std::string g_name_keyboard("Keyboard");
 
@@ -195,14 +159,6 @@ public:
     }
 
     /** Default helpers */
-    static InputDevice* GetKeyboard()
-    {
-        return GetDevice(g_name_keyboard);
-    }
-    static InputDevice* GetMouse()
-    {
-        return GetDevice(g_name_mouse);
-    }
     static InputDevice* GetJoystick(const uint64_t num)
     {
         return GetDevice(g_name_joystick(num));
@@ -260,9 +216,6 @@ public:
         m_axis[id].m1 = value;
     }
 
-    static InputDevice* CreateStandardKeyboard();
-    static InputDevice* CreateStandardMouse();
-
 protected:
     // TODO: hide all of this in a InputDeviceData?
 
@@ -306,6 +259,50 @@ private:
         }
         return nullptr;
     }
+};
+
+class input
+{
+public:
+    static std::shared_ptr<input> get();
+
+    // Default devices
+
+    std::shared_ptr<InputDevice> keyboard() { return m_keyboard; }
+    std::shared_ptr<InputDevice> mouse() { return m_mouse; }
+
+    // Keyboard API
+
+    enum class key : uint16_t
+    {
+#define _SC(id, str, name) SC_##name = id,
+#include "ui/keys.inc"
+    };
+
+    static std::vector<key> const &all_keys();
+    static std::string const &key_to_name(key k);
+    static key name_to_key(std::string const &name);
+
+    // Internal keyboard API (TODO: move to input device class?)
+
+    void internal_set_key(key k, bool state);
+    void internal_add_text(std::string const &text);
+
+    // Mouse API
+
+    /** Gets and sets whether the mouse cursor should be captured. */
+    void mouse_capture(bool value) { m_mouse_capture = value; }
+    bool mouse_capture() const { return m_mouse_capture; }
+
+    // Joystick API
+
+private:
+    input();
+
+    std::shared_ptr<InputDevice> m_keyboard;
+    std::shared_ptr<InputDevice> m_mouse;
+
+    bool m_mouse_capture = false;
 };
 
 } /* namespace lol */

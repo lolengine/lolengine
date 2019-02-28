@@ -29,6 +29,29 @@ std::shared_ptr<input> input::get()
     return shared_instance;
 }
 
+input::input()
+{
+    // Create default keyboard device
+    m_keyboard = std::make_shared<InputDevice>(g_name_keyboard.c_str());
+    /* Register all scancodes known to SDL (from the USB standard) */
+#   define _SC(id, str, name) m_keyboard->AddKey(id, #name);
+#   include "ui/keys.inc"
+
+    // Create default mouse device
+    m_mouse = std::make_shared<InputDevice>(g_name_mouse.c_str());
+    m_mouse->AddKey(g_name_mouse_key_left.c_str());
+    m_mouse->AddKey(g_name_mouse_key_middle.c_str());
+    m_mouse->AddKey(g_name_mouse_key_right.c_str());
+    // Added to manage if mouse is in the screen or not.
+    m_mouse->AddKey(g_name_mouse_key_in_screen.c_str());
+    m_mouse->AddAxis(g_name_mouse_axis_x.c_str());
+    m_mouse->AddAxis(g_name_mouse_axis_y.c_str());
+    m_mouse->AddAxis(g_name_mouse_axis_xpixel.c_str());
+    m_mouse->AddAxis(g_name_mouse_axis_ypixel.c_str());
+    m_mouse->AddAxis(g_name_mouse_axis_scroll.c_str(), .0000001f);
+    m_mouse->AddCursor(g_name_mouse_cursor.c_str());
+}
+
 // Lookup tables for scancode and key name lookups
 static std::vector<input::key> g_all_keys
 {
@@ -135,38 +158,6 @@ void InputDevice::AddCursor(int index, const char* name)
     }
 
     m_cursor_names[index] = name;
-}
-
-InputDevice* InputDevice::CreateStandardKeyboard()
-{
-    InputDevice* keyboard = new InputDevice(g_name_keyboard.c_str());
-
-    /* Register all scancodes known to SDL (from the USB standard) */
-#   define _SC(id, str, name) keyboard->AddKey(id, #name);
-#   include "ui/keys.inc"
-
-    return keyboard;
-}
-
-InputDevice* InputDevice::CreateStandardMouse()
-{
-    InputDevice* mouse = new InputDevice(g_name_mouse.c_str());
-    mouse->AddKey(g_name_mouse_key_left.c_str());
-    mouse->AddKey(g_name_mouse_key_middle.c_str());
-    mouse->AddKey(g_name_mouse_key_right.c_str());
-    //Added to manage if mouse is in the screen or not.
-    mouse->AddKey(g_name_mouse_key_in_screen.c_str());
-
-    mouse->AddAxis(g_name_mouse_axis_x.c_str());
-    mouse->AddAxis(g_name_mouse_axis_y.c_str());
-    mouse->AddAxis(g_name_mouse_axis_xpixel.c_str());
-    mouse->AddAxis(g_name_mouse_axis_ypixel.c_str());
-    mouse->AddAxis(g_name_mouse_axis_scroll.c_str(), .0000001f);
-
-    mouse->AddCursor(g_name_mouse_cursor.c_str());
-
-    // TODO: extended button, and wheel (as axis or as buttons? or both?)
-    return mouse;
 }
 
 } /* namespace lol */

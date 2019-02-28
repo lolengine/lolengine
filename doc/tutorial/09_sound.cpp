@@ -32,7 +32,6 @@ public:
         m_profile << InputProfile::KeyboardKey(0, "Space")
                   << InputProfile::MouseKey(1, "Left");
         m_controller->Init(m_profile);
-        m_mouse = InputDevice::GetMouse();
 
         m_text = new Text("SPACE for sine wave, Left Click for white noise",
                           "data/font/ascii.png");
@@ -94,7 +93,6 @@ public:
 private:
     int m_streams[2];
 
-    InputDevice *m_mouse;
     Controller *m_controller;
     InputProfile m_profile;
 

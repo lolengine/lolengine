@@ -356,8 +356,8 @@ private:
     //Input profile stuff
     mutex m_mutex;
     class InputProfile m_profile;
-    class InputDevice* m_keyboard = nullptr;
-    class InputDevice* m_mouse = nullptr;
+    std::shared_ptr<InputDevice> m_keyboard;
+    std::shared_ptr<InputDevice> m_mouse;
     array<class InputDevice*> m_joysticks;
     array<uint64_t> m_joystick_idx;
 };

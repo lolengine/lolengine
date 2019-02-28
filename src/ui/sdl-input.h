@@ -47,8 +47,6 @@ private:
     void tick(float seconds);
 
     array<SDL_Joystick *, class InputDevice *> m_joysticks;
-    InputDevice *m_mouse = nullptr;
-    InputDevice *m_keyboard = nullptr;
 
     ivec2 m_prevmouse = ivec2::zero;
     vec2 m_app;

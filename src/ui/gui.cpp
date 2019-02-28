@@ -101,8 +101,6 @@ gui::gui(ImFontAtlas *shared_font_atlas)
 
     Ticker::Ref(m_controller = new Controller("ImGui_Controller"));
     m_controller->Init(m_profile);
-    m_mouse = InputDevice::GetMouse();
-    m_keyboard = InputDevice::GetKeyboard();
 }
 
 gui::~gui()
@@ -209,6 +207,9 @@ void gui::tick_game(float seconds)
 {
     super::tick_game(seconds);
 
+    auto keyboard = input::get()->keyboard();
+    auto mouse = input::get()->mouse();
+
     ImGuiIO& io = ImGui::GetIO();
 
     // Init Texture
@@ -240,29 +241,26 @@ void gui::tick_game(float seconds)
     for (input::key k : input::all_keys())
         io.KeysDown[(int)k] = m_controller->IsKeyPressed((int)k);
 
-    m_keyboard->SetTextInputActive(io.WantTextInput);
+    keyboard->SetTextInputActive(io.WantTextInput);
 
     //Update text input
-    std::string text = m_keyboard->GetText();
+    std::string text = keyboard->GetText();
     //text.case_change(io.KeyShift);
     for (auto ch : text)
         io.AddInputCharacter(ch);
 
     // Update mouse
-    if (m_mouse)
-    {
-        vec2 cursor = m_mouse->GetCursor(0);
-        cursor.y = 1.f - cursor.y;
+    vec2 cursor = mouse->GetCursor(0);
+    cursor.y = 1.f - cursor.y;
 
-        io.MousePos = cursor * video_size;
-        //msg::debug("%.2f/%.2f\n", io.MousePos.x, io.MousePos.y);
-        io.MouseWheel = m_controller->GetAxisValue(axis_enum::Scroll);
+    io.MousePos = cursor * video_size;
+    //msg::debug("%.2f/%.2f\n", io.MousePos.x, io.MousePos.y);
+    io.MouseWheel = m_controller->GetAxisValue(axis_enum::Scroll);
 
-        io.MouseDown[0] = m_controller->IsKeyPressed(key_enum::LeftClick);
-        io.MouseDown[1] = m_controller->IsKeyPressed(key_enum::RightClick);
-        io.MouseDown[2] = m_controller->IsKeyPressed(key_enum::MiddleClick);
-        // FIXME: handle key_enum::Focus?
-    }
+    io.MouseDown[0] = m_controller->IsKeyPressed(key_enum::LeftClick);
+    io.MouseDown[1] = m_controller->IsKeyPressed(key_enum::RightClick);
+    io.MouseDown[2] = m_controller->IsKeyPressed(key_enum::MiddleClick);
+    // FIXME: handle key_enum::Focus?
 
     // Start the frame
     ImGui::NewFrame();

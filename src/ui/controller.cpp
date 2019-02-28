@@ -371,7 +371,7 @@ void Controller::BindProfile(InputProfile const& setup)
     m_profile = setup;
 
     // Keyboard
-    m_keyboard = InputDevice::GetKeyboard();
+    m_keyboard = input::get()->keyboard();
     if (m_keyboard)
     {
         for (InputProfile::KeyboardKey& key : m_profile.m_keys)
@@ -379,7 +379,7 @@ void Controller::BindProfile(InputProfile const& setup)
     }
 
     // Mouse
-    m_mouse = InputDevice::GetMouse();
+    m_mouse = input::get()->mouse();
     if (m_mouse)
     {
         for (InputProfile::MouseKey& key : m_profile.m_mouse_keys)

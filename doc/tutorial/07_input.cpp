@@ -31,23 +31,22 @@ public:
 #       ifdef OLD_SCHOOL
         m_controller->SetInputCount(KEY_MAX, AXIS_MAX);
 
-        m_keyboard = InputDevice::Get("Keyboard");
-        if (m_keyboard)
-            m_controller->GetKey(KEY_MANUAL_ROTATION).Bind("Keyboard", "Space");
+        auto keyboard = input::get()->keyboard();
+        m_controller->GetKey(KEY_MANUAL_ROTATION).Bind(g_name_keyboard, "Space");
 
-        m_mouse = InputDevice::Get("Mouse");
-        if (m_mouse)
+        auto mouse = input::get()->mouse();
+        if (mouse)
         {
-            m_controller->GetKey(KEY_DRAG_MESH).Bind("Mouse", "Left");
-            m_controller->GetAxis(AXIS_DRAG_PITCH).Bind("Mouse", "Y");
-            m_controller->GetAxis(AXIS_DRAG_YAW).Bind("Mouse", "X");
+            m_controller->GetKey(KEY_DRAG_MESH).Bind(g_name_mouse, "Left");
+            m_controller->GetAxis(AXIS_DRAG_PITCH).Bind(g_name_mouse, "Y");
+            m_controller->GetAxis(AXIS_DRAG_YAW).Bind(g_name_mouse, "X");
         }
 
-        m_joystick = InputDevice::Get("Joystick1");
+        m_joystick = InputDevice::Get(g_name_joystick(1));
         if (m_joystick)
         {
-            m_controller->GetAxis(AXIS_PITCH).Bind("Joystick1", "Axis2");
-            m_controller->GetAxis(AXIS_YAW).Bind("Joystick1", "Axis1");
+            m_controller->GetAxis(AXIS_PITCH).Bind(g_name_joystick(1), "Axis2");
+            m_controller->GetAxis(AXIS_YAW).Bind(g_name_joystick(1), "Axis1");
         }
 #       else
         m_profile
@@ -59,8 +58,6 @@ public:
             << InputProfile::MouseAxis(AXIS_DRAG_YAW, "X");
 
         m_controller->Init(m_profile);
-        m_keyboard = InputDevice::GetKeyboard();
-        m_mouse = InputDevice::GetMouse();
         m_joystick = InputDevice::GetJoystick(1);
 #       endif //OLD_SCHOOL
 
@@ -107,11 +104,8 @@ public:
         WorldEntity::tick_game(seconds);
 
         /* Handle keyboard */
-        if (m_keyboard)
-        {
-            if (m_controller->WasKeyPressedThisFrame(KEY_MANUAL_ROTATION))
-                m_autorot = !m_autorot;
-        }
+        if (m_controller->WasKeyPressedThisFrame(KEY_MANUAL_ROTATION))
+            m_autorot = !m_autorot;
 
         /* Handle joystick */
         if (m_joystick)
@@ -123,7 +117,7 @@ public:
         }
 
         /* Handle mouse */
-        if (m_mouse)
+        if (true)
         {
             if (m_controller->IsKeyPressed(KEY_DRAG_MESH))
             {
@@ -138,10 +132,11 @@ public:
                     m_yaw_angle += seconds * 0.2f;
             }
 
+            auto mouse = input::get()->mouse();
             m_text->SetText(lol::format(
                 "cursor: (%0.3f, %0.3f) - pixel (%d, %d)",
-                m_mouse->GetCursor(0).x, m_mouse->GetCursor(0).y,
-                m_mouse->GetCursorPixel(0).x, m_mouse->GetCursorPixel(0).y));
+                mouse->GetCursor(0).x, mouse->GetCursor(0).y,
+                mouse->GetCursorPixel(0).x, mouse->GetCursorPixel(0).y));
         }
         else
         {
@@ -227,7 +222,7 @@ private:
         AXIS_MAX
     };
 
-    InputDevice *m_keyboard, *m_mouse, *m_joystick;
+    InputDevice *m_joystick;
     Controller *m_controller;
     InputProfile m_profile;
 

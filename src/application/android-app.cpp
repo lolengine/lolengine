@@ -84,8 +84,6 @@ public:
     /* FIXME: we need proper unproject or at least screen space events!! */
     ivec2 m_wanted_resolution;
 
-    InputDevice* m_mouse;
-
     SavedState m_state;
 
     bool m_video_ready;
@@ -195,6 +193,8 @@ void lol::AndroidAppData::DestroyDisplay()
  */
 int32_t lol::AndroidAppData::HandleInput(AInputEvent* event)
 {
+    auto mouse = input::get()->mouse();
+
     switch (AInputEvent_getType(event))
     {
     case AINPUT_EVENT_TYPE_MOTION:
@@ -206,19 +206,19 @@ int32_t lol::AndroidAppData::HandleInput(AInputEvent* event)
                   AMotionEvent_getY(event, 0));
         pos *= m_wanted_resolution / Video::GetSize();
         pos.y = m_wanted_resolution.y - 1 - pos.y;
-        m_mouse->SetCursor(0, vec2(pos) / vec2(m_wanted_resolution), pos);
+        mouse->SetCursor(0, vec2(pos) / vec2(m_wanted_resolution), pos);
         // Note: 100.0f is an arbitrary value that makes it feel about the same than an xbox controller joystick
-        m_mouse->internal_set_axis(0, (pos.x - m_prev_pos.x) / max_screen_size * 100.f);
+        mouse->internal_set_axis(0, (pos.x - m_prev_pos.x) / max_screen_size * 100.f);
         // Unlike SDL, no need to negate Y axis
-        m_mouse->internal_set_axis(1, (pos.y - m_prev_pos.y) / max_screen_size * -100.f);
+        mouse->internal_set_axis(1, (pos.y - m_prev_pos.y) / max_screen_size * -100.f);
         m_prev_pos = pos;
         switch (AKeyEvent_getAction(event) & AMOTION_EVENT_ACTION_MASK)
         {
         case AMOTION_EVENT_ACTION_DOWN:
-            m_mouse->internal_set_key(0, true);
+            mouse->internal_set_key(0, true);
             break;
         case AMOTION_EVENT_ACTION_UP:
-            m_mouse->internal_set_key(0, false);
+            mouse->internal_set_key(0, false);
             break;
         }
         return 1;
@@ -344,7 +344,6 @@ lol::AndroidApp::AndroidApp(char const *title, ivec2 res, float fps)
     Ticker::Setup(fps);
 
     m_data->m_wanted_resolution = res;
-    m_data->m_mouse = InputDevice::CreateStandardMouse();
 }
 
 void lol::AndroidApp::ShowPointer(bool show)
@@ -354,7 +353,6 @@ void lol::AndroidApp::ShowPointer(bool show)
 lol::AndroidApp::~AndroidApp()
 {
     m_data->DestroyDisplay();
-    /* FIXME: handle m_data->m_mouse */
     delete m_data;
 }
 

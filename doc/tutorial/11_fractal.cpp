@@ -48,7 +48,6 @@ public:
                   << InputProfile::MouseKey(2, "Middle")
                   << InputProfile::KeyboardKey(3, "Space");
         m_controller->Init(m_profile);
-        m_mouse = InputDevice::GetMouse();
 
         /* Window size decides the world aspect ratio. For instance, 640×480
          * will be mapped to (-0.66,-0.5) - (0.66,0.5). */
@@ -158,7 +157,7 @@ public:
     {
         WorldEntity::tick_game(seconds);
 
-        ivec2 mousepos = m_mouse->GetCursorPixel(0);
+        ivec2 mousepos = input::get()->mouse()->GetCursorPixel(0);
 
         int prev_frame = (m_frame + 4) % 4;
         m_frame = (m_frame + 1) % 4;
@@ -566,7 +565,6 @@ private:
     mat4 m_zoom_settings;
 
     // Input support
-    InputDevice *m_mouse;
     Controller *m_controller;
     InputProfile m_profile;
 

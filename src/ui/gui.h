@@ -86,8 +86,6 @@ protected:
     array<ShaderAttrib> m_attribs;
     std::shared_ptr<VertexDeclaration> m_vdecl;
     Controller* m_controller = nullptr;
-    InputDevice* m_mouse = nullptr;
-    InputDevice* m_keyboard = nullptr;
     InputProfile m_profile;
     std::string m_clipboard;
 
