@@ -59,7 +59,6 @@ private:
 const std::string g_name_mouse("Mouse");
 const std::string g_name_keyboard("Keyboard");
 
-static std::string g_name_joystick() { return "Joystick"; }
 static std::string g_name_joystick(const uint64_t num)
 {
     return format("Joystick%d", (int)num);

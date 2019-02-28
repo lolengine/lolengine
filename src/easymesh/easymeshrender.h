@@ -91,9 +91,9 @@ public:
     //--
 
 protected:
-    uint16_t m_vert_decl_flags;
     std::shared_ptr<Shader> m_shader;
     int m_render_mode;
+    uint16_t m_vert_decl_flags;
     array<std::string, ShaderUniform> m_shader_uniform;
     array<ShaderAttrib> m_shader_attrib;
 };

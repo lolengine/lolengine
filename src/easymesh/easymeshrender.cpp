@@ -79,8 +79,8 @@ GpuShaderData::GpuShaderData()
 
 //-----------------------------------------------------------------------------
 GpuShaderData::GpuShaderData(uint16_t vert_decl_flags, std::shared_ptr<Shader> shader, DebugRenderMode render_mode)
-  : m_render_mode(render_mode),
-    m_shader(shader),
+  : m_shader(shader),
+    m_render_mode(render_mode),
     m_vert_decl_flags(vert_decl_flags)
 {
 }

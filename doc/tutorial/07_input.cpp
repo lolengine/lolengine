@@ -127,13 +127,13 @@ public:
         {
             if (m_controller->IsKeyPressed(KEY_DRAG_MESH))
             {
-                InputDevice::CaptureMouse(true);
+                input::get()->mouse_capture(true);
                 m_pitch_angle -= m_controller->GetAxisValue(AXIS_DRAG_PITCH) * seconds * 0.1f;
                 m_yaw_angle += m_controller->GetAxisValue(AXIS_DRAG_YAW) * seconds * 0.1f;
             }
             else
             {
-                InputDevice::CaptureMouse(false);
+                input::get()->mouse_capture(false);
                 if (m_autorot)
                     m_yaw_angle += seconds * 0.2f;
             }

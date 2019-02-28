@@ -276,9 +276,9 @@ void gui::tick_draw(float seconds, Scene &scene)
     scene.AddPrimitiveRenderer(this, std::make_shared<primitive>());
 }
 
-void gui::primitive::Render(Scene& scene, std::shared_ptr<PrimitiveSource> primitive)
+void gui::primitive::Render(Scene& scene, std::shared_ptr<PrimitiveSource> prim)
 {
-    UNUSED(scene, primitive);
+    UNUSED(scene, prim);
 
     ImGui::Render();
     ImGui::EndFrame();
