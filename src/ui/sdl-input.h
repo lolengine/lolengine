@@ -48,7 +48,7 @@ private:
 
     array<SDL_Joystick *, class InputDevice *> m_joysticks;
 
-    ivec2 m_prevmouse = ivec2::zero;
+    ivec2 m_prev_mouse_pos = ivec2::zero;
     vec2 m_app;
     vec2 m_screen;
 

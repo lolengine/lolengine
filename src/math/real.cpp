@@ -275,7 +275,7 @@ template<> real::Real(char const *str)
                 finished = true;
                 break;
             }
-            LOL_ATTR_FALLTHROUGH;
+            LOL_ATTR_FALLTHROUGH
         case 'a': case 'b': case 'c': case 'd': case 'f':
         case 'A': case 'B': case 'C': case 'D': case 'F':
         case '0': case '1': case '2': case '3': case '4':

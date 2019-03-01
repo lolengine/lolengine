@@ -39,37 +39,6 @@
 namespace lol
 {
 
-//-------------------------------------------------------------------------
-/* DEBUG STUFF
-static String ScanCodeToText(int sc)
-{
-    switch (sc)
-    {
-#define _SC(id, str, name) \
-    case id: return String(str);
-#include "ui/keys.inc"
-    default:
-        msg::error("ScanCodeToText unknown scancode %0d\n", sc);
-    }
-    return String();
-}
-*/
-//-------------------------------------------------------------------------
-/* DEBUG STUFF
-static String ScanCodeToName(int sc)
-{
-    switch (sc)
-    {
-#define _SC(id, str, name) \
-        case id: return String(#name);
-#include "ui/keys.inc"
-    default:
-        msg::error("ScanCodeToText unknown scancode %0d\n", sc);
-    }
-    return String();
-}
-*/
-
 /*
  * Public SdlInput class
  */
@@ -179,7 +148,7 @@ void SdlInput::tick(float seconds)
 
     mouse->internal_set_axis(4, 0);
 
-    if (keyboard->IsTextInputActive())
+    if (keyboard->capture_text())
         SDL_StartTextInput();
     else
         SDL_StopTextInput();
@@ -219,12 +188,8 @@ void SdlInput::tick(float seconds)
                         break;
                     }
                     keyboard->internal_set_key(sc2, !keyboard->key((int)sc2));
-                    /* DEBUG STUFF
-                    msg::debug("Repeat: 0x%02x : %s/%s/%s/%i\n",
-                        (int)keyboard, ScanCodeToText(sc2).C(), ScanCodeToName(sc2).C(),
-                        keyboard->GetKey(sc2) ? "up" : "down", event.key.repeat);
-                    */
                 }
+                LOL_ATTR_FALLTHROUGH
             default:
                 // Set key updates the corresponding key
                 keyboard->internal_set_key(sc, event.type == SDL_KEYDOWN);
@@ -298,7 +263,7 @@ void SdlInput::tick(float seconds)
         //We need the max if we want coherent mouse speed between axis
         float max_screen_size = lol::max(m_screen.x, m_screen.y);
         vec2 vmouse = vec2(mouse_pos);
-        vec2 vprevmouse = vec2(m_prevmouse);
+        vec2 vprevmouse = vec2(m_prev_mouse_pos);
         mouse->SetCursor(0, vmouse / m_app, mouse_pos);
         // Note: 100.0f is an arbitrary value that makes it feel about the same than an xbox controller joystick
         mouse->internal_set_axis(0, (mouse_pos.x - vprevmouse.x) * MOUSE_SPEED_MOD / max_screen_size);
@@ -315,7 +280,7 @@ void SdlInput::tick(float seconds)
         //SDL_WarpMouse((uint16_t)mouse_pos.x, (uint16_t)mouse_pos.y);
     }
 
-    m_prevmouse = mouse_pos;
+    m_prev_mouse_pos = mouse_pos;
 
 #else
     UNUSED(seconds);

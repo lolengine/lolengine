@@ -20,13 +20,9 @@
 namespace lol
 {
 
-const std::string g_name_mouse("Mouse");
-const std::string g_name_keyboard("Keyboard");
-
-static std::string g_name_joystick(const uint64_t num)
-{
-    return format("Joystick%d", (int)num);
-}
+extern const std::string g_name_mouse;
+extern const std::string g_name_keyboard;
+extern std::string g_name_joystick(const uint64_t num);
 
 // Mouse default buttons/axis
 const std::string g_name_mouse_key_left("Left");
@@ -86,6 +82,10 @@ public:
         return GetItemIndex(name, m_cursor_names);
     }
 
+    //
+    // Keyboard-specific section
+    //
+
     /** Get the names of all available keys on this device */
     std::vector<std::string> const& key_names() const { return m_key_names; }
 
@@ -97,9 +97,12 @@ public:
     bool key(ptrdiff_t index) const { return m_keys[index]; }
 
     /** Gets the latest contents of text input. */
-    std::string GetText();
-    bool IsTextInputActive();
-    void SetTextInputActive(bool status);
+    std::string text();
+
+    bool capture_text();
+    void capture_text(bool status);
+
+
 
     /** Gets the current value of the given axis. Devices should try to
       * clamp this value between -1 and 1, though it is not guaranteed. */
@@ -148,9 +151,6 @@ public:
     {
         return m_cursor_names;
     }
-
-    /** Gets a list of the name of all available input devices */
-    static array<std::string> GetAvailableDevices();
 
     /** Gets an input device by its name */
     static InputDevice* Get(std::string const &name)

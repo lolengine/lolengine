@@ -241,13 +241,15 @@ void gui::tick_game(float seconds)
     for (input::key k : input::all_keys())
         io.KeysDown[(int)k] = m_controller->IsKeyPressed((int)k);
 
-    keyboard->SetTextInputActive(io.WantTextInput);
-
-    //Update text input
-    std::string text = keyboard->GetText();
-    //text.case_change(io.KeyShift);
-    for (auto ch : text)
-        io.AddInputCharacter(ch);
+    // Update text input
+    if (io.WantTextInput)
+    {
+        std::string text = keyboard->text();
+        //text.case_change(io.KeyShift);
+        for (auto ch : text)
+            io.AddInputCharacter(ch);
+    }
+    keyboard->capture_text(io.WantTextInput);
 
     // Update mouse
     vec2 cursor = mouse->GetCursor(0);

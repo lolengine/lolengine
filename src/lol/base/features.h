@@ -113,7 +113,7 @@
 #endif
 
 #ifdef LOL_FEATURE_CXX17_ATTRIBUTE_FALLTHROUGH
-#   define LOL_ATTR_FALLTHROUGH [[fallthrough]]
+#   define LOL_ATTR_FALLTHROUGH [[fallthrough]];
 #else
 #   define LOL_ATTR_FALLTHROUGH /* */
 #endif

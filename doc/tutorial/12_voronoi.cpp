@@ -67,12 +67,12 @@ public:
         m_timer = -1.0f;
         mode = 0;
         m_controller = new Controller("Default");
-        m_controller->GetKey(KEY_ESC).Bind("Keyboard", "Escape");
-        m_controller->GetKey(KEY_PUSH).Bind("Keyboard", "p");
-        m_controller->GetKey(KEY_POP).Bind("Keyboard", "o");
-        m_controller->GetKey(KEY_F1).Bind("Keyboard", "F1");
-        m_controller->GetKey(KEY_F2).Bind("Keyboard", "F2");
-        m_controller->GetKey(KEY_F3).Bind("Keyboard", "F3");
+        m_controller->GetKey(KEY_ESC).Bind(g_name_keyboard, "Escape");
+        m_controller->GetKey(KEY_PUSH).Bind(g_name_keyboard, "p");
+        m_controller->GetKey(KEY_POP).Bind(g_name_keyboard, "o");
+        m_controller->GetKey(KEY_F1).Bind(g_name_keyboard, "F1");
+        m_controller->GetKey(KEY_F2).Bind(g_name_keyboard, "F2");
+        m_controller->GetKey(KEY_F3).Bind(g_name_keyboard, "F3");
     }
 
     virtual void tick_game(float seconds)

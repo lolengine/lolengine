@@ -22,6 +22,14 @@
 namespace lol
 {
 
+const std::string g_name_mouse("mouse");
+const std::string g_name_keyboard("keyboard");
+
+std::string g_name_joystick(const uint64_t num)
+{
+    return format("joystick%d", (int)num);
+}
+
 std::shared_ptr<input> input::get()
 {
     static auto instance = new input();
@@ -91,27 +99,19 @@ input::key input::name_to_key(std::string const &name)
 
 array<InputDevice*> InputDevice::devices;
 
-array<std::string> InputDevice::GetAvailableDevices()
-{
-    array<std::string> result;
-    for (auto const &device : devices)
-        result.push(device->m_name);
-    return result;
-}
-
-std::string InputDevice::GetText()
+std::string InputDevice::text()
 {
     std::string ret = m_text;
     m_text = "";
     return ret;
 }
 
-bool InputDevice::IsTextInputActive()
+bool InputDevice::capture_text()
 {
     return m_input_active;
 }
 
-void InputDevice::SetTextInputActive(bool status)
+void InputDevice::capture_text(bool status)
 {
     m_input_active = status;
 }
