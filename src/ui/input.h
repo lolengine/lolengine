@@ -65,21 +65,15 @@ public:
     }
 
     /** Gets the index of the corresponding key, needed to call GetKey */
-    ptrdiff_t GetKeyIndex(std::string const &name) const
+    int GetKeyIndex(std::string const &name) const
     {
         return GetItemIndex(name, m_key_names);
     }
 
     /** Gets the index of the corresponding axis, needed to call GetAxis */
-    ptrdiff_t GetAxisIndex(std::string const &name) const
+    int GetAxisIndex(std::string const &name) const
     {
         return GetItemIndex(name, m_axis_names);
-    }
-
-    /** Gets the index of the corresponding cursor, needed to call GetCursor */
-    ptrdiff_t GetCursorIndex(std::string const &name) const
-    {
-        return GetItemIndex(name, m_cursor_names);
     }
 
     //
@@ -94,7 +88,7 @@ public:
 
     /** Get the current state of the given key, true being pressed and
       * false being released */
-    bool key(ptrdiff_t index) const { return m_keys[index]; }
+    bool key(int index) const { return m_keys[index]; }
 
     /** Gets the latest contents of text input. */
     std::string text();
@@ -106,29 +100,29 @@ public:
 
     /** Gets the current value of the given axis. Devices should try to
       * clamp this value between -1 and 1, though it is not guaranteed. */
-    float GetAxis(ptrdiff_t index) const
+    float GetAxis(int index) const
     {
         return m_axis[index].m1 * m_axis[index].m2;
     }
 
     /** Gets the current value of the given cursor, 0,0 being the bottom-left
       * corner and 1,1 being the top-right corner */
-    vec2 GetCursor(ptrdiff_t index) const
+    vec2 get_cursor_uv(int index) const
     {
-        return m_cursors[index].m1;
+        return m_cursors[index].uv;
     }
 
     /** Gets the coordinate of the pixel the cursor is currently over,
       * 0,0 being the bottom-left corner. */
-    ivec2 GetCursorPixel(ptrdiff_t index) const
+    ivec2 get_cursor_pixel(int index) const
     {
-        return m_cursors[index].m2;
+        return m_cursors[index].pixel;
     }
 
     /** Sets a per-device-axis sensitivity factor. The value returned by
       * the operating system will be multiplied by this value before being
       * returned by GetAxis */
-    void SetAxisSensitivity(ptrdiff_t index, float sensitivity)
+    void SetAxisSensitivity(int index, float sensitivity)
     {
         m_axis[index].m2 = sensitivity;
     }
@@ -136,7 +130,7 @@ public:
     /** Gets the per-device-axis sensitivity factor. The value returned by
       * the operating system will be multiplied by this value before being
       * returned by GetAxis */
-    float GetAxisSensitivity(ptrdiff_t index) const
+    float GetAxisSensitivity(int index) const
     {
         return m_axis[index].m2;
     }
@@ -189,18 +183,13 @@ public:
         AddCursor(-1, name);
     }
 
-    void SetCursor(int id, vec2 const & position, ivec2 const & pixel)
-    {
-        m_cursors[id].m1 = position;
-        m_cursors[id].m2 = pixel;
-    }
-
-    ivec2 GetCursorPixelPos(int id)
-    {
-        return m_cursors[id].m2;
-    }
-
     /* Internal functions for the platform-specific drivers. */
+    void internal_set_cursor(int id, vec2 const & position, ivec2 const & pixel)
+    {
+        m_cursors[id].uv = position;
+        m_cursors[id].pixel = pixel;
+    }
+
     void internal_set_key(int id, bool state)
     {
         m_keys[id] = state;
@@ -236,17 +225,18 @@ protected:
     array<float, float> m_axis;
 
     /** Cursor position */
-    array<vec2, ivec2> m_cursors;
+    struct cursor_state { vec2 uv; ivec2 pixel; };
+    std::vector<cursor_state> m_cursors;
 
 private:
     static array<InputDevice*> devices;
 
     template <typename... T>
-    size_t GetItemIndex(std::string const &name, std::vector<std::string, T...> const& a) const
+    int GetItemIndex(std::string const &name, std::vector<std::string, T...> const& a) const
     {
         for (size_t i = 0; i < a.size(); ++i)
             if (a[i] == name)
-                return i;
+                return (int)i;
         return -1;
     }
 

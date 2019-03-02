@@ -154,7 +154,7 @@ void InputDevice::AddCursor(int index, const char* name)
     while (index >= (int)m_cursor_names.size())
     {
         m_cursor_names.push_back("");
-        m_cursors.push(vec2::zero, ivec2::zero);
+        m_cursors.push_back(cursor_state());
     }
 
     m_cursor_names[index] = name;

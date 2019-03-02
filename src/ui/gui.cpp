@@ -252,7 +252,7 @@ void gui::tick_game(float seconds)
     keyboard->capture_text(io.WantTextInput);
 
     // Update mouse
-    vec2 cursor = mouse->GetCursor(0);
+    vec2 cursor = mouse->get_cursor_uv(0);
     cursor.y = 1.f - cursor.y;
 
     io.MousePos = cursor * video_size;

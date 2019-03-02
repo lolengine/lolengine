@@ -264,7 +264,7 @@ void SdlInput::tick(float seconds)
         float max_screen_size = lol::max(m_screen.x, m_screen.y);
         vec2 vmouse = vec2(mouse_pos);
         vec2 vprevmouse = vec2(m_prev_mouse_pos);
-        mouse->SetCursor(0, vmouse / m_app, mouse_pos);
+        mouse->internal_set_cursor(0, vmouse / m_app, mouse_pos);
         // Note: 100.0f is an arbitrary value that makes it feel about the same than an xbox controller joystick
         mouse->internal_set_axis(0, (mouse_pos.x - vprevmouse.x) * MOUSE_SPEED_MOD / max_screen_size);
         // Y Axis is also negated to match the usual joystick Y axis (negatives values are for the upper direction)

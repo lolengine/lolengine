@@ -135,8 +135,8 @@ public:
             auto mouse = input::get()->mouse();
             m_text->SetText(lol::format(
                 "cursor: (%0.3f, %0.3f) - pixel (%d, %d)",
-                mouse->GetCursor(0).x, mouse->GetCursor(0).y,
-                mouse->GetCursorPixel(0).x, mouse->GetCursorPixel(0).y));
+                mouse->get_cursor_uv(0).x, mouse->get_cursor_uv(0).y,
+                mouse->get_cursor_pixel(0).x, mouse->get_cursor_pixel(0).y));
         }
         else
         {

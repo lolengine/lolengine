@@ -206,7 +206,7 @@ int32_t lol::AndroidAppData::HandleInput(AInputEvent* event)
                   AMotionEvent_getY(event, 0));
         pos *= m_wanted_resolution / Video::GetSize();
         pos.y = m_wanted_resolution.y - 1 - pos.y;
-        mouse->SetCursor(0, vec2(pos) / vec2(m_wanted_resolution), pos);
+        mouse->internal_set_cursor(0, vec2(pos) / vec2(m_wanted_resolution), pos);
         // Note: 100.0f is an arbitrary value that makes it feel about the same than an xbox controller joystick
         mouse->internal_set_axis(0, (pos.x - m_prev_pos.x) / max_screen_size * 100.f);
         // Unlike SDL, no need to negate Y axis
