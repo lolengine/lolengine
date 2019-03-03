@@ -4,6 +4,9 @@
   <PropertyGroup Label="UserMacros">
     <ExternalDir>$(LolDir)\external</ExternalDir>
 
+    <PlatformCode Condition="'$(Platform)'=='Win32'">i686</PlatformCode>
+    <PlatformCode Condition="'$(Platform)'=='x64'">x86_64</PlatformCode>
+
     <!-- PEGTL -->
     <PegtlDir>$(LolDir)\src/3rdparty\pegtl\include</PegtlDir>
     <PegtlIncludes>$(PegtlDir)</PegtlIncludes>
@@ -33,8 +36,7 @@
     <!-- libcaca -->
     <CacaDir>$(ExternalDir)\libcaca-0.99.beta18</CacaDir>
     <CacaIncludes>$(CacaDir)\include</CacaIncludes>
-    <CacaLibs Condition="'$(Platform)'=='Win32'">$(CacaDir)\lib\i686-w64-mingw32</CacaLibs>
-    <CacaLibs Condition="'$(Platform)'=='x64'">$(CacaDir)\lib\x86_64-w64-mingw32</CacaLibs>
+    <CacaLibs>$(CacaDir)\lib\$(PlatformCode)-w64-mingw32</CacaLibs>
     <CacaDeps>caca.lib</CacaDeps>
     <Win32Defines>CACA_STATIC;$(Win32Defines)</Win32Defines>
 
@@ -61,10 +63,8 @@
   <PropertyGroup Condition="'$(enable_gl)'!='no'" Label="UserMacros">
     <GlewDir>$(ExternalDir)\glew-2.1.0</GlewDir>
     <GlIncludes>$(GlewDir)\include</GlIncludes>
-    <GlLibs Condition="'$(Platform)'=='Win32'">$(GlewDir)\lib\i686-w64-mingw32</GlLibs>
-    <GlLibs Condition="'$(Platform)'=='x64'">$(GlewDir)\lib\x86_64-w64-mingw32</GlLibs>
-    <GlDeps Condition="'$(Platform)'=='Win32'">opengl32.lib;glew32s.lib</GlDeps>
-    <GlDeps Condition="'$(Platform)'=='x64'">opengl32.lib;glew32s.lib</GlDeps>
+    <GlLibs>$(GlewDir)\lib\$(PlatformCode)-w64-mingw32</GlLibs>
+    <GlDeps>opengl32.lib;glew32s.lib</GlDeps>
     <Win32Defines>HAVE_GL_2X;LOL_USE_GLEW;GLEW_STATIC;$(Win32Defines)</Win32Defines>
   </PropertyGroup>
 
@@ -73,14 +73,12 @@
     <SdlDir>$(ExternalDir)\sdl-2.0.9</SdlDir>
     <SdlImageDir>$(ExternalDir)\sdl-image-2.0.4</SdlImageDir>
     <SdlMixerDir>$(ExternalDir)\sdl-mixer-2.0.4</SdlMixerDir>
-    <SdlLibDir Condition="'$(Platform)'=='Win32'">$(SdlDir)\lib\i686-msvc</SdlLibDir>
-    <SdlLibDir Condition="'$(Platform)'=='x64'">$(SdlDir)\lib\x86_64-msvc</SdlLibDir>
-    <SdlImageLibDir Condition="'$(Platform)'=='Win32'">$(SdlImageDir)\lib\i686-msvc</SdlImageLibDir>
-    <SdlImageLibDir Condition="'$(Platform)'=='x64'">$(SdlImageDir)\lib\x86_64-msvc</SdlImageLibDir>
-    <SdlMixerLibDir Condition="'$(Platform)'=='Win32'">$(SdlMixerDir)\lib\i686-msvc</SdlMixerLibDir>
-    <SdlMixerLibDir Condition="'$(Platform)'=='x64'">$(SdlMixerDir)\lib\x86_64-msvc</SdlMixerLibDir>
+    <SdlLibDir>$(SdlDir)\lib\$(PlatformCode)-msvc</SdlLibDir>
+    <SdlImageLibDir>$(SdlImageDir)\lib\$(PlatformCode)-msvc</SdlImageLibDir>
+    <SdlMixerLibDir>$(SdlMixerDir)\lib\$(PlatformCode)-msvc</SdlMixerLibDir>
     <SdlIncludes>$(SdlDir)\include;$(SdlImageDir)\include;$(SdlMixerDir)\include</SdlIncludes>
     <SdlLibs>$(SdlLibDir);$(SdlImageLibDir);$(SdlMixerLibDir)</SdlLibs>
+    <SdlDeps>SDL2.lib;SDL2main.lib;SDL2_image.lib;SDL2_mixer.lib</SdlDeps>
     <Win32Defines>HAVE_SDL_H;LOL_USE_SDL;$(Win32Defines)</Win32Defines>
     <Win32Defines>LOL_USE_SDL_MIXER;LOL_USE_SDL_IMAGE;$(Win32Defines)</Win32Defines>
   </PropertyGroup>
@@ -89,8 +87,7 @@
   <PropertyGroup Condition="'$(enable_ffmpeg)'!='no'" Label="UserMacros">
     <FfmpegDir>$(ExternalDir)\ffmpeg-20190130</FfmpegDir>
     <FfmpegIncludes>$(FfmpegDir)\include</FfmpegIncludes>
-    <FfmpegLibs Condition="'$(Platform)'=='Win32'">$(FfmpegDir)\lib\i686-msvc</FfmpegLibs>
-    <FfmpegLibs Condition="'$(Platform)'=='x64'">$(FfmpegDir)\lib\x86_64-msvc</FfmpegLibs>
+    <FfmpegLibs>$(FfmpegDir)\lib\$(PlatformCode)-msvc</FfmpegLibs>
     <FfmpegDeps>swscale.lib;avformat.lib;avcodec.lib;swresample.lib;avutil.lib;ws2_32.lib;secur32.lib;bcrypt.lib</FfmpegDeps>
     <Win32Defines>LOL_USE_FFMPEG;$(Win32Defines)</Win32Defines>
   </PropertyGroup>
@@ -101,6 +98,9 @@
 
   <ItemGroup>
     <BuildMacro Include="ExternalDir"><Value>$(ExternalDir)</Value></BuildMacro>
+    <BuildMacro Include="PlatformCode"><Value>$(PlatformCode)</Value></BuildMacro>
+  </ItemGroup>
+  <ItemGroup>
     <BuildMacro Include="PegtlDir"><Value>$(PegtlDir)</Value></BuildMacro>
     <BuildMacro Include="PegtlIncludes"><Value>$(PegtlIncludes)</Value></BuildMacro>
     <BuildMacro Include="ImguiDir"><Value>$(ImguiDir)</Value></BuildMacro>
