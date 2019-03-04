@@ -521,6 +521,9 @@
     <ClInclude Include="textureimage-private.h" />
     <ClInclude Include="textureimage.h" />
     <ClInclude Include="tileset.h" />
+    <ClInclude Include="ui\buttons.inc">
+      <Filter>ui</Filter>
+    </ClInclude>
     <ClInclude Include="ui\controller.h">
       <Filter>ui</Filter>
     </ClInclude>

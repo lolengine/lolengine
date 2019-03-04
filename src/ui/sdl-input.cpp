@@ -87,7 +87,7 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
         for (int j = 0; j < SDL_JoystickNumAxes(sdlstick); ++j)
             stick->AddAxis(format("Axis%d", j + 1).c_str());
         for (int j = 0; j < SDL_JoystickNumButtons(sdlstick); ++j)
-            stick->AddKey(format("Button%d", j + 1).c_str());
+            stick->internal_add_button((input::button)(j + 1), format("Button%d", j + 1).c_str());
 
         m_joysticks.push(sdlstick, stick);
     }
@@ -200,7 +200,8 @@ void SdlInput::tick(float seconds)
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP:
             //event.button.which
-            mouse->internal_set_button((input::button)(event.button.button - 1), event.type == SDL_MOUSEBUTTONDOWN);
+            mouse->internal_set_button((input::button)((int)input::button::BTN_Left + event.button.button - 1),
+                                       event.type == SDL_MOUSEBUTTONDOWN);
             break;
         case SDL_MOUSEWHEEL:
             mouse->internal_set_axis(4, (float)event.button.y);

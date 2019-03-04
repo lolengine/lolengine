@@ -26,20 +26,6 @@
 namespace lol
 {
 
-static const std::string g_name_xbox_key_dpad_up("DPadUp");
-static const std::string g_name_xbox_key_dpad_down("DPadDown");
-static const std::string g_name_xbox_key_dpad_left("DPadLeft");
-static const std::string g_name_xbox_key_dpad_right("DPadRight");
-static const std::string g_name_xbox_key_left_thumb("LeftThumb");
-static const std::string g_name_xbox_key_right_thumb("RightThumb");
-static const std::string g_name_xbox_key_left_shoulder("LeftShoulder");
-static const std::string g_name_xbox_key_right_shoulder("Rightshoulder");
-static const std::string g_name_xbox_key_a("A");
-static const std::string g_name_xbox_key_b("B");
-static const std::string g_name_xbox_key_x("X");
-static const std::string g_name_xbox_key_y("Y");
-static const std::string g_name_xbox_key_start("Start");
-static const std::string g_name_xbox_key_back("Back");
 static const std::string g_name_xbox_axis_left_x("Axis1");
 static const std::string g_name_xbox_axis_left_y("Axis2");
 static const std::string g_name_xbox_axis_right_x("Axis3");
@@ -84,20 +70,8 @@ D3d9Input::D3d9Input()
         stick->AddAxis(g_name_xbox_axis_left_trigger.c_str());
         stick->AddAxis(g_name_xbox_axis_right_trigger.c_str());
 
-        stick->AddKey(g_name_xbox_key_dpad_up.c_str());
-        stick->AddKey(g_name_xbox_key_dpad_down.c_str());
-        stick->AddKey(g_name_xbox_key_dpad_left.c_str());
-        stick->AddKey(g_name_xbox_key_dpad_right.c_str());
-        stick->AddKey(g_name_xbox_key_start.c_str());
-        stick->AddKey(g_name_xbox_key_back.c_str());
-        stick->AddKey(g_name_xbox_key_left_thumb.c_str());
-        stick->AddKey(g_name_xbox_key_right_thumb.c_str());
-        stick->AddKey(g_name_xbox_key_left_shoulder.c_str());
-        stick->AddKey(g_name_xbox_key_right_shoulder.c_str());
-        stick->AddKey(g_name_xbox_key_a.c_str());
-        stick->AddKey(g_name_xbox_key_b.c_str());
-        stick->AddKey(g_name_xbox_key_x.c_str());
-        stick->AddKey(g_name_xbox_key_y.c_str());
+        #define _BTN(id, name) stick->internal_add_button(input::button::BTN_##name, #name);
+        #include "ui/buttons.inc" // FIXME: ignore mouse buttons here
 
         m_data->m_joysticks.push(i, stick);
     }

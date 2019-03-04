@@ -42,16 +42,13 @@ input::input()
     // Create default keyboard device
     m_keyboard = std::make_shared<InputDevice>(g_name_keyboard.c_str());
     /* Register all scancodes known to SDL (from the USB standard) */
-#   define _SC(id, str, name) m_keyboard->AddKey(id, #name);
-#   include "ui/keys.inc"
+    #define _SC(id, str, name) m_keyboard->internal_add_key(input::key::SC_##name, #name);
+    #include "ui/keys.inc"
 
     // Create default mouse device
     m_mouse = std::make_shared<InputDevice>(g_name_mouse.c_str());
-    m_mouse->AddButton((int)input::button::BTN_Left, g_name_mouse_key_left.c_str());
-    m_mouse->AddButton((int)input::button::BTN_Middle, g_name_mouse_key_middle.c_str());
-    m_mouse->AddButton((int)input::button::BTN_Right, g_name_mouse_key_right.c_str());
-    m_mouse->AddButton((int)input::button::BTN_Focus, g_name_mouse_key_in_screen.c_str());
-    // Added to manage if mouse is in the screen or not.
+    #define _BTN(id, name) m_mouse->internal_add_button(input::button::BTN_##name, #name);
+    #include "ui/buttons.inc" // FIXME: this will also add joystick buttons!
     m_mouse->AddAxis(g_name_mouse_axis_x.c_str());
     m_mouse->AddAxis(g_name_mouse_axis_y.c_str());
     m_mouse->AddAxis(g_name_mouse_axis_xpixel.c_str());
@@ -116,32 +113,26 @@ void InputDevice::capture_text(bool status)
     m_input_active = status;
 }
 
-void InputDevice::AddKey(int index, const char* name)
+void InputDevice::internal_add_key(input::key key, const char* name)
 {
-    if (index == -1)
-        index = (int)m_key_names.size();
-
-    while (index >= (int)m_key_names.size())
+    while ((int)key >= (int)m_key_names.size())
     {
         m_key_names.push_back("");
         m_keys.push_back(false);
     }
 
-    m_key_names[index] = name;
+    m_key_names[(int)key] = name;
 }
 
-void InputDevice::AddButton(int index, const char* name)
+void InputDevice::internal_add_button(input::button button, const char* name)
 {
-    if (index == -1)
-        index = (int)m_button_names.size();
-
-    while (index >= (int)m_button_names.size())
+    while ((int)button >= (int)m_button_names.size())
     {
         m_button_names.push_back("");
         m_buttons.push_back(false);
     }
 
-    m_button_names[index] = name;
+    m_button_names[(int)button] = name;
 }
 
 void InputDevice::AddAxis(int index, const char* name, float sensitivity)

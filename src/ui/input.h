@@ -58,10 +58,8 @@ public:
 
     enum class button : uint16_t
     {
-        BTN_Left,
-        BTN_Right,
-        BTN_Middle,
-        BTN_Focus,
+        #define _BTN(id, name) BTN_##name = id,
+        #include "ui/buttons.inc"
     };
 
     static std::vector<key> const &all_keys();
@@ -245,19 +243,8 @@ public:
     /** Internal functions that allow to construct an InputDevice
       * dynamically, when the keys, axis and cursors are not known at
       * compile time. */
-    void AddKey(int id, char const * name);
-
-    inline void AddKey(char const * name)
-    {
-        AddKey(-1, name);
-    }
-
-    void AddButton(int id, char const * name);
-
-    inline void AddButton(char const * name)
-    {
-        AddButton(-1, name);
-    }
+    void internal_add_key(input::key, char const * name);
+    void internal_add_button(input::button, char const * name);
 
     void AddAxis(int id, char const * name, float sensitivity = 1.0f);
 
