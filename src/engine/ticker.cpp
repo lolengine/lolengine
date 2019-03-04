@@ -49,6 +49,8 @@ public:
 #if LOL_FEATURE_THREADS
         gametick.push(0);
         disktick.push(0);
+        gamethread.release();
+        diskthread.release();
 #endif
     }
 
@@ -82,7 +84,6 @@ private:
     void GameThreadMain();
     void DrawThreadMain(); /* unused for now */
     void DiskThreadMain();
-    thread *drawthread;
     std::unique_ptr<thread> gamethread, diskthread;
     queue<int> gametick, drawtick, disktick;
 #endif
