@@ -96,7 +96,7 @@ void D3d9Input::tick_game(float seconds)
         if (XInputGetState(m_data->m_joysticks[i].m1, &state) != ERROR_SUCCESS)
             continue;
 
-        auto *stick = m_data->m_joysticks[i].m2;
+        auto stick = m_data->m_joysticks[i].m2;
         stick->internal_set_axis(input::axis::LeftX, state.Gamepad.sThumbLX / 32768.f);
         stick->internal_set_axis(input::axis::LeftY, -state.Gamepad.sThumbLY / 32768.f);
         stick->internal_set_axis(input::axis::RightX, state.Gamepad.sThumbRX / 32768.f);
