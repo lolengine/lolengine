@@ -48,10 +48,10 @@ private:
 
     array<SDL_Joystick *, class InputDevice *> m_joysticks;
 
-    ivec2 m_prev_mouse_pos = ivec2::zero;
     vec2 m_app;
     vec2 m_screen;
 
+    ivec2 m_prev_mouse_pos = ivec2::zero;
     bool m_mousecapture = false;
     bool m_tick_in_draw_thread = false;
 };

@@ -172,7 +172,6 @@
     <ClCompile Include="text.cpp" />
     <ClCompile Include="textureimage.cpp" />
     <ClCompile Include="tileset.cpp" />
-    <ClCompile Include="ui\controller.cpp" />
     <ClCompile Include="ui\d3d9-input.cpp" />
     <ClCompile Include="ui\gui.cpp" />
     <ClCompile Include="ui\input.cpp" />
@@ -288,7 +287,6 @@
     <ClInclude Include="textureimage.h" />
     <ClInclude Include="tileset.h" />
     <ClInclude Include="ui\buttons.inc" />
-    <ClInclude Include="ui\controller.h" />
     <ClInclude Include="ui\d3d9-input.h" />
     <ClInclude Include="ui\gui.h" />
     <ClInclude Include="ui\input.h" />

@@ -85,8 +85,6 @@ protected:
     Uniform m_texture;
     array<ShaderAttrib> m_attribs;
     std::shared_ptr<VertexDeclaration> m_vdecl;
-    Controller* m_controller = nullptr;
-    InputProfile m_profile;
     std::string m_clipboard;
 
     class primitive : public PrimitiveRenderer

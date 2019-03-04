@@ -26,16 +26,6 @@ class InputTutorial : public WorldEntity
 public:
     InputTutorial()
     {
-        m_controller = new Controller("Default");
-
-        m_profile
-            << InputProfile::JoystickAxis(1, AXIS_PITCH, "Axis2")
-            << InputProfile::JoystickAxis(1, AXIS_YAW, "Axis1")
-            << InputProfile::MouseAxis(AXIS_DRAG_PITCH, "Y")
-            << InputProfile::MouseAxis(AXIS_DRAG_YAW, "X");
-
-        m_controller->Init(m_profile);
-
         m_pitch_angle = 0;
         m_yaw_angle = 0;
         m_autorot = true;
@@ -63,7 +53,7 @@ public:
         m_lines_indices << 0 << 4 << 1 << 5 << 2 << 6 << 3 << 7;
 
         m_text = new Text("", "data/font/ascii.png");
-        m_text->SetPos(vec3(5, 5, 1));
+        m_text->SetPos(vec3(5, 30, 1));
         Ticker::Ref(m_text);
 
         m_ready = false;
@@ -86,10 +76,14 @@ public:
             m_autorot = !m_autorot;
 
         /* Handle joystick */
-        if (lol::abs(m_controller->GetAxisValue(AXIS_PITCH)) > 0.2f)
-            m_pitch_angle += m_controller->GetAxisValue(AXIS_PITCH) * seconds;
-        if (lol::abs(m_controller->GetAxisValue(AXIS_YAW)) > 0.2f)
-            m_yaw_angle += m_controller->GetAxisValue(AXIS_YAW) * seconds;
+        auto joystick = InputDevice::Get(g_name_joystick(1).c_str());
+        if ((bool)joystick)
+        {
+            if (lol::abs(joystick->axis(input::axis::LeftY)) > 0.2f)
+                m_pitch_angle += joystick->axis(input::axis::LeftY) * seconds;
+            if (lol::abs(joystick->axis(input::axis::LeftX)) > 0.2f)
+                m_yaw_angle += joystick->axis(input::axis::LeftX) * seconds;
+        }
 
         /* Handle mouse */
         if (true)
@@ -97,8 +91,8 @@ public:
             if (mouse->button(input::button::BTN_Left))
             {
                 mouse->capture(true);
-                m_pitch_angle -= m_controller->GetAxisValue(AXIS_DRAG_PITCH) * seconds * 0.1f;
-                m_yaw_angle += m_controller->GetAxisValue(AXIS_DRAG_YAW) * seconds * 0.1f;
+                m_pitch_angle -= mouse->axis(input::axis::MoveX) * seconds * 0.1f;
+                m_yaw_angle += mouse->axis(input::axis::MoveY) * seconds * 0.1f;
             }
             else
             {
@@ -108,9 +102,14 @@ public:
             }
 
             m_text->SetText(lol::format(
-                "cursor: (%0.3f, %0.3f) - pixel (%d, %d)",
-                mouse->get_cursor_uv(0).x, mouse->get_cursor_uv(0).y,
-                mouse->get_cursor_pixel(0).x, mouse->get_cursor_pixel(0).y));
+                "cursor: (%0.3f,%0.3f) - pixel (%d,%d)\n"
+                "  move: (%0.3f,%0.3f) - pixel (%d,%d)",
+                mouse->axis(input::axis::X), mouse->axis(input::axis::Y),
+                (int)mouse->axis(input::axis::ScreenX),
+                (int)mouse->axis(input::axis::ScreenY),
+                mouse->axis(input::axis::MoveX), mouse->axis(input::axis::MoveY),
+                (int)mouse->axis(input::axis::ScreenMoveX),
+                (int)mouse->axis(input::axis::ScreenMoveY)));
         }
         else
         {
@@ -180,18 +179,6 @@ public:
     }
 
 private:
-    enum
-    {
-        AXIS_DRAG_PITCH,
-        AXIS_DRAG_YAW,
-        AXIS_PITCH,
-        AXIS_YAW,
-        AXIS_MAX
-    };
-
-    Controller *m_controller;
-    InputProfile m_profile;
-
     bool m_autorot;
     float m_pitch_angle;
     float m_yaw_angle;

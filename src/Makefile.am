@@ -102,7 +102,6 @@ liblol_core_sources = \
     audio/audio.cpp audio/sample.cpp \
     \
     ui/input.cpp ui/input.h ui/keys.inc ui/buttons.inc \
-    ui/controller.cpp ui/controller.h \
     ui/gui.cpp ui/gui.h \
     \
     gpu/default-material.lolfx \

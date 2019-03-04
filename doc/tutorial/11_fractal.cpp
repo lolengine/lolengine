@@ -153,7 +153,8 @@ public:
         auto mouse = input::mouse();
         auto keyboard = input::keyboard();
 
-        ivec2 mousepos = mouse->get_cursor_pixel(0);
+        vec2 mousepos(mouse->axis(input::axis::ScreenX),
+                      mouse->axis(input::axis::ScreenY));
 
         int prev_frame = (m_frame + 4) % 4;
         m_frame = (m_frame + 1) % 4;
@@ -164,7 +165,7 @@ public:
             if (m_julia)
             {
                 m_saved_view = m_view;
-                m_view.r0 = m_view.center + rcmplx(ScreenToWorldOffset((vec2)mousepos));
+                m_view.r0 = m_view.center + rcmplx(ScreenToWorldOffset(mousepos));
             }
             else
             {
@@ -174,24 +175,24 @@ public:
                 flag = 2;
         }
 
-        rcmplx worldmouse = m_view.center + rcmplx(ScreenToWorldOffset((vec2)mousepos));
+        rcmplx worldmouse = m_view.center + rcmplx(ScreenToWorldOffset(mousepos));
 
         if (mouse->button(input::button::BTN_Middle))
         {
             if (!m_drag)
             {
-                m_oldmouse = mousepos;
+                m_oldmouse = (ivec2)mousepos;
                 m_drag = true;
             }
             m_view.translate = rcmplx(ScreenToWorldOffset((vec2)m_oldmouse)
-                                    - ScreenToWorldOffset((vec2)mousepos));
+                                    - ScreenToWorldOffset(mousepos));
             /* XXX: the purpose of this hack is to avoid translating by
              * an exact number of pixels. If this were to happen, the step()
              * optimisation for i915 cards in our shader would behave
              * incorrectly because a quarter of the pixels in the image
              * would have tied rankings in the distance calculation. */
             m_view.translate *= real(1023.0 / 1024.0);
-            m_oldmouse = mousepos;
+            m_oldmouse = (ivec2)mousepos;
         }
         else
         {
@@ -239,7 +240,7 @@ public:
             m_view.center += m_view.translate;
             m_view.center = (m_view.center - worldmouse) * real(zoom) + worldmouse;
             worldmouse = m_view.center
-                          + rcmplx(ScreenToWorldOffset((vec2)mousepos));
+                          + rcmplx(ScreenToWorldOffset(mousepos));
 
             /* Store the transformation properties to go from m_frame - 1
              * to m_frame. */

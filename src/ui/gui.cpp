@@ -31,11 +31,6 @@ namespace
         MiddleClick,
         Focus,
     };
-
-    enum axis_enum
-    {
-        Scroll,
-    };
 }
 
 static gui* g_gui = nullptr;
@@ -88,19 +83,6 @@ gui::gui(ImFontAtlas *shared_font_atlas)
 
     m_builder << ShaderProgram::Vertex << imgui_vertex
               << ShaderProgram::Pixel << imgui_pixel;
-
-    // Input Setup -------------------------------------------------------------
-    m_profile.register_default_keys();
-
-    m_profile << InputProfile::MouseKey(key_enum::LeftClick, g_name_mouse_key_left);
-    m_profile << InputProfile::MouseKey(key_enum::RightClick, g_name_mouse_key_right);
-    m_profile << InputProfile::MouseKey(key_enum::MiddleClick, g_name_mouse_key_middle);
-    m_profile << InputProfile::MouseKey(key_enum::Focus, g_name_mouse_key_in_screen);
-
-    m_profile << InputProfile::MouseAxis(axis_enum::Scroll, g_name_mouse_axis_scroll);
-
-    Ticker::Ref(m_controller = new Controller("ImGui_Controller"));
-    m_controller->Init(m_profile);
 }
 
 gui::~gui()
@@ -252,12 +234,12 @@ void gui::tick_game(float seconds)
     keyboard->capture_text(io.WantTextInput);
 
     // Update mouse
-    vec2 cursor = mouse->get_cursor_uv(0);
-    cursor.y = 1.f - cursor.y;
+    vec2 cursor(mouse->axis(input::axis::X),
+                1.f - mouse->axis(input::axis::Y));
 
     io.MousePos = cursor * video_size;
     //msg::debug("%.2f/%.2f\n", io.MousePos.x, io.MousePos.y);
-    io.MouseWheel = m_controller->GetAxisValue(axis_enum::Scroll);
+    io.MouseWheel = mouse->axis(input::axis::Wheel);
 
     io.MouseDown[0] = mouse->button(input::button::BTN_Left);
     io.MouseDown[1] = mouse->button(input::button::BTN_Right);

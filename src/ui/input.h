@@ -25,19 +25,6 @@ extern const std::string g_name_mouse;
 extern const std::string g_name_keyboard;
 extern std::string g_name_joystick(const uint64_t num);
 
-// Mouse default buttons/axis
-const std::string g_name_mouse_key_left("Left");
-const std::string g_name_mouse_key_middle("Middle");
-const std::string g_name_mouse_key_right("Right");
-const std::string g_name_mouse_key_in_screen("InScreen");
-
-const std::string g_name_mouse_axis_x("X");
-const std::string g_name_mouse_axis_y("Y");
-const std::string g_name_mouse_axis_xpixel("XPixel");
-const std::string g_name_mouse_axis_ypixel("YPixel");
-const std::string g_name_mouse_axis_scroll("Scroll");
-const std::string g_name_mouse_cursor("Cursor");
-
 class input
 {
 public:
@@ -60,6 +47,27 @@ public:
     {
         #define _BTN(id, name) BTN_##name = id,
         #include "ui/buttons.inc"
+    };
+
+    enum class axis : uint16_t
+    {
+        // Mouse
+        Wheel,
+        X,
+        Y,
+        ScreenX,
+        ScreenY,
+        MoveX,
+        MoveY,
+        ScreenMoveX,
+        ScreenMoveY,
+        // Joystick
+        LeftX,
+        LeftY,
+        RightX,
+        RightY,
+        LeftShoulder,
+        RightShoulder,
     };
 
     static std::vector<key> const &all_keys();
@@ -125,6 +133,9 @@ public:
     void bind(input::button button, uint16_t event);
     void unbind(input::button button, uint16_t event);
 
+    void bind(input::axis axis, uint16_t event);
+    void unbind(input::axis axis, uint16_t event);
+
     //
     // Key, button etc. state
     //
@@ -155,6 +166,16 @@ public:
         return m_pressed_buttons.find(button) != m_pressed_buttons.end();
     }
 
+    // Get the current state of the given axis
+    float axis(input::axis axis) const { return m_axes[(int)axis]; }
+
+    bool axis_changed(input::axis axis) const
+    {
+        return m_changed_axes.find(axis) != m_changed_axes.end();
+    }
+
+    // TODO: axis sensitivity was removed
+
     //
     // Keyboard-specific section
     //
@@ -179,86 +200,24 @@ public:
     void capture(bool value) { m_capture = value; }
     bool capture() const { return m_capture; }
 
-    /** Gets the current value of the given axis. Devices should try to
-      * clamp this value between -1 and 1, though it is not guaranteed. */
-    float GetAxis(int index) const
-    {
-        return m_axis[index].m1 * m_axis[index].m2;
-    }
-
-    /** Gets the current value of the given cursor, 0,0 being the bottom-left
-      * corner and 1,1 being the top-right corner */
-    vec2 get_cursor_uv(int index) const
-    {
-        return m_cursors[index].uv;
-    }
-
-    /** Gets the coordinate of the pixel the cursor is currently over,
-      * 0,0 being the bottom-left corner. */
-    ivec2 get_cursor_pixel(int index) const
-    {
-        return m_cursors[index].pixel;
-    }
-
-    /** Sets a per-device-axis sensitivity factor. The value returned by
-      * the operating system will be multiplied by this value before being
-      * returned by GetAxis */
-    void SetAxisSensitivity(int index, float sensitivity)
-    {
-        m_axis[index].m2 = sensitivity;
-    }
-
-    /** Gets the per-device-axis sensitivity factor. The value returned by
-      * the operating system will be multiplied by this value before being
-      * returned by GetAxis */
-    float GetAxisSensitivity(int index) const
-    {
-        return m_axis[index].m2;
-    }
-
-    /** Gets a list of the name of all available axis in this device */
-    const std::vector<std::string>& GetAllAxis() const
-    {
-        return m_axis_names;
-    }
-    /** Gets a list of the name of all available cursors in this device */
-    const std::vector<std::string>& GetAllCursors() const
-    {
-        return m_cursor_names;
-    }
-
     /** Gets an input device by its name */
     static InputDevice* Get(std::string const &name)
     {
-        return GetDevice(name);
-    }
-
-    /** Default helpers */
-    static InputDevice* GetJoystick(const uint64_t num)
-    {
-        return GetDevice(g_name_joystick(num));
+        for (int i = 0; i < devices.count(); ++i)
+        {
+            if (devices[i]->m_name == name)
+                return devices[i];
+        }
+        return nullptr;
     }
 
 public:
     /** Internal functions that allow to construct an InputDevice
       * dynamically, when the keys, axis and cursors are not known at
       * compile time. */
-    void internal_add_key(input::key, char const * name);
-    void internal_add_button(input::button, char const * name);
-
-    void AddAxis(int id, char const * name, float sensitivity = 1.0f);
-
-    inline void AddAxis(char const * name, float sensitivity = 1.0f)
-    {
-        AddAxis(-1, name, sensitivity);
-    }
-
-    void AddCursor(int id, char const * name);
-
-    inline void AddCursor(char const * name)
-    {
-        AddCursor(-1, name);
-    }
+    void internal_add_key(input::key, char const *name);
+    void internal_add_button(input::button, char const *name);
+    void internal_add_axis(input::axis, char const *name);
 
     /* Internal functions for the platform-specific drivers. */
     void internal_begin_frame()
@@ -267,12 +226,7 @@ public:
         m_released_keys.clear();
         m_pressed_buttons.clear();
         m_released_buttons.clear();
-    }
-
-    void internal_set_cursor(int id, vec2 const & position, ivec2 const & pixel)
-    {
-        m_cursors[id].uv = position;
-        m_cursors[id].pixel = pixel;
+        m_changed_axes.clear();
     }
 
     void internal_set_key(input::key key, bool state)
@@ -289,14 +243,16 @@ public:
         m_buttons[(int)button] = state;
     }
 
+    void internal_set_axis(input::axis axis, float value)
+    {
+        if (m_axes[(int)axis] != value)
+            m_changed_axes.insert(axis);
+        m_axes[(int)axis] = value;
+    }
+
     void internal_add_text(std::string const &text)
     {
         m_text += text;
-    }
-
-    void internal_set_axis(int id, float value)
-    {
-        m_axis[id].m1 = value;
     }
 
 protected:
@@ -307,24 +263,18 @@ protected:
     std::vector<std::string> m_key_names;
     std::vector<std::string> m_button_names;
     std::vector<std::string> m_axis_names;
-    std::vector<std::string> m_cursor_names;
 
     /** Key and button states (pressed/released) */
     std::vector<bool> m_keys;
     std::unordered_set<input::key> m_pressed_keys, m_released_keys;
     std::vector<bool> m_buttons;
     std::unordered_set<input::button> m_pressed_buttons, m_released_buttons;
+    std::vector<float> m_axes;
+    std::unordered_set<input::axis> m_changed_axes;
 
-    /** Text input state */
+    // Text input state
     std::string m_text;
     bool m_input_active;
-
-    /** Axis states (value and sensitivity) */
-    array<float, float> m_axis;
-
-    /** Cursor position */
-    struct cursor_state { vec2 uv; ivec2 pixel; };
-    std::vector<cursor_state> m_cursors;
 
     // Capture (for mouse devices)
     bool m_capture = false;
@@ -339,16 +289,6 @@ private:
             if (a[i] == name)
                 return (int)i;
         return -1;
-    }
-
-    static InputDevice* GetDevice(std::string const &name)
-    {
-        for (int i = 0; i < devices.count(); ++i)
-        {
-            if (devices[i]->m_name == name)
-                return devices[i];
-        }
-        return nullptr;
     }
 };
 

@@ -46,7 +46,6 @@
 
 // UI
 #include <lol/../ui/input.h>
-#include <lol/../ui/controller.h>
 #include <lol/../ui/gui.h>
 
 // Other objects

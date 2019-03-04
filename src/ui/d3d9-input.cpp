@@ -26,13 +26,6 @@
 namespace lol
 {
 
-static const std::string g_name_xbox_axis_left_x("Axis1");
-static const std::string g_name_xbox_axis_left_y("Axis2");
-static const std::string g_name_xbox_axis_right_x("Axis3");
-static const std::string g_name_xbox_axis_right_y("Axis4");
-static const std::string g_name_xbox_axis_left_trigger("Axis5");
-static const std::string g_name_xbox_axis_right_trigger("Axis6");
-
 /*
  * D3d9 Input implementation class
  */
@@ -63,12 +56,12 @@ D3d9Input::D3d9Input()
         // TODO: we can put more friendly name here, such as LeftAxisX, ButtonX...
         InputDevice* stick = new InputDevice(g_name_joystick(i + 1));
 
-        stick->AddAxis(g_name_xbox_axis_left_x.c_str());
-        stick->AddAxis(g_name_xbox_axis_left_y.c_str());
-        stick->AddAxis(g_name_xbox_axis_right_x.c_str());
-        stick->AddAxis(g_name_xbox_axis_right_y.c_str());
-        stick->AddAxis(g_name_xbox_axis_left_trigger.c_str());
-        stick->AddAxis(g_name_xbox_axis_right_trigger.c_str());
+        stick->internal_add_axis(input::axis::LeftX, "LeftX");
+        stick->internal_add_axis(input::axis::LeftY, "LeftY");
+        stick->internal_add_axis(input::axis::RightX, "RightX");
+        stick->internal_add_axis(input::axis::RightY, "RightY");
+        stick->internal_add_axis(input::axis::LeftShoulder, "LeftShoulder");
+        stick->internal_add_axis(input::axis::RightShoulder, "RightShoulder");
 
         #define _BTN(id, name) stick->internal_add_button(input::button::BTN_##name, #name);
         #include "ui/buttons.inc" // FIXME: ignore mouse buttons here

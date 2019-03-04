@@ -85,7 +85,7 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
 
         InputDevice* stick = new InputDevice(g_name_joystick(i + 1));
         for (int j = 0; j < SDL_JoystickNumAxes(sdlstick); ++j)
-            stick->AddAxis(format("Axis%d", j + 1).c_str());
+            stick->internal_add_axis((input::axis)(j + 1), format("Axis%d", j + 1).c_str());
         for (int j = 0; j < SDL_JoystickNumButtons(sdlstick); ++j)
             stick->internal_add_button((input::button)(j + 1), format("Button%d", j + 1).c_str());
 
@@ -142,12 +142,12 @@ void SdlInput::tick(float seconds)
         for (int i = 0; i < SDL_JoystickNumButtons(m_joysticks[j].m1); i++)
             m_joysticks[j].m2->internal_set_button((input::button)i, SDL_JoystickGetButton(m_joysticks[j].m1, i) != 0);
         for (int i = 0; i < SDL_JoystickNumAxes(m_joysticks[j].m1); i++)
-            m_joysticks[j].m2->internal_set_axis(i, (float)SDL_JoystickGetAxis(m_joysticks[j].m1, i) / 32768.f);
+            m_joysticks[j].m2->internal_set_axis((input::axis)i, (float)SDL_JoystickGetAxis(m_joysticks[j].m1, i) / 32768.f);
     }
 #   endif
 
     keyboard->internal_begin_frame();
-    mouse->internal_set_axis(4, 0);
+    float mouse_wheel = 0.f;
 
     if (keyboard->capture_text())
         SDL_StartTextInput();
@@ -204,7 +204,7 @@ void SdlInput::tick(float seconds)
                                        event.type == SDL_MOUSEBUTTONDOWN);
             break;
         case SDL_MOUSEWHEEL:
-            mouse->internal_set_axis(4, (float)event.button.y);
+            mouse_wheel += (float)event.button.y;
             break;
         case SDL_WINDOWEVENT:
         {
@@ -239,6 +239,13 @@ void SdlInput::tick(float seconds)
     }
 
     /* Handle mouse input */
+    mouse->internal_set_axis(input::axis::Wheel, mouse_wheel);
+
+    ivec2 window_size;
+    // FIXME: get actual window size
+    //SDL_GetWindowSize(m_window, &window_size.x, &window_size.y);
+    window_size = (ivec2)m_app;
+
     ivec2 mouse_pos(-1, -1);
     SDL_GetMouseState(&mouse_pos.x, &mouse_pos.y);
     mouse_pos.y = Video::GetSize().y - 1 - mouse_pos.y;
@@ -247,32 +254,35 @@ void SdlInput::tick(float seconds)
     {
         m_mousecapture = mouse->capture();
         SDL_SetRelativeMouseMode(m_mousecapture ? SDL_TRUE : SDL_FALSE);
-        mouse_pos = ivec2(m_app * .5f);
 
-        // FIXME: how do I warped mouse?
-        //SDL_WarpMouse((uint16_t)mouse_pos.x, (uint16_t)mouse_pos.y);
-        //SDL_ShowCursor(m_mousecapture ? SDL_DISABLE : SDL_ENABLE);
+        // FIXME: get handle to window
+        //SDL_WarpMouseInWindow(m_window, window_size.x / 2, window_size.y / 2);
+        SDL_ShowCursor(m_mousecapture ? SDL_DISABLE : SDL_ENABLE);
     }
 
-    if (mouse_pos.x >= 0 && mouse_pos.x < m_app.x && mouse_pos.y >= 0 && mouse_pos.y < m_app.y)
+    if (mouse_pos.x >= 0 && mouse_pos.x < window_size.x && mouse_pos.y >= 0 && mouse_pos.y < window_size.y)
     {
         //We need the max if we want coherent mouse speed between axis
         float max_screen_size = lol::max(m_screen.x, m_screen.y);
         vec2 vmouse = vec2(mouse_pos);
         vec2 vprevmouse = vec2(m_prev_mouse_pos);
-        mouse->internal_set_cursor(0, vmouse / m_app, mouse_pos);
+        mouse->internal_set_axis(input::axis::X, vmouse.x / window_size.x);
+        mouse->internal_set_axis(input::axis::Y, vmouse.y / window_size.y);
+        mouse->internal_set_axis(input::axis::ScreenX, mouse_pos.x);
+        mouse->internal_set_axis(input::axis::ScreenY, mouse_pos.y);
+
         // Note: 100.0f is an arbitrary value that makes it feel about the same than an xbox controller joystick
-        mouse->internal_set_axis(0, (mouse_pos.x - vprevmouse.x) * MOUSE_SPEED_MOD / max_screen_size);
+        mouse->internal_set_axis(input::axis::MoveX, (mouse_pos.x - vprevmouse.x) * MOUSE_SPEED_MOD / max_screen_size);
         // Y Axis is also negated to match the usual joystick Y axis (negatives values are for the upper direction)
-        mouse->internal_set_axis(1,-(mouse_pos.y - vprevmouse.y) * MOUSE_SPEED_MOD / max_screen_size);
+        mouse->internal_set_axis(input::axis::MoveY,-(mouse_pos.y - vprevmouse.y) * MOUSE_SPEED_MOD / max_screen_size);
         //Pixel movement
-        mouse->internal_set_axis(2, (mouse_pos.x - vprevmouse.x));
-        mouse->internal_set_axis(3,-(mouse_pos.y - vprevmouse.y));
+        mouse->internal_set_axis(input::axis::ScreenMoveX, (mouse_pos.x - vprevmouse.x));
+        mouse->internal_set_axis(input::axis::ScreenMoveY,-(mouse_pos.y - vprevmouse.y));
     }
 
     if (m_mousecapture)
     {
-        mouse_pos = ivec2(m_app * .5f);
+        //mouse_pos = ivec2(window_size * .5f);
         //SDL_WarpMouse((uint16_t)mouse_pos.x, (uint16_t)mouse_pos.y);
     }
 

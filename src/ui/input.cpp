@@ -49,12 +49,15 @@ input::input()
     m_mouse = std::make_shared<InputDevice>(g_name_mouse.c_str());
     #define _BTN(id, name) m_mouse->internal_add_button(input::button::BTN_##name, #name);
     #include "ui/buttons.inc" // FIXME: this will also add joystick buttons!
-    m_mouse->AddAxis(g_name_mouse_axis_x.c_str());
-    m_mouse->AddAxis(g_name_mouse_axis_y.c_str());
-    m_mouse->AddAxis(g_name_mouse_axis_xpixel.c_str());
-    m_mouse->AddAxis(g_name_mouse_axis_ypixel.c_str());
-    m_mouse->AddAxis(g_name_mouse_axis_scroll.c_str(), .0000001f);
-    m_mouse->AddCursor(g_name_mouse_cursor.c_str());
+    m_mouse->internal_add_axis(input::axis::X, "X");
+    m_mouse->internal_add_axis(input::axis::Y, "Y");
+    m_mouse->internal_add_axis(input::axis::ScreenX, "ScreenX");
+    m_mouse->internal_add_axis(input::axis::ScreenY, "ScreenY");
+    m_mouse->internal_add_axis(input::axis::MoveX, "MoveX");
+    m_mouse->internal_add_axis(input::axis::MoveY, "MoveY");
+    m_mouse->internal_add_axis(input::axis::ScreenMoveX, "ScreenMoveX");
+    m_mouse->internal_add_axis(input::axis::ScreenMoveY, "ScreenMoveY");
+    m_mouse->internal_add_axis(input::axis::Wheel, "Wheel");
 }
 
 // Lookup tables for scancode and key name lookups
@@ -135,34 +138,15 @@ void InputDevice::internal_add_button(input::button button, const char* name)
     m_button_names[(int)button] = name;
 }
 
-void InputDevice::AddAxis(int index, const char* name, float sensitivity)
+void InputDevice::internal_add_axis(input::axis axis, const char* name)
 {
-    if (index == -1)
-        index = (int)m_axis_names.size();
-
-    while (index >= (int)m_axis_names.size())
+    while ((int)axis >= (int)m_axis_names.size())
     {
         m_axis_names.push_back("");
-        m_axis.push(0.0f, 1.0f);
+        m_axes.push_back(0.0f);
     }
 
-    m_axis_names[index] = name;
-    m_axis[index].m1 = 0.0f;
-    m_axis[index].m2 = sensitivity;
-}
-
-void InputDevice::AddCursor(int index, const char* name)
-{
-    if (index == -1)
-        index = (int)m_cursor_names.size();
-
-    while (index >= (int)m_cursor_names.size())
-    {
-        m_cursor_names.push_back("");
-        m_cursors.push_back(cursor_state());
-    }
-
-    m_cursor_names[index] = name;
+    m_axis_names[(int)axis] = name;
 }
 
 } /* namespace lol */
