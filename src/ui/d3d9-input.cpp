@@ -97,12 +97,13 @@ void D3d9Input::tick_game(float seconds)
         if (XInputGetState(m_data->m_joysticks[i].m1, &state) != ERROR_SUCCESS)
             continue;
 
-        m_data->m_joysticks[i].m2->internal_set_axis(0, (float)state.Gamepad.sThumbLX / 32768.f);
-        m_data->m_joysticks[i].m2->internal_set_axis(1, -(float)state.Gamepad.sThumbLY / 32768.f);
-        m_data->m_joysticks[i].m2->internal_set_axis(2, (float)state.Gamepad.sThumbRX / 32768.f);
-        m_data->m_joysticks[i].m2->internal_set_axis(3, -(float)state.Gamepad.sThumbRY / 32768.f);
-        m_data->m_joysticks[i].m2->internal_set_axis(4, (float)state.Gamepad.bLeftTrigger / 32768.f);
-        m_data->m_joysticks[i].m2->internal_set_axis(5, (float)state.Gamepad.bRightTrigger / 32768.f);
+        auto *stick = m_data->m_joysticks[i].m2;
+        stick->internal_set_axis(input::axis::LeftX, state.Gamepad.sThumbLX / 32768.f);
+        stick->internal_set_axis(input::axis::LeftY, -state.Gamepad.sThumbLY / 32768.f);
+        stick->internal_set_axis(input::axis::RightX, state.Gamepad.sThumbRX / 32768.f);
+        stick->internal_set_axis(input::axis::RightY, -state.Gamepad.sThumbRY / 32768.f);
+        stick->internal_set_axis(input::axis::LeftShoulder, state.Gamepad.bLeftTrigger / 32768.f);
+        stick->internal_set_axis(input::axis::RightShoulder, state.Gamepad.bRightTrigger / 32768.f);
 
         for (int b = 0; b < 16; b++)
         {
