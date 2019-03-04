@@ -121,10 +121,14 @@
     <ClCompile Include="gpu\texture.cpp" />
     <ClCompile Include="gpu\vertexbuffer.cpp" />
     <ClCompile Include="gradient.cpp" />
-    <ClCompile Include="image\codec\android-image.cpp" />
+    <ClCompile Include="image\codec\android-image.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="image\codec\dummy-image.cpp" />
     <ClCompile Include="image\codec\gdiplus-image.cpp" />
-    <ClCompile Include="image\codec\ios-image.cpp" />
+    <ClCompile Include="image\codec\ios-image.cpp">
+      <ExcludedFromBuild>true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="image\codec\oric-image.cpp" />
     <ClCompile Include="image\codec\sdl-image.cpp" />
     <ClCompile Include="image\codec\zed-image.cpp" />

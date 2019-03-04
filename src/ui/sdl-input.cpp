@@ -267,8 +267,8 @@ void SdlInput::tick(float seconds)
         vec2 vprevmouse = vec2(m_prev_mouse_pos);
         mouse->internal_set_axis(input::axis::X, vmouse.x / window_size.x);
         mouse->internal_set_axis(input::axis::Y, vmouse.y / window_size.y);
-        mouse->internal_set_axis(input::axis::ScreenX, mouse_pos.x);
-        mouse->internal_set_axis(input::axis::ScreenY, mouse_pos.y);
+        mouse->internal_set_axis(input::axis::ScreenX, (float)mouse_pos.x);
+        mouse->internal_set_axis(input::axis::ScreenY, (float)mouse_pos.y);
 
         // Note: 100.0f is an arbitrary value that makes it feel about the same than an xbox controller joystick
         mouse->internal_set_axis(input::axis::MoveX, (mouse_pos.x - vprevmouse.x) * MOUSE_SPEED_MOD / max_screen_size);

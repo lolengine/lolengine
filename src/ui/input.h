@@ -2,7 +2,6 @@
 //  Lol Engine
 //
 //  Copyright © 2017—2019 Sam Hocevar <sam@hocevar.net>
-//            © 2010—2015 Benjamin Litzelmann
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -20,6 +19,8 @@
 
 namespace lol
 {
+
+// FIXME: maybe m_key_names is no longer required?
 
 class input
 {
@@ -66,11 +67,8 @@ public:
         class keyboard;
         class joystick;
 
-        /** Gets the name of this input device */
-        const std::string& GetName() const
-        {
-            return m_name;
-        }
+        // Get the name of this input device
+        const std::string& name() const { return m_name; }
 
         //
         // Bindings section
@@ -134,35 +132,10 @@ public:
 
         // TODO: axis sensitivity was removed
 
-        //
-        // Keyboard-specific section
-        //
-
-        /** Get the names of all available keys on this device */
-        std::vector<std::string> const& key_names() const { return m_key_names; }
-
-        /** Get the current state of all keys */
-        std::vector<bool> const &keys() const { return m_keys; }
-
-        /** Gets the latest contents of text input. */
-        std::string text();
-
-        bool capture_text();
-        void capture_text(bool status);
-
-        //
-        // Mouse-specific section
-        //
-
-        // Gets and sets whether the mouse cursor should be captured.
-        void capture(bool value) { m_capture = value; }
-        bool capture() const { return m_capture; }
-
     public:
         /** Internal functions that allow to construct an input device
           * dynamically, when the keys, axis and cursors are not known at
           * compile time. */
-        void internal_add_key(input::key, char const *name);
         void internal_add_button(input::button, char const *name);
         void internal_add_axis(input::axis, char const *name);
 
@@ -174,13 +147,6 @@ public:
             m_pressed_buttons.clear();
             m_released_buttons.clear();
             m_changed_axes.clear();
-        }
-
-        void internal_set_key(input::key key, bool state)
-        {
-            if (m_keys[(int)key] != state)
-                (state ? m_pressed_keys : m_released_keys).insert(key);
-            m_keys[(int)key] = state;
         }
 
         void internal_set_button(input::button button, bool state)
@@ -197,11 +163,6 @@ public:
             m_axes[(int)axis] = value;
         }
 
-        void internal_add_text(std::string const &text)
-        {
-            m_text += text;
-        }
-
     protected:
         std::string m_name;
 
@@ -216,13 +177,6 @@ public:
         std::unordered_set<input::button> m_pressed_buttons, m_released_buttons;
         std::vector<float> m_axes;
         std::unordered_set<input::axis> m_changed_axes;
-
-        // Text input state
-        std::string m_text;
-        bool m_input_active = false;
-
-        // Capture (for mouse devices)
-        bool m_capture = false;
     };
 
     // Default devices
@@ -245,17 +199,67 @@ private:
     std::map<int, std::shared_ptr<device::joystick>> m_joysticks;
 };
 
+//
+// The mouse class
+//
+
 class input::device::mouse : public input::device
 {
 public:
     mouse(std::string const &name) : input::device(name) {}
+
+    // Gets and sets whether the mouse cursor should be captured.
+    void capture(bool value) { m_capture = value; }
+    bool capture() const { return m_capture; }
+
+private:
+    // Capture mouse pointer
+    bool m_capture = false;
 };
+
+//
+// The keyboard class
+//
 
 class input::device::keyboard : public input::device
 {
 public:
     keyboard(std::string const &name) : input::device(name) {}
+
+    // Get the names of all available keys on this device
+    std::vector<std::string> const& key_names() const { return m_key_names; }
+
+    // Get the current state of all keys
+    std::vector<bool> const &keys() const { return m_keys; }
+
+    // Gets the latest contents of text input.
+    std::string text();
+
+    bool capture_text();
+    void capture_text(bool status);
+
+    void internal_add_key(input::key, char const *name);
+    void internal_set_key(input::key key, bool state)
+    {
+        if (m_keys[(int)key] != state)
+            (state ? m_pressed_keys : m_released_keys).insert(key);
+        m_keys[(int)key] = state;
+    }
+
+    void internal_add_text(std::string const &text)
+    {
+        m_text += text;
+    }
+
+private:
+    // Text input state
+    std::string m_text;
+    bool m_input_active = false;
 };
+
+//
+// The joystick class
+//
 
 class input::device::joystick : public input::device
 {

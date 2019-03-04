@@ -2,7 +2,6 @@
 //  Lol Engine
 //
 //  Copyright © 2017—2019 Sam Hocevar <sam@hocevar.net>
-//            © 2010—2015 Benjamin Litzelmann
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -105,24 +104,24 @@ std::shared_ptr<input::device::joystick> input::joystick(int n)
 // input::device
 //
 
-std::string input::device::text()
+std::string input::device::keyboard::text()
 {
     std::string ret = m_text;
     m_text = "";
     return ret;
 }
 
-bool input::device::capture_text()
+bool input::device::keyboard::capture_text()
 {
     return m_input_active;
 }
 
-void input::device::capture_text(bool status)
+void input::device::keyboard::capture_text(bool status)
 {
     m_input_active = status;
 }
 
-void input::device::internal_add_key(input::key key, const char* name)
+void input::device::keyboard::internal_add_key(input::key key, const char* name)
 {
     while ((int)key >= (int)m_key_names.size())
     {
