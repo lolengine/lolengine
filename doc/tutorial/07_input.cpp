@@ -28,38 +28,13 @@ public:
     {
         m_controller = new Controller("Default");
 
-#       ifdef OLD_SCHOOL
-        m_controller->SetInputCount(KEY_MAX, AXIS_MAX);
-
-        auto keyboard = input::keyboard();
-        m_controller->GetKey(KEY_MANUAL_ROTATION).Bind(g_name_keyboard, "Space");
-
-        auto mouse = input::mouse();
-        if (mouse)
-        {
-            m_controller->GetKey(KEY_DRAG_MESH).Bind(g_name_mouse, "Left");
-            m_controller->GetAxis(AXIS_DRAG_PITCH).Bind(g_name_mouse, "Y");
-            m_controller->GetAxis(AXIS_DRAG_YAW).Bind(g_name_mouse, "X");
-        }
-
-        m_joystick = InputDevice::Get(g_name_joystick(1));
-        if (m_joystick)
-        {
-            m_controller->GetAxis(AXIS_PITCH).Bind(g_name_joystick(1), "Axis2");
-            m_controller->GetAxis(AXIS_YAW).Bind(g_name_joystick(1), "Axis1");
-        }
-#       else
         m_profile
-            << InputProfile::KeyboardKey(KEY_MANUAL_ROTATION, "Space")
-            << InputProfile::MouseKey(KEY_DRAG_MESH, "Left")
             << InputProfile::JoystickAxis(1, AXIS_PITCH, "Axis2")
             << InputProfile::JoystickAxis(1, AXIS_YAW, "Axis1")
             << InputProfile::MouseAxis(AXIS_DRAG_PITCH, "Y")
             << InputProfile::MouseAxis(AXIS_DRAG_YAW, "X");
 
         m_controller->Init(m_profile);
-        m_joystick = InputDevice::GetJoystick(1);
-#       endif //OLD_SCHOOL
 
         m_pitch_angle = 0;
         m_yaw_angle = 0;
@@ -103,24 +78,22 @@ public:
     {
         WorldEntity::tick_game(seconds);
 
+        auto mouse = input::mouse();
+        auto keyboard = input::keyboard();
+
         /* Handle keyboard */
-        if (m_controller->WasKeyPressedThisFrame(KEY_MANUAL_ROTATION))
+        if (keyboard->key_pressed(input::key::SC_Space))
             m_autorot = !m_autorot;
 
         /* Handle joystick */
-        if (m_joystick)
-        {
-            if (lol::abs(m_controller->GetAxisValue(AXIS_PITCH)) > 0.2f)
-                m_pitch_angle += m_controller->GetAxisValue(AXIS_PITCH) * seconds;
-            if (lol::abs(m_controller->GetAxisValue(AXIS_YAW)) > 0.2f)
-                m_yaw_angle += m_controller->GetAxisValue(AXIS_YAW) * seconds;
-        }
+        if (lol::abs(m_controller->GetAxisValue(AXIS_PITCH)) > 0.2f)
+            m_pitch_angle += m_controller->GetAxisValue(AXIS_PITCH) * seconds;
+        if (lol::abs(m_controller->GetAxisValue(AXIS_YAW)) > 0.2f)
+            m_yaw_angle += m_controller->GetAxisValue(AXIS_YAW) * seconds;
 
         /* Handle mouse */
         if (true)
         {
-            auto mouse = input::mouse();
-
             if (mouse->button(input::button::BTN_Left))
             {
                 mouse->capture(true);
@@ -209,13 +182,6 @@ public:
 private:
     enum
     {
-        KEY_MANUAL_ROTATION,
-        KEY_DRAG_MESH,
-        KEY_MAX
-    };
-
-    enum
-    {
         AXIS_DRAG_PITCH,
         AXIS_DRAG_YAW,
         AXIS_PITCH,
@@ -223,7 +189,6 @@ private:
         AXIS_MAX
     };
 
-    InputDevice *m_joystick;
     Controller *m_controller;
     InputProfile m_profile;
 

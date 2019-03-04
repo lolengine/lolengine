@@ -176,18 +176,12 @@ void SdlInput::tick(float seconds)
                 if (event.type == SDL_KEYDOWN)
                 {
                     auto sc2 = sc;
-                    switch (sc)
-                    {
-                    case input::key::SC_CapsLock:
+                    if (sc == input::key::SC_CapsLock)
                         sc2 = input::key::SC_CapsLockStatus;
-                        break;
-                    case input::key::SC_ScrollLock:
+                    else if (sc == input::key::SC_ScrollLock)
                         sc2 = input::key::SC_ScrollLockStatus;
-                        break;
-                    case input::key::SC_NumLockClear:
+                    else if (sc == input::key::SC_NumLockClear)
                         sc2 = input::key::SC_NumLockClearStatus;
-                        break;
-                    }
                     keyboard->internal_set_key(sc2, !keyboard->key(sc2));
                 }
                 LOL_ATTR_FALLTHROUGH

@@ -282,31 +282,6 @@ AxisBinding& Controller::GetAxis(int index)
     return m_axis_bindings[index];
 }
 
-// Key methods: should not go directly to binding
-bool Controller::IsKeyPressed(int index) const
-{
-    auto key = m_key_bindings.find(index);
-    return key != m_key_bindings.end() && key->second.IsPressed();
-}
-
-bool Controller::IsKeyReleased(int index) const
-{
-    auto key = m_key_bindings.find(index);
-    return key != m_key_bindings.end() && key->second.IsReleased();
-}
-
-bool Controller::WasKeyPressedThisFrame(int index) const
-{
-    auto key = m_key_bindings.find(index);
-    return key != m_key_bindings.end() && key->second.WasPressedThisFrame();
-}
-
-bool Controller::WasKeyReleasedThisFrame(int index) const
-{
-    auto key = m_key_bindings.find(index);
-    return key != m_key_bindings.end() && key->second.WasReleasedThisFrame();
-}
-
 //Axis methods: should not go directly to binding -----------------------------
 float Controller::GetAxisValue(int index) const
 {

@@ -42,13 +42,6 @@ public:
         m_texel_settings = vec4(1.0, 1.0, 2.0, 2.0) / (vec4)m_size.xyxy;
         m_screen_settings = vec4(1.0, 1.0, 0.5, 0.5) * (vec4)m_size.xyxy;
 
-        m_controller = new Controller("Default");
-        m_profile << InputProfile::MouseKey(0, "Left")
-                  << InputProfile::MouseKey(1, "Right")
-                  << InputProfile::MouseKey(2, "Middle")
-                  << InputProfile::KeyboardKey(3, "Space");
-        m_controller->Init(m_profile);
-
         /* Window size decides the world aspect ratio. For instance, 640×480
          * will be mapped to (-0.66,-0.5) - (0.66,0.5). */
         m_window_size = Video::GetSize();
@@ -157,12 +150,15 @@ public:
     {
         WorldEntity::tick_game(seconds);
 
-        ivec2 mousepos = input::mouse()->get_cursor_pixel(0);
+        auto mouse = input::mouse();
+        auto keyboard = input::keyboard();
+
+        ivec2 mousepos = mouse->get_cursor_pixel(0);
 
         int prev_frame = (m_frame + 4) % 4;
         m_frame = (m_frame + 1) % 4;
 
-        if (m_controller->WasKeyPressedThisFrame(3))
+        if (keyboard->key_pressed(input::key::SC_Space))
         {
             m_julia = !m_julia;
             if (m_julia)
@@ -180,7 +176,7 @@ public:
 
         rcmplx worldmouse = m_view.center + rcmplx(ScreenToWorldOffset((vec2)mousepos));
 
-        if (m_controller->IsKeyPressed(2))
+        if (mouse->button(input::button::BTN_Middle))
         {
             if (!m_drag)
             {
@@ -208,8 +204,8 @@ public:
             }
         }
 
-        bool hold_right = m_controller->IsKeyPressed(0);
-        bool hold_left = m_controller->IsKeyPressed(1);
+        bool hold_right = mouse->button(input::button::BTN_Right);
+        bool hold_left = mouse->button(input::button::BTN_Left);
         if ((hold_right || hold_left) && mousepos.x != -1)
         {
             double zoom = hold_right ? -0.5 : 0.5;
@@ -563,10 +559,6 @@ private:
 
     vec4 m_texel_settings, m_screen_settings;
     mat4 m_zoom_settings;
-
-    // Input support
-    Controller *m_controller;
-    InputProfile m_profile;
 
 #if LOL_FEATURE_THREADS
     /* Worker threads */

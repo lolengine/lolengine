@@ -93,8 +93,6 @@ private:
     std::shared_ptr<Shader>         m_cat_shader;
     CatShaderData*                  m_cat_sdata;
     Camera*                         m_camera;
-    Controller*                     m_controller;
-    InputProfile                    m_profile;
     Light*                          m_light1;
     Light*                          m_light2;
     int                             m_init_status;

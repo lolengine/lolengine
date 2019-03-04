@@ -28,11 +28,6 @@ public:
         for (auto &val : m_streams)
             val = -1;
 
-        m_controller = new Controller("Default");
-        m_profile << InputProfile::KeyboardKey(0, "Space")
-                  << InputProfile::MouseKey(1, "Left");
-        m_controller->Init(m_profile);
-
         m_text = new Text("SPACE for sine wave, Left Click for white noise",
                           "data/font/ascii.png");
         m_text->SetPos(vec3(5, 5, 1));
@@ -65,9 +60,14 @@ public:
     {
         WorldEntity::tick_game(seconds);
 
+        auto mouse = input::mouse();
+        auto keyboard = input::keyboard();
+
         for (int i = 0; i < 2; ++i)
         {
-            if (!m_controller->WasKeyPressedThisFrame(i))
+            if (i == 0 && !keyboard->key_pressed(input::key::SC_Space))
+                continue;
+            if (i == 1 && !mouse->button_pressed(input::button::BTN_Left))
                 continue;
 
             if (m_streams[i] < 0)
@@ -92,10 +92,6 @@ public:
 
 private:
     int m_streams[2];
-
-    Controller *m_controller;
-    InputProfile m_profile;
-
     Text *m_text;
 };
 
