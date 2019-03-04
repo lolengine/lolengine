@@ -28,18 +28,6 @@ LOLFX_RESOURCE_DECLARE(12_voronoi_distance);
 LOLFX_RESOURCE_DECLARE(12_distance);
 LOLFX_RESOURCE_DECLARE(12_texture_to_screen);
 
-enum
-{
-    KEY_ESC,
-    KEY_PUSH,
-    KEY_POP,
-    KEY_F1,
-    KEY_F2,
-    KEY_F3,
-
-    KEY_MAX
-};
-
 enum FboType
 {
     SrcVoronoiFbo,
@@ -66,24 +54,17 @@ public:
         m_time = .0f;
         m_timer = -1.0f;
         mode = 0;
-        m_controller = new Controller("Default");
-        m_controller->GetKey(KEY_ESC).Bind(g_name_keyboard, "Escape");
-        m_controller->GetKey(KEY_PUSH).Bind(g_name_keyboard, "p");
-        m_controller->GetKey(KEY_POP).Bind(g_name_keyboard, "o");
-        m_controller->GetKey(KEY_F1).Bind(g_name_keyboard, "F1");
-        m_controller->GetKey(KEY_F2).Bind(g_name_keyboard, "F2");
-        m_controller->GetKey(KEY_F3).Bind(g_name_keyboard, "F3");
     }
 
     virtual void tick_game(float seconds)
     {
         WorldEntity::tick_game(seconds);
 
-        {
-            //Shutdown logic
-            if (m_controller->WasKeyReleasedThisFrame(KEY_ESC))
-                Ticker::Shutdown();
-        }
+        auto keyboard = input::keyboard();
+
+        // Shutdown logic
+        if (keyboard->key_released(input::key::SC_Escape))
+            Ticker::Shutdown();
 
         m_time += seconds;
         m_hotspot = 0.4f * vec3((float)lol::sin(m_time * 4.0) + (float)lol::cos(m_time * 5.3),
@@ -170,34 +151,33 @@ public:
             m_cur_fbo = VoronoiFbo;
         }
 
+        auto keyboard = input::keyboard();
+
+        if (keyboard->key_released(input::key::SC_O))
+            voronoi_points.pop();
+        else if (keyboard->key_released(input::key::SC_P))
+            voronoi_points.push(vec3(rand<float>(512.f), rand<float>(512.f), .0f),
+                    vec2(64.f + rand<float>(64.f), 64.f + rand<float>(64.f)));
+        else if (keyboard->key_released(input::key::SC_F1))
+            m_cur_fbo = SrcVoronoiFbo;
+        else if (keyboard->key_released(input::key::SC_F2))
+            m_cur_fbo = VoronoiFbo;
+        else if (keyboard->key_released(input::key::SC_F3))
         {
-            //Shutdown logic
-            if (m_controller->WasKeyReleasedThisFrame(KEY_POP))
-                voronoi_points.pop();
-            else if (m_controller->WasKeyReleasedThisFrame(KEY_PUSH))
-                voronoi_points.push(vec3(rand<float>(512.f), rand<float>(512.f), .0f),
-                        vec2(64.f + rand<float>(64.f), 64.f + rand<float>(64.f)));
-            else if (m_controller->WasKeyReleasedThisFrame(KEY_F1))
-                m_cur_fbo = SrcVoronoiFbo;
-            else if (m_controller->WasKeyReleasedThisFrame(KEY_F2))
-                m_cur_fbo = VoronoiFbo;
-            else if (m_controller->WasKeyReleasedThisFrame(KEY_F3))
+            voronoi_points.clear();
+            if (mode == 0)
             {
-                voronoi_points.clear();
-                if (mode == 0)
-                {
-                    int i = 4;
-                    while (i-- > 0)
-                        voronoi_points.push(vec3(rand<float>(512.f), rand<float>(512.f), .0f),
-                                            vec2(64.f + rand<float>(64.f), 64.f + rand<float>(64.f))
-                                            //vec2::zero
-                                            );
-                    mode = 1;
-                }
-                else
-                {
-                    mode = 0;
-                }
+                int i = 4;
+                while (i-- > 0)
+                    voronoi_points.push(vec3(rand<float>(512.f), rand<float>(512.f), .0f),
+                                        vec2(64.f + rand<float>(64.f), 64.f + rand<float>(64.f))
+                                        //vec2::zero
+                                        );
+                mode = 1;
+            }
+            else
+            {
+                mode = 0;
             }
         }
 
@@ -381,7 +361,6 @@ public:
     }
 
 private:
-    Controller* m_controller;
     array<vec3, vec2> voronoi_points;
     array<vec2> m_vertices;
     std::shared_ptr<Shader> m_screen_shader;

@@ -131,8 +131,8 @@ void SdlInput::tick(float seconds)
     /* FIXME: maybe we should make use of this? */
     UNUSED(seconds);
 
-    auto keyboard = input::get()->keyboard();
-    auto mouse = input::get()->mouse();
+    auto keyboard = input::keyboard();
+    auto mouse = input::mouse();
 
     /* Pump all joystick events because no event is coming to us. */
 #   if SDL_FORCE_POLL_JOYSTICK && !__EMSCRIPTEN__
@@ -140,12 +140,13 @@ void SdlInput::tick(float seconds)
     for (int j = 0; j < m_joysticks.count(); j++)
     {
         for (int i = 0; i < SDL_JoystickNumButtons(m_joysticks[j].m1); i++)
-            m_joysticks[j].m2->internal_set_key(i, SDL_JoystickGetButton(m_joysticks[j].m1, i) != 0);
+            m_joysticks[j].m2->internal_set_button((input::button)i, SDL_JoystickGetButton(m_joysticks[j].m1, i) != 0);
         for (int i = 0; i < SDL_JoystickNumAxes(m_joysticks[j].m1); i++)
             m_joysticks[j].m2->internal_set_axis(i, (float)SDL_JoystickGetAxis(m_joysticks[j].m1, i) / 32768.f);
     }
 #   endif
 
+    keyboard->internal_begin_frame();
     mouse->internal_set_axis(4, 0);
 
     if (keyboard->capture_text())
@@ -165,29 +166,29 @@ void SdlInput::tick(float seconds)
 
         case SDL_KEYDOWN:
         case SDL_KEYUP:
-            switch (int sc = event.key.keysym.scancode)
+            switch (auto sc = (input::key)event.key.keysym.scancode)
             {
             // Lock management
-            case (int)input::key::SC_CapsLock:
-            case (int)input::key::SC_ScrollLock:
-            case (int)input::key::SC_NumLockClear:
+            case input::key::SC_CapsLock:
+            case input::key::SC_ScrollLock:
+            case input::key::SC_NumLockClear:
                 // Update status on key down only
                 if (event.type == SDL_KEYDOWN)
                 {
-                    int sc2 = sc;
+                    auto sc2 = sc;
                     switch (sc)
                     {
-                    case (int)input::key::SC_CapsLock:
-                        sc2 = (int)input::key::SC_CapsLockStatus;
+                    case input::key::SC_CapsLock:
+                        sc2 = input::key::SC_CapsLockStatus;
                         break;
-                    case (int)input::key::SC_ScrollLock:
-                        sc2 = (int)input::key::SC_ScrollLockStatus;
+                    case input::key::SC_ScrollLock:
+                        sc2 = input::key::SC_ScrollLockStatus;
                         break;
-                    case (int)input::key::SC_NumLockClear:
-                        sc2 = (int)input::key::SC_NumLockClearStatus;
+                    case input::key::SC_NumLockClear:
+                        sc2 = input::key::SC_NumLockClearStatus;
                         break;
                     }
-                    keyboard->internal_set_key(sc2, !keyboard->key((int)sc2));
+                    keyboard->internal_set_key(sc2, !keyboard->key(sc2));
                 }
                 LOL_ATTR_FALLTHROUGH
             default:
@@ -205,7 +206,7 @@ void SdlInput::tick(float seconds)
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP:
             //event.button.which
-            mouse->internal_set_key(event.button.button - 1, event.type == SDL_MOUSEBUTTONDOWN);
+            mouse->internal_set_button((input::button)(event.button.button - 1), event.type == SDL_MOUSEBUTTONDOWN);
             break;
         case SDL_MOUSEWHEEL:
             mouse->internal_set_axis(4, (float)event.button.y);
@@ -216,11 +217,11 @@ void SdlInput::tick(float seconds)
             {
                 case SDL_WINDOWEVENT_ENTER:
                 case SDL_WINDOWEVENT_FOCUS_GAINED:
-                    mouse->internal_set_key(3, true);
+                    mouse->internal_set_button(input::button::BTN_Focus, true);
                     break;
                 case SDL_WINDOWEVENT_LEAVE:
                 case SDL_WINDOWEVENT_FOCUS_LOST:
-                    mouse->internal_set_key(3, false);
+                    mouse->internal_set_button(input::button::BTN_Focus, false);
                     break;
                 case SDL_WINDOWEVENT_RESIZED:
                     Video::Resize(ivec2(event.window.data1, event.window.data2));
@@ -247,9 +248,9 @@ void SdlInput::tick(float seconds)
     SDL_GetMouseState(&mouse_pos.x, &mouse_pos.y);
     mouse_pos.y = Video::GetSize().y - 1 - mouse_pos.y;
 
-    if (input::get()->mouse_capture() != m_mousecapture)
+    if (mouse->capture() != m_mousecapture)
     {
-        m_mousecapture = input::get()->mouse_capture();
+        m_mousecapture = mouse->capture();
         SDL_SetRelativeMouseMode(m_mousecapture ? SDL_TRUE : SDL_FALSE);
         mouse_pos = ivec2(m_app * .5f);
 

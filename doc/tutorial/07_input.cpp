@@ -31,10 +31,10 @@ public:
 #       ifdef OLD_SCHOOL
         m_controller->SetInputCount(KEY_MAX, AXIS_MAX);
 
-        auto keyboard = input::get()->keyboard();
+        auto keyboard = input::keyboard();
         m_controller->GetKey(KEY_MANUAL_ROTATION).Bind(g_name_keyboard, "Space");
 
-        auto mouse = input::get()->mouse();
+        auto mouse = input::mouse();
         if (mouse)
         {
             m_controller->GetKey(KEY_DRAG_MESH).Bind(g_name_mouse, "Left");
@@ -119,20 +119,21 @@ public:
         /* Handle mouse */
         if (true)
         {
-            if (m_controller->IsKeyPressed(KEY_DRAG_MESH))
+            auto mouse = input::mouse();
+
+            if (mouse->button(input::button::BTN_Left))
             {
-                input::get()->mouse_capture(true);
+                mouse->capture(true);
                 m_pitch_angle -= m_controller->GetAxisValue(AXIS_DRAG_PITCH) * seconds * 0.1f;
                 m_yaw_angle += m_controller->GetAxisValue(AXIS_DRAG_YAW) * seconds * 0.1f;
             }
             else
             {
-                input::get()->mouse_capture(false);
+                mouse->capture(false);
                 if (m_autorot)
                     m_yaw_angle += seconds * 0.2f;
             }
 
-            auto mouse = input::get()->mouse();
             m_text->SetText(lol::format(
                 "cursor: (%0.3f, %0.3f) - pixel (%d, %d)",
                 mouse->get_cursor_uv(0).x, mouse->get_cursor_uv(0).y,

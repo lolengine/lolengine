@@ -145,7 +145,7 @@ void D3d9Input::tick_game(float seconds)
 
             int key_index = (1 << b) > XINPUT_GAMEPAD_RIGHT_SHOULDER ? b - 2 : b;
 
-            m_data->m_joysticks[i].m2->internal_set_key(key_index, ((uint16_t)(state.Gamepad.wButtons) >> b) & 1);
+            m_data->m_joysticks[i].m2->internal_set_button((input::button)key_index, ((uint16_t)(state.Gamepad.wButtons) >> b) & 1);
         }
     }
 #endif

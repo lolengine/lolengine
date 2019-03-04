@@ -56,7 +56,7 @@ protected:
         m_previous = m_current;
         m_current = false;
         for (int i = 0; i < m_keybindings.count(); ++i)
-            m_current = m_current || m_keybindings[i].m1->key(m_keybindings[i].m2);
+            m_current = m_current || m_keybindings[i].m1->key((input::key)m_keybindings[i].m2);
     }
 
     /** m1 is the InputDevice, m2 is the key index on the InputDevice */

@@ -200,10 +200,10 @@ float AxisBinding::RetrieveCurrentValue()
     for (int i = 0; i < m_keybindings.count(); ++i)
     {
         float value = 0.0f;
-        m_keybindings[i].m1->key(m_keybindings[i].m2);
-        value += m_keybindings[i].m1->key(m_keybindings[i].m3) ? 1.0f : 0.0f;
+        m_keybindings[i].m1->key((input::key)m_keybindings[i].m2);
+        value += m_keybindings[i].m1->key((input::key)m_keybindings[i].m3) ? 1.0f : 0.0f;
         if (m_keybindings[i].m2 != -1)
-            value += m_keybindings[i].m1->key(m_keybindings[i].m2) ? -1.0f : 0.0f;
+            value += m_keybindings[i].m1->key((input::key)m_keybindings[i].m2) ? -1.0f : 0.0f;
 
         if (value > max_positive)
             max_positive = value;
@@ -371,7 +371,7 @@ void Controller::BindProfile(InputProfile const& setup)
     m_profile = setup;
 
     // Keyboard
-    m_keyboard = input::get()->keyboard();
+    m_keyboard = input::keyboard();
     if (m_keyboard)
     {
         for (InputProfile::KeyboardKey& key : m_profile.m_keys)
@@ -379,7 +379,7 @@ void Controller::BindProfile(InputProfile const& setup)
     }
 
     // Mouse
-    m_mouse = input::get()->mouse();
+    m_mouse = input::mouse();
     if (m_mouse)
     {
         for (InputProfile::MouseKey& key : m_profile.m_mouse_keys)

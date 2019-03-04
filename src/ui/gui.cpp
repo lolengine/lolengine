@@ -207,8 +207,8 @@ void gui::tick_game(float seconds)
 {
     super::tick_game(seconds);
 
-    auto keyboard = input::get()->keyboard();
-    auto mouse = input::get()->mouse();
+    auto keyboard = input::keyboard();
+    auto mouse = input::mouse();
 
     ImGuiIO& io = ImGui::GetIO();
 
@@ -233,13 +233,13 @@ void gui::tick_game(float seconds)
     io.MouseDrawCursor = true;
 
     // Update Keyboard
-    io.KeyCtrl = m_controller->IsKeyPressed((int)input::key::SC_LCtrl)
-              || m_controller->IsKeyPressed((int)input::key::SC_RCtrl);
-    io.KeyShift = m_controller->IsKeyPressed((int)input::key::SC_LShift)
-               || m_controller->IsKeyPressed((int)input::key::SC_RShift);
+    io.KeyCtrl = keyboard->key(input::key::SC_LCtrl)
+              || keyboard->key(input::key::SC_RCtrl);
+    io.KeyShift = keyboard->key(input::key::SC_LShift)
+               || keyboard->key(input::key::SC_RShift);
 
     for (input::key k : input::all_keys())
-        io.KeysDown[(int)k] = m_controller->IsKeyPressed((int)k);
+        io.KeysDown[(int)k] = keyboard->key(k);
 
     // Update text input
     if (io.WantTextInput)
@@ -259,9 +259,9 @@ void gui::tick_game(float seconds)
     //msg::debug("%.2f/%.2f\n", io.MousePos.x, io.MousePos.y);
     io.MouseWheel = m_controller->GetAxisValue(axis_enum::Scroll);
 
-    io.MouseDown[0] = m_controller->IsKeyPressed(key_enum::LeftClick);
-    io.MouseDown[1] = m_controller->IsKeyPressed(key_enum::RightClick);
-    io.MouseDown[2] = m_controller->IsKeyPressed(key_enum::MiddleClick);
+    io.MouseDown[0] = mouse->button(input::button::BTN_Left);
+    io.MouseDown[1] = mouse->button(input::button::BTN_Right);
+    io.MouseDown[2] = mouse->button(input::button::BTN_Middle);
     // FIXME: handle key_enum::Focus?
 
     // Start the frame

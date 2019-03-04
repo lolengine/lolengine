@@ -47,11 +47,11 @@ input::input()
 
     // Create default mouse device
     m_mouse = std::make_shared<InputDevice>(g_name_mouse.c_str());
-    m_mouse->AddKey(g_name_mouse_key_left.c_str());
-    m_mouse->AddKey(g_name_mouse_key_middle.c_str());
-    m_mouse->AddKey(g_name_mouse_key_right.c_str());
+    m_mouse->AddButton((int)input::button::BTN_Left, g_name_mouse_key_left.c_str());
+    m_mouse->AddButton((int)input::button::BTN_Middle, g_name_mouse_key_middle.c_str());
+    m_mouse->AddButton((int)input::button::BTN_Right, g_name_mouse_key_right.c_str());
+    m_mouse->AddButton((int)input::button::BTN_Focus, g_name_mouse_key_in_screen.c_str());
     // Added to manage if mouse is in the screen or not.
-    m_mouse->AddKey(g_name_mouse_key_in_screen.c_str());
     m_mouse->AddAxis(g_name_mouse_axis_x.c_str());
     m_mouse->AddAxis(g_name_mouse_axis_y.c_str());
     m_mouse->AddAxis(g_name_mouse_axis_xpixel.c_str());
@@ -128,6 +128,20 @@ void InputDevice::AddKey(int index, const char* name)
     }
 
     m_key_names[index] = name;
+}
+
+void InputDevice::AddButton(int index, const char* name)
+{
+    if (index == -1)
+        index = (int)m_button_names.size();
+
+    while (index >= (int)m_button_names.size())
+    {
+        m_button_names.push_back("");
+        m_buttons.push_back(false);
+    }
+
+    m_button_names[index] = name;
 }
 
 void InputDevice::AddAxis(int index, const char* name, float sensitivity)

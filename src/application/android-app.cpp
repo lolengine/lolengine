@@ -193,7 +193,7 @@ void lol::AndroidAppData::DestroyDisplay()
  */
 int32_t lol::AndroidAppData::HandleInput(AInputEvent* event)
 {
-    auto mouse = input::get()->mouse();
+    auto mouse = input::mouse();
 
     switch (AInputEvent_getType(event))
     {

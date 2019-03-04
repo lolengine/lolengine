@@ -157,7 +157,7 @@ public:
     {
         WorldEntity::tick_game(seconds);
 
-        ivec2 mousepos = input::get()->mouse()->get_cursor_pixel(0);
+        ivec2 mousepos = input::mouse()->get_cursor_pixel(0);
 
         int prev_frame = (m_frame + 4) % 4;
         m_frame = (m_frame + 1) % 4;
