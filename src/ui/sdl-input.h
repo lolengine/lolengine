@@ -27,6 +27,8 @@
 #   endif
 #endif
 
+#include <memory>
+
 namespace lol
 {
 
@@ -46,7 +48,7 @@ protected:
 private:
     void tick(float seconds);
 
-    array<SDL_Joystick *, class InputDevice *> m_joysticks;
+    array<SDL_Joystick *, std::shared_ptr<class input::device::joystick>> m_joysticks;
 
     vec2 m_app;
     vec2 m_screen;

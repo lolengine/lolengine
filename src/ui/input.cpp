@@ -22,14 +22,6 @@
 namespace lol
 {
 
-const std::string g_name_mouse("mouse");
-const std::string g_name_keyboard("keyboard");
-
-std::string g_name_joystick(const uint64_t num)
-{
-    return format("joystick%d", (int)num);
-}
-
 std::shared_ptr<input> input::get()
 {
     static auto instance = new input();
@@ -40,13 +32,13 @@ std::shared_ptr<input> input::get()
 input::input()
 {
     // Create default keyboard device
-    m_keyboard = std::make_shared<InputDevice>(g_name_keyboard.c_str());
+    m_keyboard = std::make_shared<input::device::keyboard>("default keyboard");
     /* Register all scancodes known to SDL (from the USB standard) */
     #define _SC(id, str, name) m_keyboard->internal_add_key(input::key::SC_##name, #name);
     #include "ui/keys.inc"
 
     // Create default mouse device
-    m_mouse = std::make_shared<InputDevice>(g_name_mouse.c_str());
+    m_mouse = std::make_shared<input::device::mouse>("default mouse");
     #define _BTN(id, name) m_mouse->internal_add_button(input::button::BTN_##name, #name);
     #include "ui/buttons.inc" // FIXME: this will also add joystick buttons!
     m_mouse->internal_add_axis(input::axis::X, "X");
@@ -58,6 +50,8 @@ input::input()
     m_mouse->internal_add_axis(input::axis::ScreenMoveX, "ScreenMoveX");
     m_mouse->internal_add_axis(input::axis::ScreenMoveY, "ScreenMoveY");
     m_mouse->internal_add_axis(input::axis::Wheel, "Wheel");
+
+    // FIXME: there are no default joysticks and they will all have zero axes by default
 }
 
 // Lookup tables for scancode and key name lookups
@@ -97,26 +91,38 @@ input::key input::name_to_key(std::string const &name)
     return it == g_name_to_key.end() ? key::SC_Unknown : it->second;
 }
 
-array<InputDevice*> InputDevice::devices;
+std::shared_ptr<input::device::joystick> input::joystick(int n)
+{
+    auto &joysticks = get()->m_joysticks;
 
-std::string InputDevice::text()
+    if (joysticks.find(n) == joysticks.end())
+        joysticks[n] = std::make_shared<input::device::joystick>(format("joystick %d", n));
+
+    return joysticks[n];
+}
+
+//
+// input::device
+//
+
+std::string input::device::text()
 {
     std::string ret = m_text;
     m_text = "";
     return ret;
 }
 
-bool InputDevice::capture_text()
+bool input::device::capture_text()
 {
     return m_input_active;
 }
 
-void InputDevice::capture_text(bool status)
+void input::device::capture_text(bool status)
 {
     m_input_active = status;
 }
 
-void InputDevice::internal_add_key(input::key key, const char* name)
+void input::device::internal_add_key(input::key key, const char* name)
 {
     while ((int)key >= (int)m_key_names.size())
     {
@@ -127,7 +133,7 @@ void InputDevice::internal_add_key(input::key key, const char* name)
     m_key_names[(int)key] = name;
 }
 
-void InputDevice::internal_add_button(input::button button, const char* name)
+void input::device::internal_add_button(input::button button, const char* name)
 {
     while ((int)button >= (int)m_button_names.size())
     {
@@ -138,7 +144,7 @@ void InputDevice::internal_add_button(input::button button, const char* name)
     m_button_names[(int)button] = name;
 }
 
-void InputDevice::internal_add_axis(input::axis axis, const char* name)
+void input::device::internal_add_axis(input::axis axis, const char* name)
 {
     while ((int)axis >= (int)m_axis_names.size())
     {

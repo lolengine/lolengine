@@ -18,6 +18,8 @@
 #   include <xinput.h>
 #endif
 
+#include <memory>
+
 #include <lol/engine-internal.h>
 
 #include "ui/d3d9-input.h"
@@ -36,7 +38,7 @@ class D3d9InputData
 
 private:
 #if defined LOL_USE_XINPUT
-    array<int, InputDevice*> m_joysticks;
+    array<int, std::shared_ptr<input::device::joystick>> m_joysticks;
 #endif // LOL_USE_XINPUT
 };
 
@@ -53,8 +55,8 @@ D3d9Input::D3d9Input()
         XINPUT_STATE state;
         if (XInputGetState(i, &state) != ERROR_SUCCESS)
             continue;
-        // TODO: we can put more friendly name here, such as LeftAxisX, ButtonX...
-        InputDevice* stick = new InputDevice(g_name_joystick(i + 1));
+
+        auto stick = input::joystick(i);
 
         stick->internal_add_axis(input::axis::LeftX, "LeftX");
         stick->internal_add_axis(input::axis::LeftY, "LeftY");
@@ -76,12 +78,9 @@ D3d9Input::D3d9Input()
 D3d9Input::~D3d9Input()
 {
 #if defined LOL_USE_XINPUT
-    /* Unregister all the joysticks we added */
+    /* Unregister all the joysticks we added (FIXME: this code seems unnecessary) */
     while (m_data->m_joysticks.count())
-    {
-        delete m_data->m_joysticks[0].m2;
         m_data->m_joysticks.remove(0);
-    }
 #endif
     delete m_data;
 }

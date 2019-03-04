@@ -76,7 +76,7 @@ public:
             m_autorot = !m_autorot;
 
         /* Handle joystick */
-        auto joystick = InputDevice::Get(g_name_joystick(1).c_str());
+        auto joystick = input::joystick(0);
         if ((bool)joystick)
         {
             if (lol::abs(joystick->axis(input::axis::LeftY)) > 0.2f)
@@ -91,8 +91,8 @@ public:
             if (mouse->button(input::button::BTN_Left))
             {
                 mouse->capture(true);
-                m_pitch_angle -= mouse->axis(input::axis::MoveX) * seconds * 0.1f;
-                m_yaw_angle += mouse->axis(input::axis::MoveY) * seconds * 0.1f;
+                m_pitch_angle += mouse->axis(input::axis::MoveY) * seconds * 0.1f;
+                m_yaw_angle += mouse->axis(input::axis::MoveX) * seconds * 0.1f;
             }
             else
             {

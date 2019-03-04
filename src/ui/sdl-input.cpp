@@ -83,7 +83,7 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
             continue;
         }
 
-        InputDevice* stick = new InputDevice(g_name_joystick(i + 1));
+        auto stick = input::joystick(i);
         for (int j = 0; j < SDL_JoystickNumAxes(sdlstick); ++j)
             stick->internal_add_axis((input::axis)(j + 1), format("Axis%d", j + 1).c_str());
         for (int j = 0; j < SDL_JoystickNumButtons(sdlstick); ++j)
@@ -103,7 +103,6 @@ SdlInput::~SdlInput()
     while (m_joysticks.count())
     {
         SDL_JoystickClose(m_joysticks[0].m1);
-        delete m_joysticks[0].m2;
         m_joysticks.remove(0);
     }
 #endif
