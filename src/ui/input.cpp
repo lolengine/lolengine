@@ -104,24 +104,7 @@ std::shared_ptr<input::device::joystick> input::joystick(int n)
 // input::device
 //
 
-std::string input::device::keyboard::text()
-{
-    std::string ret = m_text;
-    m_text = "";
-    return ret;
-}
-
-bool input::device::keyboard::capture_text()
-{
-    return m_input_active;
-}
-
-void input::device::keyboard::capture_text(bool status)
-{
-    m_input_active = status;
-}
-
-void input::device::keyboard::internal_add_key(input::key key, const char* name)
+void input::device::internal_add_key(input::key key, const char* name)
 {
     while ((int)key >= (int)m_key_names.size())
     {
@@ -152,6 +135,27 @@ void input::device::internal_add_axis(input::axis axis, const char* name)
     }
 
     m_axis_names[(int)axis] = name;
+}
+
+//
+// input::device::keyboard
+//
+
+std::string input::device::keyboard::text()
+{
+    std::string ret = m_text;
+    m_text = "";
+    return ret;
+}
+
+bool input::device::keyboard::capture_text()
+{
+    return m_input_active;
+}
+
+void input::device::keyboard::capture_text(bool status)
+{
+    m_input_active = status;
 }
 
 } /* namespace lol */

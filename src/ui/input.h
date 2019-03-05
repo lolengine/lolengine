@@ -70,6 +70,7 @@ public:
         // Get the name of this input device
         const std::string& name() const { return m_name; }
 
+#if 0
         //
         // Bindings section
         //
@@ -82,6 +83,7 @@ public:
 
         void bind(input::axis axis, uint16_t event);
         void unbind(input::axis axis, uint16_t event);
+#endif
 
         //
         // Key, button etc. state
@@ -138,6 +140,7 @@ public:
           * compile time. */
         void internal_add_button(input::button, char const *name);
         void internal_add_axis(input::axis, char const *name);
+        void internal_add_key(input::key, char const *name);
 
         /* Internal functions for the platform-specific drivers. */
         void internal_begin_frame()
@@ -147,6 +150,13 @@ public:
             m_pressed_buttons.clear();
             m_released_buttons.clear();
             m_changed_axes.clear();
+        }
+
+        void internal_set_key(input::key key, bool state)
+        {
+            if (m_keys[(int)key] != state)
+                (state ? m_pressed_keys : m_released_keys).insert(key);
+            m_keys[(int)key] = state;
         }
 
         void internal_set_button(input::button button, bool state)
@@ -237,14 +247,6 @@ public:
 
     bool capture_text();
     void capture_text(bool status);
-
-    void internal_add_key(input::key, char const *name);
-    void internal_set_key(input::key key, bool state)
-    {
-        if (m_keys[(int)key] != state)
-            (state ? m_pressed_keys : m_released_keys).insert(key);
-        m_keys[(int)key] = state;
-    }
 
     void internal_add_text(std::string const &text)
     {

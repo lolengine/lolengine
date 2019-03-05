@@ -83,7 +83,8 @@ int audio::start_streaming(std::function<void(void *, int)> const &f)
     m_streamers.insert(s);
 
     s->m_empty.resize(1024);
-    s->m_chunk = Mix_QuickLoad_RAW(s->m_empty.data(), s->m_empty.size() * sizeof(uint8_t));
+    s->m_chunk = Mix_QuickLoad_RAW(s->m_empty.data(),
+            (Uint32)(s->m_empty.size() * sizeof(uint8_t)));
     s->m_channel = Mix_PlayChannel(-1, s->m_chunk, -1);
     s->m_callback = f;
     Mix_RegisterEffect(s->m_channel, trampoline, nullptr, s.get());

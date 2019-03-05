@@ -52,7 +52,7 @@ public:
             subinitializer.fill_sizes(sizes - 1);
     }
 
-    void fill_values(T * origin, int prev, ptrdiff_t * sizes)
+    void fill_values(T * origin, ptrdiff_t prev, ptrdiff_t * sizes)
     {
         int pos = 0;
 
@@ -81,7 +81,7 @@ public:
         *sizes = max(*sizes, (ptrdiff_t)m_initializers.size());
     }
 
-    void fill_values(T * origin, int prev, ptrdiff_t * sizes)
+    void fill_values(T * origin, ptrdiff_t prev, ptrdiff_t * sizes)
     {
         int pos = 0;
 
