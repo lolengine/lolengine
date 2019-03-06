@@ -45,6 +45,15 @@ public:
         return p;
     }
 
+    enum class state
+    {
+        idle,
+        pre_game,
+        post_game,
+        pre_draw,
+        post_draw,
+    };
+
     // Tick groups
     struct group
     {

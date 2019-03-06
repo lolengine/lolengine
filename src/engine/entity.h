@@ -47,8 +47,7 @@ class Entity
 {
     friend class Scene;
     friend class ticker;
-    friend class TickerData;
-    friend class Emcee;
+    friend class ticker_data;
 
 public:
     virtual std::string GetName() const;
@@ -70,32 +69,11 @@ protected:
     InitState m_initstate;
 
 #if !LOL_BUILD_RELEASE
-    enum
-    {
-        STATE_IDLE = 0,
-        STATE_PRETICK_GAME,
-        STATE_POSTTICK_GAME,
-        STATE_PRETICK_DRAW,
-        STATE_POSTTICK_DRAW,
-    }
-    m_tickstate;
+    tickable::state m_tickstate;
 #endif
 
     tickable::group::game m_gamegroup;
     tickable::group::draw m_drawgroup;
-
-    // Emcee begin
-private:
-    void SetState(uint32_t newstate);
-    void SetStateWhenMatch(uint32_t newstate,
-                           Entity *other_entity, uint32_t other_state);
-    virtual uint32_t OnStateChanged(uint32_t newstate)
-    {
-        return LOLm_state = newstate;
-    }
-
-    uint32_t LOLm_state;
-    // Emcee end
 
 private:
     int m_ref, m_autorelease, m_destroy;

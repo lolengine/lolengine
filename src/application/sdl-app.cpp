@@ -177,7 +177,7 @@ SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
     ivec2 screen_size = res;
 
     /* Initialise everything */
-    Ticker::Setup(fps);
+    ticker::setup(fps);
     audio::init();
 
     /* Autoreleased objects */
@@ -210,6 +210,7 @@ SdlApp::~SdlApp()
     SDL_Quit();
 #endif
     delete data;
+    ticker::teardown();
 }
 
 } /* namespace lol */

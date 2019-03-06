@@ -29,6 +29,10 @@ namespace lol
 class ticker
 {
 public:
+    static void setup(float fps);
+    static void tick_draw();
+    static void teardown();
+
     static void add(std::shared_ptr<tickable> entity);
     static void remove(std::shared_ptr<tickable> entity);
 
@@ -37,8 +41,6 @@ public:
     static void Ref(class Entity *entity);
     static int Unref(class Entity *entity);
 
-    static void Setup(float fps);
-    static void tick_draw();
     static void StartBenchmark();
     static void StopBenchmark();
     static void StartRecording();

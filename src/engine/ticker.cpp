@@ -23,13 +23,13 @@ namespace lol
  * Ticker implementation class
  */
 
-static class TickerData
+class ticker_data
 {
     friend class ticker;
 
 public:
-    TickerData() :
-        DEPRECATED_nentities(0),
+    ticker_data()
+      : DEPRECATED_nentities(0),
         frame(0), recording(0), deltatime(0), bias(0), fps(0),
 #if LOL_BUILD_DEBUG
         keepalive(0),
@@ -38,7 +38,7 @@ public:
     {
     }
 
-    ~TickerData()
+    ~ticker_data()
     {
         ASSERT(DEPRECATED_nentities == 0,
                "still %d entities in ticker\n", DEPRECATED_nentities);
@@ -51,6 +51,7 @@ public:
         disktick.push(0);
         gamethread.release();
         diskthread.release();
+        ASSERT(drawtick.size() == 0);
 #endif
     }
 
@@ -90,10 +91,9 @@ private:
 
     /* Shutdown management */
     int quit, quitframe, quitdelay, panic;
-}
-tickerdata;
+};
 
-static TickerData * const data = &tickerdata;
+static std::unique_ptr<ticker_data> data;
 
 //
 // Add/remove tickable objects
@@ -167,7 +167,7 @@ int Ticker::Unref(Entity *entity)
 }
 
 #if LOL_FEATURE_THREADS
-void TickerData::GameThreadMain()
+void ticker_data::GameThreadMain()
 {
 #if LOL_BUILD_DEBUG
     msg::debug("ticker game thread initialised\n");
@@ -193,7 +193,7 @@ void TickerData::GameThreadMain()
 #endif /* LOL_FEATURE_THREADS */
 
 #if LOL_FEATURE_THREADS
-void TickerData::DrawThreadMain() /* unused */
+void ticker_data::DrawThreadMain() /* unused */
 {
 #if LOL_BUILD_DEBUG
     msg::debug("ticker draw thread initialised\n");
@@ -217,7 +217,7 @@ void TickerData::DrawThreadMain() /* unused */
 #endif /* LOL_FEATURE_THREADS */
 
 #if LOL_FEATURE_THREADS
-void TickerData::DiskThreadMain()
+void ticker_data::DiskThreadMain()
 {
     /* FIXME: temporary hack to avoid crashes on the PS3 */
     disktick.pop();
@@ -225,7 +225,7 @@ void TickerData::DiskThreadMain()
 #endif /* LOL_FEATURE_THREADS */
 
 //-----------------------------------------------------------------------------
-void TickerData::GameThreadTick()
+void ticker_data::GameThreadTick()
 {
     Profiler::Stop(Profiler::STAT_TICK_FRAME);
     Profiler::Start(Profiler::STAT_TICK_FRAME);
@@ -419,17 +419,17 @@ void TickerData::GameThreadTick()
             if (!e->m_destroy)
             {
 #if !LOL_BUILD_RELEASE
-                if (e->m_tickstate != Entity::STATE_IDLE)
+                if (e->m_tickstate != tickable::state::idle)
                     msg::error("entity %s [%p] not idle for game tick\n",
                                e->GetName().c_str(), e);
-                e->m_tickstate = Entity::STATE_PRETICK_GAME;
+                e->m_tickstate = tickable::state::pre_game;
 #endif
                 e->tick_game(data->deltatime);
 #if !LOL_BUILD_RELEASE
-                if (e->m_tickstate != Entity::STATE_POSTTICK_GAME)
+                if (e->m_tickstate != tickable::state::post_game)
                     msg::error("entity %s [%p] missed super game tick\n",
                                e->GetName().c_str(), e);
-                e->m_tickstate = Entity::STATE_IDLE;
+                e->m_tickstate = tickable::state::idle;
 #endif
             }
         }
@@ -439,7 +439,7 @@ void TickerData::GameThreadTick()
 }
 
 //-----------------------------------------------------------------------------
-void TickerData::DrawThreadTick()
+void ticker_data::DrawThreadTick()
 {
     Profiler::Start(Profiler::STAT_TICK_DRAW);
 
@@ -473,17 +473,17 @@ void TickerData::DrawThreadTick()
                 if (!e->m_destroy)
                 {
 #if !LOL_BUILD_RELEASE
-                    if (e->m_tickstate != Entity::STATE_IDLE)
+                    if (e->m_tickstate != tickable::state::idle)
                         msg::error("entity %s [%p] not idle for draw tick\n",
                                    e->GetName().c_str(), e);
-                    e->m_tickstate = Entity::STATE_PRETICK_DRAW;
+                    e->m_tickstate = tickable::state::pre_draw;
 #endif
                     e->tick_draw(data->deltatime, scene);
 #if !LOL_BUILD_RELEASE
-                    if (e->m_tickstate != Entity::STATE_POSTTICK_DRAW)
+                    if (e->m_tickstate != tickable::state::post_draw)
                         msg::error("entity %s [%p] missed super draw tick\n",
                                    e->GetName().c_str(), e);
-                    e->m_tickstate = Entity::STATE_IDLE;
+                    e->m_tickstate = tickable::state::idle;
 #endif
                 }
             }
@@ -501,7 +501,7 @@ void TickerData::DrawThreadTick()
     Profiler::Stop(Profiler::STAT_TICK_DRAW);
 }
 
-void TickerData::DiskThreadTick()
+void ticker_data::DiskThreadTick()
 {
     ;
 }
@@ -517,28 +517,35 @@ void Ticker::SetStateWhenMatch(Entity * /* entity */, uint32_t /* state */,
 
 }
 
-//-----------------------------------------------------------------------------
-void Ticker::Setup(float fps)
+void ticker::setup(float fps)
 {
+    data = std::make_unique<ticker_data>();
     data->fps = fps;
 
 #if LOL_FEATURE_THREADS
-    data->gamethread = std::make_unique<thread>(std::bind(&TickerData::GameThreadMain, data));
+    data->gamethread = std::make_unique<thread>(std::bind(&ticker_data::GameThreadMain, data.get()));
     data->drawtick.push(1);
 
-    data->diskthread = std::make_unique<thread>(std::bind(&TickerData::DiskThreadMain, data));
+    data->diskthread = std::make_unique<thread>(std::bind(&ticker_data::DiskThreadMain, data.get()));
 #endif
 }
 
-void Ticker::tick_draw()
+void ticker::teardown()
+{
+    data.release();
+}
+
+void ticker::tick_draw()
 {
 #if LOL_FEATURE_THREADS
-    data->drawtick.pop();
+    int n = data->drawtick.pop();
+    if (n == 0)
+        return;
 #else
-    TickerData::GameThreadTick();
+    ticker_data::GameThreadTick();
 #endif
 
-    TickerData::DrawThreadTick();
+    ticker_data::DrawThreadTick();
 
     Profiler::Start(Profiler::STAT_TICK_BLIT);
 
@@ -546,7 +553,7 @@ void Ticker::tick_draw()
 #if LOL_FEATURE_THREADS
     data->gametick.push(1);
 #else
-    TickerData::DiskThreadTick();
+    ticker_data::DiskThreadTick();
 #endif
 
     /* Clamp FPS */

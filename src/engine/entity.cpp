@@ -27,7 +27,7 @@ Entity::Entity() :
     m_destroy(0)
 {
 #if !LOL_BUILD_RELEASE
-    m_tickstate = STATE_IDLE;
+    m_tickstate = tickable::state::idle;
 #endif
     m_gamegroup = tickable::group::game::entity;
     m_drawgroup = tickable::group::draw::entity;
@@ -61,9 +61,9 @@ void Entity::tick_game(float seconds)
 {
     UNUSED(seconds);
 #if !LOL_BUILD_RELEASE
-    if (m_tickstate != STATE_PRETICK_GAME)
+    if (m_tickstate != tickable::state::pre_game)
         msg::error("invalid entity game tick\n");
-    m_tickstate = STATE_POSTTICK_GAME;
+    m_tickstate = tickable::state::post_game;
 #endif
 }
 
@@ -71,21 +71,10 @@ void Entity::tick_draw(float seconds, Scene &scene)
 {
     UNUSED(seconds, scene);
 #if !LOL_BUILD_RELEASE
-    if (m_tickstate != STATE_PRETICK_DRAW)
+    if (m_tickstate != tickable::state::pre_draw)
         msg::error("invalid entity draw tick\n");
-    m_tickstate = STATE_POSTTICK_DRAW;
+    m_tickstate = tickable::state::post_draw;
 #endif
-}
-
-void Entity::SetState(uint32_t state)
-{
-    Ticker::SetState(this, state);
-}
-
-void Entity::SetStateWhenMatch(uint32_t state,
-                               Entity *other_entity, uint32_t other_state)
-{
-    Ticker::SetStateWhenMatch(this, state, other_entity, other_state);
 }
 
 } /* namespace lol */

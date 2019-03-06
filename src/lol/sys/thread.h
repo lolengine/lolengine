@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -94,8 +94,9 @@ public:
     queue()
       : m_start(0),
         m_count(0)
-    {
-    }
+    {}
+
+    int size() const { return m_count; }
 
     // Will block the thread if another has already locked
     void push(T value)
