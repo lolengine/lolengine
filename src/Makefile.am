@@ -57,10 +57,11 @@ liblol_core_headers = \
     \
     lol/sys/all.h \
     lol/sys/init.h lol/sys/file.h lol/sys/getopt.h lol/sys/thread.h \
-    lol/sys/threadtypes.h lol/sys/timer.h \
+    lol/sys/timer.h \
     \
     lol/image/all.h \
-    lol/image/pixel.h lol/image/color.h lol/image/image.h lol/image/resource.h lol/image/movie.h \
+    lol/image/pixel.h lol/image/color.h lol/image/image.h \
+    lol/image/resource.h lol/image/movie.h \
     \
     lol/gpu/all.h \
     lol/gpu/shader.h lol/gpu/indexbuffer.h lol/gpu/vertexbuffer.h \

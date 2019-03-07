@@ -36,6 +36,7 @@ pegtl_sources = \
     pegtl/include/tao/pegtl/internal/action_input.hpp \
     pegtl/include/tao/pegtl/internal/alnum.hpp \
     pegtl/include/tao/pegtl/internal/alpha.hpp \
+    pegtl/include/tao/pegtl/internal/always_false.hpp \
     pegtl/include/tao/pegtl/internal/any.hpp \
     pegtl/include/tao/pegtl/internal/apply0_single.hpp \
     pegtl/include/tao/pegtl/internal/apply0.hpp \
