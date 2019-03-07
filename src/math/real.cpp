@@ -821,7 +821,7 @@ template<> real cbrt(real const &x)
     real third = inverse(real::R_3());
     for (int i = 1; i <= x.bigit_count(); i *= 2)
     {
-        ret = third * (x / (ret * ret) + (ret / 2));
+        ret = third * (x / (ret * ret) + (ret * 2));
     }
 
     return ret;
