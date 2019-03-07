@@ -45,6 +45,17 @@ public:
 private:
 };
 
+/*
+ * A quick and dirty Tile structure for 2D blits
+ */
+
+struct Tile
+{
+    mat4 m_model;
+    TileSet *m_tileset;
+    int m_id;
+};
+
 class PrimitiveRenderer
 {
     friend class Scene;
@@ -57,9 +68,6 @@ public:
 private:
     bool m_fire_and_forget = false;
 };
-
-//-----------------------------------------------------------------------------
-class SceneDisplayData;
 
 class SceneDisplay
 {
@@ -88,13 +96,7 @@ public:
 //protected:
     virtual void Enable();
     virtual void Disable();
-
-private:
-    SceneDisplayData *data;
 };
-
-//-----------------------------------------------------------------------------
-class SceneData;
 
 class Scene
 {
@@ -264,8 +266,75 @@ private:
 
     ivec2 m_size, m_wanted_size;
 
-    std::unique_ptr<SceneData> data;
     std::shared_ptr<Renderer> m_renderer;
+
+    //
+    // The old SceneData stuff
+    //
+
+    /* Mask ID */
+    /* TODO: Do a mask class that handles more than 64 slots */
+    static uint64_t g_used_id;
+    uint64_t m_mask_id = 0;
+
+    /* Scene display: if none has been set to the scene,
+     * the default one created by the app will be used */
+    SceneDisplay* m_display = nullptr;
+
+    /** Render buffers: where to render to. */
+    std::shared_ptr<Framebuffer> m_renderbuffer[4];
+
+    struct postprocess
+    {
+        std::shared_ptr<Shader> m_shader[2];
+        std::shared_ptr<VertexBuffer> m_vbo;
+        std::shared_ptr<VertexDeclaration> m_vdecl;
+        ShaderUniform m_buffer_uni[2][3];
+        ShaderAttrib m_coord[2];
+    }
+    m_pp;
+
+    /* Sources are shared by all scenes.
+     * Renderers are scene-dependent. They get the primitive in the identical
+     * slot to render with the given scene.
+     * Primitives and renderers will be kept until:
+     * - Updated by entity
+     * - Marked Fire&Forget
+     * - Scene is destroyed */
+    std::map<uintptr_t, array<std::shared_ptr<PrimitiveRenderer>>> m_prim_renderers;
+    static std::map<uintptr_t, array<std::shared_ptr<PrimitiveSource>>> g_prim_sources;
+    static mutex g_prim_mutex;
+
+    Camera *m_default_cam;
+    array<Camera *> m_camera_stack;
+
+    /* Old line API <P0, P1, COLOR, TIME, MASK> */
+    struct line_api
+    {
+        //float m_duration, m_segment_size;
+        //vec4 m_color;
+        array<vec3, vec3, vec4, float, int, bool, bool> m_lines;
+        int /*m_mask,*/ m_debug_mask;
+        std::shared_ptr<Shader> m_shader;
+        std::shared_ptr<VertexDeclaration> m_vdecl;
+    }
+    m_line_api;
+
+    /* The old tiles API */
+    struct tile_api
+    {
+        int m_cam;
+        array<Tile> m_tiles;
+        array<Tile> m_palettes;
+        array<Light *> m_lights;
+
+        std::shared_ptr<Shader> m_shader;
+        std::shared_ptr<Shader> m_palette_shader;
+
+        std::shared_ptr<VertexDeclaration> m_vdecl;
+        array<std::shared_ptr<VertexBuffer>> m_bufs;
+    }
+    m_tile_api;
 };
 
 } /* namespace lol */

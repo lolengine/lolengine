@@ -248,8 +248,6 @@ EglApp::EglApp(char const *title, ivec2 res, float fps) :
     new SdlInput(res.x, res.y, data->screen_size.x, data->screen_size.y);
 #   endif
 
-    /* Initialise everything */
-    ticker::setup(fps);
     Video::Setup((ivec2)data->screen_size);
     audio::init();
 #else
@@ -285,8 +283,6 @@ EglApp::~EglApp()
     XCloseDisplay(data->dpy);
 #   endif
 #endif
-    ticker::teardown();
-
     delete data;
 }
 

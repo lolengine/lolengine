@@ -161,6 +161,8 @@ static void AppCallback()
 
 Application::Application(char const *name, ivec2 res, float framerate)
 {
+    ticker::setup(framerate);
+
     auto app_display = new ApplicationDisplay(name, res);
     SceneDisplay::Add(app_display);
     data = new ApplicationData(name, app_display->resolution(), framerate);
@@ -194,6 +196,7 @@ void Application::ShowPointer(bool show)
 
 Application::~Application()
 {
+    ticker::teardown();
     delete data;
 }
 
