@@ -320,56 +320,56 @@
     <LolFxCompile Include="gradient.lolfx" />
   </ItemGroup>
   <ItemGroup>
-    <CopyFileToFolders Include="$(SdlLibDir)\SDL2.dll">
+    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlLibDir)\SDL2.dll">
       <FileType>Document</FileType>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="$(SdlImageLibDir)\libjpeg-9.dll">
+    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlImageLibDir)\libjpeg-9.dll">
       <FileType>Document</FileType>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="$(SdlImageLibDir)\libpng16-16.dll">
+    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlImageLibDir)\libpng16-16.dll">
       <FileType>Document</FileType>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="$(SdlImageLibDir)\libtiff-5.dll">
+    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlImageLibDir)\libtiff-5.dll">
       <FileType>Document</FileType>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="$(SdlImageLibDir)\libwebp-7.dll">
+    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlImageLibDir)\libwebp-7.dll">
       <FileType>Document</FileType>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="$(SdlImageLibDir)\SDL2_image.dll">
+    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlImageLibDir)\SDL2_image.dll">
       <FileType>Document</FileType>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="$(SdlImageLibDir)\zlib1.dll">
+    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlImageLibDir)\zlib1.dll">
       <FileType>Document</FileType>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="$(SdlMixerLibDir)\libFLAC-8.dll">
+    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlMixerLibDir)\libFLAC-8.dll">
       <FileType>Document</FileType>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="$(SdlMixerLibDir)\libmodplug-1.dll">
+    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlMixerLibDir)\libmodplug-1.dll">
       <FileType>Document</FileType>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="$(SdlMixerLibDir)\libmpg123-0.dll">
+    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlMixerLibDir)\libmpg123-0.dll">
       <FileType>Document</FileType>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="$(SdlMixerLibDir)\libogg-0.dll">
+    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlMixerLibDir)\libogg-0.dll">
       <FileType>Document</FileType>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="$(SdlMixerLibDir)\libopus-0.dll">
+    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlMixerLibDir)\libopus-0.dll">
       <FileType>Document</FileType>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="$(SdlMixerLibDir)\libopusfile-0.dll">
+    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlMixerLibDir)\libopusfile-0.dll">
       <FileType>Document</FileType>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="$(SdlMixerLibDir)\libvorbis-0.dll">
+    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlMixerLibDir)\libvorbis-0.dll">
       <FileType>Document</FileType>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="$(SdlMixerLibDir)\libvorbisfile-3.dll">
+    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlMixerLibDir)\libvorbisfile-3.dll">
       <FileType>Document</FileType>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="$(SdlMixerLibDir)\SDL2_mixer.dll">
+    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlMixerLibDir)\SDL2_mixer.dll">
       <FileType>Document</FileType>
     </CopyFileToFolders>
     <None Include="Makefile.am">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild>true</ExcludedFromBuild>
     </None>
   </ItemGroup>
   <ItemGroup>
