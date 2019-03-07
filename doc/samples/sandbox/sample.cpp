@@ -18,7 +18,7 @@
 
 using namespace lol;
 
-int main()
+int main(int, char **)
 {
     timer t;
 
@@ -38,5 +38,7 @@ int main()
     printf("%d %d\n", (int)x, (int)y);
 
     printf("Time: %f s\n", t.get());
+
+    return EXIT_SUCCESS;
 }
 

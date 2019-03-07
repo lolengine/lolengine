@@ -1,7 +1,7 @@
 dnl
 dnl  Lol Engine
 dnl
-dnl  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+dnl  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 dnl
 dnl  Lol Engine is free software. It comes without any warranty, to
 dnl  the extent permitted by applicable law. You can redistribute it
@@ -64,7 +64,6 @@ dnl
 dnl  Activate some header-only libraries
 dnl
 
-LOL_CFLAGS="$LOL_CFLAGS -I\$(lol_srcdir)/src/3rdparty/mingw-std-threads"
 LOL_CFLAGS="$LOL_CFLAGS -I\$(lol_srcdir)/src/3rdparty/pegtl/include"
 LOL_CFLAGS="$LOL_CFLAGS -I\$(lol_srcdir)/src/3rdparty/imgui"
 
@@ -168,6 +167,8 @@ AM_CONDITIONAL(LOL_USE_GDIPLUS, test "${ac_cv_my_have_gdiplus}" = "yes")
 dnl  Are we building using MinGW?
 LOL_TRY_CXXFLAGS(-mwindows -mwin32,
  [AM_CXXFLAGS="${AM_CXXFLAGS} -mwindows -mwin32"
+  LOL_CFLAGS="${LOL_CFLAGS} -I\$(lol_srcdir)/src/3rdparty/mingw-std-threads"
+  LOL_CFLAGS="${LOL_CFLAGS} -D__STDC_FORMAT_MACROS"
   LOL_LIBS="${LOL_LIBS} -uWinMain -u_WinMain@16"])
 
 

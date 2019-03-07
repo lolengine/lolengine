@@ -177,6 +177,17 @@ namespace lol
 }
 
 
+//
+// Ensure CreateFile2() is available on Mingw
+//
+
+#if defined _WIN32 && !defined _MSC_VER && \
+              (!defined _WIN32_WINNT || _WIN32_WINNT < 0x0602)
+#   undef _WIN32_WINNT
+#   define _WIN32_WINNT 0x0602
+#endif
+
+
 /* XXX: workaround for X11 headers that try to #define these */
 #undef Always
 #define Always Always

@@ -245,7 +245,7 @@ configure()
             CPPFLAGS="$CPPFLAGS -I$PWD/external/sdl-image-2.0.4/include"
             CPPFLAGS="$CPPFLAGS -I$PWD/external/sdl-mixer-2.0.4/include"
             CPPFLAGS="$CPPFLAGS -I$PWD/external/ffmpeg-20190130/include"
-            CPPFLAGS="$CPPFLAGS -I$PWD/external/glew-2.1.0/include/GL -DGLEW_STATIC"
+            CPPFLAGS="$CPPFLAGS -I$PWD/external/glew-2.1.0/include -DGLEW_STATIC"
             CPPFLAGS="$CPPFLAGS -I$PWD/external/gtk-2.22.1/lib/glib-2.0/include"
             CPPFLAGS="$CPPFLAGS -I$PWD/external/gtk-2.22.1/lib/gtk-2.0/include"
             CPPFLAGS="$CPPFLAGS -I$PWD/external/gtk-2.22.1/include/glib-2.0"

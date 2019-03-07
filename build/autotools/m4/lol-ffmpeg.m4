@@ -31,6 +31,7 @@ PKG_CHECK_MODULES([LIBAVCODEC], [libavcodec], [:], [ac_cv_my_have_ffmpeg=no])
 PKG_CHECK_MODULES([LIBAVUTIL], [libavutil], [:], [ac_cv_my_have_ffmpeg=no])
 PKG_CHECK_MODULES([LIBAVFORMAT], [libavformat], [:], [ac_cv_my_have_ffmpeg=no])
 PKG_CHECK_MODULES([LIBSWSCALE], [libswscale], [:], [ac_cv_my_have_ffmpeg=no])
+LOL_FFMPEG_EXTRA_LIBS=""
 if test "${ac_cv_my_have_ffmpeg}" != "yes"; then
   ac_cv_my_have_ffmpeg="yes"
   AC_CHECK_HEADERS(libavcodec/avcodec.h, [:], [ac_cv_my_have_ffmpeg=no])
@@ -41,13 +42,21 @@ if test "${ac_cv_my_have_ffmpeg}" != "yes"; then
     LIBAVUTIL_LIBS="-lavutil"
     LIBAVFORMAT_LIBS="-lavformat"
     LIBSWSCALE_LIBS="-lswscale"
-    AC_CHECK_LIB(ws2_32, main, LOL_LIBS="${LOL_LIBS} -lws2_32")
+    LIBSWRESAMPLE_LIBS="-lswresample"
+    dnl  Required by avformat/network.c
+    AC_CHECK_LIB(ws2_32, main, LOL_FFMPEG_EXTRA_LIBS="${LOL_FFMPEG_EXTRA_LIBS} -lws2_32")
+    dnl  Required by avformat/tls_schannel.c
+    AC_CHECK_LIB(secur32, main, LOL_FFMPEG_EXTRA_LIBS="${LOL_FFMPEG_EXTRA_LIBS} -lsecur32")
+    dnl  Required by avutil/random_seed.c
+    AC_CHECK_LIB(bcrypt, main, LOL_FFMPEG_EXTRA_LIBS="${LOL_FFMPEG_EXTRA_LIBS} -lbcrypt")
+    dnl  Required by avcodec/dxva2.c
+    AC_CHECK_LIB(ole32, main, LOL_FFMPEG_EXTRA_LIBS="${LOL_FFMPEG_EXTRA_LIBS} -lole32")
   fi
 fi
 if test "${ac_cv_my_have_ffmpeg}" = "yes"; then
   AC_DEFINE(LOL_USE_FFMPEG, 1, Define to 1 to use FFmpeg)
   LOL_CFLAGS="${LOL_CFLAGS} ${LIBAVFORMAT_CFLAGS} ${LIBAVUTIL_CFLAGS} ${LIBAVCODEC_CFLAGS} ${LIBSWSCALE_CFLAGS}"
-  LOL_LIBS="${LOL_LIBS} ${LIBAVFORMAT_LIBS} ${LIBAVUTIL_LIBS} ${LIBAVCODEC_LIBS} ${LIBSWSCALE_LIBS}"
+  LOL_LIBS="${LOL_LIBS} ${LIBAVFORMAT_LIBS} ${LIBAVCODEC_LIBS} ${LIBAVUTIL_LIBS} ${LIBSWSCALE_LIBS} ${LIBSWRESAMPLE_LIBS} ${LOL_FFMPEG_EXTRA_LIBS}"
 fi
 
 ]) # LOL_AC_CHECK_FFMPEG_INNER
