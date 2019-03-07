@@ -54,9 +54,6 @@ movie::movie(ivec2 size)
     m_index(0)
 {
 #if LOL_USE_FFMPEG
-    av_register_all();
-    //av_log_set_callback(ffmpeg_logger);
-
     m_frame = av_frame_alloc();
     ASSERT(m_frame);
 
@@ -122,23 +119,29 @@ bool movie::push_image(image &im)
 
     m_frame->pts = m_index++;
 
-    AVPacket pkt;
-    memset(&pkt, 0, sizeof(pkt));
-    av_init_packet(&pkt);
-
-    // XXX: is got_packet necessary?
-    int got_packet = 0;
-    int ret = avcodec_encode_video2(m_avcodec, &pkt, m_frame, &got_packet);
+    int ret = avcodec_send_frame(m_avcodec, m_frame);
     if (ret < 0)
     {
-        msg::error("cannot encode video frame: %s\n", ERROR_TO_STRING(ret));
+        msg::error("cannot send video frame: %s\n", ERROR_TO_STRING(ret));
         return false;
     }
 
-    if (got_packet)
+    while (ret >= 0)
     {
-        pkt.stream_index = m_stream->index;
+        AVPacket pkt;
+        memset(&pkt, 0, sizeof(pkt));
+        av_init_packet(&pkt);
 
+        ret = avcodec_receive_packet(m_avcodec, &pkt);
+        if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
+            return true;
+        if (ret < 0)
+        {
+            msg::error("cannot retrieve video packet: %s\n", ERROR_TO_STRING(ret));
+            return false;
+        }
+
+        pkt.stream_index = m_stream->index;
         ret = av_interleaved_write_frame(m_avformat, &pkt);
         if (ret < 0)
         {
