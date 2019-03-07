@@ -249,7 +249,7 @@ EglApp::EglApp(char const *title, ivec2 res, float fps) :
 #   endif
 
     /* Initialise everything */
-    Ticker::Setup(fps);
+    ticker::setup(fps);
     Video::Setup((ivec2)data->screen_size);
     audio::init();
 #else
@@ -266,7 +266,7 @@ void EglApp::ShowPointer(bool show)
 void EglApp::Tick()
 {
     /* Tick the renderer, show the frame and clamp to desired framerate. */
-    Ticker::tick_draw();
+    ticker::tick_draw();
 #if defined LOL_USE_EGL && !defined __ANDROID__
     eglSwapBuffers(data->egl_dpy, data->egl_surf);
 #endif
@@ -285,6 +285,7 @@ EglApp::~EglApp()
     XCloseDisplay(data->dpy);
 #   endif
 #endif
+    ticker::teardown();
 
     delete data;
 }
