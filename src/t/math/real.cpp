@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -316,7 +316,7 @@ lolunit_declare_fixture(real_test)
         lolunit_assert_lequal((double)fabs(b), 1.0);
     }
 
-    lolunit_declare_test(sqrt_cbrt)
+    lolunit_declare_test(real_sqrt)
     {
         double sqrt0 = sqrt(real(0));
         double sqrt1 = sqrt(real(1));
@@ -337,6 +337,45 @@ lolunit_declare_fixture(real_test)
         lolunit_assert_doubles_equal(sqrt6, sqrt(6.0), 1e-8);
         lolunit_assert_doubles_equal(sqrt7, sqrt(7.0), 1e-8);
         lolunit_assert_doubles_equal(sqrt8, sqrt(8.0), 1e-8);
+    }
+
+    lolunit_declare_test(real_cbrt)
+    {
+        double cbrtm8 = cbrt(real(-8));
+        double cbrtm7 = cbrt(real(-7));
+        double cbrtm6 = cbrt(real(-6));
+        double cbrtm5 = cbrt(real(-5));
+        double cbrtm4 = cbrt(real(-4));
+        double cbrtm3 = cbrt(real(-3));
+        double cbrtm2 = cbrt(real(-2));
+        double cbrtm1 = cbrt(real(-1));
+        double cbrt0 = cbrt(real(0));
+        double cbrt1 = cbrt(real(1));
+        double cbrt2 = cbrt(real(2));
+        double cbrt3 = cbrt(real(3));
+        double cbrt4 = cbrt(real(4));
+        double cbrt5 = cbrt(real(5));
+        double cbrt6 = cbrt(real(6));
+        double cbrt7 = cbrt(real(7));
+        double cbrt8 = cbrt(real(8));
+
+        lolunit_assert_doubles_equal(cbrtm8, cbrt(-8.0), 1e-8);
+        lolunit_assert_doubles_equal(cbrtm7, cbrt(-7.0), 1e-8);
+        lolunit_assert_doubles_equal(cbrtm6, cbrt(-6.0), 1e-8);
+        lolunit_assert_doubles_equal(cbrtm5, cbrt(-5.0), 1e-8);
+        lolunit_assert_doubles_equal(cbrtm4, cbrt(-4.0), 1e-8);
+        lolunit_assert_doubles_equal(cbrtm3, cbrt(-3.0), 1e-8);
+        lolunit_assert_doubles_equal(cbrtm2, cbrt(-2.0), 1e-8);
+        lolunit_assert_doubles_equal(cbrtm1, cbrt(-1.0), 1e-8);
+        lolunit_assert_doubles_equal(cbrt0, cbrt(0.0), 1e-8);
+        lolunit_assert_doubles_equal(cbrt1, cbrt(1.0), 1e-8);
+        lolunit_assert_doubles_equal(cbrt2, cbrt(2.0), 1e-8);
+        lolunit_assert_doubles_equal(cbrt3, cbrt(3.0), 1e-8);
+        lolunit_assert_doubles_equal(cbrt4, cbrt(4.0), 1e-8);
+        lolunit_assert_doubles_equal(cbrt5, cbrt(5.0), 1e-8);
+        lolunit_assert_doubles_equal(cbrt6, cbrt(6.0), 1e-8);
+        lolunit_assert_doubles_equal(cbrt7, cbrt(7.0), 1e-8);
+        lolunit_assert_doubles_equal(cbrt8, cbrt(8.0), 1e-8);
     }
 
     lolunit_declare_test(real_ldexp)
