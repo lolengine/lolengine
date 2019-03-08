@@ -211,12 +211,12 @@ Scene& Scene::GetScene(int index)
     return *g_scenes[index];
 }
 
-void Scene::Link(Entity* entity)
+void Scene::Link(entity* entity)
 {
     entity->m_scene_mask |= m_mask_id;
 }
 
-bool Scene::IsRelevant(Entity* entity)
+bool Scene::IsRelevant(entity* entity)
 {
     return !!(entity->m_scene_mask & m_mask_id);
 }

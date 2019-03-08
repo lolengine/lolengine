@@ -13,7 +13,7 @@
 #pragma once
 
 //
-// The Entity class
+// The entity class
 // ----------------
 // Entities are objects that can be ticked by the game loop and/or the render
 // loop. Entities are implemented as one or several linked lists. See the
@@ -27,23 +27,7 @@
 namespace lol
 {
 
-struct InitState
-{
-    enum Value
-    {
-        Unknown,
-        Error,
-        NeedInitDraw,
-        NeedInitGame,
-        Ready,
-    }
-    m_value;
-
-    inline InitState(Value v) : m_value(v) {}
-    inline operator Value() { return m_value; }
-};
-
-class Entity
+class entity
 {
     friend class Scene;
     friend class ticker;
@@ -52,21 +36,32 @@ class Entity
 public:
     virtual std::string GetName() const;
 
-    inline bool IsTicked() { return !!m_ref && !m_autorelease; }
+    inline bool IsTicked() { return !!m_ref && !has_flags(flags::autorelease); }
+
+    enum class flags : uint16_t
+    {
+        none = 0,
+        init_game   = 1 << 0,
+        init_draw   = 1 << 1,
+        fini_game   = 1 << 2,
+        fini_draw   = 1 << 4,
+        destroying  = 1 << 5,
+        autorelease = 1 << 6,
+    };
+
+    inline void add_flags(flags f);
+    inline void remove_flags(flags f);
+    inline bool has_flags(flags f);
+
 protected:
-    Entity();
-    virtual ~Entity();
+    entity();
+    virtual ~entity();
 
-    inline int  IsDestroying() { return m_destroy; }
-
-    virtual void InitGame();
-    virtual void InitDraw();
+    virtual bool init_game() { return true; }
+    virtual bool init_draw() { return true; }
 
     virtual void tick_game(float seconds);
     virtual void tick_draw(float seconds, class Scene &scene);
-
-    /* The initialisation state */
-    InitState m_initstate;
 
 #if !LOL_BUILD_RELEASE
     tickable::state m_tickstate;
@@ -76,9 +71,29 @@ protected:
     tickable::group::draw m_drawgroup;
 
 private:
-    int m_ref, m_autorelease, m_destroy;
+    flags m_flags = flags::none;
+    int m_ref = 0;
     uint64_t m_scene_mask = 0;
 };
+
+static inline entity::flags operator |(entity::flags a, entity::flags b)
+{
+    return (entity::flags)((uint16_t)a | (uint16_t)b);
+}
+
+static inline entity::flags operator &(entity::flags a, entity::flags b)
+{
+    return (entity::flags)((uint16_t)a & (uint16_t)b);
+}
+
+static inline entity::flags operator ^(entity::flags a, entity::flags b)
+{
+    return (entity::flags)((uint16_t)a ^ (uint16_t)b);
+}
+
+inline void entity::add_flags(entity::flags f) { m_flags = m_flags | f; }
+inline void entity::remove_flags(entity::flags f) { m_flags = (m_flags | f) ^ f; }
+inline bool entity::has_flags(entity::flags f) { return (m_flags & f) != flags::none; }
 
 template<typename T> struct entity_dict
 {
@@ -105,6 +120,9 @@ template<typename T> struct entity_dict
     std::map<std::string, T*> m_cache1;
     std::map<T*, std::string> m_cache2;
 };
+
+// The old API
+typedef entity Entity;
 
 } /* namespace lol */
 

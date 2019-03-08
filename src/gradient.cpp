@@ -48,12 +48,12 @@ Gradient::Gradient(vec3 aa, vec3 bb)
 
 void Gradient::tick_game(float seconds)
 {
-    Entity::tick_game(seconds);
+    entity::tick_game(seconds);
 }
 
 void Gradient::tick_draw(float seconds, Scene &scene)
 {
-    Entity::tick_draw(seconds, scene);
+    entity::tick_draw(seconds, scene);
 
     float const vertex[] = { m_aabb.aa.x, m_aabb.aa.y, 0.0f,
                              m_aabb.bb.x, m_aabb.aa.y, 0.0f,

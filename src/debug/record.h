@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -24,7 +24,7 @@ namespace lol
 
 class DebugRecordData;
 
-class DebugRecord : public Entity
+class DebugRecord : public entity
 {
 public:
     DebugRecord(std::string const &path, float fps);

@@ -32,7 +32,7 @@
 namespace lol
 {
 
-class SdlInput : public Entity
+class SdlInput : public entity
 {
 public:
     /** passing the screen resolution (note: not the windowed app resolution!) allows to make the mouse axis resolution-independent */

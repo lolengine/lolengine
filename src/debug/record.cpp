@@ -61,12 +61,12 @@ DebugRecord::DebugRecord(std::string const &path, float fps)
 
 void DebugRecord::tick_game(float seconds)
 {
-    Entity::tick_game(seconds);
+    entity::tick_game(seconds);
 }
 
 void DebugRecord::tick_draw(float seconds, Scene &scene)
 {
-    Entity::tick_draw(seconds, scene);
+    entity::tick_draw(seconds, scene);
 
     ivec2 size = Video::GetSize();
 

@@ -2,7 +2,7 @@
 //  Lol Engine — Bullet physics test
 //
 //  Copyright © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//            © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -134,7 +134,7 @@ std::string EasyCharacterController::GetName()
 //Physic Tick
 void EasyCharacterController::tick_game(float seconds)
 {
-    Entity::tick_game(seconds);
+    entity::tick_game(seconds);
 
     //Send final velocity in Bullet
     {

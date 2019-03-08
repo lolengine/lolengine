@@ -62,7 +62,7 @@ protected:
     virtual void Init(std::string const &path, image* img);
 
 public:
-    /* Inherited from Entity */
+    /* Inherited from entity */
     virtual std::string GetName() const;
 
     /* New methods */

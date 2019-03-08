@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
@@ -17,19 +19,37 @@
 
 #include <lol/math/vector.h>
 
+#if LOL_USE_SDL
+#   if HAVE_SDL2_SDL_H
+#      include <SDL2/SDL.h>
+#   elif HAVE_SDL_H
+#      include <SDL.h>
+#   endif
+#endif
+
 namespace lol
 {
 
-//-----------------------------------------------------------------------------
-class SdlAppDisplayData;
+namespace sdl
+{
 
-class SdlAppDisplay
+class app
+{
+public:
+    app(char const *title, ivec2 res, float fps);
+    virtual ~app();
+
+    void ShowPointer(bool show);
+    void Tick();
+};
+
+class app_display
 {
     friend class ApplicationDisplay;
 
 public:
-    SdlAppDisplay(char const *title, ivec2 resolution);
-    virtual ~SdlAppDisplay();
+    app_display(char const *title, ivec2 resolution);
+    virtual ~app_display();
 
 protected:
     virtual void set_resolution(ivec2 resolution);
@@ -41,24 +61,13 @@ protected:
     void Disable();
 
 private:
-    SdlAppDisplayData *data;
+#if LOL_USE_SDL
+    SDL_Window *m_window;
+    SDL_GLContext m_glcontext;
+#endif
 };
 
-//-----------------------------------------------------------------------------
-class SdlAppData;
-
-class SdlApp
-{
-public:
-    SdlApp(char const *title, ivec2 res, float fps);
-    virtual ~SdlApp();
-
-    void ShowPointer(bool show);
-    void Tick();
-
-private:
-    SdlAppData *data;
-};
+} /* namespace sdl */
 
 } /* namespace lol */
 

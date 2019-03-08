@@ -73,7 +73,7 @@ protected:
 #if __ANDROID__
     //NOT HANDLED YET
 #elif LOL_USE_SDL
-    SdlAppDisplay display;
+    sdl::app_display display;
 #elif HAVE_GLES_2X
     /* FIXME: this macro is only deactivated if we include "lolgl.h" */
     //NOT HANDLED YET
@@ -137,7 +137,7 @@ class ApplicationData
 #if __ANDROID__
     AndroidApp app;
 #elif LOL_USE_SDL
-    SdlApp app;
+    sdl::app app;
 #elif HAVE_GLES_2X
     /* FIXME: this macro is only deactivated if we include "lolgl.h" */
     EglApp app;

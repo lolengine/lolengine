@@ -62,8 +62,8 @@ private:
     std::unordered_set<std::shared_ptr<tickable>> m_tickables;
 
     /* Entity management */
-    array<Entity *> DEPRECATED_m_todolist, DEPRECATED_m_todolist_delayed, DEPRECATED_m_autolist;
-    array<Entity *> DEPRECATED_m_list[(int)tickable::group::all::end];
+    array<entity *> DEPRECATED_m_todolist, DEPRECATED_m_todolist_delayed, DEPRECATED_m_autolist;
+    array<entity *> DEPRECATED_m_list[(int)tickable::group::all::end];
     array<int> DEPRECATED_m_scenes[(int)tickable::group::all::end];
     int DEPRECATED_nentities;
 
@@ -114,7 +114,7 @@ void ticker::remove(std::shared_ptr<tickable> entity)
 // Old API for entities
 //
 
-void Ticker::Register(Entity *entity)
+void Ticker::Register(entity *entity)
 {
     /* If we are called from its constructor, the object's vtable is not
      * ready yet, so we do not know which group this entity belongs to. Wait
@@ -123,22 +123,22 @@ void Ticker::Register(Entity *entity)
 
     /* Objects are autoreleased by default. Put them in a list. */
     data->DEPRECATED_m_autolist.push(entity);
-    entity->m_autorelease = 1;
+    entity->add_flags(entity::flags::autorelease);
     entity->m_ref = 1;
 
     data->DEPRECATED_nentities++;
 }
 
-void Ticker::Ref(Entity *entity)
+void Ticker::Ref(entity *entity)
 {
     ASSERT(entity, "dereferencing nullptr entity\n");
-    ASSERT(!entity->m_destroy,
+    ASSERT(!entity->has_flags(entity::flags::destroying),
            "referencing entity scheduled for destruction %s\n",
            entity->GetName().c_str());
 
-    if (entity->m_autorelease)
+    if (entity->has_flags(entity::flags::autorelease))
     {
-        /* Get the entity out of the m_autorelease list. This is usually
+        /* Get the entity out of the autorelease list. This is usually
          * very fast since the last entry in autolist is the last
          * registered entity. */
         for (int i = data->DEPRECATED_m_autolist.count(); i--; )
@@ -149,19 +149,19 @@ void Ticker::Ref(Entity *entity)
                 break;
             }
         }
-        entity->m_autorelease = 0;
+        entity->remove_flags(entity::flags::autorelease);
     }
     else
         entity->m_ref++;
 }
 
-int Ticker::Unref(Entity *entity)
+int Ticker::Unref(entity *entity)
 {
     ASSERT(entity, "dereferencing null entity\n");
-    ASSERT(entity->m_ref > 0, "dereferencing unreferenced entity %s\n",
-           entity->GetName().c_str());
-    ASSERT(!entity->m_autorelease, "dereferencing autoreleased entity %s\n",
-           entity->GetName().c_str());
+    ASSERT(entity->m_ref > 0,
+           "dereferencing unreferenced entity %s\n", entity->GetName().c_str());
+    ASSERT(!entity->has_flags(entity::flags::autorelease),
+           "dereferencing autoreleased entity %s\n", entity->GetName().c_str());
 
     return --entity->m_ref;
 }
@@ -241,9 +241,9 @@ void ticker_data::GameThreadTick()
 
         for (int i = 0; i < data->DEPRECATED_m_list[g].count(); ++i)
         {
-            Entity *e = data->DEPRECATED_m_list[g][i];
+            entity *e = data->DEPRECATED_m_list[g][i];
             msg::debug("  \\-- [%p] %s (m_ref %d, destroy %d)\n",
-                       e, e->GetName().c_str(), e->m_ref, e->m_destroy);
+                       e, e->GetName().c_str(), e->m_ref, e->has_flags(entity::flags::destroying));
         }
     }
 #endif
@@ -292,7 +292,7 @@ void ticker_data::GameThreadTick()
         for (int g = 0; g < (int)tickable::group::all::end && n < data->panic; ++g)
         for (int i = 0; i < data->DEPRECATED_m_list[g].count() && n < data->panic; ++i)
         {
-            Entity * e = data->DEPRECATED_m_list[g][i];
+            entity * e = data->DEPRECATED_m_list[g][i];
             if (e->m_ref)
             {
 #if !LOL_BUILD_RELEASE
@@ -315,15 +315,15 @@ void ticker_data::GameThreadTick()
     /* Garbage collect objects that can be destroyed. We can do this
      * before inserting awaiting objects, because only objects already
      * in the tick lists can be marked for destruction. */
-    array<Entity*> destroy_list;
+    array<entity*> destroy_list;
     bool do_reserve = true;
     for (int g = 0; g < (int)tickable::group::all::end; ++g)
     {
         for (int i = data->DEPRECATED_m_list[g].count(); i--;)
         {
-            Entity *e = data->DEPRECATED_m_list[g][i];
+            entity *e = data->DEPRECATED_m_list[g][i];
 
-            if (e->m_destroy && g < (int)tickable::group::game::end)
+            if (e->has_flags(entity::flags::destroying) && g < (int)tickable::group::game::end)
             {
                 /* Game tick list:
                 * If entity is to be destroyed, remove it */
@@ -335,7 +335,7 @@ void ticker_data::GameThreadTick()
                 }
                 destroy_list.push_unique(e);
             }
-            else if (e->m_destroy)
+            else if (e->has_flags(entity::flags::destroying))
             {
                 /* Draw tick list:
                 * If entity is to be destroyed,
@@ -360,21 +360,21 @@ void ticker_data::GameThreadTick()
             else
             {
                 if (e->m_ref <= 0 && g >= (int)tickable::group::draw::begin)
-                    e->m_destroy = 1;
+                    e->add_flags(entity::flags::destroying);
             }
         }
     }
     if (!!destroy_list.count())
     {
         data->DEPRECATED_nentities -= destroy_list.count();
-        for (Entity* e : destroy_list)
+        for (entity* e : destroy_list)
             delete e;
     }
 
     /* Insert waiting objects into the appropriate lists */
     while (data->DEPRECATED_m_todolist.count())
     {
-        Entity *e = data->DEPRECATED_m_todolist.last();
+        entity *e = data->DEPRECATED_m_todolist.last();
 
         //If the entity has no mask, default it
         if (e->m_scene_mask == 0)
@@ -404,7 +404,7 @@ void ticker_data::GameThreadTick()
         }
 
         // Initialize the entity
-        e->InitGame();
+        e->init_game();
     }
 
     data->DEPRECATED_m_todolist = data->DEPRECATED_m_todolist_delayed;
@@ -415,8 +415,8 @@ void ticker_data::GameThreadTick()
     {
         for (int i = 0; i < data->DEPRECATED_m_list[g].count() && !data->quit /* Stop as soon as required */; ++i)
         {
-            Entity *e = data->DEPRECATED_m_list[g][i];
-            if (!e->m_destroy)
+            entity *e = data->DEPRECATED_m_list[g][i];
+            if (!e->has_flags(entity::flags::destroying))
             {
 #if !LOL_BUILD_RELEASE
                 if (e->m_tickstate != tickable::state::idle)
@@ -468,9 +468,9 @@ void ticker_data::DrawThreadTick()
 
             for (int i = 0; i < data->DEPRECATED_m_list[g].count() && !data->quit /* Stop as soon as required */; ++i)
             {
-                Entity *e = data->DEPRECATED_m_list[g][i];
+                entity *e = data->DEPRECATED_m_list[g][i];
 
-                if (!e->m_destroy)
+                if (!e->has_flags(entity::flags::destroying))
                 {
 #if !LOL_BUILD_RELEASE
                     if (e->m_tickstate != tickable::state::idle)
@@ -506,13 +506,13 @@ void ticker_data::DiskThreadTick()
     ;
 }
 
-void Ticker::SetState(Entity * /* entity */, uint32_t /* state */)
+void Ticker::SetState(entity * /* entity */, uint32_t /* state */)
 {
 
 }
 
-void Ticker::SetStateWhenMatch(Entity * /* entity */, uint32_t /* state */,
-                               Entity * /* other_entity */, uint32_t /* other_state */)
+void Ticker::SetStateWhenMatch(entity * /* entity */, uint32_t /* state */,
+                               entity * /* other_entity */, uint32_t /* other_state */)
 {
 
 }
@@ -592,7 +592,7 @@ int Ticker::GetFrameNum()
 
 void Ticker::Shutdown()
 {
-    /* We're bailing out. Release all m_autorelease objects. */
+    /* We're bailing out. Release all autorelease objects. */
     while (data->DEPRECATED_m_autolist.count())
     {
         data->DEPRECATED_m_autolist.last()->m_ref--;

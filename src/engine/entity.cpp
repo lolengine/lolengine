@@ -18,13 +18,10 @@ namespace lol
 {
 
 /*
- * Public Entity class
+ * Public entity class
  */
 
-Entity::Entity() :
-    m_initstate(InitState::Ready),
-    m_ref(0),
-    m_destroy(0)
+entity::entity()
 {
 #if !LOL_BUILD_RELEASE
     m_tickstate = tickable::state::idle;
@@ -36,28 +33,20 @@ Entity::Entity() :
     Ticker::Register(this);
 }
 
-Entity::~Entity()
+entity::~entity()
 {
 #if !LOL_BUILD_RELEASE
-    if (!m_destroy)
+    if (!has_flags(flags::destroying))
         msg::error("entity destructor called directly\n");
 #endif
 }
 
-std::string Entity::GetName() const
+std::string entity::GetName() const
 {
     return "<entity>";
 }
 
-void Entity::InitGame()
-{
-}
-
-void Entity::InitDraw()
-{
-}
-
-void Entity::tick_game(float seconds)
+void entity::tick_game(float seconds)
 {
     UNUSED(seconds);
 #if !LOL_BUILD_RELEASE
@@ -67,7 +56,7 @@ void Entity::tick_game(float seconds)
 #endif
 }
 
-void Entity::tick_draw(float seconds, Scene &scene)
+void entity::tick_draw(float seconds, Scene &scene)
 {
     UNUSED(seconds, scene);
 #if !LOL_BUILD_RELEASE

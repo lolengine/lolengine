@@ -178,7 +178,7 @@ void TileSet::Init(std::string const &path, Image* image)
     m_data->m_name = "<tileset> " + path;
 }
 
-//Inherited from Entity -------------------------------------------------------
+//Inherited from entity -------------------------------------------------------
 std::string TileSet::GetName() const
 {
     return m_data->m_name;

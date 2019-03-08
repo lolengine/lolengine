@@ -41,7 +41,7 @@
 namespace lol
 {
 
-class gui : public Entity
+class gui : public entity
 {
 public:
     gui(ImFontAtlas *shared_font_atlas);
@@ -54,7 +54,7 @@ public:
     static void refresh_fonts();
 
 private:
-    typedef Entity super;
+    typedef entity super;
 
 protected:
     virtual void tick_game(float seconds);

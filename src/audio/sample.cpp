@@ -95,7 +95,7 @@ sample::~sample()
 
 void sample::tick_game(float seconds)
 {
-    Entity::tick_game(seconds);
+    entity::tick_game(seconds);
 }
 
 std::string sample::GetName() const

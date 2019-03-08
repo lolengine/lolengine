@@ -2,7 +2,7 @@
 //  Lol Engine — Bullet physics test
 //
 //  Copyright © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2012—2018 Sam Hocevar <sam@hocevar.net>
+//            © 2012—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -65,7 +65,7 @@ struct RayCastResult
     unsigned int             m_flags; //???
 };
 
-class Simulation : public Entity
+class Simulation : public entity
 {
 public:
     Simulation() :
@@ -111,7 +111,7 @@ public:
 
     virtual void tick_game(float seconds)
     {
-        Entity::tick_game(seconds);
+        entity::tick_game(seconds);
 
         //step the simulation
         if (m_dynamics_world)

@@ -91,7 +91,7 @@ void TextureImage::tick_draw(float seconds, Scene &scene)
 {
     super::tick_draw(seconds, scene);
 
-    if (IsDestroying())
+    if (has_flags(entity::flags::destroying))
     {
         if (m_data->m_image)
         {

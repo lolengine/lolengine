@@ -121,8 +121,8 @@ public:
 
 public:
     //TODO: don't like the name
-    void Link(Entity* entity);
-    bool IsRelevant(Entity* entity);
+    void Link(entity* entity);
+    bool IsRelevant(entity* entity);
 
 public:
     Camera* GetCamera(int cam_idx = -1);

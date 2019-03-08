@@ -2,7 +2,7 @@
 //  Lol Engine — Bullet physics test
 //
 //  Copyright © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2012—2018 Sam Hocevar <sam@hocevar.net>
+//            © 2012—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -33,7 +33,7 @@ namespace phys
 {
 
 class EasyCharacterController : public EasyPhysic,
-                                public Entity
+                                public entity
 {
 
     friend class Simulation;

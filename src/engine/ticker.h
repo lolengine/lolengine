@@ -37,9 +37,9 @@ public:
     static void remove(std::shared_ptr<tickable> entity);
 
     // The old API
-    static void Register(class Entity *entity);
-    static void Ref(class Entity *entity);
-    static int Unref(class Entity *entity);
+    static void Register(class entity *entity);
+    static void Ref(class entity *entity);
+    static int Unref(class entity *entity);
 
     static void StartBenchmark();
     static void StopBenchmark();
@@ -47,9 +47,9 @@ public:
     static void StopRecording();
     static int GetFrameNum();
 
-    static void SetState(class Entity *entity, uint32_t state);
-    static void SetStateWhenMatch(class Entity *entity, uint32_t state,
-                                  class Entity *other_entity, uint32_t other_state);
+    static void SetState(class entity *entity, uint32_t state);
+    static void SetStateWhenMatch(class entity *entity, uint32_t state,
+                                  class entity *other_entity, uint32_t other_state);
 
     static void Shutdown();
     static int Finished();

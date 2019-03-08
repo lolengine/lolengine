@@ -110,7 +110,7 @@ SdlInput::~SdlInput()
 
 void SdlInput::tick_game(float seconds)
 {
-    Entity::tick_game(seconds);
+    entity::tick_game(seconds);
 
     if (!m_tick_in_draw_thread)
         tick(seconds);
@@ -118,7 +118,7 @@ void SdlInput::tick_game(float seconds)
 
 void SdlInput::tick_draw(float seconds, Scene &scene)
 {
-    Entity::tick_draw(seconds, scene);
+    entity::tick_draw(seconds, scene);
 
     if (m_tick_in_draw_thread)
         tick(seconds);

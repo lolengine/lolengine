@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -33,9 +33,9 @@ namespace lol
 
 class TextureImageData;
 
-class TextureImage : public Entity
+class TextureImage : public entity
 {
-    typedef Entity super;
+    typedef entity super;
 protected:
     virtual TextureImageData* GetNewData();
 
@@ -53,7 +53,7 @@ protected:
     virtual void tick_draw(float seconds, Scene &scene);
 
 public:
-    /* Inherited from Entity */
+    /* Inherited from entity */
     virtual std::string GetName() const;
 
     void UpdateTexture(image* img);

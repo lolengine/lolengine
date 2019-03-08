@@ -27,7 +27,7 @@ namespace lol
 
 class sample_data;
 
-class sample : public Entity
+class sample : public entity
 {
 public:
     static sample *create(std::string const &path);
@@ -37,7 +37,7 @@ protected:
     sample(std::string const &path);
     virtual ~sample();
 
-    /* Inherited from Entity */
+    /* Inherited from entity */
     virtual std::string GetName() const;
     virtual void tick_game(float seconds);
 

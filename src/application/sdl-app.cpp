@@ -31,24 +31,9 @@ namespace lol
 {
 
 /*
-* SDL App display implementation class
+* Public sdl::app_display class
 */
-class SdlAppDisplayData
-{
-    friend class SdlAppDisplay;
-
-private:
-#if LOL_USE_SDL
-    SDL_Window *m_window;
-    SDL_GLContext m_glcontext;
-#endif
-};
-
-/*
-* Public SdlApp class
-*/
-SdlAppDisplay::SdlAppDisplay(char const *title, ivec2 res)
-    : data(new SdlAppDisplayData())
+sdl::app_display::app_display(char const *title, ivec2 res)
 {
 #if LOL_USE_SDL
     ivec2 window_size = res;
@@ -70,72 +55,70 @@ SdlAppDisplay::SdlAppDisplay(char const *title, ivec2 res)
     int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
     if (window_size == ivec2(0))
         flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-    data->m_window = SDL_CreateWindow(title,
+    m_window = SDL_CreateWindow(title,
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
         window_size.x, window_size.y, flags);
-    if (!data->m_window)
+    if (!m_window)
     {
         msg::error("cannot create rendering window: %s\n", SDL_GetError());
         SDL_Quit();
         exit(EXIT_FAILURE);
     }
-    SDL_GetWindowSize(data->m_window, &res.x, &res.y);
+    SDL_GetWindowSize(m_window, &res.x, &res.y);
 
-    data->m_glcontext = SDL_GL_CreateContext(data->m_window);
+    m_glcontext = SDL_GL_CreateContext(m_window);
 
     /* Initialise everything */
     Video::Setup(res); //TODO ?? Should it be here ?
 #endif
 }
 
-SdlAppDisplay::~SdlAppDisplay()
+sdl::app_display::~app_display()
 {
 #if LOL_USE_SDL
-    if (data->m_window)
+    if (m_window)
     {
-        SDL_GL_DeleteContext(data->m_glcontext);
-        SDL_DestroyWindow(data->m_window);
+        SDL_GL_DeleteContext(m_glcontext);
+        SDL_DestroyWindow(m_window);
     }
 #endif
-
-    delete data;
 }
 
-ivec2 SdlAppDisplay::resolution() const
+ivec2 sdl::app_display::resolution() const
 {
     ivec2 ret(0);
 #if LOL_USE_SDL
-    SDL_GetWindowSize(data->m_window, &ret.x, &ret.y);
+    SDL_GetWindowSize(m_window, &ret.x, &ret.y);
 #endif
     return ret;
 }
 
-void SdlAppDisplay::set_resolution(ivec2 resolution)
+void sdl::app_display::set_resolution(ivec2 resolution)
 {
 #if LOL_USE_SDL
-    SDL_SetWindowSize(data->m_window, resolution.x, resolution.y);
+    SDL_SetWindowSize(m_window, resolution.x, resolution.y);
 #endif
 }
 
-void SdlAppDisplay::SetPosition(ivec2 position)
+void sdl::app_display::SetPosition(ivec2 position)
 {
 #if LOL_USE_SDL
-    SDL_SetWindowPosition(data->m_window, position.x, position.y);
+    SDL_SetWindowPosition(m_window, position.x, position.y);
 #endif
 }
 
-void SdlAppDisplay::Enable()
+void sdl::app_display::Enable()
 {
 #if LOL_USE_SDL
     //TODO: Should we do that: ?
-    SDL_GL_MakeCurrent(data->m_window, data->m_glcontext);
+    SDL_GL_MakeCurrent(m_window, m_glcontext);
 #endif
 }
 
-void SdlAppDisplay::Disable()
+void sdl::app_display::Disable()
 {
 #if LOL_USE_SDL
-        SDL_GL_SwapWindow(data->m_window);
+    SDL_GL_SwapWindow(m_window);
 #endif
 }
 
@@ -152,24 +135,9 @@ const char* SceneDisplay::GetPhysicalName(int index)
 #endif
 
 /*
- * SDL App implementation class
+ * Public sdl::app class
  */
-class SdlAppData
-{
-    friend class SdlApp;
-
-private:
-#if LOL_USE_SDL
-    SDL_Window *m_window;
-    SDL_GLContext m_glcontext;
-#endif
-};
-
-/*
- * Public SdlApp class
- */
-SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
-    data(new SdlAppData())
+sdl::app::app(char const *title, ivec2 res, float fps)
 {
     UNUSED(title);
 #if LOL_USE_SDL
@@ -189,25 +157,24 @@ SdlApp::SdlApp(char const *title, ivec2 res, float fps) :
 #endif
 }
 
-void SdlApp::ShowPointer(bool show)
+void sdl::app::ShowPointer(bool show)
 {
 #if LOL_USE_SDL
     SDL_ShowCursor(show ? 1 : 0);
 #endif
 }
 
-void SdlApp::Tick()
+void sdl::app::Tick()
 {
     /* Tick the renderer, show the frame and clamp to desired framerate. */
     Ticker::tick_draw();
 }
 
-SdlApp::~SdlApp()
+sdl::app::~app()
 {
 #if LOL_USE_SDL
     SDL_Quit();
 #endif
-    delete data;
 }
 
 } /* namespace lol */

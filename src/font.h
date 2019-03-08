@@ -24,7 +24,7 @@ namespace lol
 
 class FontData;
 
-class Font : public Entity
+class Font : public entity
 {
 public:
     static Font *create(std::string const &path);
@@ -34,7 +34,7 @@ protected:
     Font(std::string const &path);
     ~Font();
 
-    /* Inherited from Entity */
+    /* Inherited from entity */
     virtual std::string GetName() const;
     virtual void tick_draw(float seconds, Scene &scene);
 

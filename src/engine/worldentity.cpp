@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -41,12 +41,12 @@ std::string WorldEntity::GetName() const
 
 void WorldEntity::tick_game(float seconds)
 {
-    Entity::tick_game(seconds);
+    entity::tick_game(seconds);
 }
 
 void WorldEntity::tick_draw(float seconds, Scene &scene)
 {
-    Entity::tick_draw(seconds, scene);
+    entity::tick_draw(seconds, scene);
 }
 
 } /* namespace lol */

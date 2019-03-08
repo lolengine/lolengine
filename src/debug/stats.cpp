@@ -45,7 +45,7 @@ DebugStats::DebugStats(char const *path)
 
 void DebugStats::tick_game(float seconds)
 {
-    Entity::tick_game(seconds);
+    entity::tick_game(seconds);
 
     fprintf(data->fp, "%i %f %f %f %f\n",
             Ticker::GetFrameNum(),
