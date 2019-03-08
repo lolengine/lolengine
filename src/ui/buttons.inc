@@ -18,8 +18,8 @@ _BTN(0, Unknown)
 
 // Mouse buttons (FIXME: rename to LeftClick etc.?)
 _BTN(1, Left)
-_BTN(2, Right)
-_BTN(3, Middle)
+_BTN(2, Middle)
+_BTN(3, Right)
 _BTN(4, Focus)
 
 // Typical game controller buttons
