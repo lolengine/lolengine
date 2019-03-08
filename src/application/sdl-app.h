@@ -45,7 +45,7 @@ public:
 
 class app_display
 {
-    friend class ApplicationDisplay;
+    friend class lol::ApplicationDisplay;
 
 public:
     app_display(char const *title, ivec2 resolution);
