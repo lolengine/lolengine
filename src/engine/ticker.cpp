@@ -30,11 +30,11 @@ class ticker_data
 public:
     ticker_data()
       : DEPRECATED_nentities(0),
-        frame(0), recording(0), deltatime(0), bias(0), fps(0),
+        m_frame(0), m_recording(0), deltatime(0), bias(0), fps(0),
 #if LOL_BUILD_DEBUG
         keepalive(0),
 #endif
-        quit(0), quitframe(0), quitdelay(20), panic(0)
+        m_quit(0), m_quitframe(0), m_quitdelay(20), m_panic(0)
     {
     }
 
@@ -44,7 +44,7 @@ public:
                "still %d entities in ticker\n", DEPRECATED_nentities);
         ASSERT(DEPRECATED_m_autolist.count() == 0,
                "still %d autoreleased entities\n", DEPRECATED_m_autolist.count());
-        msg::debug("%d frames required to quit\n", frame - quitframe);
+        msg::debug("%d frames required to quit\n", m_frame - m_quitframe);
 
 #if LOL_FEATURE_THREADS
         gametick.push(0);
@@ -54,6 +54,9 @@ public:
         ASSERT(drawtick.size() == 0);
 #endif
     }
+
+    void handle_shutdown();
+    void collect_garbage();
 
 private:
     // Tickables waiting to be inserted
@@ -68,7 +71,7 @@ private:
     int DEPRECATED_nentities;
 
     /* Fixed framerate management */
-    int frame, recording;
+    int m_frame, m_recording;
     timer m_timer;
     float deltatime, bias, fps;
 #if LOL_BUILD_DEBUG
@@ -90,7 +93,7 @@ private:
 #endif
 
     /* Shutdown management */
-    int quit, quitframe, quitdelay, panic;
+    int m_quit, m_quitframe, m_quitdelay, m_panic;
 };
 
 static std::unique_ptr<ticker_data> data;
@@ -248,13 +251,13 @@ void ticker_data::GameThreadTick()
     }
 #endif
 
-    data->frame++;
+    data->m_frame++;
 
     /* Ensure some randomness */
-    rand<int>();
+    (void)rand<int>();
 
     /* If recording with fixed framerate, set deltatime to a fixed value */
-    if (data->recording && data->fps)
+    if (data->m_recording && data->fps)
     {
         data->deltatime = 1.f / data->fps;
     }
@@ -280,96 +283,8 @@ void ticker_data::GameThreadTick()
     }
 #endif
 
-    /* If shutdown is stuck, kick the first entity we meet and see
-     * whether it makes things better. Note that it is always a bug to
-     * have referenced entities after 20 frames, but at least this
-     * safeguard makes it possible to exit the program cleanly. */
-    if (data->quit && !((data->frame - data->quitframe) % data->quitdelay))
-    {
-        int n = 0;
-        data->panic = 2 * (data->panic + 1);
-
-        for (int g = 0; g < (int)tickable::group::all::end && n < data->panic; ++g)
-        for (int i = 0; i < data->DEPRECATED_m_list[g].count() && n < data->panic; ++i)
-        {
-            entity * e = data->DEPRECATED_m_list[g][i];
-            if (e->m_ref)
-            {
-#if !LOL_BUILD_RELEASE
-                msg::error("poking %s\n", e->GetName().c_str());
-#endif
-                e->m_ref--;
-                n++;
-            }
-        }
-
-#if !LOL_BUILD_RELEASE
-        if (n)
-            msg::error("%d entities stuck after %d frames, poked %d\n",
-                       data->DEPRECATED_nentities, data->quitdelay, n);
-#endif
-
-        data->quitdelay = data->quitdelay > 1 ? data->quitdelay / 2 : 1;
-    }
-
-    /* Garbage collect objects that can be destroyed. We can do this
-     * before inserting awaiting objects, because only objects already
-     * in the tick lists can be marked for destruction. */
-    array<entity*> destroy_list;
-    bool do_reserve = true;
-    for (int g = 0; g < (int)tickable::group::all::end; ++g)
-    {
-        for (int i = data->DEPRECATED_m_list[g].count(); i--;)
-        {
-            entity *e = data->DEPRECATED_m_list[g][i];
-
-            if (e->has_flags(entity::flags::destroying) && g < (int)tickable::group::game::end)
-            {
-                /* Game tick list:
-                * If entity is to be destroyed, remove it */
-                data->DEPRECATED_m_list[g].remove_swap(i);
-                if (do_reserve)
-                {
-                    do_reserve = false;
-                    destroy_list.reserve(data->DEPRECATED_nentities); //Should it be less ?
-                }
-                destroy_list.push_unique(e);
-            }
-            else if (e->has_flags(entity::flags::destroying))
-            {
-                /* Draw tick list:
-                * If entity is to be destroyed,
-                * remove it and store it. */
-                data->DEPRECATED_m_list[g].remove_swap(i);
-                int removal_count = 0;
-                for (int j = 0; j < Scene::GetCount(); j++)
-                {
-                    //If entity is concerned by this scene, add it in the list
-                    if (Scene::GetScene(j).IsRelevant(e))
-                        removal_count++;
-                    //Update scene index
-                    data->DEPRECATED_m_scenes[(int)e->m_drawgroup][j] -= removal_count;
-                }
-                if (do_reserve)
-                {
-                    do_reserve = false;
-                    destroy_list.reserve(data->DEPRECATED_nentities); //Should it be less ?
-                }
-                destroy_list.push_unique(e);
-            }
-            else
-            {
-                if (e->m_ref <= 0 && g >= (int)tickable::group::draw::begin)
-                    e->add_flags(entity::flags::destroying);
-            }
-        }
-    }
-    if (!!destroy_list.count())
-    {
-        data->DEPRECATED_nentities -= destroy_list.count();
-        for (entity* e : destroy_list)
-            delete e;
-    }
+    data->handle_shutdown();
+    data->collect_garbage();
 
     /* Insert waiting objects into the appropriate lists */
     while (data->DEPRECATED_m_todolist.count())
@@ -402,21 +317,41 @@ void ticker_data::GameThreadTick()
                 data->DEPRECATED_m_scenes[(int)e->m_drawgroup][i] += added_count;
             }
         }
-
-        // Initialize the entity
-        e->init_game();
     }
 
     data->DEPRECATED_m_todolist = data->DEPRECATED_m_todolist_delayed;
     data->DEPRECATED_m_todolist_delayed.clear();
 
-    /* Tick objects for the game loop */
-    for (int g = (int)tickable::group::game::begin; g < (int)tickable::group::game::end && !data->quit /* Stop as soon as required */; ++g)
+    for (int g = (int)tickable::group::game::begin; g < (int)tickable::group::game::end; ++g)
     {
-        for (int i = 0; i < data->DEPRECATED_m_list[g].count() && !data->quit /* Stop as soon as required */; ++i)
+        for (int i = 0; i < data->DEPRECATED_m_list[g].count(); ++i)
         {
             entity *e = data->DEPRECATED_m_list[g][i];
-            if (!e->has_flags(entity::flags::destroying))
+
+            if (!e->has_flags(entity::flags::init_game))
+            {
+                // Ensure the entity is initialised on the game thread
+                if (e->init_game())
+                    e->add_flags(entity::flags::init_game);
+            }
+            else if (e->has_flags(entity::flags::destroying))
+            {
+                // If entity is being destroyed, call the release code
+                if (!e->has_flags(entity::flags::release_game) && e->release_game())
+                    e->add_flags(entity::flags::release_game);
+            }
+        }
+    }
+
+    /* Tick objects for the game loop */
+    for (int g = (int)tickable::group::game::begin; g < (int)tickable::group::game::end && !data->m_quit /* Stop as soon as required */; ++g)
+    {
+        for (int i = 0; i < data->DEPRECATED_m_list[g].count() && !data->m_quit /* Stop as soon as required */; ++i)
+        {
+            entity *e = data->DEPRECATED_m_list[g][i];
+
+            if (e->has_flags(entity::flags::init_game)
+                 && !e->has_flags(entity::flags::destroying))
             {
 #if !LOL_BUILD_RELEASE
                 if (e->m_tickstate != tickable::state::idle)
@@ -443,8 +378,29 @@ void ticker_data::DrawThreadTick()
 {
     Profiler::Start(Profiler::STAT_TICK_DRAW);
 
+    for (int g = (int)tickable::group::draw::begin; g < (int)tickable::group::draw::end; ++g)
+    {
+        for (int i = 0; i < data->DEPRECATED_m_list[g].count(); ++i)
+        {
+            entity *e = data->DEPRECATED_m_list[g][i];
+
+            if (!e->has_flags(entity::flags::init_draw))
+            {
+                // Ensure the entity is initialised on the draw thread
+                if (e->init_draw())
+                    e->add_flags(entity::flags::init_draw);
+            }
+            else if (e->has_flags(entity::flags::destroying))
+            {
+                // If entity is being destroyed, call the release code
+                if (!e->has_flags(entity::flags::release_draw) && e->release_draw())
+                    e->add_flags(entity::flags::release_draw);
+            }
+        }
+    }
+
     /* Render each scene one after the other */
-    for (int idx = 0; idx < Scene::GetCount() && !data->quit /* Stop as soon as required */; ++idx)
+    for (int idx = 0; idx < Scene::GetCount() && !data->m_quit /* Stop as soon as required */; ++idx)
     {
         Scene& scene = Scene::GetScene(idx);
 
@@ -455,7 +411,7 @@ void ticker_data::DrawThreadTick()
         scene.pre_render(data->deltatime);
 
         /* Tick objects for the draw loop */
-        for (int g = (int)tickable::group::draw::begin; g < (int)tickable::group::draw::end && !data->quit /* Stop as soon as required */; ++g)
+        for (int g = (int)tickable::group::draw::begin; g < (int)tickable::group::draw::end && !data->m_quit /* Stop as soon as required */; ++g)
         {
             switch (g)
             {
@@ -466,11 +422,12 @@ void ticker_data::DrawThreadTick()
                 break;
             }
 
-            for (int i = 0; i < data->DEPRECATED_m_list[g].count() && !data->quit /* Stop as soon as required */; ++i)
+            for (int i = 0; i < data->DEPRECATED_m_list[g].count() && !data->m_quit /* Stop as soon as required */; ++i)
             {
                 entity *e = data->DEPRECATED_m_list[g][i];
 
-                if (!e->has_flags(entity::flags::destroying))
+                if (e->has_flags(entity::flags::init_draw)
+                     && !e->has_flags(entity::flags::destroying))
                 {
 #if !LOL_BUILD_RELEASE
                     if (e->m_tickstate != tickable::state::idle)
@@ -499,6 +456,94 @@ void ticker_data::DrawThreadTick()
     }
 
     Profiler::Stop(Profiler::STAT_TICK_DRAW);
+}
+
+// If shutdown is stuck, kick the first entity we meet and see
+// whether it makes things better. Note that it is always a bug to
+// have referenced entities after 20 frames, but at least this
+// safeguard makes it possible to exit the program cleanly.
+void ticker_data::handle_shutdown()
+{
+    if (m_quit && !((m_frame - m_quitframe) % m_quitdelay))
+    {
+        int n = 0;
+        m_panic = 2 * (m_panic + 1);
+
+        for (int g = 0; g < (int)tickable::group::all::end && n < m_panic; ++g)
+        for (int i = 0; i < DEPRECATED_m_list[g].count() && n < m_panic; ++i)
+        {
+            entity * e = DEPRECATED_m_list[g][i];
+            if (e->m_ref)
+            {
+#if !LOL_BUILD_RELEASE
+                msg::error("poking %s\n", e->GetName().c_str());
+#endif
+                e->m_ref--;
+                n++;
+            }
+        }
+
+#if !LOL_BUILD_RELEASE
+        if (n)
+            msg::error("%d entities stuck after %d frames, poked %d\n",
+                       DEPRECATED_nentities, m_quitdelay, n);
+#endif
+
+        m_quitdelay = m_quitdelay > 1 ? m_quitdelay / 2 : 1;
+    }
+}
+
+void ticker_data::collect_garbage()
+{
+    /* Garbage collect objects that can be destroyed. We can do this
+     * before inserting awaiting objects, because only objects already
+     * in the tick lists can be marked for destruction. */
+    array<entity*> destroy_list;
+    for (int g = 0; g < (int)tickable::group::all::end; ++g)
+    {
+        for (int i = DEPRECATED_m_list[g].count(); i--;)
+        {
+            entity *e = DEPRECATED_m_list[g][i];
+
+            if (!e->has_flags(entity::flags::destroying))
+            {
+                if (e->m_ref <= 0 && g >= (int)tickable::group::draw::begin)
+                    e->add_flags(entity::flags::destroying);
+                continue;
+            }
+
+            // If entity is being destroyed but not released yet, retry later.
+            if (!e->has_flags(entity::flags::release_game)
+                 || !e->has_flags(entity::flags::release_draw))
+                continue;
+
+            // If entity is to be destroyed, remove it.
+            DEPRECATED_m_list[g].remove_swap(i);
+
+            // Draw group specific logic
+            if (g >= (int)tickable::group::game::end)
+            {
+                int removal_count = 0;
+                for (int j = 0; j < Scene::GetCount(); j++)
+                {
+                    // If entity is concerned by this scene, add it in the list
+                    if (Scene::GetScene(j).IsRelevant(e))
+                        removal_count++;
+                    // Update scene index
+                    DEPRECATED_m_scenes[(int)e->m_drawgroup][j] -= removal_count;
+                }
+            }
+
+            destroy_list.push_unique(e);
+        }
+    }
+
+    if (!!destroy_list.count())
+    {
+        DEPRECATED_nentities -= destroy_list.count();
+        for (entity* e : destroy_list)
+            delete e;
+    }
 }
 
 void ticker_data::DiskThreadTick()
@@ -570,24 +615,24 @@ void ticker::tick_draw()
         data->m_timer.wait(frametime - data->bias);
 
     /* If recording, do not try to compensate for lag. */
-    if (!data->recording)
+    if (!data->m_recording)
         data->bias -= frametime;
 #endif
 }
 
 void Ticker::StartRecording()
 {
-    data->recording++;
+    ++data->m_recording;
 }
 
 void Ticker::StopRecording()
 {
-    data->recording--;
+    --data->m_recording;
 }
 
 int Ticker::GetFrameNum()
 {
-    return data->frame;
+    return data->m_frame;
 }
 
 void Ticker::Shutdown()
@@ -599,8 +644,8 @@ void Ticker::Shutdown()
         data->DEPRECATED_m_autolist.remove(-1);
     }
 
-    data->quit = 1;
-    data->quitframe = data->frame;
+    data->m_quit = 1;
+    data->m_quitframe = data->m_frame;
 }
 
 int Ticker::Finished()

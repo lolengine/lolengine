@@ -36,17 +36,15 @@ class entity
 public:
     virtual std::string GetName() const;
 
-    inline bool IsTicked() { return !!m_ref && !has_flags(flags::autorelease); }
-
     enum class flags : uint16_t
     {
         none = 0,
-        init_game   = 1 << 0,
-        init_draw   = 1 << 1,
-        fini_game   = 1 << 2,
-        fini_draw   = 1 << 4,
-        destroying  = 1 << 5,
-        autorelease = 1 << 6,
+        init_game    = 1 << 0,
+        init_draw    = 1 << 1,
+        release_game = 1 << 2,
+        release_draw = 1 << 4,
+        destroying   = 1 << 5,
+        autorelease  = 1 << 6,
     };
 
     inline void add_flags(flags f);
@@ -59,6 +57,8 @@ protected:
 
     virtual bool init_game() { return true; }
     virtual bool init_draw() { return true; }
+    virtual bool release_game() { return true; }
+    virtual bool release_draw() { return true; }
 
     virtual void tick_game(float seconds);
     virtual void tick_draw(float seconds, class Scene &scene);
@@ -66,7 +66,6 @@ protected:
 #if !LOL_BUILD_RELEASE
     tickable::state m_tickstate;
 #endif
-
     tickable::group::game m_gamegroup;
     tickable::group::draw m_drawgroup;
 
@@ -120,9 +119,6 @@ template<typename T> struct entity_dict
     std::map<std::string, T*> m_cache1;
     std::map<T*, std::string> m_cache2;
 };
-
-// The old API
-typedef entity Entity;
 
 } /* namespace lol */
 
