@@ -13,6 +13,7 @@
 #if HAVE_CONFIG_H
 #   include "config.h"
 #endif
+
 #if defined LOL_USE_XINPUT
 #   include <d3d9.h>
 #   include <xinput.h>
@@ -97,6 +98,7 @@ void D3d9Input::tick_game(float seconds)
             continue;
 
         auto stick = m_data->m_joysticks[i].m2;
+        stick->internal_begin_frame();
         stick->internal_set_axis(input::axis::LeftX, state.Gamepad.sThumbLX / 32768.f);
         stick->internal_set_axis(input::axis::LeftY, -state.Gamepad.sThumbLY / 32768.f);
         stick->internal_set_axis(input::axis::RightX, state.Gamepad.sThumbRX / 32768.f);

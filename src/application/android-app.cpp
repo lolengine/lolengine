@@ -363,6 +363,8 @@ void lol::AndroidApp::Tick()
     int events;
     struct android_poll_source* source;
 
+    input::mouse()->internal_begin_frame();
+
     /* Loop until all events are read, then continue to draw the next
      * frame of animation. */
     while ((ident = ALooper_pollAll(0, nullptr, &events,

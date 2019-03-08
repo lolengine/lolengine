@@ -133,6 +133,11 @@ void SdlInput::tick(float seconds)
     auto keyboard = input::keyboard();
     auto mouse = input::mouse();
 
+    keyboard->internal_begin_frame();
+    mouse->internal_begin_frame();
+    for (int j = 0; j < m_joysticks.count(); j++)
+        m_joysticks[j].m2->internal_begin_frame();
+
     /* Pump all joystick events because no event is coming to us. */
 #   if SDL_FORCE_POLL_JOYSTICK && !__EMSCRIPTEN__
     SDL_JoystickUpdate();
@@ -145,7 +150,6 @@ void SdlInput::tick(float seconds)
     }
 #   endif
 
-    keyboard->internal_begin_frame();
     float mouse_wheel = 0.f;
 
     if (keyboard->capture_text())
