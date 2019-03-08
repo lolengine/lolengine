@@ -25,19 +25,7 @@ LOLFX_RESOURCE_DECLARE(08_fbo);
 class FBO : public WorldEntity
 {
 public:
-    FBO()
-      : m_vertices { vec2( 1.0,  1.0),
-                     vec2(-1.0, -1.0),
-                     vec2( 1.0, -1.0),
-                     vec2(-1.0, -1.0),
-                     vec2( 1.0,  1.0),
-                     vec2(-1.0,  1.0), },
-        m_time(0.f),
-        m_ready(false)
-    {
-    }
-
-    virtual void tick_game(float seconds)
+    virtual void tick_game(float seconds) override
     {
         WorldEntity::tick_game(seconds);
 
@@ -54,42 +42,49 @@ public:
         m_color /= x;
     }
 
-    virtual void tick_draw(float seconds, Scene &scene)
+    virtual bool init_draw() override
+    {
+        array<vec2> vertices
+        {
+            vec2( 1.0,  1.0),
+            vec2(-1.0, -1.0),
+            vec2( 1.0, -1.0),
+            vec2(-1.0, -1.0),
+            vec2( 1.0,  1.0),
+            vec2(-1.0,  1.0),
+        };
+
+        m_shader = Shader::Create(LOLFX_RESOURCE_NAME(08_fbo));
+        m_coord = m_shader->GetAttribLocation(VertexUsage::Position, 0);
+        m_uni_flag = m_shader->GetUniformLocation("u_flag");
+        m_uni_point = m_shader->GetUniformLocation("u_point");
+        m_uni_color = m_shader->GetUniformLocation("u_color");
+        m_uni_texture = m_shader->GetUniformLocation("u_texture");
+
+        m_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec2>(VertexUsage::Position));
+
+        m_vbo = std::make_shared<VertexBuffer>(vertices.bytes());
+        void *data = m_vbo->Lock(0, 0);
+        memcpy(data, vertices.data(), vertices.bytes());
+        m_vbo->Unlock();
+
+        m_fbo = std::make_shared<Framebuffer>(Video::GetSize());
+        return true;
+    }
+
+    virtual void tick_draw(float seconds, Scene &scene) override
     {
         WorldEntity::tick_draw(seconds, scene);
 
-        if (!m_ready)
+        // FIXME: this should only be done once!
+        m_fbo->Bind();
         {
-            m_shader = Shader::Create(LOLFX_RESOURCE_NAME(08_fbo));
-            m_coord = m_shader->GetAttribLocation(VertexUsage::Position, 0);
-            m_uni_flag = m_shader->GetUniformLocation("u_flag");
-            m_uni_point = m_shader->GetUniformLocation("u_point");
-            m_uni_color = m_shader->GetUniformLocation("u_color");
-            m_uni_texture = m_shader->GetUniformLocation("u_texture");
-
-            m_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec2>(VertexUsage::Position));
-
-            m_vbo = std::make_shared<VertexBuffer>(m_vertices.bytes());
-            void *vertices = m_vbo->Lock(0, 0);
-            memcpy(vertices, &m_vertices[0], m_vertices.bytes());
-            m_vbo->Unlock();
-
-            m_fbo = std::make_shared<Framebuffer>(Video::GetSize());
-            m_fbo->Bind();
-
-            {
-                render_context rc(scene.get_renderer());
-                rc.clear_color(vec4(0.f, 0.f, 0.f, 1.f));
-                rc.clear_depth(1.f);
-                scene.get_renderer()->Clear(ClearMask::Color | ClearMask::Depth);
-            }
-
-            m_fbo->Unbind();
-
-            m_ready = true;
-
-            /* FIXME: this object never cleans up */
+            render_context rc(scene.get_renderer());
+            rc.clear_color(vec4(0.f, 0.f, 0.f, 1.f));
+            rc.clear_depth(1.f);
+            scene.get_renderer()->Clear(ClearMask::Color | ClearMask::Depth);
         }
+        m_fbo->Unbind();
 
         /* FIXME: we should just disable depth test in the shader */
         render_context rc(scene.get_renderer());
@@ -120,17 +115,24 @@ public:
         m_shader->Unbind();
     }
 
+    virtual bool release_draw() override
+    {
+        m_shader.reset();
+        m_vdecl.reset();
+        m_vbo.reset();
+        m_fbo.reset();
+        return true;
+    }
+
 private:
-    array<vec2> m_vertices;
     std::shared_ptr<Shader> m_shader;
     ShaderAttrib m_coord;
     ShaderUniform m_uni_flag, m_uni_point, m_uni_color, m_uni_texture;
     std::shared_ptr<VertexDeclaration> m_vdecl;
     std::shared_ptr<VertexBuffer> m_vbo;
     std::shared_ptr<Framebuffer> m_fbo;
-    double m_time;
+    double m_time = 0.0f;
     vec3 m_hotspot, m_color;
-    bool m_ready;
 };
 
 int main(int argc, char **argv)

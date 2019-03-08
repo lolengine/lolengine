@@ -41,8 +41,7 @@ public:
                           0, 4, 1, 5, 2, 6, 3, 7, }),
         m_faces_indices({ 0, 1, 2, 2, 3, 0, 1, 5, 6, 6, 2, 1,
                           7, 6, 5, 5, 4, 7, 4, 0, 3, 3, 7, 4,
-                          4, 5, 1, 1, 0, 4, 3, 2, 6, 6, 7, 3, }),
-        m_ready(false)
+                          4, 5, 1, 1, 0, 4, 3, 2, 6, 6, 7, 3, })
     {
         m_camera = new Camera();
         m_camera->SetProjection(mat4::perspective(radians(30.f), 640.f, 480.f, .1f, 1000.f));
@@ -52,7 +51,6 @@ public:
         Scene& scene = Scene::GetScene();
         scene.PushCamera(m_camera);
         Ticker::Ref(m_camera);
-
     }
 
     ~Cube()
@@ -62,7 +60,37 @@ public:
         Ticker::Unref(m_camera);
     }
 
-    virtual void tick_game(float seconds)
+    virtual bool init_draw() override
+    {
+        m_shader = Shader::Create(LOLFX_RESOURCE_NAME(02_cube));
+
+        m_mvp = m_shader->GetUniformLocation("u_matrix");
+        m_coord = m_shader->GetAttribLocation(VertexUsage::Position, 0);
+        m_color = m_shader->GetAttribLocation(VertexUsage::Color, 0);
+
+        m_vdecl = std::make_shared<VertexDeclaration>(
+                                VertexStream<vec3,vec3>(VertexUsage::Position,
+                                                        VertexUsage::Color));
+
+        m_vbo = std::make_shared<VertexBuffer>(m_mesh.bytes());
+        void *mesh = m_vbo->Lock(0, 0);
+        memcpy(mesh, m_mesh.data(), m_mesh.bytes());
+        m_vbo->Unlock();
+
+        m_lines_ibo = std::make_shared<IndexBuffer>(m_lines_indices.bytes());
+        void *indices = m_lines_ibo->Lock(0, 0);
+        memcpy(indices, m_lines_indices.data(), m_lines_indices.bytes());
+        m_lines_ibo->Unlock();
+
+        m_faces_ibo = std::make_shared<IndexBuffer>(m_faces_indices.bytes());
+        indices = m_faces_ibo->Lock(0, 0);
+        memcpy(indices, m_faces_indices.data(), m_faces_indices.bytes());
+        m_faces_ibo->Unlock();
+
+        return true;
+    }
+
+    virtual void tick_game(float seconds) override
     {
         WorldEntity::tick_game(seconds);
 
@@ -95,40 +123,9 @@ public:
         }
     }
 
-    virtual void tick_draw(float seconds, Scene &scene)
+    virtual void tick_draw(float seconds, Scene &scene) override
     {
         WorldEntity::tick_draw(seconds, scene);
-
-        if (!m_ready)
-        {
-            m_shader = Shader::Create(LOLFX_RESOURCE_NAME(02_cube));
-
-            m_mvp = m_shader->GetUniformLocation("u_matrix");
-            m_coord = m_shader->GetAttribLocation(VertexUsage::Position, 0);
-            m_color = m_shader->GetAttribLocation(VertexUsage::Color, 0);
-
-            m_vdecl = std::make_shared<VertexDeclaration>(
-                                    VertexStream<vec3,vec3>(VertexUsage::Position,
-                                                            VertexUsage::Color));
-
-            m_vbo = std::make_shared<VertexBuffer>(m_mesh.bytes());
-            void *mesh = m_vbo->Lock(0, 0);
-            memcpy(mesh, &m_mesh[0], m_mesh.bytes());
-            m_vbo->Unlock();
-
-            m_lines_ibo = std::make_shared<IndexBuffer>(m_lines_indices.bytes());
-            void *indices = m_lines_ibo->Lock(0, 0);
-            memcpy(indices, &m_lines_indices[0], m_lines_indices.bytes());
-            m_lines_ibo->Unlock();
-
-            m_faces_ibo = std::make_shared<IndexBuffer>(m_faces_indices.bytes());
-            indices = m_faces_ibo->Lock(0, 0);
-            memcpy(indices, &m_faces_indices[0], m_faces_indices.bytes());
-            m_faces_ibo->Unlock();
-
-            /* FIXME: this object never cleans up */
-            m_ready = true;
-        }
 
         scene.get_renderer()->SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
@@ -149,6 +146,16 @@ public:
         m_vdecl->Unbind();
     }
 
+    virtual bool release_draw() override
+    {
+        m_shader.reset();
+        m_vdecl.reset();
+        m_vbo.reset();
+        m_lines_ibo.reset();
+        m_faces_ibo.reset();
+        return true;
+    }
+
 private:
     Camera* m_camera = nullptr;
     float m_angle;
@@ -162,8 +169,6 @@ private:
     std::shared_ptr<VertexDeclaration> m_vdecl;
     std::shared_ptr<VertexBuffer> m_vbo;
     std::shared_ptr<IndexBuffer> m_lines_ibo, m_faces_ibo;
-
-    bool m_ready;
 };
 
 int main(int argc, char **argv)

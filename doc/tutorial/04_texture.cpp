@@ -27,19 +27,11 @@ class TextureDemo : public WorldEntity
 {
 public:
     TextureDemo()
-      : m_vertices({ vec2(-1.0,  1.0),
-                     vec2(-1.0, -1.0),
-                     vec2( 1.0, -1.0),
-                     vec2(-1.0,  1.0),
-                     vec2( 1.0, -1.0),
-                     vec2( 1.0,  1.0), }),
-        m_frames(0),
-        m_ready(false)
     {
         m_heightmap.resize(TEXTURE_WIDTH * 1);
     }
 
-    virtual void tick_game(float seconds)
+    virtual void tick_game(float seconds) override
     {
         WorldEntity::tick_game(seconds);
 
@@ -60,30 +52,37 @@ public:
         ++m_frames;
     }
 
+    virtual bool init_draw() override
+    {
+        array<vec2> vertices
+        {
+            vec2(-1.0,  1.0),
+            vec2(-1.0, -1.0),
+            vec2( 1.0, -1.0),
+            vec2(-1.0,  1.0),
+            vec2( 1.0, -1.0),
+            vec2( 1.0,  1.0),
+        };
+
+        m_texture = std::make_shared<Texture>(ivec2(TEXTURE_WIDTH, 1), PixelFormat::Y_8);
+
+        m_shader = Shader::Create(LOLFX_RESOURCE_NAME(04_texture));
+        m_coord = m_shader->GetAttribLocation(VertexUsage::Position, 0);
+        m_texture_uni = m_shader->GetUniformLocation("u_texture");
+
+        m_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec2>(VertexUsage::Position));
+
+        m_vbo = std::make_shared<VertexBuffer>(vertices.bytes());
+        void *data = m_vbo->Lock(0, 0);
+        memcpy(data, vertices.data(), vertices.bytes());
+        m_vbo->Unlock();
+
+        return true;
+    }
+
     virtual void tick_draw(float seconds, Scene &scene)
     {
         WorldEntity::tick_draw(seconds, scene);
-
-        /* Initialise GPU data */
-        if (!m_ready)
-        {
-            m_texture = std::make_shared<Texture>(ivec2(TEXTURE_WIDTH, 1), PixelFormat::Y_8);
-
-            m_shader = Shader::Create(LOLFX_RESOURCE_NAME(04_texture));
-            m_coord = m_shader->GetAttribLocation(VertexUsage::Position, 0);
-            m_texture_uni = m_shader->GetUniformLocation("u_texture");
-
-            m_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec2>(VertexUsage::Position));
-
-            m_vbo = std::make_shared<VertexBuffer>(m_vertices.bytes());
-            void *vertices = m_vbo->Lock(0, 0);
-            memcpy(vertices, &m_vertices[0], m_vertices.bytes());
-            m_vbo->Unlock();
-
-            m_ready = true;
-
-            /* FIXME: this object never cleans up */
-        }
 
         /* Send new heightmap to GPU */
         m_texture->Bind();
@@ -97,8 +96,16 @@ public:
         m_vdecl->Unbind();
     }
 
+    virtual bool release_draw() override
+    {
+        m_texture.reset();
+        m_shader.reset();
+        m_vdecl.reset();
+        m_vbo.reset();
+        return true;
+    }
+
 private:
-    array<vec2> m_vertices;
     std::shared_ptr<Texture> m_texture;
     std::shared_ptr<Shader> m_shader;
     ShaderAttrib m_coord;
@@ -106,8 +113,7 @@ private:
     std::shared_ptr<VertexDeclaration> m_vdecl;
     std::shared_ptr<VertexBuffer> m_vbo;
     array<uint8_t> m_heightmap;
-    int m_frames;
-    bool m_ready;
+    int m_frames = 0;
 };
 
 int main(int argc, char **argv)

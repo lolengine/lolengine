@@ -26,34 +26,31 @@ LOLFX_RESOURCE_DECLARE(01_triangle);
 class Triangle : public WorldEntity
 {
 public:
-    Triangle()
-      : m_vertices({ vec2( 0.0f,  0.8f),
-                     vec2(-0.8f, -0.8f),
-                     vec2( 0.8f, -0.8f) }),
-        m_ready(false)
+    virtual bool init_draw() override
     {
+        array<vec2> vertices
+        {
+            vec2( 0.0f,  0.8f),
+            vec2(-0.8f, -0.8f),
+            vec2( 0.8f, -0.8f),
+        };
+
+        m_shader = Shader::Create(LOLFX_RESOURCE_NAME(01_triangle));
+        m_coord = m_shader->GetAttribLocation(VertexUsage::Position, 0);
+
+        m_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec2>(VertexUsage::Position));
+
+        m_vbo = std::make_shared<VertexBuffer>(vertices.bytes());
+        void *data = m_vbo->Lock(0, 0);
+        memcpy(data, vertices.data(), vertices.bytes());
+        m_vbo->Unlock();
+
+        return true;
     }
 
-    virtual void tick_draw(float seconds, Scene &scene)
+    virtual void tick_draw(float seconds, Scene &scene) override
     {
         WorldEntity::tick_draw(seconds, scene);
-
-        if (!m_ready)
-        {
-            m_shader = Shader::Create(LOLFX_RESOURCE_NAME(01_triangle));
-            m_coord = m_shader->GetAttribLocation(VertexUsage::Position, 0);
-
-            m_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec2>(VertexUsage::Position));
-
-            m_vbo = std::make_shared<VertexBuffer>(m_vertices.bytes());
-            void *vertices = m_vbo->Lock(0, 0);
-            memcpy(vertices, &m_vertices[0], m_vertices.bytes());
-            m_vbo->Unlock();
-
-            m_ready = true;
-
-            /* FIXME: this object never cleans up */
-        }
 
         m_shader->Bind();
         m_vdecl->SetStream(m_vbo, m_coord);
@@ -62,13 +59,20 @@ public:
         m_vdecl->Unbind();
     }
 
+    virtual bool release_draw() override
+    {
+        m_shader.reset();
+        m_vdecl.reset();
+        m_vbo.reset();
+
+        return true;
+    }
+
 private:
-    array<vec2> m_vertices;
     std::shared_ptr<Shader> m_shader;
     ShaderAttrib m_coord;
     std::shared_ptr<VertexDeclaration> m_vdecl;
     std::shared_ptr<VertexBuffer> m_vbo;
-    bool m_ready;
 };
 
 int main(int argc, char **argv)

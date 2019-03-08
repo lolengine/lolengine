@@ -26,41 +26,37 @@ LOLFX_RESOURCE_DECLARE(03_noise);
 class NoiseDemo : public WorldEntity
 {
 public:
-    NoiseDemo()
-      : m_vertices({ vec2(-1.0,  1.0),
-                     vec2(-1.0, -1.0),
-                     vec2( 1.0, -1.0),
-                     vec2(-1.0,  1.0),
-                     vec2( 1.0, -1.0),
-                     vec2( 1.0,  1.0), }),
-        m_time(0.0),
-        m_ready(false)
+    virtual bool init_draw() override
     {
+        array<vec2> vertices
+        {
+            vec2(-1.0,  1.0),
+            vec2(-1.0, -1.0),
+            vec2( 1.0, -1.0),
+            vec2(-1.0,  1.0),
+            vec2( 1.0, -1.0),
+            vec2( 1.0,  1.0),
+        };
+
+        m_shader = Shader::Create(LOLFX_RESOURCE_NAME(03_noise));
+        m_coord = m_shader->GetAttribLocation(VertexUsage::Position, 0);
+        m_time_uni = m_shader->GetUniformLocation("u_time");
+
+        m_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec2>(VertexUsage::Position));
+
+        m_vbo = std::make_shared<VertexBuffer>(vertices.bytes());
+        void *data = m_vbo->Lock(0, 0);
+        memcpy(data, vertices.data(), vertices.bytes());
+        m_vbo->Unlock();
+
+        return true;
     }
 
-    virtual void tick_draw(float seconds, Scene &scene)
+    virtual void tick_draw(float seconds, Scene &scene) override
     {
         WorldEntity::tick_draw(seconds, scene);
 
         m_time += seconds;
-
-        if (!m_ready)
-        {
-            m_shader = Shader::Create(LOLFX_RESOURCE_NAME(03_noise));
-            m_coord = m_shader->GetAttribLocation(VertexUsage::Position, 0);
-            m_time_uni = m_shader->GetUniformLocation("u_time");
-
-            m_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec2>(VertexUsage::Position));
-
-            m_vbo = std::make_shared<VertexBuffer>(m_vertices.bytes());
-            void *vertices = m_vbo->Lock(0, 0);
-            memcpy(vertices, &m_vertices[0], m_vertices.bytes());
-            m_vbo->Unlock();
-
-            m_ready = true;
-
-            /* FIXME: this object never cleans up */
-        }
 
         m_shader->Bind();
         m_shader->SetUniform(m_time_uni, m_time);
@@ -70,15 +66,21 @@ public:
         m_vdecl->Unbind();
     }
 
+    virtual bool release_draw() override
+    {
+        m_shader.reset();
+        m_vdecl.reset();
+        m_vbo.reset();
+        return true;
+    }
+
 private:
-    array<vec2> m_vertices;
     std::shared_ptr<Shader> m_shader;
     ShaderAttrib m_coord;
     ShaderUniform m_time_uni;
     std::shared_ptr<VertexDeclaration> m_vdecl;
     std::shared_ptr<VertexBuffer> m_vbo;
-    float m_time;
-    bool m_ready;
+    float m_time = 0.0;
 };
 
 int main(int argc, char **argv)
