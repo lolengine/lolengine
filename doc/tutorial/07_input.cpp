@@ -30,28 +30,6 @@ public:
         m_yaw_angle = 0;
         m_autorot = true;
 
-        /* Front vertices/colors */
-        m_mesh.push(vec3(-1.0, -1.0,  1.0), vec3(1.0, 0.0, 1.0));
-        m_mesh.push(vec3( 1.0, -1.0,  1.0), vec3(0.0, 1.0, 0.0));
-        m_mesh.push(vec3( 1.0,  1.0,  1.0), vec3(1.0, 0.5, 0.0));
-        m_mesh.push(vec3(-1.0,  1.0,  1.0), vec3(1.0, 1.0, 0.0));
-        /* Back */
-        m_mesh.push(vec3(-1.0, -1.0, -1.0), vec3(1.0, 0.0, 0.0));
-        m_mesh.push(vec3( 1.0, -1.0, -1.0), vec3(0.0, 0.5, 0.0));
-        m_mesh.push(vec3( 1.0,  1.0, -1.0), vec3(0.0, 0.5, 1.0));
-        m_mesh.push(vec3(-1.0,  1.0, -1.0), vec3(0.0, 0.0, 1.0));
-
-        m_faces_indices << 0 << 1 << 2 << 2 << 3 << 0;
-        m_faces_indices << 1 << 5 << 6 << 6 << 2 << 1;
-        m_faces_indices << 7 << 6 << 5 << 5 << 4 << 7;
-        m_faces_indices << 4 << 0 << 3 << 3 << 7 << 4;
-        m_faces_indices << 4 << 5 << 1 << 1 << 0 << 4;
-        m_faces_indices << 3 << 2 << 6 << 6 << 7 << 3;
-
-        m_lines_indices << 0 << 1 << 1 << 2 << 2 << 3 << 3 << 0;
-        m_lines_indices << 4 << 5 << 5 << 6 << 6 << 7 << 7 << 4;
-        m_lines_indices << 0 << 4 << 1 << 5 << 2 << 6 << 3 << 7;
-
         m_text = new Text("", "data/font/ascii.png");
         m_text->SetPos(vec3(5, 30, 1));
         Ticker::Ref(m_text);
@@ -124,6 +102,34 @@ public:
 
     virtual bool init_draw() override
     {
+        array<vec3, vec3> mesh
+        {
+            // Front vertices/colors
+            { vec3(-1.0, -1.0,  1.0), vec3(1.0, 0.0, 1.0) },
+            { vec3( 1.0, -1.0,  1.0), vec3(0.0, 1.0, 0.0) },
+            { vec3( 1.0,  1.0,  1.0), vec3(1.0, 0.5, 0.0) },
+            { vec3(-1.0,  1.0,  1.0), vec3(1.0, 1.0, 0.0) },
+            // Back
+            { vec3(-1.0, -1.0, -1.0), vec3(1.0, 0.0, 0.0) },
+            { vec3( 1.0, -1.0, -1.0), vec3(0.0, 0.5, 0.0) },
+            { vec3( 1.0,  1.0, -1.0), vec3(0.0, 0.5, 1.0) },
+            { vec3(-1.0,  1.0, -1.0), vec3(0.0, 0.0, 1.0) },
+        };
+
+        array<uint16_t> faces_indices
+        {
+            0, 1, 2, 2, 3, 0, 1, 5, 6, 6, 2, 1,
+            7, 6, 5, 5, 4, 7, 4, 0, 3, 3, 7, 4,
+            4, 5, 1, 1, 0, 4, 3, 2, 6, 6, 7, 3,
+        };
+
+        array<uint16_t> lines_indices
+        {
+            0, 1, 1, 2, 2, 3, 3, 0,
+            4, 5, 5, 6, 6, 7, 7, 4,
+            0, 4, 1, 5, 2, 6, 3, 7,
+        };
+
         m_shader = Shader::Create(LOLFX_RESOURCE_NAME(07_input));
 
         m_mvp = m_shader->GetUniformLocation("u_matrix");
@@ -134,19 +140,19 @@ public:
                                 VertexStream<vec3,vec3>(VertexUsage::Position,
                                                         VertexUsage::Color));
 
-        m_vbo = std::make_shared<VertexBuffer>(m_mesh.bytes());
-        void *mesh = m_vbo->Lock(0, 0);
-        memcpy(mesh, &m_mesh[0], m_mesh.bytes());
+        m_vbo = std::make_shared<VertexBuffer>(mesh.bytes());
+        void *data = m_vbo->Lock(0, 0);
+        memcpy(data, mesh.data(), mesh.bytes());
         m_vbo->Unlock();
 
-        m_lines_ibo = std::make_shared<IndexBuffer>(m_lines_indices.bytes());
-        void *indices = m_lines_ibo->Lock(0, 0);
-        memcpy(indices, &m_lines_indices[0], m_lines_indices.bytes());
+        m_lines_ibo = std::make_shared<IndexBuffer>(lines_indices.bytes());
+        data = m_lines_ibo->Lock(0, 0);
+        memcpy(data, lines_indices.data(), lines_indices.bytes());
         m_lines_ibo->Unlock();
 
-        m_faces_ibo = std::make_shared<IndexBuffer>(m_faces_indices.bytes());
-        indices = m_faces_ibo->Lock(0, 0);
-        memcpy(indices, &m_faces_indices[0], m_faces_indices.bytes());
+        m_faces_ibo = std::make_shared<IndexBuffer>(faces_indices.bytes());
+        data = m_faces_ibo->Lock(0, 0);
+        memcpy(data, faces_indices.data(), faces_indices.bytes());
         m_faces_ibo->Unlock();
 
         return WorldEntity::init_draw();
@@ -164,12 +170,12 @@ public:
 
         m_shader->SetUniform(m_mvp, m_matrix);
         m_lines_ibo->Bind();
-        m_vdecl->DrawIndexedElements(MeshPrimitive::Lines, m_lines_indices.count());
+        m_vdecl->DrawIndexedElements(MeshPrimitive::Lines, m_lines_ibo->GetSize() / sizeof(uint16_t));
         m_lines_ibo->Unbind();
 
         m_shader->SetUniform(m_mvp, m_matrix * mat4::scale(0.5f));
         m_faces_ibo->Bind();
-        m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, m_faces_indices.count());
+        m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, m_faces_ibo->GetSize() / sizeof(uint16_t));
         m_faces_ibo->Unbind();
 
         m_vdecl->Unbind();
@@ -190,8 +196,6 @@ private:
     float m_pitch_angle;
     float m_yaw_angle;
     mat4 m_matrix;
-    array<vec3,vec3> m_mesh;
-    array<uint16_t> m_lines_indices, m_faces_indices;
 
     std::shared_ptr<Shader> m_shader;
     ShaderAttrib m_coord, m_color;

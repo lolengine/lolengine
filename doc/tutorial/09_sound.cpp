@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine — Sound tutorial
 //
-//  Copyright © 2011—2016 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2011—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -47,7 +47,7 @@ public:
             switch (mode)
             {
             case 0: // sine wave
-                stream[i] = 400 * lol::sin(12 * i * F_TAU / bytes);
+                stream[i] = 400 * lol::sin(8 * i * F_TAU / bytes);
                 break;
             case 1: // white noise
                 stream[i] = lol::rand(-120, 120);
@@ -56,7 +56,7 @@ public:
         }
     }
 
-    virtual void tick_game(float seconds)
+    virtual void tick_game(float seconds) override
     {
         WorldEntity::tick_game(seconds);
 
@@ -85,7 +85,7 @@ public:
         }
     }
 
-    virtual void tick_draw(float seconds, Scene &scene)
+    virtual void tick_draw(float seconds, Scene &scene) override
     {
         WorldEntity::tick_draw(seconds, scene);
     }

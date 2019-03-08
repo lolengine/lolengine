@@ -26,18 +26,18 @@ LOLFX_RESOURCE_DECLARE(04_texture);
 class TextureDemo : public WorldEntity
 {
 public:
-    TextureDemo()
+    virtual bool init_game() override
     {
+        /* Generate a new heightmap at the beginning */
         m_heightmap.resize(TEXTURE_WIDTH * 1);
+        memset(m_heightmap.data(), 255, m_heightmap.bytes());
+
+        return true;
     }
 
     virtual void tick_game(float seconds) override
     {
         WorldEntity::tick_game(seconds);
-
-        /* Generate a new heightmap at the beginning */
-        if (m_frames == 0)
-            memset(m_heightmap.data(), 255, m_heightmap.bytes());
 
         /* Scroll left */
         for (int i = 0; i < m_heightmap.count() - 1; i++)

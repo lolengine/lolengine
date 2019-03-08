@@ -31,7 +31,6 @@ class Fractal : public WorldEntity
 {
 public:
     Fractal(ivec2 const &size)
-      : m_julia(false)
     {
         /* Ensure texture size is a multiple of 16 for better aligned
          * data access. Store the dimensions of a texel for our shader,
@@ -54,8 +53,6 @@ public:
         m_oldmouse = ivec2(0, 0);
 
         m_pixels.resize(m_size.x * m_size.y);
-        m_frame = -1;
-        m_slices = 4;
         for (int i = 0; i < 4; i++)
         {
             m_deltashift[i] = real("0");
@@ -66,8 +63,6 @@ public:
         m_zoom_speed = 0.0;
         m_view.translate = rcmplx(0.0, 0.0);
         m_view.radius = 5.0;
-        m_ready = false;
-        m_drag = false;
 
         for (int i = 0; i < (MAX_ITERATIONS + 1) * PALETTE_STEP; i++)
         {
@@ -337,7 +332,7 @@ public:
         int jmax = jmin + MAX_LINES * 2;
         if (jmax > m_size.y)
             jmax = m_size.y;
-        u8vec4 *pixelstart = &m_pixels[0]
+        u8vec4 *pixelstart = m_pixels.data()
                            + m_size.x * (m_size.y / 4 * m_frame + line / 4);
 
 #if USE_REAL
@@ -429,11 +424,9 @@ public:
         }
     }
 
-    virtual void tick_draw(float seconds, Scene &scene)
+    virtual bool init_draw() override
     {
-        WorldEntity::tick_draw(seconds, scene);
-
-        static float const vertices[] =
+        float const vertices[] =
         {
              1.0f,  1.0f,
             -1.0f,  1.0f,
@@ -443,7 +436,7 @@ public:
              1.0f,  1.0f,
         };
 
-        static float const texcoords[] =
+        float const texcoords[] =
         {
              1.0f,  1.0f,
              0.0f,  1.0f,
@@ -453,43 +446,44 @@ public:
              1.0f,  1.0f,
         };
 
-        if (!m_ready)
-        {
-            /* Create a texture of half the width and twice the height
-             * so that we can upload four different subimages each frame. */
-            m_texture = std::make_shared<Texture>(ivec2(m_size.x / 2, m_size.y * 2),
-                                                  PixelFormat::RGBA_8);
+        /* Create a texture of half the width and twice the height
+         * so that we can upload four different subimages each frame. */
+        m_texture = std::make_shared<Texture>(ivec2(m_size.x / 2, m_size.y * 2),
+                                              PixelFormat::RGBA_8);
 
-            /* Ensure the texture data is complete at least once, otherwise
-             * uploading subimages will not work. */
-            m_texture->SetData(&m_pixels[0]);
+        /* Ensure the texture data is complete at least once, otherwise
+         * uploading subimages will not work. */
+        m_texture->SetData(m_pixels.data());
 
-            m_shader = Shader::Create(LOLFX_RESOURCE_NAME(11_fractal));
+        m_shader = Shader::Create(LOLFX_RESOURCE_NAME(11_fractal));
 
-            m_vertexattrib = m_shader->GetAttribLocation(VertexUsage::Position, 0);
-            m_texattrib = m_shader->GetAttribLocation(VertexUsage::TexCoord, 0);
-            m_texuni = m_shader->GetUniformLocation("u_texture");
-            m_texeluni = m_shader->GetUniformLocation("u_texel_size");
-            m_screenuni = m_shader->GetUniformLocation("u_screen_size");
-            m_zoomuni = m_shader->GetUniformLocation("u_zoom_settings");
+        m_vertexattrib = m_shader->GetAttribLocation(VertexUsage::Position, 0);
+        m_texattrib = m_shader->GetAttribLocation(VertexUsage::TexCoord, 0);
+        m_texuni = m_shader->GetUniformLocation("u_texture");
+        m_texeluni = m_shader->GetUniformLocation("u_texel_size");
+        m_screenuni = m_shader->GetUniformLocation("u_screen_size");
+        m_zoomuni = m_shader->GetUniformLocation("u_zoom_settings");
 
-            m_vdecl = std::make_shared<VertexDeclaration>(
-                                    VertexStream<vec2>(VertexUsage::Position),
-                                    VertexStream<vec2>(VertexUsage::TexCoord));
-            m_vbo = std::make_shared<VertexBuffer>(sizeof(vertices));
-            m_tbo = std::make_shared<VertexBuffer>(sizeof(texcoords));
+        m_vdecl = std::make_shared<VertexDeclaration>(
+                                VertexStream<vec2>(VertexUsage::Position),
+                                VertexStream<vec2>(VertexUsage::TexCoord));
+        m_vbo = std::make_shared<VertexBuffer>(sizeof(vertices));
+        m_tbo = std::make_shared<VertexBuffer>(sizeof(texcoords));
 
-            void *tmp = m_vbo->Lock(0, 0);
-            memcpy(tmp, vertices, sizeof(vertices));
-            m_vbo->Unlock();
+        void *data = m_vbo->Lock(0, 0);
+        memcpy(data, vertices, sizeof(vertices));
+        m_vbo->Unlock();
 
-            tmp = m_tbo->Lock(0, 0);
-            memcpy(tmp, texcoords, sizeof(texcoords));
-            m_tbo->Unlock();
+        data = m_tbo->Lock(0, 0);
+        memcpy(data, texcoords, sizeof(texcoords));
+        m_tbo->Unlock();
 
-            /* FIXME: this object never cleans up */
-            m_ready = true;
-        }
+        return true;
+    }
+
+    virtual void tick_draw(float seconds, Scene &scene) override
+    {
+        WorldEntity::tick_draw(seconds, scene);
 
         m_texture->Bind();
 
@@ -520,6 +514,16 @@ public:
         m_vdecl->Unbind();
     }
 
+    virtual bool release_draw() override
+    {
+        m_shader.reset();
+        m_vdecl.reset();
+        m_vbo.reset();
+        m_tbo.reset();
+        m_texture.reset();
+        return true;
+    }
+
 private:
     static int const MAX_ITERATIONS = 400;
     static int const PALETTE_STEP = 32;
@@ -542,8 +546,8 @@ private:
     std::shared_ptr<VertexBuffer> m_vbo, m_tbo;
     std::shared_ptr<Texture> m_texture;
 
-    int m_frame, m_slices, m_dirty[4];
-    bool m_ready, m_drag;
+    int m_frame = -1, m_slices = 4, m_dirty[4];
+    bool m_drag = false;
 
     struct view_settings
     {
@@ -556,7 +560,7 @@ private:
     rcmplx m_deltashift[4];
     real m_deltascale[4];
     double m_zoom_speed;
-    bool m_julia;
+    bool m_julia = false;
 
     vec4 m_texel_settings, m_screen_settings;
     mat4 m_zoom_settings;

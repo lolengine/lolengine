@@ -69,22 +69,22 @@ public:
         m_vbo->Unlock();
 
         m_fbo = std::make_shared<Framebuffer>(Video::GetSize());
-        return true;
-    }
-
-    virtual void tick_draw(float seconds, Scene &scene) override
-    {
-        WorldEntity::tick_draw(seconds, scene);
-
-        // FIXME: this should only be done once!
         m_fbo->Bind();
         {
+            Scene& scene = Scene::GetScene();
             render_context rc(scene.get_renderer());
             rc.clear_color(vec4(0.f, 0.f, 0.f, 1.f));
             rc.clear_depth(1.f);
             scene.get_renderer()->Clear(ClearMask::Color | ClearMask::Depth);
         }
         m_fbo->Unbind();
+
+        return true;
+    }
+
+    virtual void tick_draw(float seconds, Scene &scene) override
+    {
+        WorldEntity::tick_draw(seconds, scene);
 
         /* FIXME: we should just disable depth test in the shader */
         render_context rc(scene.get_renderer());
@@ -140,10 +140,9 @@ int main(int argc, char **argv)
     sys::init(argc, argv);
 
     Application app("Tutorial 08: Framebuffer Object", ivec2(512, 512), 60.0f);
-
     new FBO();
-
     app.Run();
+
     return EXIT_SUCCESS;
 }
 

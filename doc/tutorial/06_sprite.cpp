@@ -27,8 +27,6 @@ public:
         m_camera = new Camera();
         m_camera->SetView(mat4(1.f));
         m_camera->SetProjection(mat4::ortho(0.f, 640.f, 0.f, 480.f, -100.f, 100.f));
-        Scene& scene = Scene::GetScene();
-        scene.PushCamera(m_camera);
         Ticker::Ref(m_camera);
 
         m_tileset = TileSet::create("06_sprite.png");
@@ -40,16 +38,11 @@ public:
             m_sprites.push(vec3((float)rand(-96, 640), (float)rand(-96, 480), 0.f),
                            rand(0.f, 1.f));
         }
-
-        m_ready = false;
     }
 
     ~SpriteTutorial()
     {
         TileSet::destroy(m_tileset);
-
-        Scene& scene = Scene::GetScene();
-        scene.PopCamera(m_camera);
         Ticker::Unref(m_camera);
     }
 
@@ -66,15 +59,17 @@ public:
         WorldEntity::tick_game(seconds);
     }
 
-    virtual void tick_draw(float seconds, Scene &scene)
+    virtual bool init_draw() override
+    {
+        Scene& scene = Scene::GetScene();
+        scene.PushCamera(m_camera);
+        scene.get_renderer()->SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        return true;
+    }
+
+    virtual void tick_draw(float seconds, Scene &scene) override
     {
         WorldEntity::tick_draw(seconds, scene);
-
-        if (!m_ready)
-        {
-            scene.get_renderer()->SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
-            m_ready = true;
-        }
 
         for (int i = 0; i < SPRITE_COUNT; ++i)
         {
@@ -85,6 +80,13 @@ public:
         }
     }
 
+    virtual bool release_draw() override
+    {
+        Scene& scene = Scene::GetScene();
+        scene.PopCamera(m_camera);
+        return true;
+    }
+
 private:
     Camera *m_camera;
     TileSet *m_tileset;
@@ -92,8 +94,6 @@ private:
     static int const SPRITE_COUNT = 192;
     static int const FRAME_COUNT = 16;
     array<vec3, float> m_sprites;
-
-    bool m_ready;
 };
 
 int main(int argc, char **argv)

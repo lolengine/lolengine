@@ -65,8 +65,6 @@ public:
         m_camera->SetView(mat4::lookat(vec3(-15.f, 5.f, 0.f),
                                        vec3(0.f, -1.f, 0.f),
                                        vec3(0.f, 1.f, 0.f)));
-        Scene& scene = Scene::GetScene();
-        scene.PushCamera(m_camera);
 
         /* Add a white directional light */
         m_light1 = new Light();
@@ -81,14 +79,10 @@ public:
         m_light2->SetColor(vec4(0.4f, 0.3f, 0.2f, 1.f));
         m_light2->SetType(LightType::Point);
         Ticker::Ref(m_light2);
-
-        m_ready = false;
     }
 
     ~EasyMeshTutorial()
     {
-        Scene& scene = Scene::GetScene();
-        scene.PopCamera(m_camera);
         Ticker::Unref(m_light1);
         Ticker::Unref(m_light2);
     }
@@ -123,34 +117,42 @@ public:
                       * mat4::rotate(m_gears[4].m3 - 80.0f, vec3(0, 1, 0));
     }
 
-    virtual void tick_draw(float seconds, Scene &scene)
+    virtual bool init_draw() override
+    {
+        Scene& scene = Scene::GetScene();
+        scene.PushCamera(m_camera);
+        scene.get_renderer()->SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
+
+        /* Upload vertex data to GPU */
+        for (int i = 0; i < m_gears.count(); i++)
+            m_gears[i].m1.MeshConvert();
+
+#if USE_CUSTOM_SHADER
+        /* Custom Shader: Init the shader */
+        auto custom_shader = Shader::Create(LOLFX_RESOURCE_NAME(easymesh_shiny));
+        // any other shader stuf here (Get uniform, mostly, and set texture)
+
+        for (int i = 0; i < m_gears.count(); i++)
+            m_gears[i].m1.SetMaterial(custom_shader);
+#endif
+
+        return true;
+    }
+
+    virtual void tick_draw(float seconds, Scene &scene) override
     {
         WorldEntity::tick_draw(seconds, scene);
 
-        if (!m_ready)
-        {
-            scene.get_renderer()->SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
-
-            /* Upload vertex data to GPU */
-            for (int i = 0; i < m_gears.count(); i++)
-                m_gears[i].m1.MeshConvert();
-
-#if USE_CUSTOM_SHADER
-            /* Custom Shader: Init the shader */
-            auto custom_shader = Shader::Create(LOLFX_RESOURCE_NAME(easymesh_shiny));
-            // any other shader stuf here (Get uniform, mostly, and set texture)
-
-            for (int i = 0; i < m_gears.count(); i++)
-                m_gears[i].m1.SetMaterial(custom_shader);
-#endif
-
-            m_ready = true;
-        }
-
         for (int i = 0; i < m_gears.count(); i++)
-        {
             m_gears[i].m1.Render(scene, m_mat * m_gears[i].m2);
-        }
+    }
+
+    virtual bool release_draw() override
+    {
+        Scene& scene = Scene::GetScene();
+        scene.PopCamera(m_camera);
+        m_gears.resize(0);
+        return true;
     }
 
 private:
@@ -159,8 +161,6 @@ private:
     mat4 m_mat;
     Camera *m_camera;
     Light *m_light1, *m_light2;
-
-    bool m_ready;
 };
 
 int main(int argc, char **argv)
