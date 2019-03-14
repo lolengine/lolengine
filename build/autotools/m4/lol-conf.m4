@@ -83,8 +83,12 @@ fi
 dnl  Use Bullet Physics?
 ac_cv_my_have_bullet="no"
 if test "${enable_bullet}" != "no"; then
-  ac_cv_my_have_bullet="yes"
-  AC_DEFINE(LOL_USE_BULLET, 1, Define to 1 to use Bullet Physics)
+  PKG_CHECK_MODULES(BULLET, bullet, [ac_cv_my_have_bullet="yes"], [:])
+  if test "${ac_cv_my_have_bullet}" != "no"; then
+    AC_DEFINE(LOL_USE_BULLET, 1, Define to 1 to use Bullet Physics)
+    LOL_CFLAGS="${LOL_CFLAGS} ${BULLET_CFLAGS}"
+    LOL_LIBS="${LOL_LIBS} ${BULLET_LIBS}"
+  fi
 fi
 AM_CONDITIONAL(LOL_USE_BULLET, test "${ac_cv_my_have_bullet}" = "yes")
 
@@ -242,7 +246,6 @@ dnl  How to use the Lol Engine outside this tree
 LOL_CFLAGS="$LOL_CFLAGS $SDL_CFLAGS $GL_CFLAGS $EGL_CFLAGS $LIBPNG_CFLAGS"
 LOL_LIBS="$LOL_LIBS $SDL_LIBS $GL_LIBS $EGL_LIBS $LIBPNG_LIBS $D3D_LIBS"
 LOL_DEPS="${LOL_DEPS} \$(lol_builddir)/src/liblol-core.a"
-LOL_BULLET_DEPS="${LOL_BULLET_DEPS} \$(lol_builddir)/src/3rdparty/liblol-bullet.a"
 LOL_LUA_DEPS="${LOL_LUA_DEPS} \$(lol_builddir)/src/3rdparty/liblol-lua.a"
 
 dnl  How to use the Lol Engine inside this tree
@@ -256,7 +259,6 @@ dnl  Extra flags
 AC_SUBST(LOL_CFLAGS)
 AC_SUBST(LOL_LIBS)
 AC_SUBST(LOL_DEPS)
-AC_SUBST(LOL_BULLET_DEPS)
 AC_SUBST(LOL_LUA_DEPS)
 
 AC_SUBST(AM_CFLAGS)

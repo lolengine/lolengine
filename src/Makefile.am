@@ -25,9 +25,6 @@ liblol_core_a_SOURCES = \
     $(d3d9_sources) \
     $(android_sources)
 liblol_core_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/3rdparty/lua/src
-if LOL_USE_BULLET
-liblol_core_a_CPPFLAGS += -I$(srcdir)/3rdparty/bullet3/src
-endif
 
 liblol_core_headers = \
     lol/engine-internal.h lol/engine.h lol/public.h lol/extras.h lol/legacy.h \
