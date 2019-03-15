@@ -267,8 +267,11 @@ configure()
             PATH="$PATH" PKG_CONFIG_PATH="$PKG_CONFIG_PATH" do_configure $HOSTFLAGS $BUILDFLAGS CPPFLAGS="$CPPFLAGS" LDFLAGS="$LDFLAGS" GTK_LIBS="$GTK_LIBS"
             ;;
         web-*)
+            # First do an emcc run so that dependent libraries are generated
+            emflags="-s USE_SDL=2 -s USE_SDL_IMAGE=2 -s USE_SDL_MIXER=2"
+            touch conftest.c ; emcc $(echo $emflags) conftest.c -c -o conftest.o ; rm -f conftest.c conftest.o
             # We use --enable-release otherwise builds are really too slow
-            do_configure --enable-release $HOSTFLAGS $BUILDFLAGS CC=emcc CXX=em++ AR=emar RANLIB=emranlib PKG_CONFIG=/bin/false SDL_CONFIG=/bin/false ac_cv_exeext=".${platform##web-}" CPPFLAGS="-s USE_SDL=2" CXXFLAGS="-s USE_SDL=2" CFLAGS="-s USE_SDL=2"
+            do_configure --enable-release $HOSTFLAGS $BUILDFLAGS CC=emcc CXX=em++ AR=emar RANLIB=emranlib PKG_CONFIG=/bin/false SDL_CONFIG=/bin/false ac_cv_exeext=".${platform##web-}" CPPFLAGS="$emflags" CXXFLAGS="$emflags" CFLAGS="$emflags"
             ;;
         *)
             PATH="$PATH" do_configure CFLAGS="$CXXFLAGS" CXXFLAGS="$CXXFLAGS"
