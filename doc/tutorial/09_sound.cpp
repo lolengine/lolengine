@@ -41,16 +41,16 @@ public:
 
     void synth(int mode, void *buf, int bytes)
     {
-        uint16_t *stream = (uint16_t *)buf;
+        int16_t *stream = (int16_t *)buf;
         for (int i = 0; i < bytes / 2; ++i)
         {
             switch (mode)
             {
             case 0: // sine wave
-                stream[i] = 400 * lol::sin(8 * i * F_TAU / bytes);
+                stream[i] = lol::sin(4 * i * F_TAU / bytes) > 0 ? 800 : -800;
                 break;
             case 1: // white noise
-                stream[i] = lol::rand(-120, 120);
+                stream[i] = lol::rand(-200, 200);
                 break;
             }
         }
