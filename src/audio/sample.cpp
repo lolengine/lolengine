@@ -58,6 +58,11 @@ sample *sample::create(std::string const &path)
     return ret ? ret : sample_cache.set(path, new sample(path));
 }
 
+sample *sample::create(void const *samples, size_t len)
+{
+    return new sample(samples, len);
+}
+
 void sample::destroy(sample *s)
 {
     // FIXME: decrement!
@@ -65,7 +70,7 @@ void sample::destroy(sample *s)
 }
 
 sample::sample(std::string const &path)
-  : data(new sample_data())
+  : data(std::make_unique<sample_data>())
 {
     data->m_name = std::string("<sample> ") + path;
 
@@ -84,13 +89,23 @@ sample::sample(std::string const &path)
 #endif
 }
 
+sample::sample(void const *samples, size_t len)
+  : data(std::make_unique<sample_data>())
+{
+    data->m_name = std::string("<sample>");
+
+#if defined LOL_USE_SDL_MIXER
+    data->m_chunk = Mix_QuickLoad_RAW((Uint8 *)samples, (Uint32)len);
+    data->m_channel = -1;
+#endif
+}
+
 sample::~sample()
 {
 #if defined LOL_USE_SDL_MIXER
     if (data->m_chunk)
         Mix_FreeChunk(data->m_chunk);
 #endif
-    delete data;
 }
 
 void sample::tick_game(float seconds)

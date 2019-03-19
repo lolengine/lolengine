@@ -197,8 +197,8 @@ void SdlInput::tick(float seconds)
 
         //case SDL_TEXTEDITING: //TODO: handle that?
         case SDL_TEXTINPUT:
-                keyboard->internal_add_text(event.text.text);
-                break;
+            keyboard->internal_add_text(event.text.text);
+            break;
 
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP:

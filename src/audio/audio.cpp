@@ -12,6 +12,7 @@
 
 #include <lol/engine-internal.h>
 
+#include <array>
 #include <unordered_set>
 #include <functional>
 
@@ -25,6 +26,13 @@
 #   endif
 #endif
 
+// Buffer size, in samples (https://wiki.libsdl.org/SDL_AudioSpec)
+// “[…] refers to the size of the audio buffer in sample frames. A sample frame
+// is a chunk of audio data of the size specified in format multiplied by the
+// number of channels.”
+#define LOL_AUDIO_SAMPLE_FRAMES 1024
+#define LOL_AUDIO_CHANNELS 2
+
 namespace lol
 {
 
@@ -32,8 +40,8 @@ struct audio_streamer
 {
     int m_channel;
     std::function<void(void *, int)> m_callback;
+    std::array<uint16_t, LOL_AUDIO_CHANNELS * LOL_AUDIO_SAMPLE_FRAMES> m_empty; // SDL needs a reference to this
 #if defined LOL_USE_SDL_MIXER
-    std::vector<uint8_t> m_empty; // SDL keeps a reference to this
     Mix_Chunk *m_chunk;
 #endif
 };
@@ -47,7 +55,7 @@ std::unordered_set<std::shared_ptr<audio_streamer>> audio::m_streamers;
 #if defined LOL_USE_SDL_MIXER
 void audio::init()
 {
-    Mix_OpenAudio(22050, AUDIO_S16, 2, 1024);
+    Mix_OpenAudio(22050, AUDIO_S16, LOL_AUDIO_CHANNELS, LOL_AUDIO_SAMPLE_FRAMES);
     set_channels(8);
 }
 
@@ -79,12 +87,13 @@ int audio::start_streaming(std::function<void(void *, int)> const &f)
         s->m_callback(stream, bytes);
     };
 
-    std::shared_ptr<audio_streamer> s = std::make_shared<audio_streamer>();
+    auto s = std::make_shared<audio_streamer>();
     m_streamers.insert(s);
 
-    s->m_empty.resize(1024);
-    s->m_chunk = Mix_QuickLoad_RAW(s->m_empty.data(),
-            (Uint32)(s->m_empty.size() * sizeof(uint8_t)));
+    Uint8* audio_data = (Uint8*)s->m_empty.data();
+    Uint32 audio_size = (Uint32)(s->m_empty.size() * sizeof(s->m_empty[0]));
+    memset(audio_data, 17, audio_size);
+    s->m_chunk = Mix_QuickLoad_RAW(audio_data, audio_size);
     s->m_channel = Mix_PlayChannel(-1, s->m_chunk, -1);
     s->m_callback = f;
     Mix_RegisterEffect(s->m_channel, trampoline, nullptr, s.get());

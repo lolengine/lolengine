@@ -17,6 +17,7 @@
 #include <lol/engine.h>
 
 #include <functional>
+#include <array>
 
 using namespace lol;
 
@@ -25,8 +26,17 @@ class sound_demo : public WorldEntity
 public:
     sound_demo()
     {
-        for (auto &val : m_streams)
-            val = -1;
+        for (int i = 0; i < 2; ++i)
+        {
+            auto f = std::bind(&sound_demo::synth, this, i,
+                               std::placeholders::_1,
+                               std::placeholders::_2);
+            m_streams[i] = audio::start_streaming(f);
+        }
+
+        for (size_t i = 0; i < m_instrument.size(); ++i)
+            m_instrument[i] = (int16_t)(i % 80 * (10000 - lol::abs(i - 10000)) * 40 / 10000);
+        m_sample = sample::create(m_instrument.data(), 40000);
 
         m_text = new Text("SPACE for sine wave, Left Click for white noise",
                           "data/font/ascii.png");
@@ -39,18 +49,25 @@ public:
         Ticker::Unref(m_text);
     }
 
-    void synth(int mode, void *buf, int bytes)
+    void synth(int channel, void *buf, int bytes)
     {
+        int mode = (1 << channel) & m_mask;
+
         int16_t *stream = (int16_t *)buf;
-        for (int i = 0; i < bytes / 2; ++i)
+        for (int i = 0; i < bytes / 2; i += 2)
         {
             switch (mode)
             {
-            case 0: // sine wave
-                stream[i] = lol::sin(4 * i * F_TAU / bytes) > 0 ? 800 : -800;
+            case 2: // square / triangle signals
+                stream[i] = 800 * (i % 128 > 64 ? -1 : 1);
+                stream[i + 1] = (i % 128 - 64) * 15;
                 break;
             case 1: // white noise
-                stream[i] = lol::rand(-200, 200);
+                stream[i] = lol::rand(-2000, 2000);
+                stream[i + 1] = lol::rand(-1000, 1000);
+                break;
+            case 0: // inactive
+                stream[i] = stream[i + 1] = 0;
                 break;
             }
         }
@@ -63,35 +80,28 @@ public:
         auto mouse = input::mouse();
         auto keyboard = input::keyboard();
 
-        for (int i = 0; i < 2; ++i)
-        {
-            if (i == 0 && !keyboard->key_pressed(input::key::SC_Space))
-                continue;
-            if (i == 1 && !mouse->button_pressed(input::button::BTN_Left))
-                continue;
+        if (keyboard->key_pressed(input::key::SC_Return))
+            m_sample->play();
 
-            if (m_streams[i] < 0)
-            {
-                auto f = std::bind(&sound_demo::synth, this, i,
-                                   std::placeholders::_1,
-                                   std::placeholders::_2);
-                m_streams[i] = audio::start_streaming(f);
-            }
-            else
-            {
-                audio::stop_streaming(m_streams[i]);
-                m_streams[i] = -1;
-            }
-        }
+        if (keyboard->key_pressed(input::key::SC_Space))
+            m_mask ^= 2;
+
+        if (mouse->button_pressed(input::button::BTN_Left))
+            m_mask ^= 1;
     }
 
-    virtual void tick_draw(float seconds, Scene &scene) override
+    virtual bool release_game() override
     {
-        WorldEntity::tick_draw(seconds, scene);
+        for (int i = 0; i < 2; ++i)
+            audio::stop_streaming(m_streams[i]);
+        return true;
     }
 
 private:
     int m_streams[2];
+    int m_mask = 0;
+    std::array<int16_t, 20000> m_instrument;
+    sample* m_sample;
     Text *m_text;
 };
 

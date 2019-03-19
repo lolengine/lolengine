@@ -25,16 +25,16 @@
 namespace lol
 {
 
-class sample_data;
-
 class sample : public entity
 {
 public:
     static sample *create(std::string const &path);
+    static sample* create(void const* samples, size_t len);
     static void destroy(sample *s);
 
 protected:
     sample(std::string const &path);
+    sample(void const *samples, size_t len);
     virtual ~sample();
 
     /* Inherited from entity */
@@ -48,7 +48,7 @@ public:
     void stop();
 
 private:
-    sample_data *data;
+    std::unique_ptr<class sample_data> data;
 };
 
 } /* namespace lol */
