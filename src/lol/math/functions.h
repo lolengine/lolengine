@@ -1,8 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
-//            © 2012—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -23,74 +22,69 @@
 #include <cmath>
 #include <cstdio>
 #include <algorithm>
+#include <type_traits>
 
 #include <stdint.h>
 
 namespace lol
 {
 
-/* This is OUR namespace. Don't let Windows headers mess with it. */
+// This is OUR namespace. Don't let Windows headers mess with it.
 #undef min
 #undef max
 
-/* Standard cmath functions */
-LOL_ATTR_NODISCARD static inline double sqrt(double const &x) { return std::sqrt(x); }
-LOL_ATTR_NODISCARD static inline float sqrt(float const &x) { return std::sqrt(x); }
+// Macros for type traits
+#define LOL_T_ARITHMETIC typename std::enable_if<std::is_arithmetic<T>::value, T>::type
+#define LOL_T_SIGNED typename std::enable_if<std::is_signed<T>::value, T>::type
+#define LOL_T_UNSIGNED typename std::enable_if<std::is_arithmetic<T>::value && \
+                                               !std::is_signed<T>::value, T>::type
+#define LOL_T_INTEGRAL typename std::enable_if<std::is_integral<T>::value, T>::type
+#define LOL_T_FLOATING_POINT typename std::enable_if<std::is_floating_point<T>::value, T>::type
 
-LOL_ATTR_NODISCARD static inline double cbrt(double const &x) { return std::cbrt(x); }
-LOL_ATTR_NODISCARD static inline float cbrt(float const &x) { return std::cbrt(x); }
+// Mechanism to import standard cmath functions
+#define LOL_FORWARD_FP_1_ARG(f) \
+    template<typename T, typename T2 = T, typename DUMMY = LOL_T_FLOATING_POINT> \
+    LOL_ATTR_NODISCARD static inline T2 f(T x) { return std::f(x); }
 
-LOL_ATTR_NODISCARD static inline double exp(double const &x) { return std::exp(x); }
-LOL_ATTR_NODISCARD static inline float exp(float const &x) { return std::exp(x); }
+#define LOL_FORWARD_ARITH_2_ARGS(f) \
+    template<typename T, typename T2 = T, typename DUMMY = LOL_T_ARITHMETIC> \
+    LOL_ATTR_NODISCARD static inline T2 f(T x, T y) { return std::f(x, y); }
 
-LOL_ATTR_NODISCARD static inline double sin(double const &x) { return std::sin(x); }
-LOL_ATTR_NODISCARD static inline double cos(double const &x) { return std::cos(x); }
-LOL_ATTR_NODISCARD static inline double tan(double const &x) { return std::tan(x); }
-LOL_ATTR_NODISCARD static inline float sin(float const &x) { return std::sin(x); }
-LOL_ATTR_NODISCARD static inline float cos(float const &x) { return std::cos(x); }
-LOL_ATTR_NODISCARD static inline float tan(float const &x) { return std::tan(x); }
+#define LOL_FORWARD_FP_2_ARGS(f) \
+    template<typename T, typename T2 = T, typename DUMMY = LOL_T_FLOATING_POINT> \
+    LOL_ATTR_NODISCARD static inline T2 f(T x, T y) { return std::f(x, y); }
 
-LOL_ATTR_NODISCARD static inline double asin(double const &x) { return std::asin(x); }
-LOL_ATTR_NODISCARD static inline double acos(double const &x) { return std::acos(x); }
-LOL_ATTR_NODISCARD static inline double atan(double const &x) { return std::atan(x); }
-LOL_ATTR_NODISCARD static inline float asin(float const &x) { return std::asin(x); }
-LOL_ATTR_NODISCARD static inline float acos(float const &x) { return std::acos(x); }
-LOL_ATTR_NODISCARD static inline float atan(float const &x) { return std::atan(x); }
+LOL_FORWARD_FP_1_ARG(sqrt)
+LOL_FORWARD_FP_1_ARG(cbrt)
 
-LOL_ATTR_NODISCARD static inline double atan2(double const &y, double const &x)
-{
-    return std::atan2(y, x);
-}
+LOL_FORWARD_FP_1_ARG(exp)
+LOL_FORWARD_FP_2_ARGS(pow)
 
-LOL_ATTR_NODISCARD static inline float atan2(float const &y, float const &x)
-{
-    return std::atan2(y, x);
-}
+LOL_FORWARD_FP_1_ARG(sin)
+LOL_FORWARD_FP_1_ARG(cos)
+LOL_FORWARD_FP_1_ARG(tan)
+LOL_FORWARD_FP_1_ARG(asin)
+LOL_FORWARD_FP_1_ARG(acos)
+LOL_FORWARD_FP_1_ARG(atan)
+LOL_FORWARD_FP_2_ARGS(atan2)
 
-LOL_ATTR_NODISCARD static inline double pow(double const &x, double const &y)
-{
-    return std::pow(x, y);
-}
+LOL_FORWARD_ARITH_2_ARGS(min)
+LOL_FORWARD_ARITH_2_ARGS(max)
 
-LOL_ATTR_NODISCARD static inline float pow(float const &x, float const &y)
-{
-    return std::pow(x, y);
-}
+LOL_FORWARD_FP_2_ARGS(fmod)
+LOL_FORWARD_FP_1_ARG(floor)
+LOL_FORWARD_FP_1_ARG(ceil)
+LOL_FORWARD_FP_1_ARG(round)
 
-/* Our extensions */
-static inline void sincos(double const &x, double *s, double *c)
-{
-    *s = std::sin(x);
-    *c = std::cos(x);
-}
-
-static inline void sincos(float const &x, float *s, float *c)
+// Our extensions
+template<typename T, typename T2 = LOL_T_FLOATING_POINT>
+LOL_ATTR_NODISCARD static inline T2 sincos(T x, T *s, T *c)
 {
     *s = std::sin(x);
     *c = std::cos(x);
 }
 
-/* Inherited from GLSL */
+// Inherited from GLSL
 LOL_ATTR_NODISCARD static inline float degrees(float radians)
 {
     return radians * (180.0f / F_PI);
@@ -121,8 +115,8 @@ LOL_ATTR_NODISCARD static inline ldouble radians(ldouble degrees)
     return degrees * (LD_PI / 180.0L);
 }
 
-/* The integer versions return floating point values. This avoids nasty
- * surprises when calling radians(180) instead of radians(180.0). */
+// The integer versions return floating point values. This avoids nasty
+// surprises when calling radians(180) instead of radians(180.0).
 LOL_ATTR_NODISCARD static inline float   degrees(int8_t x)   { return degrees(float(x)); }
 LOL_ATTR_NODISCARD static inline float   degrees(uint8_t x)  { return degrees(float(x)); }
 LOL_ATTR_NODISCARD static inline float   degrees(int16_t x)  { return degrees(float(x)); }
@@ -141,144 +135,51 @@ LOL_ATTR_NODISCARD static inline double  radians(uint32_t x) { return radians(do
 LOL_ATTR_NODISCARD static inline ldouble radians(int64_t x)  { return radians(ldouble(x)); }
 LOL_ATTR_NODISCARD static inline ldouble radians(uint64_t x) { return radians(ldouble(x)); }
 
-LOL_ATTR_NODISCARD static inline float mix(float const &a, float const &b, float const &x)
+template<typename T, typename T2 = LOL_T_FLOATING_POINT>
+LOL_ATTR_NODISCARD static inline T2 mix(T a, T b, T x)
 {
     return a + (b - a) * x;
 }
 
-LOL_ATTR_NODISCARD static inline double mix(double const &a, double const &b, double const &x)
-{
-    return a + (b - a) * x;
-}
-
-LOL_ATTR_NODISCARD static inline ldouble mix(ldouble const &a, ldouble const &b, ldouble const &x)
-{
-    return a + (b - a) * x;
-}
-
-/* Inherited from HLSL */
-LOL_ATTR_NODISCARD static inline float lerp(float const &a, float const &b, float const &x)
+// Inherited from HLSL
+template<typename T, typename T2 = LOL_T_FLOATING_POINT>
+LOL_ATTR_NODISCARD static inline T2 lerp(T a, T b, T x)
 {
     return mix(a, b, x);
 }
 
-LOL_ATTR_NODISCARD static inline double lerp(double const &a, double const &b, double const &x)
-{
-    return mix(a, b, x);
-}
+// C++ doesn't define abs() or fmod() for all types; we add these for
+// convenience to avoid adding complexity to vector.h.
+template<typename T, typename T2 = LOL_T_SIGNED>
+LOL_ATTR_NODISCARD static inline T2 abs(T x) { return std::abs(x); }
+template<typename T, typename T2 = T, typename DUMMY = LOL_T_UNSIGNED>
+LOL_ATTR_NODISCARD static inline T2 abs(T x) { return x; }
 
-LOL_ATTR_NODISCARD static inline ldouble lerp(ldouble const &a, ldouble const &b, ldouble const &x)
-{
-    return mix(a, b, x);
-}
+template<typename T, typename T2 = LOL_T_INTEGRAL>
+LOL_ATTR_NODISCARD static inline T2 fmod(T x, T y) { return x % y; }
+template<typename T, typename T2 = LOL_T_INTEGRAL>
+LOL_ATTR_NODISCARD static inline T2 floor(T x) { return x; }
+template<typename T, typename T2 = LOL_T_INTEGRAL>
+LOL_ATTR_NODISCARD static inline T2 ceil(T x) { return x; }
+template<typename T, typename T2 = LOL_T_INTEGRAL>
+LOL_ATTR_NODISCARD static inline T2 round(T x) { return x; }
 
-/* C++ doesn't define abs() and fmod() for all types; we add these for
- * convenience to avoid adding complexity to vector.h. */
-LOL_ATTR_NODISCARD static inline int8_t abs(int8_t x) { return std::abs(x); }
-LOL_ATTR_NODISCARD static inline uint8_t abs(uint8_t x) { return x; }
-LOL_ATTR_NODISCARD static inline int16_t abs(int16_t x) { return std::abs(x); }
-LOL_ATTR_NODISCARD static inline uint16_t abs(uint16_t x) { return x; }
-LOL_ATTR_NODISCARD static inline int32_t abs(int32_t x) { return std::abs(x); }
-LOL_ATTR_NODISCARD static inline uint32_t abs(uint32_t x) { return x; }
-#if defined __ANDROID__
-/* The Android toolchain doesn't provide abs() for int64_t. */
-LOL_ATTR_NODISCARD static inline int64_t abs(int64_t x) { return x > 0 ? x : -x; }
-#else
-LOL_ATTR_NODISCARD static inline int64_t abs(int64_t x) { return std::abs(x); }
-#endif
-LOL_ATTR_NODISCARD static inline uint64_t abs(uint64_t x) { return x; }
-LOL_ATTR_NODISCARD static inline float abs(float x) { return std::abs(x); }
-LOL_ATTR_NODISCARD static inline double abs(double x) { return std::abs(x); }
-LOL_ATTR_NODISCARD static inline ldouble abs(ldouble x) { return std::abs(x); }
+template<typename T, typename T2 = LOL_T_ARITHMETIC>
+LOL_ATTR_NODISCARD static inline T2 sq(T x) { return x * x; }
+template<typename T, typename T2 = LOL_T_ARITHMETIC>
+LOL_ATTR_NODISCARD static inline T2 fract(T x) { return x - lol::floor(x); }
 
-LOL_ATTR_NODISCARD static inline uint8_t fmod(uint8_t x, uint8_t y) { return x % y; }
-LOL_ATTR_NODISCARD static inline int8_t fmod(int8_t x, int8_t y) { return x % y; }
-LOL_ATTR_NODISCARD static inline uint16_t fmod(uint16_t x, uint16_t y) { return x % y; }
-LOL_ATTR_NODISCARD static inline int16_t fmod(int16_t x, int16_t y) { return x % y; }
-LOL_ATTR_NODISCARD static inline uint32_t fmod(uint32_t x, uint32_t y) { return x % y; }
-LOL_ATTR_NODISCARD static inline int32_t fmod(int32_t x, int32_t y) { return x % y; }
-LOL_ATTR_NODISCARD static inline uint64_t fmod(uint64_t x, uint64_t y) { return x % y; }
-LOL_ATTR_NODISCARD static inline int64_t fmod(int64_t x, int64_t y) { return x % y; }
-LOL_ATTR_NODISCARD static inline float fmod(float x, float y) { return std::fmod(x, y); }
-LOL_ATTR_NODISCARD static inline double fmod(double x, double y) { return std::fmod(x, y); }
-LOL_ATTR_NODISCARD static inline ldouble fmod(ldouble x, ldouble y) { return std::fmod(x, y); }
+template<typename T, typename T2 = LOL_T_ARITHMETIC>
+LOL_ATTR_NODISCARD static inline T2 clamp(T x, T y, T z) { return min(max(x, y), z); }
+template<typename T, typename T2 = LOL_T_ARITHMETIC>
+LOL_ATTR_NODISCARD static inline T2 saturate(T x) { return clamp(x, (T)0, (T)1); }
+template<typename T, typename T2 = LOL_T_ARITHMETIC>
+LOL_ATTR_NODISCARD static inline T2 gcd(T x, T y) { return y == (T)0 ? lol::abs(x) : lol::gcd(y, lol::fmod(x, y)); }
 
-LOL_ATTR_NODISCARD static inline uint8_t floor(uint8_t x) { return x; }
-LOL_ATTR_NODISCARD static inline int8_t floor(int8_t x) { return x; }
-LOL_ATTR_NODISCARD static inline uint16_t floor(uint16_t x) { return x; }
-LOL_ATTR_NODISCARD static inline int16_t floor(int16_t x) { return x; }
-LOL_ATTR_NODISCARD static inline uint32_t floor(uint32_t x) { return x; }
-LOL_ATTR_NODISCARD static inline int32_t floor(int32_t x) { return x; }
-LOL_ATTR_NODISCARD static inline uint64_t floor(uint64_t x) { return x; }
-LOL_ATTR_NODISCARD static inline int64_t floor(int64_t x) { return x; }
-LOL_ATTR_NODISCARD static inline float floor(float x) { return std::floor(x); }
-LOL_ATTR_NODISCARD static inline double floor(double x) { return std::floor(x); }
-LOL_ATTR_NODISCARD static inline ldouble floor(ldouble x) { return std::floor(x); }
-
-LOL_ATTR_NODISCARD static inline uint8_t ceil(uint8_t x) { return x; }
-LOL_ATTR_NODISCARD static inline int8_t ceil(int8_t x) { return x; }
-LOL_ATTR_NODISCARD static inline uint16_t ceil(uint16_t x) { return x; }
-LOL_ATTR_NODISCARD static inline int16_t ceil(int16_t x) { return x; }
-LOL_ATTR_NODISCARD static inline uint32_t ceil(uint32_t x) { return x; }
-LOL_ATTR_NODISCARD static inline int32_t ceil(int32_t x) { return x; }
-LOL_ATTR_NODISCARD static inline uint64_t ceil(uint64_t x) { return x; }
-LOL_ATTR_NODISCARD static inline int64_t ceil(int64_t x) { return x; }
-LOL_ATTR_NODISCARD static inline float ceil(float x) { return std::ceil(x); }
-LOL_ATTR_NODISCARD static inline double ceil(double x) { return std::ceil(x); }
-LOL_ATTR_NODISCARD static inline ldouble ceil(ldouble x) { return std::ceil(x); }
-
-LOL_ATTR_NODISCARD static inline uint8_t round(uint8_t x) { return x; }
-LOL_ATTR_NODISCARD static inline int8_t round(int8_t x) { return x; }
-LOL_ATTR_NODISCARD static inline uint16_t round(uint16_t x) { return x; }
-LOL_ATTR_NODISCARD static inline int16_t round(int16_t x) { return x; }
-LOL_ATTR_NODISCARD static inline uint32_t round(uint32_t x) { return x; }
-LOL_ATTR_NODISCARD static inline int32_t round(int32_t x) { return x; }
-LOL_ATTR_NODISCARD static inline uint64_t round(uint64_t x) { return x; }
-LOL_ATTR_NODISCARD static inline int64_t round(int64_t x) { return x; }
-LOL_ATTR_NODISCARD static inline float round(float x) { return std::round(x); }
-LOL_ATTR_NODISCARD static inline double round(double x) { return std::round(x); }
-LOL_ATTR_NODISCARD static inline ldouble round(ldouble x) { return std::round(x); }
-
-#define LOL_GENERIC_FUNC(T) \
-    LOL_ATTR_NODISCARD static inline T sq(T x) { return x * x; } \
-    LOL_ATTR_NODISCARD static inline T fract(T x) { return x - lol::floor(x); } \
-    LOL_ATTR_NODISCARD static inline T min(T x, T y) { return std::min(x, y); } \
-    LOL_ATTR_NODISCARD static inline T max(T x, T y) { return std::max(x, y); } \
-    LOL_ATTR_NODISCARD static inline T clamp(T x, T y, T z) { return min(max(x, y), z); } \
-    LOL_ATTR_NODISCARD static inline T saturate(T x) { return min(max(x, (T)0), (T)1); } \
-    LOL_ATTR_NODISCARD static inline T gcd(T x, T y) { return y == (T)0 ? lol::abs(x) : lol::gcd(y, lol::fmod(x, y)); }
-
-#define LOL_GENERIC_FUNC_SIGNED(T) \
-    LOL_GENERIC_FUNC(T) \
-    LOL_ATTR_NODISCARD static inline T sign(T x) { return (T)(((T)0 < x) - (x < (T)0)); }
-
-#define LOL_GENERIC_FUNC_UNSIGNED(T) \
-    LOL_GENERIC_FUNC(T) \
-    LOL_ATTR_NODISCARD static inline T sign(T x) { return (T)((T)0 < x); }
-
-LOL_GENERIC_FUNC_UNSIGNED(uint8_t)
-LOL_GENERIC_FUNC_SIGNED(int8_t)
-LOL_GENERIC_FUNC_UNSIGNED(uint16_t)
-LOL_GENERIC_FUNC_SIGNED(int16_t)
-LOL_GENERIC_FUNC_UNSIGNED(uint32_t)
-LOL_GENERIC_FUNC_SIGNED(int32_t)
-LOL_GENERIC_FUNC_UNSIGNED(uint64_t)
-LOL_GENERIC_FUNC_SIGNED(int64_t)
-LOL_GENERIC_FUNC_SIGNED(float)
-LOL_GENERIC_FUNC_SIGNED(double)
-LOL_GENERIC_FUNC_SIGNED(ldouble)
-#undef LOL_GENERIC_FUNC
-
-/* Some additional implementations when ptrdiff_t != int */
-#define LOL_T_PTRDIFF_T \
-    typename std::enable_if<!std::is_same<ptrdiff_t, int>::value \
-                             && std::is_same<T, ptrdiff_t>::value, T>::type
-template<typename T, typename T2 = LOL_T_PTRDIFF_T>
-LOL_ATTR_NODISCARD static inline T2 max(T x, T y) { return std::max(x, y); }
-
-template<typename T, typename T2 = LOL_T_PTRDIFF_T>
-LOL_ATTR_NODISCARD static inline T2 min(T x, T y) { return std::min(x, y); }
-#undef LOL_T_PTRDIFF_T
+template<typename T, typename T2 = LOL_T_SIGNED>
+LOL_ATTR_NODISCARD static inline T2 sign(T x) { return (T)(((T)0 < x) - (x < (T)0)); }
+template<typename T, typename T2 = T, typename DUMMY = LOL_T_UNSIGNED>
+LOL_ATTR_NODISCARD static inline T2 sign(T x) { return (T)((T)0 < x); }
 
 } /* namespace lol */
 
