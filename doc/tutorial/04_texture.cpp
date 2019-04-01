@@ -80,7 +80,7 @@ public:
         return true;
     }
 
-    virtual void tick_draw(float seconds, Scene &scene)
+    virtual void tick_draw(float seconds, Scene &scene) override
     {
         WorldEntity::tick_draw(seconds, scene);
 

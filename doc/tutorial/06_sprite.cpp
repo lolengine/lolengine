@@ -46,7 +46,7 @@ public:
         Ticker::Unref(m_camera);
     }
 
-    virtual void tick_game(float seconds)
+    virtual void tick_game(float seconds) override
     {
         for (int i = 0; i < SPRITE_COUNT; ++i)
         {

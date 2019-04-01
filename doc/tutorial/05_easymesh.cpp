@@ -87,7 +87,7 @@ public:
         Ticker::Unref(m_light2);
     }
 
-    virtual void tick_game(float seconds)
+    virtual void tick_game(float seconds) override
     {
         WorldEntity::tick_game(seconds);
 
