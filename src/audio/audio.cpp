@@ -55,8 +55,38 @@ std::unordered_set<std::shared_ptr<audio_streamer>> audio::m_streamers;
 #if defined LOL_USE_SDL_MIXER
 void audio::init()
 {
-    Mix_OpenAudio(22050, AUDIO_S16, LOL_AUDIO_CHANNELS, LOL_AUDIO_SAMPLE_FRAMES);
+    if (Mix_OpenAudio(22050, AUDIO_S16, LOL_AUDIO_CHANNELS, LOL_AUDIO_SAMPLE_FRAMES) < 0)
+    {
+        msg::error("error opening audio: %s\n", Mix_GetError());
+        return;
+    }
+
     set_channels(8);
+
+    int frequency, channels;
+    Uint16 format;
+    if (Mix_QuerySpec(&frequency, &format, &channels) == 0)
+    {
+        msg::error("error querying audio: %s\n", Mix_GetError());
+        return;
+    }
+
+    char const *sformat = "unknown";
+    switch (format)
+    {
+        case AUDIO_U8: sformat = "uint8"; break;
+        case AUDIO_S8: sformat = "int8"; break;
+        case AUDIO_U16LSB: sformat = "uint16le"; break;
+        case AUDIO_U16MSB: sformat = "uint16be"; break;
+        case AUDIO_S16LSB: sformat = "int16le"; break;
+        case AUDIO_S16MSB: sformat = "int16be"; break;
+        case AUDIO_S32LSB: sformat = "int32le"; break;
+        case AUDIO_S32MSB: sformat = "int32be"; break;
+        case AUDIO_F32LSB: sformat = "float32le"; break;
+        case AUDIO_F32MSB: sformat = "float32be"; break;
+    }
+    msg::info("audio freq=%dHz format=%s channels=%d\n",
+              frequency, sformat, channels);
 }
 
 void audio::set_channels(int channels)
