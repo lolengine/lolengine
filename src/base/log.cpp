@@ -113,6 +113,10 @@ void msg::helper(MessageType type, char const *fmt, va_list ap)
     widechar.resize(buf.length() + 1);
     MultiByteToWideChar(CP_UTF8, 0, buf.c_str(), (int)buf.length() + 1, widechar.data(), widechar.count());
     OutputDebugStringW(widechar.data());
+#   elif defined __EMSCRIPTEN__
+    fprintf(stdout, "%s: ", prefix[(int)type]);
+    vfprintf(stdout, fmt, ap);
+    fflush(stdout);
 #   else
     fprintf(stderr, "%s: ", prefix[(int)type]);
     vfprintf(stderr, fmt, ap);
