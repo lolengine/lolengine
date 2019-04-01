@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -27,15 +27,32 @@ namespace lol
 class audio
 {
 public:
+    enum class format : uint8_t
+    {
+        unknown = 0,
+        uint8,
+        int8,
+        uint16le, uint16be,
+        int16le, int16be,
+        int32le, int32be,
+        float32le, float32be,
+    };
+
     static void init();
 
-    static void set_channels(int channels);
-    static void set_volume(int channel,int volume);
+    // Set the number of audio tracks that can be mixed together
+    static void set_tracks(int tracks);
+    // Set the volume of a specific track
+    static void set_volume(int track, int volume);
     static void mute_all();
     static void unmute_all();
 
-    static int start_streaming(std::function<void(void *, int)> const &f);
-    static void stop_streaming(int channel);
+    static int start_streaming(std::function<void(void *, int)> const &f,
+                               format format = audio::format::uint16le,
+                               int frequency = 22050,
+                               int channels = 2);
+
+    static void stop_streaming(int track);
 
 private:
     audio() {}

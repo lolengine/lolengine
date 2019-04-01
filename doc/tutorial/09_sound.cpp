@@ -31,7 +31,7 @@ public:
             auto f = std::bind(&sound_demo::synth, this, i,
                                std::placeholders::_1,
                                std::placeholders::_2);
-            m_streams[i] = audio::start_streaming(f);
+            m_streams[i] = audio::start_streaming(f, audio::format::int16le, 22050, 1);
         }
 
         for (size_t i = 0; i < m_instrument.size(); ++i)
@@ -54,20 +54,18 @@ public:
         int mode = (1 << channel) & m_mask;
 
         int16_t *stream = (int16_t *)buf;
-        for (int i = 0; i < bytes / 2; i += 2)
+        for (int i = 0; i < bytes / 2; ++i)
         {
             switch (mode)
             {
-            case 2: // square / triangle signals
-                stream[i] = 800 * (i % 128 > 64 ? -1 : 1);
-                stream[i + 1] = (i % 128 - 64) * 15;
+            case 2: // triangle signal
+                stream[i] = (i % 128 - 64) * 8;
                 break;
             case 1: // white noise
-                stream[i] = lol::rand(-2000, 2000);
-                stream[i + 1] = lol::rand(-1000, 1000);
+                stream[i] = lol::rand(-2048, 2048);
                 break;
             case 0: // inactive
-                stream[i] = stream[i + 1] = 0;
+                stream[i] = 0;
                 break;
             }
         }
