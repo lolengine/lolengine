@@ -31,7 +31,7 @@ public:
             auto f = std::bind(&sound_demo::synth, this, i,
                                std::placeholders::_1,
                                std::placeholders::_2);
-            m_streams[i] = audio::start_streaming(f, audio::format::int16le, 22050, 1);
+            m_streams[i] = audio::start_streaming(f, audio::format::sint16le, 22050, 1);
         }
 
         for (size_t i = 0; i < m_instrument.size(); ++i)
