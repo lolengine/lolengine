@@ -16,12 +16,23 @@ pegtl_sources = \
     pegtl/include/tao/pegtl/config.hpp \
     pegtl/include/tao/pegtl/contrib/abnf.hpp \
     pegtl/include/tao/pegtl/contrib/alphabet.hpp \
-    pegtl/include/tao/pegtl/contrib/changes.hpp \
+    pegtl/include/tao/pegtl/contrib/change_action_and_state.hpp \
+    pegtl/include/tao/pegtl/contrib/change_action_and_states.hpp \
+    pegtl/include/tao/pegtl/contrib/change_action.hpp \
+    pegtl/include/tao/pegtl/contrib/change_control.hpp \
+    pegtl/include/tao/pegtl/contrib/change_state.hpp \
+    pegtl/include/tao/pegtl/contrib/change_states.hpp \
     pegtl/include/tao/pegtl/contrib/counter.hpp \
+    pegtl/include/tao/pegtl/contrib/disable_action.hpp \
+    pegtl/include/tao/pegtl/contrib/discard_input.hpp \
+    pegtl/include/tao/pegtl/contrib/discard_input_on_failure.hpp \
+    pegtl/include/tao/pegtl/contrib/discard_input_on_success.hpp \
+    pegtl/include/tao/pegtl/contrib/enable_action.hpp \
     pegtl/include/tao/pegtl/contrib/http.hpp \
     pegtl/include/tao/pegtl/contrib/json.hpp \
     pegtl/include/tao/pegtl/contrib/raw_string.hpp \
     pegtl/include/tao/pegtl/contrib/rep_one_min_max.hpp \
+    pegtl/include/tao/pegtl/contrib/rep_string.hpp \
     pegtl/include/tao/pegtl/contrib/to_string.hpp \
     pegtl/include/tao/pegtl/contrib/tracer.hpp \
     pegtl/include/tao/pegtl/contrib/unescape.hpp \
@@ -31,7 +42,6 @@ pegtl_sources = \
     pegtl/include/tao/pegtl/eol_pair.hpp \
     pegtl/include/tao/pegtl/file_input.hpp \
     pegtl/include/tao/pegtl.hpp \
-    pegtl/include/tao/pegtl/input_error.hpp \
     pegtl/include/tao/pegtl/internal/action.hpp \
     pegtl/include/tao/pegtl/internal/action_input.hpp \
     pegtl/include/tao/pegtl/internal/alnum.hpp \
@@ -74,6 +84,7 @@ pegtl_sources = \
     pegtl/include/tao/pegtl/internal/file_reader.hpp \
     pegtl/include/tao/pegtl/internal/has_apply0.hpp \
     pegtl/include/tao/pegtl/internal/has_apply.hpp \
+    pegtl/include/tao/pegtl/internal/has_match.hpp \
     pegtl/include/tao/pegtl/internal/identifier.hpp \
     pegtl/include/tao/pegtl/internal/if_apply.hpp \
     pegtl/include/tao/pegtl/internal/if_must_else.hpp \
@@ -90,7 +101,8 @@ pegtl_sources = \
     pegtl/include/tao/pegtl/internal/list_tail.hpp \
     pegtl/include/tao/pegtl/internal/list_tail_pad.hpp \
     pegtl/include/tao/pegtl/internal/marker.hpp \
-    pegtl/include/tao/pegtl/internal/minus.hpp \
+    pegtl/include/tao/pegtl/internal/missing_apply0.hpp \
+    pegtl/include/tao/pegtl/internal/missing_apply.hpp \
     pegtl/include/tao/pegtl/internal/must.hpp \
     pegtl/include/tao/pegtl/internal/not_at.hpp \
     pegtl/include/tao/pegtl/internal/one.hpp \
@@ -126,12 +138,11 @@ pegtl_sources = \
     pegtl/include/tao/pegtl/internal/star_must.hpp \
     pegtl/include/tao/pegtl/internal/state.hpp \
     pegtl/include/tao/pegtl/internal/string.hpp \
-    pegtl/include/tao/pegtl/internal/three.hpp \
     pegtl/include/tao/pegtl/internal/trivial.hpp \
     pegtl/include/tao/pegtl/internal/try_catch_type.hpp \
-    pegtl/include/tao/pegtl/internal/two.hpp \
     pegtl/include/tao/pegtl/internal/until.hpp \
     pegtl/include/tao/pegtl/istream_input.hpp \
+    pegtl/include/tao/pegtl/match.hpp \
     pegtl/include/tao/pegtl/memory_input.hpp \
     pegtl/include/tao/pegtl/mmap_input.hpp \
     pegtl/include/tao/pegtl/normal.hpp \
@@ -140,6 +151,8 @@ pegtl_sources = \
     pegtl/include/tao/pegtl/parse.hpp \
     pegtl/include/tao/pegtl/position.hpp \
     pegtl/include/tao/pegtl/read_input.hpp \
+    pegtl/include/tao/pegtl/require_apply0.hpp \
+    pegtl/include/tao/pegtl/require_apply.hpp \
     pegtl/include/tao/pegtl/rewind_mode.hpp \
     pegtl/include/tao/pegtl/rules.hpp \
     pegtl/include/tao/pegtl/string_input.hpp \
