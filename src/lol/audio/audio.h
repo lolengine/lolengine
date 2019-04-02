@@ -30,11 +30,10 @@ public:
     enum class format : uint8_t
     {
         unknown = 0,
-        uint8,
-        int8,
+        uint8, sint8,
         uint16le, uint16be,
-        int16le, int16be,
-        int32le, int32be,
+        sint16le, sint16be,
+        sint32le, sint32be,
         float32le, float32be,
     };
 
@@ -48,7 +47,7 @@ public:
     static void unmute_all();
 
     static int start_streaming(std::function<void(void *, int)> const &f,
-                               format format = audio::format::uint16le,
+                               format format = audio::format::sint16le,
                                int frequency = 22050,
                                int channels = 2);
 

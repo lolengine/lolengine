@@ -68,13 +68,13 @@ static audio::format sdl2lol_format(Uint16 sdl_format)
     switch (sdl_format)
     {
         case AUDIO_U8: return audio::format::uint8;
-        case AUDIO_S8: return audio::format::int8;
+        case AUDIO_S8: return audio::format::sint8;
         case AUDIO_U16LSB: return audio::format::uint16le;
         case AUDIO_U16MSB: return audio::format::uint16be;
-        case AUDIO_S16LSB: return audio::format::int16le;
-        case AUDIO_S16MSB: return audio::format::int16be;
-        case AUDIO_S32LSB: return audio::format::int32le;
-        case AUDIO_S32MSB: return audio::format::int32be;
+        case AUDIO_S16LSB: return audio::format::sint16le;
+        case AUDIO_S16MSB: return audio::format::sint16be;
+        case AUDIO_S32LSB: return audio::format::sint32le;
+        case AUDIO_S32MSB: return audio::format::sint32be;
         case AUDIO_F32LSB: return audio::format::float32le;
         case AUDIO_F32MSB: return audio::format::float32be;
         default: return audio::format::unknown;
@@ -86,13 +86,13 @@ static int lol2sdl_format(audio::format format)
     switch (format)
     {
         case audio::format::uint8: return AUDIO_U8;
-        case audio::format::int8:  return AUDIO_S8;
-        case audio::format::uint16le:  return AUDIO_U16LSB;
-        case audio::format::uint16be:  return AUDIO_U16MSB;
-        case audio::format::int16le:   return AUDIO_S16LSB;
-        case audio::format::int16be:   return AUDIO_S16MSB;
-        case audio::format::int32le:   return AUDIO_S32LSB;
-        case audio::format::int32be:   return AUDIO_S32MSB;
+        case audio::format::sint8: return AUDIO_S8;
+        case audio::format::uint16le: return AUDIO_U16LSB;
+        case audio::format::uint16be: return AUDIO_U16MSB;
+        case audio::format::sint16le: return AUDIO_S16LSB;
+        case audio::format::sint16be: return AUDIO_S16MSB;
+        case audio::format::sint32le: return AUDIO_S32LSB;
+        case audio::format::sint32be: return AUDIO_S32MSB;
         case audio::format::float32le: return AUDIO_F32LSB;
         case audio::format::float32be: return AUDIO_F32MSB;
         default: return 0;
@@ -153,7 +153,7 @@ void audio::unmute_all()
 }
 
 int audio::start_streaming(std::function<void(void *, int)> const &f,
-                           enum audio::format format /* = audio::format::uint16le */,
+                           enum audio::format format /* = audio::format::sint16le */,
                            int frequency /* = 22050 */,
                            int channels /* = 2 */)
 {
