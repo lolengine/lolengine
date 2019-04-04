@@ -23,7 +23,7 @@
 
 #define LOL_FEATURE_THREADS 1
 
-#if defined EMSCRIPTEN
+#if defined __EMSCRIPTEN__
 #   undef LOL_FEATURE_THREADS
 #endif
 

@@ -183,11 +183,12 @@ AC_CHECK_HEADERS(emscripten.h,
   AC_CHECK_HEADERS(emscripten/html5.h)
   dnl  XXX: activate this if memory heap is too small
   #AM_CXXFLAGS="${AM_CXXFLAGS} -s ALLOW_MEMORY_GROWTH=1"
+  dnl  See https://github.com/emscripten-core/emscripten/pull/7977 for more details
+  CPPFLAGS="${CPPFLAGS} -s DISABLE_DEPRECATED_FIND_EVENT_TARGET_BEHAVIOR=1"
   dnl  HACK: until emcc properly adds these to EMSDK_OPTS
   CPPFLAGS="${CPPFLAGS} -U__i386__ -U__x86_64__ -U__i386 -U__x86_64 -Ui386 -Ux86_64"
   CPPFLAGS="${CPPFLAGS} -U__SSE__ -U__SSE2__ -U__MMX__ -UX87_DOUBLE_ROUNDING"
-  CPPFLAGS="${CPPFLAGS} -UHAVE_GCC_ASM_FOR_X87 -DEMSCRIPTEN -U__STRICT_ANSI__"
-  CPPFLAGS="${CPPFLAGS} -U__CYGWIN__"])
+  CPPFLAGS="${CPPFLAGS} -UHAVE_GCC_ASM_FOR_X87 -U__STRICT_ANSI__ -U__CYGWIN__"])
 AM_CONDITIONAL(LOL_USE_EMSCRIPTEN, test "${ac_cv_my_have_emscripten}" != "no")
 
 
