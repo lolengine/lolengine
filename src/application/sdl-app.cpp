@@ -67,6 +67,7 @@ sdl::app_display::app_display(char const *title, ivec2 res)
     SDL_GetWindowSize(m_window, &res.x, &res.y);
 
     m_glcontext = SDL_GL_CreateContext(m_window);
+    msg::info("created GL context: %s\n", glGetString(GL_VERSION));
 
     /* Initialise everything */
     Video::Setup(res); //TODO ?? Should it be here ?
