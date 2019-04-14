@@ -339,14 +339,16 @@ public:
             /* unused for now, but will be if new BuildType are added. */
             TexCoordBuildType tcbt = GetTexCoordBuildType(mt);
             UNUSED(tcbt);
-            if (mt == MeshType::Triangle)
-                mt = mt;
-            else if (mt == MeshType::Quad)
+            if (mt == MeshType::Quad)
             {
                 // There's nothin' else than QuadDefault
                 BL = vec2(0.f);
                 TR = vec2(1.f);
             }
+#if 0
+            else if (mt == MeshType::Triangle)
+                mt = mt;
+#endif
             else if (mt == MeshType::Box)
             {
                 vec2 data[][2] =
@@ -361,6 +363,7 @@ public:
                 BL = data[face.ToScalar()][0]; // [tcbt]
                 TR = data[face.ToScalar()][1]; // [tcbt]
             }
+#if 0
             else if (mt == MeshType::Sphere)
                 mt = mt;
             else if (mt == MeshType::Capsule)
@@ -377,6 +380,7 @@ public:
                 mt = mt;
             else if (mt == MeshType::Cog)
                 mt = mt;
+#endif
         }
 
         vec2 res = vec2(.0f);
@@ -425,14 +429,16 @@ public:
         {
             TexCoordBuildType tcbt = GetTexCoordBuildType2(mt);
             UNUSED(tcbt);
-            if (mt == MeshType::Triangle)
-                mt = mt;
-            else if (mt == MeshType::Quad)
+            if (mt == MeshType::Quad)
             {
                 // There's nothin' else than QuadDefault
                 BL = vec2(0.f);
                 TR = vec2(1.f);
             }
+#if 0
+            else if (mt == MeshType::Triangle)
+                mt = mt;
+#endif
             else if (mt == MeshType::Box)
             {
                 vec2 data[][2] =
@@ -447,6 +453,7 @@ public:
                 BL = data[face.ToScalar()][0]; // [tcbt]
                 TR = data[face.ToScalar()][1]; // [tcbt]
             }
+#if 0
             else if (mt == MeshType::Sphere)
                 mt = mt;
             else if (mt == MeshType::Capsule)
@@ -463,6 +470,7 @@ public:
                 mt = mt;
             else if (mt == MeshType::Cog)
                 mt = mt;
+#endif
         }
 
         vec2 res = vec2(.0f);
