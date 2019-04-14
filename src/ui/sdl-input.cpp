@@ -47,7 +47,7 @@ SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
   : m_app(vec2((float)app_w, (float)app_h)),
     m_screen(vec2((float)screen_w, (float)screen_h))
 {
-#if _WIN32
+#if _WIN32 || defined __APPLE__
     m_tick_in_draw_thread = true;
 #endif
 
