@@ -50,70 +50,6 @@ uint32_t FramebufferFormat::GetFormat()
     case RGBA_8:
     case RGBA_8_I:
     case RGBA_8_UI:     return GL_RGBA;
-#elif defined __APPLE__ && defined __MACH__
-    case R_8:
-    case R_8_I:
-    case R_8_UI:
-    case R_8_F:
-
-    case R_16:
-    case R_16_I:
-    case R_16_UI:
-    case R_16_F:
-
-    case R_32_I:
-    case R_32:
-    case R_32_UI:
-    case R_32_F:        return GL_RED;
-
-    case RG_8:
-    case RG_8_I:
-    case RG_8_UI:
-    case RG_8_F:
-
-    case RG_16:
-    case RG_16_I:
-    case RG_16_UI:
-    case RG_16_F:
-
-    case RG_32:
-    case RG_32_I:
-    case RG_32_UI:
-    case RG_32_F:       return GL_RG;
-
-    case RGB_8:
-    case RGB_8_I:
-    case RGB_8_UI:
-    case RGB_8_F:
-
-    case RGB_16:
-    case RGB_16_I:
-    case RGB_16_UI:
-    case RGB_16_F:
-
-    case RGB_32:
-    case RGB_32_I:
-    case RGB_32_UI:
-    case RGB_32_F:      return (m_invert_rgb)?(GL_BGR):(GL_RGB);
-
-    case RGBA_8:
-    case RGBA_8_I:
-    case RGBA_8_UI:
-    case RGBA_8_F:
-
-    case RGBA_16:
-    case RGBA_16_I:
-    case RGBA_16_UI:
-    case RGBA_16_F:
-
-    case RGBA_32:
-    case RGBA_32_I:
-    case RGBA_32_UI:
-#   if defined GL_BGRA
-    case RGBA_32_F:     return (m_invert_rgb)?(GL_BGRA):(GL_RGBA);
-#   else
-    case RGBA_32_F:     return GL_RGBA;
-#   endif
 #else
     case R_8:           return GL_R8;
     case R_8_I:         return GL_R8I;
@@ -142,30 +78,42 @@ uint32_t FramebufferFormat::GetFormat()
     case RG_32_F:       return GL_RG32F;
 
     case RGB_8:         return GL_RGB8;
+#ifdef GL_RGB8I
     case RGB_8_I:       return GL_RGB8I;
     case RGB_8_UI:      return GL_RGB8UI;
+#endif
 
     case RGB_16:        return GL_RGB16;
+#ifdef GL_RGB16I
     case RGB_16_I:      return GL_RGB16I;
     case RGB_16_UI:     return GL_RGB16UI;
     case RGB_16_F:      return GL_RGB16F;
+#endif
 
+#ifdef GL_RGB32I
     case RGB_32_I:      return GL_RGB32I;
     case RGB_32_UI:     return GL_RGB32UI;
     case RGB_32_F:      return GL_RGB32F;
+#endif
 
     case RGBA_8:        return GL_RGBA8;
+#ifdef GL_RGBA8I
     case RGBA_8_I:      return GL_RGBA8I;
     case RGBA_8_UI:     return GL_RGBA8UI;
+#endif
 
     case RGBA_16:       return GL_RGBA16;
+#ifdef GL_RGBA16I
     case RGBA_16_I:     return GL_RGBA16I;
     case RGBA_16_UI:    return GL_RGBA16UI;
     case RGBA_16_F:     return GL_RGBA16F;
+#endif
 
+#ifdef GL_RGBA32I
     case RGBA_32_I:     return GL_RGBA32I;
     case RGBA_32_UI:    return GL_RGBA32UI;
     case RGBA_32_F:     return GL_RGBA32F;
+#endif
 #endif
     default:
         ASSERT(false, "unknown framebuffer format %d", m_format);
@@ -184,29 +132,6 @@ uint32_t FramebufferFormat::GetFormatOrder()
         return GL_BYTE;
     case R_8_UI: case RG_8_UI: case RGB_8_UI: case RGBA_8_UI:
         return GL_UNSIGNED_BYTE;
-#elif defined __APPLE__ && defined __MACH__
-    case R_8:   case RG_8:   case RGB_8:   case RGBA_8:
-    case R_8_I: case RG_8_I: case RGB_8_I: case RGBA_8_I:
-        return GL_BYTE;
-    case R_8_UI: case RG_8_UI: case RGB_8_UI: case RGBA_8_UI:
-        return GL_UNSIGNED_BYTE;
-
-    case R_16:   case RG_16:   case RGB_16:   case RGBA_16:
-    case R_16_I: case RG_16_I: case RGB_16_I: case RGBA_16_I:
-        return GL_SHORT;
-    case R_16_UI: case RG_16_UI: case RGB_16_UI: case RGBA_16_UI:
-        return GL_UNSIGNED_SHORT;
-
-    case R_16_F: case RG_16_F: case RGB_16_F: case RGBA_16_F:
-        ASSERT(false, "unsupported framebuffer format order %d", m_format);
-        return 0;
-
-    case R_32_I: case RG_32_I: case RGB_32_I: case RGBA_32_I:
-        return GL_INT;
-    case R_32_UI: case RG_32_UI: case RGB_32_UI: case RGBA_32_UI:
-        return GL_UNSIGNED_INT;
-    case R_32_F: case RG_32_F: case RGB_32_F: case RGBA_32_F:
-        return GL_FLOAT;
 #else
     case R_8:  case R_8_I:  case R_8_UI:  case R_8_F:
     case R_16: case R_16_I: case R_16_UI: case R_16_F:
@@ -226,7 +151,7 @@ uint32_t FramebufferFormat::GetFormatOrder()
     case RGBA_8:  case RGBA_8_I:  case RGBA_8_UI:  case RGBA_8_F:
     case RGBA_16: case RGBA_16_I: case RGBA_16_UI: case RGBA_16_F:
     case RGBA_32: case RGBA_32_I: case RGBA_32_UI: case RGBA_32_F:
-#   if defined GL_BGRA
+#   if defined GL_BGRA && !defined __APPLE__
         return (m_invert_rgb)?(GL_BGRA):(GL_RGBA);
 #   else
         return GL_RGBA;
@@ -280,8 +205,10 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapmode);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filtering);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filtering);
+msg::warn("lol intfmt %04x fmt %04x\n", internal_format, format);
     glTexImage2D(GL_TEXTURE_2D, 0, internal_format, size.x, size.y, 0,
                  format, GL_UNSIGNED_BYTE, nullptr);
+LOL_CHECK_GLERROR();
 
 #if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
@@ -293,7 +220,7 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
 
     m_data->m_depth = GL_INVALID_ENUM;
 #if GL_VERSION_1_1 || GL_ES_VERSION_2_0
-    if (depth != GL_INVALID_ENUM)
+    if (0)//depth != GL_INVALID_ENUM)
     {
         /* XXX: might not work on GL ES, see
          * http://stackoverflow.com/q/4041682/111461
