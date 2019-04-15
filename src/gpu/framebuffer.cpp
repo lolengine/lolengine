@@ -205,10 +205,8 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapmode);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filtering);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filtering);
-msg::warn("lol intfmt %04x fmt %04x\n", internal_format, format);
     glTexImage2D(GL_TEXTURE_2D, 0, internal_format, size.x, size.y, 0,
                  format, GL_UNSIGNED_BYTE, nullptr);
-LOL_CHECK_GLERROR();
 
 #if GL_VERSION_1_1 || GL_ES_VERSION_2_0
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
@@ -220,7 +218,7 @@ LOL_CHECK_GLERROR();
 
     m_data->m_depth = GL_INVALID_ENUM;
 #if GL_VERSION_1_1 || GL_ES_VERSION_2_0
-    if (0)//depth != GL_INVALID_ENUM)
+    if (depth != GL_INVALID_ENUM)
     {
         /* XXX: might not work on GL ES, see
          * http://stackoverflow.com/q/4041682/111461
