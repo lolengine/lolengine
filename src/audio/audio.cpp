@@ -63,6 +63,7 @@ std::unordered_set<std::shared_ptr<audio_streamer>> audio::m_streamers;
 static int g_frequency, g_channels;
 static audio::format g_format;
 
+#if defined LOL_USE_SDL_MIXER
 static audio::format sdl2lol_format(Uint16 sdl_format)
 {
     switch (sdl_format)
@@ -98,6 +99,7 @@ static int lol2sdl_format(audio::format format)
         default: return 0;
     }
 }
+#endif
 
  /*
  * Public audio class
@@ -230,7 +232,8 @@ void audio::set_tracks(int) {}
 void audio::set_volume(int, int) {}
 void audio::mute_all() {}
 void audio::unmute_all() {}
-int audio::start_streaming(std::function<void(void *, int)> const &) { return -1; }
+int audio::start_streaming(std::function<void(void *, int)> const &,
+                           enum audio::format, int, int) { return -1; }
 void audio::stop_streaming(int) {}
 #endif
 
