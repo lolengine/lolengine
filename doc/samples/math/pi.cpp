@@ -15,6 +15,7 @@
 #endif
 
 #include <iostream>
+#include <iomanip>
 
 #include <lol/engine.h>
 
@@ -24,13 +25,14 @@ int main(int argc, char **argv)
 {
     UNUSED(argc, argv);
 
-    std::cout << "      0: " << real::R_0().str() << '\n';
-    std::cout << "      1: " << real::R_1().str() << '\n';
-    std::cout << "sqrt(2): " << real::R_SQRT2().str() << '\n';
-    std::cout << "sqrt(½): " << real::R_SQRT1_2().str() << '\n';
-    std::cout << "  ln(2): " << real::R_LN2().str() << '\n';
-    std::cout << "      e: " << real::R_E().str() << '\n';
-    std::cout << "      π: " << real::R_PI().str() << '\n';
+    std::cout << std::setprecision(150);
+    std::cout << "      0: " << real::R_0() << '\n';
+    std::cout << "      1: " << real::R_1() << '\n';
+    std::cout << "sqrt(2): " << real::R_SQRT2() << '\n';
+    std::cout << "sqrt(½): " << real::R_SQRT1_2() << '\n';
+    std::cout << "  ln(2): " << real::R_LN2() << '\n';
+    std::cout << "      e: " << real::R_E() << '\n';
+    std::cout << "      π: " << real::R_PI() << '\n';
 
     // Gauss-Legendre computation of Pi — six iterations are enough for 150 digits
     real a = 1.0, b = real::R_SQRT1_2(), t = 0.25, p = 1.0;
@@ -46,7 +48,7 @@ int main(int argc, char **argv)
 
     real sum = a + b;
     sum = sum * sum / ((real)4 * t);
-    std::cout << "         " << sum.str() << '\n';
+    std::cout << "         " << sum << '\n';
 
     return EXIT_SUCCESS;
 }

@@ -235,6 +235,9 @@ public:
     inline int total_bits() const { return bigit_count() * bigit_bits(); }
 };
 
+template<typename U>
+std::ostream& operator <<(std::ostream &s, Real<U> const &x);
+
 /*
  * Mandatory forward declarations of template specialisations
  */

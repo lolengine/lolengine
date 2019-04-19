@@ -17,7 +17,6 @@
 #include <sstream>
 #include <iomanip>
 #include <cstring>
-#include <cstdio>
 #include <cstdlib>
 
 namespace lol
@@ -1561,6 +1560,14 @@ template<> real peaks(real const &x, real const &y)
     /* -1/3 * exp(-(x+1)^2 - y^2) */
     ret -= exp(-x2 - x - x - real::R_1() - y2) / real::R_3();
     return ret;
+}
+
+template<>
+std::ostream& operator <<(std::ostream &s, real const &x)
+{
+    bool hex = (s.flags() & std::ios_base::basefield) == std::ios_base::hex;
+    s << (hex ? x.xstr() : x.str((int)s.precision()));
+    return s;
 }
 
 template<> std::string real::str(int ndigits) const
