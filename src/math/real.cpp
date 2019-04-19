@@ -1628,7 +1628,7 @@ template<> std::string real::xstr() const
     std::stringstream ss;
     if (is_negative())
         ss << '-';
-    ss << "0x1." << std::hex;
+    ss << "0x1." << std::hex << std::setfill('0');
     for (int i = 0; i < bigit_count(); ++i)
         ss << std::setw(8) << m_mantissa[i];
     ss << std::dec;
