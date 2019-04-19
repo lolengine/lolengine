@@ -15,8 +15,7 @@
 #endif
 
 #include <memory>
-#include <cstring>
-#include <cstdio>
+#include <sstream>
 
 #include <lol/engine.h>
 #include "loldebug.h"
@@ -278,19 +277,12 @@ public:
             m_zoom_settings[i][1] -= 0.5f * (1.0f - m_zoom_settings[i][2]);
         }
 
-        char buf[256];
-        std::sprintf(buf, "center: ");
-        m_view.center.x.sprintf(buf + strlen(buf), 30);
-        std::sprintf(buf + strlen(buf), " ");
-        m_view.center.y.sprintf(buf + strlen(buf), 30);
-        m_centertext->SetText(buf);
-        std::sprintf(buf, " mouse: ");
-        worldmouse.x.sprintf(buf + strlen(buf), 30);
-        std::sprintf(buf + strlen(buf), " ");
-        worldmouse.y.sprintf(buf + strlen(buf), 30);
-        m_mousetext->SetText(buf);
-        std::sprintf(buf, "[%s] zoom: %g", m_julia ? "Julia" : "Mandelbrot", 1.0 / m_view.radius);
-        m_zoomtext->SetText(buf);
+        m_centertext->SetText("center: " + m_view.center.x.str(30) + " " + m_view.center.y.str(30));
+        m_mousetext->SetText(" mouse: " + worldmouse.x.str(30) + " " + worldmouse.y.str(30));
+
+        std::stringstream ss;
+        ss << '[' << (m_julia ? "Julia" : "Mandelbrot") << "] zoom: " << 1.0 / m_view.radius;
+        m_zoomtext->SetText(ss.str());
 
         if (m_dirty[m_frame])
         {

@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -13,6 +13,9 @@
 #include <lol/engine-internal.h>
 
 #include <new>
+#include <string>
+#include <sstream>
+#include <iomanip>
 #include <cstring>
 #include <cstdio>
 #include <cstdlib>
@@ -1560,62 +1563,33 @@ template<> real peaks(real const &x, real const &y)
     return ret;
 }
 
-template<> void real::sxprintf(char *str) const;
-template<> void real::sprintf(char *str, int ndigits) const;
-
-template<> void real::xprint() const
+template<> std::string real::str(int ndigits) const
 {
-    char buf[150]; /* 128 bigit digits + room for 0x1, the exponent, etc. */
-    real::sxprintf(buf);
-    std::printf("%s", buf);
-}
-
-template<> void real::print(int ndigits) const
-{
-    char *buf = new char[ndigits + 32 + 10];
-    real::sprintf(buf, ndigits);
-    std::printf("%s", buf);
-    delete[] buf;
-}
-
-template<> void real::sxprintf(char *str) const
-{
-    if (is_negative())
-        *str++ = '-';
-    str += std::sprintf(str, "0x1.");
-    for (int i = 0; i < bigit_count(); ++i)
-        str += std::sprintf(str, "%08x", m_mantissa[i]);
-    while (str[-1] == '0')
-        *--str = '\0';
-    str += std::sprintf(str, "p%lld", (long long int)m_exponent);
-}
-
-template<> void real::sprintf(char *str, int ndigits) const
-{
+    std::stringstream ss;
     real x = *this;
 
     if (x.is_negative())
     {
-        *str++ = '-';
+        ss << '-';
         x = -x;
     }
 
     if (!x)
     {
-        std::strcpy(str, "0");
-        return;
+        ss << '0';
+        return ss.str();
     }
 
-    /* Normalise x so that mantissa is in [1..9.999] */
-    /* FIXME: better use int64_t when the cast is implemented */
-    /* FIXME: does not work with R_MAX and probably R_MIN */
+    // Normalise x so that mantissa is in [1..9.999]
+    // FIXME: better use int64_t when the cast is implemented
+    // FIXME: does not work with R_MAX and probably R_MIN
     int exponent = ceil(log10(x));
     x *= pow(R_10(), -(real)exponent);
 
     if (ndigits < 1)
         ndigits = 1;
 
-    /* Add a bias to simulate some naive rounding */
+    // Add a bias to simulate some naive rounding
     x += real(4.99f) * pow(R_10(), -(real)(ndigits + 1));
 
     if (x < R_1())
@@ -1624,27 +1598,51 @@ template<> void real::sprintf(char *str, int ndigits) const
         exponent--;
     }
 
-    /* Print digits */
+    // Print digits
     for (int i = 0; i < ndigits; ++i)
     {
         int digit = (int)floor(x);
-        *str++ = '0' + digit;
+        ss << (char)('0' + digit);
         if (i == 0)
-            *str++ = '.';
+            ss << '.';
         x -= real(digit);
         x *= R_10();
     }
 
-    /* Remove excess trailing zeroes */
-    while (str[-1] == '0' && str[-2] != '.')
-        --str;
+    // Remove trailing zeroes
+    std::string ret = ss.str();
+    ss.str("");
+    size_t end = ret.find_last_not_of('0');
+    if (end != std::string::npos)
+        ss << ret.substr(0, end + 1);
 
-    /* Print exponent information */
+    // Print exponent information
     if (exponent)
-        str += std::sprintf(str, "e%c%i",
-                            exponent >= 0 ? '+' : '-', lol::abs(exponent));
+        ss << 'e' << (exponent >= 0 ? '+' : '-') << lol::abs(exponent);
 
-    *str++ = '\0';
+    return ss.str();
+}
+
+template<> std::string real::xstr() const
+{
+    std::stringstream ss;
+    if (is_negative())
+        ss << '-';
+    ss << "0x1." << std::hex;
+    for (int i = 0; i < bigit_count(); ++i)
+        ss << std::setw(8) << m_mantissa[i];
+    ss << std::dec;
+
+    // Remove trailing zeroes
+    std::string ret = ss.str();
+    ss.str("");
+    size_t end = ret.find_last_not_of('0');
+    if (end != std::string::npos)
+        ss << ret.substr(0, end + 1);
+
+    ss << 'p' << m_exponent;
+
+    return ss.str();
 }
 
 static real load_min()

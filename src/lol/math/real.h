@@ -19,8 +19,9 @@
 
 #include <lol/base/types.h>
 
-#include <cstdint>
 #include <vector>
+#include <string>
+#include <cstdint>
 
 namespace lol
 {
@@ -147,10 +148,8 @@ public:
     template<typename U> friend Real<U> franke(Real<U> const &x, Real<U> const &y);
     template<typename U> friend Real<U> peaks(Real<U> const &x, Real<U> const &y);
 
-    void xprint() const;
-    void print(int ndigits = 150) const;
-    void sxprintf(char *str) const;
-    void sprintf(char *str, int ndigits = 150) const;
+    std::string str(int ndigits = 150) const;
+    std::string xstr() const;
 
     /* Additional operators using base C++ types */
 #define __LOL_REAL_OP_HELPER_GENERIC(op, type) \
@@ -359,10 +358,8 @@ template<> real radians(real const &x);
 template<> real franke(real const &x, real const &y);
 template<> real peaks(real const &x, real const &y);
 
-template<> void real::xprint() const;
-template<> void real::print(int ndigits) const;
-template<> void real::sxprintf(char *str) const;
-template<> void real::sprintf(char *str, int ndigits) const;
+template<> std::string real::str(int ndigits) const;
+template<> std::string real::xstr() const;
 
 } /* namespace lol */
 

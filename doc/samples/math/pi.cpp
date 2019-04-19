@@ -1,23 +1,22 @@
 //
-// Lol Engine - Sample math program: compute Pi
+//  Lol Engine — Sample math program: compute Pi
 //
-// Copyright: (c) 2005-2011 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2005—2019 Sam Hocevar <sam@hocevar.net>
+//
+//  This program is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #if HAVE_CONFIG_H
 #   include "config.h"
 #endif
 
-#include <cstdio>
+#include <iostream>
 
 #include <lol/engine.h>
-
-using std::printf;
-using std::sqrt;
 
 using lol::real;
 
@@ -25,29 +24,29 @@ int main(int argc, char **argv)
 {
     UNUSED(argc, argv);
 
-    printf("Pi: "); real::R_PI().print();
-    printf("e: "); real::R_E().print();
-    printf("ln(2): "); real::R_LN2().print();
-    printf("sqrt(2): "); real::R_SQRT2().print();
-    printf("sqrt(1/2): "); real::R_SQRT1_2().print();
+    std::cout << "      0: " << real::R_0().str() << '\n';
+    std::cout << "      1: " << real::R_1().str() << '\n';
+    std::cout << "sqrt(2): " << real::R_SQRT2().str() << '\n';
+    std::cout << "sqrt(½): " << real::R_SQRT1_2().str() << '\n';
+    std::cout << "  ln(2): " << real::R_LN2().str() << '\n';
+    std::cout << "      e: " << real::R_E().str() << '\n';
+    std::cout << "      π: " << real::R_PI().str() << '\n';
 
-    /* Gauss-Legendre computation of Pi -- doesn't work well at all,
-     * probably because we use finite precision. */
-    real a = 1.0, b = sqrt((real)0.5), t = 0.25, p = 1.0;
+    // Gauss-Legendre computation of Pi — six iterations are enough for 150 digits
+    real a = 1.0, b = real::R_SQRT1_2(), t = 0.25, p = 1.0;
 
-    for (int i = 0; i < 3; i++)
+    for (int i = 0; i < 6; i++)
     {
-        real a2 = (a + b) * (real)0.5;
-        real b2 = sqrt(a * b);
-        real tmp = a - a2;
-        real t2 = t - p * tmp * tmp;
-        real p2 = p + p;
-        a = a2; b = b2; t = t2; p = p2;
+        real tmp = (a - b) * (real)0.5;
+        b = sqrt(a * b);
+        a -= tmp;
+        t -= p * tmp * tmp;
+        p += p;
     }
 
     real sum = a + b;
     sum = sum * sum / ((real)4 * t);
-    sum.print();
+    std::cout << "         " << sum.str() << '\n';
 
     return EXIT_SUCCESS;
 }
