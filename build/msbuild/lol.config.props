@@ -48,6 +48,12 @@
   </PropertyGroup>
 
   <!--
+     - Secret stuff for platforms under NDA
+   -->
+  <Import Condition="Exists('$(LolDir)\src\private\nx\msbuild\nx.config.props')"
+          Project="$(LolDir)\src\private\nx\msbuild\nx.config.props" />
+
+  <!--
      - Import final settings from Visual Studio
    -->
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />

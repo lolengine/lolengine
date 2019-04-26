@@ -183,6 +183,9 @@
     <ClCompile Include="mesh\primitivemesh.cpp" />
     <ClCompile Include="messageservice.cpp" />
     <ClCompile Include="platform.cpp" />
+    <ClCompile Include="private\nx\nx-app.cpp">
+      <ExcludedFromBuild Condition="'$(Platform)'!='NX64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="profiler.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="sprite.cpp" />

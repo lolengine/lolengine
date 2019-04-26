@@ -22,3 +22,6 @@
 	path = src/3rdparty/mingw-std-threads
 	url = ../../lolengine/ext-mingw-std-threads.git
 	branch = master
+[submodule "src/private/nx"]
+	path = src/private/nx
+	url = ../../samhocevar/lol-nx.git

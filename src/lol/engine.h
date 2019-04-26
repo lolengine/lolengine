@@ -22,6 +22,11 @@
 #   define main lol_android_main
 #endif
 
+// If using NX, do that, too
+#if NN_NINTENDO_SDK
+#   define main lol_nx_main
+#endif
+
 /* If using SDL on Windows or OS X, let it override main() */
 #if LOL_USE_SDL && (_WIN32 || __APPLE__)
 #   include <SDL_main.h>

@@ -48,7 +48,9 @@ protected:
 private:
     void tick(float seconds);
 
+#if LOL_USE_SDL
     array<SDL_Joystick *, std::shared_ptr<class input::device::joystick>> m_joysticks;
+#endif
 
     vec2 m_app;
     vec2 m_screen;

@@ -4,6 +4,13 @@
     <LinkIncremental Condition="'$(Configuration)'=='Debug'">true</LinkIncremental>
     <LinkIncremental Condition="'$(Configuration)'=='Release'">false</LinkIncremental>
   </PropertyGroup>
+
+  <!--
+     - Secret stuff for platforms under NDA
+   -->
+  <Import Condition="Exists('$(LolDir)\src\private\nx\msbuild\nx.rules.props')"
+          Project="$(LolDir)\src\private\nx\msbuild\nx.rules.props" />
+
   <ItemDefinitionGroup>
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -37,20 +44,18 @@
           %(AdditionalIncludeDirectories)
       </AdditionalIncludeDirectories>
 
-      <PreprocessorDefinitions>
+      <AdditionalPreprocessorDefinitions>
           NOMINMAX;
           _CRT_SECURE_NO_WARNINGS;
           B3_USE_CLEW;
           LUA_ANSI;
-          %(PreprocessorDefinitions)
-      </PreprocessorDefinitions>
+      </AdditionalPreprocessorDefinitions>
 
-      <!-- Escape backslashes for C++, but replace \ with / on the PS4
-           because the SCE VSI seems to have trouble with backslashes -->
-      <PreprocessorDefinitions Condition="'$(Platform)'!='Orbis'">LOL_CONFIG_PROJECTDIR="$(ProjectDir.Replace('\','\\'))";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Platform)'!='Orbis'">LOL_CONFIG_SOLUTIONDIR="$(SolutionDir.Replace('\','\\'))";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Platform)'=='Orbis'">LOL_CONFIG_PROJECTDIR="$(ProjectDir.Replace('\','/'))";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <PreprocessorDefinitions Condition="'$(Platform)'=='Orbis'">LOL_CONFIG_SOLUTIONDIR="$(SolutionDir.Replace('\','/'))";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>$(AdditionalPreprocessorDefinitions.Replace('\n',''));%(PreprocessorDefinitions)</PreprocessorDefinitions>
+
+      <!-- Trim trailing backslashes and escape them for C++ -->
+      <PreprocessorDefinitions>LOL_CONFIG_PROJECTDIR="$(ProjectDir.Trim('\').Replace('\','/'))";%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>LOL_CONFIG_SOLUTIONDIR="$(SolutionDir.Trim('\').Replace('\','/'))";%(PreprocessorDefinitions)</PreprocessorDefinitions>
 
       <PreprocessorDefinitions Condition="'$(Platform)'=='Win32'">WIN32;$(Win32Defines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Platform)'=='x64'">WIN32;$(Win32Defines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
@@ -76,23 +81,21 @@
       <PreprocessorDefinitions>NDEBUG;LOL_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
 
-    <Link>
-      <!-- FIXME: not for the static library! -->
-      <AdditionalDependencies Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;$(SdlDeps);$(FfmpegDeps);$(AssimpDeps);$(LibGccDeps);$(GdiDeps);$(XinputDeps);$(GlDeps);%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">$(LibGccLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalLibraryDirectories Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">$(SdlLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalLibraryDirectories Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">$(FfmpegLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalLibraryDirectories Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">$(AssimpLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalLibraryDirectories Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">$(GlLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalLibraryDirectories Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">$(XinputLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalLibraryDirectories Condition="'$(Platform)'=='Orbis'">$(OrbisLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies Condition="'$(Platform)'=='Orbis'">$(OrbisDeps);%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
     <Link Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">
+      <!-- FIXME: not for the static library! -->
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;$(SdlDeps);$(FfmpegDeps);$(AssimpDeps);$(LibGccDeps);$(GdiDeps);$(XinputDeps);$(GlDeps);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(LibGccLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SdlLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(FfmpegLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(AssimpLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(GlLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(XinputLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <SubSystem Condition="'$(enable_sdl)'!='no'">Windows</SubSystem>
       <SubSystem Condition="'$(enable_sdl)'=='no'">Console</SubSystem>
+    </Link>
+    <Link Condition="'$(Platform)'=='Orbis'">
+      <AdditionalLibraryDirectories>$(OrbisLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(OrbisDeps);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Link Condition="'$(Configuration)'=='Debug'">
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -101,6 +104,10 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Link>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
 
     <!-- Post-build hook to run commands -->

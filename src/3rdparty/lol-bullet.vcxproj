@@ -163,7 +163,7 @@
     <ClInclude Include="bullet3/src/Bullet3Geometry/b3GeometryUtil.h" />
     <ClInclude Include="bullet3/src/Bullet3Geometry/b3GrahamScan2dConvexHull.h" />
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup Condition="'$(Platform)'!='NX64'">
     <ClInclude Include="bullet3/src/Bullet3OpenCL/BroadphaseCollision/b3GpuBroadphaseInterface.h" />
     <ClCompile Include="bullet3/src/Bullet3OpenCL/BroadphaseCollision/b3GpuGridBroadphase.cpp" />
     <ClInclude Include="bullet3/src/Bullet3OpenCL/BroadphaseCollision/b3GpuGridBroadphase.h" />
@@ -721,7 +721,7 @@
     <ClCompile Include="bullet3/src/LinearMath/btVector3.cpp" />
     <ClInclude Include="bullet3/src/LinearMath/btVector3.h" />
   </ItemGroup>
-  <ItemGroup>
+  <ItemGroup Condition="'$(Platform)'!='NX64'">
     <ClCompile Include="bullet3/src/clew/clew.c" />
     <ClInclude Include="bullet3/src/clew/clew.h" />
   </ItemGroup>
