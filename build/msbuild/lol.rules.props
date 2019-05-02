@@ -32,11 +32,11 @@
           $(PegtlIncludes);
           $(ImguiIncludes);
           $(BtPhysIncludes);
+          $(GlIncludes);
           %(AdditionalIncludeDirectories)
       </AdditionalIncludeDirectories>
 
       <AdditionalIncludeDirectories Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">
-          $(GlIncludes);
           $(SdlIncludes);
           $(FfmpegIncludes);
           $(AssimpIncludes);

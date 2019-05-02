@@ -173,12 +173,12 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
 {
     m_data->m_size = size;
     m_data->m_bound = false;
-#if GL_ES_VERSION_2_0
+#if defined GL_ES_VERSION_2_0
     /* In OpenGL ES, internal format and format must match. */
     GLenum internal_format = fbo_format.GetFormat();
     GLenum format = fbo_format.GetFormat();
     GLenum depth = GL_DEPTH_COMPONENT16; /* for WebGL */
-#elif GL_VERSION_1_1
+#elif defined GL_VERSION_1_1
     GLenum internal_format = fbo_format.GetFormat();
     GLenum format = fbo_format.GetFormatOrder();
     GLenum depth = GL_DEPTH_COMPONENT;
@@ -190,7 +190,7 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
     GLenum wrapmode = GL_CLAMP_TO_EDGE;
     GLenum filtering = GL_LINEAR;
 
-#if GL_VERSION_1_1 || GL_ES_VERSION_2_0
+#if defined GL_VERSION_1_1 || defined GL_ES_VERSION_2_0
     glGenFramebuffers(1, &m_data->m_fbo);
     glBindFramebuffer(GL_FRAMEBUFFER, m_data->m_fbo);
 #else
@@ -208,7 +208,7 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
     glTexImage2D(GL_TEXTURE_2D, 0, internal_format, size.x, size.y, 0,
                  format, GL_UNSIGNED_BYTE, nullptr);
 
-#if GL_VERSION_1_1 || GL_ES_VERSION_2_0
+#if defined GL_VERSION_1_1 || defined GL_ES_VERSION_2_0
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
                            GL_TEXTURE_2D, m_data->m_texture, 0);
 #else
@@ -217,7 +217,7 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
 #endif
 
     m_data->m_depth = GL_INVALID_ENUM;
-#if GL_VERSION_1_1 || GL_ES_VERSION_2_0
+#if defined GL_VERSION_1_1 || defined GL_ES_VERSION_2_0
     if (depth != GL_INVALID_ENUM)
     {
         /* XXX: might not work on GL ES, see
@@ -233,13 +233,13 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
 
     glBindTexture(GL_TEXTURE_2D, 0);
 
-#if GL_VERSION_1_1 || GL_ES_VERSION_2_0
+#if defined GL_VERSION_1_1 || defined GL_ES_VERSION_2_0
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
     ASSERT(status == GL_FRAMEBUFFER_COMPLETE,
            "invalid framebuffer status 0x%x", status);
 #endif
 
-#if GL_VERSION_1_1 || GL_ES_VERSION_2_0
+#if defined GL_VERSION_1_1 || defined GL_ES_VERSION_2_0
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 #else
     glBindFramebufferOES(GL_FRAMEBUFFER_OES, 0);
@@ -248,13 +248,13 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
 
 Framebuffer::~Framebuffer()
 {
-#if GL_VERSION_1_1 || GL_ES_VERSION_2_0
+#if defined GL_VERSION_1_1 || defined GL_ES_VERSION_2_0
     glDeleteFramebuffers(1, &m_data->m_fbo);
 #else
     glDeleteFramebuffersOES(1, &m_data->m_fbo);
 #endif
     glDeleteTextures(1, &m_data->m_texture);
-#if GL_VERSION_1_1 || GL_ES_VERSION_2_0
+#if defined GL_VERSION_1_1 || defined GL_ES_VERSION_2_0
     if (m_data->m_depth != GL_INVALID_ENUM)
         glDeleteRenderbuffers(1, &m_data->m_depth);
 #endif
@@ -289,7 +289,7 @@ void Framebuffer::Bind()
 {
     ASSERT(!m_data->m_bound, "trying to bind an already bound framebuffer");
 
-#if GL_VERSION_1_1 || GL_ES_VERSION_2_0
+#if defined GL_VERSION_1_1 || defined GL_ES_VERSION_2_0
     glBindFramebuffer(GL_FRAMEBUFFER, m_data->m_fbo);
 #else
     glBindFramebufferOES(GL_FRAMEBUFFER_OES, m_data->m_fbo);
@@ -308,7 +308,7 @@ void Framebuffer::Unbind()
 {
     ASSERT(m_data->m_bound, "trying to unbind an unbound framebuffer");
 
-#if GL_VERSION_1_1 || GL_ES_VERSION_2_0
+#if defined GL_VERSION_1_1 || defined GL_ES_VERSION_2_0
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 #else
     glBindFramebufferOES(GL_FRAMEBUFFER_OES, 0);

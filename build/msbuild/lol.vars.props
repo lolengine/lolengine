@@ -1,6 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ImportGroup Label="PropertySheets" />
+
   <PropertyGroup Label="UserMacros">
     <ExternalDir>$(LolDir)\external</ExternalDir>
 
@@ -142,6 +143,9 @@
     <BuildMacro Include="XinputLibs"><Value>$(XinputLibs)</Value></BuildMacro>
     <BuildMacro Include="XinputDeps"><Value>$(XinputDeps)</Value></BuildMacro>
     <BuildMacro Include="Win32Defines"><Value>$(Win32Defines)</Value></BuildMacro>
+    <BuildMacro Include="Nx64Deps"><Value>$(Nx64Deps)</Value></BuildMacro>
+    <BuildMacro Include="Nx64Libs"><Value>$(Nx64Libs)</Value></BuildMacro>
+    <BuildMacro Include="Nx64Defines"><Value>$(Nx64Defines)</Value></BuildMacro>
     <BuildMacro Include="OrbisDeps"><Value>$(OrbisDeps)</Value></BuildMacro>
     <BuildMacro Include="OrbisLibs"><Value>$(OrbisLibs)</Value></BuildMacro>
     <BuildMacro Include="OrbisDefines"><Value>$(OrbisDefines)</Value></BuildMacro>

@@ -23,7 +23,7 @@
 #endif
 
 // If using NX, do that, too
-#if NN_NINTENDO_SDK
+#if __NX__
 #   define main lol_nx_main
 #endif
 

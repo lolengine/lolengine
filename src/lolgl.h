@@ -35,6 +35,8 @@
  * links with X11 whereas we want the system’s Cocoa-friendly GL libs. */
 #if defined LOL_USE_GLEW && !defined __APPLE__
 #   include <GL/glew.h>
+#elif defined HAVE_NN_GLL_GLL_GL_H
+#   include <nn/gll/gll_Gl.h>
 #elif defined HAVE_GL_2X
 #   if defined __APPLE__ && defined __MACH__ && defined __arm__
 #       include <OpenGL/gl.h>
