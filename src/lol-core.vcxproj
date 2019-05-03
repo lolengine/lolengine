@@ -90,7 +90,6 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions);LOL_INPUT_V2</PreprocessorDefinitions>
-      <OptimizationLevel Condition="'$(Configuration)|$(Platform)'=='Debug|NX64'">O1</OptimizationLevel>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>

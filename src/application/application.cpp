@@ -74,6 +74,8 @@ class ApplicationDisplayData
 protected:
 #if __ANDROID__
     //NOT HANDLED YET
+#elif __NX__
+    nx::app_display display;
 #elif LOL_USE_SDL
     sdl::app_display display;
 #elif HAVE_GLES_2X
@@ -139,7 +141,7 @@ class ApplicationData
 #if __ANDROID__
     AndroidApp app;
 #elif __NX__
-    NxApp app;
+    nx::app app;
 #elif LOL_USE_SDL
     sdl::app app;
 #elif HAVE_GLES_2X
