@@ -21,9 +21,11 @@
 #   undef WIN32_LEAN_AND_MEAN
 #endif
 
-#if defined(__ANDROID__)
+#if __ANDROID__
 #   include <android/log.h>
 #   include <unistd.h> /* for gettid() */
+#elif __NX__
+#   include "../private/nx/nx-log.h"
 #else
 #   include <cstdarg>
 #endif
@@ -39,7 +41,7 @@ void msg::debug(char const *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    helper(MessageType::Debug, fmt, ap);
+    helper(message_type::debug, fmt, ap);
     va_end(ap);
 }
 
@@ -47,7 +49,7 @@ void msg::info(char const *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    helper(MessageType::Info, fmt, ap);
+    helper(message_type::info, fmt, ap);
     va_end(ap);
 }
 
@@ -55,7 +57,7 @@ void msg::warn(char const *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    helper(MessageType::Warning, fmt, ap);
+    helper(message_type::warning, fmt, ap);
     va_end(ap);
 }
 
@@ -63,7 +65,7 @@ void msg::error(char const *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
-    helper(MessageType::Error, fmt, ap);
+    helper(message_type::error, fmt, ap);
     va_end(ap);
 }
 
@@ -71,12 +73,12 @@ void msg::error(char const *fmt, ...)
  * Private helper function
  */
 
-void msg::helper(MessageType type, char const *fmt, va_list ap)
+void msg::helper(message_type type, char const *fmt, va_list ap)
 {
     /* Unless this is a debug build, ignore debug messages unless
      * the LOL_DEBUG environment variable is set. */
-#if !defined LOL_BUILD_DEBUG
-    if (type == MessageType::Debug)
+#if !defined LOL_BUILD_DEBUG && !_DEBUG
+    if (type == message_type::debug)
     {
         static char const *var = getenv("LOL_DEBUG");
         static bool const disable_debug = !var || !var[0];
@@ -85,7 +87,7 @@ void msg::helper(MessageType type, char const *fmt, va_list ap)
     }
 #endif
 
-#if defined __ANDROID__
+#if __ANDROID__
     static int const prio[] =
     {
         ANDROID_LOG_DEBUG,
@@ -97,6 +99,8 @@ void msg::helper(MessageType type, char const *fmt, va_list ap)
     std::string buf = vformat(fmt, ap);
     __android_log_print(prio[(int)type], "LOL", "[%d] %s", (int)gettid(), &buf[0]);
 
+#elif __NX__
+    nx::helper(type, fmt, ap);
 #else
     static char const * const prefix[] =
     {

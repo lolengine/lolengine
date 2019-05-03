@@ -20,6 +20,8 @@
 
 #if __ANDROID__
 #   include "application/android-app.h"
+#elif __NX__
+#   include "private/nx/nx-app.h"
 #elif LOL_USE_SDL
 #   include "application/sdl-app.h"
 #elif HAVE_GLES_2X
@@ -136,6 +138,8 @@ class ApplicationData
 
 #if __ANDROID__
     AndroidApp app;
+#elif __NX__
+    NxApp app;
 #elif LOL_USE_SDL
     sdl::app app;
 #elif HAVE_GLES_2X

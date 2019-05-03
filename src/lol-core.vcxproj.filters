@@ -258,6 +258,8 @@
     <ClCompile Include="3rdparty\imgui\imgui_widgets.cpp" />
     <ClCompile Include="audio\audio.cpp" />
     <ClCompile Include="audio\sample.cpp" />
+    <ClCompile Include="private\nx\nx-app.cpp" />
+    <ClCompile Include="private\nx\nx-log.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="application\application.h">
@@ -551,6 +553,8 @@
     <ClInclude Include="lol\audio\audio.h">
       <Filter>lol\audio</Filter>
     </ClInclude>
+    <ClInclude Include="private\nx\nx-app.h" />
+    <ClInclude Include="private\nx\nx-log.h" />
   </ItemGroup>
   <ItemGroup>
     <LolFxCompile Include="easymesh\shiny.lolfx">

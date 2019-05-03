@@ -143,13 +143,16 @@
     <BuildMacro Include="XinputLibs"><Value>$(XinputLibs)</Value></BuildMacro>
     <BuildMacro Include="XinputDeps"><Value>$(XinputDeps)</Value></BuildMacro>
     <BuildMacro Include="Win32Defines"><Value>$(Win32Defines)</Value></BuildMacro>
-    <BuildMacro Include="Nx64Deps"><Value>$(Nx64Deps)</Value></BuildMacro>
-    <BuildMacro Include="Nx64Libs"><Value>$(Nx64Libs)</Value></BuildMacro>
-    <BuildMacro Include="Nx64Defines"><Value>$(Nx64Defines)</Value></BuildMacro>
     <BuildMacro Include="OrbisDeps"><Value>$(OrbisDeps)</Value></BuildMacro>
     <BuildMacro Include="OrbisLibs"><Value>$(OrbisLibs)</Value></BuildMacro>
     <BuildMacro Include="OrbisDefines"><Value>$(OrbisDefines)</Value></BuildMacro>
   </ItemGroup>
+
+  <!--
+     - Secret stuff for platforms under NDA
+   -->
+  <Import Condition="Exists('$(LolDir)\src\private\nx\msbuild\nx.vars.props')"
+          Project="$(LolDir)\src\private\nx\msbuild\nx.vars.props" />
 
   <PropertyGroup>
     <BinDir Condition="Exists('$(SolutionDir)\lol')">$(SolutionDir)\binaries</BinDir>

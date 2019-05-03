@@ -90,6 +90,7 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions);LOL_INPUT_V2</PreprocessorDefinitions>
+      <OptimizationLevel Condition="'$(Configuration)|$(Platform)'=='Debug|NX64'">O1</OptimizationLevel>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -184,6 +185,9 @@
     <ClCompile Include="messageservice.cpp" />
     <ClCompile Include="platform.cpp" />
     <ClCompile Include="private\nx\nx-app.cpp">
+      <ExcludedFromBuild Condition="'$(Platform)'!='NX64'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="private\nx\nx-log.cpp">
       <ExcludedFromBuild Condition="'$(Platform)'!='NX64'">true</ExcludedFromBuild>
     </ClCompile>
     <ClCompile Include="profiler.cpp" />
@@ -303,6 +307,12 @@
     <ClInclude Include="messageservice.h" />
     <ClInclude Include="numeric.h" />
     <ClInclude Include="platform.h" />
+    <ClInclude Include="private\nx\nx-app.h">
+      <ExcludedFromBuild Condition="'$(Platform)'!='NX64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="private\nx\nx-log.h">
+      <ExcludedFromBuild Condition="'$(Platform)'!='NX64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="profiler.h" />
     <ClInclude Include="scene.h" />
     <ClInclude Include="sprite.h" />

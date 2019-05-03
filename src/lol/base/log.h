@@ -32,16 +32,16 @@ public:
     static void warn(char const *format, ...) LOL_ATTR_FORMAT(1, 2);
     static void error(char const *format, ...) LOL_ATTR_FORMAT(1, 2);
 
-private:
-    enum class MessageType
+    enum class message_type
     {
-        Debug,
-        Info,
-        Warning,
-        Error
+        debug,
+        info,
+        warning,
+        error,
     };
 
-    static void helper(MessageType type, char const *fmt, va_list ap);
+private:
+    static void helper(message_type type, char const *fmt, va_list ap);
 };
 
 } /* namespace lol */
