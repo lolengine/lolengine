@@ -194,6 +194,9 @@ void gui::tick_game(float seconds)
 
     ImGuiIO& io = ImGui::GetIO();
 
+    // Disable the ini file for now
+    io.IniFilename = nullptr;
+
     // Init Texture
     if (!m_font)
     {
