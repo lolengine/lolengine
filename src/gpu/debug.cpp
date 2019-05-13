@@ -17,6 +17,7 @@
 namespace lol
 {
 
+#if LOL_BUILD_DEBUG
 static std::map<GLenum, char const *> gl_dbg_source_to_str
 {
     { GL_DEBUG_SOURCE_API, "API" },
@@ -71,6 +72,7 @@ static void gl_debug(GLenum source, GLenum type, GLuint id,
     }
 }
 
+#if defined LOL_USE_GLEW && !defined __APPLE__
 static void gl_debug_amd(GLuint id, GLenum category, GLenum severity,
                          GLsizei length, const GLchar* message,
                          GLvoid* user_param)
@@ -78,6 +80,8 @@ static void gl_debug_amd(GLuint id, GLenum category, GLenum severity,
     gl_debug(GL_DEBUG_SOURCE_API, GL_DEBUG_TYPE_ERROR, id,
              severity, length, message, user_param);
 }
+#endif
+#endif
 
 void gpu::setup_debug()
 {
