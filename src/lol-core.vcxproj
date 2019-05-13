@@ -129,6 +129,7 @@
     <ClCompile Include="engine\worldentity.cpp" />
     <ClCompile Include="emitter.cpp" />
     <ClCompile Include="font.cpp" />
+    <ClCompile Include="gpu\debug.cpp" />
     <ClCompile Include="gpu\framebuffer.cpp" />
     <ClCompile Include="gpu\indexbuffer.cpp" />
     <ClCompile Include="gpu\lolfx.cpp" />
@@ -261,6 +262,7 @@
     <ClInclude Include="lol\engine-internal.h" />
     <ClInclude Include="lol\extras.h" />
     <ClInclude Include="lol\gpu\all.h" />
+    <ClInclude Include="lol\gpu\debug.h" />
     <ClInclude Include="lol\gpu\framebuffer.h" />
     <ClInclude Include="lol\gpu\indexbuffer.h" />
     <ClInclude Include="lol\gpu\lolfx.h" />

@@ -10,6 +10,7 @@
 
 #pragma once
 
+#include <lol/gpu/debug.h>
 #include <lol/gpu/shader.h>
 #include <lol/gpu/indexbuffer.h>
 #include <lol/gpu/vertexbuffer.h>

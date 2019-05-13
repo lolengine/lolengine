@@ -79,6 +79,9 @@
     </ClCompile>
     <ClCompile Include="emitter.cpp" />
     <ClCompile Include="font.cpp" />
+    <ClCompile Include="gpu\debug.cpp">
+      <Filter>gpu</Filter>
+    </ClCompile>
     <ClCompile Include="gpu\framebuffer.cpp">
       <Filter>gpu</Filter>
     </ClCompile>
@@ -385,6 +388,9 @@
       <Filter>lol</Filter>
     </ClInclude>
     <ClInclude Include="lol\gpu\all.h">
+      <Filter>lol\gpu</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\gpu\debug.h">
       <Filter>lol\gpu</Filter>
     </ClInclude>
     <ClInclude Include="lol\gpu\framebuffer.h">

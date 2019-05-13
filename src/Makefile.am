@@ -63,7 +63,7 @@ liblol_core_headers = \
     lol/gpu/all.h \
     lol/gpu/shader.h lol/gpu/indexbuffer.h lol/gpu/vertexbuffer.h \
     lol/gpu/framebuffer.h lol/gpu/texture.h lol/gpu/lolfx.h \
-    lol/gpu/renderer.h lol/gpu/rendercontext.h \
+    lol/gpu/renderer.h lol/gpu/rendercontext.h lol/gpu/debug.h \
     \
     lol/debug/all.h \
     lol/debug/lines.h
@@ -95,7 +95,7 @@ liblol_core_sources = \
     \
     gpu/shader.cpp gpu/indexbuffer.cpp gpu/vertexbuffer.cpp \
     gpu/framebuffer.cpp gpu/texture.cpp gpu/renderer.cpp \
-    gpu/rendercontext.cpp \
+    gpu/rendercontext.cpp gpu/debug.cpp \
     \
     audio/audio.cpp audio/sample.cpp \
     \

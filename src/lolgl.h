@@ -61,9 +61,13 @@
 #   endif
 #endif
 
+#define LOL_STRINGIFY_INNER(n) #n
+#define LOL_STRINGIFY(n) LOL_STRINGIFY_INNER(n)
+
 #define LOL_CHECK_GLERROR() \
     { \
         GLenum error = glGetError(); \
-        ASSERT(error == GL_NO_ERROR, "OpenGL error: 0x%04x\n", error); \
+        if (error != GL_NO_ERROR) \
+            lol::gpu::error(__FILE__ ":" LOL_STRINGIFY(__LINE__), (int)error); \
     }
 
