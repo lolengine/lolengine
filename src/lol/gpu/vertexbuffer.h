@@ -245,6 +245,7 @@ private:
         int reg;
     } m_streams[12 + 1];
 
+    unsigned int m_vao;
     int m_count;
 };
 

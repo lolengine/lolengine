@@ -342,7 +342,7 @@ Shader::Shader(std::string const &name,
             uint64_t flags = (uint64_t)(uint16_t)usage.ToScalar() << 16;
             flags |= (uint64_t)(uint16_t)index;
             // TODO: this is here just in case. Remove this once everything has been correctly tested
-#if _DEBUG
+#if LOL_BUILD_DEBUG
             if (has_key(data->attrib_locations, flags))
             {
                 msg::error("error while parsing attribute semantics in %s\n",

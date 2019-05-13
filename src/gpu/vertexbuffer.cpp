@@ -69,15 +69,19 @@ VertexDeclaration::VertexDeclaration(VertexStreamBase const &s1,
     if (&s10 != &VertexStreamBase::Empty) AddStream(s10);
     if (&s11 != &VertexStreamBase::Empty) AddStream(s11);
     if (&s12 != &VertexStreamBase::Empty) AddStream(s12);
+
+    glGenVertexArrays(1, &m_vao);
 }
 
 VertexDeclaration::~VertexDeclaration()
 {
+    glDeleteVertexArrays(1, &m_vao);
 }
 
 void VertexDeclaration::Bind()
 {
     /* FIXME: Nothing to do? */
+    glBindVertexArray(m_vao);
 }
 
 void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
@@ -148,6 +152,7 @@ void VertexDeclaration::Unbind()
         }
     }
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 }
 
 void VertexDeclaration::SetStream(std::shared_ptr<VertexBuffer> vb,
@@ -176,14 +181,12 @@ void VertexDeclaration::SetStream(std::shared_ptr<VertexBuffer> vb, ShaderAttrib
         return;
 
     glBindBuffer(GL_ARRAY_BUFFER, vb->m_data->m_vbo);
+
     for (int n = 0; n < 12 && attribs[n].m_flags != (uint64_t)0 - 1; n++)
     {
         VertexUsage usage = VertexUsage((attribs[n].m_flags >> 16) & 0xffff);
         uint32_t index = attribs[n].m_flags & 0xffff;
         uint32_t reg = attribs[n].m_flags >> 32;
-
-        if (reg != 0xffffffffu)
-            glEnableVertexAttribArray((GLint)reg);
 
         /* We need to parse the whole vertex declaration to retrieve
          * the information. It sucks. */
@@ -245,9 +248,9 @@ void VertexDeclaration::SetStream(std::shared_ptr<VertexBuffer> vb, ShaderAttrib
         if (type_index < 0 || type_index >= (int)(sizeof(tlut) / sizeof(*tlut)))
             type_index = 0;
 
-
         if (reg != 0xffffffffu)
         {
+            glEnableVertexAttribArray((GLint)reg);
             if (tlut[type_index].type == GL_FLOAT
                  || tlut[type_index].type == GL_DOUBLE
                  || tlut[type_index].type == GL_BYTE

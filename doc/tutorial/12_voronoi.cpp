@@ -263,8 +263,8 @@ public:
                 m_fbos[f].m2->SetUniform(m_fbos[f].m3[i++], voronoi_points[j].m1); //"u_source_point"
                 m_fbos[f].m2->SetUniform(m_fbos[f].m3[i++], vec2(512.f, 512.f)); //"u_screen_res"
 
-                m_vdecl->SetStream(m_vbo, m_fbos[f].m4.last());
                 m_vdecl->Bind();
+                m_vdecl->SetStream(m_vbo, m_fbos[f].m4.last());
                 m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
                 m_vdecl->Unbind();
                 m_fbos[f].m2->Unbind();
@@ -329,8 +329,8 @@ public:
                     shader->SetUniform(m_fbos[m_cur_fbo].m3[i++], vec2(512.f, 512.f)); //"u_screen_res"
                 }
 
-                m_vdecl->SetStream(m_vbo, m_fbos[m_cur_fbo].m4.last());
                 m_vdecl->Bind();
+                m_vdecl->SetStream(m_vbo, m_fbos[m_cur_fbo].m4.last());
                 m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
                 m_vdecl->Unbind();
                 m_fbos[m_cur_fbo].m2->Unbind();
@@ -353,8 +353,8 @@ public:
         //SCREEN DRAW
         m_screen_shader->Bind();
         m_screen_shader->SetUniform(m_screen_texture, m_fbos[m_cur_fbo].m1->GetTextureUniform(), 0);
-        m_vdecl->SetStream(m_vbo, m_screen_coord);
         m_vdecl->Bind();
+        m_vdecl->SetStream(m_vbo, m_screen_coord);
         m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
         m_vdecl->Unbind();
         m_screen_shader->Unbind();

@@ -517,8 +517,8 @@ void Scene::post_render(float)
         m_pp.m_shader[1]->SetUniform(m_pp.m_buffer_uni[1][0], m_renderbuffer[0]->GetTextureUniform(), 0);
         m_pp.m_shader[1]->SetUniform(m_pp.m_buffer_uni[1][1], m_renderbuffer[1]->GetTextureUniform(), 1);
         m_pp.m_shader[1]->SetUniform(m_pp.m_buffer_uni[1][2], m_renderbuffer[2]->GetTextureUniform(), 2);
-        m_pp.m_vdecl->SetStream(m_pp.m_vbo, m_pp.m_coord[1]);
         m_pp.m_vdecl->Bind();
+        m_pp.m_vdecl->SetStream(m_pp.m_vbo, m_pp.m_coord[1]);
         m_pp.m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
         m_pp.m_vdecl->Unbind();
         m_pp.m_shader[1]->Unbind();
@@ -538,8 +538,8 @@ void Scene::post_render(float)
 
         /* Blit final image to screen */
         m_pp.m_shader[0]->SetUniform(m_pp.m_buffer_uni[0][0], m_renderbuffer[3]->GetTextureUniform(), 3);
-        m_pp.m_vdecl->SetStream(m_pp.m_vbo, m_pp.m_coord[0]);
         m_pp.m_vdecl->Bind();
+        m_pp.m_vdecl->SetStream(m_pp.m_vbo, m_pp.m_coord[0]);
         m_pp.m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
         m_pp.m_vdecl->Unbind();
         m_pp.m_shader[0]->Unbind();

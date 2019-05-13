@@ -151,7 +151,7 @@ uint32_t FramebufferFormat::GetFormatOrder()
     case RGBA_8:  case RGBA_8_I:  case RGBA_8_UI:  case RGBA_8_F:
     case RGBA_16: case RGBA_16_I: case RGBA_16_UI: case RGBA_16_F:
     case RGBA_32: case RGBA_32_I: case RGBA_32_UI: case RGBA_32_F:
-#   if defined GL_BGRA && !defined __APPLE__
+#   if defined GL_BGRA && !defined __APPLE__ && !defined __NX__
         return (m_invert_rgb)?(GL_BGRA):(GL_RGBA);
 #   else
         return GL_RGBA;
@@ -173,7 +173,10 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
 {
     m_data->m_size = size;
     m_data->m_bound = false;
-#if defined GL_ES_VERSION_2_0
+#if defined GL_VERSION_4_2
+    GLenum internal_format = fbo_format.GetFormat();
+    GLenum depth = GL_DEPTH_COMPONENT16; /* for WebGL */
+#elif defined GL_ES_VERSION_2_0
     /* In OpenGL ES, internal format and format must match. */
     GLenum internal_format = fbo_format.GetFormat();
     GLenum format = fbo_format.GetFormat();
@@ -205,8 +208,12 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrapmode);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filtering);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filtering);
+#if defined GL_VERSION_4_2
+    glTexStorage2D(GL_TEXTURE_2D, 1, internal_format, size.x, size.y);
+#else
     glTexImage2D(GL_TEXTURE_2D, 0, internal_format, size.x, size.y, 0,
                  format, GL_UNSIGNED_BYTE, nullptr);
+#endif
 
 #if defined GL_VERSION_1_1 || defined GL_ES_VERSION_2_0
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,

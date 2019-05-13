@@ -90,8 +90,8 @@ public:
 
         m_shader->Bind();
         m_shader->SetUniform(m_texture_uni, m_texture->GetTextureUniform(), 0);
-        m_vdecl->SetStream(m_vbo, m_coord);
         m_vdecl->Bind();
+        m_vdecl->SetStream(m_vbo, m_coord);
         m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
         m_vdecl->Unbind();
     }

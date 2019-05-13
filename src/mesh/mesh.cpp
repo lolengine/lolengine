@@ -109,6 +109,8 @@ void SubMesh::Render()
 {
     size_t vertex_count = 0;
 
+    m_vdecl->Bind();
+
     for (int i = 0; i < m_vbos.count(); ++i)
     {
         ShaderAttrib attribs[12];
@@ -143,7 +145,6 @@ void SubMesh::Render()
     }
 
     m_ibo->Bind();
-    m_vdecl->Bind();
     m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, (int)(m_ibo->GetSize() / sizeof(uint16_t)));
     m_vdecl->Unbind();
     m_ibo->Unbind();

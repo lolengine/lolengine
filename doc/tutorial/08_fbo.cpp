@@ -98,8 +98,8 @@ public:
         m_shader->SetUniform(m_uni_flag, 0.f);
         m_shader->SetUniform(m_uni_point, m_hotspot);
         m_shader->SetUniform(m_uni_color, m_color);
-        m_vdecl->SetStream(m_vbo, m_coord);
         m_vdecl->Bind();
+        m_vdecl->SetStream(m_vbo, m_coord);
         m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
         m_vdecl->Unbind();
         m_shader->Unbind();
@@ -108,8 +108,8 @@ public:
         m_shader->Bind();
         m_shader->SetUniform(m_uni_flag, 1.f);
         m_shader->SetUniform(m_uni_texture, m_fbo->GetTextureUniform(), 0);
-        m_vdecl->SetStream(m_vbo, m_coord);
         m_vdecl->Bind();
+        m_vdecl->SetStream(m_vbo, m_coord);
         m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
         m_vdecl->Unbind();
         m_shader->Unbind();
