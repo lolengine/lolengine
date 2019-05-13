@@ -43,31 +43,32 @@ static std::map<GLenum, char const *> gl_dbg_type_to_str
 
 static std::map<GLenum, char const *> gl_dbg_severity_to_str
 {
-    { GL_DEBUG_SEVERITY_HIGH, "High" },
-    { GL_DEBUG_SEVERITY_MEDIUM, "Medium" },
-    { GL_DEBUG_SEVERITY_LOW, "Low" },
-    { GL_DEBUG_SEVERITY_NOTIFICATION, "Notification" },
+    { GL_DEBUG_SEVERITY_HIGH, "high" },
+    { GL_DEBUG_SEVERITY_MEDIUM, "medium" },
+    { GL_DEBUG_SEVERITY_LOW, "low" },
+    { GL_DEBUG_SEVERITY_NOTIFICATION, "notification" },
 };
 
 static void gl_debug(GLenum source, GLenum type, GLuint id,
                      GLenum severity, GLsizei length,
                      const GLchar *message, const void *user_param)
 {
+    std::string error;
+
     switch (id)
     {
     default:
-        msg::debug("GL debug: %s\n", message);
         if (gl_dbg_source_to_str.count(source) == 1)
-            msg::debug("  source: %s\n", gl_dbg_source_to_str[source]);
+            error += lol::format(" %s", gl_dbg_source_to_str[source]);
         if (gl_dbg_type_to_str.count(type) == 1)
-            msg::debug("  type: %s\n", gl_dbg_type_to_str[type]);
-        msg::debug("  ID: %d\n", id);
+            error += lol::format(" %s", gl_dbg_type_to_str[type]);
         if (gl_dbg_severity_to_str.count(severity) == 1)
-            msg::debug("  severity: %s\n", gl_dbg_severity_to_str[severity]);
+            error += lol::format(" (%s)", gl_dbg_severity_to_str[severity]);
+        msg::debug("GL%s [id:%x]: %s\n", error.c_str(), id, message);
         break;
     // Some debug messages are just annoying informational messages
-    case 131185: // glBufferData
-    case 131169: // glFramebufferRenderbuffer
+    case 0x20061: // glFramebufferRenderbuffer
+    case 0x20071: // glBufferData
         break;
     }
 }
