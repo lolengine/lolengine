@@ -54,7 +54,7 @@ void init(int argc, char *argv[],
      * and emscripten, and the current directory on other platforms.
      */
 
-#if __ANDROID__ || __EMSCRIPTEN__
+#if __ANDROID__ || __EMSCRIPTEN__ || __NX__
     std::string binarydir = "";
 #else
     std::string binarydir = ".";
@@ -93,9 +93,11 @@ void init(int argc, char *argv[],
     {
         /* This data dir is for standalone executables */
         std::string rootdir = binarydir;
+#if !__NX__
         if (rootdir.length() && rootdir.back() != SEPARATOR)
             rootdir += SEPARATOR;
         add_data_dir(rootdir);
+#endif
 
         /* This data dir is for engine stuff */
         rootdir = solutiondir;
@@ -174,7 +176,9 @@ array<std::string> get_path_list(std::string const &file)
             ret << data_dir[i] + file;
     }
 
+#if !__NX__
     ret << file;
+#endif
 
     return ret;
 }
