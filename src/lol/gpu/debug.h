@@ -18,6 +18,7 @@ namespace lol
 namespace gpu
 {
 
+void setup_debug();
 void error(char const *msg, int error);
 
 } // namespace gpu

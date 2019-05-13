@@ -48,9 +48,17 @@ sdl::app_display::app_display(char const *title, ivec2 res)
         }
     }
 
-    /* This seems to fix the swap context bug.
-     * However, perfs warning have been may occur. */
+    // This seems to fix a bug we used to have at context swap. Maybe remove one day.
     SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
+
+#if 0
+    // Ask for GL 3.2 at least
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+#endif
+#if LOL_BUILD_DEBUG
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
+#endif
 
     int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
     if (window_size == ivec2(0))

@@ -62,7 +62,8 @@ Renderer::Renderer(ivec2 size)
   : m_data(new RendererData())
 {
 #if defined LOL_USE_GLEW && !defined __APPLE__
-    /* Initialise GLEW if necessary */
+    // Initialise GLEW if necessary
+    // FIXME: move this somewhere else
     GLenum glerr = glewInit();
     if (glerr != GLEW_OK)
     {
@@ -70,6 +71,8 @@ Renderer::Renderer(ivec2 size)
         exit(EXIT_FAILURE);
     }
 #endif
+
+    gpu::setup_debug();
 
     /* Initialise rendering states */
     m_data->m_viewport = ibox2(0, 0, 0, 0);
@@ -109,7 +112,7 @@ Renderer::Renderer(ivec2 size)
     SetPolygonMode(PolygonMode::Fill);
 
     /* Add some rendering states that we don't export to the user */
-#if defined HAVE_GL_2X && !defined __APPLE__
+#if defined HAVE_GL_2X && !defined GL_VERSION_3_1
     glHint(GL_PERSPECTIVE_CORRECTION_HINT, GL_NICEST);
 #endif
 }
@@ -218,6 +221,8 @@ void Renderer::SetAlphaFunc(AlphaFunc func, float alpha)
 
 #if defined HAVE_GLES_2X
     /* not supported */
+#elif defined GL_VERSION_3_1
+    /* deprecated */
 #elif defined GL_VERSION_1_1
     switch (func)
     {
