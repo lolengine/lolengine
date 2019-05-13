@@ -406,7 +406,6 @@ void ticker_data::DrawThreadTick()
 
         /* Enable display */
         scene.EnableDisplay();
-        scene.get_renderer()->Clear(ClearMask::All);
 
         scene.pre_render(data->deltatime);
 
