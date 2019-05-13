@@ -94,63 +94,26 @@ gui::~gui()
     ImGui::DestroyContext();
 }
 
-//-----------------------------------------------------------------------------
 void gui::init(ImFontAtlas *shared_font_atlas)
 {
     Ticker::Ref(g_gui = new gui(shared_font_atlas));
-
-    ImGuiIO& io = ImGui::GetIO();
-    //ImFont* font0 = io.Fonts->AddFontDefault();
-
-    // Keyboard mapping; these are the only ones ImGui cares about, the
-    // rest is just handled by the application.
-    io.KeyMap[ImGuiKey_Tab]         = (int)input::key::SC_Tab;
-    io.KeyMap[ImGuiKey_LeftArrow]   = (int)input::key::SC_Left;
-    io.KeyMap[ImGuiKey_RightArrow]  = (int)input::key::SC_Right;
-    io.KeyMap[ImGuiKey_UpArrow]     = (int)input::key::SC_Up;
-    io.KeyMap[ImGuiKey_DownArrow]   = (int)input::key::SC_Down;
-    io.KeyMap[ImGuiKey_Home]        = (int)input::key::SC_Home;
-    io.KeyMap[ImGuiKey_End]         = (int)input::key::SC_End;
-    io.KeyMap[ImGuiKey_Delete]      = (int)input::key::SC_Delete;
-    io.KeyMap[ImGuiKey_Backspace]   = (int)input::key::SC_Backspace;
-    io.KeyMap[ImGuiKey_Enter]       = (int)input::key::SC_Return;
-    io.KeyMap[ImGuiKey_Escape]      = (int)input::key::SC_Escape;
-    io.KeyMap[ImGuiKey_A]           = (int)input::key::SC_A;
-    io.KeyMap[ImGuiKey_C]           = (int)input::key::SC_C;
-    io.KeyMap[ImGuiKey_V]           = (int)input::key::SC_V;
-    io.KeyMap[ImGuiKey_X]           = (int)input::key::SC_X;
-    io.KeyMap[ImGuiKey_Y]           = (int)input::key::SC_Y;
-    io.KeyMap[ImGuiKey_Z]           = (int)input::key::SC_Z;
-
-    // Func pointer
-    io.RenderDrawListsFn = gui::static_render_draw_lists;
-    io.SetClipboardTextFn = gui::static_set_clipboard;
-    io.GetClipboardTextFn = gui::static_get_clipboard;
-    io.ClipboardUserData = &g_gui->m_clipboard;
 }
 
-/* CALLBACKS
+void gui::shutdown()
+{
+    Ticker::Unref(g_gui);
+    g_gui = nullptr;
+}
+
+#if 0 // CALLBACKS
 void ImGui_ImplGlfw_CharCallback(GLFWwindow* window, unsigned int c)
 {
 ImGuiIO& io = ImGui::GetIO();
 if (c > 0 && c < 0x10000)
 io.AddInputCharacter((unsigned short)c);
 }
+#endif
 
-*/
-
-void gui::shutdown()
-{
-    ImGui::EndFrame();
-
-    if (g_gui)
-    {
-        Ticker::Unref(g_gui);
-        g_gui = nullptr;
-    }
-}
-
-//-----------------------------------------------------------------------------
 std::string gui::clipboard()
 {
     return g_gui ? g_gui->m_clipboard : "";
@@ -161,6 +124,7 @@ void gui::static_set_clipboard(void *data, const char* text)
     std::string *clipboard = (std::string *)data;
     *clipboard = text;
 }
+
 const char* gui::static_get_clipboard(void *data)
 {
     std::string *clipboard = (std::string *)data;
@@ -184,7 +148,39 @@ void gui::refresh_fonts()
     Ticker::Ref(g_gui->m_font = new TextureImage("", image));
 }
 
-//-----------------------------------------------------------------------------
+bool gui::init_game()
+{
+    ImGuiIO& io = ImGui::GetIO();
+    //ImFont* font0 = io.Fonts->AddFontDefault();
+
+    // Keyboard mapping; these are the only ones ImGui cares about, the
+    // rest is just handled by the application.
+    io.KeyMap[ImGuiKey_Tab]         = (int)input::key::SC_Tab;
+    io.KeyMap[ImGuiKey_LeftArrow]   = (int)input::key::SC_Left;
+    io.KeyMap[ImGuiKey_RightArrow]  = (int)input::key::SC_Right;
+    io.KeyMap[ImGuiKey_UpArrow]     = (int)input::key::SC_Up;
+    io.KeyMap[ImGuiKey_DownArrow]   = (int)input::key::SC_Down;
+    io.KeyMap[ImGuiKey_Home]        = (int)input::key::SC_Home;
+    io.KeyMap[ImGuiKey_End]         = (int)input::key::SC_End;
+    io.KeyMap[ImGuiKey_Delete]      = (int)input::key::SC_Delete;
+    io.KeyMap[ImGuiKey_Backspace]   = (int)input::key::SC_Backspace;
+    io.KeyMap[ImGuiKey_Enter]       = (int)input::key::SC_Return;
+    io.KeyMap[ImGuiKey_Escape]      = (int)input::key::SC_Escape;
+    io.KeyMap[ImGuiKey_A]           = (int)input::key::SC_A;
+    io.KeyMap[ImGuiKey_C]           = (int)input::key::SC_C;
+    io.KeyMap[ImGuiKey_V]           = (int)input::key::SC_V;
+    io.KeyMap[ImGuiKey_X]           = (int)input::key::SC_X;
+    io.KeyMap[ImGuiKey_Y]           = (int)input::key::SC_Y;
+    io.KeyMap[ImGuiKey_Z]           = (int)input::key::SC_Z;
+
+    io.RenderDrawListsFn = static_render_draw_lists;
+    io.SetClipboardTextFn = static_set_clipboard;
+    io.GetClipboardTextFn = static_get_clipboard;
+    io.ClipboardUserData = &m_clipboard;
+
+    return true;
+}
+
 void gui::tick_game(float seconds)
 {
     super::tick_game(seconds);
@@ -253,7 +249,34 @@ void gui::tick_game(float seconds)
     ImGui::NewFrame();
 }
 
-//-----------------------------------------------------------------------------
+bool gui::release_game()
+{
+    ImGui::EndFrame();
+    return true;
+}
+
+bool gui::init_draw()
+{
+    // Create shader
+    m_shader = Shader::Create(m_builder.GetName(), m_builder.Build());
+    ASSERT(m_shader);
+
+    m_ortho.m_uniform = m_shader->GetUniformLocation(m_ortho.m_var.tostring());
+    m_texture.m_uniform = m_shader->GetUniformLocation(m_texture.m_var.tostring());
+
+    m_attribs << m_shader->GetAttribLocation(VertexUsage::Position, 0)
+              << m_shader->GetAttribLocation(VertexUsage::TexCoord, 0)
+              << m_shader->GetAttribLocation(VertexUsage::Color, 0);
+
+    m_vdecl = std::make_shared<VertexDeclaration>(
+        VertexStream<vec2, vec2, u8vec4>(
+            VertexUsage::Position,
+            VertexUsage::TexCoord,
+            VertexUsage::Color));
+
+    return true;
+}
+
 void gui::tick_draw(float seconds, Scene &scene)
 {
     super::tick_draw(seconds, scene);
@@ -303,26 +326,6 @@ void gui::render_draw_lists(ImDrawData* draw_data)
         * mat4::lookat(vec3::axis_z, vec3::zero, vec3::axis_y)
         * mat4::scale(vec3::axis_x - vec3::axis_y - vec3::axis_z)
         * mat4::translate(-size.x * .5f * alpha, -size.y * .5f * alpha, 0.f);
-
-    // Create shader
-    if (!m_shader)
-    {
-        m_shader = Shader::Create(m_builder.GetName(), m_builder.Build());
-        ASSERT(m_shader);
-
-        m_ortho.m_uniform = m_shader->GetUniformLocation(m_ortho.m_var.tostring());
-        m_texture.m_uniform = m_shader->GetUniformLocation(m_texture.m_var.tostring());
-
-        m_attribs << m_shader->GetAttribLocation(VertexUsage::Position, 0)
-                  << m_shader->GetAttribLocation(VertexUsage::TexCoord, 0)
-                  << m_shader->GetAttribLocation(VertexUsage::Color, 0);
-
-        m_vdecl = std::make_shared<VertexDeclaration>(
-            VertexStream<vec2, vec2, u8vec4>(
-                VertexUsage::Position,
-                VertexUsage::TexCoord,
-                VertexUsage::Color));
-    }
 
     // Do not render without shader
     if (!m_shader)
