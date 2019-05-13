@@ -261,6 +261,12 @@ void gui::tick_draw(float seconds, Scene &scene)
     scene.AddPrimitiveRenderer(this, std::make_shared<primitive>());
 }
 
+bool gui::release_draw()
+{
+    m_vdecl.reset();
+    return true;
+}
+
 void gui::primitive::Render(Scene& scene, std::shared_ptr<PrimitiveSource> prim)
 {
     UNUSED(scene, prim);
@@ -353,8 +359,8 @@ void gui::render_draw_lists(ImDrawData* draw_data)
         memcpy(indices, command_list.IdxBuffer.Data, command_list.IdxBuffer.Size * sizeof(ImDrawIdx));
         ibo->Unlock();
 
-        ibo->Bind();
         m_vdecl->Bind();
+        ibo->Bind();
         m_vdecl->SetStream(vbo, m_attribs[0], m_attribs[1], m_attribs[2]);
 
         const ImDrawIdx* idx_buffer_offset = 0;

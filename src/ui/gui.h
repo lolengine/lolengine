@@ -57,8 +57,9 @@ private:
     typedef entity super;
 
 protected:
-    virtual void tick_game(float seconds);
-    virtual void tick_draw(float seconds, Scene &scene);
+    virtual void tick_game(float seconds) override;
+    virtual void tick_draw(float seconds, Scene &scene) override;
+    virtual bool release_draw() override;
 
     static void static_set_clipboard(void *data, const char* text);
     static const char* static_get_clipboard(void *data);
