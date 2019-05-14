@@ -46,7 +46,7 @@ class gui : public entity
 public:
     gui(ImFontAtlas *shared_font_atlas);
     ~gui();
-    std::string GetName() const { return "<gui>"; }
+    std::string GetName() const override { return "<gui>"; }
 
     static void init(ImFontAtlas *shared_font_atlas = nullptr);
     static void shutdown();
