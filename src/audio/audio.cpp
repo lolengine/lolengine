@@ -40,6 +40,7 @@
 namespace lol
 {
 
+#if defined LOL_USE_SDL_MIXER
 struct audio_streamer
 {
     int m_track = -1;
@@ -51,19 +52,17 @@ struct audio_streamer
     int m_extra_bytes = 0;
     // Buffer used to write the converted audio data for mixing.
     std::vector<uint8_t> m_output_buffer;
-#if defined LOL_USE_SDL_MIXER
+
     SDL_AudioCVT m_convert;
     Mix_Chunk *m_chunk = nullptr;
-#endif
 };
 
-std::unordered_set<std::shared_ptr<audio_streamer>> audio::m_streamers;
+static std::unordered_set<std::shared_ptr<audio_streamer>> g_streamers;
 
 // The global audio format
 static int g_frequency, g_channels;
 static audio::format g_format;
 
-#if defined LOL_USE_SDL_MIXER
 static audio::format sdl2lol_format(Uint16 sdl_format)
 {
     switch (sdl_format)
@@ -134,6 +133,10 @@ void audio::init()
               g_frequency, u, t, b, e, g_channels);
 }
 
+void audio::shutdown()
+{
+}
+
 void audio::set_tracks(int tracks)
 {
     Mix_AllocateChannels(tracks);
@@ -188,7 +191,7 @@ int audio::start_streaming(std::function<void(void *, int)> const &f,
     };
 
     auto s = std::make_shared<audio_streamer>();
-    m_streamers.insert(s);
+    g_streamers.insert(s);
 
     // Build an audio converter that converts from a given streaming format
     // to the format SDL was currently initialised with, if necessary.
@@ -215,19 +218,21 @@ int audio::start_streaming(std::function<void(void *, int)> const &f,
 
 void audio::stop_streaming(int track)
 {
-    for (auto streamer : m_streamers)
+    for (auto streamer : g_streamers)
     {
         if (streamer->m_track == track)
         {
             Mix_HaltChannel(track);
-            m_streamers.erase(streamer);
+            g_streamers.erase(streamer);
             break;
         }
     }
 }
 
+#elif __NX__
 #else
 void audio::init() {}
+void audio::shutdown() {}
 void audio::set_tracks(int) {}
 void audio::set_volume(int, int) {}
 void audio::mute_all() {}

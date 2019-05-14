@@ -33,11 +33,13 @@ public:
         uint8, sint8,
         uint16le, uint16be,
         sint16le, sint16be,
+        sint24le,
         sint32le, sint32be,
         float32le, float32be,
     };
 
     static void init();
+    static void shutdown();
 
     // Set the number of audio tracks that can be mixed together
     static void set_tracks(int tracks);
@@ -55,7 +57,6 @@ public:
 
 private:
     audio() {}
-    static std::unordered_set<std::shared_ptr<struct audio_streamer>> m_streamers;
 };
 
 } /* namespace lol */

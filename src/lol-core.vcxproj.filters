@@ -262,6 +262,7 @@
     <ClCompile Include="audio\audio.cpp" />
     <ClCompile Include="audio\sample.cpp" />
     <ClCompile Include="private\nx\nx-app.cpp" />
+    <ClCompile Include="private\nx\nx-audio.cpp" />
     <ClCompile Include="private\nx\nx-log.cpp" />
   </ItemGroup>
   <ItemGroup>
