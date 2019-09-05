@@ -106,6 +106,12 @@
 #   define LOL_ATTR_FORMAT(n, p)
 #endif
 
+#if defined(_WIN32)
+#   define LOL_ATTR_STDCALL __stdcall
+#else
+#   define LOL_ATTR_STDCALL /* */
+#endif
+
 #ifdef LOL_FEATURE_CXX17_ATTRIBUTE_NODISCARD
 #   define LOL_ATTR_NODISCARD [[nodiscard]]
 #else

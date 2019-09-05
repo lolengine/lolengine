@@ -49,9 +49,10 @@ static std::map<GLenum, char const *> gl_dbg_severity_to_str
     { GL_DEBUG_SEVERITY_NOTIFICATION, "notification" },
 };
 
-static void gl_debug(GLenum source, GLenum type, GLuint id,
-                     GLenum severity, GLsizei length,
-                     const GLchar *message, const void *user_param)
+static void LOL_ATTR_STDCALL
+    gl_debug(GLenum source, GLenum type, GLuint id,
+             GLenum severity, GLsizei length,
+             const GLchar *message, const void *user_param)
 {
     std::string error;
 
@@ -74,9 +75,10 @@ static void gl_debug(GLenum source, GLenum type, GLuint id,
 }
 
 #if defined LOL_USE_GLEW && !defined __APPLE__
-static void gl_debug_amd(GLuint id, GLenum category, GLenum severity,
-                         GLsizei length, const GLchar* message,
-                         GLvoid* user_param)
+static void LOL_ATTR_STDCALL
+    gl_debug_amd(GLuint id, GLenum category, GLenum severity,
+                 GLsizei length, const GLchar* message,
+                 GLvoid* user_param)
 {
     gl_debug(GL_DEBUG_SOURCE_API, GL_DEBUG_TYPE_ERROR, id,
              severity, length, message, user_param);
