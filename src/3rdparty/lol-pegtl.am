@@ -13,24 +13,22 @@ pegtl_sources = \
     pegtl/include/tao/pegtl/argv_input.hpp \
     pegtl/include/tao/pegtl/ascii.hpp \
     pegtl/include/tao/pegtl/buffer_input.hpp \
+    pegtl/include/tao/pegtl/change_action_and_state.hpp \
+    pegtl/include/tao/pegtl/change_action_and_states.hpp \
+    pegtl/include/tao/pegtl/change_action.hpp \
+    pegtl/include/tao/pegtl/change_control.hpp \
+    pegtl/include/tao/pegtl/change_state.hpp \
+    pegtl/include/tao/pegtl/change_states.hpp \
     pegtl/include/tao/pegtl/config.hpp \
     pegtl/include/tao/pegtl/contrib/abnf.hpp \
     pegtl/include/tao/pegtl/contrib/alphabet.hpp \
-    pegtl/include/tao/pegtl/contrib/change_action_and_state.hpp \
-    pegtl/include/tao/pegtl/contrib/change_action_and_states.hpp \
-    pegtl/include/tao/pegtl/contrib/change_action.hpp \
-    pegtl/include/tao/pegtl/contrib/change_control.hpp \
-    pegtl/include/tao/pegtl/contrib/change_state.hpp \
-    pegtl/include/tao/pegtl/contrib/change_states.hpp \
     pegtl/include/tao/pegtl/contrib/counter.hpp \
-    pegtl/include/tao/pegtl/contrib/disable_action.hpp \
-    pegtl/include/tao/pegtl/contrib/discard_input.hpp \
-    pegtl/include/tao/pegtl/contrib/discard_input_on_failure.hpp \
-    pegtl/include/tao/pegtl/contrib/discard_input_on_success.hpp \
-    pegtl/include/tao/pegtl/contrib/enable_action.hpp \
     pegtl/include/tao/pegtl/contrib/http.hpp \
     pegtl/include/tao/pegtl/contrib/json.hpp \
+    pegtl/include/tao/pegtl/contrib/json_pointer.hpp \
+    pegtl/include/tao/pegtl/contrib/parse_tree_to_dot.hpp \
     pegtl/include/tao/pegtl/contrib/raw_string.hpp \
+    pegtl/include/tao/pegtl/contrib/remove_first_state.hpp \
     pegtl/include/tao/pegtl/contrib/rep_one_min_max.hpp \
     pegtl/include/tao/pegtl/contrib/rep_string.hpp \
     pegtl/include/tao/pegtl/contrib/to_string.hpp \
@@ -38,6 +36,11 @@ pegtl_sources = \
     pegtl/include/tao/pegtl/contrib/unescape.hpp \
     pegtl/include/tao/pegtl/contrib/uri.hpp \
     pegtl/include/tao/pegtl/cstream_input.hpp \
+    pegtl/include/tao/pegtl/disable_action.hpp \
+    pegtl/include/tao/pegtl/discard_input.hpp \
+    pegtl/include/tao/pegtl/discard_input_on_failure.hpp \
+    pegtl/include/tao/pegtl/discard_input_on_success.hpp \
+    pegtl/include/tao/pegtl/enable_action.hpp \
     pegtl/include/tao/pegtl/eol.hpp \
     pegtl/include/tao/pegtl/eol_pair.hpp \
     pegtl/include/tao/pegtl/file_input.hpp \
@@ -64,10 +67,7 @@ pegtl_sources = \
     pegtl/include/tao/pegtl/internal/crlf_eol.hpp \
     pegtl/include/tao/pegtl/internal/cstream_reader.hpp \
     pegtl/include/tao/pegtl/internal/cstring_reader.hpp \
-    pegtl/include/tao/pegtl/internal/demangle_cxxabi.hpp \
     pegtl/include/tao/pegtl/internal/demangle.hpp \
-    pegtl/include/tao/pegtl/internal/demangle_nop.hpp \
-    pegtl/include/tao/pegtl/internal/demangle_sanitise.hpp \
     pegtl/include/tao/pegtl/internal/disable.hpp \
     pegtl/include/tao/pegtl/internal/discard.hpp \
     pegtl/include/tao/pegtl/internal/dusel_mode.hpp \

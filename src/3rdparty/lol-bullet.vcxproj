@@ -66,8 +66,11 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="bullet3/src/btBulletCollisionAll.cpp" />
     <ClInclude Include="bullet3/src/btBulletCollisionCommon.h" />
+    <ClCompile Include="bullet3/src/btBulletDynamicsAll.cpp" />
     <ClInclude Include="bullet3/src/btBulletDynamicsCommon.h" />
+    <ClCompile Include="bullet3/src/btLinearMathAll.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bullet3/src/Bullet3Collision/BroadPhaseCollision/b3BroadphaseCallback.h" />
@@ -500,6 +503,7 @@
     <ClInclude Include="bullet3/src/BulletCollision/Gimpact/gim_math.h" />
     <ClCompile Include="bullet3/src/BulletCollision/Gimpact/gim_memory.cpp" />
     <ClInclude Include="bullet3/src/BulletCollision/Gimpact/gim_memory.h" />
+    <ClInclude Include="bullet3/src/BulletCollision/Gimpact/gim_pair.h" />
     <ClInclude Include="bullet3/src/BulletCollision/Gimpact/gim_radixsort.h" />
     <ClCompile Include="bullet3/src/BulletCollision/Gimpact/gim_tri_collision.cpp" />
     <ClInclude Include="bullet3/src/BulletCollision/Gimpact/gim_tri_collision.h" />
@@ -606,6 +610,7 @@
     <ClCompile Include="bullet3/src/BulletDynamics/Featherstone/btMultiBodyGearConstraint.cpp" />
     <ClInclude Include="bullet3/src/BulletDynamics/Featherstone/btMultiBodyGearConstraint.h" />
     <ClInclude Include="bullet3/src/BulletDynamics/Featherstone/btMultiBody.h" />
+    <ClInclude Include="bullet3/src/BulletDynamics/Featherstone/btMultiBodyInplaceSolverIslandCallback.h" />
     <ClInclude Include="bullet3/src/BulletDynamics/Featherstone/btMultiBodyJointFeedback.h" />
     <ClCompile Include="bullet3/src/BulletDynamics/Featherstone/btMultiBodyJointLimitConstraint.cpp" />
     <ClInclude Include="bullet3/src/BulletDynamics/Featherstone/btMultiBodyJointLimitConstraint.h" />
@@ -655,8 +660,26 @@
     <ClInclude Include="bullet3/src/BulletInverseDynamics/MultiBodyTree.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="bullet3/src/BulletSoftBody/btCGProjection.h" />
+    <ClInclude Include="bullet3/src/BulletSoftBody/btConjugateGradient.h" />
     <ClCompile Include="bullet3/src/BulletSoftBody/btDefaultSoftBodySolver.cpp" />
     <ClInclude Include="bullet3/src/BulletSoftBody/btDefaultSoftBodySolver.h" />
+    <ClCompile Include="bullet3/src/BulletSoftBody/btDeformableBackwardEulerObjective.cpp" />
+    <ClInclude Include="bullet3/src/BulletSoftBody/btDeformableBackwardEulerObjective.h" />
+    <ClCompile Include="bullet3/src/BulletSoftBody/btDeformableBodySolver.cpp" />
+    <ClInclude Include="bullet3/src/BulletSoftBody/btDeformableBodySolver.h" />
+    <ClCompile Include="bullet3/src/BulletSoftBody/btDeformableContactProjection.cpp" />
+    <ClInclude Include="bullet3/src/BulletSoftBody/btDeformableContactProjection.h" />
+    <ClInclude Include="bullet3/src/BulletSoftBody/btDeformableCorotatedForce.h" />
+    <ClInclude Include="bullet3/src/BulletSoftBody/btDeformableGravityForce.h" />
+    <ClInclude Include="bullet3/src/BulletSoftBody/btDeformableLagrangianForce.h" />
+    <ClInclude Include="bullet3/src/BulletSoftBody/btDeformableMassSpringForce.h" />
+    <ClCompile Include="bullet3/src/BulletSoftBody/btDeformableMultiBodyConstraintSolver.cpp" />
+    <ClInclude Include="bullet3/src/BulletSoftBody/btDeformableMultiBodyConstraintSolver.h" />
+    <ClCompile Include="bullet3/src/BulletSoftBody/btDeformableMultiBodyDynamicsWorld.cpp" />
+    <ClInclude Include="bullet3/src/BulletSoftBody/btDeformableMultiBodyDynamicsWorld.h" />
+    <ClInclude Include="bullet3/src/BulletSoftBody/btDeformableNeoHookeanForce.h" />
+    <ClInclude Include="bullet3/src/BulletSoftBody/btPreconditioner.h" />
     <ClCompile Include="bullet3/src/BulletSoftBody/btSoftBodyConcaveCollisionAlgorithm.cpp" />
     <ClInclude Include="bullet3/src/BulletSoftBody/btSoftBodyConcaveCollisionAlgorithm.h" />
     <ClCompile Include="bullet3/src/BulletSoftBody/btSoftBody.cpp" />
