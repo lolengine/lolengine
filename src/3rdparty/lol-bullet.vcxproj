@@ -66,11 +66,11 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="bullet3/src/btBulletCollisionAll.cpp" />
+    <!--<ClCompile Include="bullet3/src/btBulletCollisionAll.cpp" />-->
     <ClInclude Include="bullet3/src/btBulletCollisionCommon.h" />
-    <ClCompile Include="bullet3/src/btBulletDynamicsAll.cpp" />
+    <!--<ClCompile Include="bullet3/src/btBulletDynamicsAll.cpp" />-->
     <ClInclude Include="bullet3/src/btBulletDynamicsCommon.h" />
-    <ClCompile Include="bullet3/src/btLinearMathAll.cpp" />
+    <!--<ClCompile Include="bullet3/src/btLinearMathAll.cpp" />-->
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bullet3/src/Bullet3Collision/BroadPhaseCollision/b3BroadphaseCallback.h" />
