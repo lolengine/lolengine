@@ -87,9 +87,7 @@ public:
             m_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec2>(VertexUsage::Position));
 
             m_vbo = std::make_shared<VertexBuffer>(m_vertices.bytes());
-            void *vertices = m_vbo->Lock(0, 0);
-            memcpy(vertices, &m_vertices[0], m_vertices.bytes());
-            m_vbo->Unlock();
+            m_vbo->set_data(m_vertices.data(), m_vertices.bytes());
 
             m_screen_shader = Shader::Create(LOLFX_RESOURCE_NAME(12_texture_to_screen));
             m_screen_coord = m_screen_shader->GetAttribLocation(VertexUsage::Position, 0);

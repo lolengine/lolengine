@@ -73,9 +73,7 @@ public:
         m_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec2>(VertexUsage::Position));
 
         m_vbo = std::make_shared<VertexBuffer>(vertices.bytes());
-        void *data = m_vbo->Lock(0, 0);
-        memcpy(data, vertices.data(), vertices.bytes());
-        m_vbo->Unlock();
+        m_vbo->set_data(vertices.data(), vertices.bytes());
 
         return true;
     }

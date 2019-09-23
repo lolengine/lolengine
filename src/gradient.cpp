@@ -100,13 +100,8 @@ void Gradient::tick_draw(float seconds, Scene &scene)
     data->shader->Bind();
     data->m_vdecl->Bind();
 
-    void *tmp = data->m_vbo->Lock(0, 0);
-    memcpy(tmp, vertex, sizeof(vertex));
-    data->m_vbo->Unlock();
-
-    tmp = data->m_cbo->Lock(0, 0);
-    memcpy(tmp, color, sizeof(color));
-    data->m_cbo->Unlock();
+    data->m_vbo->set_data(vertex, sizeof(vertex));
+    data->m_cbo->set_data(color, sizeof(color));
 
     /* Bind vertex and color buffers */
     data->m_vdecl->SetStream(data->m_vbo, attr_pos);

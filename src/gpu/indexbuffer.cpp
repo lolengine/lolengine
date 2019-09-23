@@ -59,12 +59,12 @@ IndexBuffer::~IndexBuffer()
     delete m_data;
 }
 
-size_t IndexBuffer::GetSize()
+size_t IndexBuffer::size()
 {
     return m_data->m_size;
 }
 
-void *IndexBuffer::Lock(size_t offset, size_t size)
+void *IndexBuffer::lock(size_t offset, size_t size)
 {
     if (!m_data->m_size)
         return nullptr;
@@ -73,7 +73,7 @@ void *IndexBuffer::Lock(size_t offset, size_t size)
     return m_data->m_memory + offset;
 }
 
-void IndexBuffer::Unlock()
+void IndexBuffer::unlock()
 {
     if (!m_data->m_size)
         return;

@@ -130,7 +130,7 @@ void SubMesh::Render()
             attribs[j] = m_shader->GetAttribLocation(usage, usages[usage_index]++);
         }
 
-        vertex_count += m_vbos[i]->GetSize() / m_vdecl->GetStream(i).GetSize();
+        vertex_count += m_vbos[i]->size() / m_vdecl->GetStream(i).GetSize();
 
         m_vdecl->SetStream(m_vbos[i], attribs);
     }
@@ -145,7 +145,7 @@ void SubMesh::Render()
     }
 
     m_ibo->Bind();
-    m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, (int)(m_ibo->GetSize() / sizeof(uint16_t)));
+    m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, (int)(m_ibo->size() / sizeof(uint16_t)));
     m_vdecl->Unbind();
     m_ibo->Unbind();
 }

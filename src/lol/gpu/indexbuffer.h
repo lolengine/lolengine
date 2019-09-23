@@ -28,10 +28,17 @@ public:
     IndexBuffer(size_t size);
     ~IndexBuffer();
 
-    size_t GetSize();
+    size_t size();
 
-    void *Lock(size_t offset, size_t size);
-    void Unlock();
+    void set_data(void const *data, size_t size)
+    {
+        auto ptr = lock(0, size);
+        ::memcpy(ptr, data, size);
+        unlock();
+    }
+
+    void *lock(size_t offset, size_t size);
+    void unlock();
 
     void Bind();
     void Unbind();

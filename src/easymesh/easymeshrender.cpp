@@ -33,10 +33,10 @@ void EasyMesh::MeshConvert()
 
     /* Push index buffer to GPU */
     auto ibo = std::make_shared<IndexBuffer>(m_indices.count() * sizeof(uint16_t));
-    uint16_t *indices = (uint16_t *)ibo->Lock(0, 0);
+    uint16_t *indices = (uint16_t *)ibo->lock(0, 0);
     for (int i = 0; i < m_indices.count(); ++i)
         indices[i] = m_indices[i];
-    ibo->Unlock();
+    ibo->unlock();
 
     /* Push vertex buffer to GPU */
     struct Vertex
@@ -53,7 +53,7 @@ void EasyMesh::MeshConvert()
                                                VertexUsage::TexCoord));
 
     auto vbo = std::make_shared<VertexBuffer>(m_vert.count() * sizeof(Vertex));
-    Vertex *vert = (Vertex *)vbo->Lock(0, 0);
+    Vertex *vert = (Vertex *)vbo->lock(0, 0);
     for (int i = 0; i < m_vert.count(); ++i)
     {
         vert[i].pos = m_vert[i].m_coord,
@@ -61,7 +61,7 @@ void EasyMesh::MeshConvert()
         vert[i].color = (u8vec4)(m_vert[i].m_color * 255.f);
         vert[i].texcoord = m_vert[i].m_texcoord;
     }
-    vbo->Unlock();
+    vbo->unlock();
 
     /* Reference our new data in our submesh */
     m_submeshes.push_back(std::make_shared<SubMesh>(shader, vdecl));
@@ -271,9 +271,7 @@ void GpuEasyMeshData::AddGpuData(std::shared_ptr<GpuShaderData> gpudata, std::sh
         }
 
         m_ibo = std::make_shared<IndexBuffer>(indexlist.bytes());
-        void *indices = m_ibo->Lock(0, 0);
-        memcpy(indices, &indexlist[0], indexlist.bytes());
-        m_ibo->Unlock();
+        m_ibo->set_data(indexlist.data(), indexlist.bytes());
 
         m_indexcount = indexlist.count();
     }
@@ -307,9 +305,7 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, std::shared_ptr<EasyMesh>
     vbo_bytes = vertexlist.bytes(); \
     m_vertexcount = vertexlist.count(); \
     new_vbo = std::make_shared<VertexBuffer>(vbo_bytes); \
-    void *mesh = new_vbo->Lock(0, 0); \
-    memcpy(mesh, vbo_data, vbo_bytes); \
-    new_vbo->Unlock();
+    new_vbo->set_data(vbo_data, vbo_bytes);
 
     //Keep a count of the flags
     uint16_t saveflags = vflags;

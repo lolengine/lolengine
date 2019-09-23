@@ -141,19 +141,13 @@ public:
                                                         VertexUsage::Color));
 
         m_vbo = std::make_shared<VertexBuffer>(mesh.bytes());
-        void *data = m_vbo->Lock(0, 0);
-        memcpy(data, mesh.data(), mesh.bytes());
-        m_vbo->Unlock();
+        m_vbo->set_data(mesh.data(), mesh.bytes());
 
         m_lines_ibo = std::make_shared<IndexBuffer>(lines_indices.bytes());
-        data = m_lines_ibo->Lock(0, 0);
-        memcpy(data, lines_indices.data(), lines_indices.bytes());
-        m_lines_ibo->Unlock();
+        m_lines_ibo->set_data(lines_indices.data(), lines_indices.bytes());
 
         m_faces_ibo = std::make_shared<IndexBuffer>(faces_indices.bytes());
-        data = m_faces_ibo->Lock(0, 0);
-        memcpy(data, faces_indices.data(), faces_indices.bytes());
-        m_faces_ibo->Unlock();
+        m_faces_ibo->set_data(faces_indices.data(), faces_indices.bytes());
 
         return WorldEntity::init_draw();
     }
@@ -170,12 +164,12 @@ public:
 
         m_shader->SetUniform(m_mvp, m_matrix);
         m_lines_ibo->Bind();
-        m_vdecl->DrawIndexedElements(MeshPrimitive::Lines, m_lines_ibo->GetSize() / sizeof(uint16_t));
+        m_vdecl->DrawIndexedElements(MeshPrimitive::Lines, m_lines_ibo->size() / sizeof(uint16_t));
         m_lines_ibo->Unbind();
 
         m_shader->SetUniform(m_mvp, m_matrix * mat4::scale(0.5f));
         m_faces_ibo->Bind();
-        m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, m_faces_ibo->GetSize() / sizeof(uint16_t));
+        m_vdecl->DrawIndexedElements(MeshPrimitive::Triangles, m_faces_ibo->size() / sizeof(uint16_t));
         m_faces_ibo->Unbind();
 
         m_vdecl->Unbind();

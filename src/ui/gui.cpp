@@ -353,14 +353,10 @@ void gui::render_draw_lists(ImDrawData* draw_data)
         };
 
         auto vbo = std::make_shared<VertexBuffer>(command_list.VtxBuffer.Size * sizeof(ImDrawVert));
-        ImDrawVert *vert = (ImDrawVert *)vbo->Lock(0, 0);
-        memcpy(vert, command_list.VtxBuffer.Data, command_list.VtxBuffer.Size * sizeof(ImDrawVert));
-        vbo->Unlock();
+        vbo->set_data(command_list.VtxBuffer.Data, command_list.VtxBuffer.Size * sizeof(ImDrawVert));
 
         auto ibo = std::make_shared<IndexBuffer>(command_list.IdxBuffer.Size * sizeof(ImDrawIdx));
-        ImDrawIdx *indices = (ImDrawIdx *)ibo->Lock(0, 0);
-        memcpy(indices, command_list.IdxBuffer.Data, command_list.IdxBuffer.Size * sizeof(ImDrawIdx));
-        ibo->Unlock();
+        ibo->set_data(command_list.IdxBuffer.Data, command_list.IdxBuffer.Size * sizeof(ImDrawIdx));
 
         m_vdecl->Bind();
         ibo->Bind();

@@ -139,9 +139,7 @@ Scene::Scene(ivec2 size)
                        vec2(-1.0, -1.0), vec2( 1.0,  1.0), vec2(-1.0,  1.0), };
 
     m_pp.m_vbo = std::make_shared<VertexBuffer>(quad.bytes());
-    void *vertices = m_pp.m_vbo->Lock(0, 0);
-    memcpy(vertices, quad.data(), quad.bytes());
-    m_pp.m_vbo->Unlock();
+    m_pp.m_vbo->set_data(quad.data(), quad.bytes());
 
     /* Create a default orthographic camera, in case the user doesn’t. */
     m_default_cam = new Camera();
@@ -637,9 +635,9 @@ void Scene::render_tiles() // XXX: rename to Blit()
 
             /* Create a vertex array object */
             auto vb1 = std::make_shared<VertexBuffer>(6 * (n - i) * sizeof(vec3));
-            vec3 *vertex = (vec3 *)vb1->Lock(0, 0);
+            vec3 *vertex = (vec3 *)vb1->lock(0, 0);
             auto vb2 = std::make_shared<VertexBuffer>(6 * (n - i) * sizeof(vec2));
-            vec2 *texture = (vec2 *)vb2->Lock(0, 0);
+            vec2 *texture = (vec2 *)vb2->lock(0, 0);
 
             m_tile_api.m_bufs.push(vb1);
             m_tile_api.m_bufs.push(vb2);
@@ -650,8 +648,8 @@ void Scene::render_tiles() // XXX: rename to Blit()
                                 vertex + 6 * (j - i), texture + 6 * (j - i));
             }
 
-            vb1->Unlock();
-            vb2->Unlock();
+            vb1->unlock();
+            vb2->unlock();
 
             /* Bind texture */
             if (tiles[i].m_tileset->GetPalette())
@@ -736,9 +734,7 @@ void Scene::render_lines(float seconds)
         }
     }
     auto vb = std::make_shared<VertexBuffer>(buff.bytes());
-    float *vertex = (float *)vb->Lock(0, 0);
-    memcpy(vertex, buff.data(), buff.bytes());
-    vb->Unlock();
+    vb->set_data(buff.data(), buff.bytes());
 
     m_line_api.m_shader->Bind();
 

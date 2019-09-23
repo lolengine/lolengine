@@ -460,15 +460,9 @@ public:
                                 VertexStream<vec2>(VertexUsage::Position),
                                 VertexStream<vec2>(VertexUsage::TexCoord));
         m_vbo = std::make_shared<VertexBuffer>(sizeof(vertices));
+        m_vbo->set_data(vertices, sizeof(vertices));
         m_tbo = std::make_shared<VertexBuffer>(sizeof(texcoords));
-
-        void *data = m_vbo->Lock(0, 0);
-        memcpy(data, vertices, sizeof(vertices));
-        m_vbo->Unlock();
-
-        data = m_tbo->Lock(0, 0);
-        memcpy(data, texcoords, sizeof(texcoords));
-        m_tbo->Unlock();
+        m_tbo->set_data(texcoords, sizeof(texcoords));
 
         return true;
     }

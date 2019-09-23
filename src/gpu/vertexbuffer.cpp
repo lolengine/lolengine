@@ -364,12 +364,12 @@ VertexBuffer::~VertexBuffer()
     delete m_data;
 }
 
-size_t VertexBuffer::GetSize()
+size_t VertexBuffer::size()
 {
     return m_data->m_size;
 }
 
-void *VertexBuffer::Lock(size_t offset, size_t size)
+void *VertexBuffer::lock(size_t offset, size_t size)
 {
     if (!m_data->m_size)
         return nullptr;
@@ -379,7 +379,7 @@ void *VertexBuffer::Lock(size_t offset, size_t size)
     return m_data->m_memory + offset;
 }
 
-void VertexBuffer::Unlock()
+void VertexBuffer::unlock()
 {
     if (!m_data->m_size)
         return;
