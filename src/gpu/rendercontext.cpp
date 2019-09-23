@@ -78,13 +78,13 @@ render_context::render_context(std::shared_ptr<Renderer> renderer)
 render_context::~render_context()
 {
     if (m_data->m_viewport.is_dirty())
-        m_renderer->SetViewport(m_data->m_viewport.get());
+        m_renderer->viewport(m_data->m_viewport.get());
 
     if (m_data->m_clear_color.is_dirty())
-        m_renderer->SetClearColor(m_data->m_clear_color.get());
+        m_renderer->clear_color(m_data->m_clear_color.get());
 
     if (m_data->m_clear_depth.is_dirty())
-        m_renderer->SetClearDepth(m_data->m_clear_depth.get());
+        m_renderer->clear_depth(m_data->m_clear_depth.get());
 
     if (m_data->m_alpha_func.is_dirty())
         m_renderer->SetAlphaFunc(m_data->m_alpha_func.get(),
@@ -113,40 +113,40 @@ render_context::~render_context()
 void render_context::viewport(ibox2 viewport)
 {
     if (!m_data->m_viewport.is_dirty())
-        m_data->m_viewport.set(m_renderer->GetViewport());
+        m_data->m_viewport.set(m_renderer->viewport());
 
-    m_renderer->SetViewport(viewport);
+    m_renderer->viewport(viewport);
 }
 
 ibox2 render_context::viewport()
 {
-    return m_renderer->GetViewport();
+    return m_renderer->viewport();
 }
 
 void render_context::clear_color(vec4 color)
 {
     if (!m_data->m_clear_color.is_dirty())
-        m_data->m_clear_color.set(m_renderer->GetClearColor());
+        m_data->m_clear_color.set(m_renderer->clear_color());
 
-    m_renderer->SetClearColor(color);
+    m_renderer->clear_color(color);
 }
 
 vec4 render_context::clear_color()
 {
-    return m_renderer->GetClearColor();
+    return m_renderer->clear_color();
 }
 
 void render_context::clear_depth(float depth)
 {
     if (!m_data->m_clear_depth.is_dirty())
-        m_data->m_clear_depth.set(m_renderer->GetClearDepth());
+        m_data->m_clear_depth.set(m_renderer->clear_depth());
 
-    m_renderer->SetClearDepth(depth);
+    m_renderer->clear_depth(depth);
 }
 
 float render_context::clear_depth()
 {
-    return m_renderer->GetClearDepth();
+    return m_renderer->clear_depth();
 }
 
 void render_context::alpha_func(AlphaFunc func, float alpha)

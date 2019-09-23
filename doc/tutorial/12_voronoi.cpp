@@ -127,7 +127,7 @@ public:
                     render_context rc(scene.get_renderer());
                     rc.clear_color(vec4(0.f, 0.f, 0.f, 1.f));
                     rc.clear_depth(1.f);
-                    scene.get_renderer()->Clear(ClearMask::Color | ClearMask::Depth);
+                    scene.get_renderer()->clear(ClearMask::Color | ClearMask::Depth);
                 }
                 m_fbos.last().m1->Unbind();
             }
@@ -138,7 +138,7 @@ public:
                 render_context rc(scene.get_renderer());
                 rc.clear_color(vec4(0.f, 0.f, 0.f, 1.f));
                 rc.clear_depth(1.f);
-                scene.get_renderer()->Clear(ClearMask::Color | ClearMask::Depth);
+                scene.get_renderer()->clear(ClearMask::Color | ClearMask::Depth);
             }
             temp_buffer->Unbind();
 
@@ -201,7 +201,7 @@ public:
             render_context rc(scene.get_renderer());
             rc.clear_color(vec4(0.f, 0.f, 0.f, 1.f));
             rc.clear_depth(1.f);
-            scene.get_renderer()->Clear(ClearMask::Color | ClearMask::Depth);
+            scene.get_renderer()->clear(ClearMask::Color | ClearMask::Depth);
         }
         temp_buffer->Unbind();
 
@@ -231,7 +231,7 @@ public:
                 render_context rc(scene.get_renderer());
                 rc.clear_color(vec4(0.f, 0.f, 0.f, 1.f));
                 rc.clear_depth(1.f);
-                scene.get_renderer()->Clear(ClearMask::Color | ClearMask::Depth);
+                scene.get_renderer()->clear(ClearMask::Color | ClearMask::Depth);
             }
             m_fbos[f].m1->Unbind();
 
@@ -253,7 +253,7 @@ public:
 
                 dst_buf->Bind();
                 /* FIXME: we should just disable depth test in the shader */
-                scene.get_renderer()->Clear(ClearMask::Depth);
+                scene.get_renderer()->clear(ClearMask::Depth);
                 m_fbos[f].m2->Bind();
 
                 int i = 0;
@@ -272,7 +272,7 @@ public:
             }
         }
 
-        scene.get_renderer()->Clear(ClearMask::Color | ClearMask::Depth);
+        scene.get_renderer()->clear(ClearMask::Color | ClearMask::Depth);
 
         //FRAME BUFFER DRAW
         m_timer -= seconds;
@@ -284,7 +284,7 @@ public:
                 render_context rc(scene.get_renderer());
                 rc.clear_color(vec4(0.f, 0.f, 0.f, 1.f));
                 rc.clear_depth(1.f);
-                scene.get_renderer()->Clear(ClearMask::Color | ClearMask::Depth);
+                scene.get_renderer()->clear(ClearMask::Color | ClearMask::Depth);
             }
             m_fbos[m_cur_fbo].m1->Unbind();
 
@@ -314,7 +314,7 @@ public:
 
                 dst_buf->Bind();
                 /* FIXME: we should just disable depth test in the shader */
-                scene.get_renderer()->Clear(ClearMask::Depth);
+                scene.get_renderer()->clear(ClearMask::Depth);
                 shader->Bind();
 
                 int i = 0;

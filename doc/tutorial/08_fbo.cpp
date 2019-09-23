@@ -66,16 +66,17 @@ public:
         m_vbo = std::make_shared<VertexBuffer>(vertices.bytes());
         m_vbo->set_data(vertices.data(), vertices.bytes());
 
-        m_fbo = std::make_shared<Framebuffer>(Video::GetSize());
-        m_fbo->Bind();
+        // Create the back buffer and clear it
+        m_backbuffer = std::make_shared<Framebuffer>(Video::GetSize());
+        m_backbuffer->Bind();
         {
             Scene& scene = Scene::GetScene();
             render_context rc(scene.get_renderer());
             rc.clear_color(vec4(0.f, 0.f, 0.f, 1.f));
             rc.clear_depth(1.f);
-            scene.get_renderer()->Clear(ClearMask::Color | ClearMask::Depth);
+            scene.get_renderer()->clear(ClearMask::Color | ClearMask::Depth);
         }
-        m_fbo->Unbind();
+        m_backbuffer->Unbind();
 
         return true;
     }
@@ -90,9 +91,8 @@ public:
 
         /* FIXME: this no longer works because we don’t restore the
          * actually bound framebuffer. */
-        m_fbo->Bind();
+        m_backbuffer->Bind();
         m_shader->Bind();
-
         m_shader->SetUniform(m_uni_flag, 0.f);
         m_shader->SetUniform(m_uni_point, m_hotspot);
         m_shader->SetUniform(m_uni_color, m_color);
@@ -101,11 +101,11 @@ public:
         m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
         m_vdecl->Unbind();
         m_shader->Unbind();
-        m_fbo->Unbind();
+        m_backbuffer->Unbind();
 
         m_shader->Bind();
         m_shader->SetUniform(m_uni_flag, 1.f);
-        m_shader->SetUniform(m_uni_texture, m_fbo->GetTextureUniform(), 0);
+        m_shader->SetUniform(m_uni_texture, m_backbuffer->GetTextureUniform(), 0);
         m_vdecl->Bind();
         m_vdecl->SetStream(m_vbo, m_coord);
         m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
@@ -118,7 +118,7 @@ public:
         m_shader.reset();
         m_vdecl.reset();
         m_vbo.reset();
-        m_fbo.reset();
+        m_backbuffer.reset();
         return true;
     }
 
@@ -128,7 +128,7 @@ private:
     ShaderUniform m_uni_flag, m_uni_point, m_uni_color, m_uni_texture;
     std::shared_ptr<VertexDeclaration> m_vdecl;
     std::shared_ptr<VertexBuffer> m_vbo;
-    std::shared_ptr<Framebuffer> m_fbo;
+    std::shared_ptr<Framebuffer> m_backbuffer;
     double m_time = 0.0f;
     vec3 m_hotspot, m_color;
 };

@@ -306,8 +306,8 @@ void Framebuffer::Bind()
      * instead, maybe by getting rid of Framebuffer::Bind() and
      * creating RenderContext::SetFramebuffer() instead. */
     auto renderer = Scene::GetScene(0).get_renderer();
-    m_data->m_saved_viewport = renderer->GetViewport();
-    renderer->SetViewport(ibox2(ivec2::zero, m_data->m_size));
+    m_data->m_saved_viewport = renderer->viewport();
+    renderer->viewport(ibox2(ivec2::zero, m_data->m_size));
     m_data->m_bound = true;
 }
 
@@ -322,7 +322,7 @@ void Framebuffer::Unbind()
 #endif
 
     auto renderer = Scene::GetScene(0).get_renderer();
-    renderer->SetViewport(m_data->m_saved_viewport);
+    renderer->viewport(m_data->m_saved_viewport);
     m_data->m_bound = false;
 }
 

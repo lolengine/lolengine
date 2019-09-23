@@ -156,7 +156,7 @@ public:
     {
         WorldEntity::tick_draw(seconds, scene);
 
-        scene.get_renderer()->SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        scene.get_renderer()->clear_color(vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
         m_shader->Bind();
         m_vdecl->Bind();

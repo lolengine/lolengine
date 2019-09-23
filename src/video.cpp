@@ -127,7 +127,7 @@ void Video::Resize(ivec2 size)
 
 ivec2 Video::GetSize()
 {
-    return Scene::GetScene(0).get_renderer()->GetViewport().extent();
+    return Scene::GetScene(0).get_renderer()->viewport().extent();
 }
 
 } /* namespace lol */

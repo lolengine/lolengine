@@ -694,7 +694,7 @@ void BtPhysTest::tick_draw(float seconds, Scene &scene)
 #endif //CAT_MODE
     }
 
-    //Video::SetClearColor(vec4(0.0f, 0.0f, 0.12f, 1.0f));
+    //Video::set_clear_color(vec4(0.0f, 0.0f, 0.12f, 1.0f));
 
 }
 

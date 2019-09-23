@@ -121,7 +121,7 @@ public:
     {
         Scene& scene = Scene::GetScene();
         scene.PushCamera(m_camera);
-        scene.get_renderer()->SetClearColor(vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        scene.get_renderer()->clear_color(vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
         /* Upload vertex data to GPU */
         for (int i = 0; i < m_gears.count(); i++)

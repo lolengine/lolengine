@@ -229,14 +229,14 @@ void Debug::DrawBox(vec2 a, vec2 b, mat2 transform, DCD data)
 }
 void Debug::DrawBox(vec2 a, float s, mat2 transform, DCD data)
 {
-    vec2 b = s * vec2(1.f, Scene::GetScene(0).get_renderer()->GetXYRatio());
+    vec2 b = s * vec2(1.f, Scene::GetScene(0).get_renderer()->xy_ratio());
     Debug::DrawBox(a - b, a + b, transform, data);
 }
 
 //-- CIRCLE -------------------------------------------------------------------
-void Debug::DrawCircle(vec2 a, float s)        { Debug::DrawCircle(a, s * vec2(1.f, Scene::GetScene(0).get_renderer()->GetXYRatio()), DC::GetGlobalData()); }
+void Debug::DrawCircle(vec2 a, float s)        { Debug::DrawCircle(a, s * vec2(1.f, Scene::GetScene(0).get_renderer()->xy_ratio()), DC::GetGlobalData()); }
 void Debug::DrawCircle(vec3 a, vec3 n)         { Debug::DrawCircle(a, n, DC::GetGlobalData()); }
-void Debug::DrawCircle(vec2 a, vec2 s)         { Debug::DrawCircle(a, s * vec2(1.f, Scene::GetScene(0).get_renderer()->GetXYRatio()), DC::GetGlobalData()); }
+void Debug::DrawCircle(vec2 a, vec2 s)         { Debug::DrawCircle(a, s * vec2(1.f, Scene::GetScene(0).get_renderer()->xy_ratio()), DC::GetGlobalData()); }
 void Debug::DrawCircle(vec3 a, vec3 x, vec3 y) { Debug::DrawCircle(a, x, y, DC::GetGlobalData()); }
 void Debug::DrawCircle(vec2 a, vec2 x, vec2 y) { Debug::DrawCircle(a, x, y, DC::GetGlobalData()); }
 void Debug::DrawCircle(vec3 a, vec3 n, DCD data)

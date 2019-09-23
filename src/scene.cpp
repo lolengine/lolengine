@@ -458,7 +458,7 @@ void Scene::pre_render(float)
     {
         m_size = m_wanted_size;
 
-        m_renderer->SetViewport(ibox2(ivec2::zero, m_size));
+        m_renderer->viewport(ibox2(ivec2::zero, m_size));
         for (int i = 0; i < 4; ++i)
             m_renderbuffer[i] = std::make_shared<Framebuffer>(m_size);
 
@@ -480,7 +480,7 @@ void Scene::pre_render(float)
             rc.clear_depth(1.f);
         }
 
-        m_renderer->Clear(ClearMask::Color | ClearMask::Depth);
+        m_renderer->clear(ClearMask::Color | ClearMask::Depth);
     }
 }
 
@@ -513,7 +513,7 @@ void Scene::post_render(float)
         render_context rc(m_renderer);
         rc.clear_color(vec4(0.f, 0.f, 0.f, 1.f));
         rc.clear_depth(1.f);
-        m_renderer->Clear(ClearMask::Color | ClearMask::Depth);
+        m_renderer->clear(ClearMask::Color | ClearMask::Depth);
 
         /* Execute post process */
         m_pp.pp_shader->Bind();
@@ -537,7 +537,7 @@ void Scene::post_render(float)
         render_context rc(m_renderer);
         rc.clear_color(vec4(0.f, 0.f, 0.f, 1.f));
         rc.clear_depth(1.f);
-        m_renderer->Clear(ClearMask::Color | ClearMask::Depth);
+        m_renderer->clear(ClearMask::Color | ClearMask::Depth);
 
         /* Blit final image to screen */
         m_pp.blit_shader->SetUniform(m_pp.m_buffer_uni[0][0], m_renderbuffer[3]->GetTextureUniform(), 3);

@@ -139,18 +139,18 @@ public:
     Renderer(ivec2 size);
     ~Renderer();
 
-    void Clear(ClearMask mask);
+    void clear(ClearMask mask);
 
-    void SetViewport(ibox2 viewport);
-    ibox2 GetViewport() const;
-    float GetXYRatio() const;
-    float GetYXRatio() const;
+    void viewport(ibox2 bounds);
+    ibox2 viewport() const;
+    float xy_ratio() const;
+    float yx_ratio() const;
 
-    void SetClearColor(vec4 color);
-    vec4 GetClearColor() const;
+    void clear_color(vec4 color);
+    vec4 clear_color() const;
 
-    void SetClearDepth(float depth);
-    float GetClearDepth() const;
+    void clear_depth(float depth);
+    float clear_depth() const;
 
     void SetAlphaFunc(AlphaFunc func, float alpha);
     AlphaFunc GetAlphaFunc() const;

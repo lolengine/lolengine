@@ -76,13 +76,13 @@ Renderer::Renderer(ivec2 size)
 
     /* Initialise rendering states */
     m_data->m_viewport = ibox2(0, 0, 0, 0);
-    SetViewport(ibox2(ivec2::zero, size));
+    viewport(ibox2(ivec2::zero, size));
 
     m_data->m_clear_color = vec4(-1.f);
-    SetClearColor(vec4(0.1f, 0.2f, 0.3f, 1.0f));
+    clear_color(vec4(0.1f, 0.2f, 0.3f, 1.0f));
 
     m_data->m_clear_depth = -1.f;
-    SetClearDepth(1.f);
+    clear_depth(1.f);
 
     m_data->m_alpha_func = AlphaFunc::Never;
     m_data->m_alpha_value = -1.0f;
@@ -125,7 +125,7 @@ Renderer::~Renderer()
  * Buffer clearing
  */
 
-void Renderer::Clear(ClearMask mask)
+void Renderer::clear(ClearMask mask)
 {
     GLbitfield m = 0;
     if (mask & ClearMask::Color)
@@ -141,30 +141,30 @@ void Renderer::Clear(ClearMask mask)
  * Viewport dimensions
  */
 
-void Renderer::SetViewport(ibox2 viewport)
+void Renderer::viewport(ibox2 bounds)
 {
-    if (m_data->m_viewport == viewport)
+    if (m_data->m_viewport == bounds)
         return;
 
-    glViewport(viewport.aa.x, viewport.aa.y, viewport.bb.x, viewport.bb.y);
+    glViewport(bounds.aa.x, bounds.aa.y, bounds.bb.x, bounds.bb.y);
 
-    m_data->m_viewport = viewport;
+    m_data->m_viewport = bounds;
 }
 
-ibox2 Renderer::GetViewport() const
+ibox2 Renderer::viewport() const
 {
     return m_data->m_viewport;
 }
 
-float Renderer::GetXYRatio() const
+float Renderer::xy_ratio() const
 {
-    ivec2 s = GetViewport().extent();
+    ivec2 s = viewport().extent();
     return (float)s.x / s.y;
 }
 
-float Renderer::GetYXRatio() const
+float Renderer::yx_ratio() const
 {
-    ivec2 s = GetViewport().extent();
+    ivec2 s = viewport().extent();
     return (float)s.y / s.x;
 }
 
@@ -172,7 +172,7 @@ float Renderer::GetYXRatio() const
  * Clear color
  */
 
-void Renderer::SetClearColor(vec4 color)
+void Renderer::clear_color(vec4 color)
 {
     if (m_data->m_clear_color == color)
         return;
@@ -182,7 +182,7 @@ void Renderer::SetClearColor(vec4 color)
     m_data->m_clear_color = color;
 }
 
-vec4 Renderer::GetClearColor() const
+vec4 Renderer::clear_color() const
 {
     return m_data->m_clear_color;
 }
@@ -191,7 +191,7 @@ vec4 Renderer::GetClearColor() const
  * Clear depth
  */
 
-void Renderer::SetClearDepth(float depth)
+void Renderer::clear_depth(float depth)
 {
     if (m_data->m_clear_depth == depth)
         return;
@@ -205,7 +205,7 @@ void Renderer::SetClearDepth(float depth)
     m_data->m_clear_depth = depth;
 }
 
-float Renderer::GetClearDepth() const
+float Renderer::clear_depth() const
 {
     return m_data->m_clear_depth;
 }
