@@ -245,7 +245,7 @@ EglApp::EglApp(char const *title, ivec2 res, float fps) :
 #   endif
 
 #   if LOL_USE_SDL
-    new SdlInput(res.x, res.y, data->screen_size.x, data->screen_size.y);
+    new SdlInput(data->screen_size.x, data->screen_size.y);
 #   endif
 
     Video::Setup((ivec2)data->screen_size);

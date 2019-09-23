@@ -43,9 +43,8 @@ namespace lol
  * Public SdlInput class
  */
 
-SdlInput::SdlInput(int app_w, int app_h, int screen_w, int screen_h)
-  : m_app(vec2((float)app_w, (float)app_h)),
-    m_screen(vec2((float)screen_w, (float)screen_h))
+SdlInput::SdlInput(int screen_w, int screen_h)
+  : m_screen(vec2((float)screen_w, (float)screen_h))
 {
 #if _WIN32 || defined __APPLE__
     m_tick_in_draw_thread = true;
@@ -247,7 +246,7 @@ void SdlInput::tick(float seconds)
     ivec2 window_size;
     // FIXME: get actual window size
     //SDL_GetWindowSize(m_window, &window_size.x, &window_size.y);
-    window_size = (ivec2)m_app;
+    window_size = Video::GetSize();
 
     ivec2 mouse_pos(-1, -1);
     SDL_GetMouseState(&mouse_pos.x, &mouse_pos.y);

@@ -162,7 +162,7 @@ sdl::app::app(char const *title, ivec2 res, float fps)
     new D3d9Input();
 #endif
 
-    new SdlInput(res.x, res.y, screen_size.x, screen_size.y);
+    new SdlInput(screen_size.x, screen_size.y);
 #endif
 }
 
