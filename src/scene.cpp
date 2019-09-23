@@ -457,6 +457,8 @@ void Scene::pre_render(float)
     if (m_size != m_wanted_size)
     {
         m_size = m_wanted_size;
+
+        m_renderer->SetViewport(ibox2(ivec2::zero, m_size));
         for (int i = 0; i < 4; ++i)
             m_renderbuffer[i] = std::make_shared<Framebuffer>(m_size);
 
