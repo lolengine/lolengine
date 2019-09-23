@@ -17,6 +17,8 @@
 // ---------------------------------------------------
 //
 
+#include <lol/math/vector.h>
+
 #include <ostream>
 
 namespace lol
@@ -34,7 +36,8 @@ struct LOL_ATTR_NODISCARD cmplx_t : public linear_ops::base<T>
     typedef T element;
     typedef cmplx_t<T> type;
 
-    inline constexpr cmplx_t() {}
+    inline constexpr cmplx_t() = default;
+    inline constexpr cmplx_t(cmplx_t<T> const &) = default;
     inline constexpr cmplx_t(T X) : x(X), y(T(0)) {}
     inline constexpr cmplx_t(T X, T Y) : x(X), y(Y) {}
 
@@ -82,9 +85,8 @@ struct LOL_ATTR_NODISCARD quat_t : public linear_ops::base<T>
     typedef quat_t<T> type;
 
     /* Default constructor and copy constructor */
-    inline constexpr quat_t() : w(), x(), y(), z() {}
-    inline constexpr quat_t(quat_t<T> const &q)
-      : w(q.w), x(q.x), y(q.y), z(q.z) {}
+    inline constexpr quat_t() = default;
+    inline constexpr quat_t(quat_t<T> const &) = default;
 
     /* Explicit constructor for type conversion */
     template<typename U>
@@ -257,9 +259,9 @@ template<typename T>
 struct LOL_ATTR_NODISCARD sqt_t
 {
     /* Default constructor and copy constructor */
-    inline constexpr sqt_t() : s(), q(), t() {}
-    inline constexpr sqt_t(sqt_t<T> const &other)
-      : q(other.q), t(other.t), s(other.s) {}
+    inline constexpr sqt_t() = default;
+    inline constexpr sqt_t(sqt_t<T> const &) = default;
+    inline constexpr sqt_t<T>& operator =(const sqt_t<T>&) = default;
 
     /* Explicit constructor for type conversion */
     template<typename U>

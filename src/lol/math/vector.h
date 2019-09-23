@@ -93,6 +93,25 @@ struct LOL_ATTR_NODISCARD vec_t
     }
 };
 
+/*
+ * Helper macros for vector type member functions
+ */
+
+#define LOL_COMMON_MEMBER_OPS(first) \
+    inline T& operator[](size_t n) { return (&this->first)[n]; } \
+    inline T const& operator[](size_t n) const { return (&this->first)[n]; } \
+    \
+    /* An explicit assignment operator is now mandatory */ \
+    inline type & operator =(type const &that) \
+    { \
+        for (int i = 0; i < type::count; ++i) \
+            (*this)[i] = that[i]; \
+        return *this; \
+    } \
+    \
+    void printf() const; \
+    std::string tostring() const;
+
 /* The generic “vec_t” type, which is a fixed-size vector with no
  * swizzling. There's an override for N=2, N=3, N=4 that has swizzling. */
 template<typename T, int N>
@@ -112,6 +131,8 @@ struct LOL_ATTR_NODISCARD vec_t<T, N, FULL_SWIZZLE>
             m_data[i] = v[i];
     }
     inline ~vec_t() {}
+
+    LOL_COMMON_MEMBER_OPS(m_data[0])
 
     /* Explicit constructor that takes exactly N arguments thanks to SFINAE. */
     template<typename... ARGS>
@@ -164,9 +185,6 @@ struct LOL_ATTR_NODISCARD vec_t<T, N, FULL_SWIZZLE>
             m_data[i] = T(0);
     }
 
-    inline T& operator[](size_t n) { return m_data[n]; }
-    inline T const& operator[](size_t n) const { return m_data[n]; }
-
     static const vec_t<T,N> zero;
 
 private:
@@ -184,25 +202,6 @@ private:
 
     T m_data[count];
 };
-
-/*
- * Helper macros for vector type member functions
- */
-
-#define LOL_COMMON_MEMBER_OPS(first) \
-    inline T& operator[](size_t n) { return (&this->first)[n]; } \
-    inline T const& operator[](size_t n) const { return (&this->first)[n]; } \
-    \
-    /* Visual Studio insists on having an assignment operator. */ \
-    inline type & operator =(type const &that) \
-    { \
-        for (int i = 0; i < type::count; ++i) \
-            (*this)[i] = that[i]; \
-        return *this; \
-    } \
-    \
-    void printf() const; \
-    std::string tostring() const;
 
 /*
  * 2-element vectors
