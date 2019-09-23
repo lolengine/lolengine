@@ -106,6 +106,7 @@
     <ClCompile Include="audio\sample.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="base\assert.cpp" />
+    <ClCompile Include="base\features.cpp" />
     <ClCompile Include="base\log.cpp" />
     <ClCompile Include="base\string.cpp" />
     <ClCompile Include="debug\fps.cpp" />

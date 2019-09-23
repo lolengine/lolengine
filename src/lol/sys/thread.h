@@ -19,13 +19,9 @@
 
 #include <functional>
 
-#if LOL_FEATURE_THREADS
-#   include <thread>
-#   include <mutex>
-#   include <condition_variable>
-#else
-/* Nothing */
-#endif
+#include <thread>
+#include <mutex>
+#include <condition_variable>
 
 /* XXX: workaround for a bug in Visual Studio 2012 and 2013!
  * https://connect.microsoft.com/VisualStudio/feedback/details/747145 */
@@ -52,38 +48,18 @@
 namespace lol
 {
 
+// This is like std::mutex but we can add debug information to it
 class mutex
 {
 public:
-    // Will block the thread if another has already locked
-    void lock()
-    {
-#if LOL_FEATURE_THREADS
-        m_mutex.lock();
-#endif
-    }
+    inline void lock() { m_mutex.lock(); }
 
-    // Will not block if another thread has already locked
-    bool try_lock()
-    {
-#if LOL_FEATURE_THREADS
-        return m_mutex.try_lock();
-#else
-        return false;
-#endif
-    }
+    inline bool try_lock() { return m_mutex.try_lock(); }
 
-    void unlock()
-    {
-#if LOL_FEATURE_THREADS
-        m_mutex.unlock();
-#endif
-    }
+    inline void unlock() { m_mutex.unlock(); }
 
 private:
-#if LOL_FEATURE_THREADS
     std::mutex m_mutex;
-#endif
 };
 
 // A FIFO queue for threads
@@ -91,58 +67,52 @@ template<typename T, int N = 128>
 class queue
 {
 public:
-    queue()
-      : m_start(0),
-        m_count(0)
-    {}
-
     int size() const { return m_count; }
 
     // Will block the thread if another has already locked
     void push(T value)
     {
-#if LOL_FEATURE_THREADS
-        /* Wait for the mutex availability or non-fullness */
         std::unique_lock<std::mutex> uni_lock(m_mutex);
-        m_full_cond.wait(uni_lock, [&]{ return m_count < CAPACITY; });
-#endif
+
+        if (has_threads())
+        {
+            // Wait for the mutex availability or non-fullness
+            m_full_cond.wait(uni_lock, [&]{ return m_count < CAPACITY; });
+        }
 
         do_push(value); /* Push value */
 
-#if LOL_FEATURE_THREADS
-        /* Release lock and notify empty condition var (in that order) */
-        uni_lock.unlock();
-        m_empty_cond.notify_one();
-#endif
+        if (has_threads())
+        {
+            // Release lock and notify empty condition var (in that order)
+            uni_lock.unlock();
+            m_empty_cond.notify_one();
+        }
     }
 
     // Will not block if another has already locked
     bool try_push(T value)
     {
-#if LOL_FEATURE_THREADS
-        /* Same as Push(), except .... */
-        std::unique_lock<std::mutex> uni_lock(m_mutex, std::try_to_lock);
-        /* Bail on fail try_lock fail */
-        if (!uni_lock.owns_lock())
-            return false;
-        /* Bail on max CAPACITY */
-        if (m_count == CAPACITY)
+        std::unique_lock<std::mutex> uni_lock(m_mutex, std::defer_lock);
+
+        if (has_threads())
         {
-            uni_lock.unlock();
-            return false;
+            // Try to lock, bail out if we fail
+            if (!uni_lock.try_lock())
+                return false;
         }
-#else
+
         if (m_count == CAPACITY)
-            return false;
-#endif
+            return false; // unlocks uni_lock
 
-        do_push(value); /* Push value */
+        do_push(value);
 
-#if LOL_FEATURE_THREADS
-        /* Release lock and notify empty condition var (in that order) */
-        uni_lock.unlock();
-        m_empty_cond.notify_one();
-#endif
+        if (has_threads())
+        {
+            // Release lock and notify empty condition var (in that order)
+            uni_lock.unlock();
+            m_empty_cond.notify_one();
+        }
 
         return true;
     }
@@ -150,21 +120,17 @@ public:
     // Will block the thread if another has already locked
     T pop()
     {
-#if LOL_FEATURE_THREADS
-        /* Wait for the mutex availability or non-emptiness */
+        ASSERT(has_threads(), "Pop should only be used with threads. Use try_pop instead.");
+
+        // Wait for the mutex availability or non-emptiness
         std::unique_lock<std::mutex> uni_lock(m_mutex);
         m_empty_cond.wait(uni_lock, [&]{return m_count > 0; });
-#else
-        ASSERT(0, "Pop should only be used with threads. Use try_pop instead.");
-#endif
 
-        T ret = do_pop(); /* Pop value */
+        T ret = do_pop();
 
-#if LOL_FEATURE_THREADS
-        /* Release lock and notify full condition var (in that order) */
+        // Release lock and notify full condition var (in that order)
         uni_lock.unlock();
         m_full_cond.notify_one();
-#endif
 
         return ret;
     }
@@ -172,30 +138,25 @@ public:
     // Will not block if another has already locked
     bool try_pop(T &ret)
     {
-#if LOL_FEATURE_THREADS
-        /* Same as Pop(), except .... */
-        std::unique_lock<std::mutex> uni_lock(m_mutex, std::try_to_lock);
-        /* Bail on fail try_lock fail */
-        if (!uni_lock.owns_lock())
-            return false;
-        /* Bail on zero count */
-        if (m_count == 0)
+        std::unique_lock<std::mutex> uni_lock(m_mutex, std::defer_lock);
+
+        if (has_threads())
         {
-            uni_lock.unlock();
-            return false;
+            if (!uni_lock.try_lock())
+                return false;
         }
-#else
+
         if (m_count == 0)
             return false;
-#endif
 
         ret = do_pop(); /* Pop value */
 
-#if LOL_FEATURE_THREADS
-        /* Release lock and notify full condition var (in that order) */
-        uni_lock.unlock();
-        m_full_cond.notify_one();
-#endif
+        if (has_threads())
+        {
+            // Release lock and notify full condition var (in that order)
+            uni_lock.unlock();
+            m_full_cond.notify_one();
+        }
 
         return true;
     }
@@ -219,11 +180,10 @@ private:
 private:
     static int const CAPACITY = N;
     T m_values[CAPACITY];
-    int m_start, m_count;
-#if LOL_FEATURE_THREADS
+    int m_start = 0, m_count = 0;
+
     std::mutex m_mutex;
     std::condition_variable m_empty_cond, m_full_cond;
-#endif
 };
 
 // Base class for threads
@@ -233,36 +193,28 @@ public:
     thread(std::function<void(thread*)> fn)
       : m_function(fn)
     {
-#if LOL_FEATURE_THREADS
         m_thread = std::thread(trampoline, this);
-#endif
     }
 
     ~thread()
     {
-#if LOL_FEATURE_THREADS
-#   if LOL_VISUAL_STUDIO_BUG_747145_WORKAROUND
+#if LOL_VISUAL_STUDIO_BUG_747145_WORKAROUND
         m_thread.detach();
-#   else
+#else
         m_thread.join();
-#   endif
 #endif
     }
 
 private:
-#if LOL_FEATURE_THREADS
     static void trampoline(thread *that)
     {
         that->m_function(that);
-#   if LOL_VISUAL_STUDIO_BUG_747145_WORKAROUND
+#if LOL_VISUAL_STUDIO_BUG_747145_WORKAROUND
         ExitThread(0);
-#   endif
+#endif
     }
-#endif
 
-#if LOL_FEATURE_THREADS
     std::thread m_thread;
-#endif
     std::function<void(thread*)> m_function;
 };
 

@@ -99,25 +99,26 @@ public:
         m_aabb.aa = m_position;
         m_aabb.bb = vec3((vec2)m_window_size, 0);
 
-#if LOL_FEATURE_THREADS
-        /* Spawn worker threads and wait for their readiness. */
-        for (int i = 0; i < MAX_THREADS; i++)
-            m_threads[i] = new thread(std::bind(&Fractal::DoWorkHelper, this, std::placeholders::_1));
-        for (int i = 0; i < MAX_THREADS; i++)
-            m_spawnqueue.pop();
-#endif
+        if (has_threads())
+        {
+            // Spawn worker threads and wait for their readiness
+            for (int i = 0; i < MAX_THREADS; i++)
+                m_threads[i] = new thread(std::bind(&Fractal::DoWorkHelper, this, std::placeholders::_1));
+            for (int i = 0; i < MAX_THREADS; i++)
+                m_spawnqueue.pop();
+        }
     }
 
     ~Fractal()
     {
-#if LOL_FEATURE_THREADS
-        /* Signal worker threads for completion and wait for
-         * them to quit. */
-        for (int i = 0; i < MAX_THREADS; i++)
-            m_jobqueue.push(-1);
-        for (int i = 0; i < MAX_THREADS; i++)
-            m_donequeue.pop();
-#endif
+        if (has_threads())
+        {
+            // Signal worker threads for completion and wait for them to quit
+            for (int i = 0; i < MAX_THREADS; i++)
+                m_jobqueue.push(-1);
+            for (int i = 0; i < MAX_THREADS; i++)
+                m_donequeue.pop();
+        }
 
         Ticker::Unref(m_centertext);
         Ticker::Unref(m_mousetext);
@@ -290,16 +291,14 @@ public:
 
             for (int i = 0; i < m_size.y; i += MAX_LINES * 2)
             {
-#if LOL_FEATURE_THREADS
-                m_jobqueue.push(i);
-#else
-                DoWork(i);
-#endif
+                if (has_threads())
+                    m_jobqueue.push(i);
+                else
+                    DoWork(i);
             }
         }
     }
 
-#if LOL_FEATURE_THREADS
     void DoWorkHelper(thread *)
     {
         m_spawnqueue.push(0);
@@ -313,7 +312,6 @@ public:
         }
         m_donequeue.push(0);
     };
-#endif
 
     void DoWork(int line)
     {
@@ -475,10 +473,11 @@ public:
 
         if (m_dirty[m_frame])
         {
-#if LOL_FEATURE_THREADS
-            for (int i = 0; i < m_size.y; i += MAX_LINES * 2)
-                m_donequeue.pop();
-#endif
+            if (has_threads())
+            {
+                for (int i = 0; i < m_size.y; i += MAX_LINES * 2)
+                    m_donequeue.pop();
+            }
 
             m_dirty[m_frame]--;
 
@@ -551,13 +550,11 @@ private:
     vec4 m_texel_settings, m_screen_settings;
     mat4 m_zoom_settings;
 
-#if LOL_FEATURE_THREADS
-    /* Worker threads */
+    // Worker threads
     thread *m_threads[MAX_THREADS];
     queue<int> m_spawnqueue, m_jobqueue, m_donequeue;
-#endif
 
-    /* Debug information */
+    // Debug information
     Text *m_centertext, *m_mousetext, *m_zoomtext;
 };
 

@@ -18,16 +18,6 @@
 //
 
 /*
- * System, CPU and compiler features.
- */
-
-#define LOL_FEATURE_THREADS 1
-
-#if defined __EMSCRIPTEN__
-#   undef LOL_FEATURE_THREADS
-#endif
-
-/*
  * Check for C++11 and later features.
  */
 
@@ -168,12 +158,15 @@ static inline int isnan(float f)
 #endif
 
 
-/*
- * A handy endianness test function
- */
+//
+// Some feature test functions
+//
 
 namespace lol
 {
+    extern bool has_threads();
+
+    // A handy endianness test function
     static inline bool is_big_endian()
     {
         union { int i; char c; } u;

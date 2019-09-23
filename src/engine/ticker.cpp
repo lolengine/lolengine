@@ -29,13 +29,14 @@ class ticker_data
 
 public:
     ticker_data()
-      : DEPRECATED_nentities(0),
-        m_frame(0), m_recording(0), deltatime(0), bias(0), fps(0),
-#if LOL_BUILD_DEBUG
-        keepalive(0),
-#endif
-        m_quit(0), m_quitframe(0), m_quitdelay(20), m_panic(0)
     {
+        if (has_threads())
+        {
+            gamethread = std::make_unique<thread>(std::bind(&ticker_data::GameThreadMain, this));
+            drawtick.push(1);
+
+            diskthread = std::make_unique<thread>(std::bind(&ticker_data::DiskThreadMain, this));
+        }
     }
 
     ~ticker_data()
@@ -46,13 +47,14 @@ public:
                "still %d autoreleased entities\n", DEPRECATED_m_autolist.count());
         msg::debug("%d frames required to quit\n", m_frame - m_quitframe);
 
-#if LOL_FEATURE_THREADS
-        gametick.push(0);
-        disktick.push(0);
-        gamethread.release();
-        diskthread.release();
-        ASSERT(drawtick.size() == 0);
-#endif
+        if (has_threads())
+        {
+            gametick.push(0);
+            disktick.push(0);
+            gamethread.release();
+            diskthread.release();
+            ASSERT(drawtick.size() == 0);
+        }
     }
 
     void handle_shutdown();
@@ -68,14 +70,14 @@ private:
     array<entity *> DEPRECATED_m_todolist, DEPRECATED_m_todolist_delayed, DEPRECATED_m_autolist;
     array<entity *> DEPRECATED_m_list[(int)tickable::group::all::end];
     array<int> DEPRECATED_m_scenes[(int)tickable::group::all::end];
-    int DEPRECATED_nentities;
+    int DEPRECATED_nentities = 0;
 
     /* Fixed framerate management */
-    int m_frame, m_recording;
+    int m_frame = 0, m_recording = 0;
     timer m_timer;
-    float deltatime, bias, fps;
+    float deltatime = 0.f, bias = 0.f, fps = 0.f;
 #if LOL_BUILD_DEBUG
-    float keepalive;
+    float keepalive = 0;
 #endif
 
     /* The three main functions (for now) */
@@ -83,17 +85,15 @@ private:
     static void DrawThreadTick();
     static void DiskThreadTick();
 
-#if LOL_FEATURE_THREADS
     /* The associated background threads */
     void GameThreadMain();
     void DrawThreadMain(); /* unused for now */
     void DiskThreadMain();
     std::unique_ptr<thread> gamethread, diskthread;
     queue<int> gametick, drawtick, disktick;
-#endif
 
     /* Shutdown management */
-    int m_quit, m_quitframe, m_quitdelay, m_panic;
+    int m_quit = 0, m_quitframe = 0, m_quitdelay = 20, m_panic = 0;
 };
 
 static std::unique_ptr<ticker_data> data;
@@ -169,7 +169,6 @@ int Ticker::Unref(entity *entity)
     return --entity->m_ref;
 }
 
-#if LOL_FEATURE_THREADS
 void ticker_data::GameThreadMain()
 {
 #if LOL_BUILD_DEBUG
@@ -193,9 +192,7 @@ void ticker_data::GameThreadMain()
     msg::debug("ticker game thread terminated\n");
 #endif
 }
-#endif /* LOL_FEATURE_THREADS */
 
-#if LOL_FEATURE_THREADS
 void ticker_data::DrawThreadMain() /* unused */
 {
 #if LOL_BUILD_DEBUG
@@ -217,15 +214,12 @@ void ticker_data::DrawThreadMain() /* unused */
     msg::debug("ticker draw thread terminated\n");
 #endif
 }
-#endif /* LOL_FEATURE_THREADS */
 
-#if LOL_FEATURE_THREADS
 void ticker_data::DiskThreadMain()
 {
     /* FIXME: temporary hack to avoid crashes on the PS3 */
     disktick.pop();
 }
-#endif /* LOL_FEATURE_THREADS */
 
 //-----------------------------------------------------------------------------
 void ticker_data::GameThreadTick()
@@ -565,13 +559,6 @@ void ticker::setup(float fps)
 {
     data = std::make_unique<ticker_data>();
     data->fps = fps;
-
-#if LOL_FEATURE_THREADS
-    data->gamethread = std::make_unique<thread>(std::bind(&ticker_data::GameThreadMain, data.get()));
-    data->drawtick.push(1);
-
-    data->diskthread = std::make_unique<thread>(std::bind(&ticker_data::DiskThreadMain, data.get()));
-#endif
 }
 
 void ticker::teardown()
@@ -581,24 +568,24 @@ void ticker::teardown()
 
 void ticker::tick_draw()
 {
-#if LOL_FEATURE_THREADS
-    int n = data->drawtick.pop();
-    if (n == 0)
-        return;
-#else
-    ticker_data::GameThreadTick();
-#endif
+    if (has_threads())
+    {
+        int n = data->drawtick.pop();
+        if (n == 0)
+            return;
+    }
+    else
+        ticker_data::GameThreadTick();
 
     ticker_data::DrawThreadTick();
 
     Profiler::Start(Profiler::STAT_TICK_BLIT);
 
     /* Signal game thread that it can carry on */
-#if LOL_FEATURE_THREADS
-    data->gametick.push(1);
-#else
-    ticker_data::DiskThreadTick();
-#endif
+    if (has_threads())
+        data->gametick.push(1);
+    else
+        ticker_data::DiskThreadTick();
 
     /* Clamp FPS */
     Profiler::Stop(Profiler::STAT_TICK_BLIT);

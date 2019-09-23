@@ -88,7 +88,7 @@ liblol_core_sources = \
     easymesh/shinydebuglighting.lolfx easymesh/shinydebugnormal.lolfx \
     easymesh/shinydebugUV.lolfx easymesh/shiny_SK.lolfx \
     \
-    base/assert.cpp base/log.cpp base/string.cpp \
+    base/assert.cpp base/features.cpp base/log.cpp base/string.cpp \
     \
     math/vector.cpp math/matrix.cpp math/transform.cpp math/half.cpp \
     math/geometry.cpp math/real.cpp \
