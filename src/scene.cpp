@@ -125,21 +125,21 @@ Scene::Scene(ivec2 size)
 
     for (int i = 0; i < 4; ++i)
         m_renderbuffer[i] = std::make_shared<Framebuffer>(m_size);
-    m_pp.m_shader[0] = Shader::Create(LOLFX_RESOURCE_NAME(gpu_blit));
-    m_pp.m_shader[1] = Shader::Create(LOLFX_RESOURCE_NAME(gpu_postprocess));
-    m_pp.m_coord[0] = m_pp.m_shader[0]->GetAttribLocation(VertexUsage::Position, 0);
-    m_pp.m_coord[1] = m_pp.m_shader[1]->GetAttribLocation(VertexUsage::Position, 0);
-    m_pp.m_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec2>(VertexUsage::Position));
-    m_pp.m_buffer_uni[0][0] = m_pp.m_shader[0]->GetUniformLocation("u_buffer");
-    m_pp.m_buffer_uni[1][0] = m_pp.m_shader[1]->GetUniformLocation("u_buffer");
-    m_pp.m_buffer_uni[1][1] = m_pp.m_shader[1]->GetUniformLocation("u_prev_buffer");
-    m_pp.m_buffer_uni[1][2] = m_pp.m_shader[1]->GetUniformLocation("u_prev_final");
+    m_pp.blit_shader = Shader::Create(LOLFX_RESOURCE_NAME(gpu_blit));
+    m_pp.pp_shader = Shader::Create(LOLFX_RESOURCE_NAME(gpu_postprocess));
+    m_pp.blit_pos_attr = m_pp.blit_shader->GetAttribLocation(VertexUsage::Position, 0);
+    m_pp.pp_pos_attr = m_pp.pp_shader->GetAttribLocation(VertexUsage::Position, 0);
+    m_pp.quad_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec2>(VertexUsage::Position));
+    m_pp.m_buffer_uni[0][0] = m_pp.blit_shader->GetUniformLocation("u_buffer");
+    m_pp.m_buffer_uni[1][0] = m_pp.pp_shader->GetUniformLocation("u_buffer");
+    m_pp.m_buffer_uni[1][1] = m_pp.pp_shader->GetUniformLocation("u_prev_buffer");
+    m_pp.m_buffer_uni[1][2] = m_pp.pp_shader->GetUniformLocation("u_prev_final");
 
     array<vec2> quad { vec2( 1.0,  1.0), vec2(-1.0, -1.0), vec2( 1.0, -1.0),
                        vec2(-1.0, -1.0), vec2( 1.0,  1.0), vec2(-1.0,  1.0), };
 
-    m_pp.m_vbo = std::make_shared<VertexBuffer>(quad.bytes());
-    m_pp.m_vbo->set_data(quad.data(), quad.bytes());
+    m_pp.quad_vbo = std::make_shared<VertexBuffer>(quad.bytes());
+    m_pp.quad_vbo->set_data(quad.data(), quad.bytes());
 
     /* Create a default orthographic camera, in case the user doesn’t. */
     m_default_cam = new Camera();
@@ -451,7 +451,7 @@ static bool do_pp = true;
 
 void Scene::pre_render(float)
 {
-    gpu_marker("Pre Render");
+    gpu_marker("### begin frame");
 
     // Handle resize event
     if (m_size != m_wanted_size)
@@ -485,23 +485,26 @@ void Scene::pre_render(float)
 /* Render everything that the scene contains */
 void Scene::render(float seconds)
 {
-    gpu_marker("Render");
+    gpu_marker("### render scene");
 
     // FIXME: get rid of the delta time argument
+    gpu_marker("# primitives");
     render_primitives();
+    gpu_marker("# tiles");
     render_tiles();
+    gpu_marker("# lines");
     render_lines(seconds);
 }
 
 void Scene::post_render(float)
 {
-    gpu_marker("Post Render");
+    gpu_marker("### post render");
 
     if (do_pp)
     {
         m_renderbuffer[0]->Unbind();
 
-        gpu_marker("PostProcess");
+        gpu_marker("# postprocess");
 
         m_renderbuffer[3]->Bind();
 
@@ -511,23 +514,23 @@ void Scene::post_render(float)
         m_renderer->Clear(ClearMask::Color | ClearMask::Depth);
 
         /* Execute post process */
-        m_pp.m_shader[1]->Bind();
-        m_pp.m_shader[1]->SetUniform(m_pp.m_buffer_uni[1][0], m_renderbuffer[0]->GetTextureUniform(), 0);
-        m_pp.m_shader[1]->SetUniform(m_pp.m_buffer_uni[1][1], m_renderbuffer[1]->GetTextureUniform(), 1);
-        m_pp.m_shader[1]->SetUniform(m_pp.m_buffer_uni[1][2], m_renderbuffer[2]->GetTextureUniform(), 2);
-        m_pp.m_vdecl->Bind();
-        m_pp.m_vdecl->SetStream(m_pp.m_vbo, m_pp.m_coord[1]);
-        m_pp.m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
-        m_pp.m_vdecl->Unbind();
-        m_pp.m_shader[1]->Unbind();
+        m_pp.pp_shader->Bind();
+        m_pp.pp_shader->SetUniform(m_pp.m_buffer_uni[1][0], m_renderbuffer[0]->GetTextureUniform(), 0);
+        m_pp.pp_shader->SetUniform(m_pp.m_buffer_uni[1][1], m_renderbuffer[1]->GetTextureUniform(), 1);
+        m_pp.pp_shader->SetUniform(m_pp.m_buffer_uni[1][2], m_renderbuffer[2]->GetTextureUniform(), 2);
+        m_pp.quad_vdecl->Bind();
+        m_pp.quad_vdecl->SetStream(m_pp.quad_vbo, m_pp.pp_pos_attr);
+        m_pp.quad_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
+        m_pp.quad_vdecl->Unbind();
+        m_pp.pp_shader->Unbind();
         m_renderbuffer[3]->Unbind();
     }
 
     if (do_pp)
     {
-        gpu_marker("Blit frame");
+        gpu_marker("# blit frame");
 
-        m_pp.m_shader[0]->Bind();
+        m_pp.blit_shader->Bind();
 
         render_context rc(m_renderer);
         rc.clear_color(vec4(0.f, 0.f, 0.f, 1.f));
@@ -535,12 +538,12 @@ void Scene::post_render(float)
         m_renderer->Clear(ClearMask::Color | ClearMask::Depth);
 
         /* Blit final image to screen */
-        m_pp.m_shader[0]->SetUniform(m_pp.m_buffer_uni[0][0], m_renderbuffer[3]->GetTextureUniform(), 3);
-        m_pp.m_vdecl->Bind();
-        m_pp.m_vdecl->SetStream(m_pp.m_vbo, m_pp.m_coord[0]);
-        m_pp.m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
-        m_pp.m_vdecl->Unbind();
-        m_pp.m_shader[0]->Unbind();
+        m_pp.blit_shader->SetUniform(m_pp.m_buffer_uni[0][0], m_renderbuffer[3]->GetTextureUniform(), 3);
+        m_pp.quad_vdecl->Bind();
+        m_pp.quad_vdecl->SetStream(m_pp.quad_vbo, m_pp.blit_pos_attr);
+        m_pp.quad_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
+        m_pp.quad_vdecl->Unbind();
+        m_pp.blit_shader->Unbind();
     }
 
     if (do_pp)
@@ -550,7 +553,7 @@ void Scene::post_render(float)
         std::swap(m_renderbuffer[2], m_renderbuffer[3]);
     }
 
-    gpu_marker("End Render");
+    gpu_marker("### end of frame");
 }
 
 void Scene::render_primitives()

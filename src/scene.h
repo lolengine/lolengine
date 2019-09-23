@@ -286,11 +286,11 @@ private:
 
     struct postprocess
     {
-        std::shared_ptr<Shader> m_shader[2];
-        std::shared_ptr<VertexBuffer> m_vbo;
-        std::shared_ptr<VertexDeclaration> m_vdecl;
+        std::shared_ptr<Shader> blit_shader, pp_shader;
+        std::shared_ptr<VertexBuffer> quad_vbo;
+        std::shared_ptr<VertexDeclaration> quad_vdecl;
         ShaderUniform m_buffer_uni[2][3];
-        ShaderAttrib m_coord[2];
+        ShaderAttrib blit_pos_attr, pp_pos_attr;
     }
     m_pp;
 
