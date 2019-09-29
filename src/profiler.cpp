@@ -20,24 +20,31 @@ namespace lol
  * Profiler implementation class
  */
 
-static class ProfilerData
+static class profiler_data
 {
     friend class Profiler;
 
-    static int const HISTORY = 32;
-
-public:
-    ProfilerData()
+    void update()
     {
-        for (int i = 0; i < HISTORY; i++)
-            history[i] = 0.0f;
+        history[frame++ % HISTORY] = m_timer.get();
         avg = max = 0.0f;
+
+        for (int i = 0; i < HISTORY; i++)
+        {
+            avg += history[i];
+            if (history[i] > max)
+                max = history[i];
+        }
+        avg /= HISTORY;
     }
 
+    static int const HISTORY = 32;
+
 private:
-    float history[HISTORY];
+    float history[HISTORY] = { 0.0f };
+    int frame = 0;
     timer m_timer;
-    float avg, max;
+    float avg = 0.0f, max = 0.0f;
 }
 data[Profiler::STAT_COUNT];
 
@@ -52,19 +59,7 @@ void Profiler::Start(int id)
 
 void Profiler::Stop(int id)
 {
-    float seconds = data[id].m_timer.get();
-
-    data[id].history[Ticker::GetFrameNum() % ProfilerData::HISTORY] = seconds;
-    data[id].avg = 0.0f;
-    data[id].max = 0.0f;
-
-    for (int i = 0; i < ProfilerData::HISTORY; i++)
-    {
-        data[id].avg += data[id].history[i];
-        if (data[id].history[i] > data[id].max)
-            data[id].max = data[id].history[i];
-    }
-    data[id].avg /= ProfilerData::HISTORY;
+    data[id].update();
 }
 
 float Profiler::GetAvg(int id)
