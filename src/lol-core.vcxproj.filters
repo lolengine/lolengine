@@ -266,6 +266,7 @@
     <ClCompile Include="audio\sample.cpp" />
     <ClCompile Include="private\nx\nx-app.cpp" />
     <ClCompile Include="private\nx\nx-audio.cpp" />
+    <ClCompile Include="private\nx\nx-input.cpp" />
     <ClCompile Include="private\nx\nx-log.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -564,6 +565,7 @@
       <Filter>lol\audio</Filter>
     </ClInclude>
     <ClInclude Include="private\nx\nx-app.h" />
+    <ClInclude Include="private\nx\nx-input.h" />
     <ClInclude Include="private\nx\nx-log.h" />
   </ItemGroup>
   <ItemGroup>

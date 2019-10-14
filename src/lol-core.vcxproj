@@ -191,6 +191,9 @@
     <ClCompile Include="private\nx\nx-audio.cpp">
       <ExcludedFromBuild Condition="'$(Platform)'!='NX64'">true</ExcludedFromBuild>
     </ClCompile>
+    <ClCompile Include="private\nx\nx-input.cpp">
+      <ExcludedFromBuild Condition="'$(Platform)'!='NX64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="private\nx\nx-log.cpp">
       <ExcludedFromBuild Condition="'$(Platform)'!='NX64'">true</ExcludedFromBuild>
     </ClCompile>
@@ -313,6 +316,9 @@
     <ClInclude Include="numeric.h" />
     <ClInclude Include="platform.h" />
     <ClInclude Include="private\nx\nx-app.h">
+      <ExcludedFromBuild Condition="'$(Platform)'!='NX64'">true</ExcludedFromBuild>
+    </ClInclude>
+    <ClInclude Include="private\nx\nx-input.h">
       <ExcludedFromBuild Condition="'$(Platform)'!='NX64'">true</ExcludedFromBuild>
     </ClInclude>
     <ClInclude Include="private\nx\nx-log.h">
