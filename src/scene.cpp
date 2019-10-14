@@ -596,10 +596,6 @@ void Scene::render_tiles() // XXX: rename to Blit()
     rc.blend_equation(BlendEquation::Add, BlendEquation::Max);
     rc.alpha_func(AlphaFunc::GreaterOrEqual, 0.01f);
 
-#if (defined LOL_USE_GLEW || defined HAVE_GL_2X) && !defined HAVE_GLES_2X
-    glEnable(GL_TEXTURE_2D);
-#endif
-
     if (!m_tile_api.m_shader)
         m_tile_api.m_shader = Shader::Create(LOLFX_RESOURCE_NAME(gpu_tile));
     if (!m_tile_api.m_palette_shader && m_tile_api.m_palettes.count())
@@ -692,10 +688,6 @@ void Scene::render_tiles() // XXX: rename to Blit()
         if (!m_tile_api.m_palette_shader)
             break;
     }
-
-#if (defined LOL_USE_GLEW || defined HAVE_GL_2X) && !defined HAVE_GLES_2X
-    glDisable(GL_TEXTURE_2D);
-#endif
 }
 
 // FIXME: get rid of the delta time argument

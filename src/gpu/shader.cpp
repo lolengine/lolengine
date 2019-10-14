@@ -457,7 +457,6 @@ void Shader::SetUniform(ShaderUniform const &uni, mat4 const &m)
 void Shader::SetUniform(ShaderUniform const &uni, TextureUniform tex, int index)
 {
     glActiveTexture(GL_TEXTURE0 + index);
-    //glEnable(GL_TEXTURE_2D);
     glBindTexture(GL_TEXTURE_2D, (int)tex.m_flags);
     SetUniform(uni, index);
 }

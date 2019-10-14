@@ -102,9 +102,6 @@ TextureUniform Texture::GetTextureUniform() const
 
 void Texture::Bind()
 {
-#if !defined HAVE_GLES_2X
-    glEnable(GL_TEXTURE_2D);
-#endif
     glBindTexture(GL_TEXTURE_2D, m_data->m_texture);
 }
 
