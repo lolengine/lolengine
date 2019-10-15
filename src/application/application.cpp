@@ -73,7 +73,8 @@ class ApplicationDisplayData
 
 protected:
 #if __ANDROID__
-    //NOT HANDLED YET
+    // TODO: implement this
+    null_display display;
 #elif __NX__
     nx::app_display display;
 #elif LOL_USE_SDL

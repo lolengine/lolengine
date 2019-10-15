@@ -68,7 +68,7 @@ ResourceCodecData* AndroidImageCodec::Load(std::string const &path)
 #if !LOL_BUILD_RELEASE
         msg::error("JVM environment not found, cannot open image %s\n", path.c_str());
 #endif
-        return false;
+        return nullptr;
     }
     jclass cls = env->GetObjectClass(g_activity->clazz);
     jmethodID mid;
@@ -83,32 +83,34 @@ ResourceCodecData* AndroidImageCodec::Load(std::string const &path)
 #if !LOL_BUILD_RELEASE
         msg::error("could not load %s\n", path.c_str());
 #endif
-        return false;
+        return nullptr;
     }
     env->NewGlobalRef(m_bmp);
 
-    /* Get image dimensions */
+    // Get image dimensions
     mid = env->GetMethodID(cls, "getWidth", "(Landroid/graphics/Bitmap;)I");
-    m_size.x = env->CallIntMethod(g_activity->clazz, mid, m_bmp);
+    int width = env->CallIntMethod(g_activity->clazz, mid, m_bmp);
     mid = env->GetMethodID(cls, "getHeight", "(Landroid/graphics/Bitmap;)I");
-    m_size.y = env->CallIntMethod(g_activity->clazz, mid, m_bmp);
+    int height = env->CallIntMethod(g_activity->clazz, mid, m_bmp);
+    ivec2 size(width, height);
 
-    /* Get pixels */
-    m_array = env->NewIntArray(m_size.x * m_size.y);
+    auto data = new ResourceImageData(new image(size));
+
+    // Get pixels
+    m_array = env->NewIntArray(size.x * size.y);
     env->NewGlobalRef(m_array);
     mid = env->GetMethodID(cls, "getPixels", "(Landroid/graphics/Bitmap;[I)V");
     env->CallVoidMethod(g_activity->clazz, mid, m_bmp, m_array);
 
     m_pixels = env->GetIntArrayElements(m_array, 0);
-    for (int n = 0; n < m_size.x * m_size.y; n++)
+    for (int n = 0; n < size.x * size.y; n++)
     {
         uint32_t u = m_pixels[n];
         u = (u & 0xff00ff00) | ((u & 0xff0000) >> 16) | ((u & 0xff) << 16);
         m_pixels[n] = u;
     }
-    m_format = PixelFormat::RGBA_8;
 
-    return new ResourceCodecData();
+    return data;
 }
 
 bool AndroidImageCodec::Save(std::string const &path, ResourceCodecData* data)
@@ -116,6 +118,7 @@ bool AndroidImageCodec::Save(std::string const &path, ResourceCodecData* data)
     UNUSED(path, data);
 
     /* TODO: unimplemented */
+    return false;
 }
 
 bool AndroidImageCodec::Close()

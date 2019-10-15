@@ -113,7 +113,7 @@ public:
     }
 
     /* Additional constructor if ptrdiff_t != int */
-    template<typename T2 = std::enable_if<!std::is_same<ptrdiff_t, int>::value, int>::type>
+    template<typename T2 = int, typename T3 = typename std::enable_if<!std::is_same<ptrdiff_t, T2>::value, int>::type>
     inline arraynd(vec_t<T2, N> sizes, element_t e = element_t())
     {
         m_sizes = vec_t<ptrdiff_t, N>(sizes);
@@ -152,7 +152,7 @@ public:
 
     /* If int != ptrdiff_t, access elements directly using an ivec2,
      * ivec3 etc. */
-    template<typename T2 = std::enable_if<!std::is_same<ptrdiff_t, int>::value, int>::type>
+    template<typename T2 = int, typename T3 = typename std::enable_if<!std::is_same<ptrdiff_t, T2>::value, int>::type>
     inline element_t const & operator[](vec_t<T2, N> const &pos) const
     {
         ptrdiff_t n = pos[N - 1];
@@ -161,7 +161,7 @@ public:
         return super::operator[](n);
     }
 
-    template<typename T2 = std::enable_if<!std::is_same<ptrdiff_t, int>::value, int>::type>
+    template<typename T2 = int, typename T3 = typename std::enable_if<!std::is_same<ptrdiff_t, T2>::value, int>::type>
     inline element_t & operator[](vec_t<T2, N> const &pos)
     {
         return const_cast<element_t &>(

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+# vi:syntax=python
 
 #
 # Define these variables from the beginning
@@ -99,7 +101,6 @@ all-local-android: $(foreach p, $(PROGRAMS:%$(EXEEXT)=%), .$(p).androidstamp)
 	cp "$(lol_srcdir)/build/android/icon.png" "$(d)/res/drawable/"
 	$(MKDIR_P) "$(d)/libs/armeabi"
 	$(LN_S) "$(abs_builddir)/$(p)$(EXEEXT)" "$(d)/libs/armeabi/lib$(p).so"
-	$(LN_S) "$${ANDROID_NDK_ROOT}/sources/cxx-stl/stlport/libs/armeabi/libstlport_shared.so" "$(d)/libs/armeabi"
 	android update project -t android-19 -n "$(p)" -p "$(d)"
 	ant debug -f "$(d)/build.xml"
 	touch $@

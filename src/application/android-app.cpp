@@ -92,7 +92,7 @@ private:
     void HandleCommand(int32_t cmd);
     int32_t HandleInput(AInputEvent* event);
 
-    vec2 m_prev_pos;
+    ivec2 m_prev_pos;
 
     EGLDisplay m_display;
     EGLSurface m_surface;
@@ -160,7 +160,7 @@ void lol::AndroidAppData::DrawFrame()
     if (!m_display)
         return;
 
-    Ticker::tick_draw();
+    ticker::tick_draw();
 
     eglSwapBuffers(m_display, m_surface);
 }
@@ -206,19 +206,20 @@ int32_t lol::AndroidAppData::HandleInput(AInputEvent* event)
                   AMotionEvent_getY(event, 0));
         pos *= m_wanted_resolution / Video::GetSize();
         pos.y = m_wanted_resolution.y - 1 - pos.y;
-        mouse->internal_set_cursor(0, vec2(pos) / vec2(m_wanted_resolution), pos);
+        // FIXME: bring this back
+        //mouse->internal_set_cursor(0, vec2(pos) / vec2(m_wanted_resolution), pos);
         // Note: 100.0f is an arbitrary value that makes it feel about the same than an xbox controller joystick
-        mouse->internal_set_axis(0, (pos.x - m_prev_pos.x) / max_screen_size * 100.f);
+        mouse->internal_set_axis(input::axis::X, (pos.x - m_prev_pos.x) / max_screen_size * 100.f);
         // Unlike SDL, no need to negate Y axis
-        mouse->internal_set_axis(1, (pos.y - m_prev_pos.y) / max_screen_size * -100.f);
+        mouse->internal_set_axis(input::axis::Y, (pos.y - m_prev_pos.y) / max_screen_size * -100.f);
         m_prev_pos = pos;
         switch (AKeyEvent_getAction(event) & AMOTION_EVENT_ACTION_MASK)
         {
         case AMOTION_EVENT_ACTION_DOWN:
-            mouse->internal_set_key(0, true);
+            mouse->internal_set_button(input::button::BTN_Left, true);
             break;
         case AMOTION_EVENT_ACTION_UP:
-            mouse->internal_set_key(0, false);
+            mouse->internal_set_button(input::button::BTN_Left, false);
             break;
         }
         return 1;
@@ -341,7 +342,7 @@ lol::AndroidApp::AndroidApp(char const *title, ivec2 res, float fps)
 {
     /* Launch our ticker */
     msg::debug("Java layer initialising ticker at %g fps", fps);
-    Ticker::Setup(fps);
+    ticker::setup(fps);
 
     m_data->m_wanted_resolution = res;
 }
@@ -376,7 +377,7 @@ void lol::AndroidApp::Tick()
 
         /* Check if we are exiting */
         if (m_data->m_native_app->destroyRequested != 0)
-            Ticker::Shutdown();
+            ticker::Shutdown();
     }
 
     m_data->DrawFrame();
