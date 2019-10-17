@@ -58,12 +58,6 @@ struct LOL_ATTR_NODISCARD vec_t
     typedef T element;
     typedef vec_t<T,N> type;
 
-    /* Disable all default constructors and destructors; this object
-     * is only intended to exist as part of a union. */
-    vec_t() = delete;
-    vec_t(vec_t<T, N, SWIZZLE> const &) = delete;
-    ~vec_t() = delete;
-
     /* Allow the assignment operator if unrestricted unions are supported. */
     inline vec_t<T, N, SWIZZLE>& operator =(vec_t<T, N> that)
     {
@@ -91,6 +85,15 @@ struct LOL_ATTR_NODISCARD vec_t
         int const i = SWIZZLE / lut[n + 4 - N] % 10;
         return static_cast<T const*>(static_cast<void const *>(this))[i];
     }
+
+private:
+    // Hide all default constructors and destructors; this object
+    // is only intended to exist as part of a union.
+    template<typename T2, int N2, int SWIZZLE2> friend class vec_t;
+
+    vec_t() = default;
+    vec_t(vec_t<T, N, SWIZZLE> const &) = default;
+    ~vec_t() = default;
 };
 
 /*
@@ -123,14 +126,10 @@ struct LOL_ATTR_NODISCARD vec_t<T, N, FULL_SWIZZLE>
     typedef T element;
     typedef vec_t<T,N> type;
 
-    /* Default constructor, copy constructor, and destructor */
-    inline constexpr vec_t() {}
-    inline vec_t(vec_t<T,N> const &v)
-    {
-        for (int i = 0; i < N; ++i)
-            m_data[i] = v[i];
-    }
-    inline ~vec_t() {}
+    // Default constructor, copy constructor, and destructor
+    inline constexpr vec_t() = default;
+    inline constexpr vec_t(type const &v) = default;
+    inline ~vec_t() = default;
 
     LOL_COMMON_MEMBER_OPS(m_data[0])
 
@@ -216,10 +215,10 @@ struct LOL_ATTR_NODISCARD vec_t<T,2>
     typedef T element;
     typedef vec_t<T,2> type;
 
-    /* Default constructor, copy constructor, and destructor */
-    inline constexpr vec_t() : x(), y() {}
-    inline constexpr vec_t(vec_t<T,2> const &v) : x(v.x), y(v.y) {}
-    inline ~vec_t() { x.~T(); y.~T(); }
+    // Default constructor, copy constructor, and destructor
+    inline constexpr vec_t() = default;
+    inline constexpr vec_t(type const &v) = default;
+    inline ~vec_t() = default;
 
     /* Implicit constructor for swizzling */
     template<int SWIZZLE>
@@ -330,10 +329,10 @@ struct LOL_ATTR_NODISCARD vec_t<T,3>
     typedef T element;
     typedef vec_t<T,3> type;
 
-    /* Default constructor, copy constructor, and destructor */
-    inline constexpr vec_t() : x(), y(), z() {}
-    inline constexpr vec_t(vec_t<T,3> const &v) : x(v.x), y(v.y), z(v.z) {}
-    inline ~vec_t() { x.~T(); y.~T(); z.~T(); }
+    // Default constructor, copy constructor, and destructor
+    inline constexpr vec_t() = default;
+    inline constexpr vec_t(type const &v) = default;
+    inline ~vec_t() = default;
 
     /* Implicit constructor for swizzling */
     template<int SWIZZLE>
@@ -574,11 +573,10 @@ struct LOL_ATTR_NODISCARD vec_t<T,4>
     typedef T element;
     typedef vec_t<T,4> type;
 
-    /* Default constructor, copy constructor, and destructor */
-    inline constexpr vec_t() : x(), y(), z(), w() {}
-    inline constexpr vec_t(vec_t<T,4> const &v)
-      : x(v.x), y(v.y), z(v.z), w(v.w) {}
-    inline ~vec_t() { x.~T(); y.~T(); z.~T(); w.~T(); }
+    // Default constructor, copy constructor, and destructor
+    inline constexpr vec_t() = default;
+    inline constexpr vec_t(type const &v) = default;
+    inline ~vec_t() = default;
 
     /* Implicit constructor for swizzling */
     template<int SWIZZLE>
