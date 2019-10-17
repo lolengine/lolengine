@@ -102,22 +102,20 @@ public:
     typedef array<T...> super;
     typedef typename super::element_t element_t;
 
-    inline arraynd()
-    {
-    }
+    inline arraynd() = default;
 
     inline arraynd(vec_t<ptrdiff_t, N> sizes, element_t e = element_t())
       : m_sizes(sizes)
     {
-        fix_sizes(e);
+        resize_data(e);
     }
 
     /* Additional constructor if ptrdiff_t != int */
     template<typename T2 = int, typename T3 = typename std::enable_if<!std::is_same<ptrdiff_t, T2>::value, int>::type>
     inline arraynd(vec_t<T2, N> sizes, element_t e = element_t())
+      : m_sizes(vec_t<ptrdiff_t, N>(sizes))
     {
-        m_sizes = vec_t<ptrdiff_t, N>(sizes);
-        fix_sizes(e);
+        resize_data(e);
     }
 
     inline arraynd(std::initializer_list<arraynd_initializer<element_t, N - 1> > initializer)
@@ -127,7 +125,7 @@ public:
         for (auto inner_initializer : initializer)
             inner_initializer.fill_sizes(&m_sizes[N - 2]);
 
-        fix_sizes();
+        resize_data();
 
         int pos = 0;
 
@@ -240,7 +238,7 @@ public:
     inline void resize_s(vec_t<ptrdiff_t, N> sizes, element_t e = element_t())
     {
         m_sizes = sizes;
-        fix_sizes(e);
+        resize_data(e);
     }
 
     inline vec_t<int, N> size() const
@@ -262,7 +260,7 @@ public:
     inline ptrdiff_t bytes_s() const { return super::bytes_s(); }
 
 private:
-    inline void fix_sizes(element_t e = element_t())
+    inline void resize_data(element_t e = element_t())
     {
         ptrdiff_t total_size = 1;
 
@@ -274,7 +272,7 @@ private:
         this->array<T...>::resize(total_size, e);
     }
 
-    vec_t<ptrdiff_t, N> m_sizes;
+    vec_t<ptrdiff_t, N> m_sizes { 0 };
 };
 
 template<typename... T> using array2d = arraynd<2, T...>;
