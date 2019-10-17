@@ -23,7 +23,6 @@
 
 /* These features aren't necessarily supported by all compilers */
 #undef LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS
-#undef LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
 #undef LOL_FEATURE_CXX11_ISNAN /* FIXME: is this the right place? */
 #undef LOL_FEATURE_CXX11_NULLPTR
 #undef LOL_FEATURE_CXX11_TEMPLATE_ALIASES
@@ -49,7 +48,6 @@
 #   endif
 #   define LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS 1
 #   define LOL_FEATURE_CXX11_ISNAN 1
-#   define LOL_FEATURE_CXX11_ARRAY_INITIALIZERS 1
 #   define LOL_FEATURE_CXX11_NULLPTR 1
 #   define LOL_FEATURE_CXX11_SFINAE_FOR_CTORS 1
 #   if (__GNUC__ * 100 + __GNUC_MINOR__) >= 470
@@ -60,7 +58,6 @@
 /* Features supported by Clang */
 #if !defined __GNUC__ && defined __has_feature
 #   define LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS 1
-#   define LOL_FEATURE_CXX11_ARRAY_INITIALIZERS 1
 #   if !__has_feature(cxx_constexpr)
 #       error "sorry, this version of clang does not support constexpr"
 #   endif
@@ -82,7 +79,6 @@
 #   define LOL_FEATURE_CXX11_NULLPTR 1
 #   define LOL_FEATURE_CXX11_SFINAE_FOR_CTORS 1
 #   define LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS 1
-#   define LOL_FEATURE_CXX11_ARRAY_INITIALIZERS 1
 #endif
 
 

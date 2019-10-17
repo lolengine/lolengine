@@ -89,44 +89,22 @@ struct LOL_ATTR_NODISCARD mat_t<T, 2, 2>
 
     inline mat_t() {}
     inline mat_t(vec_t<T,2> v0, vec_t<T,2> v1)
-#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
       : m_data{ v0, v1 } {}
-#else
-      : m_v0(v0), m_v1(v1) {}
-#endif
 
     explicit inline mat_t(T const &val)
-#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
       : m_data{ vec_t<T,2>(val, T(0)),
                 vec_t<T,2>(T(0), val) } {}
-#else
-      : m_v0(val, T(0)),
-        m_v1(T(0), val) {}
-#endif
 
     explicit inline mat_t(mat_t<T,4,4> const &m)
-#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
       : m_data{ m[0].xy, m[1].xy } {}
-#else
-      : m_v0(m[0].xy), m_v1(m[1].xy) {}
-#endif
 
     /* Explicit constructor for type conversion */
     template<typename U>
     explicit inline mat_t(mat_t<U,2,2> const &m)
-#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
       : m_data{ (element)m[0], (element)m[1] } {}
-#else
-      : m_v0((element)m[0]), m_v1((element)m[1]) {}
-#endif
 
-#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
     inline vec_t<T,2>& operator[](size_t n) { return m_data[n]; }
     inline vec_t<T,2> const& operator[](size_t n) const { return m_data[n]; }
-#else
-    inline vec_t<T,2>& operator[](size_t n) { return (&m_v0)[n]; }
-    inline vec_t<T,2> const& operator[](size_t n) const { return (&m_v0)[n]; }
-#endif
 
     /* Helpers for transformation matrices */
     static mat_t<T,2,2> rotate(T radians);
@@ -141,11 +119,7 @@ struct LOL_ATTR_NODISCARD mat_t<T, 2, 2>
     static const mat_t<T,2,2> identity;
 
 private:
-#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
     vec_t<T,2> m_data[2];
-#else
-    vec_t<T,2> m_v0, m_v1;
-#endif
 };
 
 static_assert(sizeof(imat2) == 16, "sizeof(imat2) == 16");
@@ -168,59 +142,30 @@ struct LOL_ATTR_NODISCARD mat_t<T, 3, 3>
 
     inline mat_t() {}
     inline mat_t(vec_t<T,3> v0, vec_t<T,3> v1, vec_t<T,3> v2)
-#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
       : m_data{ v0, v1, v2 } {}
-#else
-      : m_v0(v0), m_v1(v1), m_v2(v2) {}
-#endif
 
     explicit inline mat_t(T const &val)
-#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
       : m_data{ vec_t<T,3>(val, (T)0, (T)0),
                 vec_t<T,3>((T)0, val, (T)0),
                 vec_t<T,3>((T)0, (T)0, val) } {}
-#else
-      : m_v0(val, (T)0, (T)0),
-        m_v1((T)0, val, (T)0),
-        m_v2((T)0, (T)0, val) {}
-#endif
 
     explicit inline mat_t(mat_t<T,2,2> m, T const &val = T(1))
-#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
       : m_data{ vec_t<T,3>(m[0], (T)0),
                 vec_t<T,3>(m[1], (T)0),
                 vec_t<T,3>((T)0, (T)0, val) } {}
-#else
-      : m_v0(m[0], (T)0),
-        m_v1(m[1], (T)0),
-        m_v2((T)0, (T)0, val) {}
-#endif
 
     explicit inline mat_t(mat_t<T,4,4> const &m)
-#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
       : m_data{ m[0].xyz, m[1].xyz, m[2].xyz } {}
-#else
-      : m_v0(m[0].xyz), m_v1(m[1].xyz), m_v2(m[2].xyz) {}
-#endif
 
     /* Explicit constructor for type conversion */
     template<typename U>
     explicit inline mat_t(mat_t<U,3,3> const &m)
-#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
       : m_data{ (element)m[0], (element)m[1], (element)m[2] } {}
-#else
-      : m_v0((element)m[0]), m_v1((element)m[1]), m_v2((element)m[2]) {}
-#endif
 
     explicit mat_t(quat_t<T> const &q);
 
-#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
     inline vec_t<T,3>& operator[](size_t n) { return m_data[n]; }
     inline vec_t<T,3> const& operator[](size_t n) const { return m_data[n]; }
-#else
-    inline vec_t<T,3>& operator[](size_t n) { return (&m_v0)[n]; }
-    inline vec_t<T,3> const& operator[](size_t n) const { return (&m_v0)[n]; }
-#endif
 
     /* Helpers for transformation matrices */
     static mat_t<T,3,3> scale(T x);
@@ -266,11 +211,7 @@ struct LOL_ATTR_NODISCARD mat_t<T, 3, 3>
     static const mat_t<T,3,3> identity;
 
 private:
-#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
     vec_t<T,3> m_data[3];
-#else
-    vec_t<T,3> m_v0, m_v1, m_v2;
-#endif
 };
 
 static_assert(sizeof(imat3) == 36, "sizeof(imat3) == 36");
@@ -293,71 +234,36 @@ struct LOL_ATTR_NODISCARD mat_t<T, 4, 4>
 
     inline mat_t() {}
     inline mat_t(vec_t<T,4> v0, vec_t<T,4> v1, vec_t<T,4> v2, vec_t<T,4> v3)
-#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
       : m_data{ v0, v1, v2, v3 } {}
-#else
-      : m_v0(v0), m_v1(v1), m_v2(v2), m_v3(v3) {}
-#endif
 
     explicit inline mat_t(T const &val)
-#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
       : m_data{ vec_t<T,4>(val, (T)0, (T)0, (T)0),
                 vec_t<T,4>((T)0, val, (T)0, (T)0),
                 vec_t<T,4>((T)0, (T)0, val, (T)0),
                 vec_t<T,4>((T)0, (T)0, (T)0, val) } {}
-#else
-      : m_v0(val, (T)0, (T)0, (T)0),
-        m_v1((T)0, val, (T)0, (T)0),
-        m_v2((T)0, (T)0, val, (T)0),
-        m_v3((T)0, (T)0, (T)0, val) {}
-#endif
 
     explicit inline mat_t(mat_t<T,2,2> m, T const &val = T(1))
-#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
       : m_data{ vec_t<T,4>(m[0], (T)0, (T)0),
                 vec_t<T,4>(m[1], (T)0, (T)0),
                 vec_t<T,4>((T)0, (T)0, val, (T)0),
                 vec_t<T,4>((T)0, (T)0, (T)0, val) } {}
-#else
-      : m_v0(m[0], (T)0, (T)0),
-        m_v1(m[1], (T)0, (T)0),
-        m_v2((T)0, (T)0, val, (T)0),
-        m_v3((T)0, (T)0, (T)0, val) {}
-#endif
 
     explicit inline mat_t(mat_t<T,3,3> m, T const &val = T(1))
-#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
       : m_data{ vec_t<T,4>(m[0], (T)0),
                 vec_t<T,4>(m[1], (T)0),
                 vec_t<T,4>(m[2], (T)0),
                 vec_t<T,4>((T)0, (T)0, (T)0, val) } {}
-#else
-      : m_v0(m[0], (T)0),
-        m_v1(m[1], (T)0),
-        m_v2(m[2], (T)0),
-        m_v3((T)0, (T)0, (T)0, val) {}
-#endif
 
     /* Explicit constructor for type conversion */
     template<typename U>
     explicit inline mat_t(mat_t<U,4,4> const &m)
-#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
       : m_data{ (element)m[0], (element)m[1],
                 (element)m[2], (element)m[3] } {}
-#else
-      : m_v0((element)m[0]), m_v1((element)m[1]),
-        m_v2((element)m[2]), m_v3((element)m[3]) {}
-#endif
 
     explicit mat_t(quat_t<T> const &q);
 
-#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
     inline vec_t<T,4>& operator[](size_t n) { return m_data[n]; }
     inline vec_t<T,4> const& operator[](size_t n) const { return m_data[n]; }
-#else
-    inline vec_t<T,4>& operator[](size_t n) { return (&m_v0)[n]; }
-    inline vec_t<T,4> const& operator[](size_t n) const { return (&m_v0)[n]; }
-#endif
 
     /* Helpers for transformation matrices */
     static mat_t<T,4,4> translate(T x, T y, T z);
@@ -440,11 +346,7 @@ struct LOL_ATTR_NODISCARD mat_t<T, 4, 4>
     static const mat_t<T,4,4> identity;
 
 private:
-#if LOL_FEATURE_CXX11_ARRAY_INITIALIZERS
     vec_t<T,4> m_data[4];
-#else
-    vec_t<T,4> m_v0, m_v1, m_v2, m_v3;
-#endif
 };
 
 static_assert(sizeof(imat4) == 64, "sizeof(imat4) == 64");
