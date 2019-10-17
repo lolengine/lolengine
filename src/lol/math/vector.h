@@ -89,7 +89,7 @@ struct LOL_ATTR_NODISCARD vec_t
 private:
     // Hide all default constructors and destructors; this object
     // is only intended to exist as part of a union.
-    template<typename T2, int N2, int SWIZZLE2> friend class vec_t;
+    template<typename T2, int N2, int SWIZZLE2> friend struct vec_t;
 
     vec_t() = default;
     vec_t(vec_t<T, N, SWIZZLE> const &) = default;
