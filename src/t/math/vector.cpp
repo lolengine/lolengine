@@ -19,6 +19,91 @@ namespace lol
 
 lolunit_declare_fixture(vector_test)
 {
+    lolunit_declare_test(vector_default_ctor)
+    {
+        ivec2 a(1, 2);
+        ivec3 b(1, 2, 3);
+        ivec4 c(1, 2, 3, 4);
+        vec_t<int, 5> d(1, 2, 3, 4, 5);
+
+        lolunit_assert_equal(a.x, 1);
+        lolunit_assert_equal(a.y, 2);
+
+        lolunit_assert_equal(b.x, 1);
+        lolunit_assert_equal(b.y, 2);
+        lolunit_assert_equal(b.z, 3);
+
+        lolunit_assert_equal(c.x, 1);
+        lolunit_assert_equal(c.y, 2);
+        lolunit_assert_equal(c.z, 3);
+
+        lolunit_assert_equal(d[0], 1);
+        lolunit_assert_equal(d[1], 2);
+        lolunit_assert_equal(d[2], 3);
+        lolunit_assert_equal(d[3], 4);
+        lolunit_assert_equal(d[4], 5);
+    }
+
+    lolunit_declare_test(vector_copy_ctor)
+    {
+        ivec2 a(1, 2);
+        ivec3 b(1, 2, 3);
+        ivec4 c(1, 2, 3, 4);
+        vec_t<int, 5> d(1, 2, 3, 4, 5);
+
+        ivec2 a2(a);
+        ivec3 b2(b);
+        ivec4 c2(c);
+        vec_t<int, 5> d2(d);
+
+        lolunit_assert_equal(a2.x, 1);
+        lolunit_assert_equal(a2.y, 2);
+
+        lolunit_assert_equal(b2.x, 1);
+        lolunit_assert_equal(b2.y, 2);
+        lolunit_assert_equal(b2.z, 3);
+
+        lolunit_assert_equal(c2.x, 1);
+        lolunit_assert_equal(c2.y, 2);
+        lolunit_assert_equal(c2.z, 3);
+
+        lolunit_assert_equal(d2[0], 1);
+        lolunit_assert_equal(d2[1], 2);
+        lolunit_assert_equal(d2[2], 3);
+        lolunit_assert_equal(d[3], 4);
+        lolunit_assert_equal(d[4], 5);
+    }
+
+    lolunit_declare_test(vector_assignment)
+    {
+        ivec2 a(1, 2), a2;
+        ivec3 b(1, 2, 3), b2;
+        ivec4 c(1, 2, 3, 4), c2;
+        vec_t<int, 5> d(1, 2, 3, 4, 5), d2;
+
+        a2 = a;
+        b2 = b;
+        c2 = c;
+        d2 = d;
+
+        lolunit_assert_equal(a2.x, 1);
+        lolunit_assert_equal(a2.y, 2);
+
+        lolunit_assert_equal(b2.x, 1);
+        lolunit_assert_equal(b2.y, 2);
+        lolunit_assert_equal(b2.z, 3);
+
+        lolunit_assert_equal(c2.x, 1);
+        lolunit_assert_equal(c2.y, 2);
+        lolunit_assert_equal(c2.z, 3);
+
+        lolunit_assert_equal(d2[0], 1);
+        lolunit_assert_equal(d2[1], 2);
+        lolunit_assert_equal(d2[2], 3);
+        lolunit_assert_equal(d[3], 4);
+        lolunit_assert_equal(d[4], 5);
+    }
+
     lolunit_declare_test(vector_equality)
     {
         vec2 a2(1.0f, 2.0f);
