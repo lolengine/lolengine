@@ -424,9 +424,45 @@ T cofactor(mat_t<T, 2, 2> const &m, int i, int j)
     return (i ^ j) ? -tmp : tmp;
 }
 
-/*
- * Compute LU-decomposition
- */
+// Lu decomposition with partial pivoting
+template<typename T, int N> LOL_ATTR_NODISCARD
+std::tuple<mat_t<T, N, N>, vec_t<int, N + 1>> lu_decomposition(mat_t<T, N, N> const &m)
+{
+    mat_t<T, N, N> lu = m;
+    vec_t<int, N + 1> perm;
+
+    for (int i = 0; i < N; ++i)
+        perm[i] = i;
+    perm[N] = 1;
+
+    for (int k = 0; k < N; ++k)
+    {
+        // Find row with the largest absolute value
+        int best_j = k;
+        for (int j = k + 1; j < N; ++j)
+            if (abs(lu[k][j]) > lol::abs(lu[k][best_j]))
+                best_j = j;
+
+        // Swap rows in result
+        if (best_j != k)
+        {
+            std::swap(perm[k], perm[best_j]);
+            perm[N] = -perm[N];
+            for (int i = 0; i < N; ++i)
+                std::swap(lu[i][k], lu[i][best_j]);
+        }
+
+        // Compute the Schur complement in the lower triangular part
+        for (int j = k + 1; j < N; ++j)
+        {
+            lu[k][j] /= lu[k][k];
+            for (int i = k + 1; i < N; ++i)
+                lu[i][j] -= lu[i][k] * lu[k][j];
+        }
+    }
+
+    return std::make_tuple(lu, perm);
+}
 
 template<typename T, int N>
 void lu_decomposition(mat_t<T, N, N> const &m, mat_t<T, N, N> & L, mat_t<T, N, N> & U)
@@ -523,12 +559,8 @@ mat_t<T, N, N> permute_rows(mat_t<T, N, N> const & m, vec_t<int, N> const & perm
     mat_t<T, N, N> result;
 
     for (int i = 0 ; i < N ; ++i)
-    {
         for (int j = 0 ; j < N ; ++j)
-        {
             result[i][j] = m[i][permutation[j]];
-        }
-    }
 
     return result;
 }
@@ -539,12 +571,7 @@ mat_t<T, N, N> permute_cols(mat_t<T, N, N> const & m, vec_t<int, N> const & perm
     mat_t<T, N, N> result;
 
     for (int i = 0 ; i < N ; ++i)
-    {
-        for (int j = 0 ; j < N ; ++j)
-        {
-            result[i][j] = m[permutation[i]][j];
-        }
-    }
+        result[i] = m[permutation[i]];
 
     return result;
 }
