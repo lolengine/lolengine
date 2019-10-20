@@ -261,9 +261,6 @@ struct LOL_ATTR_NODISCARD vec_t<T,2>
     static const vec_t<T,2> axis_x;
     static const vec_t<T,2> axis_y;
 
-    template<typename U>
-    friend std::ostream &operator<<(std::ostream &stream, vec_t<U,2> const &v);
-
     union
     {
         struct { T x, y; }; /* axis */
@@ -415,9 +412,6 @@ struct LOL_ATTR_NODISCARD vec_t<T,3>
     static const vec_t<T,3> axis_x;
     static const vec_t<T,3> axis_y;
     static const vec_t<T,3> axis_z;
-
-    template<typename U>
-    friend std::ostream &operator<<(std::ostream &stream, vec_t<U,3> const &v);
 
     union
     {
@@ -632,9 +626,6 @@ struct LOL_ATTR_NODISCARD vec_t<T,4>
     static const vec_t<T,4> axis_y;
     static const vec_t<T,4> axis_z;
     static const vec_t<T,4> axis_w;
-
-    template<typename U>
-    friend std::ostream &operator<<(std::ostream &stream, vec_t<U,4> const &v);
 
     union
     {
@@ -997,26 +988,16 @@ static_assert(sizeof(vec4) == 16, "sizeof(vec4) == 16");
 static_assert(sizeof(dvec4) == 32, "sizeof(dvec4) == 32");
 
 /*
- * stdstream method implementations
+ * stdstream method implementation
  */
 
-template<typename U>
-std::ostream &operator<<(std::ostream &stream, vec_t<U,2> const &v)
+template<typename U, int N, int SWIZZLE = FULL_SWIZZLE>
+std::ostream &operator<<(std::ostream &stream, vec_t<U,N> const &v)
 {
-    return stream << "(" << v.x << ", " << v.y << ")";
-}
-
-template<typename U>
-std::ostream &operator<<(std::ostream &stream, vec_t<U,3> const &v)
-{
-    return stream << "(" << v.x << ", " << v.y << ", " << v.z << ")";
-}
-
-template<typename U>
-std::ostream &operator<<(std::ostream &stream, vec_t<U,4> const &v)
-{
-    return stream << "(" << v.x << ", " << v.y << ", "
-                         << v.z << ", " << v.w << ")";
+    stream << '(';
+    for (int i = 0; i < N; ++i)
+        stream << v[i] << (i == N - 1 ? ")" : ", ");
+    return stream;
 }
 
 /*
