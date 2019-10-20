@@ -426,14 +426,14 @@ T cofactor(mat_t<T, 2, 2> const &m, int i, int j)
 
 // Lu decomposition with partial pivoting
 template<typename T, int N> LOL_ATTR_NODISCARD
-std::tuple<mat_t<T, N, N>, vec_t<int, N + 1>> lu_decomposition(mat_t<T, N, N> const &m)
+std::tuple<mat_t<T, N, N>, vec_t<int, N>, int> lu_decomposition(mat_t<T, N, N> const &m)
 {
     mat_t<T, N, N> lu = m;
-    vec_t<int, N + 1> perm;
+    vec_t<int, N> perm;
+    int sign = 1;
 
     for (int i = 0; i < N; ++i)
         perm[i] = i;
-    perm[N] = 1;
 
     for (int k = 0; k < N; ++k)
     {
@@ -447,7 +447,7 @@ std::tuple<mat_t<T, N, N>, vec_t<int, N + 1>> lu_decomposition(mat_t<T, N, N> co
         if (best_j != k)
         {
             std::swap(perm[k], perm[best_j]);
-            perm[N] = -perm[N];
+            sign = -sign;
             for (int i = 0; i < N; ++i)
                 std::swap(lu[i][k], lu[i][best_j]);
         }
@@ -461,32 +461,7 @@ std::tuple<mat_t<T, N, N>, vec_t<int, N + 1>> lu_decomposition(mat_t<T, N, N> co
         }
     }
 
-    return std::make_tuple(lu, perm);
-}
-
-template<typename T, int N>
-void lu_decomposition(mat_t<T, N, N> const &m, mat_t<T, N, N> & L, mat_t<T, N, N> & U)
-{
-    for (int i = 0; i < N; ++i)
-    {
-        for (int j = 0; j < N; ++j)
-        {
-            T sum = 0;
-            for (int k = 0 ; k < min(i, j) ; ++k)
-                sum += L[k][j] * U[i][k];
-
-            if (i < j)
-            {
-                U[i][j] = 0;
-                L[i][j] = (m[i][j] - sum) / U[i][i];
-            }
-            else /* if (i >= j) */
-            {
-                L[i][j] = i == j ? T(1) : T(0);
-                U[i][j] = (m[i][j] - sum) / L[j][j];
-            }
-        }
-    }
+    return std::make_tuple(lu, perm, sign);
 }
 
 /*
@@ -498,7 +473,7 @@ T determinant(mat_t<T, N, N> const &m)
 {
     auto lup = lu_decomposition(m);
 
-    T det = std::get<1>(lup)[N];
+    T det(std::get<2>(lup));
     for (int i = 0; i < N; ++i)
         det *= std::get<0>(lup)[i][i];
 
@@ -511,124 +486,40 @@ T const & determinant(mat_t<T, 1, 1> const &m)
     return m[0][0];
 }
 
-/*
- * Compute permutation vector of a square matrix
- */
-
+// Compute inverse of the L matrix of an LU decomposition
 template<typename T, int N>
-vec_t<int, N> p_vector(mat_t<T, N, N> const & m)
+mat_t<T, N, N> l_inverse(mat_t<T, N, N> const & lu)
 {
-    vec_t<int, N> used;
-    vec_t<int, N> permutation;
+    mat_t<T, N, N> ret { 0 };
 
-    for (int i = 0 ; i < N ; ++i)
+    for (int j = 0; j < N; ++j)
     {
-        used[i] = 0;
-        permutation[i] = -1;
-    }
-
-    for (int i = 0 ; i < N ; ++i)
-    {
-        int index_max = -1;
-
-        for (int j = 0 ; j < N ; ++j)
-        {
-            if (!used[j] && (index_max == -1 || abs(m[i][j]) > abs(m[i][index_max])))
-                index_max = j;
-        }
-
-        ASSERT(index_max != -1);
-        ASSERT(index_max < N);
-
-        permutation[i] = index_max;
-        used[index_max] = 1;
-    }
-
-    return permutation;
-}
-
-/*
- * Compute the permutation of a square matrix according to the permutation vector
- */
-
-template<typename T, int N>
-mat_t<T, N, N> permute_rows(mat_t<T, N, N> const & m, vec_t<int, N> const & permutation)
-{
-    mat_t<T, N, N> result;
-
-    for (int i = 0 ; i < N ; ++i)
-        for (int j = 0 ; j < N ; ++j)
-            result[i][j] = m[i][permutation[j]];
-
-    return result;
-}
-
-template<typename T, int N>
-mat_t<T, N, N> permute_cols(mat_t<T, N, N> const & m, vec_t<int, N> const & permutation)
-{
-    mat_t<T, N, N> result;
-
-    for (int i = 0 ; i < N ; ++i)
-        result[i] = m[permutation[i]];
-
-    return result;
-}
-
-template<int N>
-vec_t<int, N> p_transpose(vec_t<int, N> P)
-{
-    vec_t<int, N> result;
-
-    for (int i = 0 ; i < N ; ++i)
-        result[P[i]] = i;
-
-    return result;
-}
-
-/*
- * Compute L matrix inverse
- */
-
-template<typename T, int N>
-mat_t<T, N, N> l_inverse(mat_t<T, N, N> const & L)
-{
-    mat_t<T, N, N> ret;
-
-    for (int i = 0 ; i < N ; ++i)
-    {
-        for (int j = i ; j >= 0 ; --j)
+        for (int i = j; i >= 0; --i)
         {
             T sum = 0;
-
-            for (int k = i ; k > j ; --k)
-                sum += ret[k][i] * L[j][k];
-
-            ret[j][i] = ((i == j ? 1 : 0) - sum) / L[j][j];
+            for (int k = i + 1; k <= j; ++k)
+                sum += ret[k][j] * lu[i][k];
+            ret[i][j] = T(j == i ? 1 : 0) - sum;
         }
     }
 
     return ret;
 }
 
-/*
- * Compute U matrix inverse
- */
-
+// Compute inverse of the U matrix of an LU decomposition
 template<typename T, int N>
-mat_t<T, N, N> u_inverse(mat_t<T, N, N> const & U)
+mat_t<T, N, N> u_inverse(mat_t<T, N, N> const & lu)
 {
-    mat_t<T, N, N> ret;
+    mat_t<T, N, N> ret { 0 };
 
-    for (int i = 0 ; i < N ; ++i)
+    for (int i = 0; i < N; ++i)
     {
-        for (int j = i ; j < N ; ++j)
+        for (int j = i; j < N; ++j)
         {
             T sum = 0;
-
-            for (int k = i ; k < j ; ++k)
-                sum += ret[k][i] * U[j][k];
-
-            ret[j][i] = ((i == j ? 1 : 0) - sum) / U[j][j];
+            for (int k = i; k < j; ++k)
+                sum += ret[k][i] * lu[j][k];
+            ret[j][i] = ((i == j ? 1 : 0) - sum) / lu[j][j];
         }
     }
 
@@ -642,13 +533,15 @@ mat_t<T, N, N> u_inverse(mat_t<T, N, N> const & U)
 template<typename T, int N>
 mat_t<T, N, N> inverse(mat_t<T, N, N> const &m)
 {
-    mat_t<T, N, N> L, U;
-    vec_t<int, N> P = p_vector(m);
+    auto lup = lu_decomposition(m);
+    auto lu = std::get<0>(lup);
+    auto p = std::get<1>(lup);
+    auto invlu = u_inverse(lu) * l_inverse(lu);
 
-    lu_decomposition(permute_rows(m, P), L, U);
-
-    mat_t<T, N, N> ret = permute_cols(u_inverse(U) * l_inverse(L), p_transpose(P));
-
+    // Rearrange columns according to the original permutation vector
+    mat_t<T, N, N> ret;
+    for (int i = 0; i < N; ++i)
+        ret[p[i]] = invlu[i];
     return ret;
 }
 
