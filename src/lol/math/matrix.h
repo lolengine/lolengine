@@ -496,15 +496,13 @@ void lu_decomposition(mat_t<T, N, N> const &m, mat_t<T, N, N> & L, mat_t<T, N, N
 template<typename T, int N> LOL_ATTR_NODISCARD
 T determinant(mat_t<T, N, N> const &m)
 {
-    mat_t<T, N, N> L, U;
-    vec_t<int, N> P = p_vector(m);
-    lu_decomposition(permute_rows(m, P), L, U);
+    auto lup = lu_decomposition(m);
 
-    T det = 1;
-    for (int i = 0 ; i < N ; ++i)
-        det *= U[i][i];
+    T det = std::get<1>(lup)[N];
+    for (int i = 0; i < N; ++i)
+        det *= std::get<0>(lup)[i][i];
 
-    return permutation_det(P) * det;
+    return det;
 }
 
 template<typename T> LOL_ATTR_NODISCARD
@@ -583,29 +581,6 @@ vec_t<int, N> p_transpose(vec_t<int, N> P)
 
     for (int i = 0 ; i < N ; ++i)
         result[P[i]] = i;
-
-    return result;
-}
-
-/*
- * Compute the determinant of a permutation square matrix corresponding to the permutation vector
- */
-
-template<int N> LOL_ATTR_NODISCARD
-int permutation_det(vec_t<int, N> const & permutation)
-{
-    int result = 1;
-
-    for (int i = 0 ; i < N ; ++i)
-    {
-        int relative_index = permutation[i];
-
-        for (int j = 0 ; j < i ; ++j)
-            if (permutation[j] < permutation[i])
-                --relative_index;
-
-        result *= (relative_index % 2 ? -1 : 1);
-    }
 
     return result;
 }
