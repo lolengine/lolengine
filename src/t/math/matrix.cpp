@@ -93,7 +93,7 @@ lolunit_declare_fixture(matrix_test)
 
         for (int j = 0; j < 4; ++j)
         for (int i = 0; i < 4; ++i)
-            lolunit_assert_doubles_equal(m2[i][j], mat4(1.f)[i][j], 1e-5);
+            lolunit_assert_doubles_equal(m2[i][j], float(i == j), 1e-5);
     }
 
     lolunit_declare_test(lu_decomposition_3x3)
@@ -153,7 +153,7 @@ lolunit_declare_fixture(matrix_test)
 
         for (int j = 0; j < 3; ++j)
         for (int i = 0; i < 3; ++i)
-            lolunit_assert_doubles_equal(m2[i][j], mat3(1.f)[i][j], 1e-5);
+            lolunit_assert_doubles_equal(m2[i][j], float(i == j), 1e-5);
     }
 
     lolunit_declare_test(l_inverse_4x4)
@@ -167,7 +167,7 @@ lolunit_declare_fixture(matrix_test)
 
         for (int j = 0; j < 4; ++j)
         for (int i = 0; i < 4; ++i)
-            lolunit_assert_doubles_equal(m2[i][j], mat4(1.f)[i][j], 1e-5);
+            lolunit_assert_doubles_equal(m2[i][j], float(i == j), 1e-5);
     }
 
     lolunit_declare_test(u_inverse_3x3)
@@ -180,7 +180,7 @@ lolunit_declare_fixture(matrix_test)
 
         for (int j = 0; j < 3; ++j)
         for (int i = 0; i < 3; ++i)
-            lolunit_assert_doubles_equal(m2[i][j], mat3(1.f)[i][j], 1e-5);
+            lolunit_assert_doubles_equal(m2[i][j], float(i == j), 1e-5);
     }
 
     lolunit_declare_test(u_inverse_4x4)
@@ -194,7 +194,7 @@ lolunit_declare_fixture(matrix_test)
 
         for (int j = 0; j < 4; ++j)
         for (int i = 0; i < 4; ++i)
-            lolunit_assert_doubles_equal(m2[i][j], mat4(1.f)[i][j], 1e-5);
+            lolunit_assert_doubles_equal(m2[i][j], float(i == j), 1e-5);
     }
 
     lolunit_declare_test(inverse_2x2)
@@ -202,7 +202,7 @@ lolunit_declare_fixture(matrix_test)
         mat2 m(vec2(4, 3),
                vec2(3, 2));
 
-        /* Invert matrix and check that the results are finite */
+        // Invert matrix and check that the results are finite
         mat2 m1 = inverse(m);
         for (int j = 0; j < 2; ++j)
         for (int i = 0; i < 2; ++i)
@@ -211,11 +211,11 @@ lolunit_declare_fixture(matrix_test)
             lolunit_assert_greater(m1[i][j], -FLT_MAX);
         }
 
-        /* Multiply with original matrix and check that we get identity */
+        // Multiply with original matrix and check that we get identity
         mat2 m2 = m1 * m;
         for (int j = 0; j < 2; ++j)
         for (int i = 0; i < 2; ++i)
-            lolunit_assert_doubles_equal(m2[i][j], mat2(1.f)[i][j], 1e-5);
+            lolunit_assert_doubles_equal(m2[i][j], float(i == j), 1e-5);
     }
 
     lolunit_declare_test(inverse_3x3)
@@ -224,7 +224,7 @@ lolunit_declare_fixture(matrix_test)
                vec3(3, 2, 3),
                vec3(9, 5, 7));
 
-        /* Invert matrix and check that the results are finite */
+        // Invert matrix and check that the results are finite
         mat3 m1 = inverse(m);
         for (int j = 0; j < 3; ++j)
         for (int i = 0; i < 3; ++i)
@@ -233,11 +233,11 @@ lolunit_declare_fixture(matrix_test)
             lolunit_assert_greater(m1[i][j], -FLT_MAX);
         }
 
-        /* Multiply with original matrix and check that we get identity */
+        // Multiply with original matrix and check that we get identity
         mat3 m2 = m1 * m;
         for (int j = 0; j < 3; ++j)
         for (int i = 0; i < 3; ++i)
-            lolunit_assert_doubles_equal(m2[i][j], mat3(1.f)[i][j], 1e-5);
+            lolunit_assert_doubles_equal(m2[i][j], float(i == j), 1e-5);
     }
 
     lolunit_declare_test(inverse_4x4_full)
@@ -247,7 +247,7 @@ lolunit_declare_fixture(matrix_test)
                vec4( 4,  2,  5, -4),
                vec4( 5, -3, -7, -6));
 
-        /* Invert matrix and check that the results are finite */
+        // Invert matrix and check that the results are finite
         mat4 m1 = inverse(m);
         for (int j = 0; j < 4; ++j)
         for (int i = 0; i < 4; ++i)
@@ -256,11 +256,11 @@ lolunit_declare_fixture(matrix_test)
             lolunit_assert_greater(m1[i][j], -FLT_MAX);
         }
 
-        /* Multiply with original matrix and check that we get identity */
+        // Multiply with original matrix and check that we get identity
         mat4 m2 = m1 * m;
         for (int j = 0; j < 4; ++j)
         for (int i = 0; i < 4; ++i)
-            lolunit_assert_doubles_equal(m2[i][j], mat4(1.f)[i][j], 1e-5);
+            lolunit_assert_doubles_equal(m2[i][j], float(i == j), 1e-5);
     }
 
     lolunit_declare_test(inverse_4x4_sparse)
@@ -270,7 +270,7 @@ lolunit_declare_fixture(matrix_test)
                vec4(0, -1,  0,  0),
                vec4(0,  0, -1,  1));
 
-        /* Invert matrix and check that the results are finite */
+        // Invert matrix and check that the results are finite
         mat4 m1 = inverse(m);
         for (int j = 0; j < 4; ++j)
         for (int i = 0; i < 4; ++i)
@@ -279,11 +279,31 @@ lolunit_declare_fixture(matrix_test)
             lolunit_assert_greater(m1[i][j], -FLT_MAX);
         }
 
-        /* Multiply with original matrix and check that we get identity */
+        // Multiply with original matrix and check that we get identity
         mat4 m2 = m1 * m;
         for (int j = 0; j < 4; ++j)
         for (int i = 0; i < 4; ++i)
-            lolunit_assert_doubles_equal(m2[i][j], mat4(1.f)[i][j], 1e-5);
+            lolunit_assert_doubles_equal(m2[i][j], float(i == j), 1e-5);
+    }
+
+    lolunit_declare_test(inverse_9x9)
+    {
+        // Use double because float is not accurate enough for 9×9 matrices
+        lol::mat_t<double, 9, 9> m;
+
+        // Generate 1000 random-valued matrices
+        for (int n = 0; n < 1000; ++n)
+        {
+            for (int j = 0; j < m.count; ++j)
+            for (int i = 0; i < m.count; ++i)
+                m[i][j] = lol::rand(-1.f, 1.f);
+
+            // Invert matrix and check that the result is correct
+            auto m2 = inverse(m) * m;
+            for (int j = 0; j < m.count; ++j)
+            for (int i = 0; i < m.count; ++i)
+                lolunit_assert_doubles_equal(m2[i][j], double(i == j), 1e-10);
+        }
     }
 
     lolunit_declare_test(kronecker_product)
@@ -321,5 +341,5 @@ lolunit_declare_fixture(matrix_test)
     mat4 tri4, inv4;
 };
 
-} /* namespace lol */
+} // namespace lol
 

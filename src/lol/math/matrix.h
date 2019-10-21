@@ -66,10 +66,6 @@ struct LOL_ATTR_NODISCARD mat_t
     inline vec_t<T,ROWS>& operator[](size_t n) { return m_data[n]; }
     inline vec_t<T,ROWS> const& operator[](size_t n) const { return m_data[n]; }
 
-    template<class U>
-    friend std::ostream &operator<<(std::ostream &stream,
-                                    mat_t<U,COLS,ROWS> const &m);
-
 private:
     vec_t<T,ROWS> m_data[COLS];
 };
@@ -359,8 +355,8 @@ static_assert(sizeof(dmat4) == 128, "sizeof(dmat4) == 128");
  */
 
 template<class U, int COLS, int ROWS>
-std::ostream &operator<<(std::ostream &stream,
-                         mat_t<U,COLS,ROWS> const &m)
+static std::ostream &operator<<(std::ostream &stream,
+                                mat_t<U,COLS,ROWS> const &m)
 {
     for (int y = 0; y < ROWS; ++y)
     {
