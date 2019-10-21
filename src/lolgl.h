@@ -44,8 +44,8 @@
 #       define MACOS_OPENGL
 #       define GL_GLEXT_PROTOTYPES
 #       include <OpenGL/OpenGL.h>
-#       include <OpenGL/gl.h>
-#       include <OpenGL/glext.h>
+#       include <OpenGL/gl3.h>
+#       include <OpenGL/gl3ext.h>
 #   else
 #       define GL_GLEXT_PROTOTYPES
 #       include <GL/gl.h>
