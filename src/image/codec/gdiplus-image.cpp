@@ -98,7 +98,7 @@ ResourceCodecData* GdiPlusImageCodec::Load(std::string const &path)
 
     if (!bitmap)
     {
-        msg::error("could not load %s\n", path);
+        msg::error("could not load %s\n", path.c_str());
         return nullptr;
     }
 
@@ -108,7 +108,7 @@ ResourceCodecData* GdiPlusImageCodec::Load(std::string const &path)
     if (bitmap->LockBits(&rect, Gdiplus::ImageLockModeRead,
                            PixelFormat32bppARGB, &bdata) != Gdiplus::Ok)
     {
-        msg::error("could not lock bits in %s\n", path);
+        msg::error("could not lock bits in %s\n", path.c_str());
         delete bitmap;
         return nullptr;
     }

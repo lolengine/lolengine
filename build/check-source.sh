@@ -61,7 +61,7 @@ fi
 
 # Find out whether we need to care about CRLF
 case "$(uname 2>/dev/null)" in
-  MINGW*)
+  MINGW*|MSYS*)
     can_check_crlf=false
     ;;
   *)

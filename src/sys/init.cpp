@@ -16,9 +16,9 @@
 
 #if HAVE_UNISTD_H
 #   include <unistd.h>
-#endif
-
-#if _WIN32
+#elif _WIN32
+    // Only try direct.h if unistd.h is not present, because this
+    // header does not exist on e.g. Cygwin/MSYS2.
 #   define WIN32_LEAN_AND_MEAN
 #   include <direct.h>
 #   undef WIN32_LEAN_AND_MEAN
