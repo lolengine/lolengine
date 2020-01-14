@@ -15,6 +15,9 @@ dnl
 # ---------------------
 AC_DEFUN([LOL_AC_INIT], [
 
+dnl  Silent rules by default
+AM_SILENT_RULES([yes])
+
 dnl  C++11 and later mode. Checked early so that we don't run into surprises.
 version_flag=''
 LOL_TRY_CXXFLAGS(-std=c++0x, [version_flag='-std=c++0x'])
