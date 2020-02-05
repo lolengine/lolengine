@@ -76,6 +76,8 @@ _ReSharper.*
 !external/*/*/*/*/*
 !external/*/*/*/*/*/*
 !external/*/*/*/*/*/*/*
+# Our private repositories
+src/private
 # Our binaries
 demos/lol.js/lol.js
 doc/samples/benchsuite
