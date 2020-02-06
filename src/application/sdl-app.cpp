@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -41,6 +41,7 @@ sdl::app_display::app_display(char const *title, ivec2 res)
     /* Initialise SDL */
     if (!SDL_WasInit(0))
     {
+        msg::debug("initialising SDL\n");
         if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_NOPARACHUTE) < 0)
         {
             msg::error("cannot initialise SDL: %s\n", SDL_GetError());
@@ -51,18 +52,20 @@ sdl::app_display::app_display(char const *title, ivec2 res)
     // This seems to fix a bug we used to have at context swap. Maybe remove one day.
     SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
 
-#if 0
+#if !defined __EMSCRIPTEN__
     // Ask for GL 3.2 at least
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-#endif
+
 #if LOL_BUILD_DEBUG
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
+#endif
 #endif
 
     int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
     if (window_size == ivec2(0))
         flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+    msg::debug("initialising main window\n");
     m_window = SDL_CreateWindow(title,
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
         window_size.x, window_size.y, flags);
@@ -75,6 +78,7 @@ sdl::app_display::app_display(char const *title, ivec2 res)
     SDL_GetWindowSize(m_window, &res.x, &res.y);
 
     m_glcontext = SDL_GL_CreateContext(m_window);
+    SDL_GL_MakeCurrent(m_window, m_glcontext);
     msg::info("created GL context: %s\n", glGetString(GL_VERSION));
 
     /* Initialise everything */

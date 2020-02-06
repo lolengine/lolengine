@@ -14,6 +14,13 @@
 
 #include "lolgl.h"
 
+// FIXME: can we make this more generic?
+#if defined __EMSCRIPTEN__
+    #define glGenVertexArrays glGenVertexArraysOES
+    #define glBindVertexArray glBindVertexArrayOES
+    #define glDeleteVertexArrays glDeleteVertexArraysOES
+#endif
+
 // FIXME: fine-tune this define
 #if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
 

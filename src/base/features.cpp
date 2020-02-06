@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -19,6 +19,11 @@ bool has_threads()
 {
     static char const *var = getenv("LOL_NOTHREADS");
     static bool const disable_threads = var && var[0];
+#if defined __EMSCRIPTEN__ && !defined __EMSCRIPTEN_PTHREADS__
+    // For some reason hardware_concurrency() will return the actual number
+    // of threads/cores even though the system cannot spawn threads.
+    return false;
+#endif
     return !disable_threads && std::thread::hardware_concurrency() > 1;
 }
 

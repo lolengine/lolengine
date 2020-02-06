@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -17,7 +17,7 @@
 namespace lol
 {
 
-#if LOL_BUILD_DEBUG
+#if LOL_BUILD_DEBUG && !defined __EMSCRIPTEN__
 static std::map<GLenum, char const *> gl_dbg_source_to_str
 {
     { GL_DEBUG_SOURCE_API, "API" },
@@ -88,7 +88,7 @@ static void LOL_ATTR_STDCALL
 
 void gpu::setup_debug()
 {
-#if LOL_BUILD_DEBUG
+#if LOL_BUILD_DEBUG && !defined __EMSCRIPTEN__
     GLint glflags;
     glGetIntegerv(GL_CONTEXT_FLAGS, &glflags);
 

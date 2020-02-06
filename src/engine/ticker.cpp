@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -30,6 +30,7 @@ class ticker_data
 public:
     ticker_data()
     {
+        msg::debug("platform %s threads\n", has_threads() ? "has" : "has no");
         if (has_threads())
         {
             gamethread = std::make_unique<thread>(std::bind(&ticker_data::GameThreadMain, this));
@@ -557,6 +558,7 @@ void Ticker::SetStateWhenMatch(entity * /* entity */, uint32_t /* state */,
 
 void ticker::setup(float fps)
 {
+    msg::debug("creating ticker\n");
     data = std::make_unique<ticker_data>();
     data->fps = fps;
 }
