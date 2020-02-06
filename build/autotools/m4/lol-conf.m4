@@ -1,7 +1,7 @@
 dnl
 dnl  Lol Engine
 dnl
-dnl  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+dnl  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 dnl
 dnl  Lol Engine is free software. It comes without any warranty, to
 dnl  the extent permitted by applicable law. You can redistribute it
@@ -213,7 +213,10 @@ LOL_AC_CHECK_FFMPEG()
 
 
 dnl  Debug symbols
-LOL_TRY_LDFLAGS(-rdynamic, [AM_LDFLAGS="${AM_LDFLAGS} -rdynamic"])
+dnl  We use --export-dynamic instead of -rdynamic because the latter causes
+dnl  emscripten to emit wasm even when html is asked…
+LOL_TRY_LDFLAGS(--export-dynamic, [AM_LDFLAGS="${AM_LDFLAGS} --export-dynamic"])
+
 
 dnl  Code qui fait des warnings == code de porc == deux baffes dans ta gueule
 LOL_TRY_CXXFLAGS(-Wall, [AM_CPPFLAGS="${AM_CPPFLAGS} -Wall"])

@@ -4,7 +4,7 @@
 make distclean
 
 set -e
-./build/lol-build "$@" bootstrap web-html
-./build/lol-build "$@" configure web-html
-./build/lol-build "$@" build web-html
+"$(dirname "$0")/lol-build" "$@" bootstrap web-html
+"$(dirname "$0")/lol-build" "$@" configure web-html
+"$(dirname "$0")/lol-build" "$@" build web-html
 
