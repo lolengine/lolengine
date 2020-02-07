@@ -80,8 +80,7 @@ void msg::helper(message_type type, char const *fmt, va_list ap)
 #if !defined LOL_BUILD_DEBUG && !_DEBUG
     if (type == message_type::debug)
     {
-        static char const *var = getenv("LOL_DEBUG");
-        static bool const disable_debug = !var || !var[0];
+        static bool const disable_debug = sys::getenv("LOL_DEBUG").size() > 0;
         if (disable_debug)
             return;
     }

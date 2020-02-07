@@ -17,8 +17,7 @@ namespace lol
 
 bool has_threads()
 {
-    static char const *var = getenv("LOL_NOTHREADS");
-    static bool const disable_threads = var && var[0];
+    static bool const disable_threads = sys::getenv("LOL_NOTHREADS").size() > 0;
 #if defined __EMSCRIPTEN__ && !defined __EMSCRIPTEN_PTHREADS__
     // For some reason hardware_concurrency() will return the actual number
     // of threads/cores even though the system cannot spawn threads.

@@ -19,6 +19,7 @@
 
 #include <string>
 #include <cstdint>
+#include <cstdlib>
 
 namespace lol
 {
@@ -55,6 +56,24 @@ extern void init(int argc, char *argv[],
 
 extern void add_data_dir(std::string const &dir);
 extern array<std::string> get_path_list(std::string const &file);
+
+static inline std::string getenv(std::string const &var)
+{
+#if _MSC_VER
+    char *buf = nullptr;
+    size_t count = 0;
+    if (_dupenv_s(&buf, &count, var.c_str()) == 0 && buf)
+    {
+        std::string ret(buf);
+        free(buf);
+        return ret;
+    }
+#else
+    if (auto var = std::getenv(var.c_str()))
+        return std::string(var);
+#endif
+    return std::string();
+}
 
 } /* namespace sys */
 
