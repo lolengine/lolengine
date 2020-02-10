@@ -226,6 +226,9 @@
       <Filter>mesh</Filter>
     </ClCompile>
     <ClCompile Include="messageservice.cpp" />
+    <ClCompile Include="net\http.cpp">
+      <Filter>net</Filter>
+    </ClCompile>
     <ClCompile Include="platform.cpp" />
     <ClCompile Include="profiler.cpp" />
     <ClCompile Include="scene.cpp" />
@@ -494,6 +497,12 @@
     <ClInclude Include="lol\math\vector.h">
       <Filter>lol\math</Filter>
     </ClInclude>
+    <ClInclude Include="lol\net\all.h">
+      <Filter>lol\net</Filter>
+    </ClInclude>
+    <ClInclude Include="lol\net\http.h">
+      <Filter>lol\net</Filter>
+    </ClInclude>
     <ClInclude Include="lol\public.h">
       <Filter>lol</Filter>
     </ClInclude>
@@ -671,6 +680,9 @@
     <Filter Include="mesh">
       <UniqueIdentifier>{1eaa8df5-7a31-4358-a1e9-0e265de6ed49}</UniqueIdentifier>
     </Filter>
+    <Filter Include="net">
+      <UniqueIdentifier>{0db6de04-6778-43ed-81c6-0ac49c0481f4}</UniqueIdentifier>
+    </Filter>
     <Filter Include="lol\base">
       <UniqueIdentifier>{e17b998c-d494-480b-ae29-5d1564f73327}</UniqueIdentifier>
     </Filter>
@@ -691,6 +703,9 @@
     </Filter>
     <Filter Include="lol\debug">
       <UniqueIdentifier>{01285b11-c6c7-4a9e-8dee-daa2c63901e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lol\net">
+      <UniqueIdentifier>{59f31039-b311-4ebf-a900-e0f7567eb636}</UniqueIdentifier>
     </Filter>
     <Filter Include="platform">
       <UniqueIdentifier>{a11c55f8-8e10-4270-be24-38e8d4fcf589}</UniqueIdentifier>

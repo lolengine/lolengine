@@ -23,6 +23,7 @@
 #include <lol/image/all.h>
 #include <lol/sys/all.h>
 #include <lol/audio/all.h>
+#include <lol/net/all.h>
 #include <lol/gpu/all.h>
 #include <lol/debug/all.h>
 #include <lol/engine/all.h>

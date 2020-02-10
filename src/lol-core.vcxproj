@@ -184,6 +184,7 @@
     <ClCompile Include="mesh\mesh.cpp" />
     <ClCompile Include="mesh\primitivemesh.cpp" />
     <ClCompile Include="messageservice.cpp" />
+    <ClCompile Include="net\http.cpp" />
     <ClCompile Include="platform.cpp" />
     <ClCompile Include="private\nx\nx-app.cpp">
       <ExcludedFromBuild Condition="'$(Platform)'!='NX64'">true</ExcludedFromBuild>
@@ -303,6 +304,8 @@
     <ClInclude Include="lol\math\real.h" />
     <ClInclude Include="lol\math\transform.h" />
     <ClInclude Include="lol\math\vector.h" />
+    <ClInclude Include="lol\net\all.h" />
+    <ClInclude Include="lol\net\http.h" />
     <ClInclude Include="lol\public.h" />
     <ClInclude Include="lol\sys\all.h" />
     <ClInclude Include="lol\sys\file.h" />

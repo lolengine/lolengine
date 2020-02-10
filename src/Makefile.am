@@ -60,6 +60,9 @@ liblol_core_headers = \
     lol/image/pixel.h lol/image/color.h lol/image/image.h \
     lol/image/resource.h lol/image/movie.h \
     \
+    lol/net/all.h \
+    lol/net/http.h \
+    \
     lol/gpu/all.h \
     lol/gpu/shader.h lol/gpu/indexbuffer.h lol/gpu/vertexbuffer.h \
     lol/gpu/framebuffer.h lol/gpu/texture.h lol/gpu/lolfx.h \
@@ -129,6 +132,8 @@ liblol_core_sources = \
     image/filter/convolution.cpp image/filter/colors.cpp \
     image/filter/dilate.cpp image/filter/median.cpp image/filter/yuv.cpp \
     image/movie.cpp \
+    \
+    net/http.cpp \
     \
     engine/tickable.cpp engine/ticker.cpp engine/ticker.h \
     engine/entity.cpp engine/entity.h \
