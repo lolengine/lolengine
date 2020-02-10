@@ -469,7 +469,7 @@ T determinant(mat_t<T, N, N> const &m)
 {
     auto lup = lu_decomposition(m);
 
-    T det(std::get<2>(lup));
+    T det(T(std::get<2>(lup)));
     for (int i = 0; i < N; ++i)
         det *= std::get<0>(lup)[i][i];
 
