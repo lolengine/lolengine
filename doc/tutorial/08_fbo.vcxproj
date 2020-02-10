@@ -44,14 +44,8 @@
   <ItemGroup>
     <LolFxCompile Include="08_fbo.lolfx" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="$(LolDir)\src\lol-core.vcxproj">
-      <Project>{9e62f2fe-3408-4eae-8238-fd84238ceeda}</Project>
-    </ProjectReference>
-    <ProjectReference Condition="'$(enable_bullet)'!='no'" Include="$(LolDir)\src\3rdparty\lol-bullet.vcxproj">
-      <Project>{83d3b207-c601-4025-8f41-01dedc354661}</Project>
-    </ProjectReference>
-  </ItemGroup>
+  <Import Project="$(LolDir)\build\msbuild\lol-core.props" />
+  <Import Project="$(LolDir)\build\msbuild\lol-bullet.props" />
   <PropertyGroup Label="Globals">
     <ProjectGuid>{BCEE0132-8E24-49BE-AFEB-96DAD14396BA}</ProjectGuid>
     <ConfigurationType>Application</ConfigurationType>

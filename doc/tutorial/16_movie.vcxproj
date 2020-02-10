@@ -41,14 +41,8 @@
   <ItemGroup>
     <ClCompile Include="16_movie.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="$(LolDir)\src\lol-core.vcxproj">
-      <Project>{9e62f2fe-3408-4eae-8238-fd84238ceeda}</Project>
-    </ProjectReference>
-    <ProjectReference Condition="'$(enable_bullet)'!='no'" Include="$(LolDir)\src\3rdparty\lol-bullet.vcxproj">
-      <Project>{83d3b207-c601-4025-8f41-01dedc354661}</Project>
-    </ProjectReference>
-  </ItemGroup>
+  <Import Project="$(LolDir)\build\msbuild\lol-core.props" />
+  <Import Project="$(LolDir)\build\msbuild\lol-bullet.props" />
   <PropertyGroup Label="Globals">
     <ProjectGuid>{5F5714D0-1C3D-4522-A409-214C5A2951AA}</ProjectGuid>
     <ConfigurationType>Application</ConfigurationType>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <ItemGroup>
+    <ProjectReference Include="$(LolDir)\src\3rdparty\lol-lua.vcxproj">
+      <Project>{d84021ca-b233-4e0f-8a52-071b83bbccc4}</Project>
+    </ProjectReference>
+  </ItemGroup>
+
+</Project>

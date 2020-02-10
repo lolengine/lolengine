@@ -41,14 +41,8 @@
   <ItemGroup>
     <ClCompile Include="06_sprite.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="$(LolDir)\src\lol-core.vcxproj">
-      <Project>{9e62f2fe-3408-4eae-8238-fd84238ceeda}</Project>
-    </ProjectReference>
-    <ProjectReference Condition="'$(enable_bullet)'!='no'" Include="$(LolDir)\src\3rdparty\lol-bullet.vcxproj">
-      <Project>{83d3b207-c601-4025-8f41-01dedc354661}</Project>
-    </ProjectReference>
-  </ItemGroup>
+  <Import Project="$(LolDir)\build\msbuild\lol-core.props" />
+  <Import Project="$(LolDir)\build\msbuild\lol-bullet.props" />
   <PropertyGroup Label="Globals">
     <ProjectGuid>{E05E23A5-67DE-42B5-98A3-E63CCE0CC0AF}</ProjectGuid>
     <ConfigurationType>Application</ConfigurationType>

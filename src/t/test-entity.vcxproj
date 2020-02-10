@@ -42,14 +42,8 @@
     <ClCompile Include="test-common.cpp" />
     <ClCompile Include="entity\camera.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="$(LolDir)\src\lol-core.vcxproj">
-      <Project>{9e62f2fe-3408-4eae-8238-fd84238ceeda}</Project>
-    </ProjectReference>
-    <ProjectReference Condition="'$(enable_bullet)'!='no'" Include="$(LolDir)\src\3rdparty\lol-bullet.vcxproj">
-      <Project>{83d3b207-c601-4025-8f41-01dedc354661}</Project>
-    </ProjectReference>
-  </ItemGroup>
+  <Import Project="$(LolDir)\build\msbuild\lol-core.props" />
+  <Import Project="$(LolDir)\build\msbuild\lol-bullet.props" />
   <PropertyGroup Label="Globals">
     <ProjectGuid>{d7f6c2ca-5a13-4fd0-8468-1833923e3ee3}</ProjectGuid>
     <ConfigurationType>Application</ConfigurationType>
