@@ -2,23 +2,26 @@
 	path = external
 	url = ../../lolengine/ext-binaries.git
 	branch = master
-[submodule "src/3rdparty/imgui"]
+[submodule "imgui"]
 	path = src/3rdparty/imgui
 	url = ../../lolengine/ext-imgui.git
 	branch = master
-[submodule "src/3rdparty/bullet3"]
+[submodule "bullet3"]
 	path = src/3rdparty/bullet3
 	url = ../../lolengine/ext-bullet3.git
 	branch = lol
-[submodule "src/3rdparty/lua"]
+[submodule "lua"]
 	path = src/3rdparty/lua
 	url = ../../lolengine/ext-lua.git
 	branch = lol
-[submodule "src/3rdparty/pegtl"]
+[submodule "pegtl"]
 	path = src/3rdparty/pegtl
 	url = ../../lolengine/ext-pegtl.git
 	branch = lol
-[submodule "src/3rdparty/mingw-std-threads"]
+[submodule "mingw-std-threads"]
 	path = src/3rdparty/mingw-std-threads
 	url = ../../lolengine/ext-mingw-std-threads.git
 	branch = master
+[submodule "cpp-httplib"]
+	path = src/3rdparty/cpp-httplib
+	url = ../../lolengine/ext-cpp-httplib.git

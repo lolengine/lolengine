@@ -38,6 +38,7 @@
 
       <AdditionalIncludeDirectories Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">
           $(SdlIncludes);
+          $(CppHttpIncludes);
           $(FfmpegIncludes);
           $(AssimpIncludes);
           $(XinputIncludes);
@@ -83,9 +84,10 @@
 
     <Link Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">
       <!-- FIXME: not for the static library! -->
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;$(SdlDeps);$(FfmpegDeps);$(AssimpDeps);$(LibGccDeps);$(GdiDeps);$(XinputDeps);$(GlDeps);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;$(SdlDeps);$(FfmpegDeps);$(AssimpDeps);$(LibGccDeps);$(GdiDeps);$(XinputDeps);$(GlDeps);$(CppHttpDeps);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(LibGccLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalLibraryDirectories>$(SdlLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(CppHttpLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalLibraryDirectories>$(FfmpegLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalLibraryDirectories>$(AssimpLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalLibraryDirectories>$(GlLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

@@ -16,6 +16,16 @@
     <ImguiDir>$(LolDir)\src\3rdparty\imgui</ImguiDir>
     <ImguiIncludes>$(ImguiDir)</ImguiIncludes>
 
+    <!-- OpenSSL -->
+    <OpenSslDir>$(ExternalDir)\openssl-1.1.1d</OpenSslDir>
+
+    <!-- cpp-httplib (depends on OpenSSL) -->
+    <CppHttpDir>$(LolDir)\src/3rdparty\cpp-httplib</CppHttpDir>
+    <CppHttpIncludes>$(CppHttpDir);$(OpenSslDir)\include</CppHttpIncludes>
+    <CppHttpLibs>$(OpenSslDir)\lib\$(PlatformCode)-msvc</CppHttpLibs>
+    <CppHttpDeps>libssl.lib;libcrypto.lib;crypt32.lib</CppHttpDeps>
+    <Win32Defines>CPPHTTPLIB_OPENSSL_SUPPORT;$(Win32Defines)</Win32Defines>
+
     <!-- GTK+ & GtkGl -->
     <GtkDir>$(ExternalDir)\gtk-2.22.1</GtkDir>
     <GtkGlDir>$(ExternalDir)\gtkglarea-2.0.1</GtkGlDir>
@@ -104,6 +114,8 @@
   <ItemGroup>
     <BuildMacro Include="PegtlDir"><Value>$(PegtlDir)</Value></BuildMacro>
     <BuildMacro Include="PegtlIncludes"><Value>$(PegtlIncludes)</Value></BuildMacro>
+    <BuildMacro Include="CppHttpDir"><Value>$(CppHttpDir)</Value></BuildMacro>
+    <BuildMacro Include="CppHttpIncludes"><Value>$(CppHttpIncludes)</Value></BuildMacro>
     <BuildMacro Include="ImguiDir"><Value>$(ImguiDir)</Value></BuildMacro>
     <BuildMacro Include="ImguiIncludes"><Value>$(ImguiIncludes)</Value></BuildMacro>
     <BuildMacro Include="LibGccDir"><Value>$(LibGccDir)</Value></BuildMacro>

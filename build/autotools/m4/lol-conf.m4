@@ -67,6 +67,7 @@ dnl
 dnl  Activate some header-only libraries
 dnl
 
+LOL_CFLAGS="$LOL_CFLAGS -I\$(lol_srcdir)/src/3rdparty/cpp-httplib"
 LOL_CFLAGS="$LOL_CFLAGS -I\$(lol_srcdir)/src/3rdparty/pegtl/include"
 LOL_CFLAGS="$LOL_CFLAGS -I\$(lol_srcdir)/src/3rdparty/imgui"
 
