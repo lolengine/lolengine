@@ -16,6 +16,15 @@
 #   define CPPHTTPLIB_OPENSSL_SUPPORT 1
 #endif
 
+#if _WIN32
+#   define WIN32_LEAN_AND_MEAN 1
+#   include <windows.h>
+#   undef NEAR // avoids errors in <inaddr.h>
+#   undef FAR
+#   define NEAR
+#   define FAR
+#endif
+
 #if __EMSCRIPTEN__
 #   include <emscripten/fetch.h>
 #else
