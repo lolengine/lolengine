@@ -121,7 +121,7 @@ ResourceCodecData* ZedImageCodec::Load(std::string const &path)
     //Get FileCount
     uint32_t file_pos = 0;
     uint16_t file_count = 0;
-    file_count = *((uint16_t*)(&file_buffer[file_pos]));
+    memcpy(&file_count, &file_buffer[file_pos], sizeof(uint16_t));
     file_pos += sizeof(uint16_t);
 
     array<uint32_t> file_offset;
@@ -129,7 +129,7 @@ ResourceCodecData* ZedImageCodec::Load(std::string const &path)
     //Get all the file offsets
     for (int i = 0; i < file_count; i++)
     {
-        file_offset[i] = *((uint32_t*)(&file_buffer[file_pos]));
+        memcpy(&file_offset[i], &file_buffer[file_pos], sizeof(uint32_t));
         file_pos += sizeof(uint32_t);
     }
     file_offset << file_size;

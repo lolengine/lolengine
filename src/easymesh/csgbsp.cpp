@@ -19,7 +19,7 @@ namespace lol
 //--
 int CsgBsp::AddLeaf(int leaf_type, vec3 origin, vec3 normal, int above_idx)
 {
-    if (leaf_type > 2 && leaf_type < -1)
+    if (leaf_type > 2 || leaf_type < -1)
         return -1;
 
     if ((m_tree.count() == 0 && above_idx == -1) ||
@@ -104,7 +104,7 @@ void CsgBsp::AddTriangleToTree(int const &tri_idx, vec3 const &tri_p0, vec3 cons
 
             for (int i = 0; i < 3; i++)
             {
-                vec3 ray = v[(i + 1) % 3] - v[i];
+                //vec3 ray = v[(i + 1) % 3] - v[i];
 
                 if (TestRayVsPlane(v[i], v[(i + 1) % 3],
                                     m_tree[leaf_idx].m_origin, m_tree[leaf_idx].m_normal,
