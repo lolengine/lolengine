@@ -69,8 +69,8 @@ static inline std::string getenv(std::string const &var)
         return ret;
     }
 #else
-    if (auto var = std::getenv(var.c_str()))
-        return std::string(var);
+    if (auto val = std::getenv(var.c_str()))
+        return std::string(val);
 #endif
     return std::string();
 }
