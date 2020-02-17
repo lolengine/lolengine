@@ -12,11 +12,19 @@
 
 #include <lol/engine-internal.h>
 
+#if LOL_USE_OPENSSL
+#   define CPPHTTPLIB_OPENSSL_SUPPORT 1
+#endif
+
 #if __EMSCRIPTEN__
 #   include <emscripten/fetch.h>
 #else
 #   include <httplib.h>
 #endif
+
+#include <utility>
+#include <memory>
+#include <regex>
 
 namespace lol
 {
@@ -31,11 +39,26 @@ class client_impl
 {
 public:
 #if __EMSCRIPTEN__
+    ~client_impl()
+    {
+        emscripten_fetch_close(impl->m_fetch);
+    }
+
+    void get(std::string const &url)
+    {
+        emscripten_fetch_attr_t attr;
+        emscripten_fetch_attr_init(&attr);
+        strcpy(attr.requestMethod, "GET");
+        attr.userData = impl.get();
+        attr.attributes = EMSCRIPTEN_FETCH_LOAD_TO_MEMORY;
+        attr.onsuccess = client_impl::on_success;
+        attr.onerror = client_impl::on_failure;
+        impl->m_fetch = emscripten_fetch(&attr, url.c_str());
+    }
+
     static void on_success(emscripten_fetch_t *fetch)
     {
         auto *that = (client_impl *)fetch->userData;
-        msg::info("finished downloading %llu bytes from URL %s.\n",
-                  fetch->numBytes, fetch->url);
         that->m_result.assign(fetch->data, fetch->numBytes);
         that->m_status = status::success;
     }
@@ -50,15 +73,59 @@ public:
 
     emscripten_fetch_t *m_fetch = nullptr;
 #else
-    void get(std::string const& url)
+    ~client_impl()
     {
-
+        delete m_thread;
     }
 
-    //httplib::Client &client;
+    void get(std::string const& url)
+    {
+        // This regex is copied from cpp-httplib
+        const static std::regex re(
+            R"(^(?:([^:/?#]+):)?(?://([^/?#]*))?([^?#]*(?:\?[^#]*)?)(?:#.*)?)");
+
+        std::smatch m;
+        if (!std::regex_match(url, m, re))
+        {
+            m_status = status::error;
+            return;
+        }
+
+        auto scheme = m[1].str();
+        auto host = m[2].str();
+        auto path = m[3].str();
+
+#ifdef CPPHTTPLIB_OPENSSL_SUPPORT
+        if (scheme == "https")
+            m_client = std::make_unique<httplib::SSLClient>(host);
+        else
+#endif
+        m_client = std::make_shared<httplib::Client>(host);
+        m_client->set_follow_location(true);
+
+        m_thread = new lol::thread([this, path](thread *)
+        {
+            auto res = m_client->Get(path.c_str());
+            if (res && res->status == 200)
+            {
+                m_result = std::move(res->body);
+                m_status = status::success;
+            }
+            else
+            {
+                msg::error("downloading %s failed, HTTP failure status code: %d.\n",
+                           m_url.c_str(), res ? res->status : -1);
+                m_status = status::error;
+            }
+        });
+    }
+
+    lol::thread *m_thread = nullptr;
+    std::shared_ptr<httplib::Client> m_client;
 #endif
 
     status m_status;
+    std::string m_url;
     std::string m_result;
 };
 
@@ -69,36 +136,30 @@ client::client()
 
 client::~client()
 {
-#if __EMSCRIPTEN__
-    emscripten_fetch_close(impl->m_fetch);
-#endif
 }
 
 void client::get(std::string const &url)
 {
     impl->m_status = status::pending;
-#if __EMSCRIPTEN__
-    emscripten_fetch_attr_t attr;
-    emscripten_fetch_attr_init(&attr);
-    strcpy(attr.requestMethod, "GET");
-    attr.userData = impl.get();
-    attr.attributes = EMSCRIPTEN_FETCH_LOAD_TO_MEMORY;
-    attr.onsuccess = client_impl::on_success;
-    attr.onerror = client_impl::on_failure;
-    impl->m_fetch = emscripten_fetch(&attr, url.c_str());
-#else
-#endif
+    impl->m_url = url;
+    impl->get(url);
 }
 
 void client::reset()
 {
     impl->m_status = status::ready;
+    impl->m_url.assign("");
     impl->m_result.assign("");
 }
 
 status client::get_status() const
 {
     return impl->m_status;
+}
+
+std::string const & client::get_url() const
+{
+    return impl->m_url;
 }
 
 std::string const & client::get_result() const

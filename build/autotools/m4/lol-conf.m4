@@ -84,6 +84,15 @@ if test "$ac_cv_have_getopt_long" != "no"; then
 fi
 
 
+dnl  Use OpenSSL?
+ac_cv_have_openssl=no
+AC_CHECK_LIB(ssl, OPENSSL_init_ssl,
+ [ac_cv_have_openssl=yes
+  AC_DEFINE(LOL_USE_OPENSSL, 1, Define to 1 to use OpenSSL)
+  LOL_LIBS="${LOL_LIBS} -lssl -lcrypto"])
+AM_CONDITIONAL(LOL_USE_OPENSSL, test "${ac_cv_have_openssl}" = "yes")
+
+
 dnl  Use Bullet Physics?
 ac_cv_my_have_bullet="no"
 if test "${enable_bullet}" != "no"; then

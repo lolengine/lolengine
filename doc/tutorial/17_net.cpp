@@ -30,12 +30,20 @@ public:
     {
         entity::tick_game(seconds);
 
-        if (client.get_status() == lol::net::http::status::success)
+        switch (client.get_status())
         {
-            lol::msg::info("Downloaded %d bytes: %s\n",
+        case lol::net::http::status::success:
+            lol::msg::info("downloaded %d bytes: %s\n",
                            (int)client.get_result().size(),
                            client.get_result().c_str());
             client.reset();
+            break;
+        case lol::net::http::status::error:
+            lol::msg::info("error downloading %s\n", client.get_url().c_str());
+            client.reset();
+            break;
+        default:
+            break;
         }
     }
 

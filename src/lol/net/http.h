@@ -23,8 +23,6 @@ namespace net
 namespace http
 {
 
-class client_impl;
-
 enum class status : uint8_t
 {
     ready   = 0,
@@ -32,6 +30,8 @@ enum class status : uint8_t
     success = 2,
     error   = 3,
 };
+
+class client_impl;
 
 class client
 {
@@ -45,8 +45,9 @@ public:
     // Reset state
     void reset();
 
-    // Get status (may be pending) and result
+    // Get current URL, status (may be pending), and result
     status get_status() const;
+    std::string const & get_url() const;
     std::string const & get_result() const;
 
 private:
