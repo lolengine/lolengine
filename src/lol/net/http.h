@@ -25,15 +25,29 @@ namespace http
 
 class client_impl;
 
+enum class status : uint8_t
+{
+    ready   = 0,
+    pending = 1,
+    success = 2,
+    error   = 3,
+};
+
 class client
 {
 public:
     client();
     ~client();
 
+    // Enqueue a query
     void get(std::string const &url);
-    bool is_ready() const;
-    std::tuple<int, std::string> result();
+
+    // Reset state
+    void reset();
+
+    // Get status (may be pending) and result
+    status get_status() const;
+    std::string const & get_result() const;
 
 private:
     std::unique_ptr<client_impl> impl;

@@ -66,6 +66,7 @@ build/visualstudio/ipch
 build/visualstudio/*.log
 build/visualstudio/*.XGD
 # Emscripten cruft
+a.out*
 doc/samples/*.html
 doc/samples/*.wasm
 doc/samples/*.wasm.*

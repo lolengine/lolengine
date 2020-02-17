@@ -11,7 +11,7 @@ tutorials += 01_triangle 02_cube 03_noise 04_texture 05_easymesh \
              06_sprite 07_input 08_fbo 09_sound 11_fractal \
              12_voronoi 13_shader_builder 14_lua 15_gui
 endif
-tutorials += 16_movie
+tutorials += 16_movie 17_net
 
 01_triangle_SOURCES = 01_triangle.cpp 01_triangle.lolfx
 01_triangle_CPPFLAGS = $(AM_CPPFLAGS)
@@ -80,4 +80,8 @@ endif
 16_movie_SOURCES = 16_movie.cpp
 16_movie_CPPFLAGS = $(AM_CPPFLAGS)
 16_movie_DEPENDENCIES = @LOL_DEPS@
+
+17_net_SOURCES = 17_net.cpp
+17_net_CPPFLAGS = $(AM_CPPFLAGS)
+17_net_DEPENDENCIES = @LOL_DEPS@
 
