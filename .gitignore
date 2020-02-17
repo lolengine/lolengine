@@ -65,6 +65,23 @@ build/*.opensdf
 build/visualstudio/ipch
 build/visualstudio/*.log
 build/visualstudio/*.XGD
+# Emscripten cruft
+doc/samples/*.html
+doc/samples/*.wasm
+doc/samples/*.wasm.*
+doc/samples/*.js
+doc/samples/*/*.html
+doc/samples/*/*.wasm
+doc/samples/*/*.wasm.*
+doc/samples/*/*.js
+doc/tutorial/*.html
+doc/tutorial/*.wasm
+doc/tutorial/*.wasm.*
+doc/tutorial/*.js
+src/t/*.html
+src/t/*.wasm
+src/t/*.wasm.*
+src/t/*.js
 # ReSharper cruft
 _ReSharper.*
 # Do not exclude anything in external. There is no way to do this recursively
