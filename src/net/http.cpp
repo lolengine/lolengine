@@ -50,7 +50,7 @@ public:
 #if __EMSCRIPTEN__
     ~client_impl()
     {
-        emscripten_fetch_close(impl->m_fetch);
+        emscripten_fetch_close(m_fetch);
     }
 
     void get(std::string const &url)
@@ -58,11 +58,11 @@ public:
         emscripten_fetch_attr_t attr;
         emscripten_fetch_attr_init(&attr);
         strcpy(attr.requestMethod, "GET");
-        attr.userData = impl.get();
+        attr.userData = this;
         attr.attributes = EMSCRIPTEN_FETCH_LOAD_TO_MEMORY;
         attr.onsuccess = client_impl::on_success;
         attr.onerror = client_impl::on_failure;
-        impl->m_fetch = emscripten_fetch(&attr, url.c_str());
+        m_fetch = emscripten_fetch(&attr, url.c_str());
     }
 
     static void on_success(emscripten_fetch_t *fetch)
