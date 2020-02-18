@@ -46,11 +46,6 @@ class FileData
 {
     friend class File;
 
-    FileData()
-      : m_refcount(0),
-        m_type(StreamType::File)
-    { }
-
     void Open(StreamType stream)
     {
         if (m_type == StreamType::File ||
@@ -211,12 +206,12 @@ class FileData
 
     //-----------------------
 #if __ANDROID__
-    AAsset *m_asset;
+    AAsset *m_asset = nullptr;
 #elif HAVE_STDIO_H
-    FILE *m_fd;
+    FILE *m_fd = nullptr;
 #endif
-    std::atomic<int> m_refcount;
-    StreamType m_type;
+    std::atomic<int> m_refcount = 0;
+    StreamType m_type = StreamType::File;
     struct stat m_stat;
 };
 
