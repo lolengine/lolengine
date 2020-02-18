@@ -19,6 +19,9 @@
 #      include <SDL.h>
 #   endif
 #endif
+#if HAVE_EMSCRIPTEN_H
+#   include <emscripten.h>
+#endif
 #if HAVE_EMSCRIPTEN_HTML5_H
 #   include <emscripten/html5.h>
 #endif
@@ -123,6 +126,18 @@ void SdlInput::tick_draw(float seconds, Scene &scene)
         tick(seconds);
 }
 
+#if __EMSCRIPTEN__
+static void resume_audiocontext(void)
+{
+    EM_ASM(
+    {
+        var m = Module['SDL2'];
+        if (m && m.audioContext && m.audioContext.state == 'suspended')
+            m.audioContext.resume();
+    });
+}
+#endif
+
 void SdlInput::tick(float seconds)
 {
 #if LOL_USE_SDL
@@ -201,11 +216,17 @@ void SdlInput::tick(float seconds)
 
         case SDL_MOUSEBUTTONDOWN:
         case SDL_MOUSEBUTTONUP:
+#if __EMSCRIPTEN__
+            resume_audiocontext();
+#endif
             //event.button.which
             mouse->internal_set_button((input::button)((int)input::button::BTN_Left + event.button.button - 1),
                                        event.type == SDL_MOUSEBUTTONDOWN);
             break;
         case SDL_MOUSEWHEEL:
+#if __EMSCRIPTEN__
+            resume_audiocontext();
+#endif
             mouse_wheel += (float)event.button.y;
             break;
         case SDL_WINDOWEVENT:
@@ -214,6 +235,9 @@ void SdlInput::tick(float seconds)
             {
                 case SDL_WINDOWEVENT_ENTER:
                 case SDL_WINDOWEVENT_FOCUS_GAINED:
+#if __EMSCRIPTEN__
+                    resume_audiocontext();
+#endif
                     mouse->internal_set_button(input::button::BTN_Focus, true);
                     break;
                 case SDL_WINDOWEVENT_LEAVE:
