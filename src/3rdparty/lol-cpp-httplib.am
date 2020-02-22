@@ -1,5 +1,0 @@
-
-cpp_httplib_sources = \
-    cpp-httplib/httplib.h \
-    $(NULL)
-
