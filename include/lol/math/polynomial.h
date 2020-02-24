@@ -1,25 +1,27 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2014 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
 
 //
 // The polynomial class
-// --------------------
-//
+// ————————————————————
 // The data structure is a simple dynamic array of scalars, with the
 // added guarantee that the leading coefficient is always non-zero.
 //
 
-#include <functional>
-
+#include <lol/base/features.h>
+#include <tuple>   // std::tuple
+#include <cassert> // assert()
 
 namespace lol
 {
@@ -33,7 +35,7 @@ struct LOL_ATTR_NODISCARD polynomial
     /* A constant polynomial */
     explicit inline polynomial(T const &a)
     {
-        m_coefficients.push(a);
+        m_coefficients.push_back(a);
         reduce_degree();
     }
 
@@ -41,7 +43,7 @@ struct LOL_ATTR_NODISCARD polynomial
     explicit polynomial(std::initializer_list<T> const &init)
     {
         for (auto a : init)
-            m_coefficients.push(a);
+            m_coefficients.push_back(a);
 
         reduce_degree();
     }
@@ -50,7 +52,7 @@ struct LOL_ATTR_NODISCARD polynomial
     static polynomial<T> chebyshev(int n)
     {
         /* Use T0(x) = 1, T1(x) = x, Tn(x) = 2 x Tn-1(x) - Tn-2(x) */
-        std::function<int64_t (int, int)> coeff = [&](int i, int j)
+        auto coeff = [&](int i, int j) -> int64_t
         {
             if (i > j || i < 0 || ((j ^ i) & 1))
                 return (int64_t)0;
@@ -61,7 +63,7 @@ struct LOL_ATTR_NODISCARD polynomial
 
         polynomial<T> ret;
         for (int k = 0; k <= n; ++k)
-            ret.m_coefficients.push(T(coeff(k, n)));
+            ret.m_coefficients.push_back(T(coeff(k, n)));
         return ret;
     }
 
@@ -69,19 +71,19 @@ struct LOL_ATTR_NODISCARD polynomial
      * degree -1 on purpose. */
     inline int degree() const
     {
-        return (int)m_coefficients.count() - 1;
+        return (int)m_coefficients.size() - 1;
     }
 
     /* Set one of the polynomial’s coefficients */
     void set(int n, T const &a)
     {
-        ASSERT(n >= 0);
+        assert(n >= 0);
 
         if (n > degree() && !a)
             return;
 
         while (n > degree())
-            m_coefficients.push(T(0));
+            m_coefficients.push_back(T(0));
 
         m_coefficients[n] = a;
         reduce_degree();
@@ -103,27 +105,26 @@ struct LOL_ATTR_NODISCARD polynomial
         /* No need to reduce the degree after deriving. */
         polynomial<T> ret;
         for (int i = 1; i <= degree(); ++i)
-            ret.m_coefficients.push(m_coefficients[i] * T(i));
+            ret.m_coefficients.push_back(m_coefficients[i] * T(i));
         return ret;
     }
 
-    array<T> roots() const
+    std::vector<T> roots() const
     {
         /* For now we can only solve polynomials of degrees 0, 1, 2 or 3. */
-        ASSERT(degree() >= 0 && degree() <= 3,
-               "roots() called on polynomial of degree %d", degree());
+        assert(degree() >= 0 && degree() <= 3);
 
         if (degree() == 0)
         {
             /* p(x) = a > 0 */
-            return array<T> {};
+            return {};
         }
         else if (degree() == 1)
         {
             /* p(x) = ax + b */
             T const &a = m_coefficients[1];
             T const &b = m_coefficients[0];
-            return array<T> { -b / a };
+            return { -b / a };
         }
         else if (degree() == 2)
         {
@@ -137,16 +138,16 @@ struct LOL_ATTR_NODISCARD polynomial
 
             if (delta < T(0))
             {
-                return array<T> {};
+                return {};
             }
             else if (delta > T(0))
             {
                 T const sqrt_delta = sqrt(delta);
-                return array<T> { -k - sqrt_delta, -k + sqrt_delta };
+                return { -k - sqrt_delta, -k + sqrt_delta };
             }
             else
             {
-                return array<T> { -k };
+                return { -k };
             }
         }
         else if (degree() == 3)
@@ -227,33 +228,33 @@ struct LOL_ATTR_NODISCARD polynomial
 
             if (a == d && b == c && b == T(3)*a) // triple solution
             {
-                return array<T> { solutions[0] - k };
+                return { solutions[0] - k };
             }
 
             // if root of the derivative is also root of the current polynomial, we have a double root.
             for (auto root : (polynomial<T>{ c, T(2) * b, T(3) * a }).roots())
             {
                 if (eval(root) == T(0))
-                    return array<T> { (solutions[0] + solutions[2]) / T(2) - k,
-                                      solutions[1] - k };
+                    return { (solutions[0] + solutions[2]) / T(2) - k,
+                             solutions[1] - k };
             }
 
             // we have 3 or 1 root depending on delta sign
             if (delta > 0)
             {
-                return array<T> { solutions[0] - k };
+                return { solutions[0] - k };
             }
             else // if (delta < 0) 3 real solutions
             {
-                return array<T> { solutions[0] - k,
-                                  solutions[1] - k,
-                                  solutions[2] - k };
+                return { solutions[0] - k,
+                         solutions[1] - k,
+                         solutions[2] - k };
             }
         }
 
         /* It is an error to reach this point. */
-        ASSERT(false);
-        return array<T> {};
+        assert(false);
+        return {};
     }
 
     /* Access individual coefficients. This is read-only and returns a
@@ -296,7 +297,7 @@ struct LOL_ATTR_NODISCARD polynomial
     {
         polynomial<T> ret;
         for (auto a : m_coefficients)
-            ret.m_coefficients.push(-a);
+            ret.m_coefficients.push_back(-a);
         return ret;
     }
 
@@ -309,7 +310,7 @@ struct LOL_ATTR_NODISCARD polynomial
             m_coefficients[i] += p[i];
 
         for (int i = min_degree + 1; i <= p.degree(); ++i)
-            m_coefficients.push(p[i]);
+            m_coefficients.push_back(p[i]);
 
         reduce_degree();
         return *this;
@@ -371,7 +372,7 @@ struct LOL_ATTR_NODISCARD polynomial
         {
             int n = p.degree() + q.degree();
             for (int i = 0; i <= n; ++i)
-                ret.m_coefficients.push(T(0));
+                ret.m_coefficients.push_back(T(0));
 
             for (int i = 0; i <= p.degree(); ++i)
                 for (int j = 0; j <= q.degree(); ++j)
@@ -385,13 +386,13 @@ struct LOL_ATTR_NODISCARD polynomial
 
     /* Divide a polynomial by another one. There is no /= variant because
      * the return value contains both the quotient and the remainder. */
-    tuple<polynomial<T>, polynomial<T>> operator /(polynomial<T> p) const
+    std::tuple<polynomial<T>, polynomial<T>> operator /(polynomial<T> p) const
     {
-        ASSERT(p.degree() >= 0);
+        assert(p.degree() >= 0);
 
-        tuple<polynomial<T>, polynomial<T>> ret;
-        polynomial<T> &quotient = ret.m1;
-        polynomial<T> &remainder = ret.m2;
+        std::tuple<polynomial<T>, polynomial<T>> ret;
+        polynomial<T> &quotient = std::get<0>(ret);
+        polynomial<T> &remainder = std::get<1>(ret);
 
         remainder = *this / p.leading();
         p /= p.leading();
@@ -416,7 +417,7 @@ private:
     }
 
     /* The polynomial coefficients */
-    array<T> m_coefficients;
+    std::vector<T> m_coefficients;
 };
 
 template<typename T>
