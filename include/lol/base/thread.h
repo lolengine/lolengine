@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -14,14 +14,17 @@
 
 //
 // The Threading classes
-// ---------------------
+// —————————————————————
 //
 
-#include <functional>
+#include <lol/base/features.h>
+#include <lol/base/core.h>
 
+#include <functional> // std::function
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <cassert> // assert()
 
 /* XXX: workaround for a bug in Visual Studio 2012 and 2013!
  * https://connect.microsoft.com/VisualStudio/feedback/details/747145 */
@@ -38,15 +41,59 @@
 
 /* XXX: workaround for missing std::thread in mingw */
 #if _GLIBCXX_MUTEX && !_GLIBCXX_HAS_GTHREADS && _WIN32
-#   include "mingw.thread.h"
-#   include "mingw.mutex.h"
-#   include "mingw.condition_variable.h"
+#   include "../3rdparty/mingw-std-threads/mingw.thread.h"
+#   include "../3rdparty/mingw-std-threads/mingw.mutex.h"
+#   include "../3rdparty/mingw-std-threads/mingw.condition_variable.h"
 #   undef near /* Fuck Microsoft */
 #   undef far /* Fuck Microsoft again */
 #endif
 
 namespace lol
 {
+
+// Base class for threads
+class thread
+{
+public:
+    thread(std::function<void(thread*)> fn)
+      : m_function(fn)
+    {
+        m_thread = std::thread(trampoline, this);
+    }
+
+    ~thread()
+    {
+#if LOL_VISUAL_STUDIO_BUG_747145_WORKAROUND
+        m_thread.detach();
+#else
+        m_thread.join();
+#endif
+    }
+
+    // FIXME: move to os::has_threads?
+    static bool has_threads()
+    {
+        static bool const disable_threads = os::getenv("LOL_NOTHREADS").size() > 0;
+#if defined __EMSCRIPTEN__ && !defined __EMSCRIPTEN_PTHREADS__
+        // For some reason hardware_concurrency() will return the actual number
+        // of threads/cores even though the system cannot spawn threads.
+        return false;
+#endif
+        return !disable_threads && std::thread::hardware_concurrency() > 1;
+    }
+
+private:
+    static void trampoline(thread *that)
+    {
+        that->m_function(that);
+#if LOL_VISUAL_STUDIO_BUG_747145_WORKAROUND
+        ExitThread(0);
+#endif
+    }
+
+    std::thread m_thread;
+    std::function<void(thread*)> m_function;
+};
 
 // This is like std::mutex but we can add debug information to it
 class mutex
@@ -74,7 +121,7 @@ public:
     {
         std::unique_lock<std::mutex> uni_lock(m_mutex);
 
-        if (has_threads())
+        if (thread::has_threads())
         {
             // Wait for the mutex availability or non-fullness
             m_full_cond.wait(uni_lock, [&]{ return m_count < CAPACITY; });
@@ -82,7 +129,7 @@ public:
 
         do_push(value); /* Push value */
 
-        if (has_threads())
+        if (thread::has_threads())
         {
             // Release lock and notify empty condition var (in that order)
             uni_lock.unlock();
@@ -95,7 +142,7 @@ public:
     {
         std::unique_lock<std::mutex> uni_lock(m_mutex, std::defer_lock);
 
-        if (has_threads())
+        if (thread::has_threads())
         {
             // Try to lock, bail out if we fail
             if (!uni_lock.try_lock())
@@ -107,7 +154,7 @@ public:
 
         do_push(value);
 
-        if (has_threads())
+        if (thread::has_threads())
         {
             // Release lock and notify empty condition var (in that order)
             uni_lock.unlock();
@@ -120,7 +167,7 @@ public:
     // Will block the thread if another has already locked
     T pop()
     {
-        ASSERT(has_threads(), "Pop should only be used with threads. Use try_pop instead.");
+        assert(thread::has_threads());
 
         // Wait for the mutex availability or non-emptiness
         std::unique_lock<std::mutex> uni_lock(m_mutex);
@@ -140,7 +187,7 @@ public:
     {
         std::unique_lock<std::mutex> uni_lock(m_mutex, std::defer_lock);
 
-        if (has_threads())
+        if (thread::has_threads())
         {
             if (!uni_lock.try_lock())
                 return false;
@@ -151,7 +198,7 @@ public:
 
         ret = do_pop(); /* Pop value */
 
-        if (has_threads())
+        if (thread::has_threads())
         {
             // Release lock and notify full condition var (in that order)
             uni_lock.unlock();
@@ -184,38 +231,6 @@ private:
 
     std::mutex m_mutex;
     std::condition_variable m_empty_cond, m_full_cond;
-};
-
-// Base class for threads
-class thread
-{
-public:
-    thread(std::function<void(thread*)> fn)
-      : m_function(fn)
-    {
-        m_thread = std::thread(trampoline, this);
-    }
-
-    ~thread()
-    {
-#if LOL_VISUAL_STUDIO_BUG_747145_WORKAROUND
-        m_thread.detach();
-#else
-        m_thread.join();
-#endif
-    }
-
-private:
-    static void trampoline(thread *that)
-    {
-        that->m_function(that);
-#if LOL_VISUAL_STUDIO_BUG_747145_WORKAROUND
-        ExitThread(0);
-#endif
-    }
-
-    std::thread m_thread;
-    std::function<void(thread*)> m_function;
 };
 
 } /* namespace lol */

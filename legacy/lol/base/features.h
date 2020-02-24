@@ -118,8 +118,6 @@ static inline int isnan(float f)
 
 namespace lol
 {
-    extern bool has_threads();
-
     // A handy endianness test function
     static inline bool is_big_endian()
     {

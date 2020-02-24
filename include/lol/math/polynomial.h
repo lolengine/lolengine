@@ -20,6 +20,8 @@
 //
 
 #include <lol/base/features.h>
+#include <lol/base/core.h>
+
 #include <tuple>   // std::tuple
 #include <cassert> // assert()
 
