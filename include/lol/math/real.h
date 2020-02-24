@@ -59,6 +59,12 @@ public:
 
     Real(char const *str);
 
+    static int global_bigit_count(int n = 0)
+    {
+        static int count = 16;
+        return n <= 0 ? count : (count = n);
+    }
+
     LOL_ATTR_NODISCARD bool is_zero() const { return m_mantissa.size() == 0; }
     LOL_ATTR_NODISCARD bool is_negative() const { return m_sign; }
     LOL_ATTR_NODISCARD bool is_nan() const { return m_nan; }
@@ -232,7 +238,7 @@ private:
     bool m_sign = false, m_nan = false, m_inf = false;
 
 public:
-    static int DEFAULT_BIGIT_COUNT;
+    static int const DEFAULT_BIGIT_COUNT = 16;
 
     static inline int bigit_bits() { return 8 * (int)sizeof(bigit_t); }
     inline int bigit_count() const { return (int)m_mantissa.size(); }
@@ -369,4 +375,6 @@ template<> std::string real::str(int ndigits) const;
 template<> std::string real::xstr() const;
 
 } /* namespace lol */
+
+#include "../../../legacy/math/real.cpp"
 

@@ -10,23 +10,16 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
-#include <lol/engine-internal.h>
-
 #include <new>
 #include <string>
 #include <sstream>
 #include <iomanip>
 #include <cstring>
 #include <cstdlib>
+#include <cmath>
 
 namespace lol
 {
-
-/*
- * First handle explicit specialisation of our templates.
- */
-
-template<> int real::DEFAULT_BIGIT_COUNT = 16;
 
 /*
  * Initialisation order is not important because everything is
@@ -45,21 +38,21 @@ static real load_max();
 static real load_pi();
 
 /* These getters do not need caching, their return values are small */
-template<> real const real::R_0() { return real(); }
-template<> real const real::R_INF() { real ret; ret.m_inf = true; return ret; }
-template<> real const real::R_NAN() { real ret; ret.m_nan = true; return ret; }
+template<> inline real const real::R_0() { return real(); }
+template<> inline real const real::R_INF() { real ret; ret.m_inf = true; return ret; }
+template<> inline real const real::R_NAN() { real ret; ret.m_nan = true; return ret; }
 
 #define LOL_CONSTANT_GETTER(name, value) \
-    template<> real const& real::name() \
+    template<> inline real const& real::name() \
     { \
         static real ret; \
         static int prev_bigit_count = -1; \
         /* If the default bigit count has changed, we must recompute
          * the value with the desired precision. */ \
-        if (prev_bigit_count != DEFAULT_BIGIT_COUNT) \
+        if (prev_bigit_count != global_bigit_count()) \
         { \
             ret = (value); \
-            prev_bigit_count = DEFAULT_BIGIT_COUNT; \
+            prev_bigit_count = global_bigit_count(); \
         } \
         return ret; \
     }
@@ -95,17 +88,17 @@ LOL_CONSTANT_GETTER(R_SQRT1_2,  R_SQRT2() / 2);
  * Now carry on with the rest of the Real class.
  */
 
-template<> real::Real(int32_t i) { new(this) real((double)i); }
-template<> real::Real(uint32_t i) { new(this) real((double)i); }
-template<> real::Real(float f) { new(this) real((double)f); }
+template<> inline real::Real(int32_t i) { new(this) real((double)i); }
+template<> inline real::Real(uint32_t i) { new(this) real((double)i); }
+template<> inline real::Real(float f) { new(this) real((double)f); }
 
-template<> real::Real(int64_t i)
+template<> inline real::Real(int64_t i)
 {
-    new(this) real((uint64_t)lol::abs(i));
+    new(this) real((uint64_t)std::abs(i));
     m_sign = i < 0;
 }
 
-template<> real::Real(uint64_t i)
+template<> inline real::Real(uint64_t i)
 {
     new(this) real();
     if (i)
@@ -129,7 +122,7 @@ template<> real::Real(uint64_t i)
     }
 }
 
-template<> real::Real(double d)
+template<> inline real::Real(double d)
 {
     union { double d; uint64_t x; } u = { d };
 
@@ -156,7 +149,7 @@ template<> real::Real(double d)
     }
 }
 
-template<> real::Real(long double f)
+template<> inline real::Real(long double f)
 {
     /* We don’t know the long double layout, so we get rid of the
      * exponent, then load it into a real in two steps. */
@@ -167,11 +160,11 @@ template<> real::Real(long double f)
     m_exponent += exponent;
 }
 
-template<> real::operator float() const { return (float)(double)*this; }
-template<> real::operator int32_t() const { return (int32_t)(double)floor(*this); }
-template<> real::operator uint32_t() const { return (uint32_t)(double)floor(*this); }
+template<> inline real::operator float() const { return (float)(double)*this; }
+template<> inline real::operator int32_t() const { return (int32_t)(double)floor(*this); }
+template<> inline real::operator uint32_t() const { return (uint32_t)(double)floor(*this); }
 
-template<> real::operator uint64_t() const
+template<> inline real::operator uint64_t() const
 {
     uint32_t msb = (uint32_t)ldexp(*this, -32);
     uint64_t ret = ((uint64_t)msb << 32)
@@ -179,14 +172,14 @@ template<> real::operator uint64_t() const
     return ret;
 }
 
-template<> real::operator int64_t() const
+template<> inline real::operator int64_t() const
 {
     /* If number is positive, convert it to uint64_t first. If it is
      * negative, switch its sign first. */
     return is_negative() ? -(int64_t)-*this : (int64_t)(uint64_t)*this;
 }
 
-template<> real::operator double() const
+template<> inline real::operator double() const
 {
     union { double d; uint64_t x; } u;
 
@@ -225,7 +218,7 @@ template<> real::operator double() const
     return u.d;
 }
 
-template<> real::operator long double() const
+template<> inline real::operator long double() const
 {
     double hi = double(*this);
     double lo = double(*this - hi);
@@ -235,7 +228,7 @@ template<> real::operator long double() const
 /*
  * Create a real number from an ASCII representation
  */
-template<> real::Real(char const *str)
+template<> inline real::Real(char const *str)
 {
     real ret = 0;
     exponent_t exponent = 0;
@@ -319,19 +312,19 @@ template<> real::Real(char const *str)
     *this = ret;
 }
 
-template<> real real::operator +() const
+template<> inline real real::operator +() const
 {
     return *this;
 }
 
-template<> real real::operator -() const
+template<> inline real real::operator -() const
 {
     real ret = *this;
     ret.m_sign ^= true;
     return ret;
 }
 
-template<> real real::operator +(real const &x) const
+template<> inline real real::operator +(real const &x) const
 {
     if (x.is_zero())
         return *this;
@@ -399,7 +392,7 @@ template<> real real::operator +(real const &x) const
     return ret;
 }
 
-template<> real real::operator -(real const &x) const
+template<> inline real real::operator -(real const &x) const
 {
     if (x.is_zero())
         return *this;
@@ -508,7 +501,7 @@ template<> real real::operator -(real const &x) const
     return ret;
 }
 
-template<> real real::operator *(real const &x) const
+template<> inline real real::operator *(real const &x) const
 {
     real ret;
 
@@ -579,36 +572,36 @@ template<> real real::operator *(real const &x) const
     return ret;
 }
 
-template<> real real::operator /(real const &x) const
+template<> inline real real::operator /(real const &x) const
 {
     return *this * inverse(x);
 }
 
-template<> real const &real::operator +=(real const &x)
+template<> inline real const &real::operator +=(real const &x)
 {
     real tmp = *this;
     return *this = tmp + x;
 }
 
-template<> real const &real::operator -=(real const &x)
+template<> inline real const &real::operator -=(real const &x)
 {
     real tmp = *this;
     return *this = tmp - x;
 }
 
-template<> real const &real::operator *=(real const &x)
+template<> inline real const &real::operator *=(real const &x)
 {
     real tmp = *this;
     return *this = tmp * x;
 }
 
-template<> real const &real::operator /=(real const &x)
+template<> inline real const &real::operator /=(real const &x)
 {
     real tmp = *this;
     return *this = tmp / x;
 }
 
-template<> bool real::operator ==(real const &x) const
+template<> inline bool real::operator ==(real const &x) const
 {
     /* If NaN is involved, return false */
     if (is_nan() || x.is_nan())
@@ -622,12 +615,12 @@ template<> bool real::operator ==(real const &x) const
     return m_exponent == x.m_exponent && m_mantissa == x.m_mantissa;
 }
 
-template<> bool real::operator !=(real const &x) const
+template<> inline bool real::operator !=(real const &x) const
 {
     return !(is_nan() || x.is_nan() || *this == x);
 }
 
-template<> bool real::operator <(real const &x) const
+template<> inline bool real::operator <(real const &x) const
 {
     /* If NaN is involved, return false */
     if (is_nan() || x.is_nan())
@@ -657,12 +650,12 @@ template<> bool real::operator <(real const &x) const
     return false;
 }
 
-template<> bool real::operator <=(real const &x) const
+template<> inline bool real::operator <=(real const &x) const
 {
     return !(is_nan() || x.is_nan() || *this > x);
 }
 
-template<> bool real::operator >(real const &x) const
+template<> inline bool real::operator >(real const &x) const
 {
     /* If NaN is involved, return false */
     if (is_nan() || x.is_nan())
@@ -696,38 +689,38 @@ template<> bool real::operator >(real const &x) const
     return false;
 }
 
-template<> bool real::operator >=(real const &x) const
+template<> inline bool real::operator >=(real const &x) const
 {
     return !(is_nan() || x.is_nan() || *this < x);
 }
 
-template<> bool real::operator !() const
+template<> inline bool real::operator !() const
 {
     return !(bool)*this;
 }
 
-template<> real::operator bool() const
+template<> inline real::operator bool() const
 {
     /* A real is "true" if it is non-zero AND not NaN */
     return !is_zero() && !is_nan();
 }
 
-template<> real min(real const &a, real const &b)
+template<> inline real min(real const &a, real const &b)
 {
     return (a < b) ? a : b;
 }
 
-template<> real max(real const &a, real const &b)
+template<> inline real max(real const &a, real const &b)
 {
     return (a > b) ? a : b;
 }
 
-template<> real clamp(real const &x, real const &a, real const &b)
+template<> inline real clamp(real const &x, real const &a, real const &b)
 {
     return (x < a) ? a : (x > b) ? b : x;
 }
 
-template<> real inverse(real const &x)
+template<> inline real inverse(real const &x)
 {
     real ret;
 
@@ -753,7 +746,7 @@ template<> real inverse(real const &x)
     return ret;
 }
 
-template<> real sqrt(real const &x)
+template<> inline real sqrt(real const &x)
 {
     /* if zero, return x (FIXME: negative zero?) */
     if (x.is_zero())
@@ -792,7 +785,7 @@ template<> real sqrt(real const &x)
     return ret * x;
 }
 
-template<> real cbrt(real const &x)
+template<> inline real cbrt(real const &x)
 {
     /* if zero, return x */
     if (x.is_zero())
@@ -829,7 +822,7 @@ template<> real cbrt(real const &x)
     return ret;
 }
 
-template<> real pow(real const &x, real const &y)
+template<> inline real pow(real const &x, real const &y)
 {
     /* Shortcuts for degenerate cases */
     if (!y)
@@ -908,14 +901,16 @@ static real fast_fact(int x, int step = 1)
     }
 }
 
-template<> real gamma(real const &x)
+template<> inline real gamma(real const &x)
 {
+    static float pi = acosf(-1.f);
+
     /* We use Spouge’s formula. FIXME: precision is far from acceptable,
      * especially with large values. We need to compute this with higher
      * precision values in order to attain the desired accuracy. It might
      * also be useful to sort the ck values by decreasing absolute value
      * and do the addition in this order. */
-    int a = (int)ceilf(logf(2) / logf(2 * F_PI) * x.total_bits());
+    int a = (int)ceilf(logf(2) / logf(2 * pi) * x.total_bits());
 
     real ret = sqrt(real::R_PI() * 2);
     real fact_k_1 = real::R_1();
@@ -935,24 +930,24 @@ template<> real gamma(real const &x)
     return ret;
 }
 
-template<> real fabs(real const &x)
+template<> inline real fabs(real const &x)
 {
     real ret = x;
     ret.m_sign = false;
     return ret;
 }
 
-template<> real abs(real const &x)
+template<> inline real abs(real const &x)
 {
     return fabs(x);
 }
 
-template<> real fract(real const &x)
+template<> inline real fract(real const &x)
 {
     return x - floor(x);
 }
 
-template<> real degrees(real const &x)
+template<> inline real degrees(real const &x)
 {
     /* FIXME: need to recompute this for different mantissa sizes */
     static real mul = real(180) * real::R_1_PI();
@@ -960,7 +955,7 @@ template<> real degrees(real const &x)
     return x * mul;
 }
 
-template<> real radians(real const &x)
+template<> inline real radians(real const &x)
 {
     /* FIXME: need to recompute this for different mantissa sizes */
     static real mul = real::R_PI() / real(180);
@@ -1001,7 +996,7 @@ static real fast_log(real const &x)
     return z * sum * 4;
 }
 
-template<> real log(real const &x)
+template<> inline real log(real const &x)
 {
     /* Strategy for log(x): if x = 2^E*M then log(x) = E log(2) + log(M),
      * with the property that M is in [1..2[, so fast_log() applies here. */
@@ -1013,7 +1008,7 @@ template<> real log(real const &x)
     return real(x.m_exponent) * real::R_LN2() + fast_log(tmp);
 }
 
-template<> real log2(real const &x)
+template<> inline real log2(real const &x)
 {
     /* Strategy for log2(x): see log(x). */
     if (x.is_negative() || x.is_zero())
@@ -1024,7 +1019,7 @@ template<> real log2(real const &x)
     return real(x.m_exponent) + fast_log(tmp) * real::R_LOG2E();
 }
 
-template<> real log10(real const &x)
+template<> inline real log10(real const &x)
 {
     return log(x) * real::R_LOG10E();
 }
@@ -1050,7 +1045,7 @@ static real fast_exp_sub(real const &x, real const &y)
     return ret / fast_fact(i);
 }
 
-template<> real exp(real const &x)
+template<> inline real exp(real const &x)
 {
     /* Strategy for exp(x): the Taylor series does not converge very fast
      * with large positive or negative values.
@@ -1075,7 +1070,7 @@ template<> real exp(real const &x)
     return x1;
 }
 
-template<> real exp2(real const &x)
+template<> inline real exp2(real const &x)
 {
     /* Strategy for exp2(x): see strategy in exp(). */
     real::exponent_t e0 = x;
@@ -1085,7 +1080,7 @@ template<> real exp2(real const &x)
     return x1;
 }
 
-template<> real erf(real const &x)
+template<> inline real erf(real const &x)
 {
     /* Strategy for erf(x):
      *  - if x<0, erf(x) = -erf(-x)
@@ -1136,7 +1131,7 @@ template<> real erf(real const &x)
     }
 }
 
-template<> real sinh(real const &x)
+template<> inline real sinh(real const &x)
 {
     /* We cannot always use (exp(x)-exp(-x))/2 because we'll lose
      * accuracy near zero. We only use this identity for |x|>0.5. If
@@ -1147,7 +1142,7 @@ template<> real sinh(real const &x)
     return (x1 - x2) / 2;
 }
 
-template<> real tanh(real const &x)
+template<> inline real tanh(real const &x)
 {
     /* See sinh() for the strategy here */
     bool near_zero = (fabs(x) < real::R_1() / 2);
@@ -1157,14 +1152,14 @@ template<> real tanh(real const &x)
     return (x1 - x2) / x3;
 }
 
-template<> real cosh(real const &x)
+template<> inline real cosh(real const &x)
 {
     /* No need to worry about accuracy here; maybe the last bit is slightly
      * off, but that's about it. */
     return (exp(x) + exp(-x)) / 2;
 }
 
-template<> real frexp(real const &x, real::exponent_t *exp)
+template<> inline real frexp(real const &x, real::exponent_t *exp)
 {
     if (!x)
     {
@@ -1180,7 +1175,7 @@ template<> real frexp(real const &x, real::exponent_t *exp)
     return ret;
 }
 
-template<> real ldexp(real const &x, real::exponent_t exp)
+template<> inline real ldexp(real const &x, real::exponent_t exp)
 {
     real ret = x;
     if (ret) /* Only do something if non-zero */
@@ -1188,7 +1183,7 @@ template<> real ldexp(real const &x, real::exponent_t exp)
     return ret;
 }
 
-template<> real modf(real const &x, real *iptr)
+template<> inline real modf(real const &x, real *iptr)
 {
     real absx = fabs(x);
     real tmp = floor(absx);
@@ -1197,7 +1192,7 @@ template<> real modf(real const &x, real *iptr)
     return copysign(absx - tmp, x);
 }
 
-template<> real nextafter(real const &x, real const &y)
+template<> inline real nextafter(real const &x, real const &y)
 {
     /* Linux manpage: “If x equals y, the functions return y.” */
     if (x == y)
@@ -1212,14 +1207,14 @@ template<> real nextafter(real const &x, real const &y)
     return x < y ? x + ulp : x - ulp;
 }
 
-template<> real copysign(real const &x, real const &y)
+template<> inline real copysign(real const &x, real const &y)
 {
     real ret = x;
     ret.m_sign = y.m_sign;
     return ret;
 }
 
-template<> real floor(real const &x)
+template<> inline real floor(real const &x)
 {
     /* Strategy for floor(x):
      *  - if negative, return -ceil(-x)
@@ -1250,7 +1245,7 @@ template<> real floor(real const &x)
     return ret;
 }
 
-template<> real ceil(real const &x)
+template<> inline real ceil(real const &x)
 {
     /* Strategy for ceil(x):
      *  - if negative, return -floor(-x)
@@ -1264,7 +1259,7 @@ template<> real ceil(real const &x)
     return ret;
 }
 
-template<> real round(real const &x)
+template<> inline real round(real const &x)
 {
     if (x < real::R_0())
         return -round(-x);
@@ -1272,7 +1267,7 @@ template<> real round(real const &x)
     return floor(x + (real::R_1() / 2));
 }
 
-template<> real fmod(real const &x, real const &y)
+template<> inline real fmod(real const &x, real const &y)
 {
     if (!y)
         return real::R_0(); /* FIXME: return NaN */
@@ -1284,7 +1279,7 @@ template<> real fmod(real const &x, real const &y)
     return x - tmp * y;
 }
 
-template<> real sin(real const &x)
+template<> inline real sin(real const &x)
 {
     bool switch_sign = x.is_negative();
 
@@ -1316,12 +1311,12 @@ template<> real sin(real const &x)
     return ret;
 }
 
-template<> real cos(real const &x)
+template<> inline real cos(real const &x)
 {
     return sin(real::R_PI_2() - x);
 }
 
-template<> real tan(real const &x)
+template<> inline real tan(real const &x)
 {
     /* Constrain input to [-π,π] */
     real y = fmod(x, real::R_PI());
@@ -1388,17 +1383,17 @@ static inline real asinacos(real const &x, int is_asin)
     return ret;
 }
 
-template<> real asin(real const &x)
+template<> inline real asin(real const &x)
 {
     return asinacos(x, 1);
 }
 
-template<> real acos(real const &x)
+template<> inline real acos(real const &x)
 {
     return asinacos(x, 0);
 }
 
-template<> real atan(real const &x)
+template<> inline real atan(real const &x)
 {
     /* Computing atan(x): we choose a different Taylor series depending on
      * the value of x to help with convergence.
@@ -1501,7 +1496,7 @@ template<> real atan(real const &x)
     return ret;
 }
 
-template<> real atan2(real const &y, real const &x)
+template<> inline real atan2(real const &y, real const &x)
 {
     if (!y)
     {
@@ -1524,7 +1519,7 @@ template<> real atan2(real const &y, real const &x)
 }
 
 /* Franke’s function, used as a test for interpolation methods */
-template<> real franke(real const &x, real const &y)
+template<> inline real franke(real const &x, real const &y)
 {
     /* Compute 9x and 9y */
     real nx = x + x; nx += nx; nx += nx + x;
@@ -1547,7 +1542,7 @@ template<> real franke(real const &x, real const &y)
 }
 
 /* The Peaks example function from Matlab */
-template<> real peaks(real const &x, real const &y)
+template<> inline real peaks(real const &x, real const &y)
 {
     real x2 = x * x;
     real y2 = y * y;
@@ -1562,7 +1557,7 @@ template<> real peaks(real const &x, real const &y)
     return ret;
 }
 
-template<>
+template<> inline
 std::ostream& operator <<(std::ostream &s, real const &x)
 {
     bool hex = (s.flags() & std::ios_base::basefield) == std::ios_base::hex;
@@ -1570,7 +1565,7 @@ std::ostream& operator <<(std::ostream &s, real const &x)
     return s;
 }
 
-template<> std::string real::str(int ndigits) const
+template<> inline std::string real::str(int ndigits) const
 {
     std::stringstream ss;
     real x = *this;
@@ -1625,12 +1620,12 @@ template<> std::string real::str(int ndigits) const
 
     // Print exponent information
     if (exponent)
-        ss << 'e' << (exponent >= 0 ? '+' : '-') << lol::abs(exponent);
+        ss << 'e' << (exponent >= 0 ? '+' : '-') << std::abs(exponent);
 
     return ss.str();
 }
 
-template<> std::string real::xstr() const
+template<> inline std::string real::xstr() const
 {
     std::stringstream ss;
     if (is_negative())
