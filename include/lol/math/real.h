@@ -14,8 +14,10 @@
 
 //
 // The Real class
-// --------------
+// ——————————————
 //
+
+#include <lol/base/features.h>
 
 #include <vector>
 #include <string>

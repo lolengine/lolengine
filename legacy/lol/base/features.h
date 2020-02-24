@@ -28,19 +28,6 @@
 #undef LOL_FEATURE_CXX11_TEMPLATE_ALIASES
 #undef LOL_FEATURE_CXX11_SFINAE_FOR_CTORS
 
-#undef LOL_FEATURE_CXX17_ATTRIBUTE_NODISCARD
-#undef LOL_FEATURE_CXX17_ATTRIBUTE_FALLTHROUGH
-
-/* Features detected through __has_cpp_attribute */
-#ifdef __has_cpp_attribute
-#   if __has_cpp_attribute(nodiscard)
-#       define LOL_FEATURE_CXX17_ATTRIBUTE_NODISCARD 1
-#   endif
-#   if __has_cpp_attribute(fallthrough)
-#       define LOL_FEATURE_CXX17_ATTRIBUTE_FALLTHROUGH 1
-#   endif
-#endif
-
 /* Features supported by GCC */
 #if defined __GNUC__
 #   if !defined(__GXX_EXPERIMENTAL_CXX0X) && __cplusplus < 201103L
@@ -79,35 +66,6 @@
 #   define LOL_FEATURE_CXX11_NULLPTR 1
 #   define LOL_FEATURE_CXX11_SFINAE_FOR_CTORS 1
 #   define LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS 1
-#endif
-
-
-/*
- * Define some attribute macros.
- */
-
-#ifdef __GNUC__
-#   define LOL_ATTR_FORMAT(n, p) __attribute__((format(printf, n, p)))
-#else
-#   define LOL_ATTR_FORMAT(n, p)
-#endif
-
-#if defined(_WIN32)
-#   define LOL_ATTR_STDCALL __stdcall
-#else
-#   define LOL_ATTR_STDCALL /* */
-#endif
-
-#ifdef LOL_FEATURE_CXX17_ATTRIBUTE_NODISCARD
-#   define LOL_ATTR_NODISCARD [[nodiscard]]
-#else
-#   define LOL_ATTR_NODISCARD /* */
-#endif
-
-#ifdef LOL_FEATURE_CXX17_ATTRIBUTE_FALLTHROUGH
-#   define LOL_ATTR_FALLTHROUGH [[fallthrough]];
-#else
-#   define LOL_ATTR_FALLTHROUGH /* */
 #endif
 
 

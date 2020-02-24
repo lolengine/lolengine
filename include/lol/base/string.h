@@ -19,6 +19,8 @@
 // Contains some utilities to work with std::string objects.
 //
 
+#include <lol/base/features.h>
+
 #include <vector>
 #include <string>
 #include <algorithm> // std::transform
