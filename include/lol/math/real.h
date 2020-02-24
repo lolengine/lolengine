@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -17,8 +17,6 @@
 // --------------
 //
 
-#include <lol/base/types.h>
-
 #include <vector>
 #include <string>
 #include <cstdint>
@@ -29,6 +27,9 @@ namespace lol
 /* This is OUR namespace. Don't let Windows headers mess with it. */
 #undef min
 #undef max
+
+template<typename T> class Real;
+typedef Real<uint32_t> real;
 
 /*
  * The base class for reals. The only real reason for making this a template
