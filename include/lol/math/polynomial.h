@@ -22,8 +22,9 @@
 #include <lol/base/features.h>
 #include <lol/base/core.h>
 
-#include <tuple>   // std::tuple
-#include <cassert> // assert()
+#include <functional> // std::function
+#include <tuple>      // std::tuple
+#include <cassert>    // assert()
 
 namespace lol
 {
@@ -54,7 +55,7 @@ struct LOL_ATTR_NODISCARD polynomial
     static polynomial<T> chebyshev(int n)
     {
         /* Use T0(x) = 1, T1(x) = x, Tn(x) = 2 x Tn-1(x) - Tn-2(x) */
-        auto coeff = [&](int i, int j) -> int64_t
+        std::function<int64_t (int, int)> coeff = [&](int i, int j) -> int64_t
         {
             if (i > j || i < 0 || ((j ^ i) & 1))
                 return (int64_t)0;
@@ -306,7 +307,7 @@ struct LOL_ATTR_NODISCARD polynomial
     /* Add two polynomials */
     polynomial<T> &operator +=(polynomial<T> const &p)
     {
-        int min_degree = lol::min(p.degree(), degree());
+        int min_degree = std::min(p.degree(), degree());
 
         for (int i = 0; i <= min_degree; ++i)
             m_coefficients[i] += p[i];
@@ -414,8 +415,8 @@ private:
     /* Enforce the non-zero leading coefficient rule. */
     void reduce_degree()
     {
-        while (m_coefficients.count() && !m_coefficients.last())
-            (void)m_coefficients.pop();
+        while (m_coefficients.size() && !m_coefficients.back())
+            m_coefficients.pop_back();
     }
 
     /* The polynomial coefficients */

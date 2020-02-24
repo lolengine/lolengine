@@ -24,6 +24,7 @@
 #include <thread>
 #include <mutex>
 #include <condition_variable>
+#include <chrono>  // std::chrono
 #include <cassert> // assert()
 
 /* XXX: workaround for a bug in Visual Studio 2012 and 2013!
@@ -231,6 +232,38 @@ private:
 
     std::mutex m_mutex;
     std::condition_variable m_empty_cond, m_full_cond;
+};
+
+class timer
+{
+public:
+    inline timer() { (void)get_seconds(true); }
+
+    inline void reset() { (void)get_seconds(true); }
+    inline float get() { return get_seconds(true); }
+    inline float poll() { return get_seconds(false); }
+
+    void wait(float seconds)
+    {
+        if (seconds > 0.0f)
+        {
+            float secs_elapsed = get_seconds(false);
+            std::this_thread::sleep_for(std::chrono::duration<float>(seconds - secs_elapsed));
+        }
+    }
+
+private:
+    std::chrono::steady_clock::time_point m_tp;
+
+    float get_seconds(bool do_reset)
+    {
+        auto tp = std::chrono::steady_clock::now(), tp0 = m_tp;
+
+        if (do_reset)
+            m_tp = tp;
+
+        return std::chrono::duration_cast<std::chrono::duration<float>>(tp - tp0).count();
+    }
 };
 
 } /* namespace lol */

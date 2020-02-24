@@ -1,20 +1,25 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
 
 //
 // The Random number generators
-// ----------------------------
+// ————————————————————————————
 //
 
+#include <lol/base/features.h>
+
+#include <cassert>
 #include <cstdlib>
 #include <stdint.h>
 
@@ -32,27 +37,29 @@ template<typename T> LOL_ATTR_NODISCARD static inline T rand(T a)
     return a ? rand<T>() % a : T(0);
 }
 
+#if 0
 template<> LOL_ATTR_NODISCARD inline half rand<half>(half a)
 {
     float f = (float)std::rand() / (float)RAND_MAX;
     return (half)(a * f);
 }
+#endif
 
 template<> LOL_ATTR_NODISCARD inline float rand<float>(float a)
 {
-    float f = (float)std::rand() / (float)RAND_MAX;
+    auto f = (float)std::rand() / (float)RAND_MAX;
     return a * f;
 }
 
 template<> LOL_ATTR_NODISCARD inline double rand<double>(double a)
 {
-    double f = (double)std::rand() / (double)RAND_MAX;
+    auto f = (double)std::rand() / (double)RAND_MAX;
     return a * f;
 }
 
-template<> LOL_ATTR_NODISCARD inline ldouble rand<ldouble>(ldouble a)
+template<> LOL_ATTR_NODISCARD inline long double rand<long double>(long double a)
 {
-    ldouble f = (ldouble)std::rand() / (ldouble)RAND_MAX;
+    auto f = (long double)std::rand() / (long double)RAND_MAX;
     return a * f;
 }
 
@@ -111,16 +118,17 @@ template<typename T> LOL_ATTR_NODISCARD static inline T rand()
         return static_cast<T>(ret & (~(uint64_t)0 >> 1));
     }
     default:
-        ASSERT(false, "rand() doesn’t support types of size %d\n",
-               (int)sizeof(T));
+        assert(false);
         return 0;
     }
 }
 
+#if 0
 template<> LOL_ATTR_NODISCARD inline half rand<half>() { return rand<half>(1.f); }
+#endif
 template<> LOL_ATTR_NODISCARD inline float rand<float>() { return rand<float>(1.f); }
 template<> LOL_ATTR_NODISCARD inline double rand<double>() { return rand<double>(1.0); }
-template<> LOL_ATTR_NODISCARD inline ldouble rand<ldouble>() { return rand<ldouble>(1.0); }
+template<> LOL_ATTR_NODISCARD inline long double rand<long double>() { return rand<long double>(1.0); }
 
 } /* namespace lol */
 
