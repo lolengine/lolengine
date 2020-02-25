@@ -1,7 +1,14 @@
+# The "core" submodule is another branch of ourselves
+[submodule "core"]
+	path = lol-core
+	url = ../../lolengine/lol.git
+	branch = core/master
+
 [submodule "external"]
 	path = external
 	url = ../../lolengine/ext-binaries.git
 	branch = master
+
 [submodule "imgui"]
 	path = src/3rdparty/imgui
 	url = ../../lolengine/ext-imgui.git
