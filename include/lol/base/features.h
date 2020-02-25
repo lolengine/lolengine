@@ -20,9 +20,9 @@
 // C++ compiler features detected through __has_cpp_attribute
 
 #if defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard)
-#   define LOL_ATTR_NODISCARD [[nodiscard]]
+#   define lol_attr_nodiscard [[nodiscard]]
 #else
-#   define LOL_ATTR_NODISCARD /* */
+#   define lol_attr_nodiscard /* */
 #endif
 
 #if defined(__has_cpp_attribute) && __has_cpp_attribute(fallthrough)
@@ -34,9 +34,9 @@
 // Define some attribute macros.
 
 #ifdef __GNUC__
-#   define LOL_ATTR_FORMAT(n, p) __attribute__((format(printf, n, p)))
+#   define lol_attr_printf_format(n, p) __attribute__((format(printf, n, p)))
 #else
-#   define LOL_ATTR_FORMAT(n, p)
+#   define lol_attr_printf_format(n, p)
 #endif
 
 #if defined(_WIN32)

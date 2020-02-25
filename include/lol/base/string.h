@@ -104,7 +104,7 @@ std::basic_string<T> toupper(std::basic_string<T> const &s)
 }
 
 // Format a string, printf-style
-template<typename T = char> LOL_ATTR_FORMAT(1, 2)
+template<typename T = char> lol_attr_printf_format(1, 2)
 std::basic_string<T> format(T const *format, ...)
 {
     va_list ap;

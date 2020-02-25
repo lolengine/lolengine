@@ -41,7 +41,7 @@ typedef Real<uint32_t> real;
  * call real::sqrt).
  */
 template<typename T>
-class LOL_ATTR_NODISCARD Real
+class lol_attr_nodiscard Real
 {
 public:
     typedef T bigit_t;
@@ -65,18 +65,18 @@ public:
         return n <= 0 ? count : (count = n);
     }
 
-    LOL_ATTR_NODISCARD bool is_zero() const { return m_mantissa.size() == 0; }
-    LOL_ATTR_NODISCARD bool is_negative() const { return m_sign; }
-    LOL_ATTR_NODISCARD bool is_nan() const { return m_nan; }
-    LOL_ATTR_NODISCARD bool is_inf() const { return m_inf; }
+    lol_attr_nodiscard bool is_zero() const { return m_mantissa.size() == 0; }
+    lol_attr_nodiscard bool is_negative() const { return m_sign; }
+    lol_attr_nodiscard bool is_nan() const { return m_nan; }
+    lol_attr_nodiscard bool is_inf() const { return m_inf; }
 
-    LOL_ATTR_NODISCARD operator float() const;
-    LOL_ATTR_NODISCARD operator double() const;
-    LOL_ATTR_NODISCARD operator long double() const;
-    LOL_ATTR_NODISCARD operator int32_t() const;
-    LOL_ATTR_NODISCARD operator uint32_t() const;
-    LOL_ATTR_NODISCARD operator int64_t() const;
-    LOL_ATTR_NODISCARD operator uint64_t() const;
+    lol_attr_nodiscard operator float() const;
+    lol_attr_nodiscard operator double() const;
+    lol_attr_nodiscard operator long double() const;
+    lol_attr_nodiscard operator int32_t() const;
+    lol_attr_nodiscard operator uint32_t() const;
+    lol_attr_nodiscard operator int64_t() const;
+    lol_attr_nodiscard operator uint64_t() const;
 
     Real<T> operator +() const;
     Real<T> operator -() const;
@@ -89,15 +89,15 @@ public:
     Real<T> const &operator *=(Real<T> const &x);
     Real<T> const &operator /=(Real<T> const &x);
 
-    LOL_ATTR_NODISCARD bool operator ==(Real<T> const &x) const;
-    LOL_ATTR_NODISCARD bool operator !=(Real<T> const &x) const;
-    LOL_ATTR_NODISCARD bool operator <(Real<T> const &x) const;
-    LOL_ATTR_NODISCARD bool operator >(Real<T> const &x) const;
-    LOL_ATTR_NODISCARD bool operator <=(Real<T> const &x) const;
-    LOL_ATTR_NODISCARD bool operator >=(Real<T> const &x) const;
+    lol_attr_nodiscard bool operator ==(Real<T> const &x) const;
+    lol_attr_nodiscard bool operator !=(Real<T> const &x) const;
+    lol_attr_nodiscard bool operator <(Real<T> const &x) const;
+    lol_attr_nodiscard bool operator >(Real<T> const &x) const;
+    lol_attr_nodiscard bool operator <=(Real<T> const &x) const;
+    lol_attr_nodiscard bool operator >=(Real<T> const &x) const;
 
-    LOL_ATTR_NODISCARD bool operator !() const;
-    LOL_ATTR_NODISCARD operator bool() const;
+    lol_attr_nodiscard bool operator !() const;
+    lol_attr_nodiscard operator bool() const;
 
     /* Comparison functions */
     template<typename U> friend Real<U> min(Real<U> const &a, Real<U> const &b);
@@ -260,13 +260,13 @@ template<> real::Real(int64_t i);
 template<> real::Real(uint64_t i);
 template<> real::Real(char const *str);
 
-template<> LOL_ATTR_NODISCARD real::operator float() const;
-template<> LOL_ATTR_NODISCARD real::operator double() const;
-template<> LOL_ATTR_NODISCARD real::operator long double() const;
-template<> LOL_ATTR_NODISCARD real::operator int32_t() const;
-template<> LOL_ATTR_NODISCARD real::operator uint32_t() const;
-template<> LOL_ATTR_NODISCARD real::operator int64_t() const;
-template<> LOL_ATTR_NODISCARD real::operator uint64_t() const;
+template<> lol_attr_nodiscard real::operator float() const;
+template<> lol_attr_nodiscard real::operator double() const;
+template<> lol_attr_nodiscard real::operator long double() const;
+template<> lol_attr_nodiscard real::operator int32_t() const;
+template<> lol_attr_nodiscard real::operator uint32_t() const;
+template<> lol_attr_nodiscard real::operator int64_t() const;
+template<> lol_attr_nodiscard real::operator uint64_t() const;
 template<> real real::operator +() const;
 template<> real real::operator -() const;
 template<> real real::operator +(real const &x) const;
@@ -277,14 +277,14 @@ template<> real const &real::operator +=(real const &x);
 template<> real const &real::operator -=(real const &x);
 template<> real const &real::operator *=(real const &x);
 template<> real const &real::operator /=(real const &x);
-template<> LOL_ATTR_NODISCARD bool real::operator ==(real const &x) const;
-template<> LOL_ATTR_NODISCARD bool real::operator !=(real const &x) const;
-template<> LOL_ATTR_NODISCARD bool real::operator <(real const &x) const;
-template<> LOL_ATTR_NODISCARD bool real::operator >(real const &x) const;
-template<> LOL_ATTR_NODISCARD bool real::operator <=(real const &x) const;
-template<> LOL_ATTR_NODISCARD bool real::operator >=(real const &x) const;
-template<> LOL_ATTR_NODISCARD bool real::operator !() const;
-template<> LOL_ATTR_NODISCARD real::operator bool() const;
+template<> lol_attr_nodiscard bool real::operator ==(real const &x) const;
+template<> lol_attr_nodiscard bool real::operator !=(real const &x) const;
+template<> lol_attr_nodiscard bool real::operator <(real const &x) const;
+template<> lol_attr_nodiscard bool real::operator >(real const &x) const;
+template<> lol_attr_nodiscard bool real::operator <=(real const &x) const;
+template<> lol_attr_nodiscard bool real::operator >=(real const &x) const;
+template<> lol_attr_nodiscard bool real::operator !() const;
+template<> lol_attr_nodiscard real::operator bool() const;
 
 template<typename U> Real<U> min(Real<U> const &a, Real<U> const &b);
 template<typename U> Real<U> max(Real<U> const &a, Real<U> const &b);
@@ -376,5 +376,5 @@ template<> std::string real::xstr() const;
 
 } /* namespace lol */
 
-#include "../../../legacy/math/real.cpp"
+#include "real.ipp"
 

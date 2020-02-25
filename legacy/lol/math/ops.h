@@ -70,14 +70,14 @@ namespace swizzle_ops
 namespace swizzle_ops
 {
 
-template<typename T, int N, int SWIZZLE1, int SWIZZLE2> LOL_ATTR_NODISCARD
+template<typename T, int N, int SWIZZLE1, int SWIZZLE2> lol_attr_nodiscard
 static inline typename std::enable_if<SWIZZLE1 != FULL_SWIZZLE || SWIZZLE2 != FULL_SWIZZLE, bool>::type
 operator ==(vec_t<T,N,SWIZZLE1> const &a, vec_t<T,N,SWIZZLE2> const &b)
 {
     return vec_t<T,N>(a) == vec_t<T,N>(b);
 }
 
-template<typename T, int N, int SWIZZLE1, int SWIZZLE2> LOL_ATTR_NODISCARD
+template<typename T, int N, int SWIZZLE1, int SWIZZLE2> lol_attr_nodiscard
 static inline typename std::enable_if<SWIZZLE1 != FULL_SWIZZLE || SWIZZLE2 != FULL_SWIZZLE, bool>::type
 operator !=(vec_t<T,N,SWIZZLE1> const &a, vec_t<T,N,SWIZZLE2> const &b)
 {
@@ -135,7 +135,7 @@ namespace linear_ops
  * Comparisons
  */
 
-template<typename V> LOL_ATTR_NODISCARD
+template<typename V> lol_attr_nodiscard
 static inline typename std::enable_if<std::is_base_of<base<typename V::element>, V>::value, bool>::type
 operator ==(V const &a, V const &b)
 {
@@ -145,7 +145,7 @@ operator ==(V const &a, V const &b)
     return true;
 }
 
-template<typename V> LOL_ATTR_NODISCARD
+template<typename V> lol_attr_nodiscard
 static inline typename std::enable_if<std::is_base_of<base<typename V::element>, V>::value, bool>::type
 operator !=(V const &a, V const &b)
 {

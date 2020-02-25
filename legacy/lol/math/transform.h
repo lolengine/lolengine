@@ -29,7 +29,7 @@ namespace lol
  */
 
 template<typename T>
-struct LOL_ATTR_NODISCARD cmplx_t : public linear_ops::base<T>
+struct lol_attr_nodiscard cmplx_t : public linear_ops::base<T>
 {
     static int const count = 2;
     typedef T scalar_element;
@@ -77,7 +77,7 @@ static_assert(sizeof(dcmplx) == 16, "sizeof(dcmplx) == 16");
  */
 
 template<typename T>
-struct LOL_ATTR_NODISCARD quat_t : public linear_ops::base<T>
+struct lol_attr_nodiscard quat_t : public linear_ops::base<T>
 {
     static int const count = 4;
     typedef T scalar_element;
@@ -231,7 +231,7 @@ struct LOL_ATTR_NODISCARD quat_t : public linear_ops::base<T>
         return normalize(v);
     }
 
-    LOL_ATTR_NODISCARD inline T angle()
+    lol_attr_nodiscard inline T angle()
     {
         vec_t<T,3> v(x, y, z);
         T n2 = sqlength(v);
@@ -256,7 +256,7 @@ static_assert(sizeof(dquat) == 32, "sizeof(dquat) == 32");
  */
 
 template<typename T>
-struct LOL_ATTR_NODISCARD sqt_t
+struct lol_attr_nodiscard sqt_t
 {
     /* Default constructor and copy constructor */
     inline constexpr sqt_t() = default;
@@ -340,7 +340,7 @@ std::ostream &operator<<(std::ostream &stream, quat_t<U> const &q)
  * Common operations on transforms
  */
 
-template<typename T> LOL_ATTR_NODISCARD
+template<typename T> lol_attr_nodiscard
 static inline T dot(cmplx_t<T> const &t1, cmplx_t<T> const &t2)
 {
     T ret(0);
@@ -349,20 +349,20 @@ static inline T dot(cmplx_t<T> const &t1, cmplx_t<T> const &t2)
     return ret;
 }
 
-template<typename T> LOL_ATTR_NODISCARD
+template<typename T> lol_attr_nodiscard
 static inline T sqlength(cmplx_t<T> const &t)
 {
     return dot(t, t);
 }
 
-template<typename T> LOL_ATTR_NODISCARD
+template<typename T> lol_attr_nodiscard
 static inline T length(cmplx_t<T> const &t)
 {
     /* FIXME: this is not very nice */
     return (T)sqrt((double)sqlength(t));
 }
 
-template<typename T> LOL_ATTR_NODISCARD
+template<typename T> lol_attr_nodiscard
 static inline T norm(cmplx_t<T> const &t)
 {
     return length(t);
@@ -377,7 +377,7 @@ static inline cmplx_t<T> normalize(cmplx_t<T> const &z)
 
 /* XXX: duplicate */
 
-template<typename T> LOL_ATTR_NODISCARD
+template<typename T> lol_attr_nodiscard
 static inline T dot(quat_t<T> const &t1, quat_t<T> const &t2)
 {
     T ret(0);
@@ -386,20 +386,20 @@ static inline T dot(quat_t<T> const &t1, quat_t<T> const &t2)
     return ret;
 }
 
-template<typename T> LOL_ATTR_NODISCARD
+template<typename T> lol_attr_nodiscard
 static inline T sqlength(quat_t<T> const &t)
 {
     return dot(t, t);
 }
 
-template<typename T> LOL_ATTR_NODISCARD
+template<typename T> lol_attr_nodiscard
 static inline T length(quat_t<T> const &t)
 {
     /* FIXME: this is not very nice */
     return (T)sqrt((double)sqlength(t));
 }
 
-template<typename T> LOL_ATTR_NODISCARD
+template<typename T> lol_attr_nodiscard
 static inline T norm(quat_t<T> const &t)
 {
     return length(t);
@@ -434,22 +434,22 @@ static inline cmplx_t<T> operator /(cmplx_t<T> a, cmplx_t<T> const &b)
     return a * inverse(b);
 }
 
-template<typename T> LOL_ATTR_NODISCARD
+template<typename T> lol_attr_nodiscard
 static inline bool operator ==(cmplx_t<T> const &a, T b)
 {
     return (a.x == b) && !a.y;
 }
 
-template<typename T> LOL_ATTR_NODISCARD
+template<typename T> lol_attr_nodiscard
 static inline bool operator !=(cmplx_t<T> const &a, T b)
 {
     return (a.x != b) || a.y;
 }
 
-template<typename T> LOL_ATTR_NODISCARD
+template<typename T> lol_attr_nodiscard
 static inline bool operator ==(T a, cmplx_t<T> const &b) { return b == a; }
 
-template<typename T> LOL_ATTR_NODISCARD
+template<typename T> lol_attr_nodiscard
 static inline bool operator !=(T a, cmplx_t<T> const &b) { return b != a; }
 
 /*

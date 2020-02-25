@@ -96,7 +96,7 @@ private:
 
 
 template<int N, typename... T>
-class LOL_ATTR_NODISCARD arraynd : protected array<T...>
+class lol_attr_nodiscard arraynd : protected array<T...>
 {
 public:
     typedef array<T...> super;
