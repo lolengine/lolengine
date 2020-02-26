@@ -94,7 +94,10 @@ template<> inline real::Real(float f) { new(this) real((double)f); }
 
 template<> inline real::Real(int64_t i)
 {
-    new(this) real((uint64_t)std::abs(i));
+    // Use this instead of std::abs() because of undefined behaviour
+    // with INT64_MIN.
+    uint64_t abs_i = i < 0 ? -(uint64_t)i : (uint64_t)i;
+    new(this) real(abs_i);
     m_sign = i < 0;
 }
 
