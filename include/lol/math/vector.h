@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -14,15 +14,12 @@
 
 //
 // The vector classes
-// ------------------
+// ——————————————————
 //
 
-#include <lol/base/assert.h>
-#include <lol/math/functions.h>
-#include <lol/math/half.h>
-#include <lol/math/real.h>
-#include <lol/math/ops.h>
+#include <lol/math/private/ops.h>
 
+#include <cassert>
 #include <ostream>
 #include <type_traits>
 
@@ -112,7 +109,6 @@ private:
         return *this; \
     } \
     \
-    void printf() const; \
     std::string tostring() const;
 
 /* The generic “vec_t” type, which is a fixed-size vector with no
@@ -166,8 +162,8 @@ struct lol_attr_nodiscard vec_t<T, N, FULL_SWIZZLE>
     /* Factory for base axis vectors, e.g. [1,0,0,…,0] */
     static inline vec_t<T, N> axis(int i)
     {
-        ASSERT(i >= 0);
-        ASSERT(i < N);
+        assert(i >= 0);
+        assert(i < N);
         vec_t<T, N> ret(T(0));
         ret[i] = T(1);
         return ret;
@@ -250,8 +246,8 @@ struct lol_attr_nodiscard vec_t<T,2>
     /* Factory for base axis vectors, e.g. [1,0,0,…,0] */
     static inline vec_t<T,2> axis(int i)
     {
-        ASSERT(i >= 0);
-        ASSERT(i < 2);
+        assert(i >= 0);
+        assert(i < 2);
         return vec_t<T,2>(T(i == 0), T(i == 1));
     }
 
@@ -365,8 +361,8 @@ struct lol_attr_nodiscard vec_t<T,3>
     /* Factory for base axis vectors, e.g. [1,0,0,…,0] */
     static inline vec_t<T,3> axis(int i)
     {
-        ASSERT(i >= 0);
-        ASSERT(i < 3);
+        assert(i >= 0);
+        assert(i < 3);
         return vec_t<T,3>(T(i == 0), T(i == 1), T(i == 2));
     }
 
@@ -614,8 +610,8 @@ struct lol_attr_nodiscard vec_t<T,4>
     /* Factory for base axis vectors, e.g. [1,0,0,…,0] */
     static inline vec_t<T,4> axis(int i)
     {
-        ASSERT(i >= 0);
-        ASSERT(i < 4);
+        assert(i >= 0);
+        assert(i < 4);
         return vec_t<T,4>(T(i == 0), T(i == 1), T(i == 2), T(i == 3));
     }
 
@@ -1346,4 +1342,6 @@ template<typename T>
 vec_t<T,4> const vec_t<T,4>::axis_w = vec_t<T,4>(T(0), T(0), T(0), T(1));
 
 } /* namespace lol */
+
+#include "private/vector.ipp"
 

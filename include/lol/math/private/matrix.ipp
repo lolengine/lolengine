@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -10,52 +10,93 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
-#include <lol/engine-internal.h>
+#pragma once
+
+#include <cassert>
+#include <cmath>
 
 namespace lol
 {
 
-template<> mat3 mat3::scale(float x, float y, float z)
+template<>
+inline std::string mat2::tostring() const
 {
-    mat3 ret(1.0f);
+    mat2 const &p = *this;
 
+    return format("[ %6.6f %6.6f\n", p[0][0], p[1][0]) +
+           format("  %6.6f %6.6f ]\n", p[0][1], p[1][1]);
+}
+
+template<>
+inline std::string mat3::tostring() const
+{
+    mat3 const &p = *this;
+
+    return format("[ %6.6f %6.6f %6.6f\n", p[0][0], p[1][0], p[2][0]) +
+           format("  %6.6f %6.6f %6.6f\n", p[0][1], p[1][1], p[2][1]) +
+           format("  %6.6f %6.6f %6.6f ]\n", p[0][2], p[1][2], p[2][2]);
+}
+
+template<>
+inline std::string mat4::tostring() const
+{
+    mat4 const &p = *this;
+
+    return format("[ %6.6f %6.6f %6.6f %6.6f\n",
+                  p[0][0], p[1][0], p[2][0], p[3][0]) +
+           format("  %6.6f %6.6f %6.6f %6.6f\n",
+                  p[0][1], p[1][1], p[2][1], p[3][1]) +
+           format("  %6.6f %6.6f %6.6f %6.6f\n",
+                  p[0][2], p[1][2], p[2][2], p[3][2]) +
+           format("  %6.6f %6.6f %6.6f %6.6f ]\n",
+                  p[0][3], p[1][3], p[2][3], p[3][3]);
+}
+
+template<typename T>
+mat_t<T,3,3> mat_t<T,3,3>::scale(T x, T y, T z)
+{
+    mat_t<T,3,3> ret(T(1));
     ret[0][0] = x;
     ret[1][1] = y;
     ret[2][2] = z;
-
     return ret;
 }
 
-template<> mat3 mat3::scale(float x)
+template<typename T>
+mat_t<T,3,3> mat_t<T,3,3>::scale(T x)
 {
     return scale(x, x, x);
 }
 
-template<> mat3 mat3::scale(vec3 v)
+template<typename T>
+mat_t<T,3,3> mat_t<T,3,3>::scale(vec_t<T,3> v)
 {
     return scale(v.x, v.y, v.z);
 }
 
-template<> mat4 mat4::translate(float x, float y, float z)
+template<typename T>
+mat_t<T,4,4> mat_t<T,4,4>::translate(T x, T y, T z)
 {
-    mat4 ret(1.0f);
+    mat_t<T,4,4> ret(T(1));
     ret[3][0] = x;
     ret[3][1] = y;
     ret[3][2] = z;
     return ret;
 }
 
-template<> mat4 mat4::translate(vec3 v)
+template<typename T>
+mat_t<T,4,4> mat_t<T,4,4>::translate(vec_t<T,3> v)
 {
     return translate(v.x, v.y, v.z);
 }
 
-template<> mat2 mat2::rotate(float radians)
+template<typename T>
+mat_t<T,2,2> mat_t<T,2,2>::rotate(T radians)
 {
-    float st = sin(radians);
-    float ct = cos(radians);
+    T st = sin(radians);
+    T ct = cos(radians);
 
-    mat2 ret;
+    mat_t<T,2,2> ret;
 
     ret[0][0] = ct;
     ret[0][1] = st;
@@ -66,22 +107,23 @@ template<> mat2 mat2::rotate(float radians)
     return ret;
 }
 
-template<> mat3 mat3::rotate(float radians, float x, float y, float z)
+template<typename T>
+mat_t<T,3,3> mat_t<T,3,3>::rotate(T radians, T x, T y, T z)
 {
-    float st = sin(radians);
-    float ct = cos(radians);
+    T st = sin(radians);
+    T ct = cos(radians);
 
-    float len = std::sqrt(x * x + y * y + z * z);
-    float invlen = len ? 1.0f / len : 0.0f;
+    T len = std::sqrt(x * x + y * y + z * z);
+    T invlen = len ? T(1) / len : T(0);
     x *= invlen;
     y *= invlen;
     z *= invlen;
 
-    float mtx = (1.0f - ct) * x;
-    float mty = (1.0f - ct) * y;
-    float mtz = (1.0f - ct) * z;
+    T mtx = (T(1) - ct) * x;
+    T mty = (T(1) - ct) * y;
+    T mtz = (T(1) - ct) * z;
 
-    mat3 ret;
+    mat_t<T,3,3> ret;
 
     ret[0][0] = x * mtx + ct;
     ret[0][1] = x * mty + st * z;
@@ -98,44 +140,50 @@ template<> mat3 mat3::rotate(float radians, float x, float y, float z)
     return ret;
 }
 
-template<> mat3 mat3::rotate(float radians, vec3 v)
+template<typename T>
+mat_t<T,3,3> mat_t<T,3,3>::rotate(T radians, vec_t<T,3> v)
 {
     return rotate(radians, v.x, v.y, v.z);
 }
 
-template<> mat3::mat_t(quat const &q)
+template<typename T>
+mat_t<T,3,3>::mat_t(quat_t<T> const &q)
 {
-    float n = norm(q);
+    T n = norm(q);
 
     if (!n)
     {
         for (int j = 0; j < 3; j++)
             for (int i = 0; i < 3; i++)
-                (*this)[i][j] = (i == j) ? 1.f : 0.f;
+                (*this)[i][j] = (i == j) ? T(1) : T(0);
         return;
     }
 
-    float s = 2.0f / n;
+    T s = T(2) / n;
 
-    (*this)[0][0] = 1.0f - s * (q.y * q.y + q.z * q.z);
+    (*this)[0][0] = T(1) - s * (q.y * q.y + q.z * q.z);
     (*this)[0][1] = s * (q.x * q.y + q.z * q.w);
     (*this)[0][2] = s * (q.x * q.z - q.y * q.w);
 
     (*this)[1][0] = s * (q.x * q.y - q.z * q.w);
-    (*this)[1][1] = 1.0f - s * (q.z * q.z + q.x * q.x);
+    (*this)[1][1] = T(1) - s * (q.z * q.z + q.x * q.x);
     (*this)[1][2] = s * (q.y * q.z + q.x * q.w);
 
     (*this)[2][0] = s * (q.x * q.z + q.y * q.w);
     (*this)[2][1] = s * (q.y * q.z - q.x * q.w);
-    (*this)[2][2] = 1.0f - s * (q.x * q.x + q.y * q.y);
+    (*this)[2][2] = T(1) - s * (q.x * q.x + q.y * q.y);
 }
 
-template<> mat4::mat_t(quat const &q)
+template<typename T>
+mat_t<T,4,4>::mat_t(quat_t<T> const &q)
 {
-    *this = mat4(mat3(q), 1.f);
+    *this = mat_t<T,4,4>(mat_t<T,3,3>(q), T(1));
 }
 
-template<> mat4 mat4::lookat(vec3 eye, vec3 center, vec3 up)
+// These are only specialised for float type, but could be extended
+// to anything else. I’m just not sure it’s worth it.
+template<>
+inline mat4 mat4::lookat(vec3 eye, vec3 center, vec3 up)
 {
     vec3 v3 = normalize(eye - center);
     vec3 v1 = normalize(cross(up, v3));
@@ -147,8 +195,9 @@ template<> mat4 mat4::lookat(vec3 eye, vec3 center, vec3 up)
                 vec4(-dot(eye, v1), -dot(eye, v2), -dot(eye, v3), 1.f));
 }
 
-template<> mat4 mat4::ortho(float left, float right, float bottom,
-                            float top, float near, float far)
+template<>
+inline mat4 mat4::ortho(float left, float right, float bottom,
+                        float top, float near, float far)
 {
     float invrl = (right != left) ? 1.0f / (right - left) : 0.0f;
     float invtb = (top != bottom) ? 1.0f / (top - bottom) : 0.0f;
@@ -165,15 +214,17 @@ template<> mat4 mat4::ortho(float left, float right, float bottom,
     return ret;
 }
 
-template<> mat4 mat4::ortho(float width, float height,
-                            float near, float far)
+template<>
+inline mat4 mat4::ortho(float width, float height,
+                        float near, float far)
 {
     return mat4::ortho(-0.5f * width, 0.5f * width,
                        -0.5f * height, 0.5f * height, near, far);
 }
 
-template<> mat4 mat4::frustum(float left, float right, float bottom,
-                              float top, float near, float far)
+template<>
+inline mat4 mat4::frustum(float left, float right, float bottom,
+                          float top, float near, float far)
 {
     float invrl = (right != left) ? 1.0f / (right - left) : 0.0f;
     float invtb = (top != bottom) ? 1.0f / (top - bottom) : 0.0f;
@@ -194,8 +245,9 @@ template<> mat4 mat4::frustum(float left, float right, float bottom,
  * Return a standard perspective matrix
  */
 
-template<> mat4 mat4::perspective(float fov_y, float width,
-                                  float height, float near, float far)
+template<>
+inline mat4 mat4::perspective(float fov_y, float width,
+                              float height, float near, float far)
 {
     float t2 = lol::tan(fov_y * 0.5f);
     float t1 = t2 * width / height;
@@ -208,12 +260,13 @@ template<> mat4 mat4::perspective(float fov_y, float width,
  * the near plane
  */
 
-template<> mat4 mat4::shifted_perspective(float fov_y, float screen_size,
-                                          float screen_ratio_yx,
-                                          float near, float far)
+template<>
+inline mat4 mat4::shifted_perspective(float fov_y, float screen_size,
+                                      float screen_ratio_yx,
+                                      float near, float far)
 {
     float tan_y = tanf(fov_y * .5f);
-    ASSERT(tan_y > 0.000001f);
+    assert(tan_y > 0.000001f);
     float dist_scr = (screen_size * screen_ratio_yx * .5f) / tan_y;
 
     return mat4::perspective(fov_y, screen_size, screen_size * screen_ratio_yx,

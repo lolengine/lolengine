@@ -376,5 +376,5 @@ template<> std::string real::xstr() const;
 
 } /* namespace lol */
 
-#include "real.ipp"
+#include "private/real.ipp"
 

@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -14,13 +14,13 @@
 
 //
 // The matrix classes
-// ------------------
+// ——————————————————
 //
 
 #include <ostream>
 
+#include <lol/math/private/ops.h>
 #include <lol/math/vector.h>
-#include <lol/math/transform.h>
 
 #if _WIN32
 #   pragma push_macro("near")
@@ -28,6 +28,8 @@
 #   undef near
 #   undef far
 #endif
+
+#define have_lol_matrix_h
 
 namespace lol
 {
@@ -109,7 +111,6 @@ struct lol_attr_nodiscard mat_t<T, 2, 2>
         return rotate(radians) * m;
     }
 
-    void printf() const;
     std::string tostring() const;
 
     static const mat_t<T,2,2> identity;
@@ -158,7 +159,7 @@ struct lol_attr_nodiscard mat_t<T, 3, 3>
     explicit inline mat_t(mat_t<U,3,3> const &m)
       : m_data{ (element)m[0], (element)m[1], (element)m[2] } {}
 
-    explicit mat_t(quat_t<T> const &q);
+    explicit mat_t(class quat_t<T> const &q);
 
     inline vec_t<T,3>& operator[](size_t n) { return m_data[n]; }
     inline vec_t<T,3> const& operator[](size_t n) const { return m_data[n]; }
@@ -201,7 +202,6 @@ struct lol_attr_nodiscard mat_t<T, 3, 3>
         return rotate(radians, v) * m;
     }
 
-    void printf() const;
     std::string tostring() const;
 
     static const mat_t<T,3,3> identity;
@@ -256,7 +256,7 @@ struct lol_attr_nodiscard mat_t<T, 4, 4>
       : m_data{ (element)m[0], (element)m[1],
                 (element)m[2], (element)m[3] } {}
 
-    explicit mat_t(quat_t<T> const &q);
+    explicit mat_t(class quat_t<T> const &q);
 
     inline vec_t<T,4>& operator[](size_t n) { return m_data[n]; }
     inline vec_t<T,4> const& operator[](size_t n) const { return m_data[n]; }
@@ -336,7 +336,6 @@ struct lol_attr_nodiscard mat_t<T, 4, 4>
     static mat_t<T,4,4> perspective(T fov_y, T width, T height, T near, T far);
     static mat_t<T,4,4> shifted_perspective(T fov_y, T screen_size, T screen_ratio_yx, T near, T far);
 
-    void printf() const;
     std::string tostring() const;
 
     static const mat_t<T,4,4> identity;

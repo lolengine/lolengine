@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -10,12 +10,26 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
-#include <lol/engine-internal.h>
+#pragma once
 
 namespace lol
 {
 
-template<> quat quat::rotate(float radians, vec3 const &v)
+template<>
+inline std::string cmplx::tostring() const
+{
+    return format("[ %6.6f %6.6f ]", x, y);
+}
+
+template<>
+inline std::string quat::tostring() const
+{
+    return format("[ %6.6f %6.6f %6.6f %6.6f ]", w, x, y, z);
+
+}
+
+template<>
+inline quat quat::rotate(float radians, vec3 const &v)
 {
     float half_angle = radians * 0.5f;
 
@@ -24,12 +38,14 @@ template<> quat quat::rotate(float radians, vec3 const &v)
     return quat(cos(half_angle), tmp.x, tmp.y, tmp.z);
 }
 
-template<> quat quat::rotate(float radians, float x, float y, float z)
+template<>
+inline quat quat::rotate(float radians, float x, float y, float z)
 {
     return quat::rotate(radians, vec3(x, y, z));
 }
 
-template<> quat quat::rotate(vec3 const &src, vec3 const &dst)
+template<>
+inline quat quat::rotate(vec3 const &src, vec3 const &dst)
 {
     /* Algorithm directly taken from Sam Hocevar's article "Quaternion from
      * two vectors: the final version".
@@ -56,7 +72,8 @@ template<> quat quat::rotate(vec3 const &src, vec3 const &dst)
     return normalize(quat(real_part, w.x, w.y, w.z));
 }
 
-template<> quat slerp(quat const &qa, quat const &qb, float f)
+template<>
+inline quat slerp(quat const &qa, quat const &qb, float f)
 {
     float const magnitude = lol::sqrt(sqlength(qa) * sqlength(qb));
     float const product = lol::dot(qa, qb) / magnitude;
@@ -199,43 +216,43 @@ static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
 
 #define DEFINE_GENERIC_EULER_CONVERSIONS_INNER(a1, a2, a3, name) \
     /* Create quaternions from Euler angles */ \
-    template<> quat quat::fromeuler_##name(vec3 const &v) \
+    template<> inline quat quat::fromeuler_##name(vec3 const &v) \
     { \
         int x = 0, y = 1, z = 2; UNUSED(x, y, z); \
         return quat_fromeuler_generic(v, a1, a2, a3); \
     } \
     \
-    template<> quat quat::fromeuler_##name(float phi, float theta, float psi) \
+    template<> inline quat quat::fromeuler_##name(float phi, float theta, float psi) \
     { \
         return quat::fromeuler_##name(vec3(phi, theta, psi)); \
     } \
     \
     /* Create 3×3 matrices from Euler angles */ \
-    template<> mat3 mat3::fromeuler_##name(vec3 const &v) \
+    template<> inline mat3 mat3::fromeuler_##name(vec3 const &v) \
     { \
         int x = 0, y = 1, z = 2; UNUSED(x, y, z); \
         return mat3_fromeuler_generic(v, a1, a2, a3); \
     } \
     \
-    template<> mat3 mat3::fromeuler_##name(float phi, float theta, float psi) \
+    template<> inline mat3 mat3::fromeuler_##name(float phi, float theta, float psi) \
     { \
         return mat3::fromeuler_##name(vec3(phi, theta, psi)); \
     } \
     \
     /* Create 4×4 matrices from Euler angles */ \
-    template<> mat4 mat4::fromeuler_##name(vec3 const &v) \
+    template<> inline mat4 mat4::fromeuler_##name(vec3 const &v) \
     { \
         int x = 0, y = 1, z = 2; UNUSED(x, y, z); \
         return mat4(mat3_fromeuler_generic(v, a1, a2, a3), 1.f); \
     } \
     \
-    template<> mat4 mat4::fromeuler_##name(float phi, float theta, float psi) \
+    template<> inline mat4 mat4::fromeuler_##name(float phi, float theta, float psi) \
     { \
         return mat4::fromeuler_##name(vec3(phi, theta, psi)); \
     } \
     \
     /* Retrieve Euler angles from a quaternion */ \
-    template<> vec3 vec3::toeuler_##name(quat const &q) \
+    template<> inline vec3 vec3::toeuler_##name(quat const &q) \
     { \
         int x = 0, y = 1, z = 2; UNUSED(x, y, z); \
         return quat_toeuler_generic(q, a1, a2, a3); \

@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -14,12 +14,15 @@
 
 //
 // The complex, quaternion and dual quaternion classes
-// ---------------------------------------------------
+// ———————————————————————————————————————————————————
 //
 
+#include <lol/math/private/ops.h>
 #include <lol/math/vector.h>
 
 #include <ostream>
+
+#include "private/matrix.h"
 
 namespace lol
 {
@@ -496,4 +499,7 @@ static inline sqt_t<T> operator /(sqt_t<T> const &x, sqt_t<T> const &y)
 }
 
 } /* namespace lol */
+
+#include "private/matrix.ipp"
+#include "private/transform.ipp"
 
