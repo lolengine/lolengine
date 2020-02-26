@@ -12,7 +12,8 @@
 
 #pragma once
 
-#include <lol/base/features.h>
+#include <lol/../../legacy/features.h>
+
 #include <lol/base/types.h>
 #include <lol/base/log.h>
 #include <lol/base/assert.h>

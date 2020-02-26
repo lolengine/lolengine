@@ -22,16 +22,16 @@ lolunit_declare_fixture(quaternion_test)
     void setup()
     {
         /* Generate identity quaternions */
-        m_vectorpairs.push(vec3::axis_x, vec3::axis_x);
-        m_vectorpairs.push(2.f * vec3::axis_x, 3.f * vec3::axis_x);
+        push_vector_pair(vec3::axis_x, vec3::axis_x);
+        push_vector_pair(2.f * vec3::axis_x, 3.f * vec3::axis_x);
 
         /* Generate 90-degree rotations */
-        m_vectorpairs.push(vec3::axis_x, vec3::axis_y);
-        m_vectorpairs.push(2.f * vec3::axis_x, 3.f * vec3::axis_y);
+        push_vector_pair(vec3::axis_x, vec3::axis_y);
+        push_vector_pair(2.f * vec3::axis_x, 3.f * vec3::axis_y);
 
         /* Generate 180-degree rotations */
-        m_vectorpairs.push(vec3::axis_x, -vec3::axis_x);
-        m_vectorpairs.push(2.f * vec3::axis_x, -3.f * vec3::axis_x);
+        push_vector_pair(vec3::axis_x, -vec3::axis_x);
+        push_vector_pair(2.f * vec3::axis_x, -3.f * vec3::axis_x);
 
         /* Fill array with random test values */
         for (int i = 0; i < 10000; ++i)
@@ -40,7 +40,7 @@ lolunit_declare_fixture(quaternion_test)
                     * vec3(rand(-1.f, 1.f), rand(-1.f, 1.f), rand(-1.f, 1.f));
             vec3 v2 = lol::pow(10.f, rand(-5.f, 5.f))
                     * vec3(rand(-1.f, 1.f), rand(-1.f, 1.f), rand(-1.f, 1.f));
-            m_vectorpairs.push(v1, v2);
+            push_vector_pair(v1, v2);
         }
     }
 
@@ -203,41 +203,44 @@ lolunit_declare_fixture(quaternion_test)
     {
         for (auto pair : m_vectorpairs)
         {
-            vec3 a = pair.m1;
-            vec3 b = pair.m2;
-            vec3 da = normalize(a);
-            vec3 db = normalize(b);
+            vec3 a0 = std::get<0>(pair);
+            vec3 b0 = std::get<1>(pair);
+            vec3 a = normalize(a0);
+            vec3 b = normalize(b0);
 
-            quat q = quat::rotate(a, b);
+            quat q = quat::rotate(a0, b0);
+
+            auto ctx = a0.tostring() + " " + b0.tostring();
+            lolunit_set_context(ctx);
 
             /* Check that q is a unit quaternion */
             lolunit_assert_doubles_equal(1.0, (double)norm(q), 1e-5);
 
-            /* Check that q transforms da into db */
-            vec3 c = q.transform(da);
+            /* Check that q transforms a into b */
+            vec3 c = q.transform(a);
 
-            lolunit_assert_doubles_equal(c.x, db.x, 1e-5);
-            lolunit_assert_doubles_equal(c.y, db.y, 1e-5);
-            lolunit_assert_doubles_equal(c.z, db.z, 1e-5);
+            lolunit_assert_doubles_equal(c.x, b.x, 2e-5);
+            lolunit_assert_doubles_equal(c.y, b.y, 2e-5);
+            lolunit_assert_doubles_equal(c.z, b.z, 2e-5);
 
-            /* Check that ~q transforms db into da */
-            vec3 d = (~q).transform(db);
+            /* Check that ~q transforms b into a */
+            vec3 d = (~q).transform(b);
 
-            lolunit_assert_doubles_equal(d.x, da.x, 1e-5);
-            lolunit_assert_doubles_equal(d.y, da.y, 1e-5);
-            lolunit_assert_doubles_equal(d.z, da.z, 1e-5);
+            lolunit_assert_doubles_equal(d.x, a.x, 2e-5);
+            lolunit_assert_doubles_equal(d.y, a.y, 2e-5);
+            lolunit_assert_doubles_equal(d.z, a.z, 2e-5);
 
-            if (distance(da, db) > 1e-6f)
+            if (distance(a, b) > 1e-6f)
             {
-                /* If da and db differ, check that the rotation axis is normal to both
+                /* If a and b differ, check that the rotation axis is normal to both
                  * vectors, which is only true if the rotation uses the shortest path. */
                 vec3 axis = q.axis();
-                lolunit_assert_doubles_equal(0.0, (double)dot(axis, da), 1e-5);
-                lolunit_assert_doubles_equal(0.0, (double)dot(axis, db), 1e-5);
+                lolunit_assert_doubles_equal(0.0, (double)dot(axis, a), 1e-5);
+                lolunit_assert_doubles_equal(0.0, (double)dot(axis, b), 1e-5);
             }
             else
             {
-                /* If da and db are roughly the same, check that the rotation angle
+                /* If a and b are roughly the same, check that the rotation angle
                  * is zero. */
                 lolunit_assert_doubles_equal(0.0, (double)q.angle(), 1e-5);
             }
@@ -533,7 +536,12 @@ lolunit_declare_fixture(quaternion_test)
     }
 
 private:
-    array<vec3, vec3> m_vectorpairs;
+    void push_vector_pair(vec3 p, vec3 q)
+    {
+        m_vectorpairs.push_back(std::make_tuple(p, q));
+    }
+
+    std::vector<std::tuple<vec3, vec3>> m_vectorpairs;
 };
 
 } /* namespace lol */

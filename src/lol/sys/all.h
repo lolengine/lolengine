@@ -12,9 +12,6 @@
 
 #pragma once
 
-#include <lol/sys/thread.h>
-#include <lol/sys/timer.h> /* requires thread.h */
-#include <lol/sys/getopt.h>
 #include <lol/sys/init.h>
 #include <lol/sys/file.h>
 

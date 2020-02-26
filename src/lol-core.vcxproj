@@ -178,7 +178,6 @@
     <ClCompile Include="math\geometry.cpp" />
     <ClCompile Include="math\half.cpp" />
     <ClCompile Include="math\matrix.cpp" />
-    <ClCompile Include="math\real.cpp" />
     <ClCompile Include="math\transform.cpp" />
     <ClCompile Include="math\vector.cpp" />
     <ClCompile Include="mesh\mesh.cpp" />
@@ -202,7 +201,6 @@
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="sprite.cpp" />
     <ClCompile Include="sys\file.cpp" />
-    <ClCompile Include="sys\getopt.cpp" />
     <ClCompile Include="sys\hacks.cpp" />
     <ClCompile Include="sys\init.cpp" />
     <ClCompile Include="text.cpp" />
@@ -256,10 +254,9 @@
     <ClInclude Include="lol\base\array.h" />
     <ClInclude Include="lol\base\assert.h" />
     <ClInclude Include="lol\base\enum.h" />
-    <ClInclude Include="lol\base\features.h" />
+    <ClInclude Include="..\legacy\features.h" />
     <ClInclude Include="lol\base\log.h" />
     <ClInclude Include="lol\base\map.h" />
-    <ClInclude Include="lol\base\string.h" />
     <ClInclude Include="lol\base\types.h" />
     <ClInclude Include="lol\base\tuple.h" />
     <ClInclude Include="lol\debug\all.h" />
@@ -299,9 +296,6 @@
     <ClInclude Include="lol\math\noise\perlin.h" />
     <ClInclude Include="lol\math\noise\simplex.h" />
     <ClInclude Include="lol\math\ops.h" />
-    <ClInclude Include="lol\math\polynomial.h" />
-    <ClInclude Include="lol\math\rand.h" />
-    <ClInclude Include="lol\math\real.h" />
     <ClInclude Include="lol\math\transform.h" />
     <ClInclude Include="lol\math\vector.h" />
     <ClInclude Include="lol\net\all.h" />
@@ -309,10 +303,7 @@
     <ClInclude Include="lol\public.h" />
     <ClInclude Include="lol\sys\all.h" />
     <ClInclude Include="lol\sys\file.h" />
-    <ClInclude Include="lol\sys\getopt.h" />
     <ClInclude Include="lol\sys\init.h" />
-    <ClInclude Include="lol\sys\thread.h" />
-    <ClInclude Include="lol\sys\timer.h" />
     <ClInclude Include="mesh\mesh.h" />
     <ClInclude Include="mesh\primitivemesh.h" />
     <ClInclude Include="messageservice.h" />

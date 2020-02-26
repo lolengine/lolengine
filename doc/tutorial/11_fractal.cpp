@@ -99,7 +99,7 @@ public:
         m_aabb.aa = m_position;
         m_aabb.bb = vec3((vec2)m_window_size, 0);
 
-        if (has_threads())
+        if (thread::has_threads())
         {
             // Spawn worker threads and wait for their readiness
             for (int i = 0; i < MAX_THREADS; i++)
@@ -111,7 +111,7 @@ public:
 
     ~Fractal()
     {
-        if (has_threads())
+        if (thread::has_threads())
         {
             // Signal worker threads for completion and wait for them to quit
             for (int i = 0; i < MAX_THREADS; i++)
@@ -291,7 +291,7 @@ public:
 
             for (int i = 0; i < m_size.y; i += MAX_LINES * 2)
             {
-                if (has_threads())
+                if (thread::has_threads())
                     m_jobqueue.push(i);
                 else
                     DoWork(i);
@@ -473,7 +473,7 @@ public:
 
         if (m_dirty[m_frame])
         {
-            if (has_threads())
+            if (thread::has_threads())
             {
                 for (int i = 0; i < m_size.y; i += MAX_LINES * 2)
                     m_donequeue.pop();

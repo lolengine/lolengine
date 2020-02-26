@@ -210,9 +210,6 @@
     <ClCompile Include="math\matrix.cpp">
       <Filter>math</Filter>
     </ClCompile>
-    <ClCompile Include="math\real.cpp">
-      <Filter>math</Filter>
-    </ClCompile>
     <ClCompile Include="math\transform.cpp">
       <Filter>math</Filter>
     </ClCompile>
@@ -234,9 +231,6 @@
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="sprite.cpp" />
     <ClCompile Include="sys\file.cpp">
-      <Filter>sys</Filter>
-    </ClCompile>
-    <ClCompile Include="sys\getopt.cpp">
       <Filter>sys</Filter>
     </ClCompile>
     <ClCompile Include="sys\hacks.cpp">
@@ -356,16 +350,13 @@
     <ClInclude Include="lol\base\enum.h">
       <Filter>lol\base</Filter>
     </ClInclude>
-    <ClInclude Include="lol\base\features.h">
+    <ClInclude Include="..\legacy\features.h">
       <Filter>lol\base</Filter>
     </ClInclude>
     <ClInclude Include="lol\base\log.h">
       <Filter>lol\base</Filter>
     </ClInclude>
     <ClInclude Include="lol\base\map.h">
-      <Filter>lol\base</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\base\string.h">
       <Filter>lol\base</Filter>
     </ClInclude>
     <ClInclude Include="lol\base\types.h">
@@ -482,15 +473,6 @@
     <ClInclude Include="lol\math\ops.h">
       <Filter>lol\math</Filter>
     </ClInclude>
-    <ClInclude Include="lol\math\polynomial.h">
-      <Filter>lol\math</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\math\rand.h">
-      <Filter>lol\math</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\math\real.h">
-      <Filter>lol\math</Filter>
-    </ClInclude>
     <ClInclude Include="lol\math\transform.h">
       <Filter>lol\math</Filter>
     </ClInclude>
@@ -512,16 +494,7 @@
     <ClInclude Include="lol\sys\file.h">
       <Filter>lol\sys</Filter>
     </ClInclude>
-    <ClInclude Include="lol\sys\getopt.h">
-      <Filter>lol\sys</Filter>
-    </ClInclude>
     <ClInclude Include="lol\sys\init.h">
-      <Filter>lol\sys</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\sys\thread.h">
-      <Filter>lol\sys</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\sys\timer.h">
       <Filter>lol\sys</Filter>
     </ClInclude>
     <ClInclude Include="mesh\mesh.h">

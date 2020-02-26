@@ -2,13 +2,15 @@
 [submodule "core"]
 	path = lol-core
 	url = ../../lolengine/lol.git
-	branch = core/master
+	branch = core
 
+# A very large repository with Windows binaries
 [submodule "external"]
 	path = external
 	url = ../../lolengine/ext-binaries.git
 	branch = master
 
+# Some libraries we embed in the engine
 [submodule "imgui"]
 	path = src/3rdparty/imgui
 	url = ../../lolengine/ext-imgui.git
@@ -21,14 +23,6 @@
 	path = src/3rdparty/lua
 	url = ../../lolengine/ext-lua.git
 	branch = lol
-[submodule "pegtl"]
-	path = src/3rdparty/pegtl
-	url = ../../lolengine/ext-pegtl.git
-	branch = lol
-[submodule "mingw-std-threads"]
-	path = src/3rdparty/mingw-std-threads
-	url = ../../lolengine/ext-mingw-std-threads.git
-	branch = master
 [submodule "cpp-httplib"]
 	path = src/3rdparty/cpp-httplib
 	url = ../../lolengine/ext-cpp-httplib.git

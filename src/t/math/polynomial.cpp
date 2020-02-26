@@ -196,12 +196,12 @@ lolunit_declare_fixture(polynomial_test)
          * r(x) = 3 + x + x²
          * s(x) = 5 */
         auto r = p / q;
-        lolunit_assert_equal(r.m1.degree(), 2);
-        lolunit_assert_doubles_equal(r.m1[0], 3.f, 1e-5f);
-        lolunit_assert_doubles_equal(r.m1[1], 1.f, 1e-5f);
-        lolunit_assert_doubles_equal(r.m1[2], 1.f, 1e-5f);
-        lolunit_assert_equal(r.m2.degree(), 0);
-        lolunit_assert_doubles_equal(r.m2[0], 5.f, 1e-5f);
+        lolunit_assert_equal(std::get<0>(r).degree(), 2);
+        lolunit_assert_doubles_equal(std::get<0>(r)[0], 3.f, 1e-5f);
+        lolunit_assert_doubles_equal(std::get<0>(r)[1], 1.f, 1e-5f);
+        lolunit_assert_doubles_equal(std::get<0>(r)[2], 1.f, 1e-5f);
+        lolunit_assert_equal(std::get<1>(r).degree(), 0);
+        lolunit_assert_doubles_equal(std::get<1>(r)[0], 5.f, 1e-5f);
     }
 
     lolunit_declare_test(composition_degree_2_2)
@@ -241,7 +241,7 @@ lolunit_declare_fixture(polynomial_test)
         polynomial<float> p { 42.f };
         auto roots = p.roots();
 
-        lolunit_assert_equal(roots.count(), 0);
+        lolunit_assert_equal(roots.size(), 0);
     }
 
     lolunit_declare_test(degree_1_root)
@@ -250,7 +250,7 @@ lolunit_declare_fixture(polynomial_test)
         polynomial<float> p { -6.f, 2.f };
         auto roots = p.roots();
 
-        lolunit_assert_equal(roots.count(), 1);
+        lolunit_assert_equal(roots.size(), 1);
         lolunit_assert_equal(roots[0], 3.f);
     }
 
@@ -260,14 +260,14 @@ lolunit_declare_fixture(polynomial_test)
         polynomial<float> p { 81.f, -18.f, 1.f };
         auto roots1 = p.roots();
 
-        lolunit_assert_equal(roots1.count(), 1);
+        lolunit_assert_equal(roots1.size(), 1);
         lolunit_assert_equal(roots1[0], 9.f);
 
         /* p(x) = 42 - 20x + 2x² */
         polynomial<float> q { 42.f, -20.f, 2.f };
         auto roots2 = q.roots();
 
-        lolunit_assert_equal(roots2.count(), 2);
+        lolunit_assert_equal(roots2.size(), 2);
         lolunit_assert_equal(roots2[0], 3.f);
         lolunit_assert_equal(roots2[1], 7.f);
     }
@@ -277,7 +277,7 @@ lolunit_declare_fixture(polynomial_test)
         polynomial<float> p { 1.f, 3.f, 3.f, 1.f };
         auto roots1 = p.roots();
 
-        lolunit_assert_equal(roots1.count(), 1);
+        lolunit_assert_equal(roots1.size(), 1);
         lolunit_assert_doubles_equal(roots1[0], -1, 0);
     }
 
@@ -287,7 +287,7 @@ lolunit_declare_fixture(polynomial_test)
         auto roots1 = p.roots();
 
         // Should have 2 solutions only, but precision leads to 3 solutions
-        lolunit_assert_equal(roots1.count(), 2);
+        lolunit_assert_equal(roots1.size(), 2);
         lolunit_assert_doubles_equal(roots1[0], -1, 1e-6);
         lolunit_assert_doubles_equal(roots1[1], -2, 1e-6);
     }
@@ -297,7 +297,7 @@ lolunit_declare_fixture(polynomial_test)
         polynomial<float> p { 6.f, 11.f, 6.f, 1.f };
         auto roots1 = p.roots();
 
-        lolunit_assert_equal(roots1.count(), 3);
+        lolunit_assert_equal(roots1.size(), 3);
         lolunit_assert_doubles_equal(roots1[0], -1, 1e-8);
         lolunit_assert_doubles_equal(roots1[1], -3, 1e-8);
         lolunit_assert_doubles_equal(roots1[2], -2, 1e-8);
@@ -308,7 +308,7 @@ lolunit_declare_fixture(polynomial_test)
         polynomial<float> p { -12000.f, 1000.f - 1200.f - 120.f, 100.f + 10.0f - 12.f, 1.f };
         auto roots1 = p.roots();
 
-        lolunit_assert_equal(roots1.count(), 3);
+        lolunit_assert_equal(roots1.size(), 3);
 
         lolunit_assert_doubles_equal(roots1[0], 12, 1e-5);
         lolunit_assert_doubles_equal(roots1[1], -100, 1e-5);

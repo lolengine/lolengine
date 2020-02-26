@@ -51,27 +51,27 @@ lolunit_declare_fixture(string_test)
     lolunit_declare_test(string_split)
     {
         auto l1 = split(std::string("abc"));
-        lolunit_assert(l1.count() == 1);
+        lolunit_assert(l1.size() == 1);
         lolunit_assert(l1[0] == "abc");
 
         auto l2 = split(std::string("\nabc"));
-        lolunit_assert(l2.count() == 2);
+        lolunit_assert(l2.size() == 2);
         lolunit_assert(l2[0] == "");
         lolunit_assert(l2[1] == "abc");
 
         auto l3 = split(std::string("abc\n"));
-        lolunit_assert(l3.count() == 2);
+        lolunit_assert(l3.size() == 2);
         lolunit_assert(l3[0] == "abc");
         lolunit_assert(l3[1] == "");
 
         auto l4 = split(std::string("\n\n"));
-        lolunit_assert(l4.count() == 3);
+        lolunit_assert(l4.size() == 3);
         lolunit_assert(l4[0] == "");
         lolunit_assert(l4[1] == "");
         lolunit_assert(l4[2] == "");
 
         auto l5 = split(std::string("abc\nde\n\nf\n"));
-        lolunit_assert(l5.count() == 5);
+        lolunit_assert(l5.size() == 5);
         lolunit_assert(l5[0] == "abc");
         lolunit_assert(l5[1] == "de");
         lolunit_assert(l5[2] == "");

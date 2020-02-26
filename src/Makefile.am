@@ -31,15 +31,15 @@ liblol_core_headers = \
     lol/lua.h \
     \
     lol/base/all.h \
-    lol/base/avl_tree.h lol/base/features.h lol/base/tuple.h lol/base/types.h \
-    lol/base/array.h lol/base/assert.h lol/base/string.h lol/base/map.h \
-    lol/base/enum.h lol/base/log.h \
+    lol/base/avl_tree.h ../legacy/features.h lol/base/tuple.h lol/base/types.h \
+    lol/base/array.h lol/base/assert.h lol/base/map.h lol/base/enum.h \
+    lol/base/log.h \
     \
     lol/math/all.h \
-    lol/math/functions.h lol/math/vector.h lol/math/half.h lol/math/real.h \
-    lol/math/geometry.h lol/math/interp.h lol/math/rand.h lol/math/arraynd.h \
+    lol/math/functions.h lol/math/vector.h lol/math/half.h \
+    lol/math/geometry.h lol/math/interp.h lol/math/arraynd.h \
     lol/math/constants.h lol/math/matrix.h lol/math/ops.h \
-    lol/math/transform.h lol/math/polynomial.h lol/math/bigint.h \
+    lol/math/transform.h lol/math/bigint.h \
     lol/math/noise/gradient.h lol/math/noise/perlin.h \
     lol/math/noise/simplex.h \
     \
@@ -53,8 +53,7 @@ liblol_core_headers = \
     lol/engine/tickable.h \
     \
     lol/sys/all.h \
-    lol/sys/init.h lol/sys/file.h lol/sys/getopt.h lol/sys/thread.h \
-    lol/sys/timer.h \
+    lol/sys/init.h lol/sys/file.h \
     \
     lol/image/all.h \
     lol/image/pixel.h lol/image/color.h lol/image/image.h \
@@ -94,7 +93,7 @@ liblol_core_sources = \
     base/assert.cpp base/features.cpp base/log.cpp base/string.cpp \
     \
     math/vector.cpp math/matrix.cpp math/transform.cpp math/half.cpp \
-    math/geometry.cpp math/real.cpp \
+    math/geometry.cpp \
     \
     gpu/shader.cpp gpu/indexbuffer.cpp gpu/vertexbuffer.cpp \
     gpu/framebuffer.cpp gpu/texture.cpp gpu/renderer.cpp \
@@ -117,7 +116,7 @@ liblol_core_sources = \
     mesh/mesh.cpp mesh/mesh.h \
     mesh/primitivemesh.cpp mesh/primitivemesh.h \
     \
-    sys/init.cpp sys/file.cpp sys/hacks.cpp sys/getopt.cpp \
+    sys/init.cpp sys/file.cpp sys/hacks.cpp \
     \
     image/resource.cpp image/resource-private.h \
     image/image.cpp image/image-private.h image/kernel.cpp image/pixel.cpp \

@@ -13,13 +13,10 @@ liblol_lua_a_CPPFLAGS = $(AM_CPPFLAGS) -DLUA_ANSI $(disable_cflags_lua)
 
 include lol-lua.am
 
-EXTRA_DIST += $(imgui_sources) $(mingw_std_threads_sources) $(pegtl_sources) \
-              $(cpp_httplib_sources)
+EXTRA_DIST += $(imgui_sources) $(cpp_httplib_sources)
 EXTRA_DIST += lol-lua.vcxproj lol-lua.vcxproj.filters
 
 include lol-cpp-httplib.am
-include lol-mingw-std-threads.am
-include lol-pegtl.am
 
 # XXX: this is included by the parent Makefile instead
 #include lol-imgui.am

@@ -25,7 +25,9 @@
 #include "light.h"
 #include "camera.h"
 #include "mesh/mesh.h"
+
 #include <lol/gpu/renderer.h>
+#include <lol/base/thread.h>
 
 #define LOL_MAX_LIGHT_COUNT 8
 
