@@ -67,6 +67,14 @@ std::vector<std::basic_string<T>> split(std::basic_string<T> const &s,
 
 }
 
+// Helper for template deduction
+template<typename T>
+std::vector<std::basic_string<T>> split(std::basic_string<T> const &s,
+                                        T const *seps)
+{
+    return split(s, std::basic_string<T>(seps));
+}
+
 // Check whether a string starts or ends with a given substring
 template<typename T>
 bool starts_with(std::basic_string<T> const &s,
@@ -77,11 +85,23 @@ bool starts_with(std::basic_string<T> const &s,
 }
 
 template<typename T>
+bool starts_with(std::basic_string<T> const &s, T const *prefix)
+{
+    return starts_with(s, std::basic_string<T>(prefix));
+}
+
+template<typename T>
 bool ends_with(std::basic_string<T> const &s,
                std::basic_string<T> const &suffix)
 {
     return s.size() >= suffix.size() &&
            s.compare(s.size() - suffix.size(), suffix.size(), suffix) == 0;
+}
+
+template<typename T>
+bool ends_with(std::basic_string<T> const &s, T const *suffix)
+{
+    return ends_with(s, std::basic_string<T>(suffix));
 }
 
 // Convert a string to lowercase or uppercase
@@ -95,6 +115,12 @@ std::basic_string<T> tolower(std::basic_string<T> const &s)
 }
 
 template<typename T>
+std::basic_string<T> tolower(T const *s)
+{
+    return tolower(std::basic_string<T>(s));
+}
+
+template<typename T>
 std::basic_string<T> toupper(std::basic_string<T> const &s)
 {
     std::string ret;
@@ -103,17 +129,13 @@ std::basic_string<T> toupper(std::basic_string<T> const &s)
     return ret;
 }
 
-// Format a string, printf-style
-template<typename T = char> lol_attr_printf_format(1, 2)
-std::basic_string<T> format(T const *format, ...)
+template<typename T>
+std::basic_string<T> toupper(T const *s)
 {
-    va_list ap;
-    va_start(ap, format);
-    std::string ret = vformat(format, ap);
-    va_end(ap);
-    return ret;
+    return toupper(std::basic_string<T>(s));
 }
 
+// Format a string, printf-style
 template<typename T = char>
 std::basic_string<T> vformat(char const *format, va_list ap)
 {
@@ -138,6 +160,16 @@ std::basic_string<T> vformat(char const *format, va_list ap)
     ret.resize(needed);
     vsnprintf(&ret[0], needed + 1, format, ap);
 
+    return ret;
+}
+
+template<typename T = char> lol_attr_printf_format(1, 2)
+std::basic_string<T> format(T const *format, ...)
+{
+    va_list ap;
+    va_start(ap, format);
+    std::string ret = vformat(format, ap);
+    va_end(ap);
     return ret;
 }
 

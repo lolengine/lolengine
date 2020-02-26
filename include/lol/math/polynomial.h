@@ -405,7 +405,7 @@ struct lol_attr_nodiscard polynomial
             quotient.set(n, remainder.leading());
             for (int i = 0; i < p.degree(); ++i)
                 remainder.m_coefficients[n + i] -= remainder.leading() * p[i];
-            (void)remainder.m_coefficients.pop();
+            (void)remainder.m_coefficients.pop_back();
         }
 
         return ret;
