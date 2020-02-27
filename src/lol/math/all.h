@@ -15,9 +15,7 @@
 #include <lol/math/half.h>
 #include <lol/math/bigint.h>
 #include <lol/math/real.h>
-#include <lol/math/ops.h>
 #include <lol/math/vector.h>
-#include <lol/math/matrix.h>
 #include <lol/math/transform.h>
 #include <lol/math/arraynd.h>
 #include <lol/math/geometry.h>

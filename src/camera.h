@@ -17,7 +17,7 @@
 // ----------------
 //
 
-#include <lol/math/matrix.h>
+#include <lol/math/transform.h>
 
 #include "engine/worldentity.h"
 

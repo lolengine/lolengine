@@ -207,15 +207,6 @@
     <ClCompile Include="math\half.cpp">
       <Filter>math</Filter>
     </ClCompile>
-    <ClCompile Include="math\matrix.cpp">
-      <Filter>math</Filter>
-    </ClCompile>
-    <ClCompile Include="math\transform.cpp">
-      <Filter>math</Filter>
-    </ClCompile>
-    <ClCompile Include="math\vector.cpp">
-      <Filter>math</Filter>
-    </ClCompile>
     <ClCompile Include="mesh\mesh.cpp">
       <Filter>mesh</Filter>
     </ClCompile>
@@ -458,9 +449,6 @@
     <ClInclude Include="lol\math\interp.h">
       <Filter>lol\math</Filter>
     </ClInclude>
-    <ClInclude Include="lol\math\matrix.h">
-      <Filter>lol\math</Filter>
-    </ClInclude>
     <ClInclude Include="lol\math\noise\gradient.h">
       <Filter>lol\math\noise</Filter>
     </ClInclude>
@@ -469,15 +457,6 @@
     </ClInclude>
     <ClInclude Include="lol\math\noise\simplex.h">
       <Filter>lol\math\noise</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\math\ops.h">
-      <Filter>lol\math</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\math\transform.h">
-      <Filter>lol\math</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\math\vector.h">
-      <Filter>lol\math</Filter>
     </ClInclude>
     <ClInclude Include="lol\net\all.h">
       <Filter>lol\net</Filter>

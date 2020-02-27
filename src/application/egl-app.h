@@ -15,7 +15,7 @@
 // ----------------
 //
 
-#include "lol/math/vector.h"
+#include <lol/math/vector.h>
 
 namespace lol
 {
