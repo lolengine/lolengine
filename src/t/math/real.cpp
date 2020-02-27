@@ -12,9 +12,10 @@
 
 #include <lol/engine-internal.h>
 
-#include <cmath>
-
+#include <lol/math/real.h>
 #include <lolunit.h>
+
+#include <cmath>
 
 namespace lol
 {

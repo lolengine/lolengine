@@ -18,6 +18,10 @@
 #include <sstream>
 
 #include <lol/engine.h>
+#include <lol/math/vector.h>
+#include <lol/math/real.h>
+#include <lol/math/transform.h>
+
 #include "loldebug.h"
 
 #define USE_REAL 0

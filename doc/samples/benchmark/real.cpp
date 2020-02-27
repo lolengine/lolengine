@@ -17,6 +17,7 @@
 #include <cstdio>
 
 #include <lol/engine.h>
+#include <lol/math/real.h>
 
 using namespace lol;
 
