@@ -23,36 +23,36 @@ lolunit_declare_fixture(real_test)
 {
     lolunit_declare_test(float_to_real)
     {
-        float a1 = real(0.0f);
-        float a2 = real(-0.0f);
-        float a3 = real(1.0f);
-        float a4 = real(-1.0f);
-        float a5 = real(1.5f);
-        float a6 = real(12345678.0f);
+        auto a1 = real(0.0f);
+        auto a2 = real(-0.0f);
+        auto a3 = real(1.0f);
+        auto a4 = real(-1.0f);
+        auto a5 = real(1.5f);
+        auto a6 = real(12345678.0f);
 
-        lolunit_assert_equal(a1, 0.0f);
-        lolunit_assert_equal(a2, -0.0f);
-        lolunit_assert_equal(a3, 1.0f);
-        lolunit_assert_equal(a4, -1.0f);
-        lolunit_assert_equal(a5, 1.5f);
-        lolunit_assert_equal(a6, 12345678.0f);
+        lolunit_assert_equal(float(a1), 0.0f);
+        lolunit_assert_equal(float(a2), -0.0f);
+        lolunit_assert_equal(float(a3), 1.0f);
+        lolunit_assert_equal(float(a4), -1.0f);
+        lolunit_assert_equal(float(a5), 1.5f);
+        lolunit_assert_equal(float(a6), 12345678.0f);
     }
 
     lolunit_declare_test(double_to_real)
     {
-        double a1 = real(0.0);
-        double a2 = real(-0.0);
-        double a3 = real(1.0);
-        double a4 = real(-1.0);
-        double a5 = real(1.5);
-        double a6 = real(1234567876543210.0);
+        auto a1 = real(0.0);
+        auto a2 = real(-0.0);
+        auto a3 = real(1.0);
+        auto a4 = real(-1.0);
+        auto a5 = real(1.5);
+        auto a6 = real(1234567876543210.0);
 
-        lolunit_assert_doubles_equal(a1, 0.0, 0.0);
-        lolunit_assert_doubles_equal(a2, -0.0, 0.0);
-        lolunit_assert_doubles_equal(a3, 1.0, 0.0);
-        lolunit_assert_doubles_equal(a4, -1.0, 0.0);
-        lolunit_assert_doubles_equal(a5, 1.5, 0.0);
-        lolunit_assert_doubles_equal(a6, 1234567876543210.0, 0.0);
+        lolunit_assert_doubles_equal(double(a1),  0.0, 0.0);
+        lolunit_assert_doubles_equal(double(a2), -0.0, 0.0);
+        lolunit_assert_doubles_equal(double(a3),  1.0, 0.0);
+        lolunit_assert_doubles_equal(double(a4), -1.0, 0.0);
+        lolunit_assert_doubles_equal(double(a5),  1.5, 0.0);
+        lolunit_assert_doubles_equal(double(a6), 1234567876543210.0, 0.0);
     }
 
     lolunit_declare_test(long_double_to_real)
@@ -133,61 +133,61 @@ lolunit_declare_fixture(real_test)
 
     lolunit_declare_test(constants)
     {
-        double a0 = real::R_0();
-        double a1 = real::R_1();
-        double a2 = real::R_2();
-        double a10 = real::R_10();
+        auto a0 = real::R_0();
+        auto a1 = real::R_1();
+        auto a2 = real::R_2();
+        auto a10 = real::R_10();
 
-        lolunit_assert_equal(a0, 0.0);
-        lolunit_assert_equal(a1, 1.0);
-        lolunit_assert_equal(a2, 2.0);
-        lolunit_assert_equal(a10, 10.0);
+        lolunit_assert_equal(double(a0), 0.0);
+        lolunit_assert_equal(double(a1), 1.0);
+        lolunit_assert_equal(double(a2), 2.0);
+        lolunit_assert_equal(double(a10), 10.0);
 
-        double b1 = log(real::R_E());
-        double b2 = log2(real::R_2());
-        lolunit_assert_equal(b1, 1.0);
-        lolunit_assert_equal(b2, 1.0);
+        auto b1 = log(real::R_E());
+        auto b2 = log2(real::R_2());
+        lolunit_assert_equal(double(b1), 1.0);
+        lolunit_assert_equal(double(b2), 1.0);
 
-        double c1 = exp(inverse(real::R_LOG2E()));
-        double c2 = log(exp2(real::R_LOG2E()));
-        lolunit_assert_equal(c1, 2.0);
-        lolunit_assert_equal(c2, 1.0);
+        auto c1 = exp(inverse(real::R_LOG2E()));
+        auto c2 = log(exp2(real::R_LOG2E()));
+        lolunit_assert_equal(double(c1), 2.0);
+        lolunit_assert_equal(double(c2), 1.0);
 
-        double d1 = exp(inverse(real::R_LOG10E()));
-        lolunit_assert_equal(d1, 10.0);
+        auto d1 = exp(inverse(real::R_LOG10E()));
+        lolunit_assert_equal(double(d1), 10.0);
 
-        double e1 = exp(real::R_LN2());
-        lolunit_assert_equal(e1, 2.0);
+        auto e1 = exp(real::R_LN2());
+        lolunit_assert_equal(double(e1), 2.0);
 
-        double f1 = exp(real::R_LN10());
-        lolunit_assert_equal(f1, 10.0);
+        auto f1 = exp(real::R_LN10());
+        lolunit_assert_equal(double(f1), 10.0);
 
-        double g1 = sin(real::R_PI());
-        double g2 = cos(real::R_PI());
-        lolunit_assert_doubles_equal(g1, 0.0, 1e-100);
-        lolunit_assert_equal(g2, -1.0);
+        auto g1 = sin(real::R_PI());
+        auto g2 = cos(real::R_PI());
+        lolunit_assert_doubles_equal(double(g1), 0.0, 1e-100);
+        lolunit_assert_equal(double(g2), -1.0);
 
-        double h1 = sin(real::R_PI_2());
-        double h2 = cos(real::R_PI_2());
-        lolunit_assert_equal(h1, 1.0);
-        lolunit_assert_doubles_equal(h2, 0.0, 1e-100);
+        auto h1 = sin(real::R_PI_2());
+        auto h2 = cos(real::R_PI_2());
+        lolunit_assert_equal(double(h1), 1.0);
+        lolunit_assert_doubles_equal(double(h2), 0.0, 1e-100);
 
-        double i1 = sin(real::R_PI_4()) * sin(real::R_PI_4());
-        double i2 = cos(real::R_PI_4()) * cos(real::R_PI_4());
-        lolunit_assert_equal(i1, 0.5);
-        lolunit_assert_equal(i2, 0.5);
+        auto i1 = sin(real::R_PI_4()) * sin(real::R_PI_4());
+        auto i2 = cos(real::R_PI_4()) * cos(real::R_PI_4());
+        lolunit_assert_equal(double(i1), 0.5);
+        lolunit_assert_equal(double(i2), 0.5);
     }
 
     lolunit_declare_test(init)
     {
         real r;
-        float f1 = (float)r;
+        float f1(r);
 
         lolunit_assert_equal(f1, 0.0f);
 
         rcmplx q;
-        float f2 = (float)q.x;
-        float f3 = (float)q.y;
+        float f2(q.x);
+        float f3(q.y);
 
         lolunit_assert_equal(f2, 0.0f);
         lolunit_assert_equal(f3, 0.0f);
@@ -195,32 +195,32 @@ lolunit_declare_fixture(real_test)
 
     lolunit_declare_test(string_to_real)
     {
-        float a1 = real("0");
-        float a2 = real("1");
-        float a3 = real("-1");
+        auto a1 = real("0");
+        auto a2 = real("1");
+        auto a3 = real("-1");
         /* 2^-128 * 2^128 */
-        float a4 = real("0.0000000000000000000000000000000000000029387358770"
-                        "557187699218413430556141945466638919302188037718792"
-                        "6569604314863681793212890625")
-                 * real("340282366920938463463374607431768211456");
+        auto a4 = real("0.0000000000000000000000000000000000000029387358770"
+                       "557187699218413430556141945466638919302188037718792"
+                       "6569604314863681793212890625")
+                * real("340282366920938463463374607431768211456");
 
-        lolunit_assert_equal(a1, 0.0f);
-        lolunit_assert_equal(a2, 1.0f);
-        lolunit_assert_equal(a3, -1.0f);
-        lolunit_assert_equal(a4, 1.0f);
+        lolunit_assert_equal(float(a1), 0.0f);
+        lolunit_assert_equal(float(a2), 1.0f);
+        lolunit_assert_equal(float(a3), -1.0f);
+        lolunit_assert_equal(float(a4), 1.0f);
     }
 
     lolunit_declare_test(unary_minus)
     {
-        float a1 = - real(1.0f);
-        float a2 = - real(-1.0f);
-        float a3 = - real(0.0f);
-        float a4 = - real(-0.0f);
+        auto a1 = - real(1.0f);
+        auto a2 = - real(-1.0f);
+        auto a3 = - real(0.0f);
+        auto a4 = - real(-0.0f);
 
-        lolunit_assert_equal(a1, -1.0f);
-        lolunit_assert_equal(a2, 1.0f);
-        lolunit_assert_equal(a3, -0.0f);
-        lolunit_assert_equal(a4, 0.0f);
+        lolunit_assert_equal(float(a1), -1.0f);
+        lolunit_assert_equal(float(a2), 1.0f);
+        lolunit_assert_equal(float(a3), -0.0f);
+        lolunit_assert_equal(float(a4), 0.0f);
     }
 
     lolunit_declare_test(comparison)
@@ -246,31 +246,31 @@ lolunit_declare_fixture(real_test)
 
     lolunit_declare_test(addition)
     {
-        float a1 = real(1.0f) + real(0.0f);
-        float a2 = real(0.0f) + real(1.0f);
-        float a3 = real(1.0f) + real(1.0f);
-        float a4 = real(-1.0f) + real(-1.0f);
-        float a5 = real(1.0f) + real(0.125f);
-        double a6 = real(3.13609818956293918)
-                  + real(0.00005972154828114);
-        float a7 = real(1.0f) + real(-0.125f);
-        double a8 = real(0.10000000002) + real(-2.0e-11);
+        auto a1 = real(1.0f) + real(0.0f);
+        auto a2 = real(0.0f) + real(1.0f);
+        auto a3 = real(1.0f) + real(1.0f);
+        auto a4 = real(-1.0f) + real(-1.0f);
+        auto a5 = real(1.0f) + real(0.125f);
+        auto a6 = real(3.13609818956293918)
+                + real(0.00005972154828114);
+        auto a7 = real(1.0f) + real(-0.125f);
+        auto a8 = real(0.10000000002) + real(-2.0e-11);
 
-        lolunit_assert_equal(a1, 1.0f);
-        lolunit_assert_equal(a2, 1.0f);
-        lolunit_assert_equal(a3, 2.0f);
-        lolunit_assert_equal(a4, -2.0f);
-        lolunit_assert_equal(a5, 1.125f);
-        lolunit_assert_doubles_equal(a6, 3.1361579, 0.000001);
-        lolunit_assert_equal(a7, 0.875f);
-        lolunit_assert_doubles_equal(a8, 0.1, 1.0e-13);
+        lolunit_assert_equal(float(a1), 1.0f);
+        lolunit_assert_equal(float(a2), 1.0f);
+        lolunit_assert_equal(float(a3), 2.0f);
+        lolunit_assert_equal(float(a4), -2.0f);
+        lolunit_assert_equal(float(a5), 1.125f);
+        lolunit_assert_doubles_equal(double(a6), 3.1361579, 0.000001);
+        lolunit_assert_equal(float(a7), 0.875f);
+        lolunit_assert_doubles_equal(double(a8), 0.1, 1.0e-13);
     }
 
     lolunit_declare_test(subtraction)
     {
-        float a1 = real(1.0f) + real(1e20f) - real(1e20f);
+        auto a1 = real(1.0f) + real(1e20f) - real(1e20f);
 
-        lolunit_assert_equal(a1, 1.0f);
+        lolunit_assert_equal(float(a1), 1.0f);
     }
 
     lolunit_declare_test(multiplication)
@@ -280,30 +280,30 @@ lolunit_declare_fixture(real_test)
         real z(1.99999f);
         real w(-1.5f);
 
-        float m1 = x * x;
-        float m2 = y * y;
-        float m3 = z * z;
-        float m4 = w * w;
+        auto m1 = x * x;
+        auto m2 = y * y;
+        auto m3 = z * z;
+        auto m4 = w * w;
 
-        lolunit_assert_equal(m1, 1.25f * 1.25f);
-        lolunit_assert_equal(m2, 1.5f * 1.5f);
-        lolunit_assert_equal(m3, 1.99999f * 1.99999f);
-        lolunit_assert_equal(m4, -1.5f * -1.5f);
+        lolunit_assert_equal(float(m1), 1.25f * 1.25f);
+        lolunit_assert_equal(float(m2), 1.5f * 1.5f);
+        lolunit_assert_equal(float(m3), 1.99999f * 1.99999f);
+        lolunit_assert_equal(float(m4), -1.5f * -1.5f);
     }
 
     lolunit_declare_test(exact_division)
     {
-        float m1 = real::R_1() / real::R_1();
-        float m2 = real::R_2() / real::R_1();
-        float m3 = real::R_1() / real::R_2();
-        float m4 = real::R_2() / real::R_2();
-        float m5 = real::R_1() / -real::R_2();
+        auto m1 = real::R_1() / real::R_1();
+        auto m2 = real::R_2() / real::R_1();
+        auto m3 = real::R_1() / real::R_2();
+        auto m4 = real::R_2() / real::R_2();
+        auto m5 = real::R_1() / -real::R_2();
 
-        lolunit_assert_equal(m1, 1.0f);
-        lolunit_assert_equal(m2, 2.0f);
-        lolunit_assert_equal(m3, 0.5f);
-        lolunit_assert_equal(m4, 1.0f);
-        lolunit_assert_equal(m5, -0.5f);
+        lolunit_assert_equal(float(m1), 1.0f);
+        lolunit_assert_equal(float(m2), 2.0f);
+        lolunit_assert_equal(float(m3), 0.5f);
+        lolunit_assert_equal(float(m4), 1.0f);
+        lolunit_assert_equal(float(m5), -0.5f);
     }
 
     lolunit_declare_test(inexact_division)
@@ -313,69 +313,69 @@ lolunit_declare_fixture(real_test)
         real a = real::R_1() / real::R_3() * real::R_3();
         real b = ldexp(real::R_1() - a, a.total_bits());
 
-        lolunit_assert_lequal((double)fabs(b), 1.0);
+        lolunit_assert_lequal(double(fabs(b)), 1.0);
     }
 
     lolunit_declare_test(real_sqrt)
     {
-        double sqrt0 = sqrt(real(0));
-        double sqrt1 = sqrt(real(1));
-        double sqrt2 = sqrt(real(2));
-        double sqrt3 = sqrt(real(3));
-        double sqrt4 = sqrt(real(4));
-        double sqrt5 = sqrt(real(5));
-        double sqrt6 = sqrt(real(6));
-        double sqrt7 = sqrt(real(7));
-        double sqrt8 = sqrt(real(8));
+        auto sqrt0 = sqrt(real(0));
+        auto sqrt1 = sqrt(real(1));
+        auto sqrt2 = sqrt(real(2));
+        auto sqrt3 = sqrt(real(3));
+        auto sqrt4 = sqrt(real(4));
+        auto sqrt5 = sqrt(real(5));
+        auto sqrt6 = sqrt(real(6));
+        auto sqrt7 = sqrt(real(7));
+        auto sqrt8 = sqrt(real(8));
 
-        lolunit_assert_doubles_equal(sqrt0, sqrt(0.0), 1e-8);
-        lolunit_assert_doubles_equal(sqrt1, sqrt(1.0), 1e-8);
-        lolunit_assert_doubles_equal(sqrt2, sqrt(2.0), 1e-8);
-        lolunit_assert_doubles_equal(sqrt3, sqrt(3.0), 1e-8);
-        lolunit_assert_doubles_equal(sqrt4, sqrt(4.0), 1e-8);
-        lolunit_assert_doubles_equal(sqrt5, sqrt(5.0), 1e-8);
-        lolunit_assert_doubles_equal(sqrt6, sqrt(6.0), 1e-8);
-        lolunit_assert_doubles_equal(sqrt7, sqrt(7.0), 1e-8);
-        lolunit_assert_doubles_equal(sqrt8, sqrt(8.0), 1e-8);
+        lolunit_assert_doubles_equal(double(sqrt0), sqrt(0.0), 1e-8);
+        lolunit_assert_doubles_equal(double(sqrt1), sqrt(1.0), 1e-8);
+        lolunit_assert_doubles_equal(double(sqrt2), sqrt(2.0), 1e-8);
+        lolunit_assert_doubles_equal(double(sqrt3), sqrt(3.0), 1e-8);
+        lolunit_assert_doubles_equal(double(sqrt4), sqrt(4.0), 1e-8);
+        lolunit_assert_doubles_equal(double(sqrt5), sqrt(5.0), 1e-8);
+        lolunit_assert_doubles_equal(double(sqrt6), sqrt(6.0), 1e-8);
+        lolunit_assert_doubles_equal(double(sqrt7), sqrt(7.0), 1e-8);
+        lolunit_assert_doubles_equal(double(sqrt8), sqrt(8.0), 1e-8);
     }
 
     lolunit_declare_test(real_cbrt)
     {
-        double cbrtm8 = cbrt(real(-8));
-        double cbrtm7 = cbrt(real(-7));
-        double cbrtm6 = cbrt(real(-6));
-        double cbrtm5 = cbrt(real(-5));
-        double cbrtm4 = cbrt(real(-4));
-        double cbrtm3 = cbrt(real(-3));
-        double cbrtm2 = cbrt(real(-2));
-        double cbrtm1 = cbrt(real(-1));
-        double cbrt0 = cbrt(real(0));
-        double cbrt1 = cbrt(real(1));
-        double cbrt2 = cbrt(real(2));
-        double cbrt3 = cbrt(real(3));
-        double cbrt4 = cbrt(real(4));
-        double cbrt5 = cbrt(real(5));
-        double cbrt6 = cbrt(real(6));
-        double cbrt7 = cbrt(real(7));
-        double cbrt8 = cbrt(real(8));
+        auto cbrtm8 = cbrt(real(-8));
+        auto cbrtm7 = cbrt(real(-7));
+        auto cbrtm6 = cbrt(real(-6));
+        auto cbrtm5 = cbrt(real(-5));
+        auto cbrtm4 = cbrt(real(-4));
+        auto cbrtm3 = cbrt(real(-3));
+        auto cbrtm2 = cbrt(real(-2));
+        auto cbrtm1 = cbrt(real(-1));
+        auto cbrt0 = cbrt(real(0));
+        auto cbrt1 = cbrt(real(1));
+        auto cbrt2 = cbrt(real(2));
+        auto cbrt3 = cbrt(real(3));
+        auto cbrt4 = cbrt(real(4));
+        auto cbrt5 = cbrt(real(5));
+        auto cbrt6 = cbrt(real(6));
+        auto cbrt7 = cbrt(real(7));
+        auto cbrt8 = cbrt(real(8));
 
-        lolunit_assert_doubles_equal(cbrtm8, cbrt(-8.0), 1e-8);
-        lolunit_assert_doubles_equal(cbrtm7, cbrt(-7.0), 1e-8);
-        lolunit_assert_doubles_equal(cbrtm6, cbrt(-6.0), 1e-8);
-        lolunit_assert_doubles_equal(cbrtm5, cbrt(-5.0), 1e-8);
-        lolunit_assert_doubles_equal(cbrtm4, cbrt(-4.0), 1e-8);
-        lolunit_assert_doubles_equal(cbrtm3, cbrt(-3.0), 1e-8);
-        lolunit_assert_doubles_equal(cbrtm2, cbrt(-2.0), 1e-8);
-        lolunit_assert_doubles_equal(cbrtm1, cbrt(-1.0), 1e-8);
-        lolunit_assert_doubles_equal(cbrt0, cbrt(0.0), 1e-8);
-        lolunit_assert_doubles_equal(cbrt1, cbrt(1.0), 1e-8);
-        lolunit_assert_doubles_equal(cbrt2, cbrt(2.0), 1e-8);
-        lolunit_assert_doubles_equal(cbrt3, cbrt(3.0), 1e-8);
-        lolunit_assert_doubles_equal(cbrt4, cbrt(4.0), 1e-8);
-        lolunit_assert_doubles_equal(cbrt5, cbrt(5.0), 1e-8);
-        lolunit_assert_doubles_equal(cbrt6, cbrt(6.0), 1e-8);
-        lolunit_assert_doubles_equal(cbrt7, cbrt(7.0), 1e-8);
-        lolunit_assert_doubles_equal(cbrt8, cbrt(8.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrtm8), cbrt(-8.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrtm7), cbrt(-7.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrtm6), cbrt(-6.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrtm5), cbrt(-5.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrtm4), cbrt(-4.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrtm3), cbrt(-3.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrtm2), cbrt(-2.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrtm1), cbrt(-1.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrt0), cbrt(0.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrt1), cbrt(1.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrt2), cbrt(2.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrt3), cbrt(3.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrt4), cbrt(4.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrt5), cbrt(5.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrt6), cbrt(6.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrt7), cbrt(7.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrt8), cbrt(8.0), 1e-8);
     }
 
     lolunit_declare_test(real_ldexp)
@@ -422,12 +422,12 @@ lolunit_declare_fixture(real_test)
         for (double test : tests)
         {
             double a = test / 1024;
-            double b = sin(asin((real)a));
-            double c = cos(acos((real)a));
+            auto b = sin(asin(real(a)));
+            auto c = cos(acos(real(a)));
 
             lolunit_set_context(a);
-            lolunit_assert_doubles_equal(b, a, 1e-100);
-            lolunit_assert_doubles_equal(c, a, 1e-100);
+            lolunit_assert_doubles_equal(double(b), a, 1e-100);
+            lolunit_assert_doubles_equal(double(c), a, 1e-100);
         }
     }
 
@@ -460,28 +460,28 @@ lolunit_declare_fixture(real_test)
 
         for (unsigned int n = 0; n < sizeof(tests) / sizeof(*tests); n += 4)
         {
-            double a0 = floor((real)tests[n]);
+            real a0 = floor((real)tests[n]);
             double b0 = tests[n + 1];
-            double a1 = ceil((real)tests[n]);
+            real a1 = ceil((real)tests[n]);
             double b1 = tests[n + 2];
-            double a2 = round((real)tests[n]);
+            real a2 = round((real)tests[n]);
             double b2 = tests[n + 3];
 
-            lolunit_assert_equal(b0, a0);
-            lolunit_assert_equal(b1, a1);
-            lolunit_assert_equal(b2, a2);
+            lolunit_assert_equal(b0, double(a0));
+            lolunit_assert_equal(b1, double(a1));
+            lolunit_assert_equal(b2, double(a2));
         }
     }
 
     lolunit_declare_test(real_pow)
     {
-        double a1 = pow(-real::R_2(), real::R_2());
+        real a1 = pow(-real::R_2(), real::R_2());
         double b1 = 4.0;
-        lolunit_assert_doubles_equal(a1, b1, 1.0e-13);
+        lolunit_assert_doubles_equal(double(a1), b1, 1.0e-13);
 
-        double a2 = pow(-real::R_2(), real::R_3());
+        real a2 = pow(-real::R_2(), real::R_3());
         double b2 = -8.0;
-        lolunit_assert_doubles_equal(a2, b2, 1.0e-13);
+        lolunit_assert_doubles_equal(double(a2), b2, 1.0e-13);
     }
 };
 

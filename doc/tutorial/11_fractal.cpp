@@ -266,9 +266,13 @@ public:
             int prev_index = (m_frame + 4 - i) % 4;
             int cur_index = (m_frame + 3 - i) % 4;
 
-            m_zoom_settings[cur_index][0] = (real)m_zoom_settings[prev_index][0] * m_deltascale[cur_index] + m_deltashift[cur_index].x;
-            m_zoom_settings[cur_index][1] = (real)m_zoom_settings[prev_index][1] * m_deltascale[cur_index] + m_deltashift[cur_index].y;
-            m_zoom_settings[cur_index][2] = (real)m_zoom_settings[prev_index][2] * m_deltascale[cur_index];
+            auto t0 = (real)m_zoom_settings[prev_index][0] * m_deltascale[cur_index] + m_deltashift[cur_index].x;
+            auto t1 = (real)m_zoom_settings[prev_index][1] * m_deltascale[cur_index] + m_deltashift[cur_index].y;
+            auto t2 = (real)m_zoom_settings[prev_index][2] * m_deltascale[cur_index];
+
+            m_zoom_settings[cur_index][0] = float(t0);
+            m_zoom_settings[cur_index][1] = float(t1);
+            m_zoom_settings[cur_index][2] = float(t2);
         }
 
         /* Precompute texture offset change instead of doing it in GLSL */
