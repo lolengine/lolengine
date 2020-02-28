@@ -17,12 +17,12 @@
 // —————————————————————
 //
 
-#include <lol/base/features.h>
-#include <lol/base/core.h>
+#include "../base/private/features.h"
 
-#include <vector>
-#include <string>
-#include <cstdint>
+#include <limits>  // std::numeric_limits
+#include <vector>  // std::vector
+#include <string>  // std::string
+#include <cstdint> // int64_t etc.
 
 #if _MSC_VER
 #   pragma push_macro("min")

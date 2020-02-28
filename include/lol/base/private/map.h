@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //            © 2013—2015 Guillaume Bittoun <guillaume.bittoun@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -14,12 +14,12 @@
 #pragma once
 
 //
-// Simple map utilities
-// --------------------
+// The map utilities
+// —————————————————
+// Contains some utilities to work with std::map objects.
 //
 
-#include <lol/base/array.h>
-
+#include <vector>
 #include <map>
 
 namespace lol
@@ -43,11 +43,11 @@ static inline bool try_get(T const &m, typename T::key_type const &key,
 }
 
 template <typename T>
-static inline array<typename T::key_type> keys(T const &m)
+static inline std::vector<typename T::key_type> keys(T const &m)
 {
-    array<typename T::key_type> ret;
+    std::vector<typename T::key_type> ret;
     for (auto const &it : m)
-        ret << it.first;
+        ret.push_back(it.first);
     return ret;
 }
 

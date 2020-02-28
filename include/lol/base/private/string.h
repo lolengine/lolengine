@@ -19,11 +19,10 @@
 // Contains some utilities to work with std::string objects.
 //
 
-#include <lol/base/features.h>
-#include <lol/base/core.h>
+#include "features.h"
 
-#include <vector>
-#include <string>
+#include <vector>    // std::vector
+#include <string>    // std::basic_string
 #include <algorithm> // std::transform
 #include <cstdarg>   // va_list
 #include <cctype>    // size_t

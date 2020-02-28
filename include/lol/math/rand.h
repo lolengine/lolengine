@@ -17,7 +17,7 @@
 // ————————————————————————————
 //
 
-#include <lol/base/features.h>
+#include "../base/private/features.h"
 
 #include <cassert>
 #include <cstdlib>

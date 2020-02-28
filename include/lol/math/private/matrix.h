@@ -19,7 +19,7 @@
 
 #include <ostream>
 
-#include <lol/math/private/ops.h>
+#include "ops.h"
 #include <lol/math/vector.h>
 
 #if _WIN32

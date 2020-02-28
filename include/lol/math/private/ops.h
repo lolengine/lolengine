@@ -21,7 +21,6 @@
 #include <type_traits>
 
 #include <lol/math/half.h>
-#include <lol/math/real.h>
 
 namespace lol
 {

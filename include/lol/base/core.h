@@ -12,6 +12,7 @@
 
 #pragma once
 
+#include <string>   // std::string
 #include <cstdlib>  // _dupenv_s / std::getenv
 
 namespace lol

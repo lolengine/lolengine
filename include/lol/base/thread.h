@@ -17,8 +17,7 @@
 // —————————————————————
 //
 
-#include <lol/base/features.h>
-#include <lol/base/core.h>
+#include <lol/base/core.h> // os::getenv
 
 #include <functional> // std::function
 #include <thread>

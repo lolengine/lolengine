@@ -1,7 +1,6 @@
 
 ## `lol` headers to keep
 
-    src/lol/base/map.h (map utilities)
     src/lol/base/types.h (vec_t shortcuts eg. vec2, ivec2, u8vec3 etc.)
     src/lol/math/bigint.h
     src/lol/math/constants.h
