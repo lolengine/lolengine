@@ -7,16 +7,7 @@
     src/lol/math/constants.h
     src/lol/math/functions.h
     src/lol/math/half.h (needs half.cpp)
-    src/lol/math/matrix.h
     src/lol/math/noise/*
-    src/lol/math/ops.h
-    src/lol/math/polynomial.h
-    src/lol/math/rand.h
-    src/lol/math/real.h (needs real.cpp)
-    src/lol/math/transform.h (needs matrix.cpp and transform.cpp)
-    src/lol/math/vector.h (needs vector.cpp)
-    src/lol/sys/thread.h
-    src/lol/sys/timer.h
 
 
 ## other headers to keep
