@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -27,7 +27,7 @@ namespace lol
     static double const D_##name = (double)LD_##name; \
     static float const F_##name = (float)LD_##name;
 
-/* These values are truncated, not rounded, because I don’t care. */
+// These values get truncated, not rounded, because I don’t care much
 
 LOL_MATH_CONSTANT(TAU,  6.28318530717958647692528676655900576839433879875L)
 
@@ -45,5 +45,5 @@ LOL_MATH_CONSTANT(SQRT_1_2, 0.70710678118654752440084436210484903928483593768L)
 
 #undef LOL_MATH_CONSTANT
 
-} /* namespace lol */
+} // namespace lol
 
