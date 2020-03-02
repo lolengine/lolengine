@@ -119,8 +119,12 @@ template<typename T> real_t<T>::real_t(float f)
 template<typename T> real_t<T>::real_t(int64_t i)
 {
     // Use this instead of std::abs() because of undefined behaviour
-    // with INT64_MIN.
-    uint64_t abs_i = i < 0 ? -(uint64_t)i : (uint64_t)i;
+    // of std::abs(INT64_MIN).
+#if _MSC_VER // Silence warning C4146
+    uint64_t abs_i = i < 0 ? uint64_t(~i + 1) : uint64_t(i);
+#else
+    uint64_t abs_i = i < 0 ? -uint64_t(i) : uint64_t(i);
+#endif
     new(this) real_t<T>(abs_i);
     m_sign = i < 0;
 }
@@ -1092,7 +1096,7 @@ template<typename T> real_t<T> exp(real_t<T> const &x)
      *  real x1 = exp(x0)
      *  return x1 * 2^E0
      */
-    typename real_t<T>::exponent_t e0 = x / real_t<T>::R_LN2();
+    typename real_t<T>::exponent_t e0(x / real_t<T>::R_LN2());
     auto x0 = x - real_t<T>(e0) * real_t<T>::R_LN2();
     auto x1 = fast_exp_sub<T>(x0, real_t<T>::R_0());
     x1.m_exponent += e0;
@@ -1102,7 +1106,7 @@ template<typename T> real_t<T> exp(real_t<T> const &x)
 template<typename T> real_t<T> exp2(real_t<T> const &x)
 {
     /* Strategy for exp2(x): see strategy in exp(). */
-    typename real_t<T>::exponent_t e0 = x;
+    typename real_t<T>::exponent_t e0(x);
     auto x0 = x - real_t<T>(e0);
     auto x1 = fast_exp_sub<T>(x0 * real_t<T>::R_LN2(), real_t<T>::R_0());
     x1.m_exponent += e0;
@@ -1614,7 +1618,7 @@ template<typename T> std::string real_t<T>::str(int ndigits) const
     // Normalise x so that mantissa is in [1..9.999]
     // FIXME: better use int64_t when the cast is implemented
     // FIXME: does not work with R_MAX and probably R_MIN
-    int exponent = ceil(log10(x));
+    int exponent(ceil(log10(x)));
     x *= pow(R_10(), -real_t<T>(exponent));
 
     if (ndigits < 1)
