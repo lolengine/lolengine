@@ -278,8 +278,6 @@
     <ClInclude Include="lol\lua.h" />
     <ClInclude Include="lol\math\all.h" />
     <ClInclude Include="lol\math\arraynd.h" />
-    <ClInclude Include="lol\math\bigint.h" />
-    <ClInclude Include="lol\math\constants.h" />
     <ClInclude Include="lol\math\functions.h" />
     <ClInclude Include="lol\math\geometry.h" />
     <ClInclude Include="lol\math\interp.h" />

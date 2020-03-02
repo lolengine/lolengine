@@ -38,7 +38,6 @@ liblol_core_headers = \
     lol/math/all.h \
     lol/math/functions.h \
     lol/math/geometry.h lol/math/interp.h lol/math/arraynd.h \
-    lol/math/constants.h lol/math/bigint.h \
     lol/math/noise/gradient.h lol/math/noise/perlin.h \
     lol/math/noise/simplex.h \
     \

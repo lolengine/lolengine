@@ -14,14 +14,12 @@
 
 #include <lol/math/constants.h>
 #include <lol/math/functions.h>
-#include <lol/math/bigint.h>
 #include <lol/math/vector.h>
 #include <lol/math/transform.h>
 #include <lol/math/arraynd.h>
 #include <lol/math/geometry.h>
 #include <lol/math/interp.h>
 #include <lol/math/rand.h>
-#include <lol/math/polynomial.h>
 
 #include <lol/math/noise/gradient.h>
 #include <lol/math/noise/perlin.h>

@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Fractal tutorial
 //
-//  Copyright © 2011—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2011—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -18,8 +18,8 @@
 #include <sstream>
 
 #include <lol/engine.h>
+#include <lol/types/real.h>
 #include <lol/math/vector.h>
-#include <lol/math/real.h>
 #include <lol/math/transform.h>
 
 #include "loldebug.h"

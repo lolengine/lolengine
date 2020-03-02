@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Sample math program: polynomials
 //
-//  Copyright © 2005—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2005—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  This program is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -14,16 +14,12 @@
 #   include "config.h"
 #endif
 
-#include <cstdio>
-
-#include <lol/engine.h>
+#include <lol/math/polynomial.h>
 
 using namespace lol;
 
-int main(int argc, char **argv)
+int main()
 {
-    UNUSED(argc, argv);
-
     polynomial<polynomial<float>> p;
 
     return EXIT_SUCCESS;

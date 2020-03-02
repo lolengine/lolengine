@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -14,6 +14,7 @@
 
 #include <cmath>
 
+#include <lol/types/bigint.h>
 #include <lolunit.h>
 
 namespace lol
@@ -26,6 +27,8 @@ lolunit_declare_fixture(bigint_test)
         bigint<> a;
         bigint<0> b;
         bigint<32> c;
+
+        UNUSED(a, b,c);
     }
 
     lolunit_declare_test(int32_cast)

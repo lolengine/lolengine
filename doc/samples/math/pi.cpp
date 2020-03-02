@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Sample math program: compute Pi
 //
-//  Copyright © 2005—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2005—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  This program is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -18,7 +18,7 @@
 #include <iomanip>
 
 #include <lol/engine.h>
-#include <lol/math/real.h>
+#include <lol/types/real.h>
 
 using lol::real;
 
