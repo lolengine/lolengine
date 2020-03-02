@@ -14,20 +14,14 @@
 
 //
 // The bigint class
-// ----------------
+// ————————————————
 //
 
-#include <lol/base/types.h>
-
-#include <array>
-#include <stdint.h>
+#include <array>    // std::array
+#include <stdint.h> // uint32_t etc.
 
 namespace lol
 {
-
-/* This is OUR namespace. Don't let Windows headers mess with it. */
-#undef min
-#undef max
 
 /*
  * A bigint stores its digits in an array of integers. The MSB of the
@@ -43,9 +37,7 @@ class [[nodiscard]] bigint
     static T const digit_mask = ~((T)1 << bits_per_digit);
 
 public:
-    inline bigint()
-    {
-    }
+    inline bigint() = default;
 
     explicit bigint(int32_t x)
     {
@@ -416,5 +408,5 @@ typedef bigint<16, uint32_t>  int496_t;
 typedef bigint<32, uint32_t>  int992_t;
 typedef bigint<64, uint32_t> int1984_t;
 
-} /* namespace lol */
+} // namespace lol
 

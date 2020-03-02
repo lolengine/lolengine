@@ -2,7 +2,6 @@
 ## `lol` headers to keep
 
     src/lol/base/types.h (vec_t shortcuts eg. vec2, ivec2, u8vec3 etc.)
-    src/lol/math/bigint.h
     src/lol/math/constants.h
     src/lol/math/functions.h
     src/lol/math/noise/*
@@ -31,7 +30,6 @@
 
     src/lol/algorithm/portal.h
     src/lol/audio/*
-    src/lol/base/features.h (a bit dangerous to ship)
     src/lol/base/log.h
     src/lol/debug/*
     src/lol/engine.h
