@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Unit test implementation
 //
-//  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -14,23 +14,13 @@
 
 //
 // The Unit test framework
-// -----------------------
+// ———————————————————————
 //
 
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 #include <cstdio>
-#if defined _XBOX
-#   include <xtl.h>
-#   undef near /* Fuck Microsoft */
-#   undef far /* Fuck Microsoft again */
-#elif defined _WIN32
-#   define WIN32_LEAN_AND_MEAN
-#   include <windows.h>
-#   undef near /* Fuck Microsoft */
-#   undef far /* Fuck Microsoft again */
-#endif
 
 namespace lol
 {

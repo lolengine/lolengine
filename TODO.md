@@ -7,10 +7,6 @@
     src/lol/math/noise/*
 
 
-## other headers to keep
-
-    tools/lolunit/lolunit.h
-
 ## headers we could clean up and keep
 
     src/lol/algorithm/aabb_tree.h
