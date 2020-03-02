@@ -109,9 +109,9 @@ public:
         m_matrix = proj * view * model * anim;
 
         {
-            auto context0 = Debug::DrawContext::New(Color::red);
+            auto context0 = Debug::DrawContext::New(color::red);
             {
-                auto context1 = Debug::DrawContext::New(Color::blue);
+                auto context1 = Debug::DrawContext::New(color::blue);
                 Debug::DrawBox(box3(vec3(0.f), vec3(1.2f)));
                 Debug::DrawGrid(vec3(0.f), vec3::axis_x, vec3::axis_y, vec3::axis_z, 10.0f);
                 {
@@ -120,7 +120,7 @@ public:
                 }
                 {
                     auto context2 = Debug::DrawContext::New(context0);
-                    context2.SetColor(Color::yellow);
+                    context2.SetColor(color::yellow);
                     Debug::DrawBox(box3(vec3(-1.f), vec3(1.4f)));
                 }
             }

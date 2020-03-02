@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2004—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2004—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -160,7 +160,7 @@ static image ResizeBresenham(image &src, ivec2 size)
         {
             if (remy == 0)
             {
-                vec4 color(0.f);
+                vec4 col(0.f);
                 int remx = 0;
 
                 for (int x = 0, x0 = 0; x < size.x; x++)
@@ -171,13 +171,13 @@ static image ResizeBresenham(image &src, ivec2 size)
                     {
                         if (remx == 0)
                         {
-                            color = srcp[y0 * oldsize.x + x0];
+                            col = srcp[y0 * oldsize.x + x0];
                             x0++;
                             remx = size.x;
                         }
 
                         int nx = lol::min(remx, oldsize.x - totx);
-                        acolor += (float)nx * color;
+                        acolor += (float)nx * col;
                         totx += nx;
                         remx -= nx;
                     }

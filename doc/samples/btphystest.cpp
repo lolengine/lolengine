@@ -392,7 +392,7 @@ void BtPhysTest::tick_game(float seconds)
         return;
     }
 
-    auto context = Debug::DrawContext::New(Color::white, 1.f);
+    auto context = Debug::DrawContext::New(color::white, 1.f);
     Debug::DrawGrid(vec3::zero, vec3::axis_x, vec3::axis_y, vec3::axis_z, 10.f);
 
     if (input::keyboard()->key_released(input::key::SC_Escape))

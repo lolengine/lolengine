@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -172,14 +172,14 @@ float Renderer::yx_ratio() const
  * Clear color
  */
 
-void Renderer::clear_color(vec4 color)
+void Renderer::clear_color(vec4 c)
 {
-    if (m_data->m_clear_color == color)
+    if (m_data->m_clear_color == c)
         return;
 
-    glClearColor(color.r, color.g, color.b, color.a);
+    glClearColor(c.r, c.g, c.b, c.a);
 
-    m_data->m_clear_color = color;
+    m_data->m_clear_color = c;
 }
 
 vec4 Renderer::clear_color() const

@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //            © 2014—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -408,14 +408,14 @@ void Scene::AddTile(TileSet *tileset, int id, mat4 model)
         m_tile_api.m_tiles.push(t);
 }
 
-void Scene::AddLine(vec3 a, vec3 b, vec4 color)
+void Scene::AddLine(vec3 a, vec3 b, vec4 col)
 {
-    m_line_api.m_lines.push(a, b, color, -1.f, 0xFFFFFFFF, false, false);
+    m_line_api.m_lines.push(a, b, col, -1.f, 0xFFFFFFFF, false, false);
 }
 
-void Scene::AddLine(vec3 a, vec3 b, vec4 color, float duration, int mask)
+void Scene::AddLine(vec3 a, vec3 b, vec4 col, float duration, int mask)
 {
-    m_line_api.m_lines.push(a, b, color, duration, mask, false, false);
+    m_line_api.m_lines.push(a, b, col, duration, mask, false, false);
 }
 
 void Scene::AddLight(Light *l)

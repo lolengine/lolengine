@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //            © 2014—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -19,7 +19,7 @@
 //
 
 #include <memory>
-#include <cstdint>
+#include <stdint.h>
 
 #include "tileset.h"
 #include "light.h"
@@ -27,6 +27,7 @@
 #include "mesh/mesh.h"
 
 #include <lol/gpu/renderer.h>
+#include <lol/gpu/framebuffer.h>
 #include <lol/base/thread.h>
 
 #define LOL_MAX_LIGHT_COUNT 8

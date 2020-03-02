@@ -1,9 +1,9 @@
 //
 //  Lol Engine — Bullet physics test
 //
-//  Copyright © 2009—2013 Cédric Lecacheur <jordx@free.fr>
+//  Copyright © 2012—2020 Sam Hocevar <sam@hocevar.net>
+//            © 2009—2013 Cédric Lecacheur <jordx@free.fr>
 //            © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2012—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -36,6 +36,32 @@ using namespace lol::phys;
 #define USE_CAPSULE         1
 #endif
 
+static vec4 hex_to_color(std::string const &s)
+{
+    std::string c = s[0] == '#' ? &s[1] : s;
+    uint32_t tmp = std::strtol(c.c_str(), nullptr, 16);
+    if (c.length() == 3)
+    {
+        tmp = 0x11000000u * (tmp >> 8)
+            | 0x00110000u * ((tmp >> 4) & 0xf)
+            | 0x00001100u * (tmp & 0xf)
+            | 0x000000ffu;
+    }
+    else if (c.length() == 4)
+    {
+        tmp = 0x11000000u * (tmp >> 12)
+            | 0x00110000u * ((tmp >> 8) & 0xf)
+            | 0x00001100u * ((tmp >> 4) & 0xf)
+            | 0x00000011u * (tmp & 0xf);
+    }
+    else if (c.length() == 6)
+    {
+        tmp = 0xffu | 0x100u * tmp;
+    }
+    ivec4 v(tmp >> 24, (tmp >> 16) & 0xff, (tmp >> 8) & 0xff, tmp & 0xff);
+    return vec4(v) * (1.f / 255.f);
+}
+
 class PhysicsObject : public WorldEntity
 {
 public:
@@ -49,7 +75,7 @@ public:
         m_physics = new EasyPhysic(this);
 
         //m_mesh.Compile("[sc#ddd afcb 60 1 60 -.1]");
-        m_mesh.SetCurColor(Color::white);
+        m_mesh.SetCurColor(color::white);
         m_mesh.AppendFlatChamfBox(vec3(60.f, 1.f, 60.f), -.1f);
 
         vec3 BoxSize = vec3(60.f, 1.f, 60.f);
@@ -155,12 +181,12 @@ public:
                 while (colors.count())
                 {
                     EasyMesh m;
-                    vec4 color = Color::C8BppHexString(colors.pop());
+                    vec4 color = hex_to_color(colors.pop());
                     m.SetCurColor(color);
                     m.AppendFlatChamfBox(vec3(1.7f), .4f);
                     m.OpenBrace();
                     {
-                        m.SetCurColor(Color::black);
+                        m.SetCurColor(color::black);
                         m.ToggleScaleWinding();
                         m.AppendFlatChamfBox(vec3(1.9f), .4f);
                         m.ScaleX(-1.f);
@@ -204,7 +230,7 @@ public:
                 while (colors.count())
                 {
                     EasyMesh m;
-                    vec4 color = Color::C8BppHexString(colors.pop());
+                    vec4 color = hex_to_color(colors.pop());
                     m.SetCurColor(color);
                     m.AppendSphere(1, 2.f);
                     MeshRand << m;
@@ -228,7 +254,7 @@ public:
                 while (colors.count())
                 {
                     EasyMesh m;
-                    vec4 color = Color::C8BppHexString(colors.pop());
+                    vec4 color = hex_to_color(colors.pop());
                     m.SetCurColor(color);
                     m.SetCurColorB(color);
                     m.AppendDisc(8, 2.f);
@@ -255,7 +281,7 @@ public:
                 while (colors.count())
                 {
                     EasyMesh m;
-                    vec4 color = Color::C8BppHexString(colors.pop());
+                    vec4 color = hex_to_color(colors.pop());
                     m.SetCurColor(color);
                     m.SetCurColorB(color);
                     m.AppendDisc(8, 2.f);
@@ -283,7 +309,7 @@ public:
                 while (colors.count())
                 {
                     EasyMesh m;
-                    vec4 color = Color::C8BppHexString(colors.pop());
+                    vec4 color = hex_to_color(colors.pop());
                     m.SetCurColor(color);
                     m.SetCurColorB(color);
                     m.AppendCapsule(1, 2.f, 1.f);

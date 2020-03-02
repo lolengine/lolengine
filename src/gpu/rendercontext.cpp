@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -123,12 +123,12 @@ ibox2 render_context::viewport()
     return m_renderer->viewport();
 }
 
-void render_context::clear_color(vec4 color)
+void render_context::clear_color(vec4 c)
 {
     if (!m_data->m_clear_color.is_dirty())
         m_data->m_clear_color.set(m_renderer->clear_color());
 
-    m_renderer->clear_color(color);
+    m_renderer->clear_color(c);
 }
 
 vec4 render_context::clear_color()

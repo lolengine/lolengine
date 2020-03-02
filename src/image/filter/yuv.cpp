@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2004—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2004—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -26,7 +26,7 @@ image image::YUVToRGB() const
 
     vec4 *pixels = ret.lock<PixelFormat::RGBA_F32>();
     for (int n = 0; n < count; ++n)
-        pixels[n] = Color::YUVToRGB(pixels[n]);
+        pixels[n] = color::yuv_to_rgb(pixels[n]);
     ret.unlock(pixels);
 
     return ret;
@@ -39,7 +39,7 @@ image image::RGBToYUV() const
 
     vec4 *pixels = ret.lock<PixelFormat::RGBA_F32>();
     for (int n = 0; n < count; ++n)
-        pixels[n] = Color::RGBToYUV(pixels[n]);
+        pixels[n] = color::rgb_to_yuv(pixels[n]);
     ret.unlock(pixels);
 
     return ret;

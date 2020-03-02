@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //            © 2016—2017 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -15,12 +15,13 @@
 
 //
 // The Resource class
-// ---------------
+// ——————————————————
 //
 
 #include <lol/math/arraynd.h>
 #include <lol/math/vector.h>
 #include <lol/math/geometry.h>
+#include <lol/image/image.h>
 #include <lol/image/pixel.h>
 
 namespace lol

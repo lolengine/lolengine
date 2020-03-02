@@ -1,13 +1,15 @@
 //
-// EasyMesh-Cursor: The code belonging to Cursor operations
+//  EasyMesh-Cursor — Cursor operations
 //
-// Copyright: (c) 2010-2015 Sam Hocevar <sam@hocevar.net>
-//            (c) 2009-2015 Cédric Lecacheur <jordx@free.fr>
-//            (c) 2009-2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2012—2020 Sam Hocevar <sam@hocevar.net>
+//            © 2009—2015 Cédric Lecacheur <jordx@free.fr>
+//            © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
@@ -129,50 +131,50 @@ void EasyMesh::ToggleVerticeNoCleanup()
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::SetCurColor(vec4 const &color)
+void EasyMesh::SetCurColor(vec4 const &col)
 {
-    SetCurColorA(color);
-    SetCurColorB(color);
+    SetCurColorA(col);
+    SetCurColorB(col);
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::SetCurColorA(vec4 const &color)
+void EasyMesh::SetCurColorA(vec4 const &col)
 {
     if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
     {
         BD()->CmdStack().AddCmd(EasyMeshCmdType::SetColorA);
-        BD()->CmdStack() << color;
+        BD()->CmdStack() << col;
         return;
     }
 
-    BD()->ColorA() = color;
+    BD()->ColorA() = col;
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::SetCurColorB(vec4 const &color)
+void EasyMesh::SetCurColorB(vec4 const &col)
 {
     if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
     {
         BD()->CmdStack().AddCmd(EasyMeshCmdType::SetColorB);
-        BD()->CmdStack() << color;
+        BD()->CmdStack() << col;
         return;
     }
 
-    BD()->ColorB() = color;
+    BD()->ColorB() = col;
 }
 
 //-----------------------------------------------------------------------------
-void EasyMesh::SetVertColor(vec4 const &color)
+void EasyMesh::SetVertColor(vec4 const &col)
 {
     if (BD()->IsEnabled(MeshBuildOperation::CommandRecording))
     {
         BD()->CmdStack().AddCmd(EasyMeshCmdType::SetVertColor);
-        BD()->CmdStack() << color;
+        BD()->CmdStack() << col;
         return;
     }
 
     for (int i = m_cursors.last().m1; i < m_vert.count(); i++)
-        m_vert[i].m_color = color;
+        m_vert[i].m_color = col;
 }
 
 } /* namespace lol */

@@ -128,12 +128,6 @@
     <ClCompile Include="image\codec\zed-palette-image.cpp">
       <Filter>image\codec</Filter>
     </ClCompile>
-    <ClCompile Include="image\color\cie1931.cpp">
-      <Filter>image\color</Filter>
-    </ClCompile>
-    <ClCompile Include="image\color\color.cpp">
-      <Filter>image\color</Filter>
-    </ClCompile>
     <ClCompile Include="image\filter\colors.cpp">
       <Filter>image\filter</Filter>
     </ClCompile>

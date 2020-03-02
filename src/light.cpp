@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -52,9 +52,9 @@ vec3 Light::GetPosition()
     return m_position;
 }
 
-void Light::SetColor(vec4 const &color)
+void Light::SetColor(vec4 const &col)
 {
-    m_color = color;
+    m_color = col;
 }
 
 vec4 Light::GetColor()

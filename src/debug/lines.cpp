@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -75,15 +75,15 @@ void Debug::DrawLine(vec2 a, vec2 b, float az, float bz)           { DrawLine(a,
 //-- GIZMO --------------------------------------------------------------------
 void Debug::DrawGizmo(vec3 pos, vec3 x, vec3 y, vec3 z, float size)
 {
-    Debug::DrawLine(pos, pos + x * size, Color::red);
-    Debug::DrawLine(pos, pos + y * size, Color::green);
-    Debug::DrawLine(pos, pos + z * size, Color::blue);
+    Debug::DrawLine(pos, pos + x * size, color::red);
+    Debug::DrawLine(pos, pos + y * size, color::green);
+    Debug::DrawLine(pos, pos + z * size, color::blue);
 }
 void Debug::DrawGizmo(vec2 pos, vec3 x, vec3 y, vec3 z, float size, float posz)
 {
-    Debug::DrawLine(pos, pos + x.xy * size, Color::red, posz, posz + x.z * size);
-    Debug::DrawLine(pos, pos + y.xy * size, Color::green, posz, posz + y.z * size);
-    Debug::DrawLine(pos, pos + z.xy * size, Color::blue, posz, posz + z.z * size);
+    Debug::DrawLine(pos, pos + x.xy * size, color::red, posz, posz + x.z * size);
+    Debug::DrawLine(pos, pos + y.xy * size, color::green, posz, posz + y.z * size);
+    Debug::DrawLine(pos, pos + z.xy * size, color::blue, posz, posz + z.z * size);
 }
 
 //-- GRID ---------------------------------------------------------------------
@@ -95,9 +95,9 @@ void Debug::DrawGrid(vec3 pos, vec3 x, vec3 y, vec3 z, float size, bool draw_3d)
 
     //Draw Gizmo
     Debug::DrawGizmo(pos, x, y, z, size);
-    Debug::DrawLine(pos, pos - x * size, Color::gray);
-    Debug::DrawLine(pos, pos - y * size, Color::gray);
-    Debug::DrawLine(pos, pos - z * size, Color::gray);
+    Debug::DrawLine(pos, pos - x * size, color::gray);
+    Debug::DrawLine(pos, pos - y * size, color::gray);
+    Debug::DrawLine(pos, pos - z * size, color::gray);
 
     //grid
     for (float i = (float)-seg_nb; i <= seg_nb; i++)
@@ -105,16 +105,16 @@ void Debug::DrawGrid(vec3 pos, vec3 x, vec3 y, vec3 z, float size, bool draw_3d)
         if (i != 0)
         {
             float iter = seg_sz * ((float)i);
-            Debug::DrawLine(vec3(-size, 0, iter), vec3(size, 0, iter), Color::dark_gray);
-            Debug::DrawLine(vec3(iter, 0, -size), vec3(iter, 0, size), Color::dark_gray);
+            Debug::DrawLine(vec3(-size, 0, iter), vec3(size, 0, iter), color::dark_gray);
+            Debug::DrawLine(vec3(iter, 0, -size), vec3(iter, 0, size), color::dark_gray);
 
             if (draw_3d)
             {
-                Debug::DrawLine(vec3(0, -size, iter), vec3(0, size, iter), Color::dark_gray);
-                Debug::DrawLine(vec3(0, iter, -size), vec3(0, iter, size), Color::dark_gray);
+                Debug::DrawLine(vec3(0, -size, iter), vec3(0, size, iter), color::dark_gray);
+                Debug::DrawLine(vec3(0, iter, -size), vec3(0, iter, size), color::dark_gray);
 
-                Debug::DrawLine(vec3(-size, iter, 0), vec3(size, iter, 0), Color::dark_gray);
-                Debug::DrawLine(vec3(iter, -size, 0), vec3(iter, size, 0), Color::dark_gray);
+                Debug::DrawLine(vec3(-size, iter, 0), vec3(size, iter, 0), color::dark_gray);
+                Debug::DrawLine(vec3(iter, -size, 0), vec3(iter, size, 0), color::dark_gray);
             }
         }
     }

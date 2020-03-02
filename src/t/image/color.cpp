@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -71,8 +71,8 @@ lolunit_declare_fixture(color_test)
             vec3 b(ciede2k[n + 3], ciede2k[n + 4], ciede2k[n + 5]);
             float d1 = ciede2k[n + 6];
 
-            float d2 = Color::DistanceCIEDE2000(a, b);
-            float d3 = Color::DistanceCIEDE2000(b, a);
+            float d2 = color::distance_ciede2k(a, b);
+            float d3 = color::distance_ciede2k(b, a);
 
             /* Check that our function works, and check that
              * it is symmetrical. */
@@ -90,8 +90,8 @@ lolunit_declare_fixture(color_test)
         for (int b = 0; b < 20; b++)
         {
             vec3 v1 = vec3(r / 20.f, g / 20.f, b / 20.f);
-            vec3 v2 = Color::RGBToHSV(v1);
-            vec3 v3 = Color::HSVToRGB(v2);
+            vec3 v2 = color::rgb_to_hsv(v1);
+            vec3 v3 = color::hsv_to_rgb(v2);
 
             std::string rgb = format("[%f %f %f]", v1.r, v1.g, v1.b);
             lolunit_set_context(&rgb[0]);
@@ -112,8 +112,8 @@ lolunit_declare_fixture(color_test)
         for (int b = 0; b < 20; b++)
         {
             vec3 v1 = vec3(r / 20.f, g / 20.f, b / 20.f);
-            vec3 v2 = Color::RGBToHSL(v1);
-            vec3 v3 = Color::HSVToHSL(Color::RGBToHSV(v1));
+            vec3 v2 = color::rgb_to_hsl(v1);
+            vec3 v3 = color::hsv_to_hsl(color::rgb_to_hsv(v1));
 
             std::string rgb = format("[%f %f %f]", v1.r, v1.g, v1.b);
             lolunit_set_context(&rgb[0]);

@@ -74,7 +74,7 @@ public:
             vec3 hsv(lol::fmod(i * 0.001f, 1.f),
                      0.3 * lol::sin(f * 0.27 + 2.0) + 0.3,
                      0.3 * lol::sin(f * 0.21 - 2.6) + 0.6);
-            vec3 rgb = Color::HSVToRGB(hsv);
+            vec3 rgb = color::hsv_to_rgb(hsv);
 
             if (f < 7.0)
             {

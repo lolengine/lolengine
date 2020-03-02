@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -62,19 +62,19 @@ void Gradient::tick_draw(float seconds, Scene &scene)
                              m_aabb.aa.x, m_aabb.bb.y, 0.0f,
                              m_aabb.bb.x, m_aabb.aa.y, 0.0f, };
 
-    float const color[] = { 0.73f, 0.85f, 0.85f, 1.0f,
-                            0.73f, 0.85f, 0.85f, 1.0f,
-                            0.0f, 0.0f, 1.0f, 1.0f,
-                            0.0f, 0.0f, 1.0f, 1.0f,
-                            0.0f, 0.0f, 1.0f, 1.0f,
-                            0.73f, 0.85f, 0.85f, 1.0f, };
+    float const colors[] = { 0.73f, 0.85f, 0.85f, 1.0f,
+                             0.73f, 0.85f, 0.85f, 1.0f,
+                             0.0f, 0.0f, 1.0f, 1.0f,
+                             0.0f, 0.0f, 1.0f, 1.0f,
+                             0.0f, 0.0f, 1.0f, 1.0f,
+                             0.73f, 0.85f, 0.85f, 1.0f, };
 
     if (!data->shader)
     {
         data->shader = Shader::Create(LOLFX_RESOURCE_NAME(gradient));
 
         data->m_vbo = std::make_shared<VertexBuffer>(sizeof(vertex));
-        data->m_cbo = std::make_shared<VertexBuffer>(sizeof(color));
+        data->m_cbo = std::make_shared<VertexBuffer>(sizeof(colors));
 
         data->m_vdecl = std::make_shared<VertexDeclaration>
                             (VertexStream<vec3>(VertexUsage::Position),
@@ -101,7 +101,7 @@ void Gradient::tick_draw(float seconds, Scene &scene)
     data->m_vdecl->Bind();
 
     data->m_vbo->set_data(vertex, sizeof(vertex));
-    data->m_cbo->set_data(color, sizeof(color));
+    data->m_cbo->set_data(colors, sizeof(colors));
 
     /* Bind vertex and color buffers */
     data->m_vdecl->SetStream(data->m_vbo, attr_pos);

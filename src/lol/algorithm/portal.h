@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //            © 2013—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -36,8 +36,8 @@ void Draw(PortalDoor<TE>& port, vec4 color)
 
     // Draw normal
     vec3 p = port.m_center + port.m_up * port.m_size.y * .5f;
-    Debug::DrawLine(p, p + port.m_normal, Color::red);
-    Debug::DrawLine(p, p + port.m_up, Color::green);
+    Debug::DrawLine(p, p + port.m_normal, color::red);
+    Debug::DrawLine(p, p + port.m_up, color::green);
     // Draw door
     for (int l = 0; l < 4; l++)
         Debug::DrawLine(points[l], points[(l + 1) % 4], color);
@@ -309,16 +309,16 @@ public:
             vec4 tmp = vec4::zero;
             for (auto port : room->m_doors)
             {
-                Debug::Draw(*port, Color::cyan);
+                Debug::Draw(*port, color::cyan);
                 tmp += vec4(port->m_center, 1.f);
             }
             tmp /= tmp.w;
-            Debug::DrawBox(tmp.xyz - vec3(1.f), tmp.xyz + vec3(1.f), Color::yellow);
+            Debug::DrawBox(tmp.xyz - vec3(1.f), tmp.xyz + vec3(1.f), color::yellow);
         }
         for (auto port : ignore_doors)
         {
-            Debug::Draw(*port, Color::magenta);
-            Debug::DrawViewProj(port->m_view, port->m_proj, Color::magenta);
+            Debug::Draw(*port, color::magenta);
+            Debug::DrawViewProj(port->m_view, port->m_proj, color::magenta);
         }
     #endif //LOL_BUILD_DEBUG
     }
