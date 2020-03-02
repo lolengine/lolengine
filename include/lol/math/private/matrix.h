@@ -39,7 +39,7 @@ namespace lol
  */
 
 template<typename T, int COLS, int ROWS>
-struct lol_attr_nodiscard mat_t
+struct [[nodiscard]] mat_t
   : public linear_ops::base<vec_t<T,ROWS>>
 {
     static int const count = COLS;
@@ -77,7 +77,7 @@ private:
  */
 
 template <typename T>
-struct lol_attr_nodiscard mat_t<T, 2, 2>
+struct [[nodiscard]] mat_t<T, 2, 2>
   : public linear_ops::base<vec_t<T,2>>
 {
     static int const count = 2;
@@ -129,7 +129,7 @@ static_assert(sizeof(dmat2) == 32, "sizeof(dmat2) == 32");
  */
 
 template <typename T>
-struct lol_attr_nodiscard mat_t<T, 3, 3>
+struct [[nodiscard]] mat_t<T, 3, 3>
   : public linear_ops::base<vec_t<T,3>>
 {
     static int const count = 3;
@@ -220,7 +220,7 @@ static_assert(sizeof(dmat3) == 72, "sizeof(dmat3) == 72");
  */
 
 template <typename T>
-struct lol_attr_nodiscard mat_t<T, 4, 4>
+struct [[nodiscard]] mat_t<T, 4, 4>
   : public linear_ops::base<vec_t<T,4>>
 {
     static int const count = 4;
@@ -402,7 +402,7 @@ mat_t<T, N - 1, N - 1> submatrix(mat_t<T, N, N> const &m, int i, int j)
  * Compute square matrix cofactor
  */
 
-template<typename T, int N> lol_attr_nodiscard
+template<typename T, int N> [[nodiscard]]
 T cofactor(mat_t<T, N, N> const &m, int i, int j)
 {
     ASSERT(i >= 0); ASSERT(j >= 0); ASSERT(i < N); ASSERT(j < N);
@@ -410,7 +410,7 @@ T cofactor(mat_t<T, N, N> const &m, int i, int j)
     return ((i + j) & 1) ? -tmp : tmp;
 }
 
-template<typename T> lol_attr_nodiscard
+template<typename T> [[nodiscard]]
 T cofactor(mat_t<T, 2, 2> const &m, int i, int j)
 {
     /* This specialisation shouldn't be needed, but Visual Studio. */
@@ -420,7 +420,7 @@ T cofactor(mat_t<T, 2, 2> const &m, int i, int j)
 }
 
 // Lu decomposition with partial pivoting
-template<typename T, int N> lol_attr_nodiscard
+template<typename T, int N> [[nodiscard]]
 std::tuple<mat_t<T, N, N>, vec_t<int, N>, int> lu_decomposition(mat_t<T, N, N> const &m)
 {
     mat_t<T, N, N> lu = m;
@@ -463,7 +463,7 @@ std::tuple<mat_t<T, N, N>, vec_t<int, N>, int> lu_decomposition(mat_t<T, N, N> c
  * Compute square matrix determinant, with a specialisation for 1×1 matrices
  */
 
-template<typename T, int N> lol_attr_nodiscard
+template<typename T, int N> [[nodiscard]]
 T determinant(mat_t<T, N, N> const &m)
 {
     auto lup = lu_decomposition(m);
@@ -475,7 +475,7 @@ T determinant(mat_t<T, N, N> const &m)
     return det;
 }
 
-template<typename T> lol_attr_nodiscard
+template<typename T> [[nodiscard]]
 T const & determinant(mat_t<T, 1, 1> const &m)
 {
     return m[0][0];

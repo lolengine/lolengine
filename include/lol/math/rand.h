@@ -27,50 +27,50 @@ namespace lol
 {
 
 /* Random number generators */
-template<typename T> lol_attr_nodiscard static inline T rand();
-template<typename T> lol_attr_nodiscard static inline T rand(T a);
-template<typename T> lol_attr_nodiscard static inline T rand(T a, T b);
+template<typename T> [[nodiscard]] static inline T rand();
+template<typename T> [[nodiscard]] static inline T rand(T a);
+template<typename T> [[nodiscard]] static inline T rand(T a, T b);
 
 /* One-value random number generators */
-template<typename T> lol_attr_nodiscard static inline T rand(T a)
+template<typename T> [[nodiscard]] static inline T rand(T a)
 {
     return a ? rand<T>() % a : T(0);
 }
 
 #if 0
-template<> lol_attr_nodiscard inline half rand<half>(half a)
+template<> [[nodiscard]] inline half rand<half>(half a)
 {
     float f = (float)std::rand() / (float)RAND_MAX;
     return (half)(a * f);
 }
 #endif
 
-template<> lol_attr_nodiscard inline float rand<float>(float a)
+template<> [[nodiscard]] inline float rand<float>(float a)
 {
     auto f = (float)std::rand() / (float)RAND_MAX;
     return a * f;
 }
 
-template<> lol_attr_nodiscard inline double rand<double>(double a)
+template<> [[nodiscard]] inline double rand<double>(double a)
 {
     auto f = (double)std::rand() / (double)RAND_MAX;
     return a * f;
 }
 
-template<> lol_attr_nodiscard inline long double rand<long double>(long double a)
+template<> [[nodiscard]] inline long double rand<long double>(long double a)
 {
     auto f = (long double)std::rand() / (long double)RAND_MAX;
     return a * f;
 }
 
 /* Two-value random number generator -- no need for specialisation */
-template<typename T> lol_attr_nodiscard static inline T rand(T a, T b)
+template<typename T> [[nodiscard]] static inline T rand(T a, T b)
 {
     return a + rand<T>(b - a);
 }
 
 /* Default random number generator */
-template<typename T> lol_attr_nodiscard static inline T rand()
+template<typename T> [[nodiscard]] static inline T rand()
 {
     switch (sizeof(T))
     {
@@ -124,11 +124,11 @@ template<typename T> lol_attr_nodiscard static inline T rand()
 }
 
 #if 0
-template<> lol_attr_nodiscard inline half rand<half>() { return rand<half>(1.f); }
+template<> [[nodiscard]] inline half rand<half>() { return rand<half>(1.f); }
 #endif
-template<> lol_attr_nodiscard inline float rand<float>() { return rand<float>(1.f); }
-template<> lol_attr_nodiscard inline double rand<double>() { return rand<double>(1.0); }
-template<> lol_attr_nodiscard inline long double rand<long double>() { return rand<long double>(1.0); }
+template<> [[nodiscard]] inline float rand<float>() { return rand<float>(1.f); }
+template<> [[nodiscard]] inline double rand<double>() { return rand<double>(1.0); }
+template<> [[nodiscard]] inline long double rand<long double>() { return rand<long double>(1.0); }
 
 } /* namespace lol */
 

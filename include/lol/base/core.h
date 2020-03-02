@@ -39,6 +39,14 @@ static inline std::string getenv(std::string const &var)
     return std::string();
 }
 
+// A handy endianness test function
+static inline bool is_big_endian()
+{
+    union { int i; char c; } u;
+    u.i = 1;
+    return u.c == 0;
+}
+
 } // namespace os
 
 } // namespace lol

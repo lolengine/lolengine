@@ -19,16 +19,12 @@
 
 // C++ compiler features detected through __has_cpp_attribute
 
-#if defined(__has_cpp_attribute) && __has_cpp_attribute(nodiscard)
-#   define lol_attr_nodiscard [[nodiscard]]
-#else
-#   define lol_attr_nodiscard /* */
+#if defined(__has_cpp_attribute) && !__has_cpp_attribute(nodiscard)
+#   error C++ compiler support for [[nodiscard]] is required (use -std=c++17?)
 #endif
 
-#if defined(__has_cpp_attribute) && __has_cpp_attribute(fallthrough)
-#   define LOL_ATTR_FALLTHROUGH [[fallthrough]];
-#else
-#   define LOL_ATTR_FALLTHROUGH /* */
+#if defined(__has_cpp_attribute) && !__has_cpp_attribute(fallthrough)
+#   error C++ compiler support for [[fallthrough]] is required (use -std=c++17?)
 #endif
 
 // Define some attribute macros.

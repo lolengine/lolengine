@@ -17,6 +17,13 @@
 // —————————————————
 //
 
+// Ensure CreateFile2() is available on mingw
+#if defined _WIN32 && !defined _MSC_VER && \
+              (!defined _WIN32_WINNT || _WIN32_WINNT < 0x0602)
+#   undef _WIN32_WINNT
+#   define _WIN32_WINNT 0x0602
+#endif
+
 //namespace lol
 //{
 

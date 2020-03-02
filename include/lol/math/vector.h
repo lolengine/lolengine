@@ -44,7 +44,7 @@ namespace lol
  */
 
 template<typename T, int N, int SWIZZLE>
-struct lol_attr_nodiscard vec_t
+struct [[nodiscard]] vec_t
     /* MUST have a different base than e.g. vec_t<T,2> otherwise the unions
      * in vec_t<T,2> with the same base will cause empty base optimisation
      * failures. */
@@ -114,7 +114,7 @@ private:
 /* The generic “vec_t” type, which is a fixed-size vector with no
  * swizzling. There's an override for N=2, N=3, N=4 that has swizzling. */
 template<typename T, int N>
-struct lol_attr_nodiscard vec_t<T, N, FULL_SWIZZLE>
+struct [[nodiscard]] vec_t<T, N, FULL_SWIZZLE>
   : public componentwise_ops::base<T>
 {
     static int const count = N;
@@ -131,13 +131,9 @@ struct lol_attr_nodiscard vec_t<T, N, FULL_SWIZZLE>
 
     /* Explicit constructor that takes exactly N arguments thanks to SFINAE. */
     template<typename... ARGS>
-#if LOL_FEATURE_CXX11_SFINAE_FOR_CTORS
     explicit inline vec_t(T const &X,
         typename std::enable_if<sizeof...(ARGS) + 2 == N, T>::type const &Y,
         ARGS... args)
-#else
-    explicit inline vec_t(T const &X, T const &Y, ARGS... args)
-#endif
     {
         static_assert(sizeof...(ARGS) + 2 == N,
                       "wrong argument count in vec_t constructor");
@@ -203,7 +199,7 @@ private:
  */
 
 template <typename T>
-struct lol_attr_nodiscard vec_t<T,2>
+struct [[nodiscard]] vec_t<T,2>
   : public swizzle_ops::base<T>
 {
     static int const count = 2;
@@ -314,7 +310,7 @@ static_assert(sizeof(dvec2) == 16, "sizeof(dvec2) == 16");
  */
 
 template <typename T>
-struct lol_attr_nodiscard vec_t<T,3>
+struct [[nodiscard]] vec_t<T,3>
   : public swizzle_ops::base<T>
 {
     static int const count = 3;
@@ -555,7 +551,7 @@ static_assert(sizeof(dvec3) == 24, "sizeof(dvec3) == 24");
  */
 
 template <typename T>
-struct lol_attr_nodiscard vec_t<T,4>
+struct [[nodiscard]] vec_t<T,4>
   : public swizzle_ops::base<T>
 {
     static int const count = 4;
@@ -1117,7 +1113,7 @@ static inline vec_t<T,N> mix(vec_t<T,N,SWIZZLE1> const &x,
  * Some GLSL-like functions.
  */
 
-template<typename T, int N, int SWIZZLE1, int SWIZZLE2> lol_attr_nodiscard
+template<typename T, int N, int SWIZZLE1, int SWIZZLE2> [[nodiscard]]
 static inline T dot(vec_t<T,N,SWIZZLE1> const &a,
                     vec_t<T,N,SWIZZLE2> const &b)
 {
@@ -1127,13 +1123,13 @@ static inline T dot(vec_t<T,N,SWIZZLE1> const &a,
     return ret;
 }
 
-template<typename T, int N, int SWIZZLE> lol_attr_nodiscard
+template<typename T, int N, int SWIZZLE> [[nodiscard]]
 static inline T sqlength(vec_t<T,N,SWIZZLE> const &a)
 {
     return dot(a, a);
 }
 
-template<typename T, int N, int SWIZZLE> lol_attr_nodiscard
+template<typename T, int N, int SWIZZLE> [[nodiscard]]
 static inline T length(vec_t<T,N,SWIZZLE> const &a)
 {
     /* FIXME: this is not very nice */
@@ -1151,7 +1147,7 @@ static inline vec_t<T,N> lerp(vec_t<T,N,SWIZZLE1> const &a,
     return ret;
 }
 
-template<typename T, int N, int SWIZZLE1, int SWIZZLE2> lol_attr_nodiscard
+template<typename T, int N, int SWIZZLE1, int SWIZZLE2> [[nodiscard]]
 static inline T distance(vec_t<T,N,SWIZZLE1> const &a,
                          vec_t<T,N,SWIZZLE2> const &b)
 {

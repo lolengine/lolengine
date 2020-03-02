@@ -32,7 +32,7 @@ namespace lol
 
 namespace half_ops { struct base {}; }
 
-class lol_attr_nodiscard half
+class [[nodiscard]] half
   : half_ops::base
 {
 public:
@@ -44,22 +44,22 @@ public:
     inline half(double f) { *this = makefast((float)f); }
     inline half(ldouble f) { *this = makefast((float)f); }
 
-    lol_attr_nodiscard inline int is_nan() const
+    [[nodiscard]] inline int is_nan() const
     {
         return ((bits & 0x7c00u) == 0x7c00u) && (bits & 0x03ffu);
     }
 
-    lol_attr_nodiscard inline int is_finite() const
+    [[nodiscard]] inline int is_finite() const
     {
         return (bits & 0x7c00u) != 0x7c00u;
     }
 
-    lol_attr_nodiscard inline int is_inf() const
+    [[nodiscard]] inline int is_inf() const
     {
         return (uint16_t)(bits << 1) == (0x7c00u << 1);
     }
 
-    lol_attr_nodiscard inline int is_normal() const
+    [[nodiscard]] inline int is_normal() const
     {
         return (is_finite() && (bits & 0x7c00u)) || ((bits & 0x7fffu) == 0);
     }
@@ -69,33 +69,33 @@ public:
     inline half &operator =(float f) { return *this = makefast(f); }
     inline half &operator =(double f) { return *this = makefast((float)f); }
     inline half &operator =(ldouble f) { return *this = makefast((float)f); }
-    lol_attr_nodiscard inline operator int8_t() const { return (int8_t)(float)*this; }
-    lol_attr_nodiscard inline operator uint8_t() const { return (uint8_t)(float)*this; }
-    lol_attr_nodiscard inline operator int16_t() const { return (int16_t)(float)*this; }
-    lol_attr_nodiscard inline operator uint16_t() const { return (uint16_t)(float)*this; }
-    lol_attr_nodiscard inline operator int32_t() const { return (int32_t)(float)*this; }
-    lol_attr_nodiscard inline operator uint32_t() const { return (uint32_t)(float)*this; }
-    lol_attr_nodiscard inline operator int64_t() const { return (int64_t)(float)*this; }
-    lol_attr_nodiscard inline operator uint64_t() const { return (uint64_t)(float)*this; }
+    [[nodiscard]] inline operator int8_t() const { return (int8_t)(float)*this; }
+    [[nodiscard]] inline operator uint8_t() const { return (uint8_t)(float)*this; }
+    [[nodiscard]] inline operator int16_t() const { return (int16_t)(float)*this; }
+    [[nodiscard]] inline operator uint16_t() const { return (uint16_t)(float)*this; }
+    [[nodiscard]] inline operator int32_t() const { return (int32_t)(float)*this; }
+    [[nodiscard]] inline operator uint32_t() const { return (uint32_t)(float)*this; }
+    [[nodiscard]] inline operator int64_t() const { return (int64_t)(float)*this; }
+    [[nodiscard]] inline operator uint64_t() const { return (uint64_t)(float)*this; }
 
-    lol_attr_nodiscard operator float() const;
-    lol_attr_nodiscard inline operator double() const { return (float)(*this); }
-    lol_attr_nodiscard inline operator ldouble() const { return (float)(*this); }
+    [[nodiscard]] operator float() const;
+    [[nodiscard]] inline operator double() const { return (float)(*this); }
+    [[nodiscard]] inline operator ldouble() const { return (float)(*this); }
 
     /* Array conversions */
     static void convert(half *dst, float const *src, size_t nelem);
     static void convert(float *dst, half const *src, size_t nelem);
 
     /* Operations */
-    lol_attr_nodiscard bool operator ==(half x) const { return (float)*this == (float)x; }
-    lol_attr_nodiscard bool operator !=(half x) const { return (float)*this != (float)x; }
-    lol_attr_nodiscard bool operator <(half x) const { return (float)*this < (float)x; }
-    lol_attr_nodiscard bool operator >(half x) const { return (float)*this > (float)x; }
-    lol_attr_nodiscard bool operator <=(half x) const { return (float)*this <= (float)x; }
-    lol_attr_nodiscard bool operator >=(half x) const { return (float)*this >= (float)x; }
+    [[nodiscard]] bool operator ==(half x) const { return (float)*this == (float)x; }
+    [[nodiscard]] bool operator !=(half x) const { return (float)*this != (float)x; }
+    [[nodiscard]] bool operator <(half x) const { return (float)*this < (float)x; }
+    [[nodiscard]] bool operator >(half x) const { return (float)*this > (float)x; }
+    [[nodiscard]] bool operator <=(half x) const { return (float)*this <= (float)x; }
+    [[nodiscard]] bool operator >=(half x) const { return (float)*this >= (float)x; }
 
-    lol_attr_nodiscard bool operator !() const { return !(bits & 0x7fffu); }
-    lol_attr_nodiscard operator bool() const { return !!*this; }
+    [[nodiscard]] bool operator !() const { return !(bits & 0x7fffu); }
+    [[nodiscard]] operator bool() const { return !!*this; }
 
     inline half operator -() const { return makebits(bits ^ 0x8000u); }
     inline half operator +() const { return *this; }
@@ -104,10 +104,10 @@ public:
     inline half &operator *=(half h) { return (*this = (half)(*this * h)); }
     inline half &operator /=(half h) { return (*this = (half)(*this / h)); }
 
-    lol_attr_nodiscard inline float operator +(half h) const { return (float)*this + (float)h; }
-    lol_attr_nodiscard inline float operator -(half h) const { return (float)*this - (float)h; }
-    lol_attr_nodiscard inline float operator *(half h) const { return (float)*this * (float)h; }
-    lol_attr_nodiscard inline float operator /(half h) const { return (float)*this / (float)h; }
+    [[nodiscard]] inline float operator +(half h) const { return (float)*this + (float)h; }
+    [[nodiscard]] inline float operator -(half h) const { return (float)*this - (float)h; }
+    [[nodiscard]] inline float operator *(half h) const { return (float)*this * (float)h; }
+    [[nodiscard]] inline float operator /(half h) const { return (float)*this / (float)h; }
 
     /* Factories */
     static half makefast(float f);

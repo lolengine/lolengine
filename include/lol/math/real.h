@@ -41,7 +41,7 @@ namespace lol
 // call real::sqrt).
 //
 template<typename T>
-class lol_attr_nodiscard real_t
+class [[nodiscard]] real_t
 {
 public:
     typedef T bigit_t;
@@ -65,19 +65,19 @@ public:
         return n <= 0 ? count : (count = n);
     }
 
-    lol_attr_nodiscard bool is_zero() const { return m_mantissa.size() == 0; }
-    lol_attr_nodiscard bool is_negative() const { return m_sign; }
-    lol_attr_nodiscard bool is_nan() const { return m_nan; }
-    lol_attr_nodiscard bool is_inf() const { return m_inf; }
+    [[nodiscard]] bool is_zero() const { return m_mantissa.size() == 0; }
+    [[nodiscard]] bool is_negative() const { return m_sign; }
+    [[nodiscard]] bool is_nan() const { return m_nan; }
+    [[nodiscard]] bool is_inf() const { return m_inf; }
 
     // Mark all these operators explicit to avoid surprises
-    lol_attr_nodiscard explicit operator float() const;
-    lol_attr_nodiscard explicit operator double() const;
-    lol_attr_nodiscard explicit operator long double() const;
-    lol_attr_nodiscard explicit operator int32_t() const;
-    lol_attr_nodiscard explicit operator uint32_t() const;
-    lol_attr_nodiscard explicit operator int64_t() const;
-    lol_attr_nodiscard explicit operator uint64_t() const;
+    [[nodiscard]] explicit operator float() const;
+    [[nodiscard]] explicit operator double() const;
+    [[nodiscard]] explicit operator long double() const;
+    [[nodiscard]] explicit operator int32_t() const;
+    [[nodiscard]] explicit operator uint32_t() const;
+    [[nodiscard]] explicit operator int64_t() const;
+    [[nodiscard]] explicit operator uint64_t() const;
 
     real_t<T> operator +() const;
     real_t<T> operator -() const;
@@ -90,15 +90,15 @@ public:
     real_t<T> const &operator *=(real_t<T> const &x);
     real_t<T> const &operator /=(real_t<T> const &x);
 
-    lol_attr_nodiscard bool operator ==(real_t<T> const &x) const;
-    lol_attr_nodiscard bool operator !=(real_t<T> const &x) const;
-    lol_attr_nodiscard bool operator <(real_t<T> const &x) const;
-    lol_attr_nodiscard bool operator >(real_t<T> const &x) const;
-    lol_attr_nodiscard bool operator <=(real_t<T> const &x) const;
-    lol_attr_nodiscard bool operator >=(real_t<T> const &x) const;
+    [[nodiscard]] bool operator ==(real_t<T> const &x) const;
+    [[nodiscard]] bool operator !=(real_t<T> const &x) const;
+    [[nodiscard]] bool operator <(real_t<T> const &x) const;
+    [[nodiscard]] bool operator >(real_t<T> const &x) const;
+    [[nodiscard]] bool operator <=(real_t<T> const &x) const;
+    [[nodiscard]] bool operator >=(real_t<T> const &x) const;
 
-    lol_attr_nodiscard bool operator !() const;
-    lol_attr_nodiscard explicit operator bool() const;
+    [[nodiscard]] bool operator !() const;
+    [[nodiscard]] explicit operator bool() const;
 
     // Comparison functions
     template<typename U> friend real_t<U> min(real_t<U> const &a,
