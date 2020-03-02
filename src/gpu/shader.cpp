@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -991,8 +991,8 @@ std::string ShaderBuilder::Build()
         //Added shader variables
         for (int var = 0; var < ShaderVariable::InOut; var++)
         {
-            array<std::string> all_keys = keys(m_parameters[prog][var]);
-            if (all_keys.count())
+            auto all_keys = keys(m_parameters[prog][var]);
+            if (all_keys.size())
             {
                 code += std::string("//- ") + Shader::GetVariableQualifier((ShaderVariable)var) + " ----\n";
                 for (auto const &key : all_keys)
@@ -1028,14 +1028,9 @@ std::string ShaderBuilder::Build()
 
         //Add local variables
         int var = ShaderVariable::InOut;
-        array<std::string> all_keys = keys(m_parameters[prog][var]);
+        auto all_keys = keys(m_parameters[prog][var]);
         for (auto const &key : all_keys)
-        {
-            if (all_keys.count())
-            {
-                code += "    " + m_parameters[prog][var][key] + " " + key + ";\n";
-            }
-        }
+            code += "    " + m_parameters[prog][var][key] + " " + key + ";\n";
         code += "\n";
 
         //Add calls

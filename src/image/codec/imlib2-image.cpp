@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -83,7 +83,7 @@ ResourceCodecData *Imlib2ImageCodec::Load(std::string const &path)
 
     for (int i = 0; i < size.x * size.y; i++)
     {
-        if (is_big_endian())
+        if (os::is_big_endian())
             dstdata[i] = srcdata[i].argb;
         else
             dstdata[i] = srcdata[i].bgra;
@@ -113,7 +113,7 @@ bool Imlib2ImageCodec::Save(std::string const &path, ResourceCodecData *data)
 
     for (int i = 0; i < size.x * size.y; i++)
     {
-        if (is_big_endian())
+        if (os::is_big_endian())
             dstdata[i] = srcdata[i].argb;
         else
             dstdata[i] = srcdata[i].bgra;

@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -93,13 +93,13 @@ public:
     void SetWrap(WrapMode wrap_x, WrapMode wrap_y);
 
     /* Lock continuous arrays of pixels for writing */
-    template<PixelFormat T> LOL_ATTR_NODISCARD typename PixelType<T>::type *lock();
-    LOL_ATTR_NODISCARD void *lock();
+    template<PixelFormat T> [[nodiscard]] typename PixelType<T>::type *lock();
+    [[nodiscard]] void *lock();
     void unlock(void const *pixels);
 
     /* Lock 2D arrays of pixels for writing */
     template<PixelFormat T>
-    LOL_ATTR_NODISCARD inline array2d<typename PixelType<T>::type> &lock2d()
+    [[nodiscard]] inline array2d<typename PixelType<T>::type> &lock2d()
     {
         /* Hack: this indirection is needed because of a Visual Studio ICE */
         return *(array2d<typename PixelType<T>::type> *)lock2d_helper(T);

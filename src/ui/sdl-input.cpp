@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -201,7 +201,7 @@ void SdlInput::tick(float seconds)
                         sc2 = input::key::SC_NumLockClearStatus;
                     keyboard->internal_set_key(sc2, !keyboard->key(sc2));
                 }
-                LOL_ATTR_FALLTHROUGH
+                [[fallthrough]];
             default:
                 // Set key updates the corresponding key
                 keyboard->internal_set_key(sc, event.type == SDL_KEYDOWN);

@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //            © 2013—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -50,7 +50,7 @@ enum class SortAlgorithm : uint8_t
  * m_count are allocated. The rest is uninitialised memory.
  */
 
-template<typename T, typename ARRAY> class LOL_ATTR_NODISCARD array_base
+template<typename T, typename ARRAY> class [[nodiscard]] array_base
 {
 public:
     typedef T element_t;

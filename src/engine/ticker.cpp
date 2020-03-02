@@ -30,8 +30,8 @@ class ticker_data
 public:
     ticker_data()
     {
-        msg::debug("platform %s threads\n", has_threads() ? "has" : "has no");
-        if (has_threads())
+        msg::debug("platform %s threads\n", thread::has_threads() ? "has" : "has no");
+        if (thread::has_threads())
         {
             gamethread = std::make_unique<thread>(std::bind(&ticker_data::GameThreadMain, this));
             drawtick.push(1);
@@ -48,7 +48,7 @@ public:
                "still %d autoreleased entities\n", DEPRECATED_m_autolist.count());
         msg::debug("%d frames required to quit\n", m_frame - m_quitframe);
 
-        if (has_threads())
+        if (thread::has_threads())
         {
             gametick.push(0);
             disktick.push(0);
@@ -570,7 +570,7 @@ void ticker::teardown()
 
 void ticker::tick_draw()
 {
-    if (has_threads())
+    if (thread::has_threads())
     {
         int n = data->drawtick.pop();
         if (n == 0)
@@ -584,7 +584,7 @@ void ticker::tick_draw()
     Profiler::Start(Profiler::STAT_TICK_BLIT);
 
     /* Signal game thread that it can carry on */
-    if (has_threads())
+    if (thread::has_threads())
         data->gametick.push(1);
     else
         ticker_data::DiskThreadTick();

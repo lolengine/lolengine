@@ -14,6 +14,12 @@
 
 #include "lolgl.h"
 
+#if defined(_WIN32)
+#   define attr_stdcall __stdcall
+#else
+#   define attr_stdcall /* */
+#endif
+
 namespace lol
 {
 
@@ -49,7 +55,7 @@ static std::map<GLenum, char const *> gl_dbg_severity_to_str
     { GL_DEBUG_SEVERITY_NOTIFICATION, "notification" },
 };
 
-static void LOL_ATTR_STDCALL
+static void attr_stdcall
     gl_debug(GLenum source, GLenum type, GLuint id,
              GLenum severity, GLsizei length,
              const GLchar *message, const void *user_param)
@@ -75,7 +81,7 @@ static void LOL_ATTR_STDCALL
 }
 
 #if defined LOL_USE_GLEW && !defined __APPLE__
-static void LOL_ATTR_STDCALL
+static void attr_stdcall
     gl_debug_amd(GLuint id, GLenum category, GLenum severity,
                  GLsizei length, const GLchar* message,
                  GLvoid* user_param)

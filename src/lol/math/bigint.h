@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -37,7 +37,7 @@ namespace lol
  */
 
 template<unsigned int N = 16, typename T = uint32_t>
-class LOL_ATTR_NODISCARD bigint
+class [[nodiscard]] bigint
 {
     static int const bits_per_digit = sizeof(T) * 8 - 1;
     static T const digit_mask = ~((T)1 << bits_per_digit);

@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -18,7 +18,9 @@
 // The central logging system.
 //
 
-#include <stdint.h>
+#include <lol/base/private/features.h>
+
+#include <cstdint>
 #include <cstdarg>
 
 namespace lol
@@ -27,10 +29,10 @@ namespace lol
 class msg
 {
 public:
-    static void debug(char const *format, ...) LOL_ATTR_FORMAT(1, 2);
-    static void info(char const *format, ...) LOL_ATTR_FORMAT(1, 2);
-    static void warn(char const *format, ...) LOL_ATTR_FORMAT(1, 2);
-    static void error(char const *format, ...) LOL_ATTR_FORMAT(1, 2);
+    static void debug(char const *format, ...) lol_attr_printf_format(1, 2);
+    static void info(char const *format, ...)  lol_attr_printf_format(1, 2);
+    static void warn(char const *format, ...)  lol_attr_printf_format(1, 2);
+    static void error(char const *format, ...) lol_attr_printf_format(1, 2);
 
     enum class message_type
     {

@@ -106,7 +106,6 @@
     <ClCompile Include="audio\sample.cpp" />
     <ClCompile Include="camera.cpp" />
     <ClCompile Include="base\assert.cpp" />
-    <ClCompile Include="base\features.cpp" />
     <ClCompile Include="base\log.cpp" />
     <ClCompile Include="base\string.cpp" />
     <ClCompile Include="debug\fps.cpp" />
@@ -251,7 +250,6 @@
     <ClInclude Include="lol\base\array.h" />
     <ClInclude Include="lol\base\assert.h" />
     <ClInclude Include="lol\base\enum.h" />
-    <ClInclude Include="..\legacy\features.h" />
     <ClInclude Include="lol\base\log.h" />
     <ClInclude Include="lol\base\map.h" />
     <ClInclude Include="lol\base\types.h" />

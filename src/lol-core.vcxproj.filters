@@ -14,9 +14,6 @@
     <ClCompile Include="base\assert.cpp">
       <Filter>base</Filter>
     </ClCompile>
-    <ClCompile Include="base\features.cpp">
-      <Filter>base</Filter>
-    </ClCompile>
     <ClCompile Include="base\log.cpp">
       <Filter>base</Filter>
     </ClCompile>
@@ -339,9 +336,6 @@
       <Filter>lol\base</Filter>
     </ClInclude>
     <ClInclude Include="lol\base\enum.h">
-      <Filter>lol\base</Filter>
-    </ClInclude>
-    <ClInclude Include="..\legacy\features.h">
       <Filter>lol\base</Filter>
     </ClInclude>
     <ClInclude Include="lol\base\log.h">
