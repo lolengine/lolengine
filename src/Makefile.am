@@ -36,7 +36,7 @@ liblol_core_headers = \
     lol/base/log.h \
     \
     lol/math/all.h \
-    lol/math/functions.h lol/math/half.h \
+    lol/math/functions.h \
     lol/math/geometry.h lol/math/interp.h lol/math/arraynd.h \
     lol/math/constants.h lol/math/bigint.h \
     lol/math/noise/gradient.h lol/math/noise/perlin.h \
@@ -89,9 +89,8 @@ liblol_core_sources = \
     easymesh/shinydebuglighting.lolfx easymesh/shinydebugnormal.lolfx \
     easymesh/shinydebugUV.lolfx easymesh/shiny_SK.lolfx \
     \
-    base/assert.cpp base/log.cpp base/string.cpp \
+    base/assert.cpp base/log.cpp \
     \
-    math/half.cpp \
     math/geometry.cpp \
     \
     gpu/shader.cpp gpu/indexbuffer.cpp gpu/vertexbuffer.cpp \

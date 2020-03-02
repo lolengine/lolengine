@@ -19,27 +19,31 @@
 namespace lol
 {
 
+static_assert(sizeof(f16vec2) == 4, "sizeof(f16vec2) == 4");
+static_assert(sizeof(f16vec3) == 6, "sizeof(f16vec3) == 6");
+static_assert(sizeof(f16vec4) == 8, "sizeof(f16vec4) == 8");
+
+static_assert(sizeof(f16mat2) == 8, "sizeof(f16mat2) == 8");
+static_assert(sizeof(f16mat3) == 18, "sizeof(f16mat3) == 18");
+static_assert(sizeof(f16mat4) == 32, "sizeof(f16mat4) == 32");
+
+static_assert(sizeof(f16cmplx) == 4, "sizeof(f16cmplx) == 4");
+static_assert(sizeof(f16quat) == 8, "sizeof(f16quat) == 8");
+
 lolunit_declare_fixture(half_test)
 {
+    // Largest normal number is 65504 (2¹⁵*(1+1023/1024))
+    static float constexpr largest_normal = 65504.f;
+
     lolunit_declare_test(float_to_half)
     {
-        for (size_t i = 0; i < sizeof(pairs) / sizeof(*pairs); i++)
+        for (auto &pair : pairs)
         {
-            half a = (half)pairs[i].f;
-            uint16_t b = pairs[i].x;
-            lolunit_set_context(i);
-            lolunit_assert_equal(a.bits, b);
-        }
-    }
+            lolunit_set_context(pair.x);
 
-    lolunit_declare_test(float_to_half_accurate)
-    {
-        for (size_t i = 0; i < sizeof(pairs) / sizeof(*pairs); i++)
-        {
-            half a = half::makeaccurate(pairs[i].f);
-            uint16_t b = pairs[i].x;
-            lolunit_set_context(i);
-            lolunit_assert_equal(a.bits, b);
+            half a = (half)pair.f;
+            uint16_t b = pair.x;
+            lolunit_assert_equal(a.bits(), b);
         }
     }
 
@@ -47,22 +51,51 @@ lolunit_declare_fixture(half_test)
     {
         for (unsigned int i = 0; i < 0x10000; i++)
         {
-            half a = half::makebits(i);
-            uint16_t b = i;
             lolunit_set_context(i);
-            lolunit_assert_equal(a.bits, b);
+
+            half a = half::frombits(i);
+            uint16_t b = i;
+            lolunit_assert_equal(a.bits(), b);
+        }
+    }
+
+    lolunit_declare_test(equal)
+    {
+        for (auto &pair : pairs)
+        {
+             lolunit_set_context(pair.x);
+
+             half a = half::frombits(pair.x);
+             half b = half::frombits(pair.x);
+             lolunit_assert_equal(a, b);
+        }
+    }
+
+    lolunit_declare_test(different)
+    {
+        for (auto &p1 : pairs)
+        for (auto &p2 : pairs)
+        {
+            if (p1.f == p2.f)
+                continue;
+
+            lolunit_set_context(lol::format("%04x %04x", p1.x, p2.x));
+
+            half a = half::frombits(p1.x);
+            half b = half::frombits(p2.x);
+            lolunit_assert_different(a, b);
         }
     }
 
     lolunit_declare_test(half_is_nan)
     {
-        lolunit_assert(half::makebits(0x7c01).is_nan());
-        lolunit_assert(half::makebits(0xfc01).is_nan());
-        lolunit_assert(half::makebits(0x7e00).is_nan());
-        lolunit_assert(half::makebits(0xfe00).is_nan());
+        lolunit_assert(half::frombits(0x7c01).is_nan());
+        lolunit_assert(half::frombits(0xfc01).is_nan());
+        lolunit_assert(half::frombits(0x7e00).is_nan());
+        lolunit_assert(half::frombits(0xfe00).is_nan());
 
-        lolunit_assert(!half::makebits(0x7c00).is_nan());
-        lolunit_assert(!half::makebits(0xfc00).is_nan());
+        lolunit_assert(!half::frombits(0x7c00).is_nan());
+        lolunit_assert(!half::frombits(0xfc00).is_nan());
 
         lolunit_assert(!half(0.0f).is_nan());
         lolunit_assert(!half(-0.0f).is_nan());
@@ -77,48 +110,48 @@ lolunit_declare_fixture(half_test)
 
         lolunit_assert(!half(0.0f).is_inf());
         lolunit_assert(!half(-0.0f).is_inf());
-        lolunit_assert(!half(65535.0f).is_inf());
-        lolunit_assert(!half(-65535.0f).is_inf());
+        lolunit_assert(!half(largest_normal).is_inf());
+        lolunit_assert(!half(-largest_normal).is_inf());
 
-        lolunit_assert(half::makebits(0x7c00).is_inf());
-        lolunit_assert(half::makebits(0xfc00).is_inf());
+        lolunit_assert(half::frombits(0x7c00).is_inf());
+        lolunit_assert(half::frombits(0xfc00).is_inf());
 
-        lolunit_assert(!half::makebits(0x7e00).is_inf());
-        lolunit_assert(!half::makebits(0xfe00).is_inf());
+        lolunit_assert(!half::frombits(0x7e00).is_inf());
+        lolunit_assert(!half::frombits(0xfe00).is_inf());
     }
 
     lolunit_declare_test(half_is_finite)
     {
         lolunit_assert(half(0.0f).is_finite());
         lolunit_assert(half(-0.0f).is_finite());
-        lolunit_assert(half(65535.0f).is_finite());
-        lolunit_assert(half(-65535.0f).is_finite());
+        lolunit_assert(half(largest_normal).is_finite());
+        lolunit_assert(half(-largest_normal).is_finite());
 
         lolunit_assert(!half(65536.0f).is_finite());
         lolunit_assert(!half(-65536.0f).is_finite());
 
-        lolunit_assert(!half::makebits(0x7c00).is_finite());
-        lolunit_assert(!half::makebits(0xfc00).is_finite());
+        lolunit_assert(!half::frombits(0x7c00).is_finite());
+        lolunit_assert(!half::frombits(0xfc00).is_finite());
 
-        lolunit_assert(!half::makebits(0x7e00).is_finite());
-        lolunit_assert(!half::makebits(0xfe00).is_finite());
+        lolunit_assert(!half::frombits(0x7e00).is_finite());
+        lolunit_assert(!half::frombits(0xfe00).is_finite());
     }
 
     lolunit_declare_test(half_is_normal)
     {
         lolunit_assert(half(0.0f).is_normal());
         lolunit_assert(half(-0.0f).is_normal());
-        lolunit_assert(half(65535.0f).is_normal());
-        lolunit_assert(half(-65535.0f).is_normal());
+        lolunit_assert(half(largest_normal).is_normal());
+        lolunit_assert(half(-largest_normal).is_normal());
 
         lolunit_assert(!half(65536.0f).is_normal());
         lolunit_assert(!half(-65536.0f).is_normal());
 
-        lolunit_assert(!half::makebits(0x7c00).is_normal());
-        lolunit_assert(!half::makebits(0xfc00).is_normal());
+        lolunit_assert(!half::frombits(0x7c00).is_normal());
+        lolunit_assert(!half::frombits(0xfc00).is_normal());
 
-        lolunit_assert(!half::makebits(0x7e00).is_normal());
-        lolunit_assert(!half::makebits(0xfe00).is_normal());
+        lolunit_assert(!half::frombits(0x7e00).is_normal());
+        lolunit_assert(!half::frombits(0xfe00).is_normal());
     }
 
     lolunit_declare_test(half_classify)
@@ -126,7 +159,7 @@ lolunit_declare_fixture(half_test)
         for (uint32_t i = 0; i < 0x10000; i++)
         {
             lolunit_set_context(i);
-            half h = half::makebits(i);
+            half h = half::frombits(i);
             if (h.is_nan())
             {
                 lolunit_assert(!h.is_inf());
@@ -149,7 +182,7 @@ lolunit_declare_fixture(half_test)
     {
         for (size_t i = 0; i < sizeof(pairs) / sizeof(*pairs); i++)
         {
-            float a = (float)half::makebits(pairs[i].x);
+            float a = (float)half::frombits(pairs[i].x);
             float b = pairs[i].f;
             lolunit_set_context(i);
             lolunit_assert_equal(a, b);
@@ -157,14 +190,14 @@ lolunit_declare_fixture(half_test)
 
         for (uint32_t i = 0; i < 0x10000; i++)
         {
-            half h = half::makebits(i);
+            half h = half::frombits(i);
             if (h.is_nan())
                 continue;
 
             float f = (float)h;
             half g = (half)f;
             lolunit_set_context(i);
-            lolunit_assert_equal(g.bits, h.bits);
+            lolunit_assert_equal(g, h);
         }
     }
 
@@ -184,9 +217,9 @@ lolunit_declare_fixture(half_test)
 
     lolunit_declare_test(float_op_half)
     {
-        half zero = 0;
-        half one = 1;
-        half two = 2;
+        half const zero(0);
+        half const one(1);
+        half const two(2);
 
         float a = zero + one;
         lolunit_assert_equal(1.0f, a);
@@ -225,44 +258,44 @@ lolunit_declare_fixture(half_test)
 
     lolunit_declare_test(half_op_float)
     {
-        half zero = 0;
-        half one = 1;
-        half two = 2;
-        half four = 4;
+        half const zero(0);
+        half const one(1);
+        half const two(2);
+        half const four(4);
 
-        half a = one + 0.0f;
-        lolunit_assert_equal(one.bits, a.bits);
+        half a(one + 0.0f);
+        lolunit_assert_equal(one, a);
         a += 0.0f;
-        lolunit_assert_equal(one.bits, a.bits);
+        lolunit_assert_equal(one, a);
         a -= 0.0f;
-        lolunit_assert_equal(one.bits, a.bits);
+        lolunit_assert_equal(one, a);
         a *= 1.0f;
-        lolunit_assert_equal(one.bits, a.bits);
+        lolunit_assert_equal(one, a);
         a /= 1.0f;
-        lolunit_assert_equal(one.bits, a.bits);
+        lolunit_assert_equal(one, a);
 
-        half b = one + 0.0f;
-        lolunit_assert_equal(one.bits, b.bits);
+        half b(one + 0.0f);
+        lolunit_assert_equal(one, b);
         b += 1.0f;
-        lolunit_assert_equal(two.bits, b.bits);
+        lolunit_assert_equal(two, b);
         b *= 2.0f;
-        lolunit_assert_equal(four.bits, b.bits);
+        lolunit_assert_equal(four, b);
         b -= 2.0f;
-        lolunit_assert_equal(two.bits, b.bits);
+        lolunit_assert_equal(two, b);
         b /= 2.0f;
-        lolunit_assert_equal(one.bits, b.bits);
+        lolunit_assert_equal(one, b);
 
-        half c = 1.0f - zero;
-        lolunit_assert_equal(one.bits, c.bits);
+        half c(1.0f - zero);
+        lolunit_assert_equal(one, c);
 
-        half d = 2.0f - one;
-        lolunit_assert_equal(one.bits, d.bits);
+        half d(2.0f - one);
+        lolunit_assert_equal(one, d);
 
-        half e = 2.0f + (-one);
-        lolunit_assert_equal(one.bits, e.bits);
+        half e(2.0f + (-one));
+        lolunit_assert_equal(one, e);
 
-        half f = (2.0f * two) / (1.0f + one);
-        lolunit_assert_equal(two.bits, f.bits);
+        half f((2.0f * two) / (1.0f + one));
+        lolunit_assert_equal(two, f);
     }
 
     struct test_pair { float f; uint16_t x; };

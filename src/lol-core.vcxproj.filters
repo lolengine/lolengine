@@ -17,9 +17,6 @@
     <ClCompile Include="base\log.cpp">
       <Filter>base</Filter>
     </ClCompile>
-    <ClCompile Include="base\string.cpp">
-      <Filter>base</Filter>
-    </ClCompile>
     <ClCompile Include="debug\fps.cpp">
       <Filter>debug</Filter>
     </ClCompile>
@@ -199,9 +196,6 @@
       <Filter>lolua</Filter>
     </ClCompile>
     <ClCompile Include="math\geometry.cpp">
-      <Filter>math</Filter>
-    </ClCompile>
-    <ClCompile Include="math\half.cpp">
       <Filter>math</Filter>
     </ClCompile>
     <ClCompile Include="mesh\mesh.cpp">
@@ -435,9 +429,6 @@
       <Filter>lol\math</Filter>
     </ClInclude>
     <ClInclude Include="lol\math\geometry.h">
-      <Filter>lol\math</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\math\half.h">
       <Filter>lol\math</Filter>
     </ClInclude>
     <ClInclude Include="lol\math\interp.h">
