@@ -17,13 +17,11 @@
 // ———————————————————————
 //
 
-#include <lol/base/types.h>
-
 namespace lol
 {
 
 #define LOL_MATH_CONSTANT(name, value) \
-    static ldouble const LD_##name = value; \
+    static long double const LD_##name = value; \
     static double const D_##name = (double)LD_##name; \
     static float const F_##name = (float)LD_##name;
 

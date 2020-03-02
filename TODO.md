@@ -17,7 +17,6 @@
     src/lol/base/assert.h (could be useful)
     src/lol/base/avl_tree.h
     src/lol/base/string.h (string utilities)
-    src/lol/image/color.h
     src/lol/image/pixel.h (but is it useful?)
     src/lol/math/arraynd.h (but do we really want to keep it?)
     src/lol/math/geometry.h
