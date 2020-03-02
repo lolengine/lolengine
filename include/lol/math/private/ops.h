@@ -20,8 +20,6 @@
 #include <ostream>
 #include <type_traits>
 
-#include <lol/math/half.h>
-
 namespace lol
 {
 

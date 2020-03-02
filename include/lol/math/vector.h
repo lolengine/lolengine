@@ -20,7 +20,7 @@
 #include <lol/math/private/ops.h>
 
 #include <cassert>
-#include <ostream>
+#include <ostream>     // std::ostream
 #include <type_traits>
 
 namespace lol
@@ -301,7 +301,6 @@ static_assert(sizeof(i16vec2) == 4, "sizeof(i16vec2) == 4");
 static_assert(sizeof(ivec2) == 8, "sizeof(ivec2) == 8");
 static_assert(sizeof(i64vec2) == 16, "sizeof(i64vec2) == 16");
 
-static_assert(sizeof(f16vec2) == 4, "sizeof(f16vec2) == 4");
 static_assert(sizeof(vec2) == 8, "sizeof(vec2) == 8");
 static_assert(sizeof(dvec2) == 16, "sizeof(dvec2) == 16");
 
@@ -542,7 +541,6 @@ static_assert(sizeof(i16vec3) == 6, "sizeof(i16vec3) == 6");
 static_assert(sizeof(ivec3) == 12, "sizeof(ivec3) == 12");
 static_assert(sizeof(i64vec3) == 24, "sizeof(i64vec3) == 24");
 
-static_assert(sizeof(f16vec3) == 6, "sizeof(f16vec3) == 6");
 static_assert(sizeof(vec3) == 12, "sizeof(vec3) == 12");
 static_assert(sizeof(dvec3) == 24, "sizeof(dvec3) == 24");
 
@@ -975,7 +973,6 @@ static_assert(sizeof(i16vec4) == 8, "sizeof(i16vec4) == 8");
 static_assert(sizeof(ivec4) == 16, "sizeof(ivec4) == 16");
 static_assert(sizeof(i64vec4) == 32, "sizeof(i64vec4) == 32");
 
-static_assert(sizeof(f16vec4) == 8, "sizeof(f16vec4) == 8");
 static_assert(sizeof(vec4) == 16, "sizeof(vec4) == 16");
 static_assert(sizeof(dvec4) == 32, "sizeof(dvec4) == 32");
 

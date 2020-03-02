@@ -5,7 +5,6 @@
     src/lol/math/bigint.h
     src/lol/math/constants.h
     src/lol/math/functions.h
-    src/lol/math/half.h (needs half.cpp)
     src/lol/math/noise/*
 
 

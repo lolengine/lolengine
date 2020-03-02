@@ -71,7 +71,6 @@ struct [[nodiscard]] cmplx_t : public linear_ops::base<T>
     T x, y;
 };
 
-static_assert(sizeof(f16cmplx) == 4, "sizeof(f16cmplx) == 4");
 static_assert(sizeof(cmplx) == 8, "sizeof(cmplx) == 8");
 static_assert(sizeof(dcmplx) == 16, "sizeof(dcmplx) == 16");
 
@@ -250,7 +249,6 @@ struct [[nodiscard]] quat_t : public linear_ops::base<T>
     T w, x, y, z;
 };
 
-static_assert(sizeof(f16quat) == 8, "sizeof(f16quat) == 8");
 static_assert(sizeof(quat) == 16, "sizeof(quat) == 16");
 static_assert(sizeof(dquat) == 32, "sizeof(dquat) == 32");
 
