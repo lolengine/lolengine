@@ -41,8 +41,6 @@
 #include <lol/../gradient.h>
 #include <lol/../sprite.h>
 #include <lol/../text.h>
-#include <lol/../textureimage.h>
-#include <lol/../tileset.h>
 
 // UI
 #include <lol/../ui/input.h>

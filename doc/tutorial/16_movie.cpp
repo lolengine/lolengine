@@ -15,6 +15,7 @@
 #endif
 
 #include <lol/engine.h>
+#include <lol/image/movie.h>
 #include "loldebug.h"
 
 int main(int argc, char **argv)

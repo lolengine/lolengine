@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -13,8 +13,5 @@
 #pragma once
 
 #include <lol/image/pixel.h>
-#include <lol/image/color.h>
-#include <lol/image/image.h>
 #include <lol/image/resource.h>
-#include <lol/image/movie.h>
 

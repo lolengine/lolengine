@@ -21,7 +21,6 @@
 #include <memory>
 #include <stdint.h>
 
-#include "tileset.h"
 #include "light.h"
 #include "camera.h"
 #include "mesh/mesh.h"
@@ -55,7 +54,7 @@ private:
 struct Tile
 {
     mat4 m_model;
-    TileSet *m_tileset;
+    class TileSet *m_tileset;
     int m_id;
 };
 
@@ -241,8 +240,8 @@ public:
 
     /* FIXME: this should be deprecated -- it doesn't really match
      * the architecture we want to build */
-    void AddTile(TileSet *tileset, int id, vec3 pos, vec2 scale, float radians);
-    void AddTile(TileSet *tileset, int id, mat4 model);
+    void AddTile(class TileSet *tileset, int id, vec3 pos, vec2 scale, float radians);
+    void AddTile(class TileSet *tileset, int id, mat4 model);
 
 public:
     void AddLine(vec3 a, vec3 b, vec4 color);
