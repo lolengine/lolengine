@@ -297,14 +297,14 @@ template<typename T> real_t<T>::real_t(char const *str)
                 finished = true;
                 break;
             }
-            LOL_ATTR_FALLTHROUGH
+            [[fallthrough]];
         case 'a': case 'b': case 'c': case 'd': case 'f':
         case 'A': case 'B': case 'C': case 'D': case 'F':
         case '0': case '1': case '2': case '3': case '4':
         case '5': case '6': case '7': case '8': case '9':
             if (nonzero)
             {
-                /* Multiply ret by 10 or 16 depending the base. */
+                // Multiply ret by 10 or 16 according to the basis
                 if (!hex)
                 {
                     real_t<T> x = ret + ret;
