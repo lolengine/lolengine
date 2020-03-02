@@ -19,10 +19,10 @@
 
 #include "../base/private/features.h"
 
-#include <limits>  // std::numeric_limits
-#include <vector>  // std::vector
-#include <string>  // std::string
-#include <cstdint> // int64_t etc.
+#include <limits>   // std::numeric_limits
+#include <vector>   // std::vector
+#include <string>   // std::string
+#include <stdint.h> // int64_t etc.
 
 #if _MSC_VER
 #   pragma push_macro("min")
