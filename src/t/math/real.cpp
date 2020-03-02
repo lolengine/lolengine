@@ -11,9 +11,8 @@
 //
 
 #include <lol/engine-internal.h>
-
+#include <lol/base/lolunit.h>
 #include <lol/types/real.h>
-#include <lolunit.h>
 
 #include <cmath>
 

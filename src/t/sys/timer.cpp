@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //            © 2014—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //            © 2014—2015 Guillaume Bittoun <guillaume.bittoun@gmail.com>
 //
@@ -13,10 +13,8 @@
 //
 
 #include <lol/engine-internal.h>
+#include <lol/base/lolunit.h>
 
-#include <lolunit.h>
-
-#include <iostream>
 namespace lol
 {
 

@@ -11,11 +11,10 @@
 //
 
 #include <lol/engine-internal.h>
+#include <lol/base/lolunit.h>
+#include <lol/types/bigint.h>
 
 #include <cmath>
-
-#include <lol/types/bigint.h>
-#include <lolunit.h>
 
 namespace lol
 {

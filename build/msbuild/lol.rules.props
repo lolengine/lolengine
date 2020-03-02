@@ -29,7 +29,6 @@
           $(LolDir)\lol-core\include;
           $(LolDir)\src;
           $(LolDir)\src\3rdparty\bullet3\src;
-          $(LolDir)\tools\lolunit;
           $(PegtlIncludes);
           $(ImguiIncludes);
           $(BtPhysIncludes);

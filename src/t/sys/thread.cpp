@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //            © 2014—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -12,11 +12,10 @@
 //
 
 #include <lol/engine-internal.h>
+#include <lol/base/lolunit.h>
 
 #include <string>
 #include <map>
-
-#include <lolunit.h>
 
 namespace lol
 {

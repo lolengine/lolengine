@@ -11,10 +11,9 @@
 //
 
 #include <lol/engine-internal.h>
-
+#include <lol/base/lolunit.h>
 #include <lol/types/real.h>
 #include <lol/math/polynomial.h>
-#include <lolunit.h>
 
 namespace lol
 {

@@ -11,8 +11,7 @@
 //
 
 #include <lol/engine-internal.h>
-
-#include <lolunit.h>
+#include <lol/base/lolunit.h>
 
 namespace lol
 {

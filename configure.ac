@@ -271,7 +271,6 @@ AC_CONFIG_FILES(
   doc/samples/sandbox/Makefile
   doc/tutorial/Makefile
   tools/Makefile
-  tools/lolunit/Makefile
   tools/vimlol/Makefile
   tools/vslol/Makefile
 ])
