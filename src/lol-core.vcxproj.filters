@@ -305,9 +305,6 @@
     <ClInclude Include="lolua\baselua.h">
       <Filter>lolua</Filter>
     </ClInclude>
-    <ClInclude Include="lol\algorithm\aabb_tree.h">
-      <Filter>lol\algorithm</Filter>
-    </ClInclude>
     <ClInclude Include="lol\algorithm\all.h">
       <Filter>lol\algorithm</Filter>
     </ClInclude>
@@ -320,19 +317,10 @@
     <ClInclude Include="lol\base\array.h">
       <Filter>lol\base</Filter>
     </ClInclude>
-    <ClInclude Include="lol\base\assert.h">
-      <Filter>lol\base</Filter>
-    </ClInclude>
     <ClInclude Include="lol\base\enum.h">
       <Filter>lol\base</Filter>
     </ClInclude>
     <ClInclude Include="lol\base\log.h">
-      <Filter>lol\base</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\base\map.h">
-      <Filter>lol\base</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\base\types.h">
       <Filter>lol\base</Filter>
     </ClInclude>
     <ClInclude Include="lol\base\tuple.h">
@@ -392,16 +380,10 @@
     <ClInclude Include="lol\image\all.h">
       <Filter>lol\image</Filter>
     </ClInclude>
-    <ClInclude Include="lol\image\color.h">
-      <Filter>lol\image</Filter>
-    </ClInclude>
     <ClInclude Include="lol\image\image.h">
       <Filter>lol\image</Filter>
     </ClInclude>
     <ClInclude Include="lol\image\movie.h">
-      <Filter>lol\image</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\image\pixel.h">
       <Filter>lol\image</Filter>
     </ClInclude>
     <ClInclude Include="lol\image\resource.h">
@@ -409,27 +391,6 @@
     </ClInclude>
     <ClInclude Include="lol\lua.h">
       <Filter>lol</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\math\arraynd.h">
-      <Filter>lol\math</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\math\functions.h">
-      <Filter>lol\math</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\math\geometry.h">
-      <Filter>lol\math</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\math\interp.h">
-      <Filter>lol\math</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\math\noise\gradient.h">
-      <Filter>lol\math\noise</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\math\noise\perlin.h">
-      <Filter>lol\math\noise</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\math\noise\simplex.h">
-      <Filter>lol\math\noise</Filter>
     </ClInclude>
     <ClInclude Include="lol\net\all.h">
       <Filter>lol\net</Filter>
@@ -485,9 +446,6 @@
     </ClInclude>
     <ClInclude Include="utils.h" />
     <ClInclude Include="video.h" />
-    <ClInclude Include="lol\math\all.h">
-      <Filter>lol\math</Filter>
-    </ClInclude>
     <ClInclude Include="lol\base\all.h">
       <Filter>lol\base</Filter>
     </ClInclude>

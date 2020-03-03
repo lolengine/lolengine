@@ -13,6 +13,8 @@
 
 #pragma once
 
+#include <lol/base/utils.h> // has_key()
+
 #include <string>
 #include <map>
 

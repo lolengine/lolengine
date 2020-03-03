@@ -15,7 +15,7 @@
 // ------------------
 //
 
-#include <lol/math/functions.h>
+#include <../legacy/lol/math/functions.h>
 
 #include <cstdlib>
 #include <stdint.h>

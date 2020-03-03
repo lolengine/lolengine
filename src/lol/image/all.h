@@ -12,6 +12,6 @@
 
 #pragma once
 
-#include <lol/image/pixel.h>
+#include <../legacy/lol/image/pixel.h>
 #include <lol/image/resource.h>
 

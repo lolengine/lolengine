@@ -15,6 +15,9 @@
 // ---------------------
 //
 
+#include <../legacy/lol/math/geometry.h> // box3
+#include <lol/math/vector.h> // vec3, vec4 etc.
+
 #include <stdint.h>
 
 namespace lol

@@ -1,8 +1,8 @@
 //
 //  Lol Engine — Simplex Noise tutorial
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
-//            © 2013-2014 Guillaume Bittoun <guillaume.bittoun@gmail.com>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
+//            © 2013—2014 Guillaume Bittoun <guillaume.bittoun@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -16,6 +16,7 @@
 #endif
 
 #include <lol/engine.h>
+#include <../legacy/lol/math/noise/simplex.h>
 
 using namespace lol;
 

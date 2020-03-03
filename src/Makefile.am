@@ -31,18 +31,11 @@ liblol_core_headers = \
     lol/lua.h \
     \
     lol/base/all.h \
-    lol/base/avl_tree.h lol/base/tuple.h lol/base/types.h \
-    lol/base/array.h lol/base/assert.h lol/base/map.h lol/base/enum.h \
+    lol/base/tuple.h lol/base/array.h lol/base/map.h lol/base/enum.h \
     lol/base/log.h \
     \
-    lol/math/all.h \
-    lol/math/functions.h \
-    lol/math/geometry.h lol/math/interp.h lol/math/arraynd.h \
-    lol/math/noise/gradient.h lol/math/noise/perlin.h \
-    lol/math/noise/simplex.h \
-    \
     lol/algorithm/all.h \
-    lol/algorithm/sort.h lol/algorithm/portal.h lol/algorithm/aabb_tree.h \
+    lol/algorithm/sort.h lol/algorithm/portal.h \
     \
     lol/audio/all.h \
     lol/audio/audio.h lol/audio/sample.h \
@@ -54,7 +47,7 @@ liblol_core_headers = \
     lol/sys/init.h lol/sys/file.h \
     \
     lol/image/all.h \
-    lol/image/pixel.h lol/image/color.h lol/image/image.h \
+    lol/image/image.h \
     lol/image/resource.h lol/image/movie.h \
     \
     lol/net/all.h \

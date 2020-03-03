@@ -20,7 +20,7 @@
 // additional features, eg. array<int,float> for automatic arrays of tuples.
 //
 
-#include <lol/base/assert.h>
+#include <../legacy/lol/base/assert.h>
 #include <lol/base/tuple.h>
 
 #include <new> /* for placement new */

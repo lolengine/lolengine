@@ -18,11 +18,11 @@
 // ——————————————————
 //
 
-#include <lol/math/arraynd.h>
+#include <../legacy/lol/math/arraynd.h>
 #include <lol/math/vector.h>
-#include <lol/math/geometry.h>
+#include <../legacy/lol/math/geometry.h>
 #include <lol/image/image.h>
-#include <lol/image/pixel.h>
+#include <../legacy/lol/image/pixel.h>
 
 namespace lol
 {

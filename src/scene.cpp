@@ -713,6 +713,7 @@ void Scene::render_lines(float seconds)
     buff.resize(linecount);
     int real_linecount = 0;
     mat4 const inv_view_proj = inverse(GetCamera()->GetProjection() * GetCamera()->GetView());
+    UNUSED(inv_view_proj);
     for (int i = 0; i < linecount; i++)
     {
         if (m_line_api.m_lines[i].m5 & m_line_api.m_debug_mask)

@@ -14,6 +14,8 @@
 #pragma once
 
 #include <lol/base/array.h>
+#include <lol/math/rand.h>
+#include <../legacy/lol/math/functions.h> // lol::max
 
 namespace lol
 {

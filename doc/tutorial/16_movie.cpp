@@ -16,6 +16,7 @@
 
 #include <lol/engine.h>
 #include <lol/image/movie.h>
+#include <../legacy/lol/math/noise/perlin.h>
 #include "loldebug.h"
 
 int main(int argc, char **argv)

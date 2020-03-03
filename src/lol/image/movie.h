@@ -17,7 +17,7 @@
 // ---------------
 //
 
-#include <lol/image/pixel.h>
+#include <../legacy/lol/image/pixel.h>
 #include <lol/image/image.h>
 
 extern "C" struct AVFormatContext;

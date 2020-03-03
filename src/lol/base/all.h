@@ -12,12 +12,12 @@
 
 #pragma once
 
-#include <lol/base/types.h>
+#include <../legacy/lol/base/types.h>
 #include <lol/base/log.h>
-#include <lol/base/assert.h>
+#include <../legacy/lol/base/assert.h>
 #include <lol/base/tuple.h>
 #include <lol/base/array.h>
-#include <lol/base/avl_tree.h>
+#include <../legacy/lol/base/avl_tree.h>
 #include <lol/base/utils.h>
 #include <lol/base/enum.h>
 

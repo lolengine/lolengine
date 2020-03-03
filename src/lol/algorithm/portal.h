@@ -14,6 +14,8 @@
 #pragma once
 
 #include <lol/base/array.h>
+#include <lol/math/vector.h>    // vec_t
+#include <lol/math/transform.h> // mat_t
 #include <lol/debug/lines.h>
 #include <lol/image/color.h>
 

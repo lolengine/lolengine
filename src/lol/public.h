@@ -18,7 +18,6 @@
 //
 
 #include <lol/base/all.h>
-#include <lol/math/all.h>
 #include <lol/algorithm/all.h>
 #include <lol/image/all.h>
 #include <lol/sys/all.h>
