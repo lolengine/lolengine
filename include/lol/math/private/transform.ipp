@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <cmath> // std::cos, std::sin
+
 namespace lol
 {
 
@@ -31,10 +33,10 @@ inline std::string quat::tostring() const
 template<>
 inline quat quat::rotate(float radians, vec3 const &v)
 {
+    using std::sin, std::cos;
+
     float half_angle = radians * 0.5f;
-
     vec3 tmp = normalize(v) * sin(half_angle);
-
     return quat(cos(half_angle), tmp.x, tmp.y, tmp.z);
 }
 
@@ -47,10 +49,12 @@ inline quat quat::rotate(float radians, float x, float y, float z)
 template<>
 inline quat quat::rotate(vec3 const &src, vec3 const &dst)
 {
+    using std::sqrt;
+
     /* Algorithm directly taken from Sam Hocevar's article "Quaternion from
      * two vectors: the final version".
      * http://lolengine.net/blog/2014/02/24/quaternion-from-two-vectors-final */
-    float magnitude = lol::sqrt(sqlength(src) * sqlength(dst));
+    float magnitude = sqrt(sqlength(src) * sqlength(dst));
     float real_part = magnitude + dot(src, dst);
     vec3 w;
 
@@ -60,8 +64,7 @@ inline quat quat::rotate(vec3 const &src, vec3 const &dst)
          * around an arbitrary orthogonal axis. Axis normalisation
          * can happen later, when we normalise the quaternion. */
         real_part = 0.0f;
-        w = abs(src.x) > abs(src.z) ? vec3(-src.y, src.x, 0.f)
-                                    : vec3(0.f, -src.z, src.y);
+        w = orthogonal(src);
     }
     else
     {
@@ -75,8 +78,10 @@ inline quat quat::rotate(vec3 const &src, vec3 const &dst)
 template<>
 inline quat slerp(quat const &qa, quat const &qb, float f)
 {
-    float const magnitude = lol::sqrt(sqlength(qa) * sqlength(qb));
-    float const product = lol::dot(qa, qb) / magnitude;
+    using std::sin, std::cos, std::sqrt, std::acos;
+
+    float const magnitude = sqrt(sqlength(qa) * sqlength(qb));
+    float const product = dot(qa, qb) / magnitude;
 
     /* If quaternions are equal or opposite, there is no need
      * to slerp anything, just return qa. */
@@ -84,18 +89,25 @@ inline quat slerp(quat const &qa, quat const &qb, float f)
         return qa;
 
     float const sign = (product < 0.0f) ? -1.0f : 1.0f;
-    float const theta = lol::acos(sign * product);
-    float const s1 = lol::sin(sign * f * theta);
-    float const s0 = lol::sin((1.0f - f) * theta);
+    float const theta = acos(sign * product);
+    float const s1 = sin(sign * f * theta);
+    float const s0 = sin((1.0f - f) * theta);
 
     /* This is the same as 1/sin(theta) */
-    float const d = 1.0f / lol::sqrt(1.f - product * product);
+    float const d = 1.0f / sqrt(1.f - product * product);
 
     return qa * (s0 * d) + qb * (s1 * d);
 }
 
+static inline float sq(float x)
+{
+    return x * x;
+}
+
 static inline vec3 quat_toeuler_generic(quat const &q, int i, int j, int k)
 {
+    using std::atan2, std::acos, std::asin;
+
     float n = norm(q);
 
     if (!n)
@@ -132,6 +144,8 @@ static inline vec3 quat_toeuler_generic(quat const &q, int i, int j, int k)
 
 static inline mat3 mat3_fromeuler_generic(vec3 const &v, int i, int j, int k)
 {
+    using std::sin, std::cos;
+
     mat3 ret;
 
     float const s0 = sin(v[0]), c0 = cos(v[0]);
@@ -179,6 +193,8 @@ static inline mat3 mat3_fromeuler_generic(vec3 const &v, int i, int j, int k)
 
 static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
 {
+    using std::sin, std::cos;
+
     vec3 const half_angles = v * 0.5f;
     float const s0 = sin(half_angles[0]), c0 = cos(half_angles[0]);
     float const s1 = sin(half_angles[1]), c1 = cos(half_angles[1]);
@@ -218,7 +234,7 @@ static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
     /* Create quaternions from Euler angles */ \
     template<> inline quat quat::fromeuler_##name(vec3 const &v) \
     { \
-        int x = 0, y = 1, z = 2; UNUSED(x, y, z); \
+        int x = 0, y = 1, z = 2; (void)x, (void)y, (void)z; \
         return quat_fromeuler_generic(v, a1, a2, a3); \
     } \
     \
@@ -230,7 +246,7 @@ static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
     /* Create 3×3 matrices from Euler angles */ \
     template<> inline mat3 mat3::fromeuler_##name(vec3 const &v) \
     { \
-        int x = 0, y = 1, z = 2; UNUSED(x, y, z); \
+        int x = 0, y = 1, z = 2; (void)x, (void)y, (void)z; \
         return mat3_fromeuler_generic(v, a1, a2, a3); \
     } \
     \
@@ -242,7 +258,7 @@ static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
     /* Create 4×4 matrices from Euler angles */ \
     template<> inline mat4 mat4::fromeuler_##name(vec3 const &v) \
     { \
-        int x = 0, y = 1, z = 2; UNUSED(x, y, z); \
+        int x = 0, y = 1, z = 2; (void)x, (void)y, (void)z; \
         return mat4(mat3_fromeuler_generic(v, a1, a2, a3), 1.f); \
     } \
     \
@@ -254,7 +270,7 @@ static inline quat quat_fromeuler_generic(vec3 const &v, int i, int j, int k)
     /* Retrieve Euler angles from a quaternion */ \
     template<> inline vec3 vec3::toeuler_##name(quat const &q) \
     { \
-        int x = 0, y = 1, z = 2; UNUSED(x, y, z); \
+        int x = 0, y = 1, z = 2; (void)x, (void)y, (void)z; \
         return quat_toeuler_generic(q, a1, a2, a3); \
     }
 

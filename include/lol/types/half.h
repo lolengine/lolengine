@@ -21,6 +21,9 @@
 #include <ostream>  // std::ostream
 #include <stdint.h> // uint32_t etc.
 
+// FIXME: get rid of this
+#include <../legacy/lol/math/functions.h>
+
 namespace lol
 {
 
@@ -41,7 +44,7 @@ public:
     inline half() {}
     explicit inline half(int f) : half(float(f)) {}
     explicit inline half(double f) : half(float(f)) {}
-    explicit inline half(ldouble f) : half(float(f)) {}
+    explicit inline half(long double f) : half(float(f)) {}
 
     explicit inline half(float f)
     {
@@ -115,7 +118,7 @@ public:
     inline half &operator =(int f) { return *this = half(f); }
     inline half &operator =(float f) { return *this = half(f); }
     inline half &operator =(double f) { return *this = half(f); }
-    inline half &operator =(ldouble f) { return *this = half(f); }
+    inline half &operator =(long double f) { return *this = half(f); }
     [[nodiscard]] inline operator int8_t() const { return (int8_t)(float)*this; }
     [[nodiscard]] inline operator uint8_t() const { return (uint8_t)(float)*this; }
     [[nodiscard]] inline operator int16_t() const { return (int16_t)(float)*this; }
@@ -132,7 +135,7 @@ public:
     }
 
     [[nodiscard]] inline operator double() const { return (float)(*this); }
-    [[nodiscard]] inline operator ldouble() const { return (float)(*this); }
+    [[nodiscard]] inline operator long double() const { return (float)(*this); }
 
     // Operators
     [[nodiscard]] bool operator ==(half x) const { return (float)*this == (float)x; }
@@ -277,8 +280,8 @@ namespace half_ops
         { typedef float from; typedef TO to; };
     template<typename TO> struct valid<double, TO>
         { typedef double from; typedef TO to; };
-    template<typename TO> struct valid<ldouble, TO>
-        { typedef ldouble from; typedef TO to; };
+    template<typename TO> struct valid<long double, TO>
+        { typedef long double from; typedef TO to; };
 
 #define DECLARE_HALF_NUMERIC_OPS(op) \
     /* other + half */ \

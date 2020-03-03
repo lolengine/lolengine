@@ -13,7 +13,8 @@
 #pragma once
 
 #include <cassert>
-#include <cmath>
+#include <cmath>     // std::tan
+#include <algorithm> // std::max
 
 #if _WIN32
 #   pragma push_macro("near")
@@ -256,7 +257,9 @@ template<>
 inline mat4 mat4::perspective(float fov_y, float width,
                               float height, float near, float far)
 {
-    float t2 = lol::tan(fov_y * 0.5f);
+    using std::tan;
+
+    float t2 = tan(fov_y * 0.5f);
     float t1 = t2 * width / height;
 
     return frustum(-near * t1, near * t1, -near * t2, near * t2, near, far);
@@ -272,13 +275,15 @@ inline mat4 mat4::shifted_perspective(float fov_y, float screen_size,
                                       float screen_ratio_yx,
                                       float near, float far)
 {
-    float tan_y = tanf(fov_y * .5f);
+    using std::tan;
+
+    float tan_y = tan(fov_y * .5f);
     assert(tan_y > 0.000001f);
     float dist_scr = (screen_size * screen_ratio_yx * .5f) / tan_y;
 
     return mat4::perspective(fov_y, screen_size, screen_size * screen_ratio_yx,
-                             max(.001f, dist_scr + near),
-                             max(.001f, dist_scr + far)) *
+                             std::max(.001f, dist_scr + near),
+                             std::max(.001f, dist_scr + far)) *
            mat4::translate(.0f, .0f, -dist_scr);
 }
 

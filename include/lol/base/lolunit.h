@@ -17,10 +17,11 @@
 // ———————————————————————
 //
 
-#include <iostream>
-#include <iomanip>
-#include <sstream>
-#include <cstdio>
+#include <iostream> // std::cout
+#include <iomanip>  // std::setprecision
+#include <sstream>  // std::stringstream
+#include <string>   // std::string
+#include <cmath>    // std::fabs
 
 namespace lol
 {

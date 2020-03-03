@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2014 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //            © 2013—2014 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //            © 2013—2014 Guillaume Bittoun <guillaume.bittoun@gmail.com>
 //
@@ -15,6 +15,11 @@
 #pragma once
 
 #include <../legacy/lol/math/noise/gradient.h>
+#include <lol/math/vector.h>    // vec_t
+#include <lol/math/transform.h> // mat_t
+
+#include <vector>    // std::vector
+#include <algorithm> // std::min, std::max
 
 namespace lol
 {
@@ -106,7 +111,6 @@ protected:
          * coordinates. */
         vec_t<float, N> world_corner(0.f);
         float result = 0.f, sum = 0.f, special = 0.f;
-        UNUSED(sum, special);
 
         for (int i = 0; i < N + 1; ++i)
         {
@@ -137,9 +141,9 @@ protected:
             //  -4.f: centre (-2.f),
             //  -3.f: r=0.38 sphere of influence (contribution = 1/4)
             //  -2.f: r=0.52 sphere of influence (contribution = 1/24)
-            if (d > 0.99f) special = min(special, -4.f);
-            if (d > 0.7f && d < 0.72f) special = min(special, -3.f);
-            if (d > 0.44f && d < 0.46f) special = min(special, -2.f);
+            if (d > 0.99f) special = std::min(special, -4.f);
+            if (d > 0.7f && d < 0.72f) special = std::min(special, -3.f);
+            if (d > 0.44f && d < 0.46f) special = std::min(special, -2.f);
 #endif
 
             if (d > 0)
@@ -168,6 +172,8 @@ protected:
 #if 0
         if (special < 0.f)
             return special;
+#else
+        (void)special;
 #endif
 
         return get_scale() * result;
@@ -275,8 +281,8 @@ private:
                     continue;
 
                 float l = length(vertices[i] - vertices[j]);
-                minlength = min(minlength, l);
-                maxlength = max(maxlength, l);
+                minlength = std::min(minlength, l);
+                maxlength = std::max(maxlength, l);
             }
             printf("   · edge lengths between %f and %f\n",
                    minlength, maxlength);
@@ -300,7 +306,7 @@ private:
                     p += k * vertices[j];
                     sum += k;
                 }
-                mindist = min(mindist, distance(vertices[i], p / sum));
+                mindist = std::min(mindist, distance(vertices[i], p / sum));
             }
             printf("   · approx. dist. to opposite hyperplane: %f\n", mindist);
 #endif
@@ -327,7 +333,7 @@ private:
             /* Find distance from current vertex to the opposite hyperplane.
              * Just use the projection theorem in N dimensions. */
             auto w = vertices[i] - vertices[i0];
-            float dist = abs(dot(normal, w));
+            float dist = fabs(dot(normal, w));
             printf("   · distance to opposite hyperplane: %f\n", dist);
 #endif
         }
@@ -345,11 +351,12 @@ private:
 
         /* Try to find max noise value by climbing gradient */
         float minval = 0.f, maxval = 0.f;
-        array<vec_t<float, N>> deltas;
+        std::vector<vec_t<float, N>> deltas;
         for (int i = 0; i < N; ++i)
         {
             auto v = vec_t<float, N>::axis(i);
-            deltas << v << -v;
+            deltas.push_back(v);
+            deltas.push_back(-v);
         }
         for (int run = 0; run < 1000; ++run)
         {
@@ -364,10 +371,10 @@ private:
             {
                 int best_delta = -1;
                 float best_t2 = t;
-                for (int i = 0; i < deltas.count(); ++i)
+                for (int i = 0; i < (int)deltas.size(); ++i)
                 {
                     float t2 = eval(v + e * deltas[i]);
-                    if (abs(t2) > abs(best_t2))
+                    if (fabs(t2) > fabs(best_t2))
                     {
                         best_delta = i;
                         best_t2 = t2;
@@ -381,11 +388,11 @@ private:
                     t = best_t2;
                 }
             }
-            minval = min(t, minval);
-            maxval = max(t, maxval);
+            minval = std::min(t, minval);
+            maxval = std::max(t, maxval);
         }
         printf(" - noise value min/max: %f %f\n", minval, maxval);
-        float newscale = 1.f / max(-minval, maxval);
+        float newscale = 1.f / std::max(-minval, maxval);
         if (newscale < 1.f)
              printf(" - could replace scale %f with %f\n",
                     get_scale(), newscale * get_scale());

@@ -12,6 +12,8 @@
 
 #pragma once
 
+#include <lol/base/private/string.h> // lol::format
+
 namespace lol
 {
 

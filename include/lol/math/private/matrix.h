@@ -117,10 +117,6 @@ private:
     vec_t<T,2> m_data[2];
 };
 
-static_assert(sizeof(imat2) == 16, "sizeof(imat2) == 16");
-static_assert(sizeof(mat2) == 16, "sizeof(mat2) == 16");
-static_assert(sizeof(dmat2) == 32, "sizeof(dmat2) == 32");
-
 /*
  * 3×3-element matrices
  */
@@ -206,10 +202,6 @@ struct [[nodiscard]] mat_t<T, 3, 3>
 private:
     vec_t<T,3> m_data[3];
 };
-
-static_assert(sizeof(imat3) == 36, "sizeof(imat3) == 36");
-static_assert(sizeof(mat3) == 36, "sizeof(mat3) == 36");
-static_assert(sizeof(dmat3) == 72, "sizeof(dmat3) == 72");
 
 /*
  * 4×4-element matrices
@@ -340,10 +332,6 @@ private:
     vec_t<T,4> m_data[4];
 };
 
-static_assert(sizeof(imat4) == 64, "sizeof(imat4) == 64");
-static_assert(sizeof(mat4) == 64, "sizeof(mat4) == 64");
-static_assert(sizeof(dmat4) == 128, "sizeof(dmat4) == 128");
-
 /*
  * stdstream method implementations
  */
@@ -383,8 +371,6 @@ static inline mat_t<T, ROWS, COLS> transpose(mat_t<T, COLS, ROWS> const &m)
 template<typename T, int N>
 mat_t<T, N - 1, N - 1> submatrix(mat_t<T, N, N> const &m, int i, int j)
 {
-    ASSERT(i >= 0); ASSERT(j >= 0); ASSERT(i < N); ASSERT(j < N);
-
     mat_t<T, N - 1, N - 1> ret;
     for (int i2 = 0; i2 < N - 1; ++i2)
         for (int j2 = 0; j2 < N - 1; ++j2)
@@ -400,7 +386,6 @@ mat_t<T, N - 1, N - 1> submatrix(mat_t<T, N, N> const &m, int i, int j)
 template<typename T, int N> [[nodiscard]]
 T cofactor(mat_t<T, N, N> const &m, int i, int j)
 {
-    ASSERT(i >= 0); ASSERT(j >= 0); ASSERT(i < N); ASSERT(j < N);
     T tmp = determinant(submatrix(m, i, j));
     return ((i + j) & 1) ? -tmp : tmp;
 }
@@ -409,7 +394,6 @@ template<typename T> [[nodiscard]]
 T cofactor(mat_t<T, 2, 2> const &m, int i, int j)
 {
     /* This specialisation shouldn't be needed, but Visual Studio. */
-    ASSERT(i >= 0); ASSERT(j >= 0); ASSERT(i < 2); ASSERT(j < 2);
     T tmp = m[1 - i][1 - j];
     return (i ^ j) ? -tmp : tmp;
 }
@@ -430,7 +414,7 @@ std::tuple<mat_t<T, N, N>, vec_t<int, N>, int> lu_decomposition(mat_t<T, N, N> c
         // Find row with the largest absolute value
         int best_j = k;
         for (int j = k + 1; j < N; ++j)
-            if (abs(lu[k][j]) > lol::abs(lu[k][best_j]))
+            if (fabs(lu[k][j]) > fabs(lu[k][best_j]))
                 best_j = j;
 
         // Swap rows in result

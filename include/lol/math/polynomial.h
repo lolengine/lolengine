@@ -25,6 +25,7 @@
 #include <functional> // std::function
 #include <tuple>      // std::tuple
 #include <cassert>    // assert()
+#include <cmath>      // sqrt(), cbrt(), acos()
 
 namespace lol
 {
@@ -114,6 +115,9 @@ struct [[nodiscard]] polynomial
 
     std::vector<T> roots() const
     {
+        using std::cos, std::acos, std::atan2;
+        using std::sqrt, std::cbrt, std::fabs;
+
         /* For now we can only solve polynomials of degrees 0, 1, 2 or 3. */
         assert(degree() >= 0 && degree() <= 3);
 
@@ -212,8 +216,8 @@ struct [[nodiscard]] polynomial
             {
                 T const sqrt_delta = sqrt(delta);
 
-                u_norm = cbrt(abs(n - sqrt_delta) / T(2));
-                v_norm = cbrt(abs(n + sqrt_delta) / T(2));
+                u_norm = cbrt(fabs(n - sqrt_delta) / T(2));
+                v_norm = cbrt(fabs(n + sqrt_delta) / T(2));
 
                 u3_angle = (n >=  sqrt_delta) ? pi : 0;
                 v3_angle = (n <= -sqrt_delta) ? 0 : -pi;

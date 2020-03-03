@@ -17,14 +17,20 @@
 // ——————————————————
 //
 
-#include <lol/math/private/ops.h>
-
 #include <cassert>
 #include <ostream>     // std::ostream
 #include <type_traits>
+#include <cmath>       // std::fabs, std::cos…
+
+// FIXME: get rid of this, too
+#include <../legacy/lol/base/types.h>
+
+#include "private/ops.h"
 
 namespace lol
 {
+
+template<typename T> struct quat_t;
 
 /*
  * Magic vector swizzling
@@ -188,7 +194,7 @@ private:
 
     static inline void internal_init(T *data)
     {
-        UNUSED(data);
+        (void)data;
     }
 
     T m_data[count];
@@ -296,14 +302,6 @@ struct [[nodiscard]] vec_t<T,2>
     };
 };
 
-static_assert(sizeof(i8vec2) == 2, "sizeof(i8vec2) == 2");
-static_assert(sizeof(i16vec2) == 4, "sizeof(i16vec2) == 4");
-static_assert(sizeof(ivec2) == 8, "sizeof(ivec2) == 8");
-static_assert(sizeof(i64vec2) == 16, "sizeof(i64vec2) == 16");
-
-static_assert(sizeof(vec2) == 8, "sizeof(vec2) == 8");
-static_assert(sizeof(dvec2) == 16, "sizeof(dvec2) == 16");
-
 /*
  * 3-element vectors
  */
@@ -388,7 +386,9 @@ struct [[nodiscard]] vec_t<T,3>
     /* Return a vector that is orthogonal to “a” */
     friend inline type orthogonal(type const &a)
     {
-        return lol::abs(a.x) > lol::abs(a.z)
+        using std::fabs;
+
+        return fabs(a.x) > fabs(a.z)
              ? type(-a.y, a.x, T(0))
              : type(T(0), -a.z, a.y);
     }
@@ -535,14 +535,6 @@ struct [[nodiscard]] vec_t<T,3>
         T m_data[count];
     };
 };
-
-static_assert(sizeof(i8vec3) == 3, "sizeof(i8vec3) == 3");
-static_assert(sizeof(i16vec3) == 6, "sizeof(i16vec3) == 6");
-static_assert(sizeof(ivec3) == 12, "sizeof(ivec3) == 12");
-static_assert(sizeof(i64vec3) == 24, "sizeof(i64vec3) == 24");
-
-static_assert(sizeof(vec3) == 12, "sizeof(vec3) == 12");
-static_assert(sizeof(dvec3) == 24, "sizeof(dvec3) == 24");
 
 /*
  * 4-element vectors
@@ -968,14 +960,6 @@ struct [[nodiscard]] vec_t<T,4>
     };
 };
 
-static_assert(sizeof(i8vec4) == 4, "sizeof(i8vec4) == 4");
-static_assert(sizeof(i16vec4) == 8, "sizeof(i16vec4) == 8");
-static_assert(sizeof(ivec4) == 16, "sizeof(ivec4) == 16");
-static_assert(sizeof(i64vec4) == 32, "sizeof(i64vec4) == 32");
-
-static_assert(sizeof(vec4) == 16, "sizeof(vec4) == 16");
-static_assert(sizeof(dvec4) == 32, "sizeof(dvec4) == 32");
-
 /*
  * stdstream method implementation
  */
@@ -1013,7 +997,6 @@ operator *(T const &val, vec_t<T,N,SWIZZLE> const &a)
     inline vec_t<T,N> fun(vec_t<T,N,SWIZZLE1> const &a, \
                           vec_t<T,N,SWIZZLE2> const &b) \
     { \
-        using lol::fun; \
         vec_t<T,N> ret; \
         for (int i = 0; i < N; ++i) \
             ret[i] = fun(a[i], b[i]); \
@@ -1023,7 +1006,6 @@ operator *(T const &val, vec_t<T,N,SWIZZLE> const &a)
     template<typename T, int N, int SWIZZLE> \
     inline vec_t<T,N> fun(vec_t<T,N,SWIZZLE> const &a, T const &b) \
     { \
-        using lol::fun; \
         vec_t<T,N> ret; \
         for (int i = 0; i < N; ++i) \
             ret[i] = fun(a[i], b); \
@@ -1033,7 +1015,6 @@ operator *(T const &val, vec_t<T,N,SWIZZLE> const &a)
     template<typename T, int N, int SWIZZLE> \
     inline vec_t<T,N> fun(T const &a, vec_t<T,N,SWIZZLE> const &b) \
     { \
-        using lol::fun; \
         vec_t<T,N> ret; \
         for (int i = 0; i < N; ++i) \
             ret[i] = fun(a, b[i]); \
@@ -1129,8 +1110,9 @@ static inline T sqlength(vec_t<T,N,SWIZZLE> const &a)
 template<typename T, int N, int SWIZZLE> [[nodiscard]]
 static inline T length(vec_t<T,N,SWIZZLE> const &a)
 {
+    using std::sqrt;
     /* FIXME: this is not very nice */
-    return T(sqrt((double)sqlength(a)));
+    return T(sqrt(sqlength(a)));
 }
 
 template<typename T, int N, int SWIZZLE1, int SWIZZLE2>
@@ -1181,7 +1163,7 @@ static inline vec_t<T,N> abs(vec_t<T,N,SWIZZLE> const &a)
 {
     vec_t<T,N> ret;
     for (int i = 0; i < N; ++i)
-        ret[i] = lol::abs(a[i]);
+        ret[i] = abs(a[i]);
     return ret;
 }
 
@@ -1190,7 +1172,7 @@ static inline vec_t<T,N> degrees(vec_t<T,N,SWIZZLE> const &a)
 {
     vec_t<T,N> ret;
     for (int i = 0; i < N; ++i)
-        ret[i] = lol::degrees(a[i]);
+        ret[i] = degrees(a[i]);
     return ret;
 }
 
@@ -1199,7 +1181,7 @@ static inline vec_t<T, N> radians(vec_t<T, N, SWIZZLE> const &a)
 {
     vec_t<T, N> ret;
     for (int i = 0; i < N; ++i)
-        ret[i] = lol::radians(a[i]);
+        ret[i] = radians(a[i]);
     return ret;
 }
 
@@ -1207,19 +1189,23 @@ static inline vec_t<T, N> radians(vec_t<T, N, SWIZZLE> const &a)
 template<typename T, int SWIZZLE>
 static inline vec_t<T, 2> cartesian(vec_t<T, 2, SWIZZLE> const &a)
 {
+    using std::sin, std::cos;
+
     vec_t<T, 2> ret;
-    ret.x = a[0] * lol::cos(a[1]);
-    ret.y = a[0] * lol::sin(a[1]);
+    ret.x = a[0] * cos(a[1]);
+    ret.y = a[0] * sin(a[1]);
     return ret;
 }
 
 template<typename T, int SWIZZLE>
 static inline vec_t<T, 3> cartesian(vec_t<T, 3, SWIZZLE> const &a)
 {
+    using std::sin, std::cos;
+
     vec_t<T, 3> ret;
-    ret.x = a[0] * lol::sin(a[2]) * lol::cos(a[1]);
-    ret.y = a[0] * lol::cos(a[2]);
-    ret.z = a[0] * lol::sin(a[2]) * lol::sin(a[1]);
+    ret.x = a[0] * sin(a[2]) * cos(a[1]);
+    ret.y = a[0] * cos(a[2]);
+    ret.z = a[0] * sin(a[2]) * sin(a[1]);
     return ret;
 }
 
@@ -1229,17 +1215,19 @@ static inline vec_t<T, 2> spherical(vec_t<T, 2, SWIZZLE> const &a)
 {
     vec_t<T, 2> ret;
     ret[0] = sqlength(a);
-    ret[1] = lol::atan2(a.y, a.x);
+    ret[1] = atan2(a.y, a.x);
     return ret;
 }
 
 template<typename T, int SWIZZLE>
 static inline vec_t<T, 3> spherical(vec_t<T, 3, SWIZZLE> const &a)
 {
+    using std::atan, std::acos;
+
     vec_t<T, 3> ret;
     ret[0] = sqlength(a);
-    ret[1] = lol::atan(a.y / a.x);
-    ret[2] = lol::acos(a.z / ret[0]);
+    ret[1] = atan(a.y / a.x);
+    ret[2] = acos(a.z / ret[0]);
     return ret;
 }
 
@@ -1334,7 +1322,100 @@ vec_t<T,4> const vec_t<T,4>::axis_z = vec_t<T,4>(T(0), T(0), T(1), T(0));
 template<typename T>
 vec_t<T,4> const vec_t<T,4>::axis_w = vec_t<T,4>(T(0), T(0), T(0), T(1));
 
-} /* namespace lol */
+//
+// Generic GLSL-like type names
+//
+
+#define T_(tleft, tright, suffix) \
+    typedef tleft half tright f16##suffix; \
+    typedef tleft float tright suffix; \
+    typedef tleft double tright d##suffix; \
+    typedef tleft ldouble tright f128##suffix; \
+    typedef tleft int8_t tright i8##suffix; \
+    typedef tleft uint8_t tright u8##suffix; \
+    typedef tleft int16_t tright i16##suffix; \
+    typedef tleft uint16_t tright u16##suffix; \
+    typedef tleft int32_t tright i##suffix; \
+    typedef tleft uint32_t tright u##suffix; \
+    typedef tleft int64_t tright i64##suffix; \
+    typedef tleft uint64_t tright u64##suffix; \
+    typedef tleft real tright r##suffix;
+
+// Idiotic hack to put "," inside a macro argument
+#define C_ ,
+
+T_(vec_t<, C_ 2>, vec2)
+T_(vec_t<, C_ 3>, vec3)
+T_(vec_t<, C_ 4>, vec4)
+T_(vec_t<, C_ 5>, vec5)
+T_(vec_t<, C_ 6>, vec6)
+T_(vec_t<, C_ 7>, vec7)
+T_(vec_t<, C_ 8>, vec8)
+T_(vec_t<, C_ 9>, vec9)
+T_(vec_t<, C_ 10>, vec10)
+T_(vec_t<, C_ 11>, vec11)
+T_(vec_t<, C_ 12>, vec12)
+
+#undef C_
+#undef T_
+
+static_assert(sizeof(i8vec2) == 2, "sizeof(i8vec2) == 2");
+static_assert(sizeof(i16vec2) == 4, "sizeof(i16vec2) == 4");
+static_assert(sizeof(ivec2) == 8, "sizeof(ivec2) == 8");
+static_assert(sizeof(i64vec2) == 16, "sizeof(i64vec2) == 16");
+
+static_assert(sizeof(vec2) == 8, "sizeof(vec2) == 8");
+static_assert(sizeof(dvec2) == 16, "sizeof(dvec2) == 16");
+
+static_assert(sizeof(i8vec3) == 3, "sizeof(i8vec3) == 3");
+static_assert(sizeof(i16vec3) == 6, "sizeof(i16vec3) == 6");
+static_assert(sizeof(ivec3) == 12, "sizeof(ivec3) == 12");
+static_assert(sizeof(i64vec3) == 24, "sizeof(i64vec3) == 24");
+
+static_assert(sizeof(vec3) == 12, "sizeof(vec3) == 12");
+static_assert(sizeof(dvec3) == 24, "sizeof(dvec3) == 24");
+
+static_assert(sizeof(i8vec4) == 4, "sizeof(i8vec4) == 4");
+static_assert(sizeof(i16vec4) == 8, "sizeof(i16vec4) == 8");
+static_assert(sizeof(ivec4) == 16, "sizeof(ivec4) == 16");
+static_assert(sizeof(i64vec4) == 32, "sizeof(i64vec4) == 32");
+
+static_assert(sizeof(vec4) == 16, "sizeof(vec4) == 16");
+static_assert(sizeof(dvec4) == 32, "sizeof(dvec4) == 32");
+
+//
+// HLSL/Cg-compliant type names
+//
+
+typedef vec2 float2;
+typedef vec3 float3;
+typedef vec4 float4;
+typedef vec5 float5;
+typedef vec6 float6;
+typedef vec7 float7;
+typedef vec8 float8;
+typedef vec9 float9;
+typedef vec10 float10;
+typedef vec11 float11;
+typedef vec12 float12;
+
+typedef f16vec2 half2;
+typedef f16vec3 half3;
+typedef f16vec4 half4;
+
+typedef ivec2 int2;
+typedef ivec3 int3;
+typedef ivec4 int4;
+typedef ivec5 int5;
+typedef ivec6 int6;
+typedef ivec7 int7;
+typedef ivec8 int8;
+typedef ivec9 int9;
+typedef ivec10 int10;
+typedef ivec11 int11;
+typedef ivec12 int12;
+
+} // namespace lol
 
 #include "private/vector.ipp"
 

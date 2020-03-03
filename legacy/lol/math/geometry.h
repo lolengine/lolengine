@@ -19,7 +19,9 @@
 //
 
 #include <lol/base/enum.h>
-#include <lol/math/vector.h> // vec_t
+#include <lol/math/vector.h>    // vec_t
+#include <lol/math/transform.h> // mat_t
+#include <../legacy/lol/math/functions.h> // distance, clamp…
 
 #include <algorithm>
 #include <map>
@@ -70,26 +72,6 @@ protected:
     }
 };
 typedef SafeEnum<DirectionBase> Direction;
-
-/*
- * Generic box type names
- */
-
-#define T_(tleft, tright, suffix) \
-    typedef tleft float tright suffix; \
-    typedef tleft double tright d##suffix; \
-    typedef tleft int32_t tright i##suffix; \
-    typedef tleft uint32_t tright u##suffix;
-
-/* Idiotic hack to put "," inside a macro argument */
-#define C_ ,
-
-T_(box_t<, C_ 2>, box2)
-T_(box_t<, C_ 3>, box3)
-T_(box_t<, C_ 4>, box4)
-
-#undef C_
-#undef T_
 
 template<typename T, int N>
 struct [[nodiscard]] box_t
@@ -172,6 +154,26 @@ struct [[nodiscard]] box_t
     vec_t<T,N> aa, bb;
 };
 
+//
+// Generic box type names
+//
+
+#define T_(tleft, tright, suffix) \
+    typedef tleft float tright suffix; \
+    typedef tleft double tright d##suffix; \
+    typedef tleft int32_t tright i##suffix; \
+    typedef tleft uint32_t tright u##suffix;
+
+// Idiotic hack to put "," inside a macro argument
+#define C_ ,
+
+T_(box_t<, C_ 2>, box2)
+T_(box_t<, C_ 3>, box3)
+T_(box_t<, C_ 4>, box4)
+
+#undef C_
+#undef T_
+
 static_assert(sizeof(box2) == 16, "sizeof(box2) == 16");
 static_assert(sizeof(box3) == 24, "sizeof(box3) == 24");
 static_assert(sizeof(dbox2) == 32, "sizeof(dbox2) == 32");
@@ -215,8 +217,8 @@ static inline bool TestAABBVsAABB(box2 const &b1, box2 const &b2)
     vec2 e1 = 0.5f * b1.extent();
     vec2 e2 = 0.5f * b2.extent();
 
-    return abs(c.x) <= e1.x + e2.x
-        && abs(c.y) <= e1.y + e2.y;
+    return fabs(c.x) <= e1.x + e2.x
+        && fabs(c.y) <= e1.y + e2.y;
 }
 static inline bool TestAABBVsPoint(box2 const &b1, vec2 const &p)
 {
@@ -229,9 +231,9 @@ static inline bool TestAABBVsAABB(box3 const &b1, box3 const &b2)
     vec3 e1 = 0.5f * b1.extent();
     vec3 e2 = 0.5f * b2.extent();
 
-    return abs(c.x) <= e1.x + e2.x
-        && abs(c.y) <= e1.y + e2.y
-        && abs(c.z) <= e1.z + e2.z;
+    return fabs(c.x) <= e1.x + e2.x
+        && fabs(c.y) <= e1.y + e2.y
+        && fabs(c.z) <= e1.z + e2.z;
 }
 static inline bool TestAABBVsPoint(box3 const &b1, vec3 const &p)
 {

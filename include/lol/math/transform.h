@@ -20,7 +20,8 @@
 #include <lol/math/private/ops.h>
 #include <lol/math/vector.h>
 
-#include <ostream>
+#include <ostream> // std::ostream
+#include <cmath>   // std::atan2, std::sqrt
 
 #include "private/matrix.h"
 
@@ -71,9 +72,6 @@ struct [[nodiscard]] cmplx_t : public linear_ops::base<T>
     T x, y;
 };
 
-static_assert(sizeof(cmplx) == 8, "sizeof(cmplx) == 8");
-static_assert(sizeof(dcmplx) == 16, "sizeof(dcmplx) == 16");
-
 /*
  * 4-element transforms: quaternions
  */
@@ -104,11 +102,13 @@ struct [[nodiscard]] quat_t : public linear_ops::base<T>
     /* Construct a unit quaternion from a pure rotation matrix */
     explicit quat_t(mat_t<T,3,3> const &m)
     {
+        using std::sqrt;
+
         T tr = m[0][0] + m[1][1] + m[2][2];
 
         if (tr > T(0))
         {
-            T const p = T(0.5) * std::sqrt(T(1) + tr);
+            T const p = T(0.5) * sqrt(T(1) + tr);
             T const q = T(0.25) / p;
 
             w = p;
@@ -123,7 +123,7 @@ struct [[nodiscard]] quat_t : public linear_ops::base<T>
                   : 2;
             int j = (i + 1) % 3, k = (i + 2) % 3;
 
-            T const p = T(0.5) * lol::sqrt(T(1) - tr + m[i][i] + m[i][i]);
+            T const p = T(0.5) * sqrt(T(1) - tr + m[i][i] + m[i][i]);
             T const q = T(0.25) / p;
 
             w              = q * (m[j][k] - m[k][j]);
@@ -235,11 +235,13 @@ struct [[nodiscard]] quat_t : public linear_ops::base<T>
 
     [[nodiscard]] inline T angle()
     {
+        using std::atan2, std::sqrt;
+
         vec_t<T,3> v(x, y, z);
         T n2 = sqlength(v);
         if (n2 <= (T)1e-6)
             return (T)0;
-        return (T)2 * lol::atan2(lol::sqrt(n2), w);
+        return (T)2 * atan2(sqrt(n2), w);
     }
 
     template<typename U>
@@ -248,9 +250,6 @@ struct [[nodiscard]] quat_t : public linear_ops::base<T>
     /* XXX: storage order is wxyz, unlike vectors! */
     T w, x, y, z;
 };
-
-static_assert(sizeof(quat) == 16, "sizeof(quat) == 16");
-static_assert(sizeof(dquat) == 32, "sizeof(dquat) == 32");
 
 /*
  * SQT transforms: scale / rotation / translation
@@ -359,6 +358,7 @@ static inline T sqlength(cmplx_t<T> const &t)
 template<typename T> [[nodiscard]]
 static inline T length(cmplx_t<T> const &t)
 {
+    using std::sqrt;
     /* FIXME: this is not very nice */
     return (T)sqrt((double)sqlength(t));
 }
@@ -396,8 +396,9 @@ static inline T sqlength(quat_t<T> const &t)
 template<typename T> [[nodiscard]]
 static inline T length(quat_t<T> const &t)
 {
+    using std::sqrt;
     /* FIXME: this is not very nice */
-    return (T)sqrt((double)sqlength(t));
+    return (T)sqrt(sqlength(t));
 }
 
 template<typename T> [[nodiscard]]
@@ -496,7 +497,99 @@ static inline sqt_t<T> operator /(sqt_t<T> const &x, sqt_t<T> const &y)
     return x * inverse(y);
 }
 
-} /* namespace lol */
+//
+// Generic GLSL-like type names
+//
+
+#define T_(tleft, tright, suffix) \
+    typedef tleft half tright f16##suffix; \
+    typedef tleft float tright suffix; \
+    typedef tleft double tright d##suffix; \
+    typedef tleft ldouble tright f128##suffix; \
+    typedef tleft int8_t tright i8##suffix; \
+    typedef tleft uint8_t tright u8##suffix; \
+    typedef tleft int16_t tright i16##suffix; \
+    typedef tleft uint16_t tright u16##suffix; \
+    typedef tleft int32_t tright i##suffix; \
+    typedef tleft uint32_t tright u##suffix; \
+    typedef tleft int64_t tright i64##suffix; \
+    typedef tleft uint64_t tright u64##suffix; \
+    typedef tleft real tright r##suffix;
+
+/* Idiotic hack to put "," inside a macro argument */
+#define C_ ,
+
+T_(mat_t<, C_ 2 C_ 2>, mat2)
+T_(mat_t<, C_ 3 C_ 3>, mat3)
+T_(mat_t<, C_ 4 C_ 4>, mat4)
+
+T_(mat_t<, C_ 2 C_ 3>, mat2x3)
+T_(mat_t<, C_ 2 C_ 4>, mat2x4)
+T_(mat_t<, C_ 3 C_ 2>, mat3x2)
+T_(mat_t<, C_ 3 C_ 4>, mat3x4)
+T_(mat_t<, C_ 4 C_ 2>, mat4x2)
+T_(mat_t<, C_ 4 C_ 3>, mat4x3)
+
+T_(cmplx_t<, >, cmplx)
+T_(quat_t<, >, quat)
+T_(sqt_t<, >, sqt)
+
+#undef C_
+#undef T_
+
+static_assert(sizeof(cmplx) == 8, "sizeof(cmplx) == 8");
+static_assert(sizeof(dcmplx) == 16, "sizeof(dcmplx) == 16");
+
+static_assert(sizeof(quat) == 16, "sizeof(quat) == 16");
+static_assert(sizeof(dquat) == 32, "sizeof(dquat) == 32");
+
+static_assert(sizeof(imat2) == 16, "sizeof(imat2) == 16");
+static_assert(sizeof(mat2) == 16, "sizeof(mat2) == 16");
+static_assert(sizeof(dmat2) == 32, "sizeof(dmat2) == 32");
+
+static_assert(sizeof(imat3) == 36, "sizeof(imat3) == 36");
+static_assert(sizeof(mat3) == 36, "sizeof(mat3) == 36");
+static_assert(sizeof(dmat3) == 72, "sizeof(dmat3) == 72");
+
+static_assert(sizeof(imat4) == 64, "sizeof(imat4) == 64");
+static_assert(sizeof(mat4) == 64, "sizeof(mat4) == 64");
+static_assert(sizeof(dmat4) == 128, "sizeof(dmat4) == 128");
+
+//
+// HLSL/Cg-compliant type names
+//
+
+typedef mat2 float2x2;
+typedef mat3 float3x3;
+typedef mat4 float4x4;
+typedef mat2x3 float2x3;
+typedef mat2x4 float2x4;
+typedef mat3x2 float3x2;
+typedef mat3x4 float3x4;
+typedef mat4x2 float4x2;
+typedef mat4x3 float4x3;
+
+typedef f16mat2 half2x2;
+typedef f16mat3 half3x3;
+typedef f16mat4 half4x4;
+typedef f16mat2x3 half2x3;
+typedef f16mat2x4 half2x4;
+typedef f16mat3x2 half3x2;
+typedef f16mat3x4 half3x4;
+typedef f16mat4x2 half4x2;
+typedef f16mat4x3 half4x3;
+
+typedef imat2 int2x2;
+typedef imat3 int3x3;
+typedef imat4 int4x4;
+typedef imat2x3 int2x3;
+typedef imat2x4 int2x4;
+typedef imat3x2 int3x2;
+typedef imat3x4 int3x4;
+typedef imat4x2 int4x2;
+typedef imat4x3 int4x3;
+
+} // namespace lol
 
 #include "private/matrix.ipp"
 #include "private/transform.ipp"

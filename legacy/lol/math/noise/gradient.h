@@ -14,7 +14,11 @@
 
 #pragma once
 
-#include <functional>
+#include <lol/math/vector.h> // vec_t
+#include <lol/math/rand.h>   // rand()
+
+#include <vector>    // std::vector
+#include <algorithm> // std::min
 
 namespace lol
 {
@@ -58,22 +62,22 @@ protected:
 
         /* Generate 2^(N+2) random vectors, but at least 2^5 (32) and not
          * more than 2^20 (~ 1 million). */
-        int const gradient_count = 1 << min(max(N + 2, 5), 20);
+        int constexpr gradient_count = 1 << std::min(std::max(N + 2, 5), 20);
 
         static auto build_gradients = [&]()
         {
-            array<vec_t<float, N>> ret;
+            std::array<vec_t<float, N>, gradient_count> ret;
             for (int k = 0; k < gradient_count; ++k)
             {
                 vec_t<float, N> v;
                 for (int i = 0; i < N; ++i)
                     v[i] = rand(-1.f, 1.f);
-                ret << normalize(v);
+                ret[k] = normalize(v);
             }
             return ret;
         };
 
-        static array<vec_t<float, N>> const gradients = build_gradients();
+        static auto const gradients = build_gradients();
 
         int idx = m_seed;
         for (int i = 0; i < N; ++i)

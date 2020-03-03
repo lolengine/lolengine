@@ -20,8 +20,15 @@
 #include <ostream>
 #include <type_traits>
 
+// HACK: if this is declared int const, Visual Studio becomes unable
+// to perform template argument deduction.
+// FIXME: should we get rid of this #define?
+#define FULL_SWIZZLE (0)
+
 namespace lol
 {
+
+template<typename T, int N, int SWIZZLE = FULL_SWIZZLE> struct vec_t;
 
 /*
  * Utility namespaces for traits -- this file uses a combination of
