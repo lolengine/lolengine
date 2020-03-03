@@ -15,6 +15,13 @@
 #include <cassert>
 #include <cmath>
 
+#if _WIN32
+#   pragma push_macro("near")
+#   pragma push_macro("far")
+#   undef near
+#   undef far
+#endif
+
 namespace lol
 {
 
@@ -276,4 +283,9 @@ inline mat4 mat4::shifted_perspective(float fov_y, float screen_size,
 }
 
 } /* namespace lol */
+
+#if _WIN32
+#   pragma pop_macro("near")
+#   pragma pop_macro("far")
+#endif
 

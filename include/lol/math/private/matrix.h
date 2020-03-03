@@ -156,7 +156,7 @@ struct [[nodiscard]] mat_t<T, 3, 3>
     explicit inline mat_t(mat_t<U,3,3> const &m)
       : m_data{ (element)m[0], (element)m[1], (element)m[2] } {}
 
-    explicit mat_t(class quat_t<T> const &q);
+    explicit mat_t(struct quat_t<T> const &q);
 
     inline vec_t<T,3>& operator[](size_t n) { return m_data[n]; }
     inline vec_t<T,3> const& operator[](size_t n) const { return m_data[n]; }
@@ -252,7 +252,7 @@ struct [[nodiscard]] mat_t<T, 4, 4>
       : m_data{ (element)m[0], (element)m[1],
                 (element)m[2], (element)m[3] } {}
 
-    explicit mat_t(class quat_t<T> const &q);
+    explicit mat_t(struct quat_t<T> const &q);
 
     inline vec_t<T,4>& operator[](size_t n) { return m_data[n]; }
     inline vec_t<T,4> const& operator[](size_t n) const { return m_data[n]; }
