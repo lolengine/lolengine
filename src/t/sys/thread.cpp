@@ -11,25 +11,18 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
-#include <lol/engine-internal.h>
-#include <lol/base/lolunit.h>
+#if HAVE_CONFIG_H
+#   include "config.h"
+#endif
 
-#include <string>
-#include <map>
+#include <lol/base/lolunit.h>
+#include <lol/base/thread.h>
 
 namespace lol
 {
 
 lolunit_declare_fixture(thread_test)
 {
-    void setup()
-    {
-    }
-
-    void teardown()
-    {
-    }
-
     lolunit_declare_test(queue_try_push)
     {
         queue<int, 1> q;

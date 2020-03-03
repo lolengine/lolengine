@@ -10,8 +10,17 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
-#include <lol/engine-internal.h>
+#if HAVE_CONFIG_H
+#   include "config.h"
+#endif
+
 #include <lol/base/lolunit.h>
+#include <lol/math/vector.h>    // vec_t
+#include <lol/math/transform.h> // quat_t
+#include <lol/math/rand.h>      // rand()
+#include <../legacy/lol/math/functions.h> // radians()
+
+#include <cstring> // memset
 
 namespace lol
 {
@@ -35,9 +44,9 @@ lolunit_declare_fixture(quaternion_test)
         /* Fill array with random test values */
         for (int i = 0; i < 10000; ++i)
         {
-            vec3 v1 = lol::pow(10.f, rand(-5.f, 5.f))
+            vec3 v1 = pow(10.f, rand(-5.f, 5.f))
                     * vec3(rand(-1.f, 1.f), rand(-1.f, 1.f), rand(-1.f, 1.f));
-            vec3 v2 = lol::pow(10.f, rand(-5.f, 5.f))
+            vec3 v2 = pow(10.f, rand(-5.f, 5.f))
                     * vec3(rand(-1.f, 1.f), rand(-1.f, 1.f), rand(-1.f, 1.f));
             push_vector_pair(v1, v2);
         }

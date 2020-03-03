@@ -10,11 +10,12 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
-#include <lol/engine-internal.h>
+#if HAVE_CONFIG_H
+#   include "config.h"
+#endif
+
 #include <lol/base/lolunit.h>
 #include <lol/types/bigint.h>
-
-#include <cmath>
 
 namespace lol
 {
@@ -27,7 +28,7 @@ lolunit_declare_fixture(bigint_test)
         bigint<0> b;
         bigint<32> c;
 
-        UNUSED(a, b,c);
+        (void)a, (void)b, (void)c;
     }
 
     lolunit_declare_test(int32_cast)

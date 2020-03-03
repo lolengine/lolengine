@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -20,7 +20,9 @@
 // Ticker class for the ticking logic and the linked list implementation.
 //
 
-#include <cstdint>
+#include <map>      // std::map
+#include <string>   // std::string
+#include <stdint.h>
 
 #include <lol/engine/tickable.h>
 

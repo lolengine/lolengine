@@ -11,8 +11,13 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
-#include <lol/engine-internal.h>
+#if HAVE_CONFIG_H
+#   include "config.h"
+#endif
+
 #include <lol/base/lolunit.h>
+#include <lol/../camera.h>
+#include <lol/../engine/ticker.h>
 
 #include <memory>
 

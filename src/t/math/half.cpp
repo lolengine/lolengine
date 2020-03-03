@@ -10,10 +10,14 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
-#include <lol/engine-internal.h>
-#include <lol/base/lolunit.h>
+#if HAVE_CONFIG_H
+#   include "config.h"
+#endif
 
-#include <cmath>
+#include <lol/base/lolunit.h>
+#include <lol/types/half.h>
+#include <lol/math/vector.h>    // for the sizeof(f16vec2) etc. tests
+#include <lol/math/transform.h> // for the sizeof(f16mat2) etc. tests
 
 namespace lol
 {

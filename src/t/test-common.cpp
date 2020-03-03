@@ -10,16 +10,17 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
-#include <lol/engine-internal.h>
+#if HAVE_CONFIG_H
+#   include "config.h"
+#endif
+
 #include <lol/base/lolunit.h>
 
 #include <cstdio>
 #include <cstdlib>
 
-int main(int argc, char **argv)
+int main(int, char **)
 {
-    UNUSED(argc, argv);
-
     lol::text_runner runner;
     bool success = runner.Run();
     return success ? EXIT_SUCCESS : EXIT_FAILURE;

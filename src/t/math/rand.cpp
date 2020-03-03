@@ -10,8 +10,14 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
-#include <lol/engine-internal.h>
+#if HAVE_CONFIG_H
+#   include "config.h"
+#endif
+
 #include <lol/base/lolunit.h>
+#include <lol/math/rand.h>
+
+#include <cfloat> // FLT_MAX
 
 namespace lol
 {
@@ -22,8 +28,7 @@ lolunit_declare_fixture(rand_test)
     {
         int const rolls = 2000;
 
-        int bits[32];
-        memset(bits, 0, sizeof(bits));
+        int bits[32] = { 0 };
 
         for (int i = 0; i < rolls; ++i)
         {
@@ -51,8 +56,7 @@ lolunit_declare_fixture(rand_test)
     {
         int const rolls = 2000;
 
-        int bits[16];
-        memset(bits, 0, sizeof(bits));
+        int bits[16] = { 0 };
 
         for (int i = 0; i < rolls; ++i)
         {
@@ -80,8 +84,7 @@ lolunit_declare_fixture(rand_test)
     {
         int const rolls = 2000;
 
-        int bits[8];
-        memset(bits, 0, sizeof(bits));
+        int bits[8] = { 0 };
 
         for (int i = 0; i < rolls; ++i)
         {

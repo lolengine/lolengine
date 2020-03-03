@@ -10,9 +10,13 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
-#include <lol/engine-internal.h>
+#if HAVE_CONFIG_H
+#   include "config.h"
+#endif
+
 #include <lol/base/lolunit.h>
 #include <lol/types/real.h>
+#include <lol/math/transform.h> // for rcmplx
 
 #include <cmath>
 
@@ -328,15 +332,15 @@ lolunit_declare_fixture(real_test)
         auto sqrt7 = sqrt(real(7));
         auto sqrt8 = sqrt(real(8));
 
-        lolunit_assert_doubles_equal(double(sqrt0), sqrt(0.0), 1e-8);
-        lolunit_assert_doubles_equal(double(sqrt1), sqrt(1.0), 1e-8);
-        lolunit_assert_doubles_equal(double(sqrt2), sqrt(2.0), 1e-8);
-        lolunit_assert_doubles_equal(double(sqrt3), sqrt(3.0), 1e-8);
-        lolunit_assert_doubles_equal(double(sqrt4), sqrt(4.0), 1e-8);
-        lolunit_assert_doubles_equal(double(sqrt5), sqrt(5.0), 1e-8);
-        lolunit_assert_doubles_equal(double(sqrt6), sqrt(6.0), 1e-8);
-        lolunit_assert_doubles_equal(double(sqrt7), sqrt(7.0), 1e-8);
-        lolunit_assert_doubles_equal(double(sqrt8), sqrt(8.0), 1e-8);
+        lolunit_assert_doubles_equal(double(sqrt0), std::sqrt(0.0), 1e-8);
+        lolunit_assert_doubles_equal(double(sqrt1), std::sqrt(1.0), 1e-8);
+        lolunit_assert_doubles_equal(double(sqrt2), std::sqrt(2.0), 1e-8);
+        lolunit_assert_doubles_equal(double(sqrt3), std::sqrt(3.0), 1e-8);
+        lolunit_assert_doubles_equal(double(sqrt4), std::sqrt(4.0), 1e-8);
+        lolunit_assert_doubles_equal(double(sqrt5), std::sqrt(5.0), 1e-8);
+        lolunit_assert_doubles_equal(double(sqrt6), std::sqrt(6.0), 1e-8);
+        lolunit_assert_doubles_equal(double(sqrt7), std::sqrt(7.0), 1e-8);
+        lolunit_assert_doubles_equal(double(sqrt8), std::sqrt(8.0), 1e-8);
     }
 
     lolunit_declare_test(real_cbrt)
@@ -359,23 +363,23 @@ lolunit_declare_fixture(real_test)
         auto cbrt7 = cbrt(real(7));
         auto cbrt8 = cbrt(real(8));
 
-        lolunit_assert_doubles_equal(double(cbrtm8), cbrt(-8.0), 1e-8);
-        lolunit_assert_doubles_equal(double(cbrtm7), cbrt(-7.0), 1e-8);
-        lolunit_assert_doubles_equal(double(cbrtm6), cbrt(-6.0), 1e-8);
-        lolunit_assert_doubles_equal(double(cbrtm5), cbrt(-5.0), 1e-8);
-        lolunit_assert_doubles_equal(double(cbrtm4), cbrt(-4.0), 1e-8);
-        lolunit_assert_doubles_equal(double(cbrtm3), cbrt(-3.0), 1e-8);
-        lolunit_assert_doubles_equal(double(cbrtm2), cbrt(-2.0), 1e-8);
-        lolunit_assert_doubles_equal(double(cbrtm1), cbrt(-1.0), 1e-8);
-        lolunit_assert_doubles_equal(double(cbrt0), cbrt(0.0), 1e-8);
-        lolunit_assert_doubles_equal(double(cbrt1), cbrt(1.0), 1e-8);
-        lolunit_assert_doubles_equal(double(cbrt2), cbrt(2.0), 1e-8);
-        lolunit_assert_doubles_equal(double(cbrt3), cbrt(3.0), 1e-8);
-        lolunit_assert_doubles_equal(double(cbrt4), cbrt(4.0), 1e-8);
-        lolunit_assert_doubles_equal(double(cbrt5), cbrt(5.0), 1e-8);
-        lolunit_assert_doubles_equal(double(cbrt6), cbrt(6.0), 1e-8);
-        lolunit_assert_doubles_equal(double(cbrt7), cbrt(7.0), 1e-8);
-        lolunit_assert_doubles_equal(double(cbrt8), cbrt(8.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrtm8), std::cbrt(-8.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrtm7), std::cbrt(-7.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrtm6), std::cbrt(-6.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrtm5), std::cbrt(-5.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrtm4), std::cbrt(-4.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrtm3), std::cbrt(-3.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrtm2), std::cbrt(-2.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrtm1), std::cbrt(-1.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrt0), std::cbrt(0.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrt1), std::cbrt(1.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrt2), std::cbrt(2.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrt3), std::cbrt(3.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrt4), std::cbrt(4.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrt5), std::cbrt(5.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrt6), std::cbrt(6.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrt7), std::cbrt(7.0), 1e-8);
+        lolunit_assert_doubles_equal(double(cbrt8), std::cbrt(8.0), 1e-8);
     }
 
     lolunit_declare_test(real_ldexp)

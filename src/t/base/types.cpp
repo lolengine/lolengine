@@ -10,8 +10,16 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
-#include <lol/engine-internal.h>
+#if HAVE_CONFIG_H
+#   include "config.h"
+#endif
+
 #include <lol/base/lolunit.h>
+#include <../legacy/lol/base/types.h>
+#include <../legacy/lol/math/functions.h>
+#include <lol/math/vector.h>
+#include <lol/math/transform.h>
+#include <lol/types/half.h>
 
 namespace lol
 {
@@ -96,20 +104,6 @@ lolunit_declare_fixture(build_features)
         lolunit_assert_equal(sizeof(i64vec4), 32);
         lolunit_assert_equal(sizeof(u64vec4), 32);
     }
-
-#if !defined LOL_BUILD_DEBUG
-    lolunit_declare_test(fast_math)
-    {
-        double x, y;
-
-        y = x = 1.0 + rand(0.1f, 0.2f);
-        y += 4503599627370496.0;
-        /* The compiler should optimise this away */
-        y -= 4503599627370496.0;
-
-        lolunit_assert_equal(x, y);
-    }
-#endif
 };
 
 } /* namespace lol */

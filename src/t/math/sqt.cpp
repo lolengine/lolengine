@@ -10,8 +10,13 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
-#include <lol/engine-internal.h>
+#if HAVE_CONFIG_H
+#   include "config.h"
+#endif
+
 #include <lol/base/lolunit.h>
+#include <lol/math/vector.h>
+#include <lol/math/transform.h>
 
 namespace lol
 {
