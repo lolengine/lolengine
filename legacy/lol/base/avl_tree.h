@@ -1,9 +1,9 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010-2015 Sam Hocevar <sam@hocevar.net>
-//            © 2013-2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2013-2015 Guillaume Bittoun <guillaume.bittoun@gmail.com>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
+//            © 2013—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//            © 2013—2015 Guillaume Bittoun <guillaume.bittoun@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -14,10 +14,10 @@
 
 #pragma once
 
+#include <lol/base/all.h>
+
 namespace lol
 {
-
-#include <lol/base/all.h>
 
 template<typename K, typename V>
 class avl_tree

@@ -14,7 +14,7 @@
 
 #pragma once
 
-#include <lol/math/noise/gradient.h>
+#include <../legacy/lol/math/noise/gradient.h>
 
 namespace lol
 {

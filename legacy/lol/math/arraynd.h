@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //            © 2013—2014 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //            © 2013—2014 Guillaume Bittoun <guillaume.bittoun@gmail.com>
 //
@@ -25,7 +25,7 @@
 //
 
 #include <lol/base/array.h>
-#include <lol/base/assert.h>
+#include <../legacy/lol/base/assert.h>
 
 #include <cstddef>
 #include <climits>

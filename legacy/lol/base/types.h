@@ -1,11 +1,13 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
@@ -15,15 +17,12 @@
 namespace lol
 {
 
-/* It’s nice to have single-word type names, so define this. */
+// It’s sometimes nice to have single-word type names, so define this.
 typedef long double ldouble;
 
-/* The “real” type used for real numbers. It’s a specialisation of the
- * “Real” template class. */
-template<typename T> class Real;
-typedef Real<uint32_t> real;
+template<typename T> class real_t;
+typedef real_t<uint32_t> real;
 
-/* The “half” type used for 16-bit floating point numbers. */
 class half;
 
 /*

@@ -19,6 +19,7 @@
 //
 
 #include <lol/base/enum.h>
+#include <lol/math/vector.h> // vec_t
 
 #include <algorithm>
 #include <map>

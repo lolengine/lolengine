@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //            © 2013—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -34,7 +34,7 @@ void DrawInner(TREE *tree, array<TBB, vec4> &boxes,
                array<TE *, int, vec4> &elements,
                array<int, TBB> &leaves, int children, vec4 color)
 {
-    boxes.push(tree->GetAABB(), Color::white);
+    boxes.push(tree->GetAABB(), color::white);
     leaves.push(0, boxes.last().m1);
     while (leaves.count() > 0)
     {
@@ -51,7 +51,7 @@ void DrawInner(TREE *tree, array<TBB, vec4> &boxes,
                 }
             }
             if (!done)
-                elements.push(tree->GetElements()[tree->GetTree()[leaves[0].m1].m_elements[j]].m_element, 1, Color::red);
+                elements.push(tree->GetElements()[tree->GetTree()[leaves[0].m1].m_elements[j]].m_element, 1, color::red);
         }
 
         for (int i = 0; i < children; i++)
