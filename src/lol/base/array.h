@@ -15,16 +15,16 @@
 
 //
 // The array class
-// ---------------
+// ———————————————
 // A very simple array class not unlike the std::vector, with some nice
 // additional features, eg. array<int,float> for automatic arrays of tuples.
 //
 
-#include <../legacy/lol/base/assert.h>
 #include <lol/base/tuple.h>
 
-#include <new> /* for placement new */
-#include <algorithm> /* for std::swap */
+#include <cassert>   // assert()
+#include <new>       // placement new
+#include <algorithm> // std::swap
 #include <stdint.h>
 #include <initializer_list>
 
@@ -165,23 +165,19 @@ public:
     {
         /* Allow array[0] even if size is zero so that people can
          * always use &array[0] to get a pointer to the data. */
-        ASSERT(n >= 0 && (n < m_count || (!n && !m_count)),
-               "cannot access index %ld in array of size %ld",
-               (long int)n, (long int)m_count);
+        assert(n >= 0 && (n < m_count || (!n && !m_count)));
         return m_data[n];
     }
 
     inline element_t const& operator[](ptrdiff_t n) const
     {
-        ASSERT(n >= 0 && (n < m_count || (!n && !m_count)),
-               "cannot access index %ld in array of size %ld",
-               (long int)n, (long int)m_count);
+        assert(n >= 0 && (n < m_count || (!n && !m_count)));
         return m_data[n];
     }
 
     inline element_t& last()
     {
-        ASSERT(m_count > 0);
+        assert(m_count > 0);
         return m_data[m_count - 1];
     }
 
@@ -197,7 +193,7 @@ public:
 
     inline element_t const& last() const
     {
-        ASSERT(m_count > 0);
+        assert(m_count > 0);
         return m_data[m_count - 1];
     }
 
@@ -239,9 +235,7 @@ public:
 
     inline void insert(T const &x, ptrdiff_t pos)
     {
-        ASSERT(pos >= 0 && pos <= m_count,
-               "cannot insert at index %ld in array of size %ld",
-               (long int)pos, (long int)m_count);
+        assert(pos >= 0 && pos <= m_count);
 
         if (m_count >= m_reserved)
             grow();
@@ -257,9 +251,7 @@ public:
 
     inline bool insert_unique(T const &x, ptrdiff_t pos)
     {
-        ASSERT(pos >= 0 && pos <= m_count,
-               "cannot insert at index %ld in array of size %ld",
-               (long int)pos, (long int)m_count);
+        assert(pos >= 0 && pos <= m_count);
 
         if (find(x) != INDEX_NONE)
             return false;
@@ -300,7 +292,7 @@ public:
 
     inline T pop()
     {
-        ASSERT(m_count > 0);
+        assert(m_count > 0);
         element_t tmp = last();
         remove(m_count - 1, 1);
         return tmp;
@@ -308,19 +300,14 @@ public:
 
     inline void swap(ptrdiff_t i, ptrdiff_t j)
     {
-        ASSERT(i >= 0 && i < m_count && j >= 0 && j < m_count,
-               "cannot swap elements %ld and %ld in array of size %ld",
-               (long int)i, (long int)j, (long int)m_count);
-
+        assert(i >= 0 && i < m_count && j >= 0 && j < m_count);
         std::swap(m_data[i], m_data[j]);
     }
 
     void remove(ptrdiff_t pos, ptrdiff_t todelete = 1)
     {
-        ASSERT(todelete >= 0);
-        ASSERT(pos - todelete >= -m_count - 1 && pos + todelete <= m_count,
-               "cannot remove %ld elements at %ld in array of size %ld",
-               (long int)todelete, (long int)pos, (long int)m_count);
+        assert(todelete >= 0);
+        assert(pos - todelete >= -m_count - 1 && pos + todelete <= m_count);
 
         if (pos < 0)
             pos = m_count + pos;
@@ -334,10 +321,8 @@ public:
 
     void remove_swap(ptrdiff_t pos, ptrdiff_t todelete = 1)
     {
-        ASSERT(todelete >= 0);
-        ASSERT(pos - todelete >= -m_count - 1 && pos + todelete <= m_count,
-               "cannot remove %ld elements at %ld in array of size %ld",
-               (long int)todelete, (long int)pos, (long int)m_count);
+        assert(todelete >= 0);
+        assert(pos - todelete >= -m_count - 1 && pos + todelete <= m_count);
 
         if (pos < 0)
             pos = m_count + pos;
@@ -353,7 +338,7 @@ public:
 
     void resize(ptrdiff_t item_count, element_t e = element_t())
     {
-        ASSERT(item_count >= 0);
+        assert(item_count >= 0);
         reserve(item_count);
 
         /* Too many elements? Remove them. */
@@ -377,13 +362,12 @@ public:
         if (toreserve <= m_reserved)
             return;
 
-        /* This cast is not very nice, because we kill any alignment
-         * information we could have. But until C++ gives us the proper
-         * tools to deal with it, we assume new uint8_t[] returns properly
-         * aligned data. */
+        // This cast is not very nice, because we kill any alignment
+        // information we could have. But until C++ gives us the proper
+        // tools to deal with it, we assume new uint8_t[] returns properly
+        // aligned data.
         element_t *tmp = reinterpret_cast<element_t *>(reinterpret_cast<uintptr_t>
                                (new uint8_t[sizeof(element_t) * toreserve]));
-        ASSERT(tmp, "out of memory in array class");
         for (ptrdiff_t i = 0; i < m_count; i++)
         {
             new(&tmp[i]) element_t(m_data[i]);
@@ -517,9 +501,7 @@ public:
 
     inline void insert(ptrdiff_t pos, T... args)
     {
-        ASSERT(pos >= 0 && pos <= this->m_count,
-               "cannot insert at index %ld in array of size %ld",
-               (long int)pos, (long int)this->m_count);
+        assert(pos >= 0 && pos <= this->m_count);
 
         if (this->m_count >= this->m_reserved)
             this->grow();

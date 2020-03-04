@@ -19,8 +19,6 @@
 // A very simple tuple class.
 //
 
-#include <../legacy/lol/base/assert.h>
-
 #include <tuple>
 
 namespace lol
