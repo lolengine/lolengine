@@ -22,6 +22,7 @@
 #include "../base/private/features.h"
 
 #include <vector>     // std::vector
+#include <algorithm>  // std::min
 #include <functional> // std::function
 #include <tuple>      // std::tuple
 #include <cassert>    // assert()

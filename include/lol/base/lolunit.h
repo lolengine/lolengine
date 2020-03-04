@@ -227,11 +227,7 @@ public:
         }
         summary << "\n\n";
 
-#if _WIN32
-        ::OutputDebugStringA(summary.str().c_str());
-#else
         std::cout << summary.str();
-#endif
 
         return ret;
     }
@@ -436,5 +432,5 @@ public:
 #define lolunit_assert_doubles_equal_message(msg, a, b, t) \
     lolunit_assert_doubles_equal_generic(make_msg(msg), a, b, t)
 
-} /* namespace lol */
+} // namespace lol
 

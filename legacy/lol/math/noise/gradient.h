@@ -17,7 +17,7 @@
 #include <lol/math/vector.h> // vec_t
 #include <lol/math/rand.h>   // rand()
 
-#include <vector>    // std::vector
+#include <array>     // std::array
 #include <algorithm> // std::min
 
 namespace lol
@@ -33,6 +33,10 @@ public:
     }
 
 protected:
+    // Generate 2^(N+2) random vectors, but at least 2^5 (32) and not
+    // more than 2^20 (~ 1 million).
+    static int constexpr gradient_count = 1 << std::min(std::max(N + 2, 5), 20);
+
     vec_t<float, N> get_gradient(vec_t<int, N> origin) const
     {
         /* Quick shuffle table:
@@ -59,10 +63,6 @@ protected:
             40, 196, 59, 57, 190, 80, 104, 167, 78, 124, 103, 240, 184, 170,
             137, 29, 23, 223, 108, 102, 86, 198, 227, 35, 229, 76, 168, 132,
         };
-
-        /* Generate 2^(N+2) random vectors, but at least 2^5 (32) and not
-         * more than 2^20 (~ 1 million). */
-        int constexpr gradient_count = 1 << std::min(std::max(N + 2, 5), 20);
 
         static auto build_gradients = [&]()
         {
