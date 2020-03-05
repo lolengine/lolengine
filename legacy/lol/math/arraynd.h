@@ -24,9 +24,9 @@
 // XXX: This file is in lol/math/ instead of lol/base/ because it uses vec_t.
 //
 
-#include <lol/base/array.h>
 #include <lol/math/vector.h> // vec_t
 
+#include <vector>      // std::vector
 #include <algorithm>   // std::min
 #include <cstring>     // memset
 #include <climits>
@@ -96,12 +96,11 @@ private:
 };
 
 
-template<int N, typename... T>
-class [[nodiscard]] arraynd : protected array<T...>
+template<int N, typename T>
+class [[nodiscard]] arraynd
 {
 public:
-    typedef array<T...> super;
-    typedef typename super::element_t element_t;
+    typedef T element_t;
 
     inline arraynd() = default;
 
@@ -131,7 +130,7 @@ public:
         int pos = 0;
 
         for (auto inner_initializer : initializer)
-            inner_initializer.fill_values(&super::operator[](0), pos++, &m_sizes[N - 2]);
+            inner_initializer.fill_values(&m_data[0], pos++, &m_sizes[N - 2]);
     }
 
     /* Access elements directly using an vec_t<size_t, N> index */
@@ -140,13 +139,13 @@ public:
         size_t n = pos[N - 1];
         for (size_t i = N - 1; i > 0; --i)
             n = pos[i - 1] + m_sizes[i] * n;
-        return super::operator[](n);
+        return m_data[n];
     }
 
     inline element_t & operator[](vec_t<size_t, N> const &pos)
     {
         return const_cast<element_t &>(
-                   const_cast<arraynd<N, T...> const&>(*this)[pos]);
+                   const_cast<arraynd<N, T> const&>(*this)[pos]);
     }
 
     /* If int != size_t, access elements directly using an ivec2,
@@ -157,14 +156,14 @@ public:
         size_t n = pos[N - 1];
         for (size_t i = N - 1; i > 0; --i)
             n = pos[i - 1] + m_sizes[i] * n;
-        return super::operator[](n);
+        return m_data[n];
     }
 
     template<typename T2 = int, typename T3 = typename std::enable_if<!std::is_same<size_t, T2>::value, int>::type>
     inline element_t & operator[](vec_t<T2, N> const &pos)
     {
         return const_cast<element_t &>(
-                   const_cast<arraynd<N, T...> const&>(*this)[pos]);
+                   const_cast<arraynd<N, T> const&>(*this)[pos]);
     }
 
     /* Proxy to access slices */
@@ -194,7 +193,7 @@ public:
         inline typename std::enable_if<V, typename ARRAY_TYPE::element_t>::type
         const & operator[](size_t pos) const
         {
-            return m_array.super::operator[](m_index + pos * m_accumulator);
+            return m_array.m_data[m_index + pos * m_accumulator];
         }
 
         /* Accessors for the non-const version of the proxy */
@@ -210,7 +209,7 @@ public:
         inline typename std::enable_if<V, typename ARRAY_TYPE::element_t>::type
         & operator[](size_t pos)
         {
-            return m_array.super::operator[](m_index + pos * m_accumulator);
+            return m_array.m_data[m_index + pos * m_accumulator];
         }
 
     private:
@@ -219,14 +218,14 @@ public:
     };
 
     /* Access addressable slices, allowing for array[i][j][...] syntax. */
-    inline slice<arraynd<N, T...> const> operator[](size_t pos) const
+    inline slice<arraynd<N, T> const> operator[](size_t pos) const
     {
-        return slice<arraynd<N, T...> const>(*this, pos, m_sizes[0]);
+        return slice<arraynd<N, T> const>(*this, pos, m_sizes[0]);
     }
 
-    inline slice<arraynd<N, T...>> operator[](size_t pos)
+    inline slice<arraynd<N, T>> operator[](size_t pos)
     {
-        return slice<arraynd<N, T...>>(*this, pos, m_sizes[0]);
+        return slice<arraynd<N, T>>(*this, pos, m_sizes[0]);
     }
 
     /* Resize the array.
@@ -247,18 +246,11 @@ public:
         return vec_t<int, N>(this->m_sizes);
     }
 
-    inline vec_t<size_t, N> size_s() const
-    {
-        return this->m_sizes;
-    }
-
 public:
-    inline element_t *data() { return super::data(); }
-    inline element_t const *data() const { return super::data(); }
-    inline int count() const { return super::count(); }
-    inline int bytes() const { return super::bytes(); }
-    inline size_t count_s() const { return super::count_s(); }
-    inline size_t bytes_s() const { return super::bytes_s(); }
+    inline element_t *data() { return m_data.data(); }
+    inline element_t const *data() const { return m_data.data(); }
+    inline int total_size() const { return m_data.size(); }
+    inline size_t bytes() const { return total_size() * sizeof(element_t); }
 
 private:
     inline void resize_data(element_t e = element_t())
@@ -270,14 +262,15 @@ private:
         for (int i = 0; i < N; ++i)
             total_size *= m_sizes[i];
 
-        this->array<T...>::resize(total_size, e);
+        m_data.resize(total_size, e);
     }
 
+    std::vector<T> m_data;
     vec_t<size_t, N> m_sizes { 0 };
 };
 
-template<typename... T> using array2d = arraynd<2, T...>;
-template<typename... T> using array3d = arraynd<3, T...>;
+template<typename T> using array2d = arraynd<2, T>;
+template<typename T> using array3d = arraynd<3, T>;
 
 } /* namespace lol */
 
