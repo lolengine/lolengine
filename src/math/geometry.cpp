@@ -1,27 +1,27 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//            (c) 2010-2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
+//            © 2010—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #include <lol/engine-internal.h>
 
-#include <cstdlib> /* free() */
-#include <cstring> /* strdup() */
-
-#include <ostream> /* std::ostream */
+#include <algorithm> // std::min
+#include <cmath>     // std::fabs
 
 namespace lol
 {
     //Test epsilon stuff
     TestEpsilon g_test_epsilon;
     float TestEpsilon::Get()                                    { return g_test_epsilon.m_epsilon; }
-    void  TestEpsilon::Set(float epsilon)                       { g_test_epsilon.m_epsilon = lol::max(epsilon, .0f); }
+    void  TestEpsilon::Set(float epsilon)                       { using std::max; g_test_epsilon.m_epsilon = max(epsilon, .0f); }
     const TestEpsilon& TestEpsilon::F(float value)              { g_test_epsilon.m_value = value; return g_test_epsilon; }
     float TestEpsilon::Minus()const                             { return m_value - m_epsilon; }
     float TestEpsilon::Plus() const                             { return m_value + m_epsilon; }
@@ -102,7 +102,7 @@ namespace lol
         //Check the normal before doing any other calculations
         vec3 plane_norm[2] = { cross(normalize(triD[0]), normalize(triD[1])),
                                cross(normalize(triD[3]), normalize(triD[4])) };
-        if (abs(dot(plane_norm[0], plane_norm[1])) == 1.0f)
+        if (fabs(dot(plane_norm[0], plane_norm[1])) == 1.0f)
             return false;
 
 #if 0
@@ -256,13 +256,15 @@ namespace lol
     //--
     bool TestPointVsFrustum(const vec3& point, const mat4& frustum, vec3* result_point)
     {
+        using std::fabs;
+
         vec4 proj_point = frustum * vec4(point, 1.f);
         proj_point /= proj_point.w;
 
         if (result_point)
             *result_point = proj_point.xyz;
         for (int i = 0; i < 3; i++)
-            if (lol::abs(proj_point[i]) > 1.f)
+            if (fabs(proj_point[i]) > 1.f)
                 return false;
         return true;
     }

@@ -245,7 +245,7 @@ public:
 
 public:
     void AddLine(vec3 a, vec3 b, vec4 color);
-    void AddLine(vec3 a, vec3 b, vec4 color, float duration, int mask);
+    void AddLine(vec3 a, vec3 b, vec4 color, float duration, uint32_t mask);
 
     void AddLight(Light *light);
     array<Light *> const &GetLights();

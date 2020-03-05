@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2004—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2004—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -37,6 +37,8 @@ enum class MergeMode
 template<PixelFormat FORMAT, MergeMode MODE>
 static image generic_merge(image &src1, image &src2, float alpha)
 {
+    using std::min, std::max, std::fabs;
+
     typedef typename PixelType<FORMAT>::type pixel_t;
 
     ASSERT(src1.size() == src2.size());
@@ -70,7 +72,7 @@ static image generic_merge(image &src1, image &src2, float alpha)
         else if (MODE == MergeMode::Sub)
             dstp[n] = lol::max(src1p[n] - src2p[n], pixel_t(0.f));
         else if (MODE == MergeMode::Difference)
-            dstp[n] = lol::abs(src1p[n] - src2p[n]);
+            dstp[n] = lol::fabs(src1p[n] - src2p[n]);
     }
 
     src1.unlock(src1p);

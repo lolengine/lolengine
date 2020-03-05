@@ -20,8 +20,7 @@
 
 #include <lol/base/private/features.h>
 
-#include <cstdint>
-#include <cstdarg>
+#include <cstdarg> // va_list
 
 namespace lol
 {

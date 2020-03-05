@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -17,9 +17,8 @@
 // -------------------------------
 //
 
-#include <string>
-#include <cstdint>
-#include <cstdlib>
+#include <string>  // std::string
+#include <cstdlib> // std::getenv
 
 namespace lol
 {
@@ -56,24 +55,6 @@ extern void init(int argc, char *argv[],
 
 extern void add_data_dir(std::string const &dir);
 extern array<std::string> get_path_list(std::string const &file);
-
-static inline std::string getenv(std::string const &var)
-{
-#if _MSC_VER
-    char *buf = nullptr;
-    size_t count = 0;
-    if (_dupenv_s(&buf, &count, var.c_str()) == 0 && buf)
-    {
-        std::string ret(buf);
-        free(buf);
-        return ret;
-    }
-#else
-    if (auto val = std::getenv(var.c_str()))
-        return std::string(val);
-#endif
-    return std::string();
-}
 
 } /* namespace sys */
 

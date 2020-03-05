@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Input tutorial
 //
-//  Copyright © 2011—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2011—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -55,9 +55,9 @@ public:
         auto joystick = input::joystick(0);
         if ((bool)joystick)
         {
-            if (lol::abs(joystick->axis(input::axis::LeftY)) > 0.2f)
+            if (lol::fabs(joystick->axis(input::axis::LeftY)) > 0.2f)
                 m_pitch_angle += joystick->axis(input::axis::LeftY) * seconds;
-            if (lol::abs(joystick->axis(input::axis::LeftX)) > 0.2f)
+            if (lol::fabs(joystick->axis(input::axis::LeftX)) > 0.2f)
                 m_yaw_angle += joystick->axis(input::axis::LeftX) * seconds;
         }
 

@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //            © 2009—2015 Cédric Lecacheur <jordx@free.fr>
 //            © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
@@ -207,7 +207,7 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float d)
                 p[k] = normalize(p[k]);
 
                 uv[k].x = (lol::atan2(p[k].z, p[k].x) + F_PI) / (F_PI * 2.f);
-                if (abs(p[k].y) >= 1.0f)
+                if (fabs(p[k].y) >= 1.0f)
                     uv[k].x = -1.f;
                 uv[k].y = lol::atan2(p[k].y, dot(p[k], normalize(p[k] * vec3(1.f,0.f,1.f)))) / F_PI + 0.5f;
                 if (h)
@@ -241,7 +241,7 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float d)
                         int rid[] = { id[k + l], id[(k + 1) % 3 + l] };
                         if (uv[rid[0]].x >= .0f &&
                             uv[rid[1]].x >= .0f &&
-                            abs(uv[rid[0]].x - uv[rid[1]].x) > .5f)
+                            fabs(uv[rid[0]].x - uv[rid[1]].x) > .5f)
                         {
                             if (uv[rid[0]].x < uv[rid[1]].x)
                                 uv[rid[0]].x += 1.0f;

@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine — Sound tutorial
 //
-//  Copyright © 2011—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2011—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -35,7 +35,7 @@ public:
         }
 
         for (size_t i = 0; i < m_instrument.size(); ++i)
-            m_instrument[i] = (int16_t)(i % 80 * (10000 - lol::abs(i - 10000)) * 40 / 10000);
+            m_instrument[i] = (int16_t)(i % 80 * (10000 - lol::fabs(i - 10000)) * 40 / 10000);
         m_sample = sample::create(m_instrument.data(), 40000);
 
         m_text = new Text("SPACE for sine wave, Left Click for white noise",

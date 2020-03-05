@@ -12,7 +12,6 @@
 
 #pragma once
 
-#include <lol/algorithm/sort.h>
 #include <../legacy/lol/algorithm/aabb_tree.h>
 #include <lol/algorithm/portal.h>
 

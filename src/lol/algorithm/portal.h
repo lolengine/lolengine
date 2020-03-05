@@ -140,7 +140,7 @@ public:
         mat4 inv_proj_mx = inverse(proj);
 
         // First: Check normal dot
-        if (lol::abs(dot(mat3(inverse(view)) * vec3(0.f, 0.f, 1.f), m_normal)) < .00001f)
+        if (lol::fabs(dot(mat3(inverse(view)) * vec3(0.f, 0.f, 1.f), m_normal)) < .00001f)
             return false;
 
         // Second: convert to screen coordinates
@@ -177,7 +177,7 @@ public:
             //world calculations
             proj_p[k] = inv_proj_mx * vec4(port_2d[j[k].x].x, port_2d[j[k].y].y, (i<4)?(port_2d[0].z):(1.f), 1.f);
             proj_p[k] /= proj_p[k].w;
-            proj_p[k].z = lol::abs(proj_p[k].z);
+            proj_p[k].z = lol::fabs(proj_p[k].z);
 
             for (int h = 0; h < 3; h++)
             {
@@ -230,7 +230,7 @@ public:
 
         //Check if at least one point is not on the same side as the others
         for (int i = 0; i < 3; i++)
-            if (lol::abs(pos_test[i]) == 4)
+            if (lol::fabs(pos_test[i]) == 4)
                 return false;
 
         return true;

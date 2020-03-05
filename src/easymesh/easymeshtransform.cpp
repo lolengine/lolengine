@@ -155,7 +155,7 @@ void EasyMesh::DoMeshTransform(MeshTransform ct, Axis axis0, Axis axis1, float n
             case MeshTransform::Taper:
             {
                 float value = m_vert[i].m_coord[axis0.ToScalar()];
-                if (absolute) value = abs(value);
+                if (absolute) value = fabs(value);
                 m_vert[i].m_coord[(axis0.ToScalar() + 1) % 3] *= max(0.f, 1.f + (n0 * value + noff));
                 m_vert[i].m_coord[(axis0.ToScalar() + 2) % 3] *= max(0.f, 1.f + (n1 * value + noff));
                 break;
@@ -169,14 +169,14 @@ void EasyMesh::DoMeshTransform(MeshTransform ct, Axis axis0, Axis axis1, float n
             case MeshTransform::Shear:
             {
                 float value = m_vert[i].m_coord[axis0.ToScalar()];
-                if (absolute) value = abs(value);
+                if (absolute) value = fabs(value);
                 m_vert[i].m_coord[(axis0.ToScalar() + 1) % 3] += (n0 * value + noff);
                 m_vert[i].m_coord[(axis0.ToScalar() + 2) % 3] += (n1 * value + noff);
                 break;
             }
             case MeshTransform::Stretch:
             {
-                //float value = abs(std::get<0>(m_vert[i])[axis0.ToScalar()]);
+                //float value = fabs(std::get<0>(m_vert[i])[axis0.ToScalar()]);
                 //std::get<0>(m_vert[i])[(axis0.ToScalar() + 1) % 3] += (lol::pow(value, n0) + noff);
                 //std::get<0>(m_vert[i])[(axis0.ToScalar() + 2) % 3] += (lol::pow(value, n1) + noff);
                 break;

@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -57,7 +57,7 @@ struct LightType
         {
             LightType lv = LightType(i);
             float nv = lv.f();
-            float ntop = lol::abs(nv - v);
+            float ntop = lol::fabs(nv - v);
             if (ntop < top)
             {
                 top = ntop;

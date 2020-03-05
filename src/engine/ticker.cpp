@@ -13,8 +13,8 @@
 #include <lol/engine-internal.h>
 
 #include <cstdlib>
-#include <cstdint>
 #include <functional>
+#include <stdint.h>
 
 namespace lol
 {

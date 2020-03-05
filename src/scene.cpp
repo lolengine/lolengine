@@ -414,7 +414,7 @@ void Scene::AddLine(vec3 a, vec3 b, vec4 col)
     m_line_api.m_lines.push(l);
 }
 
-void Scene::AddLine(vec3 a, vec3 b, vec4 col, float duration, int mask)
+void Scene::AddLine(vec3 a, vec3 b, vec4 col, float duration, uint32_t mask)
 {
     struct line l { a, b, col, duration, mask, false, false };
     m_line_api.m_lines.push(l);

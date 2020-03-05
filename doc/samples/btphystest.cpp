@@ -459,7 +459,7 @@ void BtPhysTest::tick_game(float seconds)
 
         //Jump handling
         //if (length(PhysObj->GetPhysic()->GetLinearVelocity()) < ZERO_SPEED)
-        if (lol::abs(PhysObj->GetPhysic()->GetLinearVelocity().y) < ZERO_SPEED)
+        if (lol::fabs(PhysObj->GetPhysic()->GetLinearVelocity().y) < ZERO_SPEED)
             obj_timer -= seconds;
 
         if (obj_timer < .0f)
@@ -472,15 +472,15 @@ void BtPhysTest::tick_game(float seconds)
         }
     }
 
-    float fov_ratio = max(max(lol::abs(screen_min_max[0].x), lol::abs(screen_min_max[0].y)),
-                          max(lol::abs(screen_min_max[1].x), lol::abs(screen_min_max[1].y)));
+    float fov_ratio = max(max(lol::fabs(screen_min_max[0].x), lol::fabs(screen_min_max[0].y)),
+                          max(lol::fabs(screen_min_max[1].x), lol::fabs(screen_min_max[1].y)));
 
     vec3 new_target = cam_center / cam_factor;
     float fov_dp = .0f;
     float loc_dp = .0f;
 
     //ideally fov is on the target
-    if (lol::abs(fov_ratio - 1.f) < .2f)
+    if (lol::fabs(fov_ratio - 1.f) < .2f)
         fov_dp = ((m_cam_target == -1)?(.7f):(.2f));
     else
         fov_dp = ((m_cam_target == -1)?(1.7f):(.9f));

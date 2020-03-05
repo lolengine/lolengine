@@ -19,6 +19,7 @@
 //
 
 #include <lol/base/utils.h>
+#include <lol/math/rand.h>
 
 #include <string>
 

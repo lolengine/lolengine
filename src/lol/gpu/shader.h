@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -17,10 +17,10 @@
 // ----------------
 //
 
-#include <string>
-#include <map>
-#include <memory>
-#include <cstdint>
+#include <string>   // std::string
+#include <map>      // std::map
+#include <memory>   // std::shared_ptr
+#include <stdint.h> // int64_t
 
 #include "engine/entity.h"
 

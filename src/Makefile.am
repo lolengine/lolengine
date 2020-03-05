@@ -35,7 +35,7 @@ liblol_core_headers = \
     lol/base/log.h \
     \
     lol/algorithm/all.h \
-    lol/algorithm/sort.h lol/algorithm/portal.h \
+    lol/algorithm/portal.h \
     \
     lol/audio/all.h \
     lol/audio/audio.h lol/audio/sample.h \

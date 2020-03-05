@@ -311,9 +311,6 @@
     <ClInclude Include="lol\algorithm\portal.h">
       <Filter>lol\algorithm</Filter>
     </ClInclude>
-    <ClInclude Include="lol\algorithm\sort.h">
-      <Filter>lol\algorithm</Filter>
-    </ClInclude>
     <ClInclude Include="lol\base\array.h">
       <Filter>lol\base</Filter>
     </ClInclude>

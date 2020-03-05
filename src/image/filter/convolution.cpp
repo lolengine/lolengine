@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2004—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2004—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -57,7 +57,7 @@ image image::Convolution(array2d<float> const &in_kernel)
             float p = in_kernel[dx][dy] * in_kernel[bestx][besty];
             float q = in_kernel[dx][besty] * in_kernel[bestx][dy];
 
-            if (lol::abs(p - q) > 1.0e-8f)
+            if (lol::fabs(p - q) > 1.0e-8f)
                 separable = false;
         }
     }
@@ -67,7 +67,7 @@ image image::Convolution(array2d<float> const &in_kernel)
         /* Matrix rank is 1! Separate the filter. */
         array<float> hvec, vvec;
 
-        float norm = 1.0f / lol::sqrt(lol::abs(in_kernel[bestx][besty]));
+        float norm = 1.0f / lol::sqrt(lol::fabs(in_kernel[bestx][besty]));
         for (int dx = 0; dx < ksize.x; dx++)
             hvec << norm * in_kernel[dx][besty];
         for (int dy = 0; dy < ksize.y; dy++)

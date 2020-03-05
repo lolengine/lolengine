@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2004—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2004—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -290,8 +290,8 @@ array2d<float> image::kernel::gaussian(vec2 radius, float angle, vec2 delta)
 
     /* FIXME: the kernel becomes far too big with large values of dx, because
      * we grow both left and right. Fix the growing direction. */
-    int const krx = (int)(3.f * bbx + .99999f + lol::ceil(lol::abs(delta.x)));
-    int const kry = (int)(3.f * bby + .99999f + lol::ceil(lol::abs(delta.y)));
+    int const krx = (int)(3.f * bbx + .99999f + lol::ceil(lol::fabs(delta.x)));
+    int const kry = (int)(3.f * bby + .99999f + lol::ceil(lol::fabs(delta.y)));
     ivec2 size(2 * krx + 1, 2 * kry + 1);
     float const Kx = -1.f / (2.f * radius.x * radius.x);
     float const Ky = -1.f / (2.f * radius.y * radius.y);
