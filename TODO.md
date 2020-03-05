@@ -47,7 +47,6 @@
 ## headers to remove one day
 
     src/lol/algorithm/sort.h (there’s plenty of stuff in libc++)
-    src/lol/base/array.h (use std::vector)
     src/lol/base/enum.h (can’t see the point)
     src/lol/base/tuple.h (use std::tuple)
 
