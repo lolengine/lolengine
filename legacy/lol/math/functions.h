@@ -149,12 +149,12 @@ template<typename T, typename T2 = LOL_T_FLOATING_POINT>
     return mix(a, b, x);
 }
 
-// C++ doesn't define abs() or fmod() for all types; we add these for
+// C++ doesn't define fabs() or fmod() for all types; we add these for
 // convenience to avoid adding complexity to vector.h.
 template<typename T, typename T2 = LOL_T_SIGNED>
-[[nodiscard]] static inline T2 abs(T x) { return std::abs(x); }
+[[nodiscard]] static inline T2 fabs(T x) { return std::abs(x); }
 template<typename T, typename T2 = T, typename DUMMY = LOL_T_UNSIGNED>
-[[nodiscard]] static inline T2 abs(T x) { return x; }
+[[nodiscard]] static inline T2 fabs(T x) { return x; }
 
 template<typename T, typename T2 = LOL_T_INTEGRAL>
 [[nodiscard]] static inline T2 fmod(T x, T y) { return x % y; }
@@ -175,7 +175,7 @@ template<typename T, typename T2 = LOL_T_ARITHMETIC>
 template<typename T, typename T2 = LOL_T_ARITHMETIC>
 [[nodiscard]] static inline T2 saturate(T x) { return clamp(x, (T)0, (T)1); }
 template<typename T, typename T2 = LOL_T_ARITHMETIC>
-[[nodiscard]] static inline T2 gcd(T x, T y) { return y == (T)0 ? lol::abs(x) : lol::gcd(y, lol::fmod(x, y)); }
+[[nodiscard]] static inline T2 gcd(T x, T y) { return y == (T)0 ? lol::fabs(x) : lol::gcd(y, lol::fmod(x, y)); }
 
 template<typename T, typename T2 = LOL_T_SIGNED>
 [[nodiscard]] static inline T2 sign(T x) { return (T)(((T)0 < x) - (x < (T)0)); }

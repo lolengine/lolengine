@@ -25,7 +25,7 @@
 
 #include <algorithm>
 #include <map>
-#include <cmath>
+#include <cmath>    // std::fabs
 #include <cstdio>
 #include <stdint.h>
 
@@ -213,6 +213,8 @@ public:
 //--
 static inline bool TestAABBVsAABB(box2 const &b1, box2 const &b2)
 {
+    using std::fabs;
+
     vec2 c = b1.center() - b2.center();
     vec2 e1 = 0.5f * b1.extent();
     vec2 e2 = 0.5f * b2.extent();
@@ -227,6 +229,8 @@ static inline bool TestAABBVsPoint(box2 const &b1, vec2 const &p)
 
 static inline bool TestAABBVsAABB(box3 const &b1, box3 const &b2)
 {
+    using std::fabs;
+
     vec3 c = b1.center() - b2.center();
     vec3 e1 = 0.5f * b1.extent();
     vec3 e2 = 0.5f * b2.extent();

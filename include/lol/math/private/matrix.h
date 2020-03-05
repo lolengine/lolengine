@@ -17,10 +17,11 @@
 // ——————————————————
 //
 
-#include <ostream>
-
 #include "ops.h"
 #include <lol/math/vector.h>
+
+#include <ostream> // std::ostream
+#include <cmath>   // std::fabs
 
 #if _WIN32
 #   pragma push_macro("near")
@@ -402,6 +403,8 @@ T cofactor(mat_t<T, 2, 2> const &m, int i, int j)
 template<typename T, int N> [[nodiscard]]
 std::tuple<mat_t<T, N, N>, vec_t<int, N>, int> lu_decomposition(mat_t<T, N, N> const &m)
 {
+    using std::fabs;
+
     mat_t<T, N, N> lu = m;
     vec_t<int, N> perm;
     int sign = 1;

@@ -970,11 +970,6 @@ template<typename T> real_t<T> fabs(real_t<T> const &x)
     return ret;
 }
 
-template<typename T> real_t<T> abs(real_t<T> const &x)
-{
-    return fabs(x);
-}
-
 template<typename T> real_t<T> fract(real_t<T> const &x)
 {
     return x - floor(x);

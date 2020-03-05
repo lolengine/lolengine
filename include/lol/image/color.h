@@ -22,6 +22,9 @@
 #include <lol/math/vector.h>    // vec_t
 #include <lol/math/transform.h> // mat_t
 
+#include <cmath>     // std::fabs
+#include <algorithm> // std::min
+
 namespace lol
 {
 
@@ -125,9 +128,10 @@ public:
      */
     static vec3_t hsv_to_rgb(vec3_t src)
     {
-        vec3_t tmp = vec3_t(-1.f + abs(6.f * src.x - 3.f),
-                         2.f - abs(6.f * src.x - 2.f),
-                         2.f - abs(6.f * src.x - 4.f));
+        using std::fabs;
+        vec3_t tmp = vec3_t(-1.f + fabs(6.f * src.x - 3.f),
+                         2.f - fabs(6.f * src.x - 2.f),
+                         2.f - fabs(6.f * src.x - 4.f));
         return src.z * mix(vec3_t(1.f), clamp(tmp, 0.f, 1.f), src.y);
     }
 
@@ -141,6 +145,8 @@ public:
      */
     static vec3_t rgb_to_hsv(vec3_t src)
     {
+        using std::fabs, std::min;
+
         float K = 0.f;
 
         if (src.g < src.b)
@@ -152,7 +158,7 @@ public:
         float chroma = src.r - min(src.g, src.b);
         /* XXX: we use min() here because numerical stability is not
          * guaranteed with -ffast-math, I’ve seen it fail on i386. */
-        return vec3_t(min(abs(K + (src.g - src.b) / (6.f * chroma)), 1.f),
+        return vec3_t(min(fabs(K + (src.g - src.b) / (6.f * chroma)), 1.f),
                     chroma / (src.r + 1e-20f),
                     src.r);
     }
@@ -167,6 +173,8 @@ public:
      */
     static vec3_t rgb_to_hsl(vec3_t src)
     {
+        using std::fabs, std::min;
+
         float K = 0.f;
 
         if (src.g < src.b)
@@ -179,7 +187,7 @@ public:
         float luma = src.r + min(src.g, src.b);
         /* XXX: we use min() here because numerical stability is not
          * guaranteed with -ffast-math, I’ve seen it fail on i386. */
-        float h = min(abs(K + (src.g - src.b) / (6.f * chroma)), 1.f);
+        float h = min(fabs(K + (src.g - src.b) / (6.f * chroma)), 1.f);
         float s = clamp(chroma / (min(luma, 2.f - luma)), 0.f, 1.f);
         return vec3_t(h, s, 0.5f * luma);
     }
@@ -194,6 +202,8 @@ public:
      */
     static vec3_t hsv_to_hsl(vec3_t src)
     {
+        using std::min;
+
         float tmp = (2 - src.y) * src.z;
         return vec3_t(src.x,
                       src.y * src.z / (min(tmp, 2.f - tmp) + 1e-20f),
@@ -210,7 +220,7 @@ public:
      */
     static vec3_t hsl_to_hsv(vec3_t src)
     {
-        float tmp = src.y * (0.5f - abs(0.5f - src.z));
+        float tmp = src.y * (0.5f - fabs(0.5f - src.z));
         return vec3_t(src.x, 2.f * tmp / (src.z + tmp + 1e-20f), src.z + tmp);
     }
 

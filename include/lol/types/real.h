@@ -161,7 +161,6 @@ public:
                                                real_t<U> const &y);
 
     // Functions inherited from GLSL
-    template<typename U> friend real_t<U> abs(real_t<U> const &x);
     template<typename U> friend real_t<U> fract(real_t<U> const &x);
     template<typename U> friend real_t<U> degrees(real_t<U> const &x);
     template<typename U> friend real_t<U> radians(real_t<U> const &x);

@@ -20,6 +20,7 @@
 #include <cassert>
 #include <ostream>     // std::ostream
 #include <type_traits>
+#include <algorithm>   // std::min, std::max
 #include <cmath>       // std::fabs, std::cos…
 
 // FIXME: get rid of this, too
@@ -1004,6 +1005,7 @@ operator *(T const &val, vec_t<T,N,SWIZZLE> const &a)
     inline vec_t<T,N> fun(vec_t<T,N,SWIZZLE1> const &a, \
                           vec_t<T,N,SWIZZLE2> const &b) \
     { \
+        using std::fun; \
         vec_t<T,N> ret; \
         for (int i = 0; i < N; ++i) \
             ret[i] = fun(a[i], b[i]); \
@@ -1013,6 +1015,7 @@ operator *(T const &val, vec_t<T,N,SWIZZLE> const &a)
     template<typename T, int N, int SWIZZLE> \
     inline vec_t<T,N> fun(vec_t<T,N,SWIZZLE> const &a, T const &b) \
     { \
+        using std::fun; \
         vec_t<T,N> ret; \
         for (int i = 0; i < N; ++i) \
             ret[i] = fun(a[i], b); \
@@ -1022,6 +1025,7 @@ operator *(T const &val, vec_t<T,N,SWIZZLE> const &a)
     template<typename T, int N, int SWIZZLE> \
     inline vec_t<T,N> fun(T const &a, vec_t<T,N,SWIZZLE> const &b) \
     { \
+        using std::fun; \
         vec_t<T,N> ret; \
         for (int i = 0; i < N; ++i) \
             ret[i] = fun(a, b[i]); \
@@ -1165,13 +1169,22 @@ static inline vec_t<T,N> normalize(vec_t<T,N,SWIZZLE> const &a)
     return norm ? a / norm : vec_t<T,N>(T(0));
 }
 
+// We define fabs() because that’s the C++ std library uses for
+// floating-point numbers, and abs() because GLSL does.
+template<typename T, int N, int SWIZZLE>
+static inline vec_t<T,N> fabs(vec_t<T,N,SWIZZLE> const &a)
+{
+    using std::fabs;
+    vec_t<T,N> ret;
+    for (int i = 0; i < N; ++i)
+        ret[i] = fabs(a[i]);
+    return ret;
+}
+
 template<typename T, int N, int SWIZZLE>
 static inline vec_t<T,N> abs(vec_t<T,N,SWIZZLE> const &a)
 {
-    vec_t<T,N> ret;
-    for (int i = 0; i < N; ++i)
-        ret[i] = abs(a[i]);
-    return ret;
+    return fabs(a);
 }
 
 template<typename T, int N, int SWIZZLE>

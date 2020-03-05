@@ -19,6 +19,7 @@
 #include <lol/math/transform.h> // mat_t
 
 #include <vector>    // std::vector
+#include <cmath>     // std::fabs
 #include <algorithm> // std::min, std::max
 
 namespace lol
@@ -88,6 +89,8 @@ protected:
     inline float get_noise(vec_t<int, N> origin,
                            vec_t<float, N> const & pos) const
     {
+        using std::min;
+
         /* For a given position [0…1]^N inside a regular N-hypercube, find
          * the N-simplex which contains that position, and return a path
          * along the hypercube edges from (0,0,…,0) to (1,1,…,1) which
@@ -141,9 +144,9 @@ protected:
             //  -4.f: centre (-2.f),
             //  -3.f: r=0.38 sphere of influence (contribution = 1/4)
             //  -2.f: r=0.52 sphere of influence (contribution = 1/24)
-            if (d > 0.99f) special = std::min(special, -4.f);
-            if (d > 0.7f && d < 0.72f) special = std::min(special, -3.f);
-            if (d > 0.44f && d < 0.46f) special = std::min(special, -2.f);
+            if (d > 0.99f) special = min(special, -4.f);
+            if (d > 0.7f && d < 0.72f) special = min(special, -3.f);
+            if (d > 0.44f && d < 0.46f) special = min(special, -2.f);
 #endif
 
             if (d > 0)
@@ -230,6 +233,8 @@ protected:
 private:
     void debugprint()
     {
+        using std::min, std::max, std::fabs;
+
         // Print some debug information
         printf("Simplex Noise of Dimension %d\n", N);
 
@@ -281,8 +286,8 @@ private:
                     continue;
 
                 float l = length(vertices[i] - vertices[j]);
-                minlength = std::min(minlength, l);
-                maxlength = std::max(maxlength, l);
+                minlength = min(minlength, l);
+                maxlength = max(maxlength, l);
             }
             printf("   · edge lengths between %f and %f\n",
                    minlength, maxlength);
@@ -306,7 +311,7 @@ private:
                     p += k * vertices[j];
                     sum += k;
                 }
-                mindist = std::min(mindist, distance(vertices[i], p / sum));
+                mindist = min(mindist, distance(vertices[i], p / sum));
             }
             printf("   · approx. dist. to opposite hyperplane: %f\n", mindist);
 #endif
@@ -388,11 +393,11 @@ private:
                     t = best_t2;
                 }
             }
-            minval = std::min(t, minval);
-            maxval = std::max(t, maxval);
+            minval = min(t, minval);
+            maxval = max(t, maxval);
         }
         printf(" - noise value min/max: %f %f\n", minval, maxval);
-        float newscale = 1.f / std::max(-minval, maxval);
+        float newscale = 1.f / max(-minval, maxval);
         if (newscale < 1.f)
              printf(" - could replace scale %f with %f\n",
                     get_scale(), newscale * get_scale());
