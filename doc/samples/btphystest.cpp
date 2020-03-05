@@ -1,7 +1,7 @@
 //
 //  Lol Engine — BtPhys tutorial
 //
-//  Copyright © 2012—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2012—2020 Sam Hocevar <sam@hocevar.net>
 //            © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -258,7 +258,7 @@ void BtPhysTest::InitApp()
                         vec3(2.f       , 1.f      , 2.f) +
 #endif //CAT_MODE
                         vec3(8.f * (float)x, 8.f * (float)y, 8.f * (float)z));
-                    m_physobj_list.push(new_physobj, ZERO_TIME);
+                    m_physobj_list.push(animated_object { new_physobj, ZERO_TIME });
                     Ticker::Ref(new_physobj);
                 }
             }
@@ -322,7 +322,7 @@ BtPhysTest::~BtPhysTest()
         + m_platform_list;
     while (m_physobj_list.count())
     {
-        objects << m_physobj_list.last().m1;
+        objects << m_physobj_list.last().obj;
         m_physobj_list.pop();
     }
     m_ground_list.clear();
@@ -367,7 +367,7 @@ BtPhysTest::~BtPhysTest()
     //}
     //while (m_physobj_list.count())
     //{
-    //    PhysicsObject* CurPop = m_physobj_list.last().m1;
+    //    PhysicsObject* CurPop = m_physobj_list.last().obj;
     //    m_physobj_list.pop();
     //    CurPop->GetPhysic()->RemoveFromSimulation(m_simulation);
     //    Ticker::Unref(CurPop);
@@ -426,8 +426,8 @@ void BtPhysTest::tick_game(float seconds)
 
     for (int i = 0; i < m_physobj_list.count(); i++)
     {
-        PhysicsObject* PhysObj = m_physobj_list[i].m1;
-        float &obj_timer = m_physobj_list[i].m2;
+        PhysicsObject* PhysObj = m_physobj_list[i].obj;
+        float &obj_timer = m_physobj_list[i].anim;
 
         vec3 obj_loc = PhysObj->GetPhysic()->GetTransform()[3].xyz;
 
@@ -629,7 +629,7 @@ void BtPhysTest::tick_game(float seconds)
         PhysObjBarycenter = vec3(.0f);
         for (int i = 0; i < m_physobj_list.count(); i++)
         {
-            PhysicsObject* PhysObj = m_physobj_list[i].m1;
+            PhysicsObject* PhysObj = m_physobj_list[i].obj;
             mat4 GroundMat = PhysObj->GetTransform();
 
             PhysObjBarycenter += GroundMat[3].xyz;
@@ -661,7 +661,7 @@ void BtPhysTest::tick_draw(float seconds, Scene &scene)
 #if USE_BODIES
         for (int i = 0; i < m_physobj_list.count(); i++)
         {
-            PhysicsObject* PhysObj = m_physobj_list[i].m1;
+            PhysicsObject* PhysObj = m_physobj_list[i].obj;
             m_cat_sdata = new CatShaderData(((1 << VertexUsage::Position) |
                                                 (1 << VertexUsage::Color) |
                                                 (1 << VertexUsage::TexCoord) |
@@ -683,7 +683,7 @@ void BtPhysTest::tick_draw(float seconds, Scene &scene)
 #if CAT_MODE
         for (int i = 0; i < m_physobj_list.count(); i++)
         {
-            PhysicsObject* PhysObj = m_physobj_list[i].m1;
+            PhysicsObject* PhysObj = m_physobj_list[i].obj;
             CatShaderData* ShaderData = (CatShaderData*)PhysObj->GetCustomShaderData();
 
             ShaderData->m_sprite_orientation = damp(ShaderData->m_sprite_orientation,

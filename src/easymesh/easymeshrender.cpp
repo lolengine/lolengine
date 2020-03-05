@@ -1,8 +1,8 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
+//            © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //            © 2009—2013 Cédric Lecacheur <jordx@free.fr>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -108,8 +108,8 @@ void GpuShaderData::AddAttribute(VertexUsage usage, int index)
 ShaderUniform const *GpuShaderData::GetUniform(std::string const &uniform)
 {
     for (int i = 0; i < m_shader_uniform.count(); ++i)
-        if (m_shader_uniform[i].m1 == uniform)
-            return &m_shader_uniform[i].m2;
+        if (std::get<0>(m_shader_uniform[i]) == uniform)
+            return &std::get<1>(m_shader_uniform[i]);
     return nullptr;
 }
 
@@ -292,7 +292,7 @@ void GpuEasyMeshData::AddGpuData(std::shared_ptr<GpuShaderData> gpudata, std::sh
 void GpuEasyMeshData::SetupVertexData(uint16_t vflags, std::shared_ptr<EasyMesh> src_mesh)
 {
     for (int i = 0; i < m_vdata.count(); ++i)
-        if (m_vdata[i].m1 == vflags)
+        if (std::get<0>(m_vdata[i]) == vflags)
             return;
 
     std::shared_ptr<VertexDeclaration> new_vdecl;
@@ -417,15 +417,15 @@ void GpuEasyMeshData::RenderMeshData(mat4 const &model, int render_mode)
 
     int vdecl_idx = 0;
     for (; vdecl_idx < m_vdata.count(); ++vdecl_idx)
-        if (m_vdata[vdecl_idx].m1 == gpu_sd.m_vert_decl_flags)
+        if (std::get<0>(m_vdata[vdecl_idx]) == gpu_sd.m_vert_decl_flags)
             break;
 
     if (vdecl_idx >= m_vdata.count())
         return;
 
-    uint16_t vflags = m_vdata[vdecl_idx].m1;
-    auto vdecl = m_vdata[vdecl_idx].m2;
-    auto vbo = m_vdata[vdecl_idx].m3;
+    uint16_t vflags = std::get<0>(m_vdata[vdecl_idx]);
+    auto vdecl = std::get<1>(m_vdata[vdecl_idx]);
+    auto vbo = std::get<2>(m_vdata[vdecl_idx]);
 
     gpu_sd.m_shader->Bind();
     gpu_sd.SetupShaderDatas(model);

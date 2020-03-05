@@ -1,8 +1,8 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2009—2014 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
+//            © 2009—2014 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -253,8 +253,8 @@ ResourceCodecData* ZedImageCodec::Load(std::string const &path)
 
                 compacter.m_primary[j].m_count--;
                 int i = compacter.m_primary[j].m_secondary[k].m_tiles.pop();
-                int32_t file_off = tiles[i].m1[0];
-                ivec2 t_size = tiles[i].m2;
+                int32_t file_off = std::get<0>(tiles[i])[0];
+                ivec2 t_size = std::get<1>(tiles[i]);
 
                 ASSERT(pos.y + t_size.y < tex_size);
 
@@ -275,7 +275,7 @@ ResourceCodecData* ZedImageCodec::Load(std::string const &path)
                 }
 
                 //Register new pos and move to next
-                tiles[i].m1 = pos;
+                std::get<0>(tiles[i]) = pos;
                 pos.x += t_size.x;
             }
         }

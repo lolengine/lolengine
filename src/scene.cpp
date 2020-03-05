@@ -410,12 +410,14 @@ void Scene::AddTile(TileSet *tileset, int id, mat4 model)
 
 void Scene::AddLine(vec3 a, vec3 b, vec4 col)
 {
-    m_line_api.m_lines.push(a, b, col, -1.f, 0xFFFFFFFF, false, false);
+    struct line l { a, b, col, -1.f, 0xFFFFFFFF, false, false };
+    m_line_api.m_lines.push(l);
 }
 
 void Scene::AddLine(vec3 a, vec3 b, vec4 col, float duration, int mask)
 {
-    m_line_api.m_lines.push(a, b, col, duration, mask, false, false);
+    struct line l { a, b, col, duration, mask, false, false };
+    m_line_api.m_lines.push(l);
 }
 
 void Scene::AddLight(Light *l)
@@ -716,16 +718,16 @@ void Scene::render_lines(float seconds)
     UNUSED(inv_view_proj);
     for (int i = 0; i < linecount; i++)
     {
-        if (m_line_api.m_lines[i].m5 & m_line_api.m_debug_mask)
+        if (m_line_api.m_lines[i].mask & m_line_api.m_debug_mask)
         {
-            buff[real_linecount].m1 = vec4(m_line_api.m_lines[i].m1, (float)m_line_api.m_lines[i].m6);
-            buff[real_linecount].m2 = m_line_api.m_lines[i].m3;
-            buff[real_linecount].m3 = vec4(m_line_api.m_lines[i].m2, (float)m_line_api.m_lines[i].m7);
-            buff[real_linecount].m4 = m_line_api.m_lines[i].m3;
+            std::get<0>(buff[real_linecount]) = vec4(m_line_api.m_lines[i].a, (float)m_line_api.m_lines[i].wtf1);
+            std::get<1>(buff[real_linecount]) = m_line_api.m_lines[i].col;
+            std::get<2>(buff[real_linecount]) = vec4(m_line_api.m_lines[i].b, (float)m_line_api.m_lines[i].wtf2);
+            std::get<3>(buff[real_linecount]) = m_line_api.m_lines[i].col;
             real_linecount++;
         }
-        m_line_api.m_lines[i].m4 -= seconds;
-        if (m_line_api.m_lines[i].m4 < 0.f)
+        m_line_api.m_lines[i].duration -= seconds;
+        if (m_line_api.m_lines[i].duration < 0.f)
         {
             m_line_api.m_lines.remove_swap(i--);
             linecount--;

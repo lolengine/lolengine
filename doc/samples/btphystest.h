@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Bullet physics test
 //
-//  Copyright © 2012—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2012—2020 Sam Hocevar <sam@hocevar.net>
 //            © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -100,7 +100,8 @@ private:
 
     lol::phys::Simulation*          m_simulation;
     array<EasyConstraint*>          m_constraint_list;
-    array<PhysicsObject*, float>    m_physobj_list;
+    struct animated_object { PhysicsObject* obj; float anim; };
+    array<animated_object>          m_physobj_list;
     array<PhysicsObject*>           m_ground_list;
     array<PhysicsObject*>           m_platform_list;
     array<PhysicsObject*>           m_character_list;

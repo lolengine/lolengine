@@ -104,7 +104,7 @@ SdlInput::~SdlInput()
     /* Unregister all the joysticks we added */
     while (m_joysticks.count())
     {
-        SDL_JoystickClose(m_joysticks[0].m1);
+        SDL_JoystickClose(std::get<0>(m_joysticks[0]));
         m_joysticks.remove(0);
     }
 #endif
@@ -150,17 +150,17 @@ void SdlInput::tick(float seconds)
     keyboard->internal_begin_frame();
     mouse->internal_begin_frame();
     for (int j = 0; j < m_joysticks.count(); j++)
-        m_joysticks[j].m2->internal_begin_frame();
+        std::get<1>(m_joysticks[j])->internal_begin_frame();
 
     /* Pump all joystick events because no event is coming to us. */
 #   if SDL_FORCE_POLL_JOYSTICK && !__EMSCRIPTEN__
     SDL_JoystickUpdate();
     for (int j = 0; j < m_joysticks.count(); j++)
     {
-        for (int i = 0; i < SDL_JoystickNumButtons(m_joysticks[j].m1); i++)
-            m_joysticks[j].m2->internal_set_button((input::button)i, SDL_JoystickGetButton(m_joysticks[j].m1, i) != 0);
-        for (int i = 0; i < SDL_JoystickNumAxes(m_joysticks[j].m1); i++)
-            m_joysticks[j].m2->internal_set_axis((input::axis)i, (float)SDL_JoystickGetAxis(m_joysticks[j].m1, i) / 32768.f);
+        for (int i = 0; i < SDL_JoystickNumButtons(std::get<0>(m_joysticks[j])); i++)
+            std::get<1>(m_joysticks[j])->internal_set_button((input::button)i, SDL_JoystickGetButton(std::get<0>(m_joysticks[j]), i) != 0);
+        for (int i = 0; i < SDL_JoystickNumAxes(std::get<0>(m_joysticks[j])); i++)
+            std::get<1>(m_joysticks[j])->internal_set_axis((input::axis)i, (float)SDL_JoystickGetAxis(std::get<0>(m_joysticks[j]), i) / 32768.f);
     }
 #   endif
 
@@ -253,12 +253,12 @@ void SdlInput::tick(float seconds)
 
 #   if !SDL_FORCE_POLL_JOYSTICK
         case SDL_JOYAXISMOTION:
-            m_joysticks[event.jaxis.which].m2->internal_set_axis(event.jaxis.axis, (float)event.jaxis.value / 32768.f);
+            std::get<1>(m_joysticks[event.jaxis.which])->internal_set_axis(event.jaxis.axis, (float)event.jaxis.value / 32768.f);
             break;
 
         case SDL_JOYBUTTONUP:
         case SDL_JOYBUTTONDOWN:
-            m_joysticks[event.jbutton.which].m2->internal_set_key(event.jbutton.button, event.jbutton.state);
+            std::get<1>(m_joysticks[event.jbutton.which])->internal_set_key(event.jbutton.button, event.jbutton.state);
             break;
 #   endif
         }

@@ -30,7 +30,7 @@ void EasyMesh::LoopStart(int loopnb)
     else if (BD()->IsEnabled(MeshBuildOperation::CommandExecution))
     {
         //Only register if we're not the current loop command
-        if (!BD()->LoopStack().count() || BD()->LoopStack().last().m1 != BD()->Cmdi())
+        if (!BD()->LoopStack().count() || std::get<0>(BD()->LoopStack().last()) != BD()->Cmdi())
             BD()->LoopStack().push(BD()->Cmdi(), loopnb);
     }
 }
@@ -49,9 +49,9 @@ void EasyMesh::LoopEnd()
         //Only register if we're not the current loop command
         if (BD()->LoopStack().count())
         {
-            BD()->LoopStack().last().m2--;
-            if (BD()->LoopStack().last().m2 > 0)
-                BD()->Cmdi() = BD()->LoopStack().last().m1 - 1;
+            std::get<1>(BD()->LoopStack().last())--;
+            if (std::get<1>(BD()->LoopStack().last()) > 0)
+                BD()->Cmdi() = std::get<0>(BD()->LoopStack().last()) - 1;
             else
                 BD()->LoopStack().pop();
         }
@@ -173,7 +173,7 @@ void EasyMesh::SetVertColor(vec4 const &col)
         return;
     }
 
-    for (int i = m_cursors.last().m1; i < m_vert.count(); i++)
+    for (int i = std::get<0>(m_cursors.last()); i < m_vert.count(); i++)
         m_vert[i].m_color = col;
 }
 

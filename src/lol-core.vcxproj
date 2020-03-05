@@ -245,7 +245,6 @@
     <ClInclude Include="lol\base\array.h" />
     <ClInclude Include="lol\base\enum.h" />
     <ClInclude Include="lol\base\log.h" />
-    <ClInclude Include="lol\base\tuple.h" />
     <ClInclude Include="lol\debug\all.h" />
     <ClInclude Include="lol\debug\lines.h" />
     <ClInclude Include="lol\engine\all.h" />

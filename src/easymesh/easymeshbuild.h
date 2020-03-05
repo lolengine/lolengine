@@ -1,9 +1,9 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2009—2013 Cédric Lecacheur <jordx@free.fr>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
+//            © 2009—2013 Cédric Lecacheur <jordx@free.fr>
 //            © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -318,8 +318,8 @@ public:
     {
         if (face.ToScalar() >= m_texcoord_custom_build[mt.ToScalar()].count())
             m_texcoord_custom_build[mt.ToScalar()].resize(face.ToScalar() + 1);
-        m_texcoord_custom_build[mt.ToScalar()][face.ToScalar()].m1 = BL;
-        m_texcoord_custom_build[mt.ToScalar()][face.ToScalar()].m2 = TR;
+        std::get<0>(m_texcoord_custom_build[mt.ToScalar()][face.ToScalar()]) = BL;
+        std::get<1>(m_texcoord_custom_build[mt.ToScalar()][face.ToScalar()]) = TR;
         m_texcoord_build_type[mt.ToScalar()] |= 1;
     }
     void ClearTexCoordCustomBuild(MeshType mt) { m_texcoord_build_type[mt.ToScalar()] &= ~1; }
@@ -331,8 +331,8 @@ public:
         if (m_texcoord_build_type[mt.ToScalar()] & 1
              && face.ToScalar() < m_texcoord_custom_build[mt.ToScalar()].count())
         {
-            BL = m_texcoord_custom_build[mt.ToScalar()][face.ToScalar()].m1;
-            TR = m_texcoord_custom_build[mt.ToScalar()][face.ToScalar()].m2;
+            BL = std::get<0>(m_texcoord_custom_build[mt.ToScalar()][face.ToScalar()]);
+            TR = std::get<1>(m_texcoord_custom_build[mt.ToScalar()][face.ToScalar()]);
         }
         else
         {
@@ -410,8 +410,8 @@ public:
     {
         if (face.ToScalar() >= m_texcoord_custom_build2[mt.ToScalar()].count())
             m_texcoord_custom_build2[mt.ToScalar()].resize(face.ToScalar() + 1);
-        m_texcoord_custom_build2[mt.ToScalar()][face.ToScalar()].m1 = BL;
-        m_texcoord_custom_build2[mt.ToScalar()][face.ToScalar()].m2 = TR;
+        std::get<0>(m_texcoord_custom_build2[mt.ToScalar()][face.ToScalar()]) = BL;
+        std::get<1>(m_texcoord_custom_build2[mt.ToScalar()][face.ToScalar()]) = TR;
         m_texcoord_build_type2[mt.ToScalar()] |= 1;
     }
     void ClearTexCoordCustomBuild2(MeshType mt) { m_texcoord_build_type2[mt.ToScalar()] &= ~1; }
@@ -422,8 +422,8 @@ public:
         if (m_texcoord_build_type2[mt.ToScalar()] & 1
              && face.ToScalar() < m_texcoord_custom_build2[mt.ToScalar()].count())
         {
-            BL = m_texcoord_custom_build2[mt.ToScalar()][face.ToScalar()].m1;
-            TR = m_texcoord_custom_build2[mt.ToScalar()][face.ToScalar()].m2;
+            BL = std::get<0>(m_texcoord_custom_build2[mt.ToScalar()][face.ToScalar()]);
+            TR = std::get<1>(m_texcoord_custom_build2[mt.ToScalar()][face.ToScalar()]);
         }
         else
         {

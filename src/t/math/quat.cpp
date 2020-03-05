@@ -21,6 +21,8 @@
 #include <../legacy/lol/math/functions.h> // radians()
 
 #include <cstring> // memset
+#include <tuple>   // std::tuple
+#include <vector>  // std::vector
 
 namespace lol
 {

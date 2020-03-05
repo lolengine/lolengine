@@ -216,7 +216,7 @@ void EasyMesh::VerticesMerge()
 
     //1: Crunch all vertices in the dictionnary
     VertexDictionnary vert_dict;
-    for (int i = m_cursors.last().m1; i < m_vert.count(); i++)
+    for (int i = std::get<0>(m_cursors.last()); i < m_vert.count(); i++)
         vert_dict.RegisterVertex(i, m_vert[i].m_coord);
 
     //2: Update the indices
@@ -249,7 +249,7 @@ void EasyMesh::VerticesSeparate()
         vert_ids[m_indices[i]]++;
 
     //2: Update the vertices
-    int vbase = m_cursors.last().m1;
+    int vbase = std::get<0>(m_cursors.last());
     int vcount = m_vert.count();
     new_ids.resize(vcount);
     for (int i = vbase; i < vcount; i++)
@@ -285,8 +285,8 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
     VertexDictionnary vert_dict;
     array<int> tri_list;
 
-    tri_list.Reserve(m_indices.count() - m_cursors.last().m2);
-    for (int i = m_cursors.last().m2; i < m_indices.count(); i++)
+    tri_list.Reserve(m_indices.count() - std::get<1>(m_cursors.last()));
+    for (int i = std::get<1>(m_cursors.last()); i < m_indices.count(); i++)
     {
         vert_dict.RegisterVertex(m_indices[i], m_vert[m_indices[i]].m_coord);
         tri_list << m_indices[i];
@@ -295,7 +295,7 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
     //full triangle count
     array<int> tri_done;
     array<int> tri_check;
-    int tri_count = (m_indices.count() - m_cursors.last().m2) / 3;
+    int tri_count = (m_indices.count() - std::get<1>(m_cursors.last())) / 3;
 
     tri_check << tri_list[0];
 
@@ -326,7 +326,7 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
             {
                 if (uv[j] != vec2(-1.0f))
                 {
-                    uv[(j + 1) % 2] = uv[j] + vec2(.0f, uv_scale * length(m_vert[v[j]].m1 - m_vert[v[(j + 1) % 3]].m1));
+                    uv[(j + 1) % 2] = uv[j] + vec2(.0f, uv_scale * length(std::get<0>(m_vert[v[j]]) - std::get<0>(m_vert[v[(j + 1) % 3]])));
                     uv_set = 2;
                     break;
                 }

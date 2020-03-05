@@ -1,20 +1,24 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2009-2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
-//            (c) 2010-2013 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
+//            © 2009—2013 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
 
 //
 // The CommandStack struct
-// ------------------
+// ———————————————————————
 //
+
+#include <tuple> // std::get
 
 namespace lol
 {
@@ -35,9 +39,9 @@ public:
     int GetCmd(int i)
     {
         ASSERT(0 <= i && i < m_commands.count());
-        m_f_cur = m_commands[i].m2;
-        m_i_cur = m_commands[i].m3;
-        return m_commands[i].m1;
+        m_f_cur = std::get<1>(m_commands[i]);
+        m_i_cur = std::get<2>(m_commands[i]);
+        return std::get<0>(m_commands[i]);
     }
 
     //cmd storage

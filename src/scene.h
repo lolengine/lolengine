@@ -310,12 +310,21 @@ private:
     Camera *m_default_cam;
     array<Camera *> m_camera_stack;
 
+    struct line
+    {
+        vec3 a, b;
+        vec4 col;
+        float duration;
+        uint32_t mask;
+        bool wtf1, wtf2; // FIXME: document this
+    };
+
     /* Old line API <P0, P1, COLOR, TIME, MASK> */
     struct line_api
     {
         //float m_duration, m_segment_size;
         //vec4 m_color;
-        array<vec3, vec3, vec4, float, int, bool, bool> m_lines;
+        array<line> m_lines;
         int /*m_mask,*/ m_debug_mask;
         std::shared_ptr<Shader> m_shader;
         std::shared_ptr<VertexDeclaration> m_vdecl;

@@ -15,7 +15,6 @@
 #include <../legacy/lol/base/types.h>
 #include <lol/base/log.h>
 #include <../legacy/lol/base/assert.h>
-#include <lol/base/tuple.h>
 #include <lol/base/array.h>
 #include <../legacy/lol/base/avl_tree.h>
 #include <lol/base/utils.h>

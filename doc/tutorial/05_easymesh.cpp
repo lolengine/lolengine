@@ -1,7 +1,7 @@
 //
 //  Lol Engine — EasyMesh tutorial
 //
-//  Copyright © 2011—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2011—2020 Sam Hocevar <sam@hocevar.net>
 //            © 2012—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -39,23 +39,23 @@ public:
         EasyMeshLuaObject* gears3 = EzMhLoader.GetPtr<EasyMeshLuaObject>("g3");
         EasyMeshLuaObject* gears4 = EzMhLoader.GetPtr<EasyMeshLuaObject>("g4");
 
-        m_gears.push(gears0->GetMesh(), mat4(1.0f), 0.0f);
-        m_gears.push(gears1->GetMesh(), mat4(1.0f), 0.0f);
-        m_gears.push(gears2->GetMesh(), mat4(1.0f), 180.0f / 18);
-        m_gears.push(gears3->GetMesh(), mat4(1.0f), 180.0f / 18);
-        m_gears.push(gears4->GetMesh(), mat4(1.0f), 180.0f / 18);
+        m_gears.push(gear { gears0->GetMesh(), mat4(1.0f), 0.0f });
+        m_gears.push(gear { gears1->GetMesh(), mat4(1.0f), 0.0f });
+        m_gears.push(gear { gears2->GetMesh(), mat4(1.0f), 180.0f / 18 });
+        m_gears.push(gear { gears3->GetMesh(), mat4(1.0f), 180.0f / 18 });
+        m_gears.push(gear { gears4->GetMesh(), mat4(1.0f), 180.0f / 18 });
 
         /*
-        m_gears[0].m1.Compile("[sc#00f ab 8 1 8 ty -.25]"
-                              "[sc#f9f scb#f9f acg 12 10 5 5 20 20 5 5 0.1 0 s .1 .1 .1 ty -.1 csgu]"
-                              "[sc#fff scb#000 acg 12 10 10 10 20 20 5 5 0.1 0 s .05 .05 .05 tx -1.5 ty .3 csgu]"
-                              "[sc#00f ab 5 3 9 tx 2.5 csgs]"
-                              "[[ sc#fff ab 3   1.4 2   tx -2 tz -2 "
-                              "[sc#fff ab 2.1  .7 1.1 ty .5 tx -1.4 tz -1.4 csgs] mz] csgu]");
-        m_gears[1].m1.Compile("sc#ff9 scb#ff9 acg 54 10 95 95 90 90 -5 -5 0.1 0 s .1 .1 .1");
-        m_gears[2].m1.Compile("[sc#0f0 ab 2 2 2 t .8 .8 .8 rx 20 ry 20 [sc#00f ab 2 2 2 tx 0 csgu]]");
-        m_gears[3].m1.Compile("[sc#0f0 ab 2 2 2 t .8 .8 .8 rx 20 ry 20 [sc#00f ab 2 2 2 tx 0 csgs]]");
-        m_gears[4].m1.Compile("[sc#0f0 ab 2 2 2 t .8 .8 .8 rx 20 ry 20 [sc#00f ab 2 2 2 tx 0 csga]]");
+        m_gears[0].mesh.Compile("[sc#00f ab 8 1 8 ty -.25]"
+                                "[sc#f9f scb#f9f acg 12 10 5 5 20 20 5 5 0.1 0 s .1 .1 .1 ty -.1 csgu]"
+                                "[sc#fff scb#000 acg 12 10 10 10 20 20 5 5 0.1 0 s .05 .05 .05 tx -1.5 ty .3 csgu]"
+                                "[sc#00f ab 5 3 9 tx 2.5 csgs]"
+                                "[[ sc#fff ab 3   1.4 2   tx -2 tz -2 "
+                                "[sc#fff ab 2.1  .7 1.1 ty .5 tx -1.4 tz -1.4 csgs] mz] csgu]");
+        m_gears[1].mesh.Compile("sc#ff9 scb#ff9 acg 54 10 95 95 90 90 -5 -5 0.1 0 s .1 .1 .1");
+        m_gears[2].mesh.Compile("[sc#0f0 ab 2 2 2 t .8 .8 .8 rx 20 ry 20 [sc#00f ab 2 2 2 tx 0 csgu]]");
+        m_gears[3].mesh.Compile("[sc#0f0 ab 2 2 2 t .8 .8 .8 rx 20 ry 20 [sc#00f ab 2 2 2 tx 0 csgs]]");
+        m_gears[4].mesh.Compile("[sc#0f0 ab 2 2 2 t .8 .8 .8 rx 20 ry 20 [sc#00f ab 2 2 2 tx 0 csga]]");
         */
 
         m_angle = 0;
@@ -96,25 +96,25 @@ public:
                 * mat4::rotate(radians(100.f), vec3(0, 1, 0));
         //      * mat4::rotate(m_angle, vec3(0, 1, 0));
 
-        m_gears[0].m3 += seconds * radians(20.0f);
-        m_gears[1].m3 += seconds * radians(20.0f) * -2 / 9;
-        m_gears[2].m3 += seconds * radians(20.0f) * -2 / 3;
-        m_gears[3].m3 += seconds * radians(20.0f) * -2 / 3;
-        m_gears[4].m3 += seconds * radians(20.0f) * -2 / 3;
+        m_gears[0].anim += seconds * radians(20.0f);
+        m_gears[1].anim += seconds * radians(20.0f) * -2 / 9;
+        m_gears[2].anim += seconds * radians(20.0f) * -2 / 3;
+        m_gears[3].anim += seconds * radians(20.0f) * -2 / 3;
+        m_gears[4].anim += seconds * radians(20.0f) * -2 / 3;
 
-        m_gears[0].m2 = mat4::translate(vec3(0, -1, 0))
-                      * mat4::rotate(m_gears[0].m3 - 130.0f, vec3(0, 1, 0))
-                      * mat4::rotate(40.0f, vec3(0, 0, 1));
-        m_gears[1].m2 = mat4::translate(vec3(0, 0, 0))
-                      * mat4::rotate(m_gears[1].m3, vec3(0, 1, 0));
-        m_gears[2].m2 = mat4::translate(vec3(0, 0, 5.5f))
-                      * mat4::rotate(m_gears[2].m3 - 40.0f, vec3(0, 1, 0))
-                      * mat4::rotate(90.0f, vec3(0, 0, 1));
-        m_gears[3].m2 = mat4::translate(vec3(5.5f * lol::sqrt(3.f) * 0.5f, 0, -5.5f * 0.5f))
-                      * mat4::rotate(m_gears[3].m3 - 140.0f, vec3(0, 1, 0))
-                      * mat4::rotate(-70.0f, vec3(0, 0, 1));
-        m_gears[4].m2 = mat4::translate(vec3(-5.5f * lol::sqrt(3.f) * 0.5f, 0, -5.5f * 0.5f))
-                      * mat4::rotate(m_gears[4].m3 - 80.0f, vec3(0, 1, 0));
+        m_gears[0].mat = mat4::translate(vec3(0, -1, 0))
+                       * mat4::rotate(m_gears[0].anim - 130.0f, vec3(0, 1, 0))
+                       * mat4::rotate(40.0f, vec3(0, 0, 1));
+        m_gears[1].mat = mat4::translate(vec3(0, 0, 0))
+                       * mat4::rotate(m_gears[1].anim, vec3(0, 1, 0));
+        m_gears[2].mat = mat4::translate(vec3(0, 0, 5.5f))
+                       * mat4::rotate(m_gears[2].anim - 40.0f, vec3(0, 1, 0))
+                       * mat4::rotate(90.0f, vec3(0, 0, 1));
+        m_gears[3].mat = mat4::translate(vec3(5.5f * lol::sqrt(3.f) * 0.5f, 0, -5.5f * 0.5f))
+                       * mat4::rotate(m_gears[3].anim - 140.0f, vec3(0, 1, 0))
+                       * mat4::rotate(-70.0f, vec3(0, 0, 1));
+        m_gears[4].mat = mat4::translate(vec3(-5.5f * lol::sqrt(3.f) * 0.5f, 0, -5.5f * 0.5f))
+                       * mat4::rotate(m_gears[4].anim - 80.0f, vec3(0, 1, 0));
     }
 
     virtual bool init_draw() override
@@ -125,7 +125,7 @@ public:
 
         /* Upload vertex data to GPU */
         for (int i = 0; i < m_gears.count(); i++)
-            m_gears[i].m1.MeshConvert();
+            m_gears[i].mesh.MeshConvert();
 
 #if USE_CUSTOM_SHADER
         /* Custom Shader: Init the shader */
@@ -133,7 +133,7 @@ public:
         // any other shader stuf here (Get uniform, mostly, and set texture)
 
         for (int i = 0; i < m_gears.count(); i++)
-            m_gears[i].m1.SetMaterial(custom_shader);
+            m_gears[i].mesh.SetMaterial(custom_shader);
 #endif
 
         return true;
@@ -144,7 +144,7 @@ public:
         WorldEntity::tick_draw(seconds, scene);
 
         for (int i = 0; i < m_gears.count(); i++)
-            m_gears[i].m1.Render(scene, m_mat * m_gears[i].m2);
+            m_gears[i].mesh.Render(scene, m_mat * m_gears[i].mat);
     }
 
     virtual bool release_draw() override
@@ -156,7 +156,9 @@ public:
     }
 
 private:
-    array<EasyMesh, mat4, float> m_gears;
+    struct gear { EasyMesh mesh; mat4 mat; float anim; };
+    array<gear> m_gears;
+
     float m_angle;
     mat4 m_mat;
     Camera *m_camera;

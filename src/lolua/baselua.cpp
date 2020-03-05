@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2017—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2017—2020 Sam Hocevar <sam@hocevar.net>
 //            © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -121,6 +121,7 @@ Loader::~Loader()
 }
 
 //Store loader ------------------------------------------------------------
+// FIXME: change this to a map?
 static array<lua_State*, Lolua::Loader*> g_loaders;
 
 void Loader::Store(lua_State* l, Lolua::Loader* loader)
@@ -132,7 +133,7 @@ void Loader::Release(lua_State* l, Lolua::Loader* loader)
 {
     for (int i = 0; i < g_loaders.count(); ++i)
     {
-        if (g_loaders[i].m1 == l && g_loaders[i].m2 == loader)
+        if (std::get<0>(g_loaders[i]) == l && std::get<1>(g_loaders[i]) == loader)
         {
             g_loaders.remove(i);
             return;
@@ -145,9 +146,9 @@ void Loader::StoreObject(lua_State* l, Object* obj)
 {
     for (auto loader : g_loaders)
     {
-        if (loader.m1 == l)
+        if (std::get<0>(loader) == l)
         {
-            loader.m2->Store(obj);
+            std::get<1>(loader)->Store(obj);
             return;
         }
     }

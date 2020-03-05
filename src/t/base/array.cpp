@@ -66,12 +66,12 @@ lolunit_declare_fixture(array_test)
                                 { 4, 5.0f },
                                 { 6, 7.0f } };
 
-        lolunit_assert_equal(c[0].m1, 2);
-        lolunit_assert_equal(c[0].m2, 3.0f);
-        lolunit_assert_equal(c[1].m1, 4);
-        lolunit_assert_equal(c[1].m2, 5.0f);
-        lolunit_assert_equal(c[2].m1, 6);
-        lolunit_assert_equal(c[2].m2, 7.0f);
+        lolunit_assert_equal(std::get<0>(c[0]), 2);
+        lolunit_assert_equal(std::get<1>(c[0]), 3.0f);
+        lolunit_assert_equal(std::get<0>(c[1]), 4);
+        lolunit_assert_equal(std::get<1>(c[1]), 5.0f);
+        lolunit_assert_equal(std::get<0>(c[2]), 6);
+        lolunit_assert_equal(std::get<1>(c[2]), 7.0f);
     }
 
     lolunit_declare_test(array_push_with_shift)
@@ -144,14 +144,14 @@ lolunit_declare_fixture(array_test)
         array<int, long, float, double, unsigned, char, bool, void *> a;
         a.push(1, 2, 3.f, 4.0, 5, 'a', true, 0);
 
-        lolunit_assert_equal(a[0].m1, 1);
-        lolunit_assert_equal(a[0].m2, 2);
-        lolunit_assert_equal(a[0].m3, 3.f);
-        lolunit_assert_equal(a[0].m4, 4.0);
-        lolunit_assert_equal(a[0].m5, 5);
-        lolunit_assert_equal(a[0].m6, 'a');
-        lolunit_assert_equal(a[0].m7, true);
-        lolunit_assert_equal(a[0].m8, 0);
+        lolunit_assert_equal(std::get<0>(a[0]), 1);
+        lolunit_assert_equal(std::get<1>(a[0]), 2);
+        lolunit_assert_equal(std::get<2>(a[0]), 3.f);
+        lolunit_assert_equal(std::get<3>(a[0]), 4.0);
+        lolunit_assert_equal(std::get<4>(a[0]), 5);
+        lolunit_assert_equal(std::get<5>(a[0]), 'a');
+        lolunit_assert_equal(std::get<6>(a[0]), true);
+        lolunit_assert_equal(std::get<7>(a[0]), 0);
     }
 
     lolunit_declare_test(array_swap)
@@ -162,10 +162,10 @@ lolunit_declare_fixture(array_test)
 
         a.swap(0, 1);
 
-        lolunit_assert_equal(30, a[0].m1);
-        lolunit_assert_equal(40, a[0].m2);
-        lolunit_assert_equal(10, a[1].m1);
-        lolunit_assert_equal(20, a[1].m2);
+        lolunit_assert_equal(30, std::get<0>(a[0]));
+        lolunit_assert_equal(40, std::get<1>(a[0]));
+        lolunit_assert_equal(10, std::get<0>(a[1]));
+        lolunit_assert_equal(20, std::get<1>(a[1]));
     }
 
     lolunit_declare_test(array_insert)
@@ -196,22 +196,22 @@ lolunit_declare_fixture(array_test)
     {
         array<int, float, std::string> b;
         b.insert(0, 5, 6.f, "lol");
-        lolunit_assert_equal(5, b[0].m1);
-        lolunit_assert_equal(6.f, b[0].m2);
+        lolunit_assert_equal(5,   std::get<0>(b[0]));
+        lolunit_assert_equal(6.f, std::get<1>(b[0]));
 
         b.insert(1, 8, 9.f, "hi there");
-        lolunit_assert_equal(5, b[0].m1);
-        lolunit_assert_equal(6.f, b[0].m2);
-        lolunit_assert_equal(8, b[1].m1);
-        lolunit_assert_equal(9.f, b[1].m2);
+        lolunit_assert_equal(5,   std::get<0>(b[0]));
+        lolunit_assert_equal(6.f, std::get<1>(b[0]));
+        lolunit_assert_equal(8,   std::get<0>(b[1]));
+        lolunit_assert_equal(9.f, std::get<1>(b[1]));
 
         b.insert(1, 4, 5.f, "anyone home?");
-        lolunit_assert_equal(5, b[0].m1);
-        lolunit_assert_equal(6.f, b[0].m2);
-        lolunit_assert_equal(4, b[1].m1);
-        lolunit_assert_equal(5.f, b[1].m2);
-        lolunit_assert_equal(8, b[2].m1);
-        lolunit_assert_equal(9.f, b[2].m2);
+        lolunit_assert_equal(5,   std::get<0>(b[0]));
+        lolunit_assert_equal(6.f, std::get<1>(b[0]));
+        lolunit_assert_equal(4,   std::get<0>(b[1]));
+        lolunit_assert_equal(5.f, std::get<1>(b[1]));
+        lolunit_assert_equal(8,   std::get<0>(b[2]));
+        lolunit_assert_equal(9.f, std::get<1>(b[2]));
     }
 
     lolunit_declare_test(array_concat)

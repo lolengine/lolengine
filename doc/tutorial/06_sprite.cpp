@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Sprite tutorial
 //
-//  Copyright © 2011—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2011—2020 Sam Hocevar <sam@hocevar.net>
 //            © 2012 Daniel Stephens (artwork)
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -35,8 +35,8 @@ public:
 
         for (int i = 0; i < SPRITE_COUNT; ++i)
         {
-            m_sprites.push(vec3((float)rand(-96, 640), (float)rand(-96, 480), 0.f),
-                           rand(0.f, 1.f));
+            m_sprites.push(sprite { vec3((float)rand(-96, 640), (float)rand(-96, 480), 0.f),
+                                    rand(0.f, 1.f) });
         }
     }
 
@@ -50,10 +50,10 @@ public:
     {
         for (int i = 0; i < SPRITE_COUNT; ++i)
         {
-            m_sprites[i].m1.y += 50.f * seconds;
-            m_sprites[i].m2 = lol::fmod(m_sprites[i].m2 + seconds, 1.f);
-            if (m_sprites[i].m1.y > 480 + 48)
-                m_sprites[i].m1.y = (float)rand(-96, -48);
+            m_sprites[i].pos.y += 50.f * seconds;
+            m_sprites[i].anim = lol::fmod(m_sprites[i].anim + seconds, 1.f);
+            if (m_sprites[i].pos.y > 480 + 48)
+                m_sprites[i].pos.y = (float)rand(-96, -48);
         }
 
         WorldEntity::tick_game(seconds);
@@ -73,10 +73,10 @@ public:
 
         for (int i = 0; i < SPRITE_COUNT; ++i)
         {
-            int frame = (int)(m_sprites[i].m2 * FRAME_COUNT);
-//            m_sprites[i].m1.z = frame;
+            int frame = (int)(m_sprites[i].anim * FRAME_COUNT);
+//            m_sprites[i].pos.z = frame;
             scene.AddTile(m_tileset, frame,
-                          m_sprites[i].m1, vec2(2.f), 0.f);
+                          m_sprites[i].pos, vec2(2.f), 0.f);
         }
     }
 
@@ -93,7 +93,9 @@ private:
 
     static int const SPRITE_COUNT = 192;
     static int const FRAME_COUNT = 16;
-    array<vec3, float> m_sprites;
+
+    struct sprite { vec3 pos; float anim; };
+    array<sprite> m_sprites;
 };
 
 int main(int argc, char **argv)

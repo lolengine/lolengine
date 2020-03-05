@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Voronoi diagram tutorial
 //
-//  Copyright © 2015—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2015—2020 Sam Hocevar <sam@hocevar.net>
 //            © 2011—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -95,41 +95,47 @@ public:
 
             for (int i = 0; i < MaxFboType; ++i)
             {
-                m_fbos.push(std::make_shared<Framebuffer>(Video::GetSize()), 0, array<ShaderUniform>(), array<ShaderAttrib>() );
+                m_fbos.push(fbo
+                {
+                    std::make_shared<Framebuffer>(Video::GetSize()),
+                    0,
+                    array<ShaderUniform>(),
+                    array<ShaderAttrib>(),
+                });
 
                 if (i == SrcVoronoiFbo)
                 {
-                    m_fbos[i].m2 = Shader::Create(LOLFX_RESOURCE_NAME(12_voronoi_setup));
-                    m_fbos[i].m3 << m_fbos[i].m2->GetUniformLocation("u_texture");
-                    m_fbos[i].m3 << m_fbos[i].m2->GetUniformLocation("u_source_point");
-                    m_fbos[i].m3 << m_fbos[i].m2->GetUniformLocation("u_screen_res");
-                    m_fbos[i].m4 << m_fbos[i].m2->GetAttribLocation(VertexUsage::Position, 0);
+                    m_fbos[i].shader = Shader::Create(LOLFX_RESOURCE_NAME(12_voronoi_setup));
+                    m_fbos[i].uni << m_fbos[i].shader->GetUniformLocation("u_texture");
+                    m_fbos[i].uni << m_fbos[i].shader->GetUniformLocation("u_source_point");
+                    m_fbos[i].uni << m_fbos[i].shader->GetUniformLocation("u_screen_res");
+                    m_fbos[i].attr << m_fbos[i].shader->GetAttribLocation(VertexUsage::Position, 0);
                 }
                 else if (i == VoronoiFbo)
                 {
-                    m_fbos[i].m2 = Shader::Create(LOLFX_RESOURCE_NAME(12_voronoi));
-                    m_fbos[i].m3 << m_fbos[i].m2->GetUniformLocation("u_texture");
-                    m_fbos[i].m3 << m_fbos[i].m2->GetUniformLocation("u_step");
-                    m_fbos[i].m3 << m_fbos[i].m2->GetUniformLocation("u_screen_res");
-                    m_fbos[i].m4 << m_fbos[i].m2->GetAttribLocation(VertexUsage::Position, 0);
+                    m_fbos[i].shader = Shader::Create(LOLFX_RESOURCE_NAME(12_voronoi));
+                    m_fbos[i].uni << m_fbos[i].shader->GetUniformLocation("u_texture");
+                    m_fbos[i].uni << m_fbos[i].shader->GetUniformLocation("u_step");
+                    m_fbos[i].uni << m_fbos[i].shader->GetUniformLocation("u_screen_res");
+                    m_fbos[i].attr << m_fbos[i].shader->GetAttribLocation(VertexUsage::Position, 0);
                 }
                 else if (i == DistanceVoronoiFbo)
                 {
-                    m_fbos[i].m2 = Shader::Create(LOLFX_RESOURCE_NAME(12_voronoi_distance));
+                    m_fbos[i].shader = Shader::Create(LOLFX_RESOURCE_NAME(12_voronoi_distance));
                 }
                 else if (i == DistanceFbo)
                 {
-                    m_fbos[i].m2 = Shader::Create(LOLFX_RESOURCE_NAME(12_distance));
+                    m_fbos[i].shader = Shader::Create(LOLFX_RESOURCE_NAME(12_distance));
                 }
 
-                m_fbos.last().m1->Bind();
+                m_fbos.last().framebuffer->Bind();
                 {
                     render_context rc(scene.get_renderer());
                     rc.clear_color(vec4(0.f, 0.f, 0.f, 1.f));
                     rc.clear_depth(1.f);
                     scene.get_renderer()->clear(ClearMask::Color | ClearMask::Depth);
                 }
-                m_fbos.last().m1->Unbind();
+                m_fbos.last().framebuffer->Unbind();
             }
 
             temp_buffer = std::make_shared<Framebuffer>(Video::GetSize());
@@ -154,8 +160,11 @@ public:
         if (keyboard->key_released(input::key::SC_O))
             voronoi_points.pop();
         else if (keyboard->key_released(input::key::SC_P))
-            voronoi_points.push(vec3(rand<float>(512.f), rand<float>(512.f), .0f),
-                    vec2(64.f + rand<float>(64.f), 64.f + rand<float>(64.f)));
+            voronoi_points.push(point
+            {
+                vec3(rand<float>(512.f), rand<float>(512.f), .0f),
+                vec2(64.f + rand<float>(64.f), 64.f + rand<float>(64.f))
+            });
         else if (keyboard->key_released(input::key::SC_F1))
             m_cur_fbo = SrcVoronoiFbo;
         else if (keyboard->key_released(input::key::SC_F2))
@@ -167,10 +176,12 @@ public:
             {
                 int i = 4;
                 while (i-- > 0)
-                    voronoi_points.push(vec3(rand<float>(512.f), rand<float>(512.f), .0f),
-                                        vec2(64.f + rand<float>(64.f), 64.f + rand<float>(64.f))
-                                        //vec2::zero
-                                        );
+                    voronoi_points.push(point
+                    {
+                        vec3(rand<float>(512.f), rand<float>(512.f), .0f),
+                        vec2(64.f + rand<float>(64.f), 64.f + rand<float>(64.f))
+                        //vec2::zero
+                    });
                 mode = 1;
             }
             else
@@ -188,12 +199,12 @@ public:
                 float mi = (float)maxi;
                 float j = (float)i;
                 float f_time = (float)m_time;
-                voronoi_points.push(vec3(256.f) + 196.f * vec3(lol::cos( f_time + j * 2.f * F_PI / mi), lol::sin( f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f));
-                voronoi_points.push(vec3(256.f) + 128.f * vec3(lol::cos(-f_time + j * 2.f * F_PI / mi), lol::sin(-f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f));
-                voronoi_points.push(vec3(256.f) +  64.f * vec3(lol::cos( f_time + j * 2.f * F_PI / mi), lol::sin( f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f));
-                voronoi_points.push(vec3(256.f) +  32.f * vec3(lol::cos(-f_time + j * 2.f * F_PI / mi), lol::sin(-f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f));
+                voronoi_points.push(point { vec3(256.f) + 196.f * vec3(lol::cos( f_time + j * 2.f * F_PI / mi), lol::sin( f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f) });
+                voronoi_points.push(point { vec3(256.f) + 128.f * vec3(lol::cos(-f_time + j * 2.f * F_PI / mi), lol::sin(-f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f) });
+                voronoi_points.push(point { vec3(256.f) +  64.f * vec3(lol::cos( f_time + j * 2.f * F_PI / mi), lol::sin( f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f) });
+                voronoi_points.push(point { vec3(256.f) +  32.f * vec3(lol::cos(-f_time + j * 2.f * F_PI / mi), lol::sin(-f_time + j * 2.f * F_PI / mi), .0f), vec2(.0f) });
             }
-            voronoi_points.push(vec3(256.f), vec2(0.f));
+            voronoi_points.push(point { vec3(256.f), vec2(0.f) });
         }
 
         temp_buffer->Bind();
@@ -210,30 +221,30 @@ public:
             //SRC SETUP
             for (int j = 0; j < voronoi_points.count(); ++j)
             {
-                voronoi_points[j].m1 = vec3(voronoi_points[j].m1.xy + voronoi_points[j].m2 * seconds, voronoi_points[j].m1.z);
-                if (voronoi_points[j].m1.x >= limit.y || voronoi_points[j].m1.x <= limit.x)
+                voronoi_points[j].pos = vec3(voronoi_points[j].pos.xy + voronoi_points[j].speed * seconds, voronoi_points[j].pos.z);
+                if (voronoi_points[j].pos.x >= limit.y || voronoi_points[j].pos.x <= limit.x)
                 {
-                    voronoi_points[j].m2.x *= -1.f;
-                    voronoi_points[j].m1.x = clamp(voronoi_points[j].m1.x, limit.x, limit.y);
+                    voronoi_points[j].speed.x *= -1.f;
+                    voronoi_points[j].pos.x = clamp(voronoi_points[j].pos.x, limit.x, limit.y);
                 }
-                if (voronoi_points[j].m1.y >= limit.y || voronoi_points[j].m1.y <= limit.x)
+                if (voronoi_points[j].pos.y >= limit.y || voronoi_points[j].pos.y <= limit.x)
                 {
-                    voronoi_points[j].m2.y *= -1.f;
-                    voronoi_points[j].m1.y = clamp(voronoi_points[j].m1.y, limit.x, limit.y);
+                    voronoi_points[j].speed.y *= -1.f;
+                    voronoi_points[j].pos.y = clamp(voronoi_points[j].pos.y, limit.x, limit.y);
                 }
-                voronoi_points[j].m1.z = ((float)j + 1) / ((float)voronoi_points.count());
+                voronoi_points[j].pos.z = ((float)j + 1) / ((float)voronoi_points.count());
             }
 
             int f = SrcVoronoiFbo;
 
-            m_fbos[f].m1->Bind();
+            m_fbos[f].framebuffer->Bind();
             {
                 render_context rc(scene.get_renderer());
                 rc.clear_color(vec4(0.f, 0.f, 0.f, 1.f));
                 rc.clear_depth(1.f);
                 scene.get_renderer()->clear(ClearMask::Color | ClearMask::Depth);
             }
-            m_fbos[f].m1->Unbind();
+            m_fbos[f].framebuffer->Unbind();
 
             int buf = voronoi_points.count() % 2;
             for (int j = 0; j < voronoi_points.count(); ++j)
@@ -242,30 +253,30 @@ public:
 
                 if (buf)
                 {
-                    dst_buf = m_fbos[f].m1;
+                    dst_buf = m_fbos[f].framebuffer;
                     src_buf = temp_buffer;
                 }
                 else
                 {
-                    src_buf = m_fbos[f].m1;
+                    src_buf = m_fbos[f].framebuffer;
                     dst_buf = temp_buffer;
                 }
 
                 dst_buf->Bind();
                 /* FIXME: we should just disable depth test in the shader */
                 scene.get_renderer()->clear(ClearMask::Depth);
-                m_fbos[f].m2->Bind();
+                m_fbos[f].shader->Bind();
 
                 int i = 0;
-                m_fbos[f].m2->SetUniform(m_fbos[f].m3[i++], src_buf->GetTextureUniform(), 0); //"u_texture"
-                m_fbos[f].m2->SetUniform(m_fbos[f].m3[i++], voronoi_points[j].m1); //"u_source_point"
-                m_fbos[f].m2->SetUniform(m_fbos[f].m3[i++], vec2(512.f, 512.f)); //"u_screen_res"
+                m_fbos[f].shader->SetUniform(m_fbos[f].uni[i++], src_buf->GetTextureUniform(), 0); //"u_texture"
+                m_fbos[f].shader->SetUniform(m_fbos[f].uni[i++], voronoi_points[j].pos); //"u_source_point"
+                m_fbos[f].shader->SetUniform(m_fbos[f].uni[i++], vec2(512.f, 512.f)); //"u_screen_res"
 
                 m_vdecl->Bind();
-                m_vdecl->SetStream(m_vbo, m_fbos[f].m4.last());
+                m_vdecl->SetStream(m_vbo, m_fbos[f].attr.last());
                 m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
                 m_vdecl->Unbind();
-                m_fbos[f].m2->Unbind();
+                m_fbos[f].shader->Unbind();
                 dst_buf->Unbind();
 
                 buf = 1 - buf;
@@ -279,14 +290,14 @@ public:
         if (m_timer < .0f && m_cur_fbo != SrcVoronoiFbo)
         {
             //m_timer = 1.0f;
-            m_fbos[m_cur_fbo].m1->Bind();
+            m_fbos[m_cur_fbo].framebuffer->Bind();
             {
                 render_context rc(scene.get_renderer());
                 rc.clear_color(vec4(0.f, 0.f, 0.f, 1.f));
                 rc.clear_depth(1.f);
                 scene.get_renderer()->clear(ClearMask::Color | ClearMask::Depth);
             }
-            m_fbos[m_cur_fbo].m1->Unbind();
+            m_fbos[m_cur_fbo].framebuffer->Unbind();
 
             ivec2 curres = ivec2(512, 512) / 2;
             int buf = 0;
@@ -298,19 +309,19 @@ public:
                 if (curres == ivec2::zero)
                     shader = m_screen_shader;
                 else
-                    shader = m_fbos[m_cur_fbo].m2;
+                    shader = m_fbos[m_cur_fbo].shader;
 
                 if (curres.x == 256)
-                    src_buf = m_fbos[SrcVoronoiFbo].m1;
+                    src_buf = m_fbos[SrcVoronoiFbo].framebuffer;
                 else if (buf)
-                    src_buf = m_fbos[m_cur_fbo].m1;
+                    src_buf = m_fbos[m_cur_fbo].framebuffer;
                 else
                     src_buf = temp_buffer;
 
                 if (buf)
                     dst_buf = temp_buffer;
                 else
-                    dst_buf = m_fbos[m_cur_fbo].m1;
+                    dst_buf = m_fbos[m_cur_fbo].framebuffer;
 
                 dst_buf->Bind();
                 /* FIXME: we should just disable depth test in the shader */
@@ -322,16 +333,16 @@ public:
                     m_screen_shader->SetUniform(m_screen_texture, src_buf->GetTextureUniform(), 0);
                 else if (m_cur_fbo == VoronoiFbo)
                 {
-                    shader->SetUniform(m_fbos[m_cur_fbo].m3[i++], src_buf->GetTextureUniform(), 0); //"u_texture"
-                    shader->SetUniform(m_fbos[m_cur_fbo].m3[i++], ((float)curres.x) / 512.f); //"u_step"
-                    shader->SetUniform(m_fbos[m_cur_fbo].m3[i++], vec2(512.f, 512.f)); //"u_screen_res"
+                    shader->SetUniform(m_fbos[m_cur_fbo].uni[i++], src_buf->GetTextureUniform(), 0); //"u_texture"
+                    shader->SetUniform(m_fbos[m_cur_fbo].uni[i++], ((float)curres.x) / 512.f); //"u_step"
+                    shader->SetUniform(m_fbos[m_cur_fbo].uni[i++], vec2(512.f, 512.f)); //"u_screen_res"
                 }
 
                 m_vdecl->Bind();
-                m_vdecl->SetStream(m_vbo, m_fbos[m_cur_fbo].m4.last());
+                m_vdecl->SetStream(m_vbo, m_fbos[m_cur_fbo].attr.last());
                 m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
                 m_vdecl->Unbind();
-                m_fbos[m_cur_fbo].m2->Unbind();
+                m_fbos[m_cur_fbo].shader->Unbind();
                 dst_buf->Unbind();
 
                 if (curres == ivec2::zero)
@@ -350,7 +361,7 @@ public:
 
         //SCREEN DRAW
         m_screen_shader->Bind();
-        m_screen_shader->SetUniform(m_screen_texture, m_fbos[m_cur_fbo].m1->GetTextureUniform(), 0);
+        m_screen_shader->SetUniform(m_screen_texture, m_fbos[m_cur_fbo].framebuffer->GetTextureUniform(), 0);
         m_vdecl->Bind();
         m_vdecl->SetStream(m_vbo, m_screen_coord);
         m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, 6);
@@ -359,7 +370,8 @@ public:
     }
 
 private:
-    array<vec3, vec2> voronoi_points;
+    struct point { vec3 pos; vec2 speed; };
+    array<point> voronoi_points;
     array<vec2> m_vertices;
     std::shared_ptr<Shader> m_screen_shader;
     ShaderAttrib m_screen_coord;
@@ -368,7 +380,14 @@ private:
     std::shared_ptr<VertexDeclaration> m_vdecl;
     std::shared_ptr<VertexBuffer> m_vbo;
 
-    array<std::shared_ptr<Framebuffer>, std::shared_ptr<Shader>, array<ShaderUniform>, array<ShaderAttrib> > m_fbos;
+    struct fbo
+    {
+        std::shared_ptr<Framebuffer> framebuffer;
+        std::shared_ptr<Shader> shader;
+        array<ShaderUniform> uni;
+        array<ShaderAttrib> attr;
+    };
+    array<fbo> m_fbos;
     std::shared_ptr<Framebuffer> temp_buffer;
 
     int mode;

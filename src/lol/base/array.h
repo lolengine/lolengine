@@ -20,11 +20,10 @@
 // additional features, eg. array<int,float> for automatic arrays of tuples.
 //
 
-#include <lol/base/tuple.h>
-
 #include <cassert>   // assert()
 #include <new>       // placement new
 #include <algorithm> // std::swap
+#include <tuple>     // std::tuple
 #include <stdint.h>
 #include <initializer_list>
 
@@ -463,15 +462,15 @@ protected:
  */
 
 template<typename... T>
-class array : public array_base<tuple<T...>, array<T...>>
+class array : public array_base<std::tuple<T...>, array<T...>>
 {
 public:
     /* GCC needs this but Clang doesn’t */
-    typedef tuple<T...> element_t;
+    typedef std::tuple<T...> element_t;
 
 #if LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS
 private:
-    using array_base<tuple<T...>, array<T...>>::array_base;
+    using array_base<std::tuple<T...>, array<T...>>::array_base;
 #else
 public:
     inline array()
@@ -488,13 +487,13 @@ public:
     {
         if (this->m_count >= this->m_reserved)
         {
-            tuple<T...> tmp = { args... };
+            std::tuple<T...> tmp = { args... };
             this->grow();
-            new (&this->m_data[this->m_count]) tuple<T...>(tmp);
+            new (&this->m_data[this->m_count]) std::tuple<T...>(tmp);
         }
         else
         {
-            new (&this->m_data[this->m_count]) tuple<T...>({ args... });
+            new (&this->m_data[this->m_count]) std::tuple<T...>({ args... });
         }
         ++this->m_count;
     }
@@ -511,7 +510,7 @@ public:
             new (&this->m_data[i]) element_t(this->m_data[i - 1]);
             this->m_data[i - 1].~element_t();
         }
-        new (&this->m_data[pos]) tuple<T...>({ args... });
+        new (&this->m_data[pos]) std::tuple<T...>({ args... });
         ++this->m_count;
     }
 };

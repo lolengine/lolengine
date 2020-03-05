@@ -1,8 +1,8 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
+//            © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //            © 2009—2013 Cédric Lecacheur <jordx@free.fr>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -22,8 +22,8 @@ int VertexDictionnary::FindVertexMaster(const int search_idx)
 {
     //Resolve current vertex idx in the dictionnary (if exist)
     for (int j = 0; j < vertex_list.count(); j++)
-        if (vertex_list[j].m1 == search_idx)
-            return vertex_list[j].m3;
+        if (std::get<0>(vertex_list[j]) == search_idx)
+            return std::get<2>(vertex_list[j]);
     return VDictType::DoesNotExist;
 }
 
@@ -39,11 +39,11 @@ bool VertexDictionnary::FindMatchingVertices(const int search_idx, array<int> &m
     if (cur_mast == VDictType::Master)
         cur_mast = search_idx;
     else
-        matching_ids << vertex_list[cur_mast].m1;
+        matching_ids << std::get<0>(vertex_list[cur_mast]);
 
     for (int j = 0; j < vertex_list.count(); j++)
-        if (vertex_list[j].m3 == cur_mast && vertex_list[j].m1 != search_idx)
-            matching_ids << vertex_list[j].m1;
+        if (std::get<2>(vertex_list[j]) == cur_mast && std::get<0>(vertex_list[j]) != search_idx)
+            matching_ids << std::get<0>(vertex_list[j]);
 
     return (matching_ids.count() > 0);
 }
@@ -143,7 +143,7 @@ bool VertexDictionnary::FindConnectedTriangles(const ivec3 &search_idx, const ar
 void VertexDictionnary::RegisterVertex(const int vert_id, const vec3 vert_coord)
 {
     for (int j = 0; j < vertex_list.count(); j++)
-        if (vertex_list[j].m1 == vert_id)
+        if (std::get<0>(vertex_list[j]) == vert_id)
             return;
 
     //First, build the vertex Dictionnary
@@ -151,9 +151,9 @@ void VertexDictionnary::RegisterVertex(const int vert_id, const vec3 vert_coord)
     for (; i < master_list.count(); i++)
     {
         int cur_mast  = master_list[i];
-        int cur_id    = vertex_list[cur_mast].m1;
-        vec3 cur_loc  = vertex_list[cur_mast].m2;
-        int &cur_type = vertex_list[cur_mast].m3;
+        int cur_id    = std::get<0>(vertex_list[cur_mast]);
+        vec3 cur_loc  = std::get<1>(vertex_list[cur_mast]);
+        int &cur_type = std::get<2>(vertex_list[cur_mast]);
 
         if (cur_id == vert_id)
             return;
@@ -178,24 +178,24 @@ void VertexDictionnary::RemoveVertex(const int vert_id)
 {
     int j = 0;
     for (; j < vertex_list.count(); j++)
-        if (vertex_list[j].m1 == vert_id)
+        if (std::get<0>(vertex_list[j]) == vert_id)
             break;
 
-    if (vertex_list[j].m3 == VDictType::Master)
+    if (std::get<2>(vertex_list[j]) == VDictType::Master)
     {
         int jf = -1;
         //change all the master ref in the list
         for (int i = 0; i < vertex_list.count(); i++)
         {
-            if (vertex_list[i].m3 == j)
+            if (std::get<2>(vertex_list[i]) == j)
             {
                 if (jf < 0)
                 {
                     jf = i;
-                    vertex_list[i].m3 = VDictType::Master;
+                    std::get<2>(vertex_list[i]) = VDictType::Master;
                 }
                 else
-                    vertex_list[i].m3 = jf;
+                    std::get<2>(vertex_list[i]) = jf;
             }
         }
     }

@@ -31,7 +31,7 @@ liblol_core_headers = \
     lol/lua.h \
     \
     lol/base/all.h \
-    lol/base/tuple.h lol/base/array.h lol/base/map.h lol/base/enum.h \
+    lol/base/array.h lol/base/map.h lol/base/enum.h \
     lol/base/log.h \
     \
     lol/algorithm/all.h \

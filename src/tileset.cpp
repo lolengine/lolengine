@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -219,7 +219,11 @@ void TileSet::define_tile(array<ibox2>& tiles)
 void TileSet::define_tile(array<ivec2, ivec2>& tiles)
 {
     for (int i = 0; i < tiles.count(); i++)
-        define_tile(ibox2(tiles[i].m1, tiles[i].m1 + tiles[i].m2));
+    {
+        auto const &a = std::get<0>(tiles[i]);
+        auto const &b = std::get<1>(tiles[i]);
+        define_tile(ibox2(a, a + b));
+    }
 }
 
 int TileSet::GetTileCount() const
@@ -229,17 +233,17 @@ int TileSet::GetTileCount() const
 
 ivec2 TileSet::GetTileSize(int tileid) const
 {
-    return m_tileset_data->m_tiles[tileid].m1.extent();
+    return std::get<0>(m_tileset_data->m_tiles[tileid]).extent();
 }
 
 ibox2 TileSet::GetTilePixel(int tileid) const
 {
-    return m_tileset_data->m_tiles[tileid].m1;
+    return std::get<0>(m_tileset_data->m_tiles[tileid]);
 }
 
 box2 TileSet::GetTileTexel(int tileid) const
 {
-    return m_tileset_data->m_tiles[tileid].m2;
+    return std::get<1>(m_tileset_data->m_tiles[tileid]);
 }
 
 //Palette ---------------------------------------------------------------------
@@ -260,8 +264,8 @@ TileSet const* TileSet::GetPalette() const
 
 void TileSet::BlitTile(uint32_t id, mat4 model, vec3 *vertex, vec2 *texture)
 {
-    ibox2 pixels = m_tileset_data->m_tiles[id].m1;
-    box2 texels = m_tileset_data->m_tiles[id].m2;
+    ibox2 pixels = std::get<0>(m_tileset_data->m_tiles[id]);
+    box2 texels = std::get<1>(m_tileset_data->m_tiles[id]);
     float dtx = texels.extent().x;
     float dty = texels.extent().y;
     float tx = texels.aa.x;

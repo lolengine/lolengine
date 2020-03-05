@@ -323,9 +323,6 @@
     <ClInclude Include="lol\base\log.h">
       <Filter>lol\base</Filter>
     </ClInclude>
-    <ClInclude Include="lol\base\tuple.h">
-      <Filter>lol\base</Filter>
-    </ClInclude>
     <ClInclude Include="lol\debug\all.h">
       <Filter>lol\debug</Filter>
     </ClInclude>

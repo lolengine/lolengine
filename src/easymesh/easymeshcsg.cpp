@@ -1,7 +1,7 @@
 //
 //  EasyMesh-Csg: The code belonging to CSG operations
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //            © 2009—2015 Cédric Lecacheur <jordx@free.fr>
 //            © 2009—2015 Benjamin "Touky" Huet <huet.benjamin@gmail.com>
 //
@@ -53,11 +53,11 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
         return;
 
     //BSP BUILD : We use the brace logic, csg should be used as : "[ exp .... [exp .... csg]]"
-    int cursor_start = (m_cursors.count() < 2)?(0):(m_cursors[(m_cursors.count() - 2)].m2);
+    int cursor_start = (m_cursors.count() < 2)?(0):(std::get<1>(m_cursors[(m_cursors.count() - 2)]));
     for (int mesh_id = 0; mesh_id < 2; mesh_id++)
     {
-        int start_point = (mesh_id == 0) ? (cursor_start) : (m_cursors.last().m2);
-        int end_point   = (mesh_id == 0) ? (m_cursors.last().m2) : (m_indices.count());
+        int start_point = (mesh_id == 0) ? (cursor_start) : (std::get<1>(m_cursors.last()));
+        int end_point   = (mesh_id == 0) ? (std::get<1>(m_cursors.last())) : (m_indices.count());
         CsgBsp &mesh_bsp      = (mesh_id == 0) ? (mesh_bsp_0) : (mesh_bsp_1);
         for (int i = start_point; i < end_point; i += 3)
             mesh_bsp.AddTriangleToTree(i, m_vert[m_indices[i]].m_coord,
@@ -69,8 +69,8 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
     int indices_count = m_indices.count();
     for (int mesh_id = 0; mesh_id < 2; mesh_id++)
     {
-        int start_point = (mesh_id == 0) ? (cursor_start) : (m_cursors.last().m2);
-        int end_point   = (mesh_id == 0) ? (m_cursors.last().m2) : (indices_count);
+        int start_point = (mesh_id == 0) ? (cursor_start) : (std::get<1>(m_cursors.last()));
+        int end_point   = (mesh_id == 0) ? (std::get<1>(m_cursors.last())) : (indices_count);
         CsgBsp &mesh_bsp      = (mesh_id == 0) ? (mesh_bsp_1) : (mesh_bsp_0);
         array< vec3, int, int, float > vert_list;
         array< int, int, int, int > tri_list;
@@ -96,21 +96,21 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
                 int base_idx = m_vert.count();
                 for (int k = 3; k < vert_list.count(); k++)
                 {
-                    int P0 = (vert_list[k].m2 < 3) ? (m_indices[i + vert_list[k].m2]) : (base_idx + vert_list[k].m2 - 3);
-                    int P1 = (vert_list[k].m3 < 3) ? (m_indices[i + vert_list[k].m3]) : (base_idx + vert_list[k].m3 - 3);
+                    int P0 = (std::get<1>(vert_list[k]) < 3) ? (m_indices[i + std::get<1>(vert_list[k])]) : (base_idx + std::get<1>(vert_list[k]) - 3);
+                    int P1 = (std::get<2>(vert_list[k]) < 3) ? (m_indices[i + std::get<2>(vert_list[k])]) : (base_idx + std::get<2>(vert_list[k]) - 3);
 
-                    AddVertex(vert_list[k].m1);
+                    AddVertex(std::get<0>(vert_list[k]));
 
                     //Normal : bad calculations there.
                     n0 = m_vert[P0].m_normal;
                     n1 = m_vert[P1].m_normal;
-                    SetCurVertNormal(normalize(n0 + (n1 - n0) * vert_list[k].m4));
+                    SetCurVertNormal(normalize(n0 + (n1 - n0) * std::get<3>(vert_list[k])));
 
 #if 1
                     //Color
                     c0 = m_vert[P0].m_color;
                     c1 = m_vert[P1].m_color;
-                    vec4 res = c0 + ((c1 - c0) * vert_list[k].m4);
+                    vec4 res = c0 + ((c1 - c0) * std::get<3>(vert_list[k]));
                     SetCurVertColor(res);
 #else
                     if (mesh_id == 0)
@@ -121,9 +121,9 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
                 }
                 for (int k = 0; k < tri_list.count(); k++)
                 {
-                    int P0 = (tri_list[k].m2 < 3) ? (m_indices[i + tri_list[k].m2]) : (base_idx + (tri_list[k].m2 - 3));
-                    int P1 = (tri_list[k].m3 < 3) ? (m_indices[i + tri_list[k].m3]) : (base_idx + (tri_list[k].m3 - 3));
-                    int P2 = (tri_list[k].m4 < 3) ? (m_indices[i + tri_list[k].m4]) : (base_idx + (tri_list[k].m4 - 3));
+                    int P0 = (std::get<1>(tri_list[k]) < 3) ? (m_indices[i + std::get<1>(tri_list[k])]) : (base_idx + (std::get<1>(tri_list[k]) - 3));
+                    int P1 = (std::get<2>(tri_list[k]) < 3) ? (m_indices[i + std::get<2>(tri_list[k])]) : (base_idx + (std::get<2>(tri_list[k]) - 3));
+                    int P2 = (std::get<3>(tri_list[k]) < 3) ? (m_indices[i + std::get<3>(tri_list[k])]) : (base_idx + (std::get<3>(tri_list[k]) - 3));
                     AddTriangle(P0, P1, P2, 0);
                 }
 #endif
@@ -134,29 +134,30 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
             {
                 for (int k = 0; k < tri_list.count(); k++)
                 {
+                    auto const type = std::get<0>(tri_list[k]);
                     int tri_idx = (tri_list.count() == 1) ? (i) : (tri_base_idx + k * 3);
 
                     //Triangle Kill Test
                     if (//csgu : CSGUnion() -> m0_Outside + m1_Outside
-                        (csg_operation == CSGUsage::Union && tri_list[k].m1 == LEAF_BACK) ||
+                        (csg_operation == CSGUsage::Union && type == LEAF_BACK) ||
                         //csgs : CsgSub() -> m0_Outside + m1_Inside-inverted
                         (csg_operation == CSGUsage::Substract &&
-                            ((mesh_id == 0 && tri_list[k].m1 == LEAF_BACK) ||
-                            (mesh_id == 1 && tri_list[k].m1 == LEAF_FRONT))) ||
+                            ((mesh_id == 0 && type == LEAF_BACK) ||
+                            (mesh_id == 1 && type == LEAF_FRONT))) ||
                         //csgs : CsgSubL() -> m0_Outside
                         (csg_operation == CSGUsage::SubstractLoss &&
-                            ((mesh_id == 0 && tri_list[k].m1 == LEAF_BACK) || mesh_id == 1)) ||
+                            ((mesh_id == 0 && type == LEAF_BACK) || mesh_id == 1)) ||
                         //csga : CSGAnd() -> m0_Inside + m1_Inside
-                        (csg_operation == CSGUsage::And && tri_list[k].m1 == LEAF_FRONT))
+                        (csg_operation == CSGUsage::And && type == LEAF_FRONT))
                     {
                         triangle_to_kill.push(tri_idx);
                     }
 
                     //Triangle Invert Test
                     if (//csgs : CsgSub() -> m0_Outside + m1_Inside-inverted
-                        (csg_operation == CSGUsage::Substract && mesh_id == 1 && tri_list[k].m1 == LEAF_BACK) ||
+                        (csg_operation == CSGUsage::Substract && mesh_id == 1 && type == LEAF_BACK) ||
                         //csgx : CSGXor() -> m0_Outside/m0_Inside-inverted + m1_Outside/m1_Inside-inverted
-                        (csg_operation == CSGUsage::Xor && tri_list[k].m1 == LEAF_BACK))
+                        (csg_operation == CSGUsage::Xor && type == LEAF_BACK))
                     {
                         //a Xor means we will share vertices with the outside, so duplicate the vertices.
                         //TODO : This operation disconnect all triangle, in some cases, not a good thing.
@@ -209,8 +210,8 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
     for (int i = triangle_to_kill.count() - 1; i >= 0; i--)
         m_indices.remove(triangle_to_kill[i], 3);
 
-    m_cursors.last().m1 = m_vert.count();
-    m_cursors.last().m2 = m_indices.count();
+    std::get<0>(m_cursors.last()) = m_vert.count();
+    std::get<1>(m_cursors.last()) = m_indices.count();
 
     VerticesCleanup();
     //DONE for the splitting !

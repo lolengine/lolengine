@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -94,10 +94,10 @@ void D3d9Input::tick_game(float seconds)
     for (int i = 0; i < m_data->m_joysticks.count(); i++)
     {
         XINPUT_STATE state;
-        if (XInputGetState(m_data->m_joysticks[i].m1, &state) != ERROR_SUCCESS)
+        if (XInputGetState(std::get<0>(m_data->m_joysticks[i]), &state) != ERROR_SUCCESS)
             continue;
 
-        auto stick = m_data->m_joysticks[i].m2;
+        auto stick = std::get<1>(m_data->m_joysticks[i]);
         stick->internal_begin_frame();
         stick->internal_set_axis(input::axis::LeftX, state.Gamepad.sThumbLX / 32768.f);
         stick->internal_set_axis(input::axis::LeftY, -state.Gamepad.sThumbLY / 32768.f);
@@ -114,7 +114,7 @@ void D3d9Input::tick_game(float seconds)
 
             int key_index = (1 << b) > XINPUT_GAMEPAD_RIGHT_SHOULDER ? b - 2 : b;
 
-            m_data->m_joysticks[i].m2->internal_set_button((input::button)key_index, ((uint16_t)(state.Gamepad.wButtons) >> b) & 1);
+            std::get<1>(m_data->m_joysticks[i])->internal_set_button((input::button)key_index, ((uint16_t)(state.Gamepad.wButtons) >> b) & 1);
         }
     }
 #endif
