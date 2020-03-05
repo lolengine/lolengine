@@ -81,19 +81,23 @@ void Draw(Quadtree<TE>* tree, vec4 color)
     //vec3 add = vec3(0.0f, 0.1f, 0.0f);
     while (boxes.count() > 0)
     {
-        Debug::DrawBox(vec3(boxes[0].m1.aa.x, tree->m_debug_y_offset, boxes[0].m1.aa.y),
-                       vec3(boxes[0].m1.bb.x, tree->m_debug_y_offset, boxes[0].m1.bb.y),
-                       boxes[0].m2);
+        auto const &box = std::get<0>(boxes[0]);
+        auto const &col = std::get<1>(boxes[0]);
+        Debug::DrawBox(vec3(box.aa.x, tree->m_debug_y_offset, box.aa.y),
+                       vec3(box.bb.x, tree->m_debug_y_offset, box.bb.y),
+                       col);
         boxes.remove(0);
     }
     while (elements.count() > 0)
     {
-        while (elements[0].m2 > 0)
+        auto const *e = std::get<0>(elements[0]);
+        int shadow = std::get<1>(elements[0]);
+        while (shadow)
         {
-            Debug::DrawBox(vec3(elements[0].m1->GetAABB().aa.x, tree->m_debug_y_offset, elements[0].m1->GetAABB().aa.y) + off * (float)elements[0].m2,
-                           vec3(elements[0].m1->GetAABB().bb.x, tree->m_debug_y_offset, elements[0].m1->GetAABB().bb.y) + off * (float)elements[0].m2,
+            Debug::DrawBox(vec3(e->GetAABB().aa.x, tree->m_debug_y_offset, e->GetAABB().aa.y) + off * (float)shadow,
+                           vec3(e->GetAABB().bb.x, tree->m_debug_y_offset, e->GetAABB().bb.y) + off * (float)shadow,
                            elements[0].m3);
-            elements[0].m2--;
+            --shadow;
         }
         elements.remove(0);
     }
@@ -112,21 +116,25 @@ void Draw(Octree<TE>* tree, vec4 color)
     //vec3 add = vec3(0.0f, 0.1f, 0.0f);
     while (boxes.count() > 0)
     {
-        //float size = boxes[0].m1.bb.x - boxes[0].m1.aa.x;
-        Debug::DrawBox(vec3(boxes[0].m1.aa.x, boxes[0].m1.aa.y, boxes[0].m1.aa.z) /* + off * (m_size.x / size) */,
-                        vec3(boxes[0].m1.bb.x, boxes[0].m1.bb.y, boxes[0].m1.bb.z) /* + off * (m_size.x / size) */,
-                        boxes[0].m2);
+        auto const &box = std::get<0>(boxes[0]);
+        auto const &col = std::get<1>(boxes[0]);
+        //float size = box.bb.x - box.aa.x;
+        Debug::DrawBox(box.aa, /* + off * (m_size.x / size) */
+                       box.bb, /* + off * (m_size.x / size) */
+                       col);
         //off += add;
         boxes.remove(0);
     }
     while (elements.count() > 0)
     {
-        while (elements[0].m2 > 0)
+        auto const *e = std::get<0>(elements[0]);
+        int shadow = std::get<1>(elements[0]);
+        while (shadow)
         {
-            Debug::DrawBox(vec3(elements[0].m1->GetAABB().aa.x, elements[0].m1->GetAABB().aa.y, elements[0].m1->GetAABB().aa.z) + off * (float)elements[0].m2,
-                            vec3(elements[0].m1->GetAABB().bb.x, elements[0].m1->GetAABB().bb.y, elements[0].m1->GetAABB().bb.z) + off * (float)elements[0].m2,
+            Debug::DrawBox(e->GetAABB().aa + off * (float)shadow,
+                           e->GetAABB().bb + off * (float)shadow,
                             elements[0].m3);
-            elements[0].m2--;
+            --shadow;
         }
         elements.remove(0);
     }
