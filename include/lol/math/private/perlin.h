@@ -14,6 +14,7 @@
 
 #pragma once
 
+#include <lol/math/functions.h> // for clamp()
 #include "gradient.h"
 
 #include <cmath> // std::sqrt

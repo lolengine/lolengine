@@ -19,14 +19,13 @@
 //
 
 #include <lol/base/enum.h>
+#include <lol/math/functions.h> // distance, clamp…
 #include <lol/math/vector.h>    // vec_t
 #include <lol/math/transform.h> // mat_t
-#include <../legacy/lol/math/functions.h> // distance, clamp…
 
 #include <algorithm>
 #include <map>
 #include <cmath>    // std::fabs
-#include <cstdio>
 #include <stdint.h>
 
 namespace lol

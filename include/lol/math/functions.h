@@ -14,11 +14,10 @@
 
 //
 // Various maths functions
-// -----------------------
+// ———————————————————————
 //
 
 #include <lol/math/constants.h>
-#include <../legacy/lol/base/types.h> // ldouble
 
 #include <cmath>
 #include <cstdio>
@@ -27,12 +26,15 @@
 
 #include <stdint.h>
 
+#if _MSC_VER
+#   pragma push_macro("min")
+#   pragma push_macro("max")
+#   undef min
+#   undef max
+#endif
+
 namespace lol
 {
-
-// This is OUR namespace. Don't let Windows headers mess with it.
-#undef min
-#undef max
 
 // Macros for type traits
 #define LOL_T_ARITHMETIC typename std::enable_if<std::is_arithmetic<T>::value, T>::type
@@ -77,14 +79,6 @@ LOL_FORWARD_FP_1_ARG(floor)
 LOL_FORWARD_FP_1_ARG(ceil)
 LOL_FORWARD_FP_1_ARG(round)
 
-// Our extensions
-template<typename T, typename T2 = LOL_T_FLOATING_POINT>
-[[nodiscard]] static inline T2 sincos(T x, T *s, T *c)
-{
-    *s = std::sin(x);
-    *c = std::cos(x);
-}
-
 // Inherited from GLSL
 [[nodiscard]] static inline float degrees(float radians)
 {
@@ -96,7 +90,7 @@ template<typename T, typename T2 = LOL_T_FLOATING_POINT>
     return radians * (180.0 / D_PI);
 }
 
-[[nodiscard]] static inline ldouble degrees(ldouble radians)
+[[nodiscard]] static inline long double degrees(long double radians)
 {
     return radians * (180.0L / LD_PI);
 }
@@ -111,31 +105,12 @@ template<typename T, typename T2 = LOL_T_FLOATING_POINT>
     return degrees * (D_PI / 180.0);
 }
 
-[[nodiscard]] static inline ldouble radians(ldouble degrees)
+[[nodiscard]] static inline long double radians(long double degrees)
 {
     return degrees * (LD_PI / 180.0L);
 }
 
-// The integer versions return floating point values. This avoids nasty
-// surprises when calling radians(180) instead of radians(180.0).
-[[nodiscard]] static inline float   degrees(int8_t x)   { return degrees(float(x)); }
-[[nodiscard]] static inline float   degrees(uint8_t x)  { return degrees(float(x)); }
-[[nodiscard]] static inline float   degrees(int16_t x)  { return degrees(float(x)); }
-[[nodiscard]] static inline float   degrees(uint16_t x) { return degrees(float(x)); }
-[[nodiscard]] static inline double  degrees(int32_t x)  { return degrees(double(x)); }
-[[nodiscard]] static inline double  degrees(uint32_t x) { return degrees(double(x)); }
-[[nodiscard]] static inline ldouble degrees(int64_t x)  { return degrees(ldouble(x)); }
-[[nodiscard]] static inline ldouble degrees(uint64_t x) { return degrees(ldouble(x)); }
-
-[[nodiscard]] static inline float   radians(int8_t x)   { return radians(float(x)); }
-[[nodiscard]] static inline float   radians(uint8_t x)  { return radians(float(x)); }
-[[nodiscard]] static inline float   radians(int16_t x)  { return radians(float(x)); }
-[[nodiscard]] static inline float   radians(uint16_t x) { return radians(float(x)); }
-[[nodiscard]] static inline double  radians(int32_t x)  { return radians(double(x)); }
-[[nodiscard]] static inline double  radians(uint32_t x) { return radians(double(x)); }
-[[nodiscard]] static inline ldouble radians(int64_t x)  { return radians(ldouble(x)); }
-[[nodiscard]] static inline ldouble radians(uint64_t x) { return radians(ldouble(x)); }
-
+// Interpolation
 template<typename T, typename T2 = LOL_T_FLOATING_POINT>
 [[nodiscard]] static inline T2 mix(T a, T b, T x)
 {
@@ -182,5 +157,9 @@ template<typename T, typename T2 = LOL_T_SIGNED>
 template<typename T, typename T2 = T, typename DUMMY = LOL_T_UNSIGNED>
 [[nodiscard]] static inline T2 sign(T x) { return (T)((T)0 < x); }
 
-} /* namespace lol */
+} // namespace lol
 
+#if _MSC_VER
+#   pragma pop_macro("min")
+#   pragma pop_macro("max")
+#endif

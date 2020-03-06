@@ -3,7 +3,6 @@
 
     src/lol/base/types.h (vec_t shortcuts eg. vec2, ivec2, u8vec3 etc.)
     src/lol/math/constants.h
-    src/lol/math/functions.h
 
 
 ## headers we could clean up and keep

@@ -22,7 +22,7 @@
 #include <stdint.h> // uint32_t etc.
 
 // FIXME: get rid of this
-#include <../legacy/lol/math/functions.h>
+#include <lol/math/functions.h>
 
 namespace lol
 {

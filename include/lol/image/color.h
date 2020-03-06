@@ -18,7 +18,7 @@
 // Provides various color conversion routines.
 //
 
-#include <../legacy/lol/math/functions.h> // FIXME: try to remove this
+#include <lol/math/functions.h> // FIXME: try to remove this
 #include <lol/math/vector.h>    // vec_t
 #include <lol/math/transform.h> // mat_t
 
