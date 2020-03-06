@@ -16,7 +16,7 @@
 //
 // The map utilities
 // —————————————————
-// Contains some utilities to work with std::map objects.
+// Contains some utilities to work with std::map and std::vector objects.
 //
 
 #include <vector>
@@ -49,6 +49,18 @@ static inline std::vector<typename T::key_type> keys(T const &m)
     for (auto const &it : m)
         ret.push_back(it.first);
     return ret;
+}
+
+template <typename T>
+static inline auto remove_at(std::vector<T> &v, size_t i)
+{
+    return v.erase(v.begin() + i);
+}
+
+template <typename T>
+static inline auto remove_item(std::vector<T> &v, T const &x)
+{
+    return v.erase(std::remove(v.begin(), v.end(), x), v.end());
 }
 
 } /* namespace lol */
