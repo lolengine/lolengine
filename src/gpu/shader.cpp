@@ -465,24 +465,24 @@ void Shader::SetUniform(ShaderUniform const &uni, TextureUniform tex, int index)
  * Uniform setters for arrays
  */
 
-void Shader::SetUniform(ShaderUniform const &uni, array<float> const &v)
+void Shader::SetUniform(ShaderUniform const &uni, std::vector<float> const &v)
 {
-    glUniform1fv((GLint)uni.frag, (GLsizei)v.count(), &v[0]);
+    glUniform1fv((GLint)uni.frag, (GLsizei)v.size(), &v[0]);
 }
 
-void Shader::SetUniform(ShaderUniform const &uni, array<vec2> const &v)
+void Shader::SetUniform(ShaderUniform const &uni, std::vector<vec2> const &v)
 {
-    glUniform2fv((GLint)uni.frag, (GLsizei)v.count(), &v[0][0]);
+    glUniform2fv((GLint)uni.frag, (GLsizei)v.size(), &v[0][0]);
 }
 
-void Shader::SetUniform(ShaderUniform const &uni, array<vec3> const &v)
+void Shader::SetUniform(ShaderUniform const &uni, std::vector<vec3> const &v)
 {
-    glUniform3fv((GLint)uni.frag, (GLsizei)v.count(), &v[0][0]);
+    glUniform3fv((GLint)uni.frag, (GLsizei)v.size(), &v[0][0]);
 }
 
-void Shader::SetUniform(ShaderUniform const &uni, array<vec4> const &v)
+void Shader::SetUniform(ShaderUniform const &uni, std::vector<vec4> const &v)
 {
-    glUniform4fv((GLint)uni.frag, (GLsizei)v.count(), &v[0][0]);
+    glUniform4fv((GLint)uni.frag, (GLsizei)v.size(), &v[0][0]);
 }
 
 void Shader::Bind() const
@@ -892,10 +892,13 @@ ShaderBuilder& ShaderBuilder::operator<<(const ShaderProgram program)
 }
 
 //----
-ShaderBuilder& ShaderBuilder::operator<<(ShaderBlock* block)
+ShaderBuilder& ShaderBuilder::operator<<(ShaderBlock* new_block)
 {
     ASSERT(m_current_program != ShaderProgram::MAX);
-    m_blocks[m_current_program.ToScalar()].push_unique(block);
+    for (auto const block : m_blocks[m_current_program.ToScalar()])
+        if (block == new_block)
+            return *this;
+    m_blocks[m_current_program.ToScalar()].push_back(new_block);
     return *this;
 }
 
@@ -903,7 +906,7 @@ ShaderBuilder& ShaderBuilder::operator<<(ShaderBlock* block)
 ShaderBuilder& ShaderBuilder::operator<<(ShaderBlock const& block)
 {
     ASSERT(m_current_program != ShaderProgram::MAX);
-    m_blocks[m_current_program.ToScalar()].push_unique(new ShaderBlock(block));
+    m_blocks[m_current_program.ToScalar()].push_back(new ShaderBlock(block));
     return *this;
 }
 
@@ -976,8 +979,8 @@ std::string ShaderBuilder::Build()
 
         //Merge all variables
         for (int var = 0; var < ShaderVariable::MAX; var++)
-            for (int block = 0; block < m_blocks[prog].count(); block++)
-                MergeParameters(m_blocks[prog][block]->m_parameters[var], m_parameters[prog][var]);
+            for (auto *block : m_blocks[prog])
+                MergeParameters(block->m_parameters[var], m_parameters[prog][var]);
 
         //Actually write code
         code += Shader::GetProgramQualifier((ShaderProgram)prog) + "\n";
@@ -1007,19 +1010,19 @@ std::string ShaderBuilder::Build()
         code += "\n";
 
         //Build Blocks code and add it
-        array<std::string> calls;
-        for (int block = 0; block < m_blocks[prog].count(); block++)
+        std::vector<std::string> calls;
+        for (auto *block : m_blocks[prog])
         {
             std::string call;
             std::string function;
-            m_blocks[prog][block]->Build(ShaderProgram(prog), call, function);
-            calls << call;
-            if (m_blocks[prog][block]->m_code_custom.length())
+            block->Build(ShaderProgram(prog), call, function);
+            calls.push_back(call);
+            if (block->m_code_custom.length())
             {
-                code += std::string("//- ") + m_blocks[prog][block]->GetName() + " custom code ----\n";
-                code += m_blocks[prog][block]->m_code_custom + "\n\n";
+                code += std::string("//- ") + block->GetName() + " custom code ----\n";
+                code += block->m_code_custom + "\n\n";
             }
-            code += std::string("//- ") + m_blocks[prog][block]->GetName() + " main code ----\n";
+            code += std::string("//- ") + block->GetName() + " main code ----\n";
             code += function + "\n\n";
         }
 

@@ -18,6 +18,7 @@
 //
 
 #include <string>   // std::string
+#include <vector>   // std::vector
 #include <map>      // std::map
 #include <stdint.h> // int64_t
 
@@ -105,11 +106,11 @@ public:
     void Close();
 
 private:
-    bool GetContent(array<std::string>* files, array<Directory>* directories);
+    bool GetContent(std::vector<std::string>* files, std::vector<Directory>* directories);
 public:
-    bool GetContent(array<std::string>& files, array<Directory>& directories);
-    bool GetContent(array<Directory>& directories);
-    bool GetContent(array<std::string>& files);
+    bool GetContent(std::vector<std::string>& files, std::vector<Directory>& directories);
+    bool GetContent(std::vector<Directory>& directories);
+    bool GetContent(std::vector<std::string>& files);
     std::string GetName();
     long int GetModificationTime();
 

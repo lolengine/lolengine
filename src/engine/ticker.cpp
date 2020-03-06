@@ -12,6 +12,7 @@
 
 #include <lol/engine-internal.h>
 
+#include <unordered_set> // std::unordered_set
 #include <cstdlib>
 #include <functional>
 #include <stdint.h>
@@ -492,7 +493,7 @@ void ticker_data::collect_garbage()
     /* Garbage collect objects that can be destroyed. We can do this
      * before inserting awaiting objects, because only objects already
      * in the tick lists can be marked for destruction. */
-    array<entity*> destroy_list;
+    std::unordered_set<entity*> destroy_list;
     for (int g = 0; g < (int)tickable::group::all::end; ++g)
     {
         for (int i = DEPRECATED_m_list[g].count(); i--;)
@@ -528,15 +529,14 @@ void ticker_data::collect_garbage()
                 }
             }
 
-            destroy_list.push_unique(e);
+            destroy_list.insert(e);
         }
     }
 
-    if (!!destroy_list.count())
+    for (entity* e : destroy_list)
     {
-        DEPRECATED_nentities -= destroy_list.count();
-        for (entity* e : destroy_list)
-            delete e;
+        delete e;
+        --DEPRECATED_nentities;
     }
 }
 

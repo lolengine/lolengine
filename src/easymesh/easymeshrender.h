@@ -132,10 +132,10 @@ private:
     array<std::shared_ptr<GpuShaderData>> m_gpudata;
     //uint16_t are the vdecl/vbo flags to avoid copy same vdecl several times.
     array<uint16_t, std::shared_ptr<VertexDeclaration>, std::shared_ptr<VertexBuffer>> m_vdata;
-    int m_vertexcount;
+    size_t m_vertexcount;
     //We only need only one ibo for the whole mesh
     std::shared_ptr<IndexBuffer> m_ibo;
-    int m_indexcount;
+    size_t m_indexcount;
 };
 
 } /* namespace lol */

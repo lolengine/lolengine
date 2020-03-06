@@ -223,15 +223,6 @@ public:
         *this << x;
     }
 
-    inline bool push_unique(T const &x)
-    {
-        if (find(x) != INDEX_NONE)
-            return false;
-
-        push(x);
-        return true;
-    }
-
     inline void insert(T const &x, ptrdiff_t pos)
     {
         assert(pos >= 0 && pos <= m_count);

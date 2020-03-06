@@ -47,8 +47,6 @@ static bool RegisterAllCodecs(array<ResourceCodec *> &codeclist)
 #if defined LOL_USE_IMLIB2
     REGISTER_IMAGE_CODEC(Imlib2ImageCodec)
 #endif
-    REGISTER_IMAGE_CODEC(ZedImageCodec)
-    REGISTER_IMAGE_CODEC(ZedPaletteImageCodec)
     REGISTER_IMAGE_CODEC(OricImageCodec)
 
     REGISTER_IMAGE_CODEC(DummyImageCodec)

@@ -30,6 +30,8 @@
 */
 #include "textureimage.h"
 
+#include <vector> // std::vector
+
 namespace lol
 {
 
@@ -43,7 +45,7 @@ class TileSet : public TextureImage
 public:
     static TileSet *create(std::string const &path);
     static TileSet *create(std::string const &path, image* img);
-    static TileSet *create(std::string const &path, image* img, array<ivec2, ivec2>& tiles);
+    static TileSet *create(std::string const &path, image* img, std::vector<ibox2>& tiles);
 
     /* Old style: path to PNG file */
     static TileSet *create(std::string const &path, ivec2 size, ivec2 count);
@@ -69,8 +71,7 @@ public:
     void clear_all();
     int define_tile(ibox2 rect);
     void define_tile(ivec2 count);
-    void define_tile(array<ibox2>& tiles);
-    void define_tile(array<ivec2, ivec2>& tiles);
+    void define_tiles_by_box(std::vector<ibox2>& tiles);
     int GetTileCount() const;
     ivec2 GetTileSize(int tileid) const;
     ibox2 GetTilePixel(int tileid) const;

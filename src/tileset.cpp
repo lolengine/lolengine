@@ -41,7 +41,7 @@ class TileSetData
 
 protected:
     /* Pixels, then texture coordinates */
-    array<ibox2, box2> m_tiles;
+    std::vector<std::tuple<ibox2, box2>> m_tiles;
     ivec2 m_tile_size;
 };
 
@@ -61,13 +61,13 @@ TileSet *TileSet::create(std::string const &path, image* img)
     return ret ? ret : tileset_cache.set(path, new TileSet(path, img));
 }
 
-TileSet *TileSet::create(std::string const &path, image* img, array<ivec2, ivec2>& tiles)
+TileSet *TileSet::create(std::string const &path, image* img, std::vector<ibox2>& tiles)
 {
     auto ret = tileset_cache.get(path);
     if (!ret)
     {
         ret = tileset_cache.set(path, new TileSet(path, img));
-        ret->define_tile(tiles);
+        ret->define_tiles_by_box(tiles);
     }
     return ret;
 }
@@ -163,7 +163,7 @@ void TileSet::Init(std::string const &path, ResourceCodecData* loaded_data)
     auto tileset_data = dynamic_cast<ResourceTilesetData*>(loaded_data);
     if (tileset_data != nullptr)
     {
-        define_tile(tileset_data->m_tiles);
+        define_tiles_by_box(tileset_data->m_tiles);
     }
 
     m_data->m_name = "<tileset> " + path;
@@ -192,10 +192,10 @@ void TileSet::clear_all()
 
 int TileSet::define_tile(ibox2 rect)
 {
-    m_tileset_data->m_tiles.push(rect,
+    m_tileset_data->m_tiles.push_back(std::make_tuple(rect,
              box2((vec2)rect.aa / (vec2)m_data->m_texture_size,
-                  (vec2)rect.bb / (vec2)m_data->m_texture_size));
-    return m_tileset_data->m_tiles.count() - 1;
+                  (vec2)rect.bb / (vec2)m_data->m_texture_size)));
+    return int(m_tileset_data->m_tiles.size()) - 1;
 }
 
 void TileSet::define_tile(ivec2 count)
@@ -210,25 +210,15 @@ void TileSet::define_tile(ivec2 count)
     }
 }
 
-void TileSet::define_tile(array<ibox2>& tiles)
+void TileSet::define_tiles_by_box(std::vector<ibox2>& tiles)
 {
-    for (int i = 0; i < tiles.count(); i++)
-        define_tile(tiles[i]);
-}
-
-void TileSet::define_tile(array<ivec2, ivec2>& tiles)
-{
-    for (int i = 0; i < tiles.count(); i++)
-    {
-        auto const &a = std::get<0>(tiles[i]);
-        auto const &b = std::get<1>(tiles[i]);
-        define_tile(ibox2(a, a + b));
-    }
+    for (auto const &t : tiles)
+        define_tile(t);
 }
 
 int TileSet::GetTileCount() const
 {
-    return m_tileset_data->m_tiles.count();
+    return int(m_tileset_data->m_tiles.size());
 }
 
 ivec2 TileSet::GetTileSize(int tileid) const

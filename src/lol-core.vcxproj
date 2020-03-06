@@ -148,8 +148,6 @@
     </ClCompile>
     <ClCompile Include="image\codec\oric-image.cpp" />
     <ClCompile Include="image\codec\sdl-image.cpp" />
-    <ClCompile Include="image\codec\zed-image.cpp" />
-    <ClCompile Include="image\codec\zed-palette-image.cpp" />
     <ClCompile Include="image\filter\colors.cpp" />
     <ClCompile Include="image\filter\convolution.cpp" />
     <ClCompile Include="image\filter\dilate.cpp" />

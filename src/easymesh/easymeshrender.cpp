@@ -193,17 +193,24 @@ void DefaultShaderData::SetupShaderDatas(mat4 const &model)
     mat4 modelview = view * model;
     mat3 normalmat = transpose(inverse(mat3(modelview)));
     /* FIXME: this should be hidden in the shader */
-    array<Light *> const &lights = scene.GetLights();
-    array<vec4> light_data;
+    std::vector<Light *> const &lights = scene.GetLights();
+    std::vector<vec4> light_data;
     //This is not very nice, but necessary for emscripten WebGL generation.
     float f = 0.f;
 
     /* FIXME: the 4th component of the position can be used for other things */
     /* FIXME: GetUniform("blabla") is costly */
-    for (int i = 0; i < lights.count(); ++i)
-        light_data << vec4(lights[i]->GetPosition(), (float)lights[i]->GetType()) << lights[i]->GetColor();
-    while (light_data.count() < LOL_MAX_LIGHT_COUNT)
-        light_data << vec4::zero << vec4::zero;
+    for (auto *l : lights)
+    {
+        light_data.push_back(vec4(l->GetPosition(), (float)l->GetType()));
+        light_data.push_back(l->GetColor());
+    }
+
+    while (light_data.size() < LOL_MAX_LIGHT_COUNT)
+    {
+        light_data.push_back(vec4::zero);
+        light_data.push_back(vec4::zero);
+    }
 
     int i = 0;
     m_shader->SetUniform(*GetUniform(DefaultUniforms[i++]), light_data);
@@ -262,18 +269,18 @@ void GpuEasyMeshData::AddGpuData(std::shared_ptr<GpuShaderData> gpudata, std::sh
 
     if (!m_ibo)
     {
-        array<uint16_t> indexlist;
+        std::vector<uint16_t> indexlist;
         for (int i = 0; i < src_mesh->m_indices.count(); i += 3)
         {
-            indexlist << src_mesh->m_indices[i + 0];
-            indexlist << src_mesh->m_indices[i + 1];
-            indexlist << src_mesh->m_indices[i + 2];
+            indexlist.push_back(src_mesh->m_indices[i + 0]);
+            indexlist.push_back(src_mesh->m_indices[i + 1]);
+            indexlist.push_back(src_mesh->m_indices[i + 2]);
         }
 
-        m_ibo = std::make_shared<IndexBuffer>(indexlist.bytes());
-        m_ibo->set_data(indexlist.data(), indexlist.bytes());
+        m_ibo = std::make_shared<IndexBuffer>(indexlist.size() * sizeof(indexlist[0]));
+        m_ibo->set_data(indexlist.data(), indexlist.size() * sizeof(indexlist[0]));
 
-        m_indexcount = indexlist.count();
+        m_indexcount = indexlist.size();
     }
 
     //init to a minimum of gpudata->m_render_mode size
@@ -302,8 +309,8 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, std::shared_ptr<EasyMesh>
 
 #define COPY_VBO \
     vbo_data = &vertexlist[0]; \
-    vbo_bytes = vertexlist.bytes(); \
-    m_vertexcount = vertexlist.count(); \
+    vbo_bytes = vertexlist.size() * sizeof(vertexlist[0]); \
+    m_vertexcount = vertexlist.size(); \
     new_vbo = std::make_shared<VertexBuffer>(vbo_bytes); \
     new_vbo->set_data(vbo_data, vbo_bytes);
 
@@ -326,12 +333,13 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, std::shared_ptr<EasyMesh>
                           VertexUsage::Color,
                           VertexUsage::TexCoord));
 
-        array<vec3, vec3, u8vec4, vec4> vertexlist;
+        std::vector<std::tuple<vec3, vec3, u8vec4, vec4>> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.count(); i++)
-            vertexlist.push(src_mesh->m_vert[i].m_coord,
-                            src_mesh->m_vert[i].m_normal,
-                            (u8vec4)(src_mesh->m_vert[i].m_color * 255.f),
-                            src_mesh->m_vert[i].m_texcoord);
+            vertexlist.push_back(std::make_tuple(
+                src_mesh->m_vert[i].m_coord,
+                src_mesh->m_vert[i].m_normal,
+                (u8vec4)(src_mesh->m_vert[i].m_color * 255.f),
+                src_mesh->m_vert[i].m_texcoord));
         COPY_VBO;
     }
     else if (flagnb == 4 && has_position && has_normal && has_color && has_texcoord)
@@ -343,21 +351,25 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, std::shared_ptr<EasyMesh>
                           VertexUsage::Color,
                           VertexUsage::TexCoord));
 
-        array<vec3, vec3, u8vec4, vec2> vertexlist;
+        std::vector<std::tuple<vec3, vec3, u8vec4, vec2>> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.count(); i++)
-            vertexlist.push(src_mesh->m_vert[i].m_coord,
-                            src_mesh->m_vert[i].m_normal,
-                            (u8vec4)(src_mesh->m_vert[i].m_color * 255.f),
-                            src_mesh->m_vert[i].m_texcoord.xy);
+            vertexlist.push_back(std::make_tuple(
+                src_mesh->m_vert[i].m_coord,
+                src_mesh->m_vert[i].m_normal,
+                u8vec4(src_mesh->m_vert[i].m_color * 255.f),
+                vec2(src_mesh->m_vert[i].m_texcoord.xy)));
         COPY_VBO;
     }
     else if (flagnb == 4 && has_position && has_color && has_texcoord && has_texcoordExt)
     {
         new_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec3,vec4,vec4>(VertexUsage::Position, VertexUsage::Color, VertexUsage::TexCoord));
 
-        array<vec3, vec4, vec4> vertexlist;
+        std::vector<std::tuple<vec3, vec4, vec4>> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.count(); i++)
-            vertexlist.push(src_mesh->m_vert[i].m_coord, src_mesh->m_vert[i].m_color, src_mesh->m_vert[i].m_texcoord);
+            vertexlist.push_back(std::make_tuple(
+                src_mesh->m_vert[i].m_coord,
+                src_mesh->m_vert[i].m_color,
+                src_mesh->m_vert[i].m_texcoord));
         COPY_VBO;
     }
     else if (flagnb == 3 && has_position && has_normal && has_color)
@@ -368,38 +380,45 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, std::shared_ptr<EasyMesh>
                           VertexUsage::Normal,
                           VertexUsage::Color));
 
-        array<vec3,vec3,u8vec4> vertexlist;
+        std::vector<std::tuple<vec3,vec3,u8vec4>> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.count(); i++)
-            vertexlist.push(src_mesh->m_vert[i].m_coord,
-                            src_mesh->m_vert[i].m_normal,
-                            (u8vec4)(src_mesh->m_vert[i].m_color * 255.f));
+            vertexlist.push_back(std::make_tuple(
+                src_mesh->m_vert[i].m_coord,
+                src_mesh->m_vert[i].m_normal,
+                (u8vec4)(src_mesh->m_vert[i].m_color * 255.f)));
         COPY_VBO;
     }
     else if (flagnb == 3 && has_position && has_texcoord && has_texcoordExt)
     {
         new_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec3,vec4>(VertexUsage::Position, VertexUsage::TexCoord));
 
-        array<vec3, vec4> vertexlist;
+        std::vector<std::tuple<vec3, vec4>> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.count(); i++)
-            vertexlist.push(src_mesh->m_vert[i].m_coord, src_mesh->m_vert[i].m_texcoord);
+            vertexlist.push_back(std::make_tuple(
+                src_mesh->m_vert[i].m_coord,
+                src_mesh->m_vert[i].m_texcoord));
         COPY_VBO;
     }
     else if (flagnb == 2 && has_position && has_texcoord)
     {
         new_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec3,vec2>(VertexUsage::Position, VertexUsage::TexCoord));
 
-        array<vec3, vec2> vertexlist;
+        std::vector<std::tuple<vec3, vec2>> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.count(); i++)
-            vertexlist.push(src_mesh->m_vert[i].m_coord, src_mesh->m_vert[i].m_texcoord.xy);
+            vertexlist.push_back(std::make_tuple(
+                src_mesh->m_vert[i].m_coord,
+                vec2(src_mesh->m_vert[i].m_texcoord.xy)));
         COPY_VBO;
     }
     else if (flagnb == 2 && has_position && has_color)
     {
         new_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec3,u8vec4>(VertexUsage::Position, VertexUsage::Color));
 
-        array<vec3, u8vec4> vertexlist;
+        std::vector<std::tuple<vec3, u8vec4>> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.count(); i++)
-            vertexlist.push(src_mesh->m_vert[i].m_coord, (u8vec4)(src_mesh->m_vert[i].m_color * 255.f));
+            vertexlist.push_back(std::make_tuple(
+                src_mesh->m_vert[i].m_coord,
+                u8vec4(src_mesh->m_vert[i].m_color * 255.f)));
         COPY_VBO;
     }
     else

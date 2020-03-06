@@ -18,7 +18,7 @@
 //
 
 #include <string>  // std::string
-#include <cstdlib> // std::getenv
+#include <vector>  // std::vector
 
 namespace lol
 {
@@ -54,7 +54,7 @@ extern void init(int argc, char *argv[],
                  std::string const &sourcesubdir = LOL_CONFIG_SOURCESUBDIR);
 
 extern void add_data_dir(std::string const &dir);
-extern array<std::string> get_path_list(std::string const &file);
+extern std::vector<std::string> get_path_list(std::string const &file);
 
 } /* namespace sys */
 

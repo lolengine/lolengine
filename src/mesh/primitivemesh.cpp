@@ -71,15 +71,21 @@ void PrimitiveMesh::Render(Scene& scene, std::shared_ptr<PrimitiveSource> primit
             u_normalmat = shader->GetUniformLocation("u_normalmat");
 
             /* Per-scene environment */
-            array<Light *> const &lights = scene.GetLights();
-            array<vec4> light_data;
+            std::vector<Light *> const &lights = scene.GetLights();
+            std::vector<vec4> light_data;
 
             /* FIXME: the 4th component of the position can be used for other things */
             /* FIXME: GetUniform("blabla") is costly */
             for (auto l : lights)
-                light_data << vec4(l->GetPosition(), (float)l->GetType()) << l->GetColor();
-            while (light_data.count() < LOL_MAX_LIGHT_COUNT)
-                light_data << vec4::zero << vec4::zero;
+            {
+                light_data.push_back(vec4(l->GetPosition(), (float)l->GetType()));
+                light_data.push_back(l->GetColor());
+            }
+            while (light_data.size() < LOL_MAX_LIGHT_COUNT)
+            {
+                light_data.push_back(vec4::zero);
+                light_data.push_back(vec4::zero);
+            }
 
             ShaderUniform u_lights = shader->GetUniformLocation("u_lights");
             shader->SetUniform(u_lights, light_data);

@@ -18,11 +18,13 @@
 // ——————————————————
 //
 
-#include <../legacy/lol/math/arraynd.h>
 #include <lol/math/vector.h>
 #include <../legacy/lol/math/geometry.h>
 #include <lol/image/image.h>
 #include <../legacy/lol/image/pixel.h>
+
+#include <vector> // std::vector
+#include <string> // std::string
 
 namespace lol
 {
@@ -60,7 +62,7 @@ namespace lol
             : ResourceImageData(img)
         { }
 
-        array<ivec2, ivec2> m_tiles;
+        std::vector<ibox2> m_tiles;
     };
 
     //ResourceLoader --------------------------------------------------------------

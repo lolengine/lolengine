@@ -125,12 +125,12 @@ class FileData
 
     std::string ReadString()
     {
-        array<uint8_t> buf;
+        std::vector<uint8_t> buf;
         buf.resize(BUFSIZ);
         std::string ret;
         while (IsValid())
         {
-            int done = Read(&buf[0], buf.count());
+            int done = Read(&buf[0], buf.size());
 
             if (done <= 0)
                 break;
@@ -139,7 +139,7 @@ class FileData
             ret.resize(oldsize + done);
             memcpy(&ret[oldsize], &buf[0], done);
 
-            buf.resize(buf.count() * 3 / 2);
+            buf.resize(buf.size() * 3 / 2);
         }
         return ret;
     }
@@ -393,7 +393,8 @@ class DirectoryData
 #endif
     }
 
-    bool GetContentList(array<std::string>* files, array<std::string>* directories)
+    bool GetContentList(std::vector<std::string>* files,
+                        std::vector<std::string>* directories)
     {
         if (!IsValid())
             return false;
@@ -415,12 +416,12 @@ class DirectoryData
                 if (find_data.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY)
                 {
                     if (directories)
-                        *directories << std::string(find_data.cFileName);
+                        directories->push_back(std::string(find_data.cFileName));
                 }
                 else
                 {
                     if (files)
-                        *files << std::string(find_data.cFileName);
+                        files->push_back(std::string(find_data.cFileName));
                 }
             }
             //Go for next one
@@ -429,7 +430,7 @@ class DirectoryData
 #elif HAVE_STDIO_H
         /* FIXME: not implemented */
 #endif
-        return ((files && files->count()) || (directories && directories->count()));
+        return ((files && !files->empty()) || (directories && !directories->empty()));
     }
 
     inline bool IsValid() const
@@ -536,37 +537,39 @@ void Directory::Close()
 }
 
 //--
-bool Directory::GetContent(array<std::string>* files, array<Directory>* directories)
+bool Directory::GetContent(std::vector<std::string>* files,
+                           std::vector<Directory>* directories)
 {
-    array<std::string> sfiles, sdirectories;
+    std::vector<std::string> sfiles, sdirectories;
     bool found_some = m_data->GetContentList(&sfiles, &sdirectories);
     UNUSED(found_some);
 
     if (directories)
-        for (int i = 0; i < sdirectories.count(); i++)
-            directories->push(Directory(m_name + sdirectories[i]));
+        for (auto const &sdir : sdirectories)
+            directories->push_back(Directory(m_name + sdir));
 
     if (files)
-        for (int i = 0; i < sfiles.count(); i++)
-            files->push(m_name + sfiles[i]);
+        for (auto const &sfile : sfiles)
+            files->push_back(m_name + sfile);
 
-    return (files && files->count()) || (directories || directories->count());
+    return (files && !files->empty()) || (directories && !directories->size());
 }
 
 //--
-bool Directory::GetContent(array<std::string>& files, array<Directory>& directories)
+bool Directory::GetContent(std::vector<std::string>& files,
+                           std::vector<Directory>& directories)
 {
     return GetContent(&files, &directories);
 }
 
 //--
-bool Directory::GetContent(array<Directory>& directories)
+bool Directory::GetContent(std::vector<Directory>& directories)
 {
     return GetContent(nullptr, &directories);
 }
 
 //--
-bool Directory::GetContent(array<std::string>& files)
+bool Directory::GetContent(std::vector<std::string>& files)
 {
     return GetContent(&files, nullptr);
 }

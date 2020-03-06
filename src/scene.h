@@ -18,9 +18,6 @@
 // ---------------
 //
 
-#include <memory>
-#include <stdint.h>
-
 #include "light.h"
 #include "camera.h"
 #include "mesh/mesh.h"
@@ -28,6 +25,10 @@
 #include <lol/gpu/renderer.h>
 #include <lol/gpu/framebuffer.h>
 #include <lol/base/thread.h>
+
+#include <vector>   // std::vector
+#include <memory>   // std::shared_ptr
+#include <stdint.h> // uintptr_t
 
 #define LOL_MAX_LIGHT_COUNT 8
 
@@ -87,7 +88,7 @@ public:
 
     /* TODO: Should that be there or in Video ? */
     static void Add(SceneDisplay* display);
-    static int GetCount();
+    static size_t GetCount();
     static SceneDisplay* GetDisplay(int index = 0);
     static void DestroyAll();
 
@@ -105,7 +106,7 @@ class Scene
     friend class Video;
 
 private:
-    static array<Scene*> g_scenes;
+    static std::vector<Scene*> g_scenes;
 
     Scene(ivec2 size);
     ~Scene();
@@ -117,7 +118,7 @@ private: //Private because I don't know if we should have it
 private:
     static void DestroyAll();
 public:
-    static int GetCount();
+    static size_t GetCount();
     static bool IsReady(int index = 0);
     static Scene& GetScene(int index = 0);
 
@@ -248,7 +249,7 @@ public:
     void AddLine(vec3 a, vec3 b, vec4 color, float duration, uint32_t mask);
 
     void AddLight(Light *light);
-    array<Light *> const &GetLights();
+    std::vector<Light *> const &GetLights();
 
     /* === Render stuff === */
     void SetDisplay(SceneDisplay* display);
@@ -303,12 +304,12 @@ private:
      * - Updated by entity
      * - Marked Fire&Forget
      * - Scene is destroyed */
-    std::map<uintptr_t, array<std::shared_ptr<PrimitiveRenderer>>> m_prim_renderers;
-    static std::map<uintptr_t, array<std::shared_ptr<PrimitiveSource>>> g_prim_sources;
+    std::map<uintptr_t, std::vector<std::shared_ptr<PrimitiveRenderer>>> m_prim_renderers;
+    static std::map<uintptr_t, std::vector<std::shared_ptr<PrimitiveSource>>> g_prim_sources;
     static mutex g_prim_mutex;
 
     Camera *m_default_cam;
-    array<Camera *> m_camera_stack;
+    std::vector<Camera *> m_camera_stack;
 
     struct line
     {
@@ -324,7 +325,7 @@ private:
     {
         //float m_duration, m_segment_size;
         //vec4 m_color;
-        array<line> m_lines;
+        std::vector<line> m_lines;
         int /*m_mask,*/ m_debug_mask;
         std::shared_ptr<Shader> m_shader;
         std::shared_ptr<VertexDeclaration> m_vdecl;
@@ -335,15 +336,15 @@ private:
     struct tile_api
     {
         int m_cam;
-        array<Tile> m_tiles;
-        array<Tile> m_palettes;
-        array<Light *> m_lights;
+        std::vector<Tile> m_tiles;
+        std::vector<Tile> m_palettes;
+        std::vector<Light *> m_lights;
 
         std::shared_ptr<Shader> m_shader;
         std::shared_ptr<Shader> m_palette_shader;
 
         std::shared_ptr<VertexDeclaration> m_vdecl;
-        array<std::shared_ptr<VertexBuffer>> m_bufs;
+        std::vector<std::shared_ptr<VertexBuffer>> m_bufs;
     }
     m_tile_api;
 };

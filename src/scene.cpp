@@ -38,9 +38,9 @@ namespace lol
  * The global g_scenes object, initialised by Video::Init
  */
 
-array<Scene*> Scene::g_scenes;
+std::vector<Scene*> Scene::g_scenes;
 
-static array<SceneDisplay*> g_scene_displays;
+static std::vector<SceneDisplay*> g_scene_displays;
 
 static inline void gpu_marker(char const *message)
 {
@@ -58,18 +58,16 @@ static inline void gpu_marker(char const *message)
 
 void SceneDisplay::Add(SceneDisplay* display)
 {
-    g_scene_displays << display;
+    g_scene_displays.push_back(display);
 }
 
-int SceneDisplay::GetCount()
+size_t SceneDisplay::GetCount()
 {
-    return g_scene_displays.count();
+    return g_scene_displays.size();
 }
 
 SceneDisplay* SceneDisplay::GetDisplay(int index)
 {
-    ASSERT(0 <= index && index < g_scene_displays.count(),
-           "invalid display index %d", index);
     return g_scene_displays[index];
 }
 
@@ -108,7 +106,7 @@ void PrimitiveRenderer::Render(Scene& scene, std::shared_ptr<PrimitiveSource> pr
 
 uint64_t Scene::g_used_id = 1;
 mutex Scene::g_prim_mutex;
-std::map<uintptr_t, array<std::shared_ptr<PrimitiveSource>>> Scene::g_prim_sources;
+std::map<uintptr_t, std::vector<std::shared_ptr<PrimitiveSource>>> Scene::g_prim_sources;
 
 /*
  * Public Scene class
@@ -135,11 +133,11 @@ Scene::Scene(ivec2 size)
     m_pp.m_buffer_uni[1][1] = m_pp.pp_shader->GetUniformLocation("u_prev_buffer");
     m_pp.m_buffer_uni[1][2] = m_pp.pp_shader->GetUniformLocation("u_prev_final");
 
-    array<vec2> quad { vec2( 1.0,  1.0), vec2(-1.0, -1.0), vec2( 1.0, -1.0),
-                       vec2(-1.0, -1.0), vec2( 1.0,  1.0), vec2(-1.0,  1.0), };
+    std::vector<vec2> quad { vec2( 1.0,  1.0), vec2(-1.0, -1.0), vec2( 1.0, -1.0),
+                             vec2(-1.0, -1.0), vec2( 1.0,  1.0), vec2(-1.0,  1.0), };
 
-    m_pp.quad_vbo = std::make_shared<VertexBuffer>(quad.bytes());
-    m_pp.quad_vbo->set_data(quad.data(), quad.bytes());
+    m_pp.quad_vbo = std::make_shared<VertexBuffer>(quad.size() * sizeof(vec2));
+    m_pp.quad_vbo->set_data(quad.data(), quad.size() * sizeof(vec2));
 
     /* Create a default orthographic camera, in case the user doesn’t. */
     m_default_cam = new Camera();
@@ -177,35 +175,36 @@ Scene::~Scene()
 
 void Scene::AddNew(ivec2 size)
 {
-    Scene::g_scenes << new Scene(size);
+    Scene::g_scenes.push_back(new Scene(size));
 }
 
 void Scene::DestroyScene(Scene* scene)
 {
-    Scene::g_scenes.remove_item(scene);
+    remove_item(Scene::g_scenes, scene);
     delete scene;
 }
 
 void Scene::DestroyAll()
 {
-    while (Scene::g_scenes.count())
-        delete Scene::g_scenes.pop();
+    while (Scene::g_scenes.size())
+    {
+        delete Scene::g_scenes.back();
+        Scene::g_scenes.pop_back();
+    }
 }
 
-int Scene::GetCount()
+size_t Scene::GetCount()
 {
-    return g_scenes.count();
+    return g_scenes.size();
 }
 
 bool Scene::IsReady(int index)
 {
-    return 0 <= index && index < g_scenes.count() && !!g_scenes[index];
+    return 0 <= index && index < int(g_scenes.size()) && !!g_scenes[index];
 }
 
 Scene& Scene::GetScene(int index)
 {
-    ASSERT(0 <= index && index < g_scenes.count() && !!g_scenes[index],
-           "Trying to get a non-existent scene %d", index);
     return *g_scenes[index];
 }
 
@@ -221,28 +220,28 @@ bool Scene::IsRelevant(entity* entity)
 
 Camera* Scene::GetCamera(int cam_idx)
 {
-    return (0 <= cam_idx && cam_idx < m_camera_stack.count()) ?
+    return (0 <= cam_idx && cam_idx < int(m_camera_stack.size())) ?
             m_camera_stack[cam_idx] :
-            m_camera_stack.last();
+            m_camera_stack.back();
 }
 
 int Scene::PushCamera(Camera *cam)
 {
     Ticker::Ref(cam);
-    m_camera_stack.push(cam);
-    return (int)m_camera_stack.count() - 1;
+    m_camera_stack.push_back(cam);
+    return int(m_camera_stack.size()) - 1;
 }
 
 void Scene::PopCamera(Camera *cam)
 {
     /* Parse from the end because that’s probably where we’ll find
     * our camera first. */
-    for (int i = m_camera_stack.count(); i--;)
+    for (size_t i = m_camera_stack.size(); i--;)
     {
         if (m_camera_stack[i] == cam)
         {
             Ticker::Unref(cam);
-            m_camera_stack.remove(i);
+            remove_at(m_camera_stack, i);
             return;
         }
     }
@@ -260,7 +259,7 @@ void Scene::Reset()
     /* New scenegraph: Release fire&forget primitives */
     for (uintptr_t key : keys(m_prim_renderers))
     {
-        for (int idx = 0; idx < m_prim_renderers[key].count(); ++idx)
+        for (size_t idx = 0; idx < m_prim_renderers[key].size(); ++idx)
             if (m_prim_renderers[key][idx]->m_fire_and_forget)
                 ReleasePrimitiveRenderer(idx--, key);
     }
@@ -278,7 +277,7 @@ int Scene::HasPrimitiveSource(uintptr_t key)
     int count;
     g_prim_mutex.lock();
     {
-        count = g_prim_sources[key].count();
+        count = int(g_prim_sources[key].size());
     }
     g_prim_mutex.unlock();
     return count;
@@ -289,8 +288,8 @@ int Scene::AddPrimitiveSource(uintptr_t key, std::shared_ptr<PrimitiveSource> so
     int count;
     g_prim_mutex.lock();
     {
-        count = g_prim_sources[key].count();
-        g_prim_sources[key].push(source);
+        count = int(g_prim_sources[key].size());
+        g_prim_sources[key].push_back(source);
     }
     g_prim_mutex.unlock();
     return count;
@@ -306,7 +305,7 @@ void Scene::SetPrimitiveSource(int index, uintptr_t key, std::shared_ptr<Primiti
 
     g_prim_mutex.lock();
     {
-        if (index < g_prim_sources[key].count())
+        if (index < int(g_prim_sources[key].size()))
             old = g_prim_sources[key][index];
         else
             g_prim_sources[key].resize(index + 1);
@@ -320,9 +319,9 @@ void Scene::ReleasePrimitiveSource(int index, uintptr_t key)
     std::shared_ptr<PrimitiveSource> old;
     g_prim_mutex.lock();
     {
-        ASSERT(0 <= index && index < g_prim_sources[key].count());
+        ASSERT(0 <= index && index < int(g_prim_sources[key].size()));
         old = g_prim_sources[key][index];
-        g_prim_sources[key].remove(index);
+        remove_at(g_prim_sources[key], index);
     }
     g_prim_mutex.unlock();
 }
@@ -330,13 +329,13 @@ void Scene::ReleasePrimitiveSource(int index, uintptr_t key)
 void Scene::ReleaseAllPrimitiveSources(uintptr_t key)
 {
     // Delete oldies AFTER having released the lock
-    array<std::shared_ptr<PrimitiveSource>> oldies;
+    std::vector<std::shared_ptr<PrimitiveSource>> oldies;
 
     g_prim_mutex.lock();
     {
-        oldies.reserve(g_prim_sources[key].count());
+        oldies.reserve(g_prim_sources[key].size());
         for (auto source : g_prim_sources[key])
-            oldies << source;
+            oldies.push_back(source);
         g_prim_sources[key].clear();
     }
     g_prim_mutex.unlock();
@@ -348,13 +347,13 @@ void Scene::ReleaseAllPrimitiveSources(uintptr_t key)
 
 int Scene::HasPrimitiveRenderer(uintptr_t key)
 {
-    return m_prim_renderers[key].count();
+    return int(m_prim_renderers[key].size());
 }
 
 void Scene::AddPrimitiveRenderer(uintptr_t key, std::shared_ptr<PrimitiveRenderer> renderer)
 {
     renderer->m_fire_and_forget = true;
-    m_prim_renderers[key].push(renderer);
+    m_prim_renderers[key].push_back(renderer);
 }
 
 void Scene::SetPrimitiveRenderer(int index, uintptr_t key, std::shared_ptr<PrimitiveRenderer> renderer)
@@ -362,16 +361,14 @@ void Scene::SetPrimitiveRenderer(int index, uintptr_t key, std::shared_ptr<Primi
     ASSERT(renderer);
     ASSERT(index >= 0);
 
-    if (index >= m_prim_renderers[key].count())
+    if (index >= int(m_prim_renderers[key].size()))
         m_prim_renderers[key].resize(index + 1);
     m_prim_renderers[key][index] = renderer;
 }
 
 void Scene::ReleasePrimitiveRenderer(int index, uintptr_t key)
 {
-    ASSERT(0 <= index && index < m_prim_renderers[key].count());
-
-    m_prim_renderers[key].remove(index);
+    remove_at(m_prim_renderers[key], index);
 }
 
 void Scene::ReleaseAllPrimitiveRenderers(uintptr_t key)
@@ -403,29 +400,29 @@ void Scene::AddTile(TileSet *tileset, int id, mat4 model)
     t.m_id = id;
 
     if (tileset->GetPalette())
-        m_tile_api.m_palettes.push(t);
+        m_tile_api.m_palettes.push_back(t);
     else
-        m_tile_api.m_tiles.push(t);
+        m_tile_api.m_tiles.push_back(t);
 }
 
 void Scene::AddLine(vec3 a, vec3 b, vec4 col)
 {
     struct line l { a, b, col, -1.f, 0xFFFFFFFF, false, false };
-    m_line_api.m_lines.push(l);
+    m_line_api.m_lines.push_back(l);
 }
 
 void Scene::AddLine(vec3 a, vec3 b, vec4 col, float duration, uint32_t mask)
 {
     struct line l { a, b, col, duration, mask, false, false };
-    m_line_api.m_lines.push(l);
+    m_line_api.m_lines.push_back(l);
 }
 
 void Scene::AddLight(Light *l)
 {
-    m_tile_api.m_lights.push(l);
+    m_tile_api.m_lights.push_back(l);
 }
 
-array<Light *> const &Scene::GetLights()
+std::vector<Light *> const &Scene::GetLights()
 {
     return m_tile_api.m_lights;
 }
@@ -570,11 +567,11 @@ void Scene::render_primitives()
     /* new scenegraph */
     for (uintptr_t key : keys(m_prim_renderers))
     {
-        for (int idx = 0; idx < m_prim_renderers[key].count(); ++idx)
+        for (size_t idx = 0; idx < m_prim_renderers[key].size(); ++idx)
         {
             /* TODO: Not sure if thread compliant */
             std::shared_ptr<PrimitiveSource> source;
-            if (idx < g_prim_sources[key].count())
+            if (idx < g_prim_sources[key].size())
                 source = g_prim_sources[key][idx];
             m_prim_renderers[key][idx]->Render(*this, source);
         }
@@ -586,7 +583,7 @@ void Scene::render_tiles() // XXX: rename to Blit()
     render_context rc(m_renderer);
 
     /* Early test if nothing needs to be rendered */
-    if (!m_tile_api.m_tiles.count() && !m_tile_api.m_palettes.count())
+    if (m_tile_api.m_tiles.empty() && m_tile_api.m_palettes.empty())
         return;
 
     /* FIXME: we disable culling for now because we don’t have a reliable
@@ -600,7 +597,7 @@ void Scene::render_tiles() // XXX: rename to Blit()
 
     if (!m_tile_api.m_shader)
         m_tile_api.m_shader = Shader::Create(LOLFX_RESOURCE_NAME(gpu_tile));
-    if (!m_tile_api.m_palette_shader && m_tile_api.m_palettes.count())
+    if (!m_tile_api.m_palette_shader && !m_tile_api.m_palettes.empty())
         m_tile_api.m_palette_shader = Shader::Create(LOLFX_RESOURCE_NAME(gpu_palette));
 
     for (int p = 0; p < 2; p++)
@@ -608,7 +605,7 @@ void Scene::render_tiles() // XXX: rename to Blit()
         auto shader = (p == 0) ? m_tile_api.m_shader : m_tile_api.m_palette_shader;
         auto &tiles  = (p == 0) ? m_tile_api.m_tiles : m_tile_api.m_palettes;
 
-        if (tiles.count() == 0)
+        if (tiles.empty())
             continue;
 
         ShaderUniform uni_mat, uni_tex, uni_pal, uni_texsize;
@@ -629,10 +626,10 @@ void Scene::render_tiles() // XXX: rename to Blit()
         uni_pal = m_tile_api.m_palette_shader ? m_tile_api.m_palette_shader->GetUniformLocation("u_palette") : ShaderUniform();
         uni_texsize = shader->GetUniformLocation("u_texsize");
 
-        for (int buf = 0, i = 0, n; i < tiles.count(); i = n, buf += 2)
+        for (size_t buf = 0, i = 0, n; i < tiles.size(); i = n, buf += 2)
         {
             /* Count how many quads will be needed */
-            for (n = i + 1; n < tiles.count(); n++)
+            for (n = i + 1; n < tiles.size(); n++)
                 if (tiles[i].m_tileset != tiles[n].m_tileset)
                     break;
 
@@ -642,10 +639,10 @@ void Scene::render_tiles() // XXX: rename to Blit()
             auto vb2 = std::make_shared<VertexBuffer>(6 * (n - i) * sizeof(vec2));
             vec2 *texture = (vec2 *)vb2->lock(0, 0);
 
-            m_tile_api.m_bufs.push(vb1);
-            m_tile_api.m_bufs.push(vb2);
+            m_tile_api.m_bufs.push_back(vb1);
+            m_tile_api.m_bufs.push_back(vb2);
 
-            for (int j = i; j < n; j++)
+            for (size_t j = i; j < n; j++)
             {
                 tiles[i].m_tileset->BlitTile(tiles[j].m_id, tiles[j].m_model,
                                 vertex + 6 * (j - i), texture + 6 * (j - i));
@@ -698,7 +695,7 @@ void Scene::render_lines(float seconds)
 {
     render_context rc(m_renderer);
 
-    if (!m_line_api.m_lines.count())
+    if (m_line_api.m_lines.empty())
         return;
 
     rc.depth_func(DepthFunc::LessOrEqual);
@@ -706,17 +703,17 @@ void Scene::render_lines(float seconds)
     rc.blend_equation(BlendEquation::Add, BlendEquation::Max);
     rc.alpha_func(AlphaFunc::GreaterOrEqual, 0.01f);
 
-    int linecount = (int)m_line_api.m_lines.count();
+    size_t linecount = m_line_api.m_lines.size();
 
     if (!m_line_api.m_shader)
         m_line_api.m_shader = Shader::Create(LOLFX_RESOURCE_NAME(gpu_line));
 
-    array<vec4, vec4, vec4, vec4> buff;
+    std::vector<std::tuple<vec4, vec4, vec4, vec4>> buff;
     buff.resize(linecount);
     int real_linecount = 0;
     mat4 const inv_view_proj = inverse(GetCamera()->GetProjection() * GetCamera()->GetView());
     UNUSED(inv_view_proj);
-    for (int i = 0; i < linecount; i++)
+    for (size_t i = 0; i < linecount; i++)
     {
         if (m_line_api.m_lines[i].mask & m_line_api.m_debug_mask)
         {
@@ -729,12 +726,12 @@ void Scene::render_lines(float seconds)
         m_line_api.m_lines[i].duration -= seconds;
         if (m_line_api.m_lines[i].duration < 0.f)
         {
-            m_line_api.m_lines.remove_swap(i--);
+            remove_at(m_line_api.m_lines, i--);
             linecount--;
         }
     }
-    auto vb = std::make_shared<VertexBuffer>(buff.bytes());
-    vb->set_data(buff.data(), buff.bytes());
+    auto vb = std::make_shared<VertexBuffer>(buff.size() * sizeof(buff[0]));
+    vb->set_data(buff.data(), buff.size() * sizeof(buff[0]));
 
     m_line_api.m_shader->Bind();
 

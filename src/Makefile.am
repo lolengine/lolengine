@@ -110,7 +110,6 @@ liblol_core_sources = \
     image/crop.cpp image/resample.cpp image/noise.cpp image/combine.cpp \
     image/codec/gdiplus-image.cpp image/codec/imlib2-image.cpp \
     image/codec/sdl-image.cpp image/codec/ios-image.cpp \
-    image/codec/zed-image.cpp image/codec/zed-palette-image.cpp \
     image/codec/oric-image.cpp image/codec/dummy-image.cpp \
     image/dither/random.cpp image/dither/ediff.cpp image/dither/dbs.cpp \
     image/dither/ostromoukhov.cpp image/dither/ordered.cpp \

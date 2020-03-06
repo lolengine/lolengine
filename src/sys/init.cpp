@@ -12,6 +12,8 @@
 
 #include <lol/engine-internal.h>
 
+#include <vector> // std::vector
+#include <string> // std::string
 #include <cctype>
 
 #if HAVE_UNISTD_H
@@ -36,7 +38,7 @@ namespace sys
 #   define SEPARATOR '/'
 #endif
 
-static array<std::string> data_dir;
+static std::vector<std::string> data_dir;
 
 void init(int argc, char *argv[],
           std::string const &projectdir,
@@ -151,8 +153,8 @@ void init(int argc, char *argv[],
     }
 
     msg::debug("binary dir: “%s”\n", binarydir.c_str());
-    for (int i = 0; i < data_dir.count(); ++i)
-        msg::debug("data dir %d/%d: “%s”\n", i + 1, data_dir.count(),
+    for (int i = 0; i < int(data_dir.size()); ++i)
+        msg::debug("data dir %d/%d: “%s”\n", i + 1, int(data_dir.size()),
                    data_dir[i].c_str());
 }
 
@@ -162,22 +164,20 @@ void init(int argc, char *argv[],
 
 void add_data_dir(std::string const &dir)
 {
-    data_dir << dir;
+    data_dir.push_back(dir);
 }
 
-array<std::string> get_path_list(std::string const &file)
+std::vector<std::string> get_path_list(std::string const &file)
 {
-    array<std::string> ret;
+    std::vector<std::string> ret;
 
     /* If not an absolute path, look through known data directories */
     if (file[0] != '/')
-    {
-        for (int i = 0; i < data_dir.count(); ++i)
-            ret << data_dir[i] + file;
-    }
+        for (auto const &dir : data_dir)
+            ret.push_back(dir + file);
 
 #if !__NX__
-    ret << file;
+    ret.push_back(file);
 #endif
 
     return ret;

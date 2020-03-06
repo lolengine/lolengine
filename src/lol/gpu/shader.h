@@ -19,6 +19,7 @@
 
 #include <string>   // std::string
 #include <map>      // std::map
+#include <vector>   // std::vector
 #include <memory>   // std::shared_ptr
 #include <stdint.h> // int64_t
 
@@ -337,10 +338,10 @@ public:
     void SetUniform(ShaderUniform const &uni, mat4 const &m);
     void SetUniform(ShaderUniform const &uni, TextureUniform tex, int index);
 
-    void SetUniform(ShaderUniform const &uni, array<float> const &v);
-    void SetUniform(ShaderUniform const &uni, array<vec2> const &v);
-    void SetUniform(ShaderUniform const &uni, array<vec3> const &v);
-    void SetUniform(ShaderUniform const &uni, array<vec4> const &v);
+    void SetUniform(ShaderUniform const &uni, std::vector<float> const &v);
+    void SetUniform(ShaderUniform const &uni, std::vector<vec2> const &v);
+    void SetUniform(ShaderUniform const &uni, std::vector<vec3> const &v);
+    void SetUniform(ShaderUniform const &uni, std::vector<vec4> const &v);
 
     void Bind() const;
     void Unbind() const;
@@ -444,7 +445,7 @@ protected:
     ShaderProgram m_current_program = ShaderProgram::MAX;
 
     //Blocks
-    array<ShaderBlock*> m_blocks[ShaderProgram::MAX];
+    std::vector<ShaderBlock*> m_blocks[ShaderProgram::MAX];
 
     //Final shader parameters
     std::map<std::string, std::string> m_parameters[ShaderProgram::MAX][ShaderVariable::MAX];
