@@ -61,7 +61,7 @@ ResourceCodecData* GdiPlusImageCodec::Load(std::string const &path)
         return nullptr;
     }
 
-    array<std::string> pathlist = sys::get_path_list(path);
+    auto pathlist = sys::get_path_list(path);
     Gdiplus::Bitmap *bitmap = nullptr;
     for (auto const &fullpath : pathlist)
     {

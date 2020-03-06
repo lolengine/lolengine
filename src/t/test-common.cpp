@@ -14,6 +14,7 @@
 #   include "config.h"
 #endif
 
+#include <lol/engine.h> // this is required for SDL_main
 #include <lol/base/lolunit.h>
 
 #include <cstdio>
