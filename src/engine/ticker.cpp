@@ -71,7 +71,7 @@ private:
     /* Entity management */
     array<entity *> DEPRECATED_m_todolist, DEPRECATED_m_todolist_delayed, DEPRECATED_m_autolist;
     array<entity *> DEPRECATED_m_list[(int)tickable::group::all::end];
-    array<int> DEPRECATED_m_scenes[(int)tickable::group::all::end];
+    std::vector<int> DEPRECATED_m_scenes[(int)tickable::group::all::end];
     int DEPRECATED_nentities = 0;
 
     /* Fixed framerate management */
@@ -297,11 +297,11 @@ void ticker_data::GameThreadTick()
         data->DEPRECATED_m_list[(int)e->m_gamegroup].push(e);
         if (e->m_drawgroup != tickable::group::draw::none)
         {
-            if (data->DEPRECATED_m_scenes[(int)e->m_drawgroup].count() < Scene::GetCount())
+            if (data->DEPRECATED_m_scenes[(int)e->m_drawgroup].size() < Scene::GetCount())
                 data->DEPRECATED_m_scenes[(int)e->m_drawgroup].resize(Scene::GetCount());
 
             int added_count = 0;
-            for (int i = 0; i < Scene::GetCount(); i++)
+            for (size_t i = 0; i < Scene::GetCount(); i++)
             {
                 //If entity is concerned by this scene, add it in the list
                 if (Scene::GetScene(i).IsRelevant(e))
@@ -396,7 +396,7 @@ void ticker_data::DrawThreadTick()
     }
 
     /* Render each scene one after the other */
-    for (int idx = 0; idx < Scene::GetCount() && !data->m_quit /* Stop as soon as required */; ++idx)
+    for (size_t idx = 0; idx < Scene::GetCount() && !data->m_quit /* Stop as soon as required */; ++idx)
     {
         Scene& scene = Scene::GetScene(idx);
 
@@ -519,7 +519,7 @@ void ticker_data::collect_garbage()
             if (g >= (int)tickable::group::game::end)
             {
                 int removal_count = 0;
-                for (int j = 0; j < Scene::GetCount(); j++)
+                for (size_t j = 0; j < Scene::GetCount(); j++)
                 {
                     // If entity is concerned by this scene, add it in the list
                     if (Scene::GetScene(j).IsRelevant(e))

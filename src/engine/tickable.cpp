@@ -39,10 +39,13 @@ void tickable::fini()
 
 void tickable::tick_game(float seconds)
 {
+    (void)seconds;
 }
 
 void tickable::tick_draw(float seconds, class Scene &scene)
 {
+    (void)seconds;
+    (void)scene;
 }
 
 } /* namespace lol */
