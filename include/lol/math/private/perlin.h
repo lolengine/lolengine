@@ -14,7 +14,9 @@
 
 #pragma once
 
-#include <../legacy/lol/math/noise/gradient.h>
+#include "gradient.h"
+
+#include <cmath> // std::sqrt
 
 namespace lol
 {
@@ -36,6 +38,8 @@ public:
     /* Evaluate noise at a given point */
     inline float eval(vec_t<float, N> position) const
     {
+        using std::sqrt;
+
         /* Compute the containing hypercube origin */
         vec_t<int, N> origin;
         for (int i = 0; i < N; ++i)

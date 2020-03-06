@@ -14,7 +14,8 @@
 
 #pragma once
 
-#include <../legacy/lol/math/noise/gradient.h>
+#include "gradient.h"
+
 #include <lol/math/vector.h>    // vec_t
 #include <lol/math/transform.h> // mat_t
 
@@ -408,5 +409,5 @@ private:
     }
 };
 
-}
+} // namespace lol
 
