@@ -235,8 +235,6 @@
     <ClInclude Include="loldebug.h" />
     <ClInclude Include="lolgl.h" />
     <ClInclude Include="lolua\baselua.h" />
-    <ClInclude Include="lol\algorithm\all.h" />
-    <ClInclude Include="lol\algorithm\portal.h" />
     <ClInclude Include="lol\audio\all.h" />
     <ClInclude Include="lol\audio\audio.h" />
     <ClInclude Include="lol\audio\sample.h" />

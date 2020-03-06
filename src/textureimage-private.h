@@ -34,7 +34,7 @@ public:
     /* Pixels, then texture coordinates */
     ivec2 m_image_size, m_texture_size;
 
-    Image *m_image = nullptr;
+    image *m_image = nullptr;
     Texture *m_texture = nullptr;
 };
 

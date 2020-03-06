@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Cube tutorial
 //
-//  Copyright © 2011—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2011—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -15,6 +15,7 @@
 #endif
 
 #include <lol/engine.h>
+#include <lol/image/color.h>
 #include "loldebug.h"
 
 using namespace lol;

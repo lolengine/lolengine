@@ -305,12 +305,6 @@
     <ClInclude Include="lolua\baselua.h">
       <Filter>lolua</Filter>
     </ClInclude>
-    <ClInclude Include="lol\algorithm\all.h">
-      <Filter>lol\algorithm</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\algorithm\portal.h">
-      <Filter>lol\algorithm</Filter>
-    </ClInclude>
     <ClInclude Include="lol\base\array.h">
       <Filter>lol\base</Filter>
     </ClInclude>
@@ -535,9 +529,6 @@
     </Filter>
     <Filter Include="lol">
       <UniqueIdentifier>{0edcf1a5-3c9c-4425-918c-aa2cbebc51c1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="lol\algorithm">
-      <UniqueIdentifier>{39f6f872-186f-48af-8e87-bcceb06b1b21}</UniqueIdentifier>
     </Filter>
     <Filter Include="lol\engine">
       <UniqueIdentifier>{a20b47c1-a0f8-4a02-a7a8-6da2ccd8bb02}</UniqueIdentifier>

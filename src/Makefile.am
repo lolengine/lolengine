@@ -27,15 +27,12 @@ liblol_core_a_SOURCES = \
 liblol_core_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/3rdparty/lua/src
 
 liblol_core_headers = \
-    lol/engine-internal.h lol/engine.h lol/public.h lol/extras.h lol/legacy.h \
+    lol/engine-internal.h lol/engine.h lol/public.h lol/extras.h \
     lol/lua.h \
     \
     lol/base/all.h \
     lol/base/array.h lol/base/map.h lol/base/enum.h \
     lol/base/log.h \
-    \
-    lol/algorithm/all.h \
-    lol/algorithm/portal.h \
     \
     lol/audio/all.h \
     lol/audio/audio.h lol/audio/sample.h \

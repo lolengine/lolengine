@@ -21,6 +21,7 @@
 #include <lol/types/real.h>
 #include <lol/math/vector.h>
 #include <lol/math/transform.h>
+#include <lol/image/color.h>
 
 #include "loldebug.h"
 

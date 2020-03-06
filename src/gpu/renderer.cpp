@@ -18,8 +18,8 @@
 #   define WIN32_LEAN_AND_MEAN 1
 #   include <windows.h>
 #   undef WIN32_LEAN_AND_MEAN
-#   undef near /* Fuck Microsoft */
-#   undef far /* Fuck Microsoft again */
+#   undef near
+#   undef far
 #endif
 
 // FIXME: fine-tune this define

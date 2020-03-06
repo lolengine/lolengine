@@ -171,9 +171,9 @@ void TileSet::Init(std::string const &path, ResourceCodecData* loaded_data)
     super::Init(path, loaded_data);
 }
 
-void TileSet::Init(std::string const &path, Image* image)
+void TileSet::Init(std::string const &path, image* img)
 {
-    super::Init(path, image);
+    super::Init(path, img);
 
     m_data->m_name = "<tileset> " + path;
 }
