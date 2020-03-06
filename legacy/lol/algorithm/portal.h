@@ -14,12 +14,12 @@
 #pragma once
 
 #include <lol/base/array.h>
-#include <lol/math/vector.h>    // vec_t
-#include <lol/math/transform.h> // mat_t
+#include <lol/vector>    // vec_t
+#include <lol/transform> // mat_t
 #include <lol/debug/lines.h>
-#include <lol/image/color.h>
+#include <lol/color>
 
-#include <cfloat> /* for FLT_MAX */
+#include <cfloat> // FLT_MAX
 
 namespace lol
 {

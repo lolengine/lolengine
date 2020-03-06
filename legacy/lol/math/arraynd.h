@@ -20,12 +20,7 @@
 // A N-Dimensional array class allowing var[i][j][k]... indexing,
 //
 
-//
-// XXX: This file is in lol/math/ instead of lol/base/ because it uses vec_t.
-//
-
-#include <lol/math/vector.h> // vec_t
-
+#include <lol/vector>  // lol::vec_t
 #include <vector>      // std::vector
 #include <algorithm>   // std::min
 #include <cstring>     // memset

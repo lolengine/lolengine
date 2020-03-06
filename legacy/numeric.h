@@ -17,8 +17,7 @@
 // ——————————————————————————————
 //
 
-#include <lol/math/functions.h>
-
+#include <lol/math> // lol::lerp, lol::clamp
 #include <cstdlib>
 #include <stdint.h>
 

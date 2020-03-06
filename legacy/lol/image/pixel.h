@@ -18,7 +18,7 @@
 //
 
 #include <../legacy/lol/base/types.h>
-#include <lol/math/vector.h>
+#include <lol/vector>
 
 namespace lol
 {

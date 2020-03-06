@@ -19,9 +19,9 @@
 //
 
 #include <lol/base/enum.h>
-#include <lol/math/functions.h> // distance, clamp…
-#include <lol/math/vector.h>    // vec_t
-#include <lol/math/transform.h> // mat_t
+#include <lol/math>      // distance, clamp…
+#include <lol/vector>    // vec_t
+#include <lol/transform> // mat_t
 
 #include <algorithm>
 #include <map>

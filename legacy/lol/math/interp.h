@@ -12,7 +12,7 @@
 
 #pragma once
 
-#include <../legacy/lol/math/functions.h>
+#include <lol/math>
 
 //
 // Interpolator classes
