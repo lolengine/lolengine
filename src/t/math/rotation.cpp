@@ -14,10 +14,10 @@
 #   include "config.h"
 #endif
 
-#include <lol/base/lolunit.h>
-#include <lol/math/vector.h>
-#include <lol/math/transform.h>
-#include <../legacy/lol/math/functions.h>
+#include <lol/unit_test>
+#include <lol/vector>
+#include <lol/transform>
+#include <lol/math>
 
 namespace lol
 {

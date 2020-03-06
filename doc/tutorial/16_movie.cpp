@@ -1,7 +1,7 @@
 //
 //  Lol Engine — GIF encoding sample
 //
-//  Copyright © 2016—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2016—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -15,8 +15,9 @@
 #endif
 
 #include <lol/engine.h>
+#include <lol/vector>
+#include <lol/noise>
 #include <lol/image/movie.h>
-#include <lol/math/noise.h>
 
 int main(int argc, char **argv)
 {

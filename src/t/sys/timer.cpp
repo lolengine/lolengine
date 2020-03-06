@@ -14,8 +14,8 @@
 #   include "config.h"
 #endif
 
-#include <lol/base/lolunit.h>
-#include <lol/base/thread.h>
+#include <lol/unit_test>
+#include <lol/thread>
 
 namespace lol
 {

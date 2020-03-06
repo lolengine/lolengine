@@ -11,6 +11,7 @@
 //
 
 #include <lol/engine-internal.h>
+#include <lol/pegtl>
 
 #include <string>
 #include <memory>
@@ -24,8 +25,6 @@
 #   include <windows.h>
 #   undef WIN32_LEAN_AND_MEAN
 #endif
-
-#include <lol/base/pegtl.h>
 
 #include "lolgl.h"
 

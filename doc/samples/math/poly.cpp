@@ -14,7 +14,7 @@
 #   include "config.h"
 #endif
 
-#include <lol/math/polynomial.h>
+#include <lol/math>
 
 using namespace lol;
 

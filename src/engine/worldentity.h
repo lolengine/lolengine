@@ -17,7 +17,7 @@
 // -----------------------
 //
 
-#include <lol/math/transform.h>
+#include <lol/transform>
 #include <../legacy/lol/math/geometry.h> // box3
 
 #include "engine/entity.h"

@@ -18,7 +18,7 @@
 // ——————————————————
 //
 
-#include <lol/math/vector.h>
+#include <lol/vector>
 #include <../legacy/lol/math/geometry.h>
 #include <lol/image/image.h>
 #include <../legacy/lol/image/pixel.h>

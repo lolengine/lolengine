@@ -14,10 +14,10 @@
 #   include "config.h"
 #endif
 
-#include <lol/base/lolunit.h>
-#include <lol/math/vector.h>    // vec_t
-#include <lol/math/transform.h> // mat_t
-#include <lol/math/rand.h>      // lol::rand
+#include <lol/unit_test>
+#include <lol/math>      // lol::rand
+#include <lol/vector>    // vec_t
+#include <lol/transform> // mat_t
 
 #include <cfloat> // FLT_MAX
 

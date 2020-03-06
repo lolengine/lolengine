@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //            © 2013—2015 Guillaume Bittoun <guillaume.bittoun@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -13,10 +13,9 @@
 
 #pragma once
 
-#include <lol/base/utils.h> // has_key()
-
-#include <string>
-#include <map>
+#include <lol/utils> // has_key()
+#include <string>    // std::string
+#include <map>       // std::map
 
 namespace lol
 {

@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -80,7 +80,7 @@ void msg::helper(message_type type, char const *fmt, va_list ap)
 #if !defined LOL_BUILD_DEBUG && !_DEBUG
     if (type == message_type::debug)
     {
-        static bool const disable_debug = os::getenv("LOL_DEBUG").size() > 0;
+        static bool const disable_debug = sys::getenv("LOL_DEBUG").size() > 0;
         if (disable_debug)
             return;
     }

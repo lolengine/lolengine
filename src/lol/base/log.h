@@ -18,9 +18,8 @@
 // The central logging system.
 //
 
-#include <lol/base/private/features.h>
-
-#include <cstdarg> // va_list
+#include <lol/utils> // lol_attr_printf_format
+#include <cstdarg>   // va_list
 
 namespace lol
 {

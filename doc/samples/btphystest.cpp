@@ -16,7 +16,7 @@
 #endif
 
 #include <lol/engine.h>
-#include <lol/image/color.h>
+#include <lol/color>
 #include "loldebug.h"
 
 using namespace lol;

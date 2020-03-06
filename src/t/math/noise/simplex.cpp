@@ -14,8 +14,8 @@
 #   include "config.h"
 #endif
 
-#include <lol/base/lolunit.h>
-#include <lol/math/noise.h>
+#include <lol/unit_test>
+#include <lol/noise>
 
 namespace lol
 {

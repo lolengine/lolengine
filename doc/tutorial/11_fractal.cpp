@@ -18,10 +18,10 @@
 #include <sstream>
 
 #include <lol/engine.h>
-#include <lol/types/real.h>
-#include <lol/math/vector.h>
-#include <lol/math/transform.h>
-#include <lol/image/color.h>
+#include <lol/real>
+#include <lol/vector>
+#include <lol/transform>
+#include <lol/color>
 
 #include "loldebug.h"
 

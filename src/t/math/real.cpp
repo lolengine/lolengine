@@ -14,10 +14,10 @@
 #   include "config.h"
 #endif
 
-#include <lol/base/lolunit.h>
-#include <lol/types/real.h>
-#include <lol/math/transform.h> // for rcmplx
+#include <lol/unit_test>
 
+#include <lol/real>
+#include <lol/transform> // for rcmplx
 #include <cmath>
 
 namespace lol

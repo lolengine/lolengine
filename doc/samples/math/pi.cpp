@@ -18,7 +18,7 @@
 #include <iomanip>
 
 #include <lol/engine.h>
-#include <lol/types/real.h>
+#include <lol/real>
 
 using lol::real;
 

@@ -14,8 +14,8 @@
 #   include "config.h"
 #endif
 
-#include <lol/base/lolunit.h>
-#include <../legacy/lol/math/functions.h>
+#include <lol/unit_test>
+#include <lol/math>
 
 namespace lol
 {
@@ -41,25 +41,10 @@ lolunit_declare_fixture(trig_test)
     {
         lolunit_assert_doubles_equal(radians(90), radians(90.0), 1e-5);
 
-        lolunit_assert_doubles_equal(radians((uint8_t)90),  radians(90.0), 1e-5);
         lolunit_assert_doubles_equal(radians((int8_t)90),   radians(90.0), 1e-5);
-        lolunit_assert_doubles_equal(radians((uint16_t)90), radians(90.0), 1e-5);
         lolunit_assert_doubles_equal(radians((int16_t)90),  radians(90.0), 1e-5);
-        lolunit_assert_doubles_equal(radians((uint32_t)90), radians(90.0), 1e-5);
         lolunit_assert_doubles_equal(radians((int32_t)90),  radians(90.0), 1e-5);
-        lolunit_assert_doubles_equal(radians((uint64_t)90), radians(90.0), 1e-5);
         lolunit_assert_doubles_equal(radians((int64_t)90),  radians(90.0), 1e-5);
-
-        lolunit_assert_doubles_equal(degrees(1), degrees(1.0), 1e-5);
-
-        lolunit_assert_doubles_equal(degrees((uint8_t)1),  degrees(1.0), 1e-5);
-        lolunit_assert_doubles_equal(degrees((int8_t)1),   degrees(1.0), 1e-5);
-        lolunit_assert_doubles_equal(degrees((uint16_t)1), degrees(1.0), 1e-5);
-        lolunit_assert_doubles_equal(degrees((int16_t)1),  degrees(1.0), 1e-5);
-        lolunit_assert_doubles_equal(degrees((uint32_t)1), degrees(1.0), 1e-5);
-        lolunit_assert_doubles_equal(degrees((int32_t)1),  degrees(1.0), 1e-5);
-        lolunit_assert_doubles_equal(degrees((uint64_t)1), degrees(1.0), 1e-5);
-        lolunit_assert_doubles_equal(degrees((int64_t)1),  degrees(1.0), 1e-5);
     }
 };
 

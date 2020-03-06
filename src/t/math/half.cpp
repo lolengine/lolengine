@@ -14,10 +14,10 @@
 #   include "config.h"
 #endif
 
-#include <lol/base/lolunit.h>
-#include <lol/types/half.h>
-#include <lol/math/vector.h>    // for the sizeof(f16vec2) etc. tests
-#include <lol/math/transform.h> // for the sizeof(f16mat2) etc. tests
+#include <lol/unit_test>
+#include <lol/half>
+#include <lol/vector>    // for the sizeof(f16vec2) etc. tests
+#include <lol/transform> // for the sizeof(f16mat2) etc. tests
 
 namespace lol
 {

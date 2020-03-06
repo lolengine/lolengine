@@ -18,7 +18,7 @@
 //
 
 #include <../legacy/lol/math/arraynd.h>
-#include <lol/math/vector.h>
+#include <lol/vector>
 #include <../legacy/lol/image/pixel.h>
 #include <../legacy/lol/math/geometry.h> // ibox2
 

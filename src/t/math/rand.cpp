@@ -14,10 +14,10 @@
 #   include "config.h"
 #endif
 
-#include <lol/base/lolunit.h>
-#include <lol/math/rand.h>
+#include <lol/unit_test>
 
-#include <cfloat> // FLT_MAX
+#include <lol/math> // lol::rand
+#include <cfloat>   // FLT_MAX
 
 namespace lol
 {

@@ -14,8 +14,8 @@
 #   include "config.h"
 #endif
 
-#include <lol/base/lolunit.h>
-#include <lol/image/color.h>
+#include <lol/unit_test>
+#include <lol/color>
 
 namespace lol
 {

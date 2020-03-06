@@ -14,9 +14,8 @@
 #   include "config.h"
 #endif
 
-#include <lol/base/lolunit.h>
-#include <lol/base/utils.h>
-
+#include <lol/unit_test>
+#include <lol/utils>
 #include <map>
 
 namespace lol

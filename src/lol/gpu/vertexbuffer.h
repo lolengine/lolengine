@@ -17,7 +17,7 @@
 // ----------------------------------------------
 //
 
-#include <lol/types/half.h>
+#include <lol/half>
 
 #include <cstring>
 #include <map>

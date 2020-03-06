@@ -14,8 +14,8 @@
 #   include "config.h"
 #endif
 
-#include <lol/base/lolunit.h>
-#include <lol/math/vector.h>
+#include <lol/unit_test>
+#include <lol/vector>
 #include <lol/image/image.h>
 
 namespace lol

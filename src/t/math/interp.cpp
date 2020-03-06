@@ -14,7 +14,7 @@
 #   include "config.h"
 #endif
 
-#include <lol/base/lolunit.h>
+#include <lol/unit_test>
 #include <../legacy/lol/math/interp.h>
 
 namespace lol

@@ -14,8 +14,8 @@
 #   include "config.h"
 #endif
 
-#include <lol/engine.h> // this is required for SDL_main
-#include <lol/base/lolunit.h>
+#include <lol/engine.h> // FIXME: for now this is required for SDL_main
+#include <lol/unit_test>
 
 #include <cstdio>
 #include <cstdlib>

@@ -14,8 +14,9 @@
 #   include "config.h"
 #endif
 
-#include <lol/engine.h>
-#include <lol/types/bigint.h>
+#include <lol/engine.h> // FIXME: for now this is required for SDL_main
+#include <lol/thread>
+#include <lol/bigint>
 
 using namespace lol;
 

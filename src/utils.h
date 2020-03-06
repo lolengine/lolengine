@@ -18,8 +18,8 @@
 // -----------------------------------
 //
 
-#include <lol/base/utils.h>
-#include <lol/math/rand.h>
+#include <lol/utils>
+#include <lol/math>  // lol::rand
 
 #include <string>
 

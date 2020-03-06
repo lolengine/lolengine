@@ -24,7 +24,7 @@
 
 #include <lol/gpu/renderer.h>
 #include <lol/gpu/framebuffer.h>
-#include <lol/base/thread.h>
+#include <lol/thread>
 
 #include <vector>   // std::vector
 #include <memory>   // std::shared_ptr

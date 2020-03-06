@@ -14,11 +14,10 @@
 #   include "config.h"
 #endif
 
-#include <lol/base/lolunit.h>
-#include <lol/math/vector.h>    // vec_t
-#include <lol/math/transform.h> // quat_t
-#include <lol/math/rand.h>      // rand()
-#include <../legacy/lol/math/functions.h> // radians()
+#include <lol/unit_test>
+#include <lol/vector>    // vec_t
+#include <lol/transform> // quat_t
+#include <lol/math>      // rand(), radians()
 
 #include <cstring> // memset
 #include <tuple>   // std::tuple

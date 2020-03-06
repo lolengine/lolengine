@@ -83,7 +83,7 @@ ResourceCodecData *Imlib2ImageCodec::Load(std::string const &path)
 
     for (int i = 0; i < size.x * size.y; i++)
     {
-        if (os::is_big_endian())
+        if (sys::is_big_endian())
             dstdata[i] = srcdata[i].argb;
         else
             dstdata[i] = srcdata[i].bgra;
@@ -113,7 +113,7 @@ bool Imlib2ImageCodec::Save(std::string const &path, ResourceCodecData *data)
 
     for (int i = 0; i < size.x * size.y; i++)
     {
-        if (os::is_big_endian())
+        if (sys::is_big_endian())
             dstdata[i] = srcdata[i].argb;
         else
             dstdata[i] = srcdata[i].bgra;

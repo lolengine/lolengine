@@ -11,7 +11,7 @@
 //
 
 #include <lol/engine-internal.h>
-#include <lol/image/color.h>
+#include <lol/color>
 
 /*
  * YUV conversion functions

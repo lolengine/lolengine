@@ -15,7 +15,7 @@
 #   include "config.h"
 #endif
 
-#include <lol/base/lolunit.h>
+#include <lol/unit_test>
 #include <../legacy/lol/base/avl_tree.h>
 
 namespace lol

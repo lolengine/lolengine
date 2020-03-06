@@ -14,9 +14,9 @@
 #   include "config.h"
 #endif
 
-#include <lol/base/lolunit.h>
-#include <lol/types/real.h>
-#include <lol/math/polynomial.h>
+#include <lol/unit_test>
+#include <lol/real>
+#include <lol/math>
 
 namespace lol
 {
