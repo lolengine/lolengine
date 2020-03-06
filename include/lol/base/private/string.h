@@ -74,7 +74,7 @@ std::vector<std::basic_string<T>> split(std::basic_string<T> const &s,
     return split(s, std::basic_string<T>(seps));
 }
 
-// Check whether a string starts or ends with a given substring
+// Check whether a string starts with a given substring
 template<typename T>
 bool starts_with(std::basic_string<T> const &s,
                  std::basic_string<T> const &prefix)
@@ -90,6 +90,13 @@ bool starts_with(std::basic_string<T> const &s, T const *prefix)
 }
 
 template<typename T>
+bool starts_with(T const *s, T const *suffix)
+{
+    return starts_with(std::basic_string<T>(s), std::basic_string<T>(suffix));
+}
+
+// Check whether a string ends with a given substring
+template<typename T>
 bool ends_with(std::basic_string<T> const &s,
                std::basic_string<T> const &suffix)
 {
@@ -101,6 +108,12 @@ template<typename T>
 bool ends_with(std::basic_string<T> const &s, T const *suffix)
 {
     return ends_with(s, std::basic_string<T>(suffix));
+}
+
+template<typename T>
+bool ends_with(T const *s, T const *suffix)
+{
+    return ends_with(std::basic_string<T>(s), std::basic_string<T>(suffix));
 }
 
 // Convert a string to lowercase or uppercase
