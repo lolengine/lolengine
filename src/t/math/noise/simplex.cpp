@@ -15,7 +15,7 @@
 #endif
 
 #include <lol/base/lolunit.h>
-#include <../legacy/lol/math/noise/simplex.h>
+#include <lol/math/noise.h>
 
 namespace lol
 {

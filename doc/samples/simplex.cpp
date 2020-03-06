@@ -16,7 +16,7 @@
 #endif
 
 #include <lol/engine.h>
-#include <../legacy/lol/math/noise/simplex.h>
+#include <lol/math/noise.h>
 
 using namespace lol;
 
