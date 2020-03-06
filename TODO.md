@@ -10,9 +10,9 @@
 ## headers we could clean up and keep
 
     src/lol/algorithm/aabb_tree.h
+    src/lol/algorithm/portal.h
     src/lol/base/assert.h (could be useful)
     src/lol/base/avl_tree.h
-    src/lol/base/string.h (string utilities)
     src/lol/image/pixel.h (but is it useful?)
     src/lol/math/arraynd.h (but do we really want to keep it?)
     src/lol/math/geometry.h
@@ -40,13 +40,10 @@
     src/lol/net/http.h
     src/lol/public.h
     src/lol/sys/file.h
-    src/lol/sys/getopt.h
     src/lol/sys/init.h
 
 
 ## headers to remove one day
 
-    src/lol/algorithm/sort.h (there’s plenty of stuff in libc++)
     src/lol/base/enum.h (can’t see the point)
-    src/lol/base/tuple.h (use std::tuple)
 
