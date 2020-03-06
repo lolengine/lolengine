@@ -56,8 +56,6 @@ public:
 
     int parse()
     {
-        int longindex = 0; // FIXME: what is this?
-
         /* XXX: this getopt_long implementation should not be trusted for other
          * applications without any serious peer reviewing. It “just works” with
          * zzuf and a few libcaca programs but may fail miserably in other
@@ -123,12 +121,10 @@ public:
                 case '=':
                     if (!m_opts[i].has_arg)
                         goto bad_opt;
-                    longindex = i;
                     ++this->index;
                     this->arg = flag + 2 + l + 1;
                     return m_opts[i].val;
                 case '\0':
-                    longindex = i;
                     ++this->index;
                     if (m_opts[i].has_arg)
                     {
