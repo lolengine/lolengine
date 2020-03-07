@@ -30,7 +30,7 @@ image image::dither_ediff(array2d<float> const &ker, ScanMode scan) const
     image dst = *this;
 
     ivec2 isize = dst.size();
-    ivec2 ksize = ker.size();
+    ivec2 ksize = ker.sizes();
 
     int kx;
     for (kx = 0; kx < ksize.x; kx++)

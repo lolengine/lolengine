@@ -184,7 +184,7 @@ static int cmpdot(const void *p1, const void *p2)
 
 array2d<float> image::kernel::normalize(array2d<float> const &kernel)
 {
-    ivec2 size = kernel.size();
+    ivec2 size = kernel.sizes();
 
     array<Dot> tmp;
     tmp.resize(size.x * size.y);

@@ -166,7 +166,7 @@ image image::Median(array2d<float> const &ker) const
     else
 #endif
     {
-        ivec2 const ksize = ker.size();
+        ivec2 const ksize = ker.sizes();
         array2d<vec3> list(ksize);
 
         vec4 *srcp = tmp.lock<PixelFormat::RGBA_F32>();

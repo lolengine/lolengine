@@ -26,7 +26,7 @@ static image NonSepConv(image &src, array2d<float> const &in_kernel);
 image image::Convolution(array2d<float> const &in_kernel)
 {
     /* Find the cell with the largest value */
-    ivec2 ksize = in_kernel.size();
+    ivec2 ksize = in_kernel.sizes();
     int bestx = -1, besty = -1;
     float tmp = 0.f;
     for (int dy = 0; dy < ksize.y; ++dy)
@@ -83,7 +83,7 @@ image image::Convolution(array2d<float> const &in_kernel)
 
 image image::Sharpen(array2d<float> const &in_kernel)
 {
-    ivec2 ksize = in_kernel.size();
+    ivec2 ksize = in_kernel.sizes();
     array2d<float> newkernel(ksize);
 
     for (int dy = 0; dy < ksize.y; ++dy)
@@ -103,7 +103,7 @@ static image NonSepConv(image &src, array2d<float> const &in_kernel)
     typedef typename PixelType<FORMAT>::type pixel_t;
 
     ivec2 const size = src.size();
-    ivec2 const ksize = in_kernel.size();
+    ivec2 const ksize = in_kernel.sizes();
     image dst(size);
 
     array2d<pixel_t> const &srcp = src.lock2d<FORMAT>();

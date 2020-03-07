@@ -43,7 +43,7 @@ static image dither_helper(image const &img, array2d<float> const &ker,
                            float scale, float angle)
 {
     ivec2 isize = img.size();
-    ivec2 ksize = ker.size();
+    ivec2 ksize = ker.sizes();
 
     float cost = lol::cos(angle);
     float sint = lol::sin(angle);
