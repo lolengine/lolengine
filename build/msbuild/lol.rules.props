@@ -52,7 +52,7 @@
           LUA_ANSI;
       </AdditionalPreprocessorDefinitions>
 
-      <PreprocessorDefinitions>$(AdditionalPreprocessorDefinitions.Replace('\n',''));%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>%(AdditionalPreprocessorDefinitions);%(PreprocessorDefinitions)</PreprocessorDefinitions>
 
       <!-- Trim trailing backslashes and escape them for C++ -->
       <PreprocessorDefinitions>LOL_CONFIG_PROJECTDIR="$(ProjectDir.Trim('\').Replace('\','/'))";%(PreprocessorDefinitions)</PreprocessorDefinitions>
