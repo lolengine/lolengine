@@ -12,9 +12,11 @@
 
 #pragma once
 
+#include "private/push_macros.h"
 #include "private/features.h"
 #include "private/base/env.h"
 #include "private/base/string.h"
 #include "private/base/containers.h"
 #include "private/base/misc.h"
+#include "private/pop_macros.h"
 

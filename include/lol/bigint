@@ -12,5 +12,7 @@
 
 #pragma once
 
+#include "private/push_macros.h"
 #include "private/types/bigint.h"
+#include "private/pop_macros.h"
 

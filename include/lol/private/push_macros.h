@@ -10,16 +10,16 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
-#pragma once
+// Undefine some intrusive macros from the Windows headers but allow
+// to restore them afterwards if that’s what the user really wants.
 
-//
-// Noise functions
-// ———————————————
-//
-
-#include "private/push_macros.h"
-#include "private/math/gradient.h"
-#include "private/math/perlin.h"
-#include "private/math/simplex.h"
-#include "private/pop_macros.h"
-
+#if _MSC_VER
+#   pragma push_macro("min")
+#   pragma push_macro("max")
+#   pragma push_macro("near")
+#   pragma push_macro("far")
+#   undef min
+#   undef max
+#   undef near
+#   undef far
+#endif

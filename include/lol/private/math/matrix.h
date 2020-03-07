@@ -22,13 +22,6 @@
 #include <ostream>    // std::ostream
 #include <cmath>      // std::fabs
 
-#if _WIN32
-#   pragma push_macro("near")
-#   pragma push_macro("far")
-#   undef near
-#   undef far
-#endif
-
 namespace lol
 {
 
@@ -610,9 +603,3 @@ template<typename T>
 mat_t<T,4,4> const mat_t<T,4,4>::identity = mat_t<T,4,4>((T)1);
 
 } /* namespace lol */
-
-#if _WIN32
-#   pragma pop_macro("near")
-#   pragma pop_macro("far")
-#endif
-

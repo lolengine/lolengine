@@ -12,5 +12,7 @@
 
 #pragma once
 
+#include "private/push_macros.h"
 #include "private/sys/threading.h"
+#include "private/pop_macros.h"
 

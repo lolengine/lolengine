@@ -10,16 +10,11 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
-#pragma once
+// Restore macros that push_macros.h disabled.
 
-//
-// Noise functions
-// ———————————————
-//
-
-#include "private/push_macros.h"
-#include "private/math/gradient.h"
-#include "private/math/perlin.h"
-#include "private/math/simplex.h"
-#include "private/pop_macros.h"
-
+#if _MSC_VER
+#   pragma pop_macro("min")
+#   pragma pop_macro("max")
+#   pragma pop_macro("near")
+#   pragma pop_macro("far")
+#endif

@@ -28,13 +28,6 @@
 
 #include "ops.h"
 
-#if _MSC_VER
-#   pragma push_macro("min")
-#   pragma push_macro("max")
-#   undef min
-#   undef max
-#endif
-
 namespace lol
 {
 
@@ -1438,8 +1431,3 @@ typedef ivec12 int12;
 } // namespace lol
 
 #include "vector.ipp"
-
-#if _MSC_VER
-#   pragma pop_macro("min")
-#   pragma pop_macro("max")
-#endif

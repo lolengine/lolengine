@@ -24,13 +24,6 @@
 
 #include <stdint.h>
 
-#if _MSC_VER
-#   pragma push_macro("min")
-#   pragma push_macro("max")
-#   undef min
-#   undef max
-#endif
-
 namespace lol
 {
 
@@ -167,8 +160,3 @@ template<typename T, typename T2 = T, typename DUMMY = LOL_T_UNSIGNED>
 [[nodiscard]] static inline T2 sign(T x) { return (T)((T)0 < x); }
 
 } // namespace lol
-
-#if _MSC_VER
-#   pragma pop_macro("min")
-#   pragma pop_macro("max")
-#endif

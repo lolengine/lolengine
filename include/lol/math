@@ -12,8 +12,10 @@
 
 #pragma once
 
+#include "private/push_macros.h"
 #include "private/math/constants.h"
 #include "private/math/functions.h"
 #include "private/math/rand.h"
 #include "private/math/polynomial.h"
+#include "private/pop_macros.h"
 

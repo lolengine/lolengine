@@ -12,5 +12,7 @@
 
 #pragma once
 
+#include "private/push_macros.h"
 #include "private/types/real.h"
+#include "private/pop_macros.h"
 

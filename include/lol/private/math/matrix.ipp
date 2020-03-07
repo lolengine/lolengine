@@ -16,17 +16,6 @@
 #include <cmath>     // std::tan
 #include <algorithm> // std::max
 
-#if _MSC_VER
-#   pragma push_macro("min")
-#   pragma push_macro("max")
-#   pragma push_macro("near")
-#   pragma push_macro("far")
-#   undef min
-#   undef max
-#   undef near
-#   undef far
-#endif
-
 namespace lol
 {
 
@@ -291,12 +280,4 @@ inline mat4 mat4::shifted_perspective(float fov_y, float screen_size,
            mat4::translate(.0f, .0f, -dist_scr);
 }
 
-} /* namespace lol */
-
-#if _WIN32
-#   pragma pop_macro("min")
-#   pragma pop_macro("max")
-#   pragma pop_macro("near")
-#   pragma pop_macro("far")
-#endif
-
+} // namespace lol

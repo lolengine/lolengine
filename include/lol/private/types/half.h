@@ -28,13 +28,6 @@
 namespace lol
 {
 
-#if _WIN32
-#   pragma push_macro("near")
-#   pragma push_macro("far")
-#   undef near
-#   undef far
-#endif
-
 namespace half_ops { struct base {}; }
 
 class [[nodiscard]] half
@@ -335,8 +328,3 @@ DECLARE_HALF_BOOL_OPS(<=)
 } // namespace half_ops
 
 } // namespace lol
-
-#if _WIN32
-#   pragma pop_macro("near")
-#   pragma pop_macro("far")
-#endif
