@@ -236,7 +236,7 @@ public:
         resize_data(e);
     }
 
-    inline vec_t<int, N> size() const
+    inline vec_t<int, N> sizes() const
     {
         return vec_t<int, N>(this->m_sizes);
     }
@@ -244,8 +244,8 @@ public:
 public:
     inline element_t *data() { return m_data.data(); }
     inline element_t const *data() const { return m_data.data(); }
-    inline int total_size() const { return m_data.size(); }
-    inline size_t bytes() const { return total_size() * sizeof(element_t); }
+    inline size_t size() const { return m_data.size(); }
+    inline size_t bytes() const { return size() * sizeof(element_t); }
 
 private:
     inline void resize_data(element_t e = element_t())
