@@ -54,9 +54,9 @@ lolunit_declare_fixture(arraynd_test)
 
         arraynd<3, int> e = { { {1, 2}, {3, 4} }, { {5, 6}, {7, 8} } };
 
-        lolunit_assert_equal(e.size()[0], 2);
-        lolunit_assert_equal(e.size()[1], 2);
-        lolunit_assert_equal(e.size()[2], 2);
+        lolunit_assert_equal(e.sizes()[0], 2);
+        lolunit_assert_equal(e.sizes()[1], 2);
+        lolunit_assert_equal(e.sizes()[2], 2);
 
         lolunit_assert_equal(e[0][0][0], 1);
         lolunit_assert_equal(e[1][0][0], 2);
@@ -69,9 +69,9 @@ lolunit_declare_fixture(arraynd_test)
 
         arraynd<3, int> f = { { {1, 2, 3, 4}, {5, 6, 7} }, { {8, 9}, {10} } };
 
-        lolunit_assert_equal(f.size()[0], 4);
-        lolunit_assert_equal(f.size()[1], 2);
-        lolunit_assert_equal(f.size()[2], 2);
+        lolunit_assert_equal(f.sizes()[0], 4);
+        lolunit_assert_equal(f.sizes()[1], 2);
+        lolunit_assert_equal(f.sizes()[2], 2);
 
         lolunit_assert_equal(f[0][0][0], 1);
         lolunit_assert_equal(f[1][0][0], 2);
