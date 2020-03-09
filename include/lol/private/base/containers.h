@@ -52,6 +52,12 @@ static inline std::vector<typename T::key_type> keys(T const &m)
 }
 
 template <typename T>
+static inline auto insert_at(std::vector<T> &v, size_t i, T const &x)
+{
+    return v.insert(v.begin() + i, x);
+}
+
+template <typename T>
 static inline auto remove_at(std::vector<T> &v, size_t i)
 {
     return v.erase(v.begin() + i);
