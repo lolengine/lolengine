@@ -103,7 +103,7 @@ liblol_core_sources = \
     mesh/mesh.cpp mesh/mesh.h \
     mesh/primitivemesh.cpp mesh/primitivemesh.h \
     \
-    sys/init.cpp sys/file.cpp sys/hacks.cpp \
+    sys/init.cpp sys/file.cpp \
     \
     image/resource.cpp image/resource-private.h \
     image/image.cpp image/image-private.h image/kernel.cpp image/pixel.cpp \

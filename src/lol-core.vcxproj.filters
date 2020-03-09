@@ -203,9 +203,6 @@
     <ClCompile Include="sys\file.cpp">
       <Filter>sys</Filter>
     </ClCompile>
-    <ClCompile Include="sys\hacks.cpp">
-      <Filter>sys</Filter>
-    </ClCompile>
     <ClCompile Include="sys\init.cpp">
       <Filter>sys</Filter>
     </ClCompile>
