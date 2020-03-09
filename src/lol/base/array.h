@@ -33,16 +33,6 @@ namespace lol
 static ptrdiff_t const INDEX_NONE = -1;
 
 /*
- * Sorting algorithm list
- */
-
-enum class SortAlgorithm : uint8_t
-{
-    QuickSwap,
-    Bubble,
-};
-
-/*
  * The base array type.
  *
  * Contains an m_data memory array of Elements, of which only the first
@@ -368,11 +358,7 @@ public:
         m_reserved = toreserve;
     }
 
-    void shuffle();
-
-    void sort(SortAlgorithm algorithm);
-
-    /* Support C++11 range-based for loops */
+    // Support C++11 range-based for loops
     class const_iterator
     {
     public:
@@ -455,25 +441,13 @@ protected:
 template<typename... T>
 class array : public array_base<std::tuple<T...>, array<T...>>
 {
-public:
-    /* GCC needs this but Clang doesn’t */
-    typedef std::tuple<T...> element_t;
-
-#if LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS
 private:
     using array_base<std::tuple<T...>, array<T...>>::array_base;
-#else
-public:
-    inline array()
-      : array_base<element_t, array<T...>>::array_base()
-    {}
-
-    inline array(std::initializer_list<element_t> const &list)
-      : array_base<element_t, array<T...>>::array_base(list)
-    {}
-#endif
 
 public:
+    // GCC needs this but Clang doesn’t
+    typedef std::tuple<T...> element_t;
+
     inline void push(T... args)
     {
         if (this->m_count >= this->m_reserved)
@@ -510,20 +484,7 @@ template<typename T>
 class array<T>
   : public array_base<T, array<T>>
 {
-#if LOL_FEATURE_CXX11_INHERIT_CONSTRUCTORS
     using array_base<T, array<T>>::array_base;
-#else
-public:
-    typedef T element_t;
-
-    inline array()
-      : array_base<T, array<T>>::array_base()
-    {}
-
-    inline array(std::initializer_list<element_t> const &list)
-      : array_base<T, array<T>>::array_base(list)
-    {}
-#endif
 };
 
 /*
