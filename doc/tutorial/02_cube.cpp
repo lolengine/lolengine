@@ -44,9 +44,11 @@ public:
         Ticker::Unref(m_camera);
     }
 
+    struct vertex { vec3 pos, color; };
+
     virtual bool init_draw() override
     {
-        array<vec3, vec3> mesh
+        array<vertex> mesh
         {
             // Front vertices/colors
             { vec3(-1.0, -1.0,  1.0), vec3(1.0, 0.0, 1.0) },

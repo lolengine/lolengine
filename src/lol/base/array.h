@@ -444,6 +444,14 @@ class array : public array_base<std::tuple<T...>, array<T...>>
 private:
     using array_base<std::tuple<T...>, array<T...>>::array_base;
 
+    // Mark these as private: it’s dangerous to use data() with arrays of
+    // tuples because no assumption should be made about the tuple layout,
+    // not even the order of its members in memory.
+    inline void data() {}
+    inline void data() const {}
+    inline void bytes() {}
+    inline void bytes() const {}
+
 public:
     // GCC needs this but Clang doesn’t
     typedef std::tuple<T...> element_t;
