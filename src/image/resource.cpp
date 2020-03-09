@@ -30,7 +30,7 @@ namespace lol
  * The bug was reported to Microsoft and fixed by them, but the fix
  * is not yet available.
  * https://connect.microsoft.com/VisualStudio/feedback/details/730878/ */
-static bool RegisterAllCodecs(array<ResourceCodec *> &codeclist)
+static bool RegisterAllCodecs(std::vector<ResourceCodec *> &codeclist)
 {
 #if defined __ANDROID__
     REGISTER_IMAGE_CODEC(AndroidImageCodec)
@@ -69,7 +69,7 @@ public:
     }
 
 private:
-    array<ResourceCodec *> m_codecs;
+    std::vector<ResourceCodec *> m_codecs;
 }
 g_resource_loader;
 

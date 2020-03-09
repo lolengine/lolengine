@@ -20,6 +20,8 @@
 #endif
 
 #include <memory>
+#include <vector> // std::vector
+#include <tuple>  // std::tuple
 
 #include <lol/engine-internal.h>
 
@@ -39,7 +41,8 @@ class D3d9InputData
 
 private:
 #if defined LOL_USE_XINPUT
-    array<int, std::shared_ptr<input::device::joystick>> m_joysticks;
+    // FIXME: use std::map here!
+    std::vector<std::tuple<int, std::shared_ptr<input::device::joystick>>> m_joysticks;
 #endif // LOL_USE_XINPUT
 };
 
@@ -69,7 +72,7 @@ D3d9Input::D3d9Input()
         #define _BTN(id, name) stick->internal_add_button(input::button::BTN_##name, #name);
         #include "ui/buttons.inc" // FIXME: ignore mouse buttons here
 
-        m_data->m_joysticks.push(i, stick);
+        m_data->m_joysticks.push_back(std::make_tuple(i, stick));
     }
 #endif
 
@@ -80,8 +83,7 @@ D3d9Input::~D3d9Input()
 {
 #if defined LOL_USE_XINPUT
     /* Unregister all the joysticks we added (FIXME: this code seems unnecessary) */
-    while (m_data->m_joysticks.count())
-        m_data->m_joysticks.remove(0);
+    m_data->m_joysticks.clear();
 #endif
     delete m_data;
 }
@@ -91,13 +93,13 @@ void D3d9Input::tick_game(float seconds)
     entity::tick_game(seconds);
 
 #if defined LOL_USE_XINPUT
-    for (int i = 0; i < m_data->m_joysticks.count(); i++)
+    for (auto &joy : m_data->m_joysticks)
     {
         XINPUT_STATE state;
-        if (XInputGetState(std::get<0>(m_data->m_joysticks[i]), &state) != ERROR_SUCCESS)
+        if (XInputGetState(std::get<0>(joy), &state) != ERROR_SUCCESS)
             continue;
 
-        auto stick = std::get<1>(m_data->m_joysticks[i]);
+        auto stick = std::get<1>(joy);
         stick->internal_begin_frame();
         stick->internal_set_axis(input::axis::LeftX, state.Gamepad.sThumbLX / 32768.f);
         stick->internal_set_axis(input::axis::LeftY, -state.Gamepad.sThumbLY / 32768.f);
@@ -114,7 +116,7 @@ void D3d9Input::tick_game(float seconds)
 
             int key_index = (1 << b) > XINPUT_GAMEPAD_RIGHT_SHOULDER ? b - 2 : b;
 
-            std::get<1>(m_data->m_joysticks[i])->internal_set_button((input::button)key_index, ((uint16_t)(state.Gamepad.wButtons) >> b) & 1);
+            std::get<1>(joy)->internal_set_button((input::button)key_index, ((uint16_t)(state.Gamepad.wButtons) >> b) & 1);
         }
     }
 #endif

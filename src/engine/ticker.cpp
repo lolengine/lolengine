@@ -15,6 +15,7 @@
 #include <unordered_set> // std::unordered_set
 #include <cstdlib>
 #include <functional>
+#include <vector>        // std::vector
 #include <stdint.h>
 
 namespace lol
@@ -45,8 +46,8 @@ public:
     {
         ASSERT(DEPRECATED_nentities == 0,
                "still %d entities in ticker\n", DEPRECATED_nentities);
-        ASSERT(DEPRECATED_m_autolist.count() == 0,
-               "still %d autoreleased entities\n", DEPRECATED_m_autolist.count());
+        ASSERT(DEPRECATED_m_autolist.size() == 0,
+               "still %d autoreleased entities\n", int(DEPRECATED_m_autolist.size()));
         msg::debug("%d frames required to quit\n", m_frame - m_quitframe);
 
         if (thread::has_threads())
@@ -69,8 +70,8 @@ private:
     std::unordered_set<std::shared_ptr<tickable>> m_tickables;
 
     /* Entity management */
-    array<entity *> DEPRECATED_m_todolist, DEPRECATED_m_todolist_delayed, DEPRECATED_m_autolist;
-    array<entity *> DEPRECATED_m_list[(int)tickable::group::all::end];
+    std::vector<entity *> DEPRECATED_m_todolist, DEPRECATED_m_todolist_delayed, DEPRECATED_m_autolist;
+    std::vector<entity *> DEPRECATED_m_list[(int)tickable::group::all::end];
     std::vector<int> DEPRECATED_m_scenes[(int)tickable::group::all::end];
     int DEPRECATED_nentities = 0;
 
@@ -124,10 +125,10 @@ void Ticker::Register(entity *entity)
     /* If we are called from its constructor, the object's vtable is not
      * ready yet, so we do not know which group this entity belongs to. Wait
      * until the first tick. */
-    data->DEPRECATED_m_todolist_delayed.push(entity);
+    data->DEPRECATED_m_todolist_delayed.push_back(entity);
 
     /* Objects are autoreleased by default. Put them in a list. */
-    data->DEPRECATED_m_autolist.push(entity);
+    data->DEPRECATED_m_autolist.push_back(entity);
     entity->add_flags(entity::flags::autorelease);
     entity->m_ref = 1;
 
@@ -146,11 +147,11 @@ void Ticker::Ref(entity *entity)
         /* Get the entity out of the autorelease list. This is usually
          * very fast since the last entry in autolist is the last
          * registered entity. */
-        for (int i = data->DEPRECATED_m_autolist.count(); i--; )
+        for (size_t i = data->DEPRECATED_m_autolist.size(); i--; )
         {
             if (data->DEPRECATED_m_autolist[i] == entity)
             {
-                data->DEPRECATED_m_autolist.remove_swap(i);
+                remove_at(data->DEPRECATED_m_autolist, i);
                 break;
             }
         }
@@ -238,7 +239,7 @@ void ticker_data::GameThreadTick()
         msg::debug("%s Group %d\n",
                    (g < (int)tickable::group::game::end) ? "Game" : "Draw", g);
 
-        for (int i = 0; i < data->DEPRECATED_m_list[g].count(); ++i)
+        for (size_t i = 0; i < data->DEPRECATED_m_list[g].size(); ++i)
         {
             entity *e = data->DEPRECATED_m_list[g][i];
             msg::debug("  \\-- [%p] %s (m_ref %d, destroy %d)\n",
@@ -283,9 +284,9 @@ void ticker_data::GameThreadTick()
     data->collect_garbage();
 
     /* Insert waiting objects into the appropriate lists */
-    while (data->DEPRECATED_m_todolist.count())
+    while (data->DEPRECATED_m_todolist.size())
     {
-        entity *e = data->DEPRECATED_m_todolist.last();
+        entity *e = data->DEPRECATED_m_todolist.back();
 
         //If the entity has no mask, default it
         if (e->m_scene_mask == 0)
@@ -293,8 +294,8 @@ void ticker_data::GameThreadTick()
             Scene::GetScene().Link(e);
         }
 
-        data->DEPRECATED_m_todolist.remove(-1);
-        data->DEPRECATED_m_list[(int)e->m_gamegroup].push(e);
+        data->DEPRECATED_m_todolist.pop_back();
+        data->DEPRECATED_m_list[(int)e->m_gamegroup].push_back(e);
         if (e->m_drawgroup != tickable::group::draw::none)
         {
             if (data->DEPRECATED_m_scenes[(int)e->m_drawgroup].size() < Scene::GetCount())
@@ -306,7 +307,7 @@ void ticker_data::GameThreadTick()
                 //If entity is concerned by this scene, add it in the list
                 if (Scene::GetScene(i).IsRelevant(e))
                 {
-                    data->DEPRECATED_m_list[(int)e->m_drawgroup].insert(e, data->DEPRECATED_m_scenes[(int)e->m_drawgroup][i]);
+                    insert_at(data->DEPRECATED_m_list[(int)e->m_drawgroup], data->DEPRECATED_m_scenes[(int)e->m_drawgroup][i], e);
                     added_count++;
                 }
                 //Update scene index
@@ -320,7 +321,7 @@ void ticker_data::GameThreadTick()
 
     for (int g = (int)tickable::group::game::begin; g < (int)tickable::group::game::end; ++g)
     {
-        for (int i = 0; i < data->DEPRECATED_m_list[g].count(); ++i)
+        for (size_t i = 0; i < data->DEPRECATED_m_list[g].size(); ++i)
         {
             entity *e = data->DEPRECATED_m_list[g][i];
 
@@ -342,7 +343,7 @@ void ticker_data::GameThreadTick()
     /* Tick objects for the game loop */
     for (int g = (int)tickable::group::game::begin; g < (int)tickable::group::game::end && !data->m_quit /* Stop as soon as required */; ++g)
     {
-        for (int i = 0; i < data->DEPRECATED_m_list[g].count() && !data->m_quit /* Stop as soon as required */; ++i)
+        for (size_t i = 0; i < data->DEPRECATED_m_list[g].size() && !data->m_quit /* Stop as soon as required */; ++i)
         {
             entity *e = data->DEPRECATED_m_list[g][i];
 
@@ -376,7 +377,7 @@ void ticker_data::DrawThreadTick()
 
     for (int g = (int)tickable::group::draw::begin; g < (int)tickable::group::draw::end; ++g)
     {
-        for (int i = 0; i < data->DEPRECATED_m_list[g].count(); ++i)
+        for (size_t i = 0; i < data->DEPRECATED_m_list[g].size(); ++i)
         {
             entity *e = data->DEPRECATED_m_list[g][i];
 
@@ -417,7 +418,7 @@ void ticker_data::DrawThreadTick()
                 break;
             }
 
-            for (int i = 0; i < data->DEPRECATED_m_list[g].count() && !data->m_quit /* Stop as soon as required */; ++i)
+            for (size_t i = 0; i < data->DEPRECATED_m_list[g].size() && !data->m_quit /* Stop as soon as required */; ++i)
             {
                 entity *e = data->DEPRECATED_m_list[g][i];
 
@@ -465,7 +466,7 @@ void ticker_data::handle_shutdown()
         m_panic = 2 * (m_panic + 1);
 
         for (int g = 0; g < (int)tickable::group::all::end && n < m_panic; ++g)
-        for (int i = 0; i < DEPRECATED_m_list[g].count() && n < m_panic; ++i)
+        for (size_t i = 0; i < DEPRECATED_m_list[g].size() && n < m_panic; ++i)
         {
             entity * e = DEPRECATED_m_list[g][i];
             if (e->m_ref)
@@ -496,7 +497,7 @@ void ticker_data::collect_garbage()
     std::unordered_set<entity*> destroy_list;
     for (int g = 0; g < (int)tickable::group::all::end; ++g)
     {
-        for (int i = DEPRECATED_m_list[g].count(); i--;)
+        for (size_t i = DEPRECATED_m_list[g].size(); i--;)
         {
             entity *e = DEPRECATED_m_list[g][i];
 
@@ -513,7 +514,7 @@ void ticker_data::collect_garbage()
                 continue;
 
             // If entity is to be destroyed, remove it.
-            DEPRECATED_m_list[g].remove_swap(i);
+            remove_at(DEPRECATED_m_list[g], i);
 
             // Draw group specific logic
             if (g >= (int)tickable::group::game::end)
@@ -626,10 +627,10 @@ int Ticker::GetFrameNum()
 void Ticker::Shutdown()
 {
     /* We're bailing out. Release all autorelease objects. */
-    while (data->DEPRECATED_m_autolist.count())
+    while (data->DEPRECATED_m_autolist.size())
     {
-        data->DEPRECATED_m_autolist.last()->m_ref--;
-        data->DEPRECATED_m_autolist.remove(-1);
+        --data->DEPRECATED_m_autolist.back()->m_ref;
+        data->DEPRECATED_m_autolist.pop_back();
     }
 
     data->m_quit = 1;

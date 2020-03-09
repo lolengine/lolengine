@@ -1,8 +1,8 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2017—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2017—2020 Sam Hocevar <sam@hocevar.net>
+//            © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -141,7 +141,7 @@ public:
     virtual ~EasyMeshLuaLoader();
     //Virtual Store lua object ------------------------------------------------
     virtual void Store(LuaObject* obj);
-    array<EasyMeshLuaObject*>& GetInstances();
+    easy_array<EasyMeshLuaObject*>& GetInstances();
 
     //-------------------------------------------------------------------------
 protected:

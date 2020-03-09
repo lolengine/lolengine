@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -105,11 +105,11 @@ protected:
     MeshPrimitive m_mesh_prim;
     std::shared_ptr<Shader> m_shader;
     std::shared_ptr<VertexDeclaration> m_vdecl;
-    array<std::shared_ptr<VertexBuffer>> m_vbos;
+    std::vector<std::shared_ptr<VertexBuffer>> m_vbos;
     std::shared_ptr<IndexBuffer> m_ibo;
 
-    array<std::string, std::shared_ptr<Texture>> m_textures;
+    std::vector<std::tuple<std::string, std::shared_ptr<Texture>>> m_textures;
 };
 
-} /* namespace lol */
+} // namespace lol
 

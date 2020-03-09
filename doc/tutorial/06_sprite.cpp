@@ -35,8 +35,8 @@ public:
 
         for (int i = 0; i < SPRITE_COUNT; ++i)
         {
-            m_sprites.push(sprite { vec3((float)rand(-96, 640), (float)rand(-96, 480), 0.f),
-                                    rand(0.f, 1.f) });
+            m_sprites.push_back(sprite { vec3((float)rand(-96, 640), (float)rand(-96, 480), 0.f),
+                                         rand(0.f, 1.f) });
         }
     }
 
@@ -95,7 +95,7 @@ private:
     static int const FRAME_COUNT = 16;
 
     struct sprite { vec3 pos; float anim; };
-    array<sprite> m_sprites;
+    std::vector<sprite> m_sprites;
 };
 
 int main(int argc, char **argv)

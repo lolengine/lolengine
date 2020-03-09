@@ -91,7 +91,7 @@ SdlInput::SdlInput(int screen_w, int screen_h)
         for (int j = 0; j < SDL_JoystickNumButtons(sdlstick); ++j)
             stick->internal_add_button((input::button)(j + 1), format("Button%d", j + 1).c_str());
 
-        m_joysticks.push(sdlstick, stick);
+        m_joysticks.push_back(std::make_tuple(sdlstick, stick));
     }
 #endif
 
@@ -102,11 +102,9 @@ SdlInput::~SdlInput()
 {
 #if LOL_USE_SDL && !__EMSCRIPTEN__
     /* Unregister all the joysticks we added */
-    while (m_joysticks.count())
-    {
-        SDL_JoystickClose(std::get<0>(m_joysticks[0]));
-        m_joysticks.remove(0);
-    }
+    for (auto &joy : m_joysticks)
+        SDL_JoystickClose(std::get<0>(joy));
+    m_joysticks.clear();
 #endif
 }
 
@@ -149,18 +147,18 @@ void SdlInput::tick(float seconds)
 
     keyboard->internal_begin_frame();
     mouse->internal_begin_frame();
-    for (int j = 0; j < m_joysticks.count(); j++)
-        std::get<1>(m_joysticks[j])->internal_begin_frame();
+    for (auto &joy : m_joysticks)
+        std::get<1>(joy)->internal_begin_frame();
 
     /* Pump all joystick events because no event is coming to us. */
 #   if SDL_FORCE_POLL_JOYSTICK && !__EMSCRIPTEN__
     SDL_JoystickUpdate();
-    for (int j = 0; j < m_joysticks.count(); j++)
+    for (auto &joy : m_joysticks)
     {
-        for (int i = 0; i < SDL_JoystickNumButtons(std::get<0>(m_joysticks[j])); i++)
-            std::get<1>(m_joysticks[j])->internal_set_button((input::button)i, SDL_JoystickGetButton(std::get<0>(m_joysticks[j]), i) != 0);
-        for (int i = 0; i < SDL_JoystickNumAxes(std::get<0>(m_joysticks[j])); i++)
-            std::get<1>(m_joysticks[j])->internal_set_axis((input::axis)i, (float)SDL_JoystickGetAxis(std::get<0>(m_joysticks[j]), i) / 32768.f);
+        for (int i = 0; i < SDL_JoystickNumButtons(std::get<0>(joy)); i++)
+            std::get<1>(joy)->internal_set_button((input::button)i, SDL_JoystickGetButton(std::get<0>(joy), i) != 0);
+        for (int i = 0; i < SDL_JoystickNumAxes(std::get<0>(joy)); i++)
+            std::get<1>(joy)->internal_set_axis((input::axis)i, (float)SDL_JoystickGetAxis(std::get<0>(joy), i) / 32768.f);
     }
 #   endif
 

@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //            © 2009—2013 Cédric Lecacheur <jordx@free.fr>
 //            © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
@@ -147,12 +147,12 @@ void EasyPhysic::SetTransform(const lol::vec3& base_location, const lol::quat& b
             m_motion_state = new btDefaultMotionState(btTransform(LOL2BT_QUAT(base_rotation), LOL2BT_VEC3(LOL2BT_UNIT * base_location)));
     }
 
-    for (int i = 0; i < m_based_physic_list.count(); i++)
+    for (size_t i = 0; i < m_based_physic_list.size(); i++)
     {
         if (m_based_physic_list[i])
             m_based_physic_list[i]->BaseTransformChanged(PreviousMatrix, m_local_to_world);
         else
-            m_based_physic_list.remove(i--);
+            remove_at(m_based_physic_list, i--);
     }
 }
 

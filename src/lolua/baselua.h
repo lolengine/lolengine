@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2017—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2017—2020 Sam Hocevar <sam@hocevar.net>
 //            © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -19,7 +19,9 @@ extern "C" {
 #include "3rdparty/lua/lauxlib.h"
 }
 
-#include <string>
+#include <vector>  // std::vector
+#include <string>  // std::string
+#include <cstdlib> // tolower
 
 //
 // Base Lua class for Lua script loading
@@ -65,45 +67,45 @@ public:
         } ClassVarStr;
 
         Library(std::string const &class_name,
-            array<ClassMethod> const& statics,
-            array<ClassMethod> const& methods,
-            array<ClassVar> const& variables)
+            std::vector<ClassMethod> const& statics,
+            std::vector<ClassMethod> const& methods,
+            std::vector<ClassVar> const& variables)
         {
             m_class_name = class_name;
             m_static_name = class_name + "_lib";
             m_method_name = class_name + "_inst";
 
             m_statics = statics;
-            if (m_statics.count() == 0
-                || m_statics.last().name != nullptr
-                || m_statics.last().func != nullptr)
-                m_statics.push({ nullptr, nullptr });
+            if (m_statics.empty()
+                || m_statics.back().name != nullptr
+                || m_statics.back().func != nullptr)
+                m_statics.push_back({ nullptr, nullptr });
 
             m_methods = methods;
-            if (m_methods.count() == 0
-                || m_methods.last().name != nullptr
-                || m_methods.last().func != nullptr)
-                m_methods.push({ nullptr, nullptr });
+            if (m_methods.empty()
+                || m_methods.back().name != nullptr
+                || m_methods.back().func != nullptr)
+                m_methods.push_back({ nullptr, nullptr });
 
             for (ClassVar const& cv : variables)
             {
                 if (cv.name && cv.get && cv.set)
                 {
-                    m_variables.push({ cv.name, cv.get, cv.set });
+                    m_variables.push_back({ cv.name, cv.get, cv.set });
                 }
             }
-            if (m_variables.count() == 0
-                || variables.last().name != nullptr
-                || variables.last().get != nullptr
-                || variables.last().set != nullptr)
-                m_variables.push(ClassVarStr());
+            if (m_variables.empty()
+                || variables.back().name != nullptr
+                || variables.back().get != nullptr
+                || variables.back().set != nullptr)
+                m_variables.push_back(ClassVarStr());
         }
         std::string m_class_name = "";
         std::string m_static_name = "";
         std::string m_method_name = "";
-        array<ClassMethod> m_statics;
-        array<ClassMethod> m_methods;
-        array<ClassVarStr> m_variables;
+        std::vector<ClassMethod> m_statics;
+        std::vector<ClassMethod> m_methods;
+        std::vector<ClassVarStr> m_variables;
     };
 
 public:
@@ -173,7 +175,7 @@ public:
         lua_setfield(l, -1, "__index");
 
         //Create variables Get/Set
-        const array<Object::Library::ClassVarStr>& variables = GetVariables<TLuaClass>();
+        const std::vector<Object::Library::ClassVarStr>& variables = GetVariables<TLuaClass>();
         for (const Object::Library::ClassVarStr& var : variables)
         {
             if (!var.m_get || !var.m_set)
@@ -215,7 +217,7 @@ public:
     template <typename TLuaClass>
     static const ClassMethod* GetInstanceMethods() { return GetLibrary<TLuaClass>()->m_methods.data(); }
     template <typename TLuaClass>
-    static const array<Object::Library::ClassVarStr>& GetVariables() { return GetLibrary<TLuaClass>()->m_variables; }
+    static const std::vector<Object::Library::ClassVarStr>& GetVariables() { return GetLibrary<TLuaClass>()->m_variables; }
 
 protected:
     //-------------------------------------------------------------------------
@@ -387,6 +389,16 @@ protected:
     template<typename T> int InnerPush(T value) { UNUSED(value); ASSERT(false, INNER_ERROR); return 0; }
 
 #ifndef INNER_SAFE_ENUM
+    // Gets the value for the given enum type.
+    template<class T> static inline T FindValue(std::string const& name)
+    {
+        std::string needle = tolower(name);
+        for (int i = 0; i < T::Max; ++i)
+            if (tolower(T(i).tostring()).find(needle) != std::string::npos)
+                return T(i);
+        return T::Max;
+    }
+
     template<typename E> SafeEnum<E> InnerDefaultSafeEnum() { return SafeEnum<E>(); }
     template<typename E> bool InnerIsValidSafeEnum() { return InnerIsValid<std::string>(); }
     template<typename E> SafeEnum<E> InnerGetSafeEnum(SafeEnum<E> value) { return FindValue<SafeEnum<E> >(InnerGet<std::string>(value.tostring())); }

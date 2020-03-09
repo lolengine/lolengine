@@ -1,8 +1,8 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2017—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2017—2020 Sam Hocevar <sam@hocevar.net>
+//            © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -46,7 +46,7 @@ EasyMeshLuaLoader::~EasyMeshLuaLoader()
 }
 
 //-----------------------------------------------------------------------------
-static array<EasyMeshLuaObject*> g_instances;
+static easy_array<EasyMeshLuaObject*> g_instances;
 void EasyMeshLuaLoader::Store(LuaObject* obj)
 {
     EasyMeshLuaObject* ezm = static_cast<EasyMeshLuaObject*>(obj);
@@ -54,7 +54,7 @@ void EasyMeshLuaLoader::Store(LuaObject* obj)
 }
 
 //-----------------------------------------------------------------------------
-array<EasyMeshLuaObject*>& EasyMeshLuaLoader::GetInstances()
+easy_array<EasyMeshLuaObject*>& EasyMeshLuaLoader::GetInstances()
 {
     return g_instances;
 }

@@ -12,7 +12,7 @@ liblol_core_a_SOURCES = \
     textureimage.cpp textureimage.h textureimage-private.h \
     tileset.cpp tileset.h video.cpp video.h \
     profiler.cpp profiler.h text.cpp text.h emitter.cpp emitter.h \
-    numeric.h utils.h messageservice.cpp messageservice.h \
+    numeric.h messageservice.cpp messageservice.h \
     gradient.cpp gradient.h gradient.lolfx \
     platform.cpp platform.h sprite.cpp sprite.h camera.cpp camera.h \
     light.cpp light.h \
@@ -31,8 +31,7 @@ liblol_core_headers = \
     lol/lua.h \
     \
     lol/base/all.h \
-    lol/base/array.h lol/base/map.h lol/base/enum.h \
-    lol/base/log.h \
+    lol/base/enum.h lol/base/log.h \
     \
     lol/audio/all.h \
     lol/audio/audio.h lol/audio/sample.h \
@@ -67,11 +66,11 @@ liblol_core_sources = \
     commandstack.h \
     easymesh/easymeshbuild.cpp easymesh/easymeshbuild.h \
     easymesh/easymeshrender.cpp easymesh/easymeshrender.h \
-    easymesh/easymesh.cpp \
+    easymesh/easymesh.cpp easymesh/easymesh.h \
     easymesh/easymeshinternal.cpp easymesh/easymeshcsg.cpp \
     easymesh/easymeshprimitive.cpp easymesh/easymeshtransform.cpp \
-    easymesh/easymeshcursor.cpp easymesh/easymesh.h \
-    easymesh/easymeshlua.cpp easymesh/easymeshlua.h \
+    easymesh/easymeshcursor.cpp easymesh/easymeshlua.cpp \
+    easymesh/easymeshlua.h easymesh/easyarray.h \
     easymesh/csgbsp.cpp easymesh/csgbsp.h \
     easymesh/shiny.lolfx easymesh/shinyflat.lolfx \
     easymesh/shinydebugwireframe.lolfx \

@@ -12,7 +12,8 @@
 
 #include <lol/engine-internal.h>
 
-#include <memory>
+#include <memory>  // std::shared_ptr
+#include <tuple>   // std::make_tuple
 #include <cstring>
 #include <cstdlib>
 
@@ -33,7 +34,7 @@ Mesh::~Mesh()
 
 void Mesh::Render(Scene& scene, mat4 const &matrix)
 {
-    //if (scene.HasPrimitiveRenderer(this) < m_submeshes.count())
+    //if (scene.HasPrimitiveRenderer(this) < m_submeshes.size())
     {
         for (auto submesh : m_submeshes)
             scene.AddPrimitiveRenderer(this, std::make_shared<PrimitiveMesh>(submesh, matrix));
@@ -89,8 +90,8 @@ void SubMesh::SetVertexDeclaration(std::shared_ptr<VertexDeclaration> vdecl)
 
 void SubMesh::SetVertexBuffer(int index, std::shared_ptr<VertexBuffer> vbo)
 {
-    while (index >= m_vbos.count())
-        m_vbos.push(nullptr);
+    while (index >= int(m_vbos.size()))
+        m_vbos.push_back(nullptr);
 
     m_vbos[index] = vbo;
 }
@@ -102,7 +103,7 @@ void SubMesh::SetIndexBuffer(std::shared_ptr<IndexBuffer> ibo)
 
 void SubMesh::AddTexture(std::string const &name, std::shared_ptr<Texture> texture)
 {
-    m_textures.push(name, texture);
+    m_textures.push_back(std::make_tuple(name, texture));
 }
 
 void SubMesh::Render()
@@ -111,7 +112,7 @@ void SubMesh::Render()
 
     m_vdecl->Bind();
 
-    for (int i = 0; i < m_vbos.count(); ++i)
+    for (size_t i = 0; i < m_vbos.size(); ++i)
     {
         ShaderAttrib attribs[12];
 
@@ -137,7 +138,7 @@ void SubMesh::Render()
 
     UNUSED(vertex_count);
 
-    for (int i = 0; i < m_textures.count(); ++i)
+    for (size_t i = 0; i < m_textures.size(); ++i)
     {
         // TODO: might be good to cache this
         ShaderUniform u_tex = m_shader->GetUniformLocation(std::get<0>(m_textures[i]));

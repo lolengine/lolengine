@@ -135,7 +135,7 @@ void BtPhysTest::InitApp()
 
             PhysicsObject* NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 3);
             Ticker::Ref(NewPhyobj);
-            m_stairs_list << NewPhyobj;
+            m_stairs_list.push_back(NewPhyobj);
         }
         {
             NewRotation = quat::fromeuler_xyz(0.f, 0.f, radians(40.f));
@@ -143,7 +143,7 @@ void BtPhysTest::InitApp()
 
             PhysicsObject* NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 3);
             Ticker::Ref(NewPhyobj);
-            m_stairs_list << NewPhyobj;
+            m_stairs_list.push_back(NewPhyobj);
         }
         NewPosition = pos_offset + vec3(5.0f, -29.5f, 15.0f);
         NewRotation = quat::fromeuler_xyz(0.f, 0.f, 0.f);
@@ -153,7 +153,7 @@ void BtPhysTest::InitApp()
 
             PhysicsObject* NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 3);
             Ticker::Ref(NewPhyobj);
-            m_stairs_list << NewPhyobj;
+            m_stairs_list.push_back(NewPhyobj);
         }
     }
 #endif //USE_STAIRS
@@ -181,7 +181,7 @@ void BtPhysTest::InitApp()
 
             NewPhyobj->SetTransform(NewPosition, NewRotation);
             Ticker::Ref(NewPhyobj);
-            m_ground_list << NewPhyobj;
+            m_ground_list.push_back(NewPhyobj);
         }
     }
 #endif //USE_WALL
@@ -194,7 +194,7 @@ void BtPhysTest::InitApp()
 
         PhysicsObject* NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 1);
 
-        m_platform_list << NewPhyobj;
+        m_platform_list.push_back(NewPhyobj);
         Ticker::Ref(NewPhyobj);
 
         NewPosition = pos_offset + vec3(-15.0f, -25.0f, 5.0f);
@@ -202,7 +202,7 @@ void BtPhysTest::InitApp()
         NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 1);
         BasePhyobj = NewPhyobj;
 
-        m_platform_list << NewPhyobj;
+        m_platform_list.push_back(NewPhyobj);
         Ticker::Ref(NewPhyobj);
 
         NewRotation = quat::fromeuler_xyz(0.f, 0.f, radians(90.f));
@@ -211,21 +211,21 @@ void BtPhysTest::InitApp()
         NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 1);
 
         NewPhyobj->GetPhysic()->AttachTo(BasePhyobj->GetPhysic(), true, true);
-        m_platform_list << NewPhyobj;
+        m_platform_list.push_back(NewPhyobj);
         Ticker::Ref(NewPhyobj);
 
         //NewPosition += vec3(-0.0f, .0f, .0f);
         //NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 1);
 
         //NewPhyobj->GetPhysic()->AttachTo(BasePhyobj->GetPhysic(), true, false);
-        //m_platform_list << NewPhyobj;
+        //m_platform_list.push_back(NewPhyobj);
         //Ticker::Ref(NewPhyobj);
 
         //NewPosition += vec3(-2.0f, .0f, .0f);
         //NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 1);
 
         //NewPhyobj->GetPhysic()->AttachTo(BasePhyobj->GetPhysic(), false, false);
-        //m_platform_list << NewPhyobj;
+        //m_platform_list.push_back(NewPhyobj);
         //Ticker::Ref(NewPhyobj);
     }
 #endif //USE_PLATFORM
@@ -237,7 +237,7 @@ void BtPhysTest::InitApp()
 
         PhysicsObject* NewPhyobj = new PhysicsObject(m_simulation, NewPosition, NewRotation, 2);
 
-        m_character_list << NewPhyobj;
+        m_character_list.push_back(NewPhyobj);
         Ticker::Ref(NewPhyobj);
 
         //NewPhyobj->GetCharacter()->AttachTo(BasePhyobj->GetPhysic(), true, true);
@@ -259,7 +259,7 @@ void BtPhysTest::InitApp()
                         vec3(2.f       , 1.f      , 2.f) +
 #endif //CAT_MODE
                         vec3(8.f * (float)x, 8.f * (float)y, 8.f * (float)z));
-                    m_physobj_list.push(animated_object { new_physobj, ZERO_TIME });
+                    m_physobj_list.push_back(animated_object { new_physobj, ZERO_TIME });
                     Ticker::Ref(new_physobj);
                 }
             }
@@ -269,16 +269,16 @@ void BtPhysTest::InitApp()
 
 #if USE_ROPE
     {
-        array<PhysicsObject*> RopeElements;
+        std::vector<PhysicsObject*> RopeElements;
         for (int i = 0; i < 14; i++)
         {
             PhysicsObject* new_physobj = new PhysicsObject(m_simulation, 1000.f,
                 vec3(0.f, 15.f, -20.f) +
                 vec3(0.f, 0.f, 2.f * (float)i), 1);
-            RopeElements << new_physobj;
-            m_physobj_list.push(new_physobj, ZERO_TIME);
+            RopeElements.push_back(new_physobj);
+            m_physobj_list.push_back(animated_object { new_physobj, ZERO_TIME });
             Ticker::Ref(new_physobj);
-            if (RopeElements.count() > 1)
+            if (RopeElements.size() > 1)
             {
                 EasyConstraint* new_constraint = new EasyConstraint();
 
@@ -289,7 +289,7 @@ void BtPhysTest::InitApp()
                 new_constraint->InitConstraintToPoint2Point();
                 new_constraint->DisableCollisionBetweenObjs(true);
                 new_constraint->AddToSimulation(m_simulation);
-                m_constraint_list << new_constraint;
+                m_constraint_list.push_back(new_constraint);
             }
         }
     }
@@ -309,67 +309,73 @@ BtPhysTest::~BtPhysTest()
     Tiler::Deregister(m_cat_texture);
 #endif //CAT_MODE
 
-    while (m_constraint_list.count())
+    while (m_constraint_list.size())
     {
-        EasyConstraint* CurPop = m_constraint_list.last();
-        m_constraint_list.pop();
+        EasyConstraint* CurPop = m_constraint_list.back();
+        m_constraint_list.pop_back();
         CurPop->RemoveFromSimulation(m_simulation);
         delete CurPop;
     }
-    array<PhysicsObject*> objects
-        = m_ground_list
-        + m_stairs_list
-        + m_character_list
-        + m_platform_list;
-    while (m_physobj_list.count())
+    std::vector<PhysicsObject*> objects;
+    for (auto *obj : m_ground_list)
+        objects.push_back(obj);
+    for (auto *obj : m_stairs_list)
+        objects.push_back(obj);
+    for (auto *obj : m_character_list)
+        objects.push_back(obj);
+    for (auto *obj : m_platform_list)
+        objects.push_back(obj);
+    // Back insertion; is this really necessary?
+    while (m_physobj_list.size())
     {
-        objects << m_physobj_list.last().obj;
-        m_physobj_list.pop();
+        objects.push_back(m_physobj_list.back().obj);
+        m_physobj_list.pop_back();
     }
     m_ground_list.clear();
     m_stairs_list.clear();
     m_character_list.clear();
     m_platform_list.clear();
 
-    while (objects.count())
+    while (objects.size())
     {
-        PhysicsObject* CurPop = objects.pop();
+        PhysicsObject* CurPop = objects.back();
+        objects.pop_back();
         CurPop->GetPhysic()->RemoveFromSimulation(m_simulation);
         Ticker::Unref(CurPop);
     }
 
-    //while (m_ground_list.count())
+    //while (m_ground_list.size())
     //{
-    //    PhysicsObject* CurPop = m_ground_list.last();
-    //    m_ground_list.pop();
+    //    PhysicsObject* CurPop = m_ground_list.back();
+    //    m_ground_list.pop_back();
     //    CurPop->GetPhysic()->RemoveFromSimulation(m_simulation);
     //    Ticker::Unref(CurPop);
     //}
-    //while (m_stairs_list.count())
+    //while (m_stairs_list.size())
     //{
-    //    PhysicsObject* CurPop = m_stairs_list.last();
-    //    m_stairs_list.pop();
+    //    PhysicsObject* CurPop = m_stairs_list.back();
+    //    m_stairs_list.pop_back();
     //    CurPop->GetPhysic()->RemoveFromSimulation(m_simulation);
     //    Ticker::Unref(CurPop);
     //}
-    //while (m_character_list.count())
+    //while (m_character_list.size())
     //{
-    //    PhysicsObject* CurPop = m_character_list.last();
-    //    m_character_list.pop();
+    //    PhysicsObject* CurPop = m_character_list.back();
+    //    m_character_list.pop_back();
     //    CurPop->GetCharacter()->RemoveFromSimulation(m_simulation);
     //    Ticker::Unref(CurPop);
     //}
-    //while (m_platform_list.count())
+    //while (m_platform_list.size())
     //{
-    //    PhysicsObject* CurPop = m_platform_list.last();
-    //    m_platform_list.pop();
+    //    PhysicsObject* CurPop = m_platform_list.back();
+    //    m_platform_list.pop_back();
     //    CurPop->GetPhysic()->RemoveFromSimulation(m_simulation);
     //    Ticker::Unref(CurPop);
     //}
-    //while (m_physobj_list.count())
+    //while (m_physobj_list.size())
     //{
-    //    PhysicsObject* CurPop = m_physobj_list.last().obj;
-    //    m_physobj_list.pop();
+    //    PhysicsObject* CurPop = m_physobj_list.back().obj;
+    //    m_physobj_list.pop_back();
     //    CurPop->GetPhysic()->RemoveFromSimulation(m_simulation);
     //    Ticker::Unref(CurPop);
     //}
@@ -420,12 +426,12 @@ void BtPhysTest::tick_game(float seconds)
     {
         m_target_timer = TARGET_TIMER;
         if (m_cam_target == -1)
-            m_cam_target = rand(m_physobj_list.count());
+            m_cam_target = rand(m_physobj_list.size());
         else
             m_cam_target = -1;
     }
 
-    for (int i = 0; i < m_physobj_list.count(); i++)
+    for (size_t i = 0; i < m_physobj_list.size(); i++)
     {
         PhysicsObject* PhysObj = m_physobj_list[i].obj;
         float &obj_timer = m_physobj_list[i].anim;
@@ -503,7 +509,7 @@ void BtPhysTest::tick_game(float seconds)
 
 #if USE_WALL
     {
-        for (int i = 0; i < m_ground_list.count(); i++)
+        for (size_t i = 0; i < m_ground_list.size(); i++)
         {
             PhysicsObject* PhysObj = m_ground_list[i];
             mat4 GroundMat = PhysObj->GetTransform();
@@ -514,7 +520,7 @@ void BtPhysTest::tick_game(float seconds)
 
         GroundBarycenter /= factor;
 
-        for (int i = 0; i < m_ground_list.count(); i++)
+        for (size_t i = 0; i < m_ground_list.size(); i++)
         {
             PhysicsObject* PhysObj = m_ground_list[i];
 
@@ -533,7 +539,7 @@ void BtPhysTest::tick_game(float seconds)
 
 #if USE_ROTATION
     {
-        for (int i = 0; i < m_ground_list.count(); i++)
+        for (size_t i = 0; i < m_ground_list.size(); i++)
         {
             PhysicsObject* PhysObj = m_ground_list[i];
 
@@ -550,7 +556,7 @@ void BtPhysTest::tick_game(float seconds)
 
 #if USE_PLATFORM
     {
-        for (int i = 0; i < m_platform_list.count(); i++)
+        for (size_t i = 0; i < m_platform_list.size(); i++)
         {
             PhysicsObject* PhysObj = m_platform_list[i];
 
@@ -575,7 +581,7 @@ void BtPhysTest::tick_game(float seconds)
     {
         auto keyboard = input::keyboard();
 
-        for (int i = 0; i < m_character_list.count(); i++)
+        for (size_t i = 0; i < m_character_list.size(); i++)
         {
             PhysicsObject* PhysObj = m_character_list[i];
             EasyCharacterController* Character = (EasyCharacterController*)PhysObj->GetCharacter();
@@ -608,7 +614,7 @@ void BtPhysTest::tick_game(float seconds)
         PhysObjBarycenter = vec3(.0f);
         factor = .0f;
 
-        for (int i = 0; i < m_character_list.count(); i++)
+        for (size_t i = 0; i < m_character_list.size(); i++)
         {
             PhysicsObject* PhysObj = m_character_list[i];
             mat4 GroundMat = PhysObj->GetTransform();
@@ -628,7 +634,7 @@ void BtPhysTest::tick_game(float seconds)
 #else
     {
         PhysObjBarycenter = vec3(.0f);
-        for (int i = 0; i < m_physobj_list.count(); i++)
+        for (size_t i = 0; i < m_physobj_list.size(); i++)
         {
             PhysicsObject* PhysObj = m_physobj_list[i].obj;
             mat4 GroundMat = PhysObj->GetTransform();
@@ -660,7 +666,7 @@ void BtPhysTest::tick_draw(float seconds, Scene &scene)
         /* cat datas setup */
         m_cat_shader = Shader::Create(LOLFX_RESOURCE_NAME(front_camera_sprite));
 #if USE_BODIES
-        for (int i = 0; i < m_physobj_list.count(); i++)
+        for (size_t i = 0; i < m_physobj_list.size(); i++)
         {
             PhysicsObject* PhysObj = m_physobj_list[i].obj;
             m_cat_sdata = new CatShaderData(((1 << VertexUsage::Position) |
@@ -682,7 +688,7 @@ void BtPhysTest::tick_draw(float seconds, Scene &scene)
     else
     {
 #if CAT_MODE
-        for (int i = 0; i < m_physobj_list.count(); i++)
+        for (size_t i = 0; i < m_physobj_list.size(); i++)
         {
             PhysicsObject* PhysObj = m_physobj_list[i].obj;
             CatShaderData* ShaderData = (CatShaderData*)PhysObj->GetCustomShaderData();

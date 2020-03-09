@@ -15,6 +15,7 @@
 
 #include <memory>
 #include <string>
+#include <vector>
 #include <map>
 
 class CatShaderData : public GpuShaderData
@@ -89,28 +90,28 @@ private:
     typedef SafeEnum<BtPhysTestKeyInputBase> BtPhysTestKeyInput;
 
 
-    TileSet*                        m_cat_texture;
-    std::shared_ptr<Shader>         m_cat_shader;
-    CatShaderData*                  m_cat_sdata;
-    Camera*                         m_camera;
-    Light*                          m_light1;
-    Light*                          m_light2;
-    int                             m_init_status;
-    bool                            m_ready;
+    TileSet *m_cat_texture;
+    std::shared_ptr<Shader> m_cat_shader;
+    CatShaderData *m_cat_sdata;
+    Camera *m_camera;
+    Light *m_light1;
+    Light *m_light2;
+    int m_init_status;
+    bool m_ready;
 
-    lol::phys::Simulation*          m_simulation;
-    array<EasyConstraint*>          m_constraint_list;
+    lol::phys::Simulation *m_simulation;
+    std::vector<EasyConstraint*> m_constraint_list;
     struct animated_object { PhysicsObject* obj; float anim; };
-    array<animated_object>          m_physobj_list;
-    array<PhysicsObject*>           m_ground_list;
-    array<PhysicsObject*>           m_platform_list;
-    array<PhysicsObject*>           m_character_list;
-    array<PhysicsObject*>           m_stairs_list;
+    std::vector<animated_object> m_physobj_list;
+    std::vector<PhysicsObject*> m_ground_list;
+    std::vector<PhysicsObject*> m_platform_list;
+    std::vector<PhysicsObject*> m_character_list;
+    std::vector<PhysicsObject*> m_stairs_list;
 
-    float                           m_loop_value;
-    float                           m_target_timer;
-    int                             m_cam_target;
-    float                           m_fov_dp;
-    float                           m_loc_dp;
+    float m_loop_value;
+    float m_target_timer;
+    int m_cam_target;
+    float m_fov_dp;
+    float m_loc_dp;
 };
 

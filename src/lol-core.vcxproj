@@ -215,6 +215,7 @@
     <ClInclude Include="debug\record.h" />
     <ClInclude Include="debug\stats.h" />
     <ClInclude Include="easymesh\csgbsp.h" />
+    <ClInclude Include="easymesh\easyarray.h" />
     <ClInclude Include="easymesh\easymesh.h" />
     <ClInclude Include="easymesh\easymeshbuild.h" />
     <ClInclude Include="easymesh\easymeshlua.h" />
@@ -236,7 +237,6 @@
     <ClInclude Include="lol\audio\audio.h" />
     <ClInclude Include="lol\audio\sample.h" />
     <ClInclude Include="lol\base\all.h" />
-    <ClInclude Include="lol\base\array.h" />
     <ClInclude Include="lol\base\enum.h" />
     <ClInclude Include="lol\base\log.h" />
     <ClInclude Include="lol\debug\all.h" />
@@ -296,7 +296,6 @@
     <ClInclude Include="ui\sdl-input.h">
       <ExcludedFromBuild Condition="'$(enable_sdl)'=='no'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="utils.h" />
     <ClInclude Include="video.h" />
   </ItemGroup>
   <ItemGroup>

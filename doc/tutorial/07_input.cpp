@@ -104,7 +104,7 @@ public:
 
     virtual bool init_draw() override
     {
-        array<vertex> mesh
+        std::vector<vertex> mesh
         {
             // Front vertices/colors
             { vec3(-1.0, -1.0,  1.0), vec3(1.0, 0.0, 1.0) },
@@ -118,14 +118,14 @@ public:
             { vec3(-1.0,  1.0, -1.0), vec3(0.0, 0.0, 1.0) },
         };
 
-        array<uint16_t> faces_indices
+        std::vector<uint16_t> faces_indices
         {
             0, 1, 2, 2, 3, 0, 1, 5, 6, 6, 2, 1,
             7, 6, 5, 5, 4, 7, 4, 0, 3, 3, 7, 4,
             4, 5, 1, 1, 0, 4, 3, 2, 6, 6, 7, 3,
         };
 
-        array<uint16_t> lines_indices
+        std::vector<uint16_t> lines_indices
         {
             0, 1, 1, 2, 2, 3, 3, 0,
             4, 5, 5, 6, 6, 7, 7, 4,
@@ -142,14 +142,14 @@ public:
                                 VertexStream<vec3,vec3>(VertexUsage::Position,
                                                         VertexUsage::Color));
 
-        m_vbo = std::make_shared<VertexBuffer>(mesh.bytes());
-        m_vbo->set_data(mesh.data(), mesh.bytes());
+        m_vbo = std::make_shared<VertexBuffer>(mesh.size() * sizeof(mesh[0]));
+        m_vbo->set_data(mesh.data(), mesh.size() * sizeof(mesh[0]));
 
-        m_lines_ibo = std::make_shared<IndexBuffer>(lines_indices.bytes());
-        m_lines_ibo->set_data(lines_indices.data(), lines_indices.bytes());
+        m_lines_ibo = std::make_shared<IndexBuffer>(lines_indices.size() * sizeof(lines_indices[0]));
+        m_lines_ibo->set_data(lines_indices.data(), lines_indices.size() * sizeof(lines_indices[0]));
 
-        m_faces_ibo = std::make_shared<IndexBuffer>(faces_indices.bytes());
-        m_faces_ibo->set_data(faces_indices.data(), faces_indices.bytes());
+        m_faces_ibo = std::make_shared<IndexBuffer>(faces_indices.size() * sizeof(faces_indices[0]));
+        m_faces_ibo->set_data(faces_indices.data(), faces_indices.size() * sizeof(faces_indices[0]));
 
         return WorldEntity::init_draw();
     }

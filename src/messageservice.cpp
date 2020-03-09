@@ -1,8 +1,8 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2013—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2017—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2017—2020 Sam Hocevar <sam@hocevar.net>
+//            © 2013—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -67,8 +67,8 @@ bool MessageService::Send(MessageBucket id, const std::string& message)
     if (g_messageservice)
     {
         MessageService& g = *g_messageservice;
-        array<MessageList>& bucket = g.m_bucket[id.ToScalar()];
-        bucket << MessageList(time(nullptr), message);
+        auto& bucket = g.m_bucket[id.ToScalar()];
+        bucket.push_back(MessageList(time(nullptr), message));
         return true;
     }
     return false;
@@ -79,7 +79,6 @@ bool MessageService::FetchFirst(MessageBucket id, std::string& message)
 {
     if (g_messageservice)
     {
-        ASSERT(0 <= id.ToScalar() && id.ToScalar() < g_messageservice->m_bucket.count());
         time_t timestamp;
         return g_messageservice->FetchFirst(id, message, timestamp);
     }
@@ -90,15 +89,14 @@ bool MessageService::FetchFirst(MessageBucket id, std::string& message, time_t& 
 {
     if (g_messageservice)
     {
-        ASSERT(0 <= id.ToScalar() && id.ToScalar() < g_messageservice->m_bucket.count());
         MessageService& g = *g_messageservice;
-        array<MessageList>& bucket = g.m_bucket[id.ToScalar()];
+        auto& bucket = g.m_bucket[id.ToScalar()];
 
-        if (bucket.count())
+        if (bucket.size())
         {
             message = bucket[0].m_message;
             timestamp = bucket[0].m_timestamp;
-            bucket.remove(0);
+            remove_at(bucket, 0);
             return true;
         }
     }
@@ -110,7 +108,6 @@ bool MessageService::FetchAll(MessageBucket id, std::string& message)
 {
     if (g_messageservice)
     {
-        ASSERT(0 <= id.ToScalar() && id.ToScalar() < g_messageservice->m_bucket.count());
         time_t timestamp;
         return g_messageservice->FetchAll(id, message, timestamp);
     }
@@ -121,15 +118,14 @@ bool MessageService::FetchAll(MessageBucket id, std::string& message, time_t& fi
 {
     if (g_messageservice)
     {
-        ASSERT(0 <= id.ToScalar() && id.ToScalar() < g_messageservice->m_bucket.count());
         MessageService& g = *g_messageservice;
-        array<MessageList>& bucket = g.m_bucket[id.ToScalar()];
+        auto& bucket = g.m_bucket[id.ToScalar()];
         message = "";
 
-        if (bucket.count())
+        if (bucket.size())
         {
             first_timestamp = bucket[0].m_timestamp;
-            for (int i = 0; i < bucket.count(); ++i)
+            for (size_t i = 0; i < bucket.size(); ++i)
                 message += bucket[i].m_message;
             bucket.clear();
             return true;
@@ -138,5 +134,5 @@ bool MessageService::FetchAll(MessageBucket id, std::string& message, time_t& fi
     return false;
 }
 
-} /* namespace lol */
+} // namespace lol
 

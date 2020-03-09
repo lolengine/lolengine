@@ -29,7 +29,7 @@ int VertexDictionnary::FindVertexMaster(const int search_idx)
 
 //-----------------------------------------------------------------------------
 //retrieve a list of matching vertices, doesn't include search_idx.
-bool VertexDictionnary::FindMatchingVertices(const int search_idx, array<int> &matching_ids)
+bool VertexDictionnary::FindMatchingVertices(const int search_idx, easy_array<int> &matching_ids)
 {
     int cur_mast = FindVertexMaster(search_idx);
 
@@ -50,9 +50,9 @@ bool VertexDictionnary::FindMatchingVertices(const int search_idx, array<int> &m
 
 //-----------------------------------------------------------------------------
 //Will return connected vertices (through triangles), if returned vertex has matching ones, it only returns the master.
-bool VertexDictionnary::FindConnectedVertices(const int search_idx, const array<uint16_t> &tri_list, const int tri0, array<int> &connected_vert, array<int> const *ignored_tri)
+bool VertexDictionnary::FindConnectedVertices(const int search_idx, const easy_array<uint16_t> &tri_list, const int tri0, easy_array<int> &connected_vert, easy_array<int> const *ignored_tri)
 {
-    array<int> connected_tri;
+    easy_array<int> connected_tri;
     FindConnectedTriangles(search_idx, tri_list, tri0, connected_tri, ignored_tri);
 
     for (int i = 0; i < connected_tri.count(); i++)
@@ -80,20 +80,20 @@ bool VertexDictionnary::FindConnectedVertices(const int search_idx, const array<
     return (connected_vert.count() > 0);
 }
 //-----------------------------------------------------------------------------
-bool VertexDictionnary::FindConnectedTriangles(const int search_idx, const array<uint16_t> &tri_list, const int tri0, array<int> &connected_tri, array<int> const *ignored_tri)
+bool VertexDictionnary::FindConnectedTriangles(const int search_idx, const easy_array<uint16_t> &tri_list, const int tri0, easy_array<int> &connected_tri, easy_array<int> const *ignored_tri)
 {
     return FindConnectedTriangles(ivec3(search_idx, search_idx, search_idx), tri_list, tri0, connected_tri, ignored_tri);
 }
 //-----------------------------------------------------------------------------
-bool VertexDictionnary::FindConnectedTriangles(const ivec2 &search_idx, const array<uint16_t> &tri_list, const int tri0, array<int> &connected_tri, array<int> const *ignored_tri)
+bool VertexDictionnary::FindConnectedTriangles(const ivec2 &search_idx, const easy_array<uint16_t> &tri_list, const int tri0, easy_array<int> &connected_tri, easy_array<int> const *ignored_tri)
 {
     return FindConnectedTriangles(ivec3(search_idx, search_idx.x), tri_list, tri0, connected_tri, ignored_tri);
 }
 //-----------------------------------------------------------------------------
-bool VertexDictionnary::FindConnectedTriangles(const ivec3 &search_idx, const array<uint16_t> &tri_list, const int tri0, array<int> &connected_tri, array<int> const *ignored_tri)
+bool VertexDictionnary::FindConnectedTriangles(const ivec3 &search_idx, const easy_array<uint16_t> &tri_list, const int tri0, easy_array<int> &connected_tri, easy_array<int> const *ignored_tri)
 {
     int needed_validation = 0;
-    array<int> vert_list[3];
+    easy_array<int> vert_list[3];
     for (int i = 0; i < 3; i++)
     {
         //Small optim since above func will use this one

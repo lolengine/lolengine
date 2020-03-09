@@ -122,20 +122,20 @@ Loader::~Loader()
 
 //Store loader ------------------------------------------------------------
 // FIXME: change this to a map?
-static array<lua_State*, Lolua::Loader*> g_loaders;
+static std::vector<std::tuple<lua_State*, Lolua::Loader*>> g_loaders;
 
 void Loader::Store(lua_State* l, Lolua::Loader* loader)
 {
-    g_loaders.push(l, loader);
+    g_loaders.push_back(std::make_tuple(l, loader));
 }
 
 void Loader::Release(lua_State* l, Lolua::Loader* loader)
 {
-    for (int i = 0; i < g_loaders.count(); ++i)
+    for (size_t i = 0; i < g_loaders.size(); ++i)
     {
         if (std::get<0>(g_loaders[i]) == l && std::get<1>(g_loaders[i]) == loader)
         {
-            g_loaders.remove(i);
+            remove_at(g_loaders, i);
             return;
         }
     }

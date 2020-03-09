@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Graphing tutorial
 //
-//  Copyright © 2012—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2012—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -15,6 +15,7 @@
 #endif
 
 #include <lol/engine.h>
+#include <vector>
 #include "loldebug.h"
 
 using namespace lol;
@@ -30,7 +31,7 @@ public:
     {
         /* Generate a new heightmap at the beginning */
         m_heightmap.resize(TEXTURE_WIDTH * 1);
-        memset(m_heightmap.data(), 255, m_heightmap.bytes());
+        memset(m_heightmap.data(), 255, m_heightmap.size() * sizeof(m_heightmap[0]));
 
         return true;
     }
@@ -40,13 +41,13 @@ public:
         WorldEntity::tick_game(seconds);
 
         /* Scroll left */
-        for (int i = 0; i < m_heightmap.count() - 1; i++)
+        for (size_t i = 0; i + 1 < m_heightmap.size(); i++)
             m_heightmap[i] = m_heightmap[i + 1];
 
-        int height = m_heightmap.last();
+        int height = m_heightmap.back();
         height = (int)(height + 127 + 40 * lol::sin(m_frames * 0.03) + rand() % 97 - 38) / 2;
         height = std::max(15, std::min(height, 240));
-        m_heightmap.last() = height;
+        m_heightmap.back() = height;
 
         /* Update frame counter */
         ++m_frames;
@@ -54,7 +55,7 @@ public:
 
     virtual bool init_draw() override
     {
-        array<vec2> vertices
+        std::vector<vec2> vertices
         {
             vec2(-1.0,  1.0),
             vec2(-1.0, -1.0),
@@ -72,8 +73,8 @@ public:
 
         m_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec2>(VertexUsage::Position));
 
-        m_vbo = std::make_shared<VertexBuffer>(vertices.bytes());
-        m_vbo->set_data(vertices.data(), vertices.bytes());
+        m_vbo = std::make_shared<VertexBuffer>(vertices.size() * sizeof(vertices[0]));
+        m_vbo->set_data(vertices.data(), vertices.size() * sizeof(vertices[0]));
 
         return true;
     }
@@ -110,7 +111,7 @@ private:
     ShaderUniform m_texture_uni;
     std::shared_ptr<VertexDeclaration> m_vdecl;
     std::shared_ptr<VertexBuffer> m_vbo;
-    array<uint8_t> m_heightmap;
+    std::vector<uint8_t> m_heightmap;
     int m_frames = 0;
 };
 

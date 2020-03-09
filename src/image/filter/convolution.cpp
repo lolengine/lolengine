@@ -12,6 +12,8 @@
 
 #include <lol/engine-internal.h>
 
+#include <vector>
+
 /*
  * Generic convolution functions
  */
@@ -19,8 +21,8 @@
 namespace lol
 {
 
-static image SepConv(image &src, array<float> const &hvec,
-                     array<float> const &vvec);
+static image SepConv(image &src, std::vector<float> const &hvec,
+                     std::vector<float> const &vvec);
 static image NonSepConv(image &src, array2d<float> const &in_kernel);
 
 image image::Convolution(array2d<float> const &in_kernel)
@@ -65,13 +67,13 @@ image image::Convolution(array2d<float> const &in_kernel)
     if (separable)
     {
         /* Matrix rank is 1! Separate the filter. */
-        array<float> hvec, vvec;
+        std::vector<float> hvec, vvec;
 
         float norm = 1.0f / lol::sqrt(lol::fabs(in_kernel[bestx][besty]));
         for (int dx = 0; dx < ksize.x; dx++)
-            hvec << norm * in_kernel[dx][besty];
+            hvec.push_back(norm * in_kernel[dx][besty]);
         for (int dy = 0; dy < ksize.y; dy++)
-            vvec << norm * in_kernel[bestx][dy];
+            vvec.push_back(norm * in_kernel[bestx][dy]);
 
         return SepConv(*this, hvec, vvec);
     }
@@ -190,13 +192,13 @@ static image NonSepConv(image &src, array2d<float> const &in_kernel)
 }
 
 template<PixelFormat FORMAT, int WRAP_X, int WRAP_Y>
-static image SepConv(image &src, array<float> const &hvec,
-                     array<float> const &vvec)
+static image SepConv(image &src, std::vector<float> const &hvec,
+                     std::vector<float> const &vvec)
 {
     typedef typename PixelType<FORMAT>::type pixel_t;
 
     ivec2 const size = src.size();
-    ivec2 const ksize(hvec.count(), vvec.count());
+    ivec2 const ksize(int(hvec.size()), int(vvec.size()));
     image dst(size);
 
     array2d<pixel_t> const &srcp = src.lock2d<FORMAT>();
@@ -252,8 +254,8 @@ static image SepConv(image &src, array<float> const &hvec,
     return dst;
 }
 
-static image SepConv(image &src, array<float> const &hvec,
-                     array<float> const &vvec)
+static image SepConv(image &src, std::vector<float> const &hvec,
+                     std::vector<float> const &vvec)
 {
     bool const wrap_x = src.GetWrapX() == WrapMode::Repeat;
     bool const wrap_y = src.GetWrapY() == WrapMode::Repeat;

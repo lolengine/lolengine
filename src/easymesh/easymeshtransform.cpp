@@ -71,7 +71,7 @@ void EasyMesh::RadialJitter(float r)
         return;
     }
 
-    array<int> welded;
+    easy_array<int> welded;
     welded.push(-1);
     for (int i = std::get<0>(m_cursors.last()) + 1; i < m_vert.count(); i++)
     {
@@ -371,10 +371,10 @@ void EasyMesh::SmoothMesh(int main_pass, int split_per_main_pass, int smooth_per
     }
 
     VertexDictionnary vert_dict;
-    array<vec3> smooth_buf[2];
-    array<int> master_list;
-    array<int> matching_ids;
-    array<int> connected_vert;
+    easy_array<vec3> smooth_buf[2];
+    easy_array<int> master_list;
+    easy_array<int> matching_ids;
+    easy_array<int> connected_vert;
     int smbuf = 0;
 
     for (int i = std::get<0>(m_cursors.last()); i < m_vert.count(); i++)

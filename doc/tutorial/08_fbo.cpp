@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Framebuffer Object tutorial
 //
-//  Copyright © 2012—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2012—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -44,7 +44,7 @@ public:
 
     virtual bool init_draw() override
     {
-        array<vec2> vertices
+        std::vector<vec2> vertices
         {
             vec2( 1.0,  1.0),
             vec2(-1.0, -1.0),
@@ -63,8 +63,8 @@ public:
 
         m_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec2>(VertexUsage::Position));
 
-        m_vbo = std::make_shared<VertexBuffer>(vertices.bytes());
-        m_vbo->set_data(vertices.data(), vertices.bytes());
+        m_vbo = std::make_shared<VertexBuffer>(vertices.size() * sizeof(vertices[0]));
+        m_vbo->set_data(vertices.data(), vertices.size() * sizeof(vertices[0]));
 
         // Create the back buffer and clear it
         m_backbuffer = std::make_shared<Framebuffer>(Video::GetSize());

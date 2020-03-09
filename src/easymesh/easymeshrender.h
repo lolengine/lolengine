@@ -94,8 +94,8 @@ protected:
     std::shared_ptr<Shader> m_shader;
     int m_render_mode;
     uint16_t m_vert_decl_flags;
-    array<std::string, ShaderUniform> m_shader_uniform;
-    array<ShaderAttrib> m_shader_attrib;
+    easy_array<std::string, ShaderUniform> m_shader_uniform;
+    easy_array<ShaderAttrib> m_shader_attrib;
 };
 
 class DefaultShaderData : public GpuShaderData
@@ -110,7 +110,7 @@ public:
     void SetupDefaultData(bool with_UV);
     virtual void SetupShaderDatas(mat4 const &model);
     //--
-    array<std::string> m_uniform_names;
+    easy_array<std::string> m_uniform_names;
 };
 
 class GpuEasyMeshData
@@ -129,9 +129,9 @@ public:
 private:
     void SetupVertexData(uint16_t vdecl_flags, std::shared_ptr<EasyMesh> src_mesh);
 
-    array<std::shared_ptr<GpuShaderData>> m_gpudata;
+    easy_array<std::shared_ptr<GpuShaderData>> m_gpudata;
     //uint16_t are the vdecl/vbo flags to avoid copy same vdecl several times.
-    array<uint16_t, std::shared_ptr<VertexDeclaration>, std::shared_ptr<VertexBuffer>> m_vdata;
+    easy_array<uint16_t, std::shared_ptr<VertexDeclaration>, std::shared_ptr<VertexBuffer>> m_vdata;
     size_t m_vertexcount;
     //We only need only one ibo for the whole mesh
     std::shared_ptr<IndexBuffer> m_ibo;

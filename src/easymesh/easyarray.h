@@ -14,10 +14,10 @@
 #pragma once
 
 //
-// The array class
-// ———————————————
+// The easyarray class
+// ———————————————————
 // A very simple array class not unlike the std::vector, with some nice
-// additional features, eg. array<int,float> for automatic arrays of tuples.
+// additional features, eg. easy_array<int,float> for automatic arrays of tuples.
 //
 
 #include <cassert>   // assert()
@@ -229,17 +229,6 @@ public:
         ++m_count;
     }
 
-    inline bool insert_unique(T const &x, ptrdiff_t pos)
-    {
-        assert(pos >= 0 && pos <= m_count);
-
-        if (find(x) != INDEX_NONE)
-            return false;
-
-        insert(x, pos);
-        return true;
-    }
-
     inline ptrdiff_t find(T const &x)
     {
         for (ptrdiff_t i = 0; i < m_count; ++i)
@@ -439,10 +428,10 @@ protected:
  */
 
 template<typename... T>
-class array : public array_base<std::tuple<T...>, array<T...>>
+class easy_array : public array_base<std::tuple<T...>, easy_array<T...>>
 {
 private:
-    using array_base<std::tuple<T...>, array<T...>>::array_base;
+    using array_base<std::tuple<T...>, easy_array<T...>>::array_base;
 
     // Mark these as private: it’s dangerous to use data() with arrays of
     // tuples because no assumption should be made about the tuple layout,
@@ -489,10 +478,10 @@ public:
 };
 
 template<typename T>
-class array<T>
-  : public array_base<T, array<T>>
+class easy_array<T>
+  : public array_base<T, easy_array<T>>
 {
-    using array_base<T, array<T>>::array_base;
+    using array_base<T, easy_array<T>>::array_base;
 };
 
 /*
@@ -500,27 +489,27 @@ class array<T>
  */
 
 template<typename... T>
-typename array<T...>::iterator begin(array<T...> &a)
+typename easy_array<T...>::iterator begin(easy_array<T...> &a)
 {
-    return typename array<T...>::iterator(&a, 0);
+    return typename easy_array<T...>::iterator(&a, 0);
 }
 
 template<typename... T>
-typename array<T...>::iterator end(array<T...> &a)
+typename easy_array<T...>::iterator end(easy_array<T...> &a)
 {
-    return typename array<T...>::iterator(&a, a.count());
+    return typename easy_array<T...>::iterator(&a, a.count());
 }
 
 template<typename... T>
-typename array<T...>::const_iterator begin(array<T...> const &a)
+typename easy_array<T...>::const_iterator begin(easy_array<T...> const &a)
 {
-    return typename array<T...>::const_iterator(&a, 0);
+    return typename easy_array<T...>::const_iterator(&a, 0);
 }
 
 template<typename... T>
-typename array<T...>::const_iterator end(array<T...> const &a)
+typename easy_array<T...>::const_iterator end(easy_array<T...> const &a)
 {
-    return typename array<T...>::const_iterator(&a, a.count());
+    return typename easy_array<T...>::const_iterator(&a, a.count());
 }
 
 } /* namespace lol */

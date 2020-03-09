@@ -15,7 +15,7 @@
 #endif
 
 #include <lol/unit_test>
-#include <lol/base/array.h>
+#include <lol/../easymesh/easyarray.h>
 
 namespace lol
 {
@@ -36,7 +36,7 @@ lolunit_declare_fixture(array_test)
 {
     lolunit_declare_test(array_push)
     {
-        array<int> a;
+        easy_array<int> a;
         a.push(0);
         a.push(1);
         a.push(2);
@@ -50,21 +50,21 @@ lolunit_declare_fixture(array_test)
 
     lolunit_declare_test(array_initializer)
     {
-        array<int> a({ 2, 4, 6 });
+        easy_array<int> a({ 2, 4, 6 });
 
         lolunit_assert_equal(a[0], 2);
         lolunit_assert_equal(a[1], 4);
         lolunit_assert_equal(a[2], 6);
 
-        array<int> b = { 2, 4, 6 };
+        easy_array<int> b = { 2, 4, 6 };
 
         lolunit_assert_equal(b[0], 2);
         lolunit_assert_equal(b[1], 4);
         lolunit_assert_equal(b[2], 6);
 
-        array<int, float> c = { { 2, 3.0f },
-                                { 4, 5.0f },
-                                { 6, 7.0f } };
+        easy_array<int, float> c = { { 2, 3.0f },
+                                     { 4, 5.0f },
+                                     { 6, 7.0f } };
 
         lolunit_assert_equal(std::get<0>(c[0]), 2);
         lolunit_assert_equal(std::get<1>(c[0]), 3.0f);
@@ -76,7 +76,7 @@ lolunit_declare_fixture(array_test)
 
     lolunit_declare_test(array_push_with_shift)
     {
-        array<int> a;
+        easy_array<int> a;
         a << 0 << 1 << 2 << 3;
 
         lolunit_assert_equal(a[0], 0);
@@ -87,10 +87,10 @@ lolunit_declare_fixture(array_test)
 
     lolunit_declare_test(array_copy)
     {
-        array<int> a;
+        easy_array<int> a;
         a << 0 << 1 << 2 << 3;
 
-        array<int> b = a;
+        easy_array<int> b = a;
 
         lolunit_assert_equal(b[0], 0);
         lolunit_assert_equal(b[1], 1);
@@ -100,7 +100,7 @@ lolunit_declare_fixture(array_test)
 
     lolunit_declare_test(array_remove)
     {
-        array<int> a;
+        easy_array<int> a;
         a << 0 << 1 << 2 << 3;
         a.remove(1);
 
@@ -109,7 +109,7 @@ lolunit_declare_fixture(array_test)
         lolunit_assert_equal(a[1], 2);
         lolunit_assert_equal(a[2], 3);
 
-        array<int> b;
+        easy_array<int> b;
         b << 0 << 1 << 2 << 3;
         b.remove(-2);
 
@@ -121,7 +121,7 @@ lolunit_declare_fixture(array_test)
 
     lolunit_declare_test(array_remove_swap)
     {
-        array<int> a;
+        easy_array<int> a;
         a << 0 << 1 << 2 << 3;
         a.remove_swap(1);
 
@@ -130,7 +130,7 @@ lolunit_declare_fixture(array_test)
         lolunit_assert_equal(a[1], 3);
         lolunit_assert_equal(a[2], 2);
 
-        array<int> b;
+        easy_array<int> b;
         b << 0 << 1 << 2 << 3;
         b.remove(1, 2);
 
@@ -141,7 +141,7 @@ lolunit_declare_fixture(array_test)
 
     lolunit_declare_test(eight_element_arrays)
     {
-        array<int, long, float, double, unsigned, char, bool, void *> a;
+        easy_array<int, long, float, double, unsigned, char, bool, void *> a;
         a.push(1, 2, 3.f, 4.0, 5, 'a', true, 0);
 
         lolunit_assert_equal(std::get<0>(a[0]), 1);
@@ -156,7 +156,7 @@ lolunit_declare_fixture(array_test)
 
     lolunit_declare_test(array_swap)
     {
-        array<int, int> a;
+        easy_array<int, int> a;
         a.push(10, 20);
         a.push(30, 40);
 
@@ -170,7 +170,7 @@ lolunit_declare_fixture(array_test)
 
     lolunit_declare_test(array_insert)
     {
-        array<int> a;
+        easy_array<int> a;
         a << 1 << 2;
 
         a.insert(5, 0);
@@ -194,7 +194,7 @@ lolunit_declare_fixture(array_test)
 
     lolunit_declare_test(array_insert_tuple)
     {
-        array<int, float, std::string> b;
+        easy_array<int, float, std::string> b;
         b.insert(0, 5, 6.f, "lol");
         lolunit_assert_equal(5,   std::get<0>(b[0]));
         lolunit_assert_equal(6.f, std::get<1>(b[0]));
@@ -216,11 +216,11 @@ lolunit_declare_fixture(array_test)
 
     lolunit_declare_test(array_concat)
     {
-        array<int> a, b;
+        easy_array<int> a, b;
         a << 0 << 1;
         b << 2 << 3;
 
-        array<int> c = a + b;
+        easy_array<int> c = a + b;
         lolunit_assert_equal(c[0], 0);
         lolunit_assert_equal(c[1], 1);
         lolunit_assert_equal(c[2], 2);
@@ -229,7 +229,7 @@ lolunit_declare_fixture(array_test)
 
     lolunit_declare_test(array_append)
     {
-        array<int> a, b;
+        easy_array<int> a, b;
         a << 0 << 1;
         b << 2 << 3;
 
@@ -253,7 +253,7 @@ lolunit_declare_fixture(array_test)
         tracked_object::m_ctor = 0;
         tracked_object::m_dtor = 0;
         {
-            array<tracked_object> a;
+            easy_array<tracked_object> a;
 
             a.push(tracked_object());
         }
@@ -262,7 +262,7 @@ lolunit_declare_fixture(array_test)
         tracked_object::m_ctor = 0;
         tracked_object::m_dtor = 0;
         {
-            array<tracked_object> a;
+            easy_array<tracked_object> a;
 
             a.resize(2);
             a.resize(4);

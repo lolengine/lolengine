@@ -35,13 +35,13 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
     }
 
     //A vertex dictionnary for vertices on the same spot.
-    array< int, int > vertex_dict;
+    easy_array< int, int > vertex_dict;
     //This list keeps track of the triangle that will need deletion at the end.
-    array< int > triangle_to_kill;
+    easy_array< int > triangle_to_kill;
     //Listing for each triangle of the vectors intersecting it. <tri_Id, <Point0, Point1, tri_isec_Normal>>
-    array< int, array< vec3, vec3, vec3 > > triangle_isec;
+    easy_array< int, easy_array< vec3, vec3, vec3 > > triangle_isec;
     //keep a track of the intersection point on the triangle. <pos, side_id>
-    array< vec3, int > triangle_vertex;
+    easy_array< vec3, int > triangle_vertex;
     for (int k = 0; k < 10; k++)
         triangle_vertex.push(vec3(.0f), 0);
 
@@ -72,8 +72,8 @@ void EasyMesh::MeshCsg(CSGUsage csg_operation)
         int start_point = (mesh_id == 0) ? (cursor_start) : (std::get<1>(m_cursors.last()));
         int end_point   = (mesh_id == 0) ? (std::get<1>(m_cursors.last())) : (indices_count);
         CsgBsp &mesh_bsp      = (mesh_id == 0) ? (mesh_bsp_1) : (mesh_bsp_0);
-        array< vec3, int, int, float > vert_list;
-        array< int, int, int, int > tri_list;
+        easy_array< vec3, int, int, float > vert_list;
+        easy_array< int, int, int, int > tri_list;
         vec3 n0(.0f); vec3 n1(.0f);
         vec4 c0(.0f); vec4 c1(.0f);
 

@@ -260,6 +260,9 @@
     <ClInclude Include="easymesh\easymesh.h">
       <Filter>easymesh</Filter>
     </ClInclude>
+    <ClInclude Include="easymesh\easyarray.h">
+      <Filter>easymesh</Filter>
+    </ClInclude>
     <ClInclude Include="easymesh\easymeshbuild.h">
       <Filter>easymesh</Filter>
     </ClInclude>
@@ -295,9 +298,6 @@
     <ClInclude Include="lolgl.h" />
     <ClInclude Include="lolua\baselua.h">
       <Filter>lolua</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\base\array.h">
-      <Filter>lol\base</Filter>
     </ClInclude>
     <ClInclude Include="lol\base\enum.h">
       <Filter>lol\base</Filter>
@@ -423,7 +423,6 @@
     <ClInclude Include="ui\sdl-input.h">
       <Filter>ui</Filter>
     </ClInclude>
-    <ClInclude Include="utils.h" />
     <ClInclude Include="video.h" />
     <ClInclude Include="lol\base\all.h">
       <Filter>lol\base</Filter>

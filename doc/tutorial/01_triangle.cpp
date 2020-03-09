@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Triangle tutorial
 //
-//  Copyright © 2012—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2012—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -28,7 +28,7 @@ class Triangle : public WorldEntity
 public:
     virtual bool init_draw() override
     {
-        array<vec2> vertices
+        std::vector<vec2> vertices
         {
             vec2( 0.0f,  0.8f),
             vec2(-0.8f, -0.8f),
@@ -40,8 +40,8 @@ public:
 
         m_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec2>(VertexUsage::Position));
 
-        m_vbo = std::make_shared<VertexBuffer>(vertices.bytes());
-        m_vbo->set_data(vertices.data(), vertices.bytes());
+        m_vbo = std::make_shared<VertexBuffer>(vertices.size() * sizeof(vertices[0]));
+        m_vbo->set_data(vertices.data(), vertices.size() * sizeof(vertices[0]));
 
         return true;
     }

@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2017—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2017—2020 Sam Hocevar <sam@hocevar.net>
 //            © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -264,9 +264,9 @@ bool gui::init_draw()
     m_ortho.m_uniform = m_shader->GetUniformLocation(m_ortho.m_var.tostring());
     m_texture.m_uniform = m_shader->GetUniformLocation(m_texture.m_var.tostring());
 
-    m_attribs << m_shader->GetAttribLocation(VertexUsage::Position, 0)
-              << m_shader->GetAttribLocation(VertexUsage::TexCoord, 0)
-              << m_shader->GetAttribLocation(VertexUsage::Color, 0);
+    m_attribs.push_back(m_shader->GetAttribLocation(VertexUsage::Position, 0));
+    m_attribs.push_back(m_shader->GetAttribLocation(VertexUsage::TexCoord, 0));
+    m_attribs.push_back(m_shader->GetAttribLocation(VertexUsage::Color, 0));
 
     m_vdecl = std::make_shared<VertexDeclaration>(
         VertexStream<vec2, vec2, u8vec4>(

@@ -1,9 +1,9 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2009—2013 Cédric Lecacheur <jordx@free.fr>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
+//            © 2009—2013 Cédric Lecacheur <jordx@free.fr>
 //            © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2010—2018 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -15,6 +15,7 @@
 #pragma once
 
 #include "commandstack.h"
+#include "easyarray.h"
 #include "easymeshrender.h"
 #include "easymeshbuild.h"
 
@@ -100,7 +101,7 @@ public:
     void ExecuteCmdStack(bool ExecAllStack = true);
 
 private:
-    void UpdateVertexDict(array< int, int > &vertex_dict);
+    void UpdateVertexDict(easy_array< int, int > &vertex_dict);
 
     //-------------------------------------------------------------------------
     //Mesh CSG operations
@@ -417,11 +418,11 @@ public:
     vec3 const &GetVertexLocation(int i) { return m_vert[i].m_coord; }
 
 //private:
-    array<uint16_t>     m_indices;
-    array<VertexData>   m_vert;
+    easy_array<uint16_t>     m_indices;
+    easy_array<VertexData>   m_vert;
 
     //<vert count, indices count>
-    array<int, int>     m_cursors;
+    easy_array<int, int>     m_cursors;
 
     MeshRender          m_state;
 

@@ -85,7 +85,7 @@ public:
             uint8_t red   = (uint8_t)(rgb.r * 256);
             uint8_t green = (uint8_t)(rgb.g * 256);
             uint8_t blue  = (uint8_t)(rgb.b * 256);
-            m_palette.push(u8vec4(blue, green, red, 255));
+            m_palette.push_back(u8vec4(blue, green, red, 255));
         }
 
         m_zoomtext = new Text("", "data/font/ascii.png");
@@ -530,7 +530,7 @@ private:
     ivec2 m_size, m_window_size, m_oldmouse;
     double m_window2world;
     dvec2 m_texel2world;
-    array<u8vec4> m_pixels, m_palette;
+    std::vector<u8vec4> m_pixels, m_palette;
 
     std::shared_ptr<Shader> m_shader;
     ShaderAttrib m_vertexattrib, m_texattrib;

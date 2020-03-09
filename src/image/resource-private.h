@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //            © 2016—2017 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -12,6 +12,9 @@
 //
 
 #pragma once
+
+#include <lol/utils>
+#include <vector>
 
 //
 // The ResourceCodecData class
@@ -29,7 +32,7 @@ namespace lol
         virtual bool Save(std::string const &path, ResourceCodecData* data) = 0;
 
         /* TODO: this should become more fine-grained */
-        int m_priority;
+        size_t m_priority;
     };
 
 #define REGISTER_IMAGE_CODEC(name) \
@@ -37,13 +40,13 @@ namespace lol
     { \
         /* Insert image codecs in a sorted list */ \
         ResourceCodec *codec = Register##name(); \
-        int i = 0, prio = codec->m_priority; \
-        for ( ; i < codeclist.count(); ++i) \
+        size_t i = 0, prio = codec->m_priority; \
+        for ( ; i < codeclist.size(); ++i) \
         { \
             if (codeclist[i]->m_priority <= prio) \
                 break; \
         } \
-        codeclist.insert(codec, i); \
+        insert_at(codeclist, i, codec); \
     }
 
 #define DECLARE_IMAGE_CODEC(name, priority) \

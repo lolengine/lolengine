@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -28,6 +28,8 @@
 #endif
 
 #include <memory>
+#include <vector>
+#include <tuple>
 
 namespace lol
 {
@@ -49,7 +51,7 @@ private:
     void tick(float seconds);
 
 #if LOL_USE_SDL
-    array<SDL_Joystick *, std::shared_ptr<class input::device::joystick>> m_joysticks;
+    std::vector<std::tuple<SDL_Joystick *, std::shared_ptr<class input::device::joystick>>> m_joysticks;
 #endif
 
     vec2 m_app;

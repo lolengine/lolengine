@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //            © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  This library is free software. It comes without any warranty, to
@@ -19,6 +19,7 @@
 //
 
 #include <lol/engine.h>
+#include <vector>
 
 #include <btBulletDynamicsCommon.h>
 #include <btBulletCollisionCommon.h>
@@ -80,16 +81,16 @@ protected:
 
     virtual btGhostObject* GetGhostObjectInstance();
 
-    btCollisionObject*                          m_collision_object;
+    btCollisionObject *m_collision_object;
 
-    btGhostObject*                              m_ghost_object;
+    btGhostObject *m_ghost_object;
 
-    btRigidBody*                                m_rigid_body;
-    btVector3                                   m_local_inertia;
+    btRigidBody *m_rigid_body;
+    btVector3 m_local_inertia;
 
-    btCollisionShape*                           m_collision_shape;
-    btConvexShape*                              m_convex_shape;
-    btMotionState*                              m_motion_state;
+    btCollisionShape *m_collision_shape;
+    btConvexShape *m_convex_shape;
+    btMotionState *m_motion_state;
 
 public:
     //Sets the collision Group & Mask.
@@ -116,41 +117,41 @@ public:
         if (NewBase)
         {
             bool bAlreadyExists = false;
-            for (int i = 0; i < NewBase->m_based_physic_list.count(); ++i)
+            for (size_t i = 0; i < NewBase->m_based_physic_list.size(); ++i)
                 if (NewBase->m_based_physic_list[i] == this)
                     bAlreadyExists = true;
             if (!bAlreadyExists)
-                NewBase->m_based_physic_list << this;
+                NewBase->m_based_physic_list.push_back(this);
             m_base_physic = NewBase;
             m_base_lock_location = NewBaseLockLocation;
             m_base_lock_rotation = NewBaseLockRotation;
         }
         else if (m_base_physic)
         {
-            for (int i = 0; i < m_base_physic->m_based_physic_list.count(); ++i)
+            for (size_t i = 0; i < m_base_physic->m_based_physic_list.size(); ++i)
                 if (m_base_physic->m_based_physic_list[i] == this)
-                    m_base_physic->m_based_physic_list.remove(i--);
+                    remove_at(m_base_physic->m_based_physic_list, i--);
             m_base_physic = nullptr;
         }
     }
 
 protected:
-    lol::mat4                                       m_local_to_world;
-    float                                           m_mass;
-    float                                           m_hit_restitution;
-    int                                             m_collision_group;
-    int                                             m_collision_mask;
-    WorldEntity*                                    m_owner_entity;
-    Simulation*                                     m_owner_simulation;
+    lol::mat4 m_local_to_world;
+    float m_mass;
+    float m_hit_restitution;
+    int m_collision_group;
+    int m_collision_mask;
+    WorldEntity *m_owner_entity;
+    Simulation *m_owner_simulation;
 
     //Base/Attachment logic
-    array<EasyPhysic*>                              m_based_physic_list;     //List of objects based on this : this object moves, its based object MoveStep with it.
-    EasyPhysic*                                     m_base_physic;           //Base for this object : The base moves, the object moves with it.
-    bool                                            m_base_lock_location;    //when this is TRUE, location moves with rotation change.
-    bool                                            m_base_lock_rotation;    //when this is TRUE, rotation moves with rotation change.
+    std::vector<EasyPhysic*> m_based_physic_list;     //List of objects based on this : this object moves, its based object MoveStep with it.
+    EasyPhysic *m_base_physic;           //Base for this object : The base moves, the object moves with it.
+    bool m_base_lock_location;    //when this is TRUE, location moves with rotation change.
+    bool m_base_lock_rotation;    //when this is TRUE, rotation moves with rotation change.
 
     //Touch logic
-    array<EasyPhysic*>                              m_touching_physic;        //Maintained by ghost objects
+    std::vector<EasyPhysic*> m_touching_physic;        //Maintained by ghost objects
 };
 
 } /* namespace phys */

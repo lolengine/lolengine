@@ -127,7 +127,7 @@ void EasyMesh::ComputeNormals(int start, int vcount)
         BD()->IsEnabled(MeshBuildOperation::PostBuildComputeNormals))
         return;
 
-    array< array<vec3> > normals;
+    easy_array< easy_array<vec3> > normals;
     normals.resize(m_vert.count());
     for (int i = 0; i < vcount; i += 3)
     {
@@ -162,7 +162,7 @@ void EasyMesh::ComputeNormals(int start, int vcount)
 //-----------------------------------------------------------------------------
 void EasyMesh::VerticesCleanup()
 {
-    array<int> vert_ids;
+    easy_array<int> vert_ids;
     vert_ids.resize(m_vert.count(), 0);
 
     //1: Remove triangles with two vertices on each other
@@ -186,7 +186,7 @@ void EasyMesh::VerticesCleanup()
     }
 
     //2: Remove all unused vertices
-    array<VertexData> old_vert = m_vert;
+    easy_array<VertexData> old_vert = m_vert;
     int shift = 0;
     m_vert.clear();
     for (int i = 0; i < vert_ids.count(); ++i)
@@ -240,8 +240,8 @@ void EasyMesh::VerticesSeparate()
         return;
     }
 
-    array< array<int> > new_ids;
-    array<int> vert_ids;
+    easy_array< easy_array<int> > new_ids;
+    easy_array<int> vert_ids;
     vert_ids.resize(m_vert.count(), 0);
 
     //1: Mark all used vertices
@@ -283,7 +283,7 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
     UNUSED(uv_scale, uv_offset);
 #if 0
     VertexDictionnary vert_dict;
-    array<int> tri_list;
+    easy_array<int> tri_list;
 
     tri_list.Reserve(m_indices.count() - std::get<1>(m_cursors.last()));
     for (int i = std::get<1>(m_cursors.last()); i < m_indices.count(); i++)
@@ -293,8 +293,8 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
     }
 
     //full triangle count
-    array<int> tri_done;
-    array<int> tri_check;
+    easy_array<int> tri_done;
+    easy_array<int> tri_check;
     int tri_count = (m_indices.count() - std::get<1>(m_cursors.last())) / 3;
 
     tri_check << tri_list[0];
@@ -390,7 +390,7 @@ void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
             uv[2] = texu_dir * dot(v01, v02) + texv_dir * dot(v_dir, v02);
 
             //Set UV on ALL matching vertices!
-            array<int> matching_vert;
+            easy_array<int> matching_vert;
             for (int i = 0; i < 3; i++)
             {
 #if 1

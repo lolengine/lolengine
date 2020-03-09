@@ -17,6 +17,7 @@
 /* FIXME: this file is pure crap; it's only a test. */
 
 #include <lol/engine.h>
+#include <vector>
 
 #include "easymesh/easymesh.h"
 #include "physics/easyphysics.h"
@@ -165,23 +166,24 @@ public:
         m_is_character(false),
         m_is_phys(false)
     {
-        static array<EasyMesh> MeshRand;
-        static array<int> MeshLimit;
-        static array<int> MeshType;
+        static std::vector<EasyMesh> MeshRand;
+        static std::vector<int> MeshLimit;
+        static std::vector<int> MeshType;
 
-        if (!MeshRand.count())
+        if (!MeshRand.size())
         {
-            array<std::string> colors_base = { "#add", "#dad", "#dda", "#daa", "#ada", "#aad" };
+            std::vector<std::string> colors_base = { "#add", "#dad", "#dda", "#daa", "#ada", "#aad" };
 
-            MeshLimit << 0;
+            MeshLimit.push_back(0);
 
 #if USE_BOX
             {
-                array<std::string> colors = colors_base;
-                while (colors.count())
+                std::vector<std::string> colors = colors_base;
+                while (colors.size())
                 {
                     EasyMesh m;
-                    vec4 color = hex_to_color(colors.pop());
+                    vec4 color = hex_to_color(colors.back());
+                    colors.pop_back();
                     m.SetCurColor(color);
                     m.AppendFlatChamfBox(vec3(1.7f), .4f);
                     m.OpenBrace();
@@ -194,7 +196,7 @@ public:
                         m.ScaleZ(-1.f);
                     }
                     m.CloseBrace();
-                    MeshRand << m;
+                    MeshRand.push_back(m);
                 }
             }
             //MeshRand << "[sc#add afcb1.7 1.7 1.7 0.4][sc#000 tsw afcb1.9 1.9 1.9 0.4 sx-1 sy-1 sz-1]";
@@ -204,8 +206,8 @@ public:
             //MeshRand << "[sc#ada afcb1.7 1.7 1.7 0.4][sc#000 tsw afcb1.9 1.9 1.9 0.4 sx-1 sy-1 sz-1]";
             //MeshRand << "[sc#aad afcb1.7 1.7 1.7 0.4][sc#000 tsw afcb1.9 1.9 1.9 0.4 sx-1 sy-1 sz-1]";
 
-            MeshLimit << MeshRand.count();
-            MeshType << 0;
+            MeshLimit.push_back(int(MeshRand.size()));
+            MeshType.push_back(0);
 #endif //USE_BOX
 
 
@@ -220,20 +222,21 @@ public:
                 start_point, start_point + size);
             m_mesh.BD()->SetTexCoordCustomBuild2(MeshType::Quad, MeshFaceType::QuadDefault,
                 vec2(-PARTICLE_SIZE), vec2(PARTICLE_SIZE));
-            MeshRand << "[tpbn tvnc sc#ffff aq 0 0]";
-            MeshRand << "[tpbn tvnc sc#faaf aq 0 0]";
-            MeshRand << "[tpbn tvnc sc#afaf aq 0 0]";
-            MeshRand << "[tpbn tvnc sc#aaff aq 0 0]";
+            MeshRand.push_back("[tpbn tvnc sc#ffff aq 0 0]");
+            MeshRand.push_back("[tpbn tvnc sc#faaf aq 0 0]");
+            MeshRand.push_back("[tpbn tvnc sc#afaf aq 0 0]");
+            MeshRand.push_back("[tpbn tvnc sc#aaff aq 0 0]");
 #else
             {
-                array<std::string> colors = colors_base;
-                while (colors.count())
+                std::vector<std::string> colors = colors_base;
+                while (colors.size())
                 {
                     EasyMesh m;
-                    vec4 color = hex_to_color(colors.pop());
+                    vec4 color = hex_to_color(colors.back());
+                    colors.pop_back();
                     m.SetCurColor(color);
                     m.AppendSphere(1, 2.f);
-                    MeshRand << m;
+                    MeshRand.push_back(m);
                 }
             }
             //MeshRand << "[sc#add asph1 2]";
@@ -244,24 +247,25 @@ public:
             //MeshRand << "[sc#aad asph1 2]";
 #endif
 
-            MeshLimit << MeshRand.count();
-            MeshType << 1;
+            MeshLimit.push_back(int(MeshRand.size()));
+            MeshType.push_back(1);
 #endif //USE_SPHERE
 
 #if USE_CONE
             {
-                array<std::string> colors = colors_base;
-                while (colors.count())
+                std::vector<std::string> colors = colors_base;
+                while (colors.size())
                 {
                     EasyMesh m;
-                    vec4 color = hex_to_color(colors.pop());
+                    vec4 color = hex_to_color(colors.back());
+                    colors.pop_back();
                     m.SetCurColor(color);
                     m.SetCurColorB(color);
                     m.AppendDisc(8, 2.f);
                     m.RotateX(180.f);
                     m.TranslateY(-1.f);
                     m.AppendCylinder(8, 2.f, 2.f, 0.f);
-                    MeshRand << m;
+                    MeshRand.push_back(m);
                 }
             }
             //MeshRand << "[sc#add scb#add ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
@@ -271,17 +275,18 @@ public:
             //MeshRand << "[sc#ada scb#ada ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
             //MeshRand << "[sc#aad scb#aad ad8 2 0 rx180 ty-1 ac8 2 2 0 0 0]";
 
-            MeshLimit << MeshRand.count();
-            MeshType << 2;
+            MeshLimit.push_back(int(MeshRand.size()));
+            MeshType.push_back(2);
 #endif //USE_CONE
 
 #if USE_CYLINDER
             {
-                array<std::string> colors = colors_base;
-                while (colors.count())
+                std::vector<std::string> colors = colors_base;
+                while (colors.size())
                 {
                     EasyMesh m;
-                    vec4 color = hex_to_color(colors.pop());
+                    vec4 color = hex_to_color(colors.back());
+                    colors.pop_back();
                     m.SetCurColor(color);
                     m.SetCurColorB(color);
                     m.AppendDisc(8, 2.f);
@@ -289,7 +294,7 @@ public:
                     m.TranslateY(-1.f);
                     m.MirrorY();
                     m.AppendCylinder(8.f, 2.f, 2.f, 2.f);
-                    MeshRand << m;
+                    MeshRand.push_back(m);
                 }
             }
             //MeshRand << "[sc#add scb#add ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
@@ -299,21 +304,22 @@ public:
             //MeshRand << "[sc#ada scb#ada ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
             //MeshRand << "[sc#aad scb#aad ad8 2 0 rx180 ty-1 my ac8 2 2 2 0 0]";
 
-            MeshLimit << MeshRand.count();
-            MeshType << 3;
+            MeshLimit.push_back(int(MeshRand.size()));
+            MeshType.push_back(3);
 #endif //USE_CYLINDER
 
 #if USE_CAPSULE
             {
-                array<std::string> colors = colors_base;
-                while (colors.count())
+                std::vector<std::string> colors = colors_base;
+                while (colors.size())
                 {
                     EasyMesh m;
-                    vec4 color = hex_to_color(colors.pop());
+                    vec4 color = hex_to_color(colors.back());
+                    colors.pop_back();
                     m.SetCurColor(color);
                     m.SetCurColorB(color);
                     m.AppendCapsule(1, 2.f, 1.f);
-                    MeshRand << m;
+                    MeshRand.push_back(m);
                 }
             }
             //MeshRand << "[sc#add scb#add acap1 2 1]";
@@ -323,14 +329,14 @@ public:
             //MeshRand << "[sc#ada scb#ada acap1 2 1]";
             //MeshRand << "[sc#aad scb#aad acap1 2 1]";
 
-            MeshLimit << MeshRand.count();
-            MeshType << 4;
+            MeshLimit.push_back(int(MeshRand.size()));
+            MeshType.push_back(4);
 #endif //USE_CAPSULE
         }
 
         int RandLimit = RandValue;
-        if (MeshLimit.count() <= RandValue || RandValue < 0)
-            RandLimit = rand((int)MeshLimit.count() - 1);
+        if (MeshLimit.size() <= RandValue || RandValue < 0)
+            RandLimit = rand((int)MeshLimit.size() - 1);
         RandValue = rand(MeshLimit[RandLimit], MeshLimit[RandLimit + 1]);
 
         m_physics = new EasyPhysic(this);

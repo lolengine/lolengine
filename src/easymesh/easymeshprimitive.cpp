@@ -141,7 +141,7 @@ void EasyMesh::AppendCapsule(int ndivisions, float h, float d)
 
     int ibase = m_indices.count();
 
-    array<vec3> vertices;
+    easy_array<vec3> vertices;
     float uv_h = 0;
     float uv_r = 0;
 

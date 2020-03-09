@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -39,7 +39,7 @@ public:
 
 private:
     static std::string ReadScreen(std::string const &name);
-    static void WriteScreen(image &image, array<uint8_t> &result);
+    static void WriteScreen(image &image, std::vector<uint8_t> &result);
 };
 
 DECLARE_IMAGE_CODEC(OricImageCodec, 100)
@@ -122,15 +122,16 @@ bool OricImageCodec::Save(std::string const &path, ResourceCodecData* data)
         || std::toupper(path[len - 1]) != 'P')
         return false;
 
-    array<uint8_t> result;
+    std::vector<uint8_t> result;
 
-    result << 0x16 << 0x16 << 0x16 << 0x16 << 0x24;
-    result << 0 << 0xff << 0x80 << 0 << 0xbf << 0x3f << 0xa0 << 0;
+    for (auto b : { 0x16, 0x16, 0x16, 0x16, 0x24, 0, 0xff,
+                    0x80, 0, 0xbf, 0x3f, 0xa0, 0 })
+        result.push_back(b);
 
     /* Add filename, except the last 4 characters */
     for (char const *name = path.c_str(); name[4]; ++name)
-        result << (uint8_t)name[0];
-    result << 0;
+        result.push_back(uint8_t(name[0]));
+    result.push_back(0);
 
     auto img = data_image->m_image;
     image tmp;
@@ -147,7 +148,7 @@ bool OricImageCodec::Save(std::string const &path, ResourceCodecData* data)
 
     File f;
     f.Open(path, FileAccess::Write);
-    f.Write(result.data(), result.bytes());
+    f.Write(result.data(), result.size());
     f.Close();
 
     return true;
@@ -472,7 +473,7 @@ static uint8_t bestmove(ivec3 const *in, u8vec2 bgfg,
     return bestcommand;
 }
 
-void OricImageCodec::WriteScreen(image &img, array<uint8_t> &result)
+void OricImageCodec::WriteScreen(image &img, std::vector<uint8_t> &result)
 {
     ivec2 size = img.size();
     vec4 *pixels = img.lock<PixelFormat::RGBA_F32>();
@@ -525,7 +526,7 @@ void OricImageCodec::WriteScreen(image &img, array<uint8_t> &result)
             /* Iterate */
             bgfg = domove(command, bgfg);
             /* Write byte to file */
-            result << command;
+            result.push_back(command);
         }
     }
 

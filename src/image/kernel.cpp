@@ -186,7 +186,7 @@ array2d<float> image::kernel::normalize(array2d<float> const &kernel)
 {
     ivec2 size = kernel.sizes();
 
-    array<Dot> tmp;
+    std::vector<Dot> tmp;
     tmp.resize(size.x * size.y);
 
     for (int y = 0; y < size.y; y++)
@@ -196,6 +196,7 @@ array2d<float> image::kernel::normalize(array2d<float> const &kernel)
             tmp[y * size.x + x].y = y;
             tmp[y * size.x + x].val = kernel[x][y];
         }
+    // FIXME: get rid of qsort and use proper C++ algorithms
     std::qsort(tmp.data(), size.x * size.y, sizeof(Dot), cmpdot);
 
     array2d<float> dst(size);

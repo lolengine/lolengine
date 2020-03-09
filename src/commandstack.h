@@ -23,29 +23,30 @@
 namespace lol
 {
 
-//Utility struct to convert command code to pseudo-bytecode
+// Utility struct to convert command code to pseudo-bytecode
 struct CommandStack
 {
 private:
-    array<int, int, int>    m_commands;
-    array<float>            m_floats;
-    array<int>              m_ints;
-    int                     m_f_cur;
-    int                     m_i_cur;
+    struct cmd_def { int cmd, nfloats, nints; };
+
+    std::vector<cmd_def> m_commands;
+    std::vector<float> m_floats;
+    std::vector<int> m_ints;
+    int m_f_cur;
+    int m_i_cur;
 
 public:
     //GET/SET exec
-    int GetCmdNb() { return m_commands.count(); }
+    int GetCmdNb() { return int(m_commands.size()); }
     int GetCmd(int i)
     {
-        ASSERT(0 <= i && i < m_commands.count());
-        m_f_cur = std::get<1>(m_commands[i]);
-        m_i_cur = std::get<2>(m_commands[i]);
-        return std::get<0>(m_commands[i]);
+        m_f_cur = m_commands[i].nfloats;
+        m_i_cur = m_commands[i].nints;
+        return m_commands[i].cmd;
     }
 
     //cmd storage
-    void    AddCmd(int cmd) { m_commands.push(cmd, m_floats.count(), m_ints.count()); }
+    void AddCmd(int cmd) { m_commands.push_back(cmd_def{ cmd, int(m_floats.size()), int(m_ints.size()) }); }
 
     //GETTER
     inline float   F()      { return m_floats[m_f_cur++]; }
@@ -74,8 +75,8 @@ public:
     void GetValue(SafeEnum<DEF> &i) { i = typename DEF::Type(I()); }
 
     //SETTER
-    CommandStack &operator<<(int i)     { m_ints << i; return *this; }
-    CommandStack &operator<<(float f)   { m_floats << f; return *this; }
+    CommandStack &operator<<(int i)     { m_ints.push_back(i); return *this; }
+    CommandStack &operator<<(float f)   { m_floats.push_back(f); return *this; }
     CommandStack &operator<<(bool b)    { return (*this << (int)b); }
     CommandStack &operator<<(vec2 v)    { return (*this << v.x   << v.y); }
     CommandStack &operator<<(vec3 v)    { return (*this << v.xy  << v.z); }

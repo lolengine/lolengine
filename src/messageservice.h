@@ -1,8 +1,8 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2013—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2017—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2017—2020 Sam Hocevar <sam@hocevar.net>
+//            © 2013—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -103,7 +103,7 @@ public:
     static bool FetchAll(MessageBucket id, std::string& message, time_t &first_timestamp);
 
 private:
-    array<array<MessageList> >  m_bucket;
+    std::vector<std::vector<MessageList> >  m_bucket;
 };
 
 extern MessageService *g_messageservice;

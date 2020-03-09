@@ -39,11 +39,11 @@ public:
         EasyMeshLuaObject* gears3 = EzMhLoader.GetPtr<EasyMeshLuaObject>("g3");
         EasyMeshLuaObject* gears4 = EzMhLoader.GetPtr<EasyMeshLuaObject>("g4");
 
-        m_gears.push(gear { gears0->GetMesh(), mat4(1.0f), 0.0f });
-        m_gears.push(gear { gears1->GetMesh(), mat4(1.0f), 0.0f });
-        m_gears.push(gear { gears2->GetMesh(), mat4(1.0f), 180.0f / 18 });
-        m_gears.push(gear { gears3->GetMesh(), mat4(1.0f), 180.0f / 18 });
-        m_gears.push(gear { gears4->GetMesh(), mat4(1.0f), 180.0f / 18 });
+        m_gears.push_back(gear { gears0->GetMesh(), mat4(1.0f), 0.0f });
+        m_gears.push_back(gear { gears1->GetMesh(), mat4(1.0f), 0.0f });
+        m_gears.push_back(gear { gears2->GetMesh(), mat4(1.0f), 180.0f / 18 });
+        m_gears.push_back(gear { gears3->GetMesh(), mat4(1.0f), 180.0f / 18 });
+        m_gears.push_back(gear { gears4->GetMesh(), mat4(1.0f), 180.0f / 18 });
 
         /*
         m_gears[0].mesh.Compile("[sc#00f ab 8 1 8 ty -.25]"
@@ -124,7 +124,7 @@ public:
         scene.get_renderer()->clear_color(vec4(0.0f, 0.0f, 0.0f, 1.0f));
 
         /* Upload vertex data to GPU */
-        for (int i = 0; i < m_gears.count(); i++)
+        for (size_t i = 0; i < m_gears.size(); i++)
             m_gears[i].mesh.MeshConvert();
 
 #if USE_CUSTOM_SHADER
@@ -132,7 +132,7 @@ public:
         auto custom_shader = Shader::Create(LOLFX_RESOURCE_NAME(easymesh_shiny));
         // any other shader stuf here (Get uniform, mostly, and set texture)
 
-        for (int i = 0; i < m_gears.count(); i++)
+        for (size_t i = 0; i < m_gears.size(); i++)
             m_gears[i].mesh.SetMaterial(custom_shader);
 #endif
 
@@ -143,7 +143,7 @@ public:
     {
         WorldEntity::tick_draw(seconds, scene);
 
-        for (int i = 0; i < m_gears.count(); i++)
+        for (size_t i = 0; i < m_gears.size(); i++)
             m_gears[i].mesh.Render(scene, m_mat * m_gears[i].mat);
     }
 
@@ -157,7 +157,7 @@ public:
 
 private:
     struct gear { EasyMesh mesh; mat4 mat; float anim; };
-    array<gear> m_gears;
+    std::vector<gear> m_gears;
 
     float m_angle;
     mat4 m_mat;

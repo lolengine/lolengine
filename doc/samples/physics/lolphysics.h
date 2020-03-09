@@ -1,8 +1,8 @@
 //
 //  Lol Engine — Bullet physics test
 //
-//  Copyright © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2012—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2012—2020 Sam Hocevar <sam@hocevar.net>
+//            © 2009—2013 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -14,6 +14,7 @@
 #pragma once
 
 #include <cstring>
+#include <vector>
 
 #include <btBulletDynamicsCommon.h>
 #include <btBulletCollisionCommon.h>
@@ -41,12 +42,11 @@ enum eRaycastType
 struct RayCastResult
 {
     RayCastResult(int CollisionFilterGroup=1, int CollisionFilterMask=(0xFF))
+      : m_collision_filter_group(CollisionFilterGroup),
+        m_collision_filter_mask(CollisionFilterMask)
     {
-        memset(this, 0, sizeof(RayCastResult));
-
-        m_collision_filter_group = CollisionFilterGroup;
-        m_collision_filter_mask = CollisionFilterMask;
     }
+
     void Reset()
     {
         m_collider_list.clear();
@@ -55,14 +55,14 @@ struct RayCastResult
         m_hit_fraction_list.clear();
     }
 
-    array<EasyPhysic*>        m_collider_list;
-    array<vec3>                m_hit_normal_list;
-    array<vec3>                m_hit_point_list;
-    array<float>            m_hit_fraction_list;
+    std::vector<EasyPhysic*> m_collider_list;
+    std::vector<vec3> m_hit_normal_list;
+    std::vector<vec3> m_hit_point_list;
+    std::vector<float> m_hit_fraction_list;
 
-    short int                m_collision_filter_group;
-    short int                 m_collision_filter_mask;
-    unsigned int             m_flags; //???
+    int16_t m_collision_filter_group;
+    int16_t m_collision_filter_mask;
+    uint32_t m_flags = 0; //???
 };
 
 class Simulation : public entity
@@ -207,20 +207,20 @@ public:
             {
                 case ERT_Closest:
                 {
-                    HitResult.m_collider_list        << (EasyPhysic*)BtRayResult_Closest->m_collisionObject->getUserPointer();
-                    HitResult.m_hit_normal_list        << BT2LOLU_VEC3(BtRayResult_Closest->m_hitNormalWorld);
-                    HitResult.m_hit_point_list        << BT2LOLU_VEC3(BtRayResult_Closest->m_hitPointWorld);
-                    HitResult.m_hit_fraction_list    << BtRayResult_Closest->m_closestHitFraction;
+                    HitResult.m_collider_list.push_back((EasyPhysic*)BtRayResult_Closest->m_collisionObject->getUserPointer());
+                    HitResult.m_hit_normal_list.push_back(BT2LOLU_VEC3(BtRayResult_Closest->m_hitNormalWorld));
+                    HitResult.m_hit_point_list.push_back(BT2LOLU_VEC3(BtRayResult_Closest->m_hitPointWorld));
+                    HitResult.m_hit_fraction_list.push_back(BtRayResult_Closest->m_closestHitFraction);
                     break;
                 }
                 case ERT_AllHit:
                 {
                     for (int i = 0; i < BtRayResult_AllHits->m_collisionObjects.size(); i++)
                     {
-                        HitResult.m_collider_list        << (EasyPhysic*)BtRayResult_AllHits->m_collisionObjects[i]->getUserPointer();
-                        HitResult.m_hit_normal_list        << BT2LOLU_VEC3(BtRayResult_AllHits->m_hitNormalWorld[i]);
-                        HitResult.m_hit_point_list        << BT2LOLU_VEC3(BtRayResult_AllHits->m_hitPointWorld[i]);
-                        HitResult.m_hit_fraction_list    << BtRayResult_AllHits->m_hitFractions[i];
+                        HitResult.m_collider_list.push_back((EasyPhysic*)BtRayResult_AllHits->m_collisionObjects[i]->getUserPointer());
+                        HitResult.m_hit_normal_list.push_back(BT2LOLU_VEC3(BtRayResult_AllHits->m_hitNormalWorld[i]));
+                        HitResult.m_hit_point_list.push_back(BT2LOLU_VEC3(BtRayResult_AllHits->m_hitPointWorld[i]));
+                        HitResult.m_hit_fraction_list.push_back(BtRayResult_AllHits->m_hitFractions[i]);
                     }
                     break;
                 }
@@ -273,15 +273,15 @@ private:
     void CustomSetTimestep(float NewTimestep) { }
 
     //broadphase
-    btBroadphaseInterface*                    m_broadphase;
-    btAxisSweep3*                            m_Sweep_broadphase;
+    btBroadphaseInterface *m_broadphase;
+    btAxisSweep3 *m_Sweep_broadphase;
     // Set up the collision configuration and dispatc
-    btDefaultCollisionConfiguration*        m_collision_configuration;
-    btCollisionDispatcher*                    m_dispatcher;
+    btDefaultCollisionConfiguration *m_collision_configuration;
+    btCollisionDispatcher *m_dispatcher;
     // The actual physics solver
-    btSequentialImpulseConstraintSolver*    m_solver;
+    btSequentialImpulseConstraintSolver *m_solver;
     // The world.
-    btDiscreteDynamicsWorld*                m_dynamics_world;
+    btDiscreteDynamicsWorld *m_dynamics_world;
 
 public:
     //Main logic :
@@ -341,7 +341,7 @@ private:
     //Adds the given EasyPhysic to the correct list.
     void ObjectRegistration(bool AddObject, EasyPhysic* NewEP, eEasyPhysicType CurType)
     {
-        array<EasyPhysic*>* SearchList = nullptr;
+        std::vector<EasyPhysic*>* SearchList = nullptr;
         switch(CurType)
         {
             case EEPT_Dynamic:
@@ -378,45 +378,45 @@ private:
         if (AddObject)
         {
             NewEP->m_owner_simulation = this;
-            (*SearchList) << NewEP;
+            SearchList->push_back(NewEP);
         }
         else
         {
             NewEP->m_owner_simulation = nullptr;
-            SearchList->remove_item(NewEP);
+            remove_item(*SearchList, NewEP);
         }
     }
     void ObjectRegistration(bool AddObject, EasyConstraint* NewEC)
     {
-        array<EasyConstraint*>* SearchList = nullptr;
+        std::vector<EasyConstraint*>* SearchList = nullptr;
         SearchList = &m_constraint_list;
 
         if (AddObject)
         {
             NewEC->m_owner_simulation = this;
-            (*SearchList) << NewEC;
+            SearchList->push_back(NewEC);
         }
         else
         {
             NewEC->m_owner_simulation = nullptr;
-            SearchList->remove_item(NewEC);
+            remove_item(*SearchList, NewEC);
         }
     }
 
     //Easy Physics body List
-    array<EasyPhysic*>                        m_dynamic_list;
-    array<EasyPhysic*>                        m_static_list;
-    array<EasyPhysic*>                        m_ghost_list;
-    array<EasyPhysic*>                        m_collision_object_list;
-    array<EasyPhysic*>                        m_character_controller_list;
-    array<EasyConstraint*>                    m_constraint_list;
+    std::vector<EasyPhysic*> m_dynamic_list;
+    std::vector<EasyPhysic*> m_static_list;
+    std::vector<EasyPhysic*> m_ghost_list;
+    std::vector<EasyPhysic*> m_collision_object_list;
+    std::vector<EasyPhysic*> m_character_controller_list;
+    std::vector<EasyConstraint*> m_constraint_list;
 
     //Easy Physics data storage
-    float                                    m_timestep;
-    bool                                    m_using_CCD;
-    vec3                                    m_gravity;
-    vec3                                    m_world_min;
-    vec3                                    m_world_max;
+    float m_timestep;
+    bool m_using_CCD;
+    vec3 m_gravity;
+    vec3 m_world_min;
+    vec3 m_world_max;
 };
 
 } /* namespace phys */

@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2017—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2017—2020 Sam Hocevar <sam@hocevar.net>
 //            © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -87,7 +87,7 @@ protected:
     std::shared_ptr<Shader> m_shader = nullptr;
     Uniform m_ortho;
     Uniform m_texture;
-    array<ShaderAttrib> m_attribs;
+    std::vector<ShaderAttrib> m_attribs;
     std::shared_ptr<VertexDeclaration> m_vdecl;
     std::string m_clipboard;
 

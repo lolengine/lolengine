@@ -17,7 +17,8 @@
 // ------------------
 //
 
-#include <lol/math>
+#include <lol/math>  // lol::lerp, lol::clamp
+#include <algorithm> // std::swap
 #include <cstdlib>
 #include <stdint.h>
 
@@ -49,7 +50,7 @@ template <typename T1, typename T2, typename Tf> static inline T1 damp(const T1 
 static inline float SmoothClamp(float &x, float a, float b, float sd)
 {
     if (b < a)
-        Swap(a, b);
+        std::swap(a, b);
 
     float tx = x;
     float ta = a - sd;

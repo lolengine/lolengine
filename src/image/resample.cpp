@@ -12,6 +12,8 @@
 
 #include <lol/engine-internal.h>
 
+#include <vector> // std::vector
+
 /*
  * Image resizing functions
  */
@@ -145,16 +147,16 @@ static image ResizeBresenham(image &src, ivec2 size)
     vec4 const *srcp = src.lock<PixelFormat::RGBA_F32>();
     vec4 *dstp = dst.lock<PixelFormat::RGBA_F32>();
 
-    array<vec4> aline, line;
+    std::vector<vec4> aline, line;
     aline.resize(size.x);
     line.resize(size.x);
-    memset((void *)line.data(), 0, line.bytes());
+    memset((void *)line.data(), 0, line.size() * sizeof(line[0]));
 
     int remy = 0;
 
     for (int y = 0, y0 = 0; y < size.y; y++)
     {
-        memset((void *)aline.data(), 0, aline.bytes());
+        memset((void *)aline.data(), 0, aline.size() * sizeof(aline[0]));
 
         for (int toty = 0; toty < oldsize.y; )
         {
