@@ -333,13 +333,14 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, std::shared_ptr<EasyMesh>
                           VertexUsage::Color,
                           VertexUsage::TexCoord));
 
-        std::vector<std::tuple<vec3, vec3, u8vec4, vec4>> vertexlist;
+        struct vertex_def { vec3 pos, normal; u8vec4 color; vec4 uv; };
+        std::vector<vertex_def> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.count(); i++)
-            vertexlist.push_back(std::make_tuple(
+            vertexlist.push_back(vertex_def{
                 src_mesh->m_vert[i].m_coord,
                 src_mesh->m_vert[i].m_normal,
                 (u8vec4)(src_mesh->m_vert[i].m_color * 255.f),
-                src_mesh->m_vert[i].m_texcoord));
+                src_mesh->m_vert[i].m_texcoord});
         COPY_VBO;
     }
     else if (flagnb == 4 && has_position && has_normal && has_color && has_texcoord)
@@ -351,25 +352,31 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, std::shared_ptr<EasyMesh>
                           VertexUsage::Color,
                           VertexUsage::TexCoord));
 
-        std::vector<std::tuple<vec3, vec3, u8vec4, vec2>> vertexlist;
+        struct vertex_def { vec3 pos, normal; u8vec4 color; vec2 uv; };
+        std::vector<vertex_def> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.count(); i++)
-            vertexlist.push_back(std::make_tuple(
+            vertexlist.push_back(vertex_def{
                 src_mesh->m_vert[i].m_coord,
                 src_mesh->m_vert[i].m_normal,
                 u8vec4(src_mesh->m_vert[i].m_color * 255.f),
-                vec2(src_mesh->m_vert[i].m_texcoord.xy)));
+                vec2(src_mesh->m_vert[i].m_texcoord.xy)});
         COPY_VBO;
     }
     else if (flagnb == 4 && has_position && has_color && has_texcoord && has_texcoordExt)
     {
-        new_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec3,vec4,vec4>(VertexUsage::Position, VertexUsage::Color, VertexUsage::TexCoord));
+        new_vdecl = std::make_shared<VertexDeclaration>(
+                         VertexStream<vec3,vec4,vec4>(
+                          VertexUsage::Position,
+                          VertexUsage::Color,
+                          VertexUsage::TexCoord));
 
-        std::vector<std::tuple<vec3, vec4, vec4>> vertexlist;
+        struct vertex_def { vec3 pos; vec4 color; vec4 uv; };
+        std::vector<vertex_def> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.count(); i++)
-            vertexlist.push_back(std::make_tuple(
+            vertexlist.push_back(vertex_def{
                 src_mesh->m_vert[i].m_coord,
                 src_mesh->m_vert[i].m_color,
-                src_mesh->m_vert[i].m_texcoord));
+                src_mesh->m_vert[i].m_texcoord});
         COPY_VBO;
     }
     else if (flagnb == 3 && has_position && has_normal && has_color)
@@ -380,49 +387,62 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, std::shared_ptr<EasyMesh>
                           VertexUsage::Normal,
                           VertexUsage::Color));
 
-        std::vector<std::tuple<vec3,vec3,u8vec4>> vertexlist;
+        struct vertex_def { vec3 pos, normal; u8vec4 color; };
+        std::vector<vertex_def> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.count(); i++)
-            vertexlist.push_back(std::make_tuple(
+            vertexlist.push_back(vertex_def{
                 src_mesh->m_vert[i].m_coord,
                 src_mesh->m_vert[i].m_normal,
-                (u8vec4)(src_mesh->m_vert[i].m_color * 255.f)));
+                (u8vec4)(src_mesh->m_vert[i].m_color * 255.f)});
         COPY_VBO;
     }
     else if (flagnb == 3 && has_position && has_texcoord && has_texcoordExt)
     {
-        new_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec3,vec4>(VertexUsage::Position, VertexUsage::TexCoord));
+        new_vdecl = std::make_shared<VertexDeclaration>(
+                         VertexStream<vec3,vec4>(
+                          VertexUsage::Position,
+                          VertexUsage::TexCoord));
 
-        std::vector<std::tuple<vec3, vec4>> vertexlist;
+        struct vertex_def { vec3 pos; vec4 uv; };
+        std::vector<vertex_def> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.count(); i++)
-            vertexlist.push_back(std::make_tuple(
+            vertexlist.push_back(vertex_def{
                 src_mesh->m_vert[i].m_coord,
-                src_mesh->m_vert[i].m_texcoord));
+                src_mesh->m_vert[i].m_texcoord});
         COPY_VBO;
     }
     else if (flagnb == 2 && has_position && has_texcoord)
     {
-        new_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec3,vec2>(VertexUsage::Position, VertexUsage::TexCoord));
+        new_vdecl = std::make_shared<VertexDeclaration>(
+                         VertexStream<vec3,vec2>(
+                          VertexUsage::Position,
+                          VertexUsage::TexCoord));
 
-        std::vector<std::tuple<vec3, vec2>> vertexlist;
+        struct vertex_def { vec3 pos; vec2 uv; };
+        std::vector<vertex_def> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.count(); i++)
-            vertexlist.push_back(std::make_tuple(
+            vertexlist.push_back(vertex_def{
                 src_mesh->m_vert[i].m_coord,
-                vec2(src_mesh->m_vert[i].m_texcoord.xy)));
+                vec2(src_mesh->m_vert[i].m_texcoord.xy)});
         COPY_VBO;
     }
     else if (flagnb == 2 && has_position && has_color)
     {
-        new_vdecl = std::make_shared<VertexDeclaration>(VertexStream<vec3,u8vec4>(VertexUsage::Position, VertexUsage::Color));
+        new_vdecl = std::make_shared<VertexDeclaration>(
+                         VertexStream<vec3,u8vec4>(
+                          VertexUsage::Position,
+                          VertexUsage::Color));
 
-        std::vector<std::tuple<vec3, u8vec4>> vertexlist;
+        struct vertex_def { vec3 pos; u8vec4 color; };
+        std::vector<vertex_def> vertexlist;
         for (int i = 0; i < src_mesh->m_vert.count(); i++)
-            vertexlist.push_back(std::make_tuple(
+            vertexlist.push_back(vertex_def{
                 src_mesh->m_vert[i].m_coord,
-                u8vec4(src_mesh->m_vert[i].m_color * 255.f)));
+                u8vec4(src_mesh->m_vert[i].m_color * 255.f)});
         COPY_VBO;
     }
     else
-        ASSERT(0, "no Vertex Declaration combination for 0x%04x", vflags);
+        ASSERT(0, "no known Vertex Declaration combination for 0x%04x", vflags);
 
     m_vdata.push(vflags, new_vdecl, new_vbo);
 }

@@ -708,7 +708,7 @@ void Scene::render_lines(float seconds)
     if (!m_line_api.m_shader)
         m_line_api.m_shader = Shader::Create(LOLFX_RESOURCE_NAME(gpu_line));
 
-    std::vector<std::tuple<vec4, vec4, vec4, vec4>> buff;
+    std::vector<std::array<vec4,4>> buff;
     buff.resize(linecount);
     int real_linecount = 0;
     mat4 const inv_view_proj = inverse(GetCamera()->GetProjection() * GetCamera()->GetView());
@@ -717,10 +717,10 @@ void Scene::render_lines(float seconds)
     {
         if (m_line_api.m_lines[i].mask & m_line_api.m_debug_mask)
         {
-            std::get<0>(buff[real_linecount]) = vec4(m_line_api.m_lines[i].a, (float)m_line_api.m_lines[i].wtf1);
-            std::get<1>(buff[real_linecount]) = m_line_api.m_lines[i].col;
-            std::get<2>(buff[real_linecount]) = vec4(m_line_api.m_lines[i].b, (float)m_line_api.m_lines[i].wtf2);
-            std::get<3>(buff[real_linecount]) = m_line_api.m_lines[i].col;
+            buff[real_linecount][0] = vec4(m_line_api.m_lines[i].a, (float)m_line_api.m_lines[i].wtf1);
+            buff[real_linecount][1] = m_line_api.m_lines[i].col;
+            buff[real_linecount][2] = vec4(m_line_api.m_lines[i].b, (float)m_line_api.m_lines[i].wtf2);
+            buff[real_linecount][3] = m_line_api.m_lines[i].col;
             real_linecount++;
         }
         m_line_api.m_lines[i].duration -= seconds;

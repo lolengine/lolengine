@@ -35,13 +35,19 @@ static entity_dict<TileSet> tileset_cache;
  * TileSet implementation class
  */
 
+struct tile_def
+{
+    ibox2 pixel_coords;
+    box2 tex_coords;
+};
+
 class TileSetData
 {
     friend class TileSet;
 
 protected:
     /* Pixels, then texture coordinates */
-    std::vector<std::tuple<ibox2, box2>> m_tiles;
+    std::vector<tile_def> m_tiles;
     ivec2 m_tile_size;
 };
 
@@ -192,9 +198,10 @@ void TileSet::clear_all()
 
 int TileSet::define_tile(ibox2 rect)
 {
-    m_tileset_data->m_tiles.push_back(std::make_tuple(rect,
+    m_tileset_data->m_tiles.push_back(tile_def {
+             rect,
              box2((vec2)rect.aa / (vec2)m_data->m_texture_size,
-                  (vec2)rect.bb / (vec2)m_data->m_texture_size)));
+                  (vec2)rect.bb / (vec2)m_data->m_texture_size) });
     return int(m_tileset_data->m_tiles.size()) - 1;
 }
 
@@ -223,17 +230,17 @@ int TileSet::GetTileCount() const
 
 ivec2 TileSet::GetTileSize(int tileid) const
 {
-    return std::get<0>(m_tileset_data->m_tiles[tileid]).extent();
+    return m_tileset_data->m_tiles[tileid].pixel_coords.extent();
 }
 
 ibox2 TileSet::GetTilePixel(int tileid) const
 {
-    return std::get<0>(m_tileset_data->m_tiles[tileid]);
+    return m_tileset_data->m_tiles[tileid].pixel_coords;
 }
 
 box2 TileSet::GetTileTexel(int tileid) const
 {
-    return std::get<1>(m_tileset_data->m_tiles[tileid]);
+    return m_tileset_data->m_tiles[tileid].tex_coords;
 }
 
 //Palette ---------------------------------------------------------------------
@@ -254,8 +261,8 @@ TileSet const* TileSet::GetPalette() const
 
 void TileSet::BlitTile(uint32_t id, mat4 model, vec3 *vertex, vec2 *texture)
 {
-    ibox2 pixels = std::get<0>(m_tileset_data->m_tiles[id]);
-    box2 texels = std::get<1>(m_tileset_data->m_tiles[id]);
+    ibox2 pixels = m_tileset_data->m_tiles[id].pixel_coords;
+    box2 texels = m_tileset_data->m_tiles[id].tex_coords;
     float dtx = texels.extent().x;
     float dty = texels.extent().y;
     float tx = texels.aa.x;

@@ -31,16 +31,16 @@ lolunit_declare_fixture(quaternion_test)
     void setup()
     {
         /* Generate identity quaternions */
-        push_vector_pair(vec3::axis_x, vec3::axis_x);
-        push_vector_pair(2.f * vec3::axis_x, 3.f * vec3::axis_x);
+        m_vectorpairs.push_back({ vec3::axis_x, vec3::axis_x });
+        m_vectorpairs.push_back({ 2.f * vec3::axis_x, 3.f * vec3::axis_x });
 
         /* Generate 90-degree rotations */
-        push_vector_pair(vec3::axis_x, vec3::axis_y);
-        push_vector_pair(2.f * vec3::axis_x, 3.f * vec3::axis_y);
+        m_vectorpairs.push_back({ vec3::axis_x, vec3::axis_y });
+        m_vectorpairs.push_back({ 2.f * vec3::axis_x, 3.f * vec3::axis_y });
 
         /* Generate 180-degree rotations */
-        push_vector_pair(vec3::axis_x, -vec3::axis_x);
-        push_vector_pair(2.f * vec3::axis_x, -3.f * vec3::axis_x);
+        m_vectorpairs.push_back({ vec3::axis_x, -vec3::axis_x });
+        m_vectorpairs.push_back({ 2.f * vec3::axis_x, -3.f * vec3::axis_x });
 
         /* Fill array with random test values */
         for (int i = 0; i < 10000; ++i)
@@ -49,7 +49,7 @@ lolunit_declare_fixture(quaternion_test)
                     * vec3(rand(-1.f, 1.f), rand(-1.f, 1.f), rand(-1.f, 1.f));
             vec3 v2 = pow(10.f, rand(-5.f, 5.f))
                     * vec3(rand(-1.f, 1.f), rand(-1.f, 1.f), rand(-1.f, 1.f));
-            push_vector_pair(v1, v2);
+            m_vectorpairs.push_back({ v1, v2 });
         }
     }
 
@@ -212,8 +212,8 @@ lolunit_declare_fixture(quaternion_test)
     {
         for (auto pair : m_vectorpairs)
         {
-            vec3 a0 = std::get<0>(pair);
-            vec3 b0 = std::get<1>(pair);
+            vec3 a0 = pair[0];
+            vec3 b0 = pair[1];
             vec3 a = normalize(a0);
             vec3 b = normalize(b0);
 
@@ -545,12 +545,7 @@ lolunit_declare_fixture(quaternion_test)
     }
 
 private:
-    void push_vector_pair(vec3 p, vec3 q)
-    {
-        m_vectorpairs.push_back(std::make_tuple(p, q));
-    }
-
-    std::vector<std::tuple<vec3, vec3>> m_vectorpairs;
+    std::vector<std::array<vec3,2>> m_vectorpairs;
 };
 
 } /* namespace lol */
