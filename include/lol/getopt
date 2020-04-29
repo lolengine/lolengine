@@ -13,6 +13,6 @@
 #pragma once
 
 #include "private/push_macros.h"
-#include "private/sys/getopt.h"
+#include "3rdparty/clipp/include/clipp.h"
 #include "private/pop_macros.h"
 
