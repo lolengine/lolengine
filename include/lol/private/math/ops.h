@@ -23,7 +23,7 @@
 // HACK: if this is declared int const, Visual Studio becomes unable
 // to perform template argument deduction.
 // FIXME: should we get rid of this #define?
-#define FULL_SWIZZLE (0)
+#define FULL_SWIZZLE (-1)
 
 namespace lol
 {
