@@ -175,7 +175,7 @@ std::basic_string<T> vformat(char const *fmt, va_list ap)
     return ret;
 }
 
-template<typename T = char> lol_attr_printf_format(1, 2)
+template<typename T = char>
 std::basic_string<T> format(T const *fmt, ...)
 {
     va_list ap;
@@ -185,5 +185,9 @@ std::basic_string<T> format(T const *fmt, ...)
     return ret;
 }
 
-} /* namespace lol */
+// Specialize for char so that we can declare the printf format attribute
+template<>
+std::basic_string<char> format(char const *fmt, ...) lol_attr_printf_format(1, 2);
+
+} // namespace lol
 
