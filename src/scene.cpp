@@ -14,6 +14,8 @@
 #include <lol/engine-internal.h>
 
 #include <map>
+#include <vector>
+#include <array>
 #include <cstdlib>
 
 #if defined(_WIN32)
@@ -261,7 +263,7 @@ void Scene::Reset()
     {
         for (size_t idx = 0; idx < m_prim_renderers[key].size(); ++idx)
             if (m_prim_renderers[key][idx]->m_fire_and_forget)
-                ReleasePrimitiveRenderer(idx--, key);
+                ReleasePrimitiveRenderer(int(idx--), key);
     }
 
     m_tile_api.m_bufs.clear();
@@ -675,7 +677,7 @@ void Scene::render_tiles() // XXX: rename to Blit()
             m_tile_api.m_vdecl->SetStream(vb2, attr_tex);
 
             /* Draw arrays */
-            m_tile_api.m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, (n - i) * 6);
+            m_tile_api.m_vdecl->DrawElements(MeshPrimitive::Triangles, 0, int(n - i) * 6);
             m_tile_api.m_vdecl->Unbind();
             tiles[i].m_tileset->Unbind();
         }

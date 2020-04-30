@@ -110,18 +110,18 @@ void msg::helper(message_type type, char const *fmt, va_list ap)
     };
 
 #   if defined _WIN32
-    std::string buf = std::string(prefix[(int)type]) + ": " + vformat(fmt, ap);
+    std::string buf = std::string(prefix[int(type)]) + ": " + vformat(fmt, ap);
 
     std::vector<WCHAR> widechar;
     widechar.resize(buf.length() + 1);
-    MultiByteToWideChar(CP_UTF8, 0, buf.c_str(), (int)buf.length() + 1, widechar.data(), widechar.size());
+    MultiByteToWideChar(CP_UTF8, 0, buf.c_str(), int(buf.length()) + 1, widechar.data(), int(widechar.size()));
     OutputDebugStringW(widechar.data());
 #   elif defined __EMSCRIPTEN__
-    fprintf(stdout, "%s: ", prefix[(int)type]);
+    fprintf(stdout, "%s: ", prefix[int(type)]);
     vfprintf(stdout, fmt, ap);
     fflush(stdout);
 #   else
-    fprintf(stderr, "%s: ", prefix[(int)type]);
+    fprintf(stderr, "%s: ", prefix[int(type)]);
     vfprintf(stderr, fmt, ap);
 #   endif
 #endif
