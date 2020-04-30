@@ -653,6 +653,10 @@ std::string ShaderData::Patch(std::string const &code, ShaderType type)
         /* Perform small replaces */
         char const * const fast_replaces[] =
         {
+#if __APPLE__
+            "#version 130", "#version 150",
+            "texture2D", "texture",
+#else
             "#version 130", "#version 120",
             "out vec4 out_color;", " ",
             "out_color =", "gl_FragColor =",
@@ -664,6 +668,7 @@ std::string ShaderData::Patch(std::string const &code, ShaderType type)
             "out vec3", "varying vec3",
             "out vec4", "varying vec4",
             "out mat4", "varying mat4",
+#endif
             nullptr
         };
 
