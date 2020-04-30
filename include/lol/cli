@@ -16,3 +16,9 @@
 #include "3rdparty/clipp/include/clipp.h"
 #include "private/pop_macros.h"
 
+namespace lol
+{
+
+namespace cli = clipp;
+
+};
