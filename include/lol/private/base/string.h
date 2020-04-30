@@ -178,7 +178,7 @@ std::basic_string<T> vformat(char const *fmt, va_list ap)
 // XXX: we cheat by setting the argument time to char instead of T, because
 // I found no other way to use the printf attribute.
 template<typename T = char>
-std::basic_string<T> format(char const *fmt, ...) lol_attr_printf_format(1, 2)
+std::basic_string<T> lol_attr_printf_format(1, 2) format(char const *fmt, ...)
 {
     va_list ap;
     va_start(ap, fmt);
