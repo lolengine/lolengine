@@ -34,45 +34,10 @@ namespace lol
 {
 
 /*
- * Public log class
- */
-
-void msg::debug(char const *fmt, ...)
-{
-    va_list ap;
-    va_start(ap, fmt);
-    helper(message_type::debug, fmt, ap);
-    va_end(ap);
-}
-
-void msg::info(char const *fmt, ...)
-{
-    va_list ap;
-    va_start(ap, fmt);
-    helper(message_type::info, fmt, ap);
-    va_end(ap);
-}
-
-void msg::warn(char const *fmt, ...)
-{
-    va_list ap;
-    va_start(ap, fmt);
-    helper(message_type::warning, fmt, ap);
-    va_end(ap);
-}
-
-void msg::error(char const *fmt, ...)
-{
-    va_list ap;
-    va_start(ap, fmt);
-    helper(message_type::error, fmt, ap);
-    va_end(ap);
-}
-
-/*
  * Private helper function
  */
 
+#if 0
 void msg::helper(message_type type, char const *fmt, va_list ap)
 {
     /* Unless this is a debug build, ignore debug messages unless
@@ -126,6 +91,7 @@ void msg::helper(message_type type, char const *fmt, va_list ap)
 #   endif
 #endif
 }
+#endif
 
 } /* namespace lol */
 

@@ -8,10 +8,6 @@
     <PlatformCode Condition="'$(Platform)'=='Win32'">i686</PlatformCode>
     <PlatformCode Condition="'$(Platform)'=='x64'">x86_64</PlatformCode>
 
-    <!-- PEGTL -->
-    <PegtlDir>$(LolDir)\src/3rdparty\pegtl\include</PegtlDir>
-    <PegtlIncludes>$(PegtlDir)</PegtlIncludes>
-
     <!-- imgui -->
     <ImguiDir>$(LolDir)\src\3rdparty\imgui</ImguiDir>
     <ImguiIncludes>$(ImguiDir)</ImguiIncludes>

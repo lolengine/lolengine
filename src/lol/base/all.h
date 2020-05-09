@@ -13,9 +13,9 @@
 #pragma once
 
 #include <lol/utils>
+#include <lol/msg>
 
 #include <../legacy/lol/base/types.h>
-#include <lol/base/log.h>
 #include <../legacy/lol/base/assert.h>
 #include <../legacy/lol/base/avl_tree.h>
 #include <lol/base/enum.h>
