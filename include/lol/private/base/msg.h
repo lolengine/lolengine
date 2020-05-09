@@ -16,7 +16,8 @@
 #include "../base/env.h" // sys::getenv
 #endif
 
-#include <cstdio> // std::vfprintf
+#include <cstdarg> // va_start
+#include <cstdio>  // std::vfprintf
 
 namespace lol
 {
