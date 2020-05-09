@@ -11,6 +11,8 @@
 //
 
 #include <lol/engine-internal.h>
+#include <lol/msg>
+#include <../legacy/lol/base/assert.h>
 
 #include <unordered_set> // std::unordered_set
 #include <cstdlib>

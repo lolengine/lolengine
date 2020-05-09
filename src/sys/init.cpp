@@ -11,6 +11,7 @@
 //
 
 #include <lol/engine-internal.h>
+#include <lol/msg>
 
 #include <vector> // std::vector
 #include <string> // std::string

@@ -11,6 +11,7 @@
 //
 
 #include <lol/engine-internal.h>
+#include <../legacy/lol/base/assert.h>
 #include <lol/image/movie.h>
 
 #if LOL_USE_FFMPEG

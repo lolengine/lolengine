@@ -1,7 +1,7 @@
 //
 //  bluenoise — create a N×N blue noise kernel
 //
-//  Copyright © 2016—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2016—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  This program is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -18,10 +18,8 @@
 
 using namespace lol;
 
-int main(int argc, char **argv)
+int main(int, char **)
 {
-    UNUSED(argc, argv);
-
     ivec2 const size(64);
     auto const &kernel = image::kernel::blue_noise(size, ivec2(8));
 

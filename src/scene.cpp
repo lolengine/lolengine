@@ -12,6 +12,7 @@
 //
 
 #include <lol/engine-internal.h>
+#include <../legacy/lol/base/assert.h>
 
 #include <map>
 #include <vector>
@@ -50,7 +51,7 @@ static inline void gpu_marker(char const *message)
     if (GLEW_GREMEDY_string_marker)
         glStringMarkerGREMEDY(0, message);
 #else
-    UNUSED(message);
+    (void)message;
 #endif
 }
 
@@ -94,12 +95,12 @@ void SceneDisplay::Disable()
  * Primitive implementation class
  */
 
-void PrimitiveSource::Render(Scene& scene) { UNUSED(scene); }
-
-void PrimitiveRenderer::Render(Scene& scene, std::shared_ptr<PrimitiveSource> primitive)
+void PrimitiveSource::Render(Scene &)
 {
-    UNUSED(scene);
-    UNUSED(primitive);
+}
+
+void PrimitiveRenderer::Render(Scene &, std::shared_ptr<PrimitiveSource>)
+{
 }
 
 /*
@@ -713,8 +714,10 @@ void Scene::render_lines(float seconds)
     std::vector<std::array<vec4,4>> buff;
     buff.resize(linecount);
     int real_linecount = 0;
+
     mat4 const inv_view_proj = inverse(GetCamera()->GetProjection() * GetCamera()->GetView());
-    UNUSED(inv_view_proj);
+    (void)inv_view_proj;
+
     for (size_t i = 0; i < linecount; i++)
     {
         if (m_line_api.m_lines[i].mask & m_line_api.m_debug_mask)

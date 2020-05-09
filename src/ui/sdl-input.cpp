@@ -140,7 +140,7 @@ void SdlInput::tick(float seconds)
 {
 #if LOL_USE_SDL
     /* FIXME: maybe we should make use of this? */
-    UNUSED(seconds);
+    (void)seconds;
 
     auto keyboard = input::keyboard();
     auto mouse = input::mouse();
@@ -313,7 +313,7 @@ void SdlInput::tick(float seconds)
     m_prev_mouse_pos = mouse_pos;
 
 #else
-    UNUSED(seconds);
+    (void)seconds;
 #endif //LOL_USE_SDL
 }
 

@@ -87,7 +87,7 @@ public:
     ShaderUniform const *GetUniform(std::string const &uniform);
     ShaderAttrib const *GetAttribute(VertexUsage usage, int index);
     //--
-    virtual void SetupShaderDatas(mat4 const &model) { UNUSED(model); }
+    virtual void SetupShaderDatas(mat4 const &) { }
     //--
 
 protected:

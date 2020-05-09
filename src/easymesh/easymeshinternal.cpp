@@ -280,7 +280,7 @@ void EasyMesh::VerticesSeparate()
 //-----------------------------------------------------------------------------
 void EasyMesh::ComputeTexCoord(float uv_scale, int uv_offset)
 {
-    UNUSED(uv_scale, uv_offset);
+    (void)uv_scale; (void)uv_offset;
 #if 0
     VertexDictionnary vert_dict;
     easy_array<int> tri_list;

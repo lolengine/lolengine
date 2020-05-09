@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Benchmark program
 //
-//  Copyright © 2005—2015 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2005—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  This program is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -17,6 +17,7 @@
 #include <cstdio>
 
 #include <lol/engine.h>
+#include <lol/msg>
 
 using namespace lol;
 
@@ -24,10 +25,8 @@ void bench_real(int mode);
 void bench_matrix(int mode);
 void bench_half(int mode);
 
-int main(int argc, char **argv)
+int main(int, char **)
 {
-    UNUSED(argc, argv);
-
     msg::info("-----------------------\n");
     msg::info(" High precision floats\n");
     msg::info("-----------------------\n");

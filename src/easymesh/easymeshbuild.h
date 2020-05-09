@@ -338,7 +338,8 @@ public:
         {
             /* unused for now, but will be if new BuildType are added. */
             TexCoordBuildType tcbt = GetTexCoordBuildType(mt);
-            UNUSED(tcbt);
+            (void)tcbt;
+
             if (mt == MeshType::Quad)
             {
                 // There's nothin' else than QuadDefault
@@ -428,7 +429,8 @@ public:
         else
         {
             TexCoordBuildType tcbt = GetTexCoordBuildType2(mt);
-            UNUSED(tcbt);
+            (void)tcbt;
+
             if (mt == MeshType::Quad)
             {
                 // There's nothin' else than QuadDefault

@@ -81,10 +81,10 @@ public:
     virtual ~SceneDisplay() { }
 
     /* pos/size/... methods */
-    virtual void set_resolution(ivec2 resolution) { UNUSED(resolution); }
+    virtual void set_resolution(ivec2) { }
     virtual ivec2 resolution() const { return ivec2(0); }
 
-    virtual void SetPosition(ivec2 position) { UNUSED(position); }
+    virtual void SetPosition(ivec2) { }
 
     /* TODO: Should that be there or in Video ? */
     static void Add(SceneDisplay* display);
@@ -152,7 +152,6 @@ public:
     template <typename T>
     int HasPrimitiveSource(T* key)
     {
-        ASSERT(key);
         return HasPrimitiveSource(_KEY_IDX);
     }
     /* Add a primitive sources linked to the given entity
@@ -160,7 +159,6 @@ public:
     template <typename T>
     int AddPrimitiveSource(T* key, std::shared_ptr<class PrimitiveSource> source)
     {
-        ASSERT(key);
         return AddPrimitiveSource(_KEY_IDX, source);
     }
     /* Update the primitive source at index linked to the given entity
@@ -169,21 +167,18 @@ public:
     template <typename T>
     void SetPrimitiveSource(int index, T* key, std::shared_ptr<class PrimitiveSource> source)
     {
-        ASSERT(key);
         SetPrimitiveSource(index, _KEY_IDX, source);
     }
     /* Remove primitive source at index set to the given entity */
     template <typename T>
     void ReleasePrimitiveSource(int index, T* key)
     {
-        ASSERT(key);
         ReleasePrimitiveSource(index, _KEY_IDX);
     }
     /* Remove all primitive source set to the given entity */
     template <typename T>
     void ReleaseAllPrimitiveSources(T* key)
     {
-        ASSERT(key);
         ReleaseAllPrimitiveSources(_KEY_IDX);
     }
 
@@ -200,7 +195,6 @@ public:
     template <typename T>
     int HasPrimitiveRenderer(T* key)
     {
-        ASSERT(key);
         return HasPrimitiveRenderer(_KEY_IDX);
     }
     /* Add a primitive renderer linked to the given entity
@@ -209,7 +203,6 @@ public:
     template <typename T>
     void AddPrimitiveRenderer(T* key, std::shared_ptr<class PrimitiveRenderer> renderer)
     {
-        ASSERT(key);
         AddPrimitiveRenderer(_KEY_IDX, renderer);
     }
     /* Update the primitive renderer linked to the given entity
@@ -218,21 +211,18 @@ public:
     template <typename T>
     void SetPrimitiveRenderer(int index, T* key, std::shared_ptr<class PrimitiveRenderer> renderer)
     {
-        ASSERT(key && renderer);
         SetPrimitiveRenderer(index, _KEY_IDX, renderer);
     }
     /* Remove primitive renderer at index set to the given entity */
     template <typename T>
     void ReleasePrimitiveRenderer(int index, T* key)
     {
-        ASSERT(key);
         ReleasePrimitiveRenderer(index, _KEY_IDX);
     }
     /* Remove all primitive renderer set to the given entity */
     template <typename T>
     void ReleaseAllPrimitiveRenderers(T* key)
     {
-        ASSERT(key);
         ReleaseAllPrimitiveRenderers(_KEY_IDX);
     }
     /* ============================== */

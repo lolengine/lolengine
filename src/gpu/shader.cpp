@@ -11,7 +11,9 @@
 //
 
 #include <lol/engine-internal.h>
+#include <lol/msg>
 #include <lol/pegtl>
+#include <../legacy/lol/base/assert.h>
 
 #include <string>
 #include <memory>

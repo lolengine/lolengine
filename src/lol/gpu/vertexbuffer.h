@@ -129,7 +129,7 @@ public:
 protected:
 
 #define __T(T) \
-    static uint8_t GetType(T *x) { UNUSED(x); return Type##T; }
+    static uint8_t GetType(T *) { return Type##T; }
 
     __T(void)
     __T(half)     __T(f16vec2) __T(f16vec3) __T(f16vec4)
@@ -158,11 +158,10 @@ private:
     static VertexStreamBase const Empty;
 };
 
-/* Specialise this template for "void" to act as a NOP */
+// Specialise this template for "void" to act as a NOP
 template<>
-inline void VertexStreamBase::AddStream<void>(int n, VertexUsage usage)
+inline void VertexStreamBase::AddStream<void>(int n, VertexUsage)
 {
-    UNUSED(usage);
     m_streams[n].size = 0;
 }
 

@@ -11,6 +11,7 @@
 //
 
 #include <lol/engine-internal.h>
+#include <lol/msg>
 
 #if defined LOL_USE_IMLIB2
 

@@ -22,10 +22,8 @@
 
 using lol::real;
 
-int main(int argc, char **argv)
+int main(int, char **)
 {
-    UNUSED(argc, argv);
-
     std::cout << std::setprecision(150);
     std::cout << "      0: " << real::R_0() << '\n';
     std::cout << "      1: " << real::R_1() << '\n';

@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -11,6 +11,7 @@
 //
 
 #include <lol/engine-internal.h>
+#include <lol/msg>
 
 #include <cstdlib>
 
@@ -46,9 +47,8 @@ std::string entity::GetName() const
     return "<entity>";
 }
 
-void entity::tick_game(float seconds)
+void entity::tick_game(float)
 {
-    UNUSED(seconds);
 #if !LOL_BUILD_RELEASE
     if (m_tickstate != tickable::state::pre_game)
         msg::error("invalid entity game tick\n");
@@ -56,9 +56,8 @@ void entity::tick_game(float seconds)
 #endif
 }
 
-void entity::tick_draw(float seconds, Scene &scene)
+void entity::tick_draw(float, Scene &)
 {
-    UNUSED(seconds, scene);
 #if !LOL_BUILD_RELEASE
     if (m_tickstate != tickable::state::pre_draw)
         msg::error("invalid entity draw tick\n");
@@ -66,5 +65,5 @@ void entity::tick_draw(float seconds, Scene &scene)
 #endif
 }
 
-} /* namespace lol */
+} // namespace lol
 

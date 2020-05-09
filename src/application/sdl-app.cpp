@@ -11,6 +11,7 @@
 //
 
 #include <lol/engine-internal.h>
+#include <lol/msg>
 
 #if LOL_USE_SDL
 #   if HAVE_SDL2_SDL_H
@@ -155,7 +156,7 @@ const char* SceneDisplay::GetPhysicalName(int index)
  */
 sdl::app::app(char const *title, ivec2 res, float fps)
 {
-    UNUSED(title);
+    (void)title;
 #if LOL_USE_SDL
     ivec2 window_size = res;
     ivec2 screen_size = res;

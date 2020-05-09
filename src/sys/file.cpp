@@ -350,7 +350,7 @@ class DirectoryData
 
     void Open(std::string const &directory, FileAccess mode)
     {
-        UNUSED(mode); /* FIXME */
+        (void)mode; /* FIXME */
 
         m_type = StreamType::File;
 #if __ANDROID__
@@ -541,8 +541,9 @@ bool Directory::GetContent(std::vector<std::string>* files,
                            std::vector<Directory>* directories)
 {
     std::vector<std::string> sfiles, sdirectories;
+
     bool found_some = m_data->GetContentList(&sfiles, &sdirectories);
-    UNUSED(found_some);
+    (void)found_some;
 
     if (directories)
         for (auto const &sdir : sdirectories)

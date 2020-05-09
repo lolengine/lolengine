@@ -11,6 +11,7 @@
 //
 
 #include <lol/engine-internal.h>
+#include <../legacy/lol/base/assert.h>
 
 #include "lolgl.h"
 

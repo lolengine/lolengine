@@ -25,10 +25,8 @@ ivec2 const size(1280 * 1, 720 * 1);
 float const zoom = 0.03f / 1;
 int const octaves = 1;
 
-int main(int argc, char **argv)
+int main(int, char **)
 {
-    UNUSED(argc, argv);
-
     srand(time(nullptr));
 
     /* Create an image */

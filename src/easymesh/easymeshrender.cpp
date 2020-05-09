@@ -13,6 +13,7 @@
 //
 
 #include <lol/engine-internal.h>
+#include <../legacy/lol/base/assert.h>
 
 namespace lol
 {
@@ -179,7 +180,8 @@ void DefaultShaderData::StoreUniformNames()
 //-----------------------------------------------------------------------------
 void DefaultShaderData::SetupDefaultData(bool with_UV)
 {
-    UNUSED(with_UV);
+    (void)with_UV;
+
     for (int i = 0; i < 7; i++)
         AddUniform(DefaultUniforms[i]);
 }

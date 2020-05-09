@@ -15,6 +15,7 @@
 #endif
 
 #include <lol/engine.h>
+#include <lol/msg>
 
 class demo : public lol::entity
 {

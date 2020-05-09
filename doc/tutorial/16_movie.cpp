@@ -15,14 +15,13 @@
 #endif
 
 #include <lol/engine.h>
+#include <lol/msg>
 #include <lol/vector>
 #include <lol/noise>
 #include <lol/image/movie.h>
 
-int main(int argc, char **argv)
+int main(int, char **)
 {
-    UNUSED(argc, argv);
-
     lol::ivec2 size(256, 256);
 
     lol::movie movie(size);

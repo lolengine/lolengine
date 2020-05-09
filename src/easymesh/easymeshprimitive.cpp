@@ -922,7 +922,7 @@ void EasyMesh::AppendCog(int nbsides, float h, float d10, float d20,
                 j, j, j, j, \
                 k, j, j, k  \
                 };          \
-    UNUSED(q);
+    (void)q;
     int m[] = { /* The top and bottom faces */
                 0,  2,  3,  1,
                 7,  9,  8,  6,

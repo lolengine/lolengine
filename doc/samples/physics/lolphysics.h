@@ -14,6 +14,7 @@
 #pragma once
 
 #include <cstring>
+#include <cassert>
 #include <vector>
 
 #include <btBulletDynamicsCommon.h>
@@ -152,10 +153,8 @@ public:
         {
         }
 
-        virtual btScalar addSingleResult(btCollisionWorld::LocalRayResult& rayResult,bool normalInWorldSpace)
+        virtual btScalar addSingleResult(btCollisionWorld::LocalRayResult &, bool)
         {
-            UNUSED(rayResult);
-            UNUSED(normalInWorldSpace);
             return .0f;
         }
     };
@@ -194,7 +193,7 @@ public:
             }
             default:
             {
-                ASSERT(0, "Raycast not handled");
+                assert(false); // Raycast not handled
             }
         }
 
@@ -226,7 +225,7 @@ public:
                 }
                 default:
                 {
-                    ASSERT(0, "Raycast not handled");
+                    assert(false); // Raycast not handled
                 }
             }
         }
@@ -264,10 +263,8 @@ private:
             m_dynamics_world->setGravity(LOL2BT_VEC3(NewGravity * LOL2BT_UNIT));
     }
 
-    void CustomSetWorldLimit(vec3 const &NewWorldMin, vec3 const &NewWorldMax)
+    void CustomSetWorldLimit(vec3 const &, vec3 const &)
     {
-        UNUSED(NewWorldMin);
-        UNUSED(NewWorldMax);
     }
 
     void CustomSetTimestep(float NewTimestep) { }
@@ -371,7 +368,7 @@ private:
             }
             default:
             {
-                ASSERT(0, "Physic type does not exist.");
+                assert(false); // Physic type does not exist
             }
         }
 

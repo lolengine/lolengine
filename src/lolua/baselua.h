@@ -19,6 +19,8 @@ extern "C" {
 #include "3rdparty/lua/lauxlib.h"
 }
 
+#include <../legacy/lol/base/assert.h>
+
 #include <vector>  // std::vector
 #include <string>  // std::string
 #include <cstdlib> // tolower
@@ -111,10 +113,8 @@ public:
 public:
     Object() { }
     virtual ~Object() { }
-    static Object* New(lua_State* l, int arg_nb)
+    static Object* New(lua_State*, int)
     {
-        UNUSED(l);
-        UNUSED(arg_nb);
         ASSERT(false);
         return nullptr;
     }
@@ -243,17 +243,17 @@ protected:
     template <typename TLuaClass> static int Store(lua_State * l);
     template <typename TLuaClass> static int Del(lua_State * l);
     //-------------------------------------------------------------------------
-    template <typename TLuaClass> static int ToString(lua_State* l) { UNUSED(l); ASSERT(false); return 0; }
-    template <typename TLuaClass> static int OpAdd(lua_State* l) { UNUSED(l); ASSERT(false); return 0; }
-    template <typename TLuaClass> static int OpSubstract(lua_State* l) { UNUSED(l); ASSERT(false); return 0; }
-    template <typename TLuaClass> static int OpMultiply(lua_State* l) { UNUSED(l); ASSERT(false); return 0; }
-    template <typename TLuaClass> static int OpDivide(lua_State* l) { UNUSED(l); ASSERT(false); return 0; }
-    template <typename TLuaClass> static int OpModulo(lua_State* l) { UNUSED(l); ASSERT(false); return 0; }
-    template <typename TLuaClass> static int OpUnaryNeg(lua_State* l) { UNUSED(l); ASSERT(false); return 0; }
-    template <typename TLuaClass> static int OpConcat(lua_State* l) { UNUSED(l); ASSERT(false); return 0; }
-    template <typename TLuaClass> static int CmpEqual(lua_State* l) { UNUSED(l); ASSERT(false); return 0; }
-    template <typename TLuaClass> static int CmpLessThan(lua_State* l) { UNUSED(l); ASSERT(false); return 0; }
-    template <typename TLuaClass> static int CmpLessEqual(lua_State* l) { UNUSED(l); ASSERT(false); return 0; }
+    template <typename TLuaClass> static int ToString(lua_State*) { ASSERT(false); return 0; }
+    template <typename TLuaClass> static int OpAdd(lua_State*) { ASSERT(false); return 0; }
+    template <typename TLuaClass> static int OpSubstract(lua_State*) { ASSERT(false); return 0; }
+    template <typename TLuaClass> static int OpMultiply(lua_State*) { ASSERT(false); return 0; }
+    template <typename TLuaClass> static int OpDivide(lua_State*) { ASSERT(false); return 0; }
+    template <typename TLuaClass> static int OpModulo(lua_State*) { ASSERT(false); return 0; }
+    template <typename TLuaClass> static int OpUnaryNeg(lua_State*) { ASSERT(false); return 0; }
+    template <typename TLuaClass> static int OpConcat(lua_State*) { ASSERT(false); return 0; }
+    template <typename TLuaClass> static int CmpEqual(lua_State*) { ASSERT(false); return 0; }
+    template <typename TLuaClass> static int CmpLessThan(lua_State*) { ASSERT(false); return 0; }
+    template <typename TLuaClass> static int CmpLessEqual(lua_State*) { ASSERT(false); return 0; }
 };
 
 //-----------------------------------------------------------------------------
@@ -385,8 +385,8 @@ protected:
     #define INNER_ERROR "Your type is not implemented. For pointers, use LuaPtr<MyType>()"
     template<typename T> T InnerDefault() { return T(0); }
     template<typename T> bool InnerIsValid() { ASSERT(false, INNER_ERROR); return false; }
-    template<typename T> T InnerGet(T value) { UNUSED(value); ASSERT(false, INNER_ERROR); return InnerDefault<T>(); }
-    template<typename T> int InnerPush(T value) { UNUSED(value); ASSERT(false, INNER_ERROR); return 0; }
+    template<typename T> T InnerGet(T) { ASSERT(false, INNER_ERROR); return InnerDefault<T>(); }
+    template<typename T> int InnerPush(T) { ASSERT(false, INNER_ERROR); return 0; }
 
 #ifndef INNER_SAFE_ENUM
     // Gets the value for the given enum type.
@@ -505,16 +505,16 @@ private:
 #ifndef REGION_STACK_VAR
 
 #ifndef STACK_BOOL
-template<> inline bool Stack::InnerIsValid<bool>()       { return lua_isboolean(m_state, m_index); }
-template<> inline bool Stack::InnerGet<bool>(bool value) { UNUSED(value); return !!lua_toboolean(m_state, m_index++); }
+template<> inline bool Stack::InnerIsValid<bool>() { return lua_isboolean(m_state, m_index); }
+template<> inline bool Stack::InnerGet<bool>(bool) { return !!lua_toboolean(m_state, m_index++); }
 template<> inline int Stack::InnerPush<bool>(bool value) { lua_pushboolean(m_state, value); return 1; }
 #endif // STACK_BOOL
 
 //-----------------------------------------------------------------------------
 #ifndef STACK_CHAR_CONST
-template<> inline bool Stack::InnerIsValid<char const*>()                     { return !!lua_isstring(m_state, m_index); }
-template<> inline char const* Stack::InnerGet<char const*>(char const* value) { UNUSED(value); return lua_tostring(m_state, m_index++); }
-template<> inline int Stack::InnerPush<char const*>(char const* value)        { lua_pushstring(m_state, value); return 1; }
+template<> inline bool Stack::InnerIsValid<char const*>() { return !!lua_isstring(m_state, m_index); }
+template<> inline char const* Stack::InnerGet<char const*>(char const *) { return lua_tostring(m_state, m_index++); }
+template<> inline int Stack::InnerPush<char const*>(char const* value) { lua_pushstring(m_state, value); return 1; }
 #endif // STACK_CHAR_CONST
 
 //-----------------------------------------------------------------------------
@@ -527,9 +527,9 @@ template<> inline int Stack::InnerPush<std::string>(std::string value)        { 
 
 //-----------------------------------------------------------------------------
 #ifndef STACK_STRING
-template<> inline bool Stack::InnerIsValid<double>()           { return !!lua_isnumber(m_state, m_index); }
-template<> inline double Stack::InnerGet<double>(double value) { UNUSED(value); return lua_tonumber(m_state, m_index++); }
-template<> inline int Stack::InnerPush<double>(double value)   { lua_pushnumber(m_state, value); return 1; }
+template<> inline bool Stack::InnerIsValid<double>() { return !!lua_isnumber(m_state, m_index); }
+template<> inline double Stack::InnerGet<double>(double) { return lua_tonumber(m_state, m_index++); }
+template<> inline int Stack::InnerPush<double>(double value) { lua_pushnumber(m_state, value); return 1; }
 #endif //STACK_STRING
 
 //-----------------------------------------------------------------------------
@@ -541,30 +541,30 @@ template<> inline int Stack::InnerPush<float>(float value)  { return InnerPush<d
 
 //-----------------------------------------------------------------------------
 #ifndef STACK_INT64
-template<> inline bool Stack::InnerIsValid<int64_t>()             { return !!lua_isnumber(m_state, m_index); }
-template<> inline int64_t Stack::InnerGet<int64_t>(int64_t value) { UNUSED(value); return lua_tointeger(m_state, m_index++); }
-template<> inline int Stack::InnerPush<int64_t>(int64_t value)    { lua_pushinteger(m_state, value); return 1; }
+template<> inline bool Stack::InnerIsValid<int64_t>() { return !!lua_isnumber(m_state, m_index); }
+template<> inline int64_t Stack::InnerGet<int64_t>(int64_t) { return lua_tointeger(m_state, m_index++); }
+template<> inline int Stack::InnerPush<int64_t>(int64_t value) { lua_pushinteger(m_state, value); return 1; }
 #endif //STACK_INT64
 
 //-----------------------------------------------------------------------------
 #ifndef STACK_UINT64
-template<> inline bool Stack::InnerIsValid<uint64_t>()               { return !!lua_isnumber(m_state, m_index); }
-template<> inline uint64_t Stack::InnerGet<uint64_t>(uint64_t value) { UNUSED(value); return (uint64_t)lua_tointeger(m_state, m_index++); }
-template<> inline int Stack::InnerPush<uint64_t>(uint64_t value)     { lua_pushinteger(m_state, (lua_Unsigned)value); return 1; }
+template<> inline bool Stack::InnerIsValid<uint64_t>() { return !!lua_isnumber(m_state, m_index); }
+template<> inline uint64_t Stack::InnerGet<uint64_t>(uint64_t) { return (uint64_t)lua_tointeger(m_state, m_index++); }
+template<> inline int Stack::InnerPush<uint64_t>(uint64_t value) { lua_pushinteger(m_state, (lua_Unsigned)value); return 1; }
 #endif //STACK_UINT64
 
 //-----------------------------------------------------------------------------
 #ifndef STACK_INT32
-template<> inline bool Stack::InnerIsValid<int32_t>()             { return !!lua_isnumber(m_state, m_index); }
-template<> inline int32_t Stack::InnerGet<int32_t>(int32_t value) { UNUSED(value); return (int32_t)lua_tointeger(m_state, m_index++); }
-template<> inline int Stack::InnerPush<int32_t>(int32_t value)    { lua_pushinteger(m_state, (lua_Integer)value); return 1; }
+template<> inline bool Stack::InnerIsValid<int32_t>() { return !!lua_isnumber(m_state, m_index); }
+template<> inline int32_t Stack::InnerGet<int32_t>(int32_t) { return (int32_t)lua_tointeger(m_state, m_index++); }
+template<> inline int Stack::InnerPush<int32_t>(int32_t value) { lua_pushinteger(m_state, (lua_Integer)value); return 1; }
 #endif // STACK_INT32
 
 //-----------------------------------------------------------------------------
 #ifndef STACK_UINT32
-template<> inline bool Stack::InnerIsValid<uint32_t>()               { return !!lua_isnumber(m_state, m_index); }
-template<> inline uint32_t Stack::InnerGet<uint32_t>(uint32_t value) { UNUSED(value); return (uint32_t)(lua_Unsigned)lua_tointeger(m_state, m_index++); }
-template<> inline int Stack::InnerPush<uint32_t>(uint32_t value)     { lua_pushinteger(m_state, (lua_Unsigned)value); return 1; }
+template<> inline bool Stack::InnerIsValid<uint32_t>() { return !!lua_isnumber(m_state, m_index); }
+template<> inline uint32_t Stack::InnerGet<uint32_t>(uint32_t) { return (uint32_t)(lua_Unsigned)lua_tointeger(m_state, m_index++); }
+template<> inline int Stack::InnerPush<uint32_t>(uint32_t value) { lua_pushinteger(m_state, (lua_Unsigned)value); return 1; }
 #endif //STACK_UINT32
 
 //-----------------------------------------------------------------------------
@@ -625,7 +625,7 @@ protected:
     static void Release(lua_State* l, Loader* loader);
     static void StoreObject(lua_State* l, Object* obj);
     //Virtual Store lua object ------------------------------------------------
-    virtual void Store(Object* obj) { UNUSED(obj); }
+    virtual void Store(Object*) { }
 
 private:
     lua_State* m_lua_state;

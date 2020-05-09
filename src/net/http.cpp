@@ -11,6 +11,7 @@
 //
 
 #include <lol/engine-internal.h>
+#include <lol/msg>
 
 #if LOL_USE_OPENSSL
 #   define CPPHTTPLIB_OPENSSL_SUPPORT 1

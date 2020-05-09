@@ -12,6 +12,7 @@
 //
 
 #include <lol/engine-internal.h>
+#include <../legacy/lol/base/assert.h>
 
 #include <cstdio>
 #include <string>
@@ -292,7 +293,7 @@ bool gui::release_draw()
 
 void gui::primitive::Render(Scene& scene, std::shared_ptr<PrimitiveSource> prim)
 {
-    UNUSED(scene, prim);
+    (void)scene; (void)prim;
 
     ImGui::Render();
     ImGui::EndFrame();

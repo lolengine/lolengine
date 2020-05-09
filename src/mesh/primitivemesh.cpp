@@ -43,7 +43,7 @@ void PrimitiveMesh::Render(Scene& scene, std::shared_ptr<PrimitiveSource> primit
     ShaderAttrib a_pos, a_tex;
 
     /* FIXME: ignored for now */
-    UNUSED(primitive);
+    (void)primitive;
 
     {
         /* If this primitive uses a new shader, update attributes */
