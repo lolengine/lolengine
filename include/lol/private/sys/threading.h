@@ -26,26 +26,11 @@
 #include <chrono>  // std::chrono
 #include <cassert> // assert()
 
-/* XXX: workaround for a bug in Visual Studio 2012 and 2013!
- * https://connect.microsoft.com/VisualStudio/feedback/details/747145 */
-#if defined(_MSC_VER) && (_MSC_VER < 1900)
-#   define LOL_VISUAL_STUDIO_BUG_747145_WORKAROUND 1
-#   ifdef WIN32_LEAN_AND_MEAN
-#       include <windows.h>
-#   else
-#       define WIN32_LEAN_AND_MEAN 1
-#       include <windows.h>
-#       undef WIN32_LEAN_AND_MEAN
-#   endif
-#endif
-
 /* XXX: workaround for missing std::thread in mingw */
 #if _GLIBCXX_MUTEX && !_GLIBCXX_HAS_GTHREADS && _WIN32
 #   include "../3rdparty/mingw-std-threads/mingw.thread.h"
 #   include "../3rdparty/mingw-std-threads/mingw.mutex.h"
 #   include "../3rdparty/mingw-std-threads/mingw.condition_variable.h"
-#   undef near /* Fuck Microsoft */
-#   undef far /* Fuck Microsoft again */
 #endif
 
 namespace lol
@@ -63,11 +48,7 @@ public:
 
     ~thread()
     {
-#if LOL_VISUAL_STUDIO_BUG_747145_WORKAROUND
-        m_thread.detach();
-#else
         m_thread.join();
-#endif
     }
 
     // FIXME: move to os::has_threads?
@@ -86,9 +67,6 @@ private:
     static void trampoline(thread *that)
     {
         that->m_function(that);
-#if LOL_VISUAL_STUDIO_BUG_747145_WORKAROUND
-        ExitThread(0);
-#endif
     }
 
     std::thread m_thread;
@@ -265,5 +243,5 @@ private:
     }
 };
 
-} /* namespace lol */
+} // namespace lol
 
