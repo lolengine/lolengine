@@ -66,8 +66,8 @@ private:
 #if !_DEBUG
         if (type == message_type::debug)
         {
-            static bool const disable_debug = sys::getenv("LOL_DEBUG").size() > 0;
-            if (disable_debug)
+            static bool const enforce_debug = sys::getenv("LOL_DEBUG").size() > 0;
+            if (!enforce_debug)
                 return;
         }
 #endif
