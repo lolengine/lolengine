@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -115,9 +115,9 @@ ResourceCodecData* AndroidImageCodec::Load(std::string const &path)
 
 bool AndroidImageCodec::Save(std::string const &path, ResourceCodecData* data)
 {
-    UNUSED(path, data);
-
     /* TODO: unimplemented */
+    (void)path;
+    (void)data;
     return false;
 }
 

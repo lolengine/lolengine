@@ -86,10 +86,8 @@ EasyMeshLuaObject::~EasyMeshLuaObject()
 }
 
 //-----------------------------------------------------------------------------
-EasyMeshLuaObject* EasyMeshLuaObject::New(lua_State* l, int arg_nb)
+EasyMeshLuaObject* EasyMeshLuaObject::New(lua_State *, int)
 {
-    UNUSED(l);
-    UNUSED(arg_nb);
     LuaStack s = LuaStack::Begin(l);
     std::string str = s.Get<std::string>("");
     return new EasyMeshLuaObject(str);
@@ -200,7 +198,8 @@ bool EasyMesh::Compile(char const *command, bool execute)
 {
     bool res = false;
     // FIXME: make this work again
-    UNUSED(command, execute);
+    (void)command;
+    (void)execute;
 #if 0
     EasyMeshCompiler mc(*this);
     BD()->Enable(MeshBuildOperation::CommandRecording);

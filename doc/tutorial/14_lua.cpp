@@ -2,7 +2,7 @@
 //  Lol Engine — Lua tutorial
 //
 //  Copyright © 2014—2017 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2017—2018 Sam Hocevar <sam@hocevar.net>
+//            © 2017—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -29,10 +29,8 @@ class DemoObject : public LuaObject
 public:
     DemoObject() : LuaObject() {}
     virtual ~DemoObject() {}
-    static DemoObject* New(lua_State* l, int arg_nb)
+    static DemoObject* New(lua_State *, int)
     {
-        UNUSED(l);
-        UNUSED(arg_nb);
         return new DemoObject();
     }
 
@@ -61,9 +59,8 @@ public:
         return (stack << f).End();
     }
 
-    float AddTenMethod(float f, int32_t i, int32_t i2)
+    float AddTenMethod(float f, int32_t, int32_t)
     {
-        UNUSED(i, i2);
         return (f + 10);
     }
 

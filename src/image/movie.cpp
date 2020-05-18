@@ -42,7 +42,7 @@ static std::string error2string(int errnum)
 /*static void ffmpeg_logger(void *ptr, int level, const char *fmt, va_list vl)
 {
     // FIXME: use lol::msg::debug
-    UNUSED(ptr, level);
+    (void)ptr; (void)level;
     vfprintf(stderr, fmt, vl);
 }*/
 #endif
@@ -100,7 +100,7 @@ bool movie::open_file(std::string const &filename)
     }
     return true;
 #else
-    UNUSED(filename);
+    (void)filename;
     return false;
 #endif
 }
@@ -152,7 +152,7 @@ bool movie::push_image(image &im)
         }
     }
 #else
-    UNUSED(im);
+    (void)im;
 #endif
 
     return true;

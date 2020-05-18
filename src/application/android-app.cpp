@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -391,14 +391,12 @@ void lol_android_main(void)
 {
 }
 
-void lol_android_main(int argc, char **argv)
+void lol_android_main(int, char **)
 {
-    UNUSED(argc, argv);
 }
 
-void lol_android_main(int argc, char **argv, char **envp)
+void lol_android_main(int, char **, char **)
 {
-    UNUSED(argc, argv, envp);
 }
 
 #endif /* __ANDROID__ */

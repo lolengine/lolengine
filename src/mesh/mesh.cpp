@@ -137,7 +137,7 @@ void SubMesh::Render()
         m_vdecl->SetStream(m_vbos[i], attribs);
     }
 
-    UNUSED(vertex_count);
+    (void)vertex_count;
 
     for (size_t i = 0; i < m_textures.size(); ++i)
     {

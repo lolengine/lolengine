@@ -684,7 +684,7 @@ std::string ShaderData::Patch(std::string const &code, ShaderType type)
 
                 size_t l0 = strlen(rep[0]);
                 size_t l1 = strlen(rep[1]);
-                UNUSED(l1);
+                (void)l1;
 
                 std::string left = patched_code.substr(0, index);
                 std::string right = patched_code.substr(index + l0, patched_code.length() - (index + l0));
