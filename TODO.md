@@ -9,7 +9,6 @@
 
     src/lol/algorithm/aabb_tree.h
     src/lol/algorithm/portal.h
-    src/lol/base/assert.h (could be useful)
     src/lol/base/avl_tree.h
     src/lol/image/pixel.h (but is it useful?)
     src/lol/math/arraynd.h (but do we really want to keep it?)
