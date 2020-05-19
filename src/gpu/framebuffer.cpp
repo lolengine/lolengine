@@ -11,7 +11,9 @@
 //
 
 #include <lol/engine-internal.h>
-#include <../legacy/lol/base/assert.h>
+
+#include <lol/msg>
+#include <cassert>
 
 // FIXME: fine-tune this define
 #if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
@@ -117,7 +119,7 @@ uint32_t FramebufferFormat::GetFormat()
 #endif
 #endif
     default:
-        ASSERT(false, "unknown framebuffer format %d", m_format);
+        assert(false);
         return 0;
     }
 }
@@ -159,7 +161,7 @@ uint32_t FramebufferFormat::GetFormatOrder()
 #   endif
 #endif
     default:
-        ASSERT(false, "unknown framebuffer format order %d", m_format);
+        assert(false);
         return 0;
     }
 }
@@ -243,8 +245,8 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
 
 #if defined GL_VERSION_1_1 || defined GL_ES_VERSION_2_0
     GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-    ASSERT(status == GL_FRAMEBUFFER_COMPLETE,
-           "invalid framebuffer status 0x%x", status);
+    if (status != GL_FRAMEBUFFER_COMPLETE)
+        msg::error("invalid framebuffer status 0x%x", status);
 #endif
 
 #if defined GL_VERSION_1_1 || defined GL_ES_VERSION_2_0
@@ -295,7 +297,8 @@ image Framebuffer::GetImage() const
 
 void Framebuffer::Bind()
 {
-    ASSERT(!m_data->m_bound, "trying to bind an already bound framebuffer");
+    if (m_data->m_bound)
+        msg::error("trying to bind an already bound framebuffer");
 
 #if defined GL_VERSION_1_1 || defined GL_ES_VERSION_2_0
     glBindFramebuffer(GL_FRAMEBUFFER, m_data->m_fbo);
@@ -314,7 +317,8 @@ void Framebuffer::Bind()
 
 void Framebuffer::Unbind()
 {
-    ASSERT(m_data->m_bound, "trying to unbind an unbound framebuffer");
+    if (!m_data->m_bound)
+        msg::error("trying to unbind an unbound framebuffer");
 
 #if defined GL_VERSION_1_1 || defined GL_ES_VERSION_2_0
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

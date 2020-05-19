@@ -12,8 +12,8 @@
 
 #include <lol/engine-internal.h>
 #include <lol/msg>
-#include <../legacy/lol/base/assert.h>
 
+#include <cassert>       // assert
 #include <unordered_set> // std::unordered_set
 #include <cstdlib>
 #include <functional>
@@ -46,10 +46,9 @@ public:
 
     ~ticker_data()
     {
-        ASSERT(DEPRECATED_nentities == 0,
-               "still %d entities in ticker\n", DEPRECATED_nentities);
-        ASSERT(DEPRECATED_m_autolist.size() == 0,
-               "still %d autoreleased entities\n", int(DEPRECATED_m_autolist.size()));
+        assert(DEPRECATED_nentities == 0);
+        assert(DEPRECATED_m_autolist.size() == 0);
+
         msg::debug("%d frames required to quit\n", m_frame - m_quitframe);
 
         if (thread::has_threads())
@@ -58,7 +57,7 @@ public:
             disktick.push(0);
             gamethread.release();
             diskthread.release();
-            ASSERT(drawtick.size() == 0);
+            assert(drawtick.size() == 0);
         }
     }
 
@@ -139,10 +138,8 @@ void Ticker::Register(entity *entity)
 
 void Ticker::Ref(entity *entity)
 {
-    ASSERT(entity, "dereferencing nullptr entity\n");
-    ASSERT(!entity->has_flags(entity::flags::destroying),
-           "referencing entity scheduled for destruction %s\n",
-           entity->GetName().c_str());
+    assert(entity);
+    assert(!entity->has_flags(entity::flags::destroying));
 
     if (entity->has_flags(entity::flags::autorelease))
     {
@@ -165,11 +162,9 @@ void Ticker::Ref(entity *entity)
 
 int Ticker::Unref(entity *entity)
 {
-    ASSERT(entity, "dereferencing null entity\n");
-    ASSERT(entity->m_ref > 0,
-           "dereferencing unreferenced entity %s\n", entity->GetName().c_str());
-    ASSERT(!entity->has_flags(entity::flags::autorelease),
-           "dereferencing autoreleased entity %s\n", entity->GetName().c_str());
+    assert(entity);
+    assert(entity->m_ref > 0);
+    assert(!entity->has_flags(entity::flags::autorelease));
 
     return --entity->m_ref;
 }

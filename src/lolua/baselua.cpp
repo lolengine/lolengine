@@ -14,6 +14,8 @@
 #include <lol/engine-internal.h>
 #include <lol/lua.h>
 
+#include <lol/msg>
+#include <cassert>
 #include <string>
 #include <cstdlib>
 #include <cctype>
@@ -35,7 +37,7 @@ class LuaBaseData
     {
         char const *message = lua_tostring(l, -1);
         msg::error("%s\n", message);
-        debug::abort();
+        assert(false);
         return 0;
     }
 

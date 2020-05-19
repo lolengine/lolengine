@@ -11,7 +11,9 @@
 //
 
 #include <lol/engine-internal.h>
-#include <../legacy/lol/base/assert.h>
+
+#include <lol/msg>
+#include <cassert>
 
 #include "image-private.h"
 
@@ -129,8 +131,6 @@ void image::set_format(PixelFormat fmt)
 #endif
         switch (fmt)
         {
-            case PixelFormat::Unknown:
-                break;
             case PixelFormat::Y_8:
                 data = new PixelData<PixelFormat::Y_8>(isize); break;
             case PixelFormat::RGB_8:
@@ -143,11 +143,15 @@ void image::set_format(PixelFormat fmt)
                 data = new PixelData<PixelFormat::RGB_F32>(isize); break;
             case PixelFormat::RGBA_F32:
                 data = new PixelData<PixelFormat::RGBA_F32>(isize); break;
+            case PixelFormat::Unknown:
+            default:
+                msg::error("invalid pixel type %d", (int)fmt);
+                assert(false);
+                break;
         }
 #if __GNUC__
 #pragma GCC diagnostic pop
 #endif
-        ASSERT(data, "invalid pixel type %d", (int)fmt);
         m_data->m_pixels[(int)fmt] = data;
     }
 
@@ -346,8 +350,8 @@ void image::set_format(PixelFormat fmt)
     }
     else
     {
-        ASSERT(false, "Unable to find image conversion from %d to %d",
-               (int)old_fmt, (int)fmt);
+        msg::error("Unable to find image conversion from %d to %d",
+                   (int)old_fmt, (int)fmt);
     }
 }
 

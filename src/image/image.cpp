@@ -11,11 +11,11 @@
 //
 
 #include <lol/engine-internal.h>
-#include <../legacy/lol/base/assert.h>
 
 #include "image-private.h"
 
-#include <algorithm> /* for std::swap */
+#include <cassert>   // assert
+#include <algorithm> // std::swap
 
 namespace lol
 {
@@ -65,7 +65,7 @@ image::~image()
 
 void image::Copy(uint8_t* src_pixels, ivec2 const& size, PixelFormat fmt)
 {
-    ASSERT(fmt != PixelFormat::Unknown);
+    assert(fmt != PixelFormat::Unknown);
     resize(size);
     set_format(fmt);
     memcpy(m_data->m_pixels[(int)fmt]->data(), src_pixels,
@@ -125,8 +125,8 @@ ivec2 image::size() const
 
 void image::resize(ivec2 size)
 {
-    ASSERT(size.x > 0);
-    ASSERT(size.y > 0);
+    assert(size.x > 0);
+    assert(size.y > 0);
 
     if (m_data->m_size != size)
     {
@@ -175,8 +175,8 @@ void *image::lock2d_helper(PixelFormat T)
 template<typename T>
 void image::unlock2d(array2d<T> const &array)
 {
-    ASSERT(has_key(m_data->m_pixels, (int)m_data->m_format));
-    ASSERT(array.data() == m_data->m_pixels[(int)m_data->m_format]->data());
+    assert(has_key(m_data->m_pixels, (int)m_data->m_format));
+    assert(array.data() == m_data->m_pixels[(int)m_data->m_format]->data());
 }
 
 /* Explicit specialisations for the above templates */
@@ -195,15 +195,15 @@ _T(PixelFormat::RGBA_F32)
 /* Special case for the "any" format: return the last active buffer */
 void *image::lock()
 {
-    ASSERT(m_data->m_format != PixelFormat::Unknown);
+    assert(m_data->m_format != PixelFormat::Unknown);
 
     return m_data->m_pixels[(int)m_data->m_format]->data();
 }
 
 void image::unlock(void const *pixels)
 {
-    ASSERT(has_key(m_data->m_pixels, (int)m_data->m_format));
-    ASSERT(pixels == m_data->m_pixels[(int)m_data->m_format]->data());
+    assert(has_key(m_data->m_pixels, (int)m_data->m_format));
+    assert(pixels == m_data->m_pixels[(int)m_data->m_format]->data());
 }
 
 } /* namespace lol */

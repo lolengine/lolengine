@@ -13,7 +13,9 @@
 //
 
 #include <lol/engine-internal.h>
-#include <../legacy/lol/base/assert.h>
+
+#include <lol/msg>
+#include <cassert>
 
 namespace lol
 {
@@ -260,7 +262,11 @@ void GpuEasyMeshData::AddGpuData(std::shared_ptr<GpuShaderData> gpudata, std::sh
     BUILD_VFLAG(has_color,       VertexUsage::Color,        vflags);
     BUILD_VFLAG(has_texcoord,    VertexUsage::TexCoord,     vflags);
     BUILD_VFLAG_OR(has_texcoord, VertexUsage::TexCoordExt,  vflags);
-    ASSERT(!vflags, "no Vertex Usage setup for 0x%04x", vflags);
+    if (vflags)
+    {
+        msg::error("no Vertex Usage setup for 0x%04x", vflags);
+        assert(!vflags);
+    }
 
     if (has_position)   gpudata->AddAttribute(VertexUsage::Position, 0);
     if (has_normal)     gpudata->AddAttribute(VertexUsage::Normal, 0);
@@ -324,7 +330,11 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, std::shared_ptr<EasyMesh>
     BUILD_VFLAG_COUNT(has_color,      VertexUsage::Color,       saveflags, flagnb);
     BUILD_VFLAG_COUNT(has_texcoord,   VertexUsage::TexCoord,    saveflags, flagnb);
     BUILD_VFLAG_COUNT(has_texcoordExt,VertexUsage::TexCoordExt, saveflags, flagnb);
-    ASSERT(!saveflags, "no Vertex Declaration setup for 0x%04x", vflags);
+    if (saveflags)
+    {
+        msg::error("no Vertex Declaration setup for 0x%04x", vflags);
+        assert(!saveflags);
+    }
 
     if (flagnb == 5 && has_position && has_normal && has_color && has_texcoord && has_texcoordExt)
     {
@@ -444,7 +454,10 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, std::shared_ptr<EasyMesh>
         COPY_VBO;
     }
     else
-        ASSERT(0, "no known Vertex Declaration combination for 0x%04x", vflags);
+    {
+        msg::error("no known Vertex Declaration combination for 0x%04x", vflags);
+        assert(false);
+    }
 
     m_vdata.push(vflags, new_vdecl, new_vbo);
 }
@@ -452,8 +465,8 @@ void GpuEasyMeshData::SetupVertexData(uint16_t vflags, std::shared_ptr<EasyMesh>
 //-----------------------------------------------------------------------------
 void GpuEasyMeshData::RenderMeshData(mat4 const &model, int render_mode)
 {
-    ASSERT(0 <= render_mode && render_mode < m_gpudata.count(), "render mode is not in the defined range");
-    ASSERT(m_gpudata[render_mode], "gpu datas for this render mode don't exist");
+    assert(0 <= render_mode && render_mode < m_gpudata.count());
+    assert(m_gpudata[render_mode]);
     GpuShaderData& gpu_sd = *(m_gpudata[render_mode]);
 
     int vdecl_idx = 0;
@@ -478,7 +491,11 @@ void GpuEasyMeshData::RenderMeshData(mat4 const &model, int render_mode)
     BUILD_VFLAG(has_color,      VertexUsage::Color,       vflags);
     BUILD_VFLAG(has_texcoord,   VertexUsage::TexCoord,    vflags);
     BUILD_VFLAG_OR(has_texcoord,VertexUsage::TexCoordExt, vflags);
-    ASSERT(!vflags, "no Vertex Stream setup for 0x%04x", vflags);
+    if (vflags)
+    {
+        msg::error("no Vertex Stream setup for 0x%04x", vflags);
+        assert(!vflags);
+    }
 
     int idx = 0;
     ShaderAttrib Attribs[4] = { lol::ShaderAttrib(), lol::ShaderAttrib(), lol::ShaderAttrib(), lol::ShaderAttrib() };

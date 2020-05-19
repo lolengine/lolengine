@@ -54,7 +54,6 @@ au Syntax cpp
 " Global keywords
 au Syntax cpp
   \ syn keyword cConstant
-  \ UNUSED ASSERT
 
 
 """

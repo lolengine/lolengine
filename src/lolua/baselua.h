@@ -19,8 +19,7 @@ extern "C" {
 #include "3rdparty/lua/lauxlib.h"
 }
 
-#include <../legacy/lol/base/assert.h>
-
+#include <cassert> // assert
 #include <vector>  // std::vector
 #include <string>  // std::string
 #include <cstdlib> // tolower
@@ -115,10 +114,10 @@ public:
     virtual ~Object() { }
     static Object* New(lua_State*, int)
     {
-        ASSERT(false);
+        assert(false);
         return nullptr;
     }
-    static const Library* GetLib() { ASSERT(false); return nullptr; }
+    static const Library* GetLib() { assert(false); return nullptr; }
 };
 
 //-----------------------------------------------------------------------------
@@ -200,7 +199,7 @@ private:
     static const Object::Library* GetLibrary()
     {
         const Object::Library* lib = TLuaClass::GetLib();
-        ASSERT(lib);
+        assert(lib);
         return lib;
     }
 
@@ -243,17 +242,17 @@ protected:
     template <typename TLuaClass> static int Store(lua_State * l);
     template <typename TLuaClass> static int Del(lua_State * l);
     //-------------------------------------------------------------------------
-    template <typename TLuaClass> static int ToString(lua_State*) { ASSERT(false); return 0; }
-    template <typename TLuaClass> static int OpAdd(lua_State*) { ASSERT(false); return 0; }
-    template <typename TLuaClass> static int OpSubstract(lua_State*) { ASSERT(false); return 0; }
-    template <typename TLuaClass> static int OpMultiply(lua_State*) { ASSERT(false); return 0; }
-    template <typename TLuaClass> static int OpDivide(lua_State*) { ASSERT(false); return 0; }
-    template <typename TLuaClass> static int OpModulo(lua_State*) { ASSERT(false); return 0; }
-    template <typename TLuaClass> static int OpUnaryNeg(lua_State*) { ASSERT(false); return 0; }
-    template <typename TLuaClass> static int OpConcat(lua_State*) { ASSERT(false); return 0; }
-    template <typename TLuaClass> static int CmpEqual(lua_State*) { ASSERT(false); return 0; }
-    template <typename TLuaClass> static int CmpLessThan(lua_State*) { ASSERT(false); return 0; }
-    template <typename TLuaClass> static int CmpLessEqual(lua_State*) { ASSERT(false); return 0; }
+    template <typename TLuaClass> static int ToString(lua_State*) { assert(false); return 0; }
+    template <typename TLuaClass> static int OpAdd(lua_State*) { assert(false); return 0; }
+    template <typename TLuaClass> static int OpSubstract(lua_State*) { assert(false); return 0; }
+    template <typename TLuaClass> static int OpMultiply(lua_State*) { assert(false); return 0; }
+    template <typename TLuaClass> static int OpDivide(lua_State*) { assert(false); return 0; }
+    template <typename TLuaClass> static int OpModulo(lua_State*) { assert(false); return 0; }
+    template <typename TLuaClass> static int OpUnaryNeg(lua_State*) { assert(false); return 0; }
+    template <typename TLuaClass> static int OpConcat(lua_State*) { assert(false); return 0; }
+    template <typename TLuaClass> static int CmpEqual(lua_State*) { assert(false); return 0; }
+    template <typename TLuaClass> static int CmpLessThan(lua_State*) { assert(false); return 0; }
+    template <typename TLuaClass> static int CmpLessEqual(lua_State*) { assert(false); return 0; }
 };
 
 //-----------------------------------------------------------------------------
@@ -338,7 +337,7 @@ private:
         bool is_nil = lua_isnil(m_state, m_index);
         if (!is_optional || (!is_nil && value_validity))
         {
-            ASSERT(!is_nil); /* touky: should it assert, though ? */
+            assert(!is_nil); /* touky: should it assert, though ? */
             return true;
         }
         return false;
@@ -384,9 +383,9 @@ protected:
     //-------------------------------------------------------------------------
     #define INNER_ERROR "Your type is not implemented. For pointers, use LuaPtr<MyType>()"
     template<typename T> T InnerDefault() { return T(0); }
-    template<typename T> bool InnerIsValid() { ASSERT(false, INNER_ERROR); return false; }
-    template<typename T> T InnerGet(T) { ASSERT(false, INNER_ERROR); return InnerDefault<T>(); }
-    template<typename T> int InnerPush(T) { ASSERT(false, INNER_ERROR); return 0; }
+    template<typename T> bool InnerIsValid() { msg::error("%s\n", INNER_ERROR); assert(false); return false; }
+    template<typename T> T InnerGet(T) { msg::error("%s\n", INNER_ERROR); assert(false); return InnerDefault<T>(); }
+    template<typename T> int InnerPush(T) { msg::error("%s\n", INNER_ERROR); assert(false); return 0; }
 
 #ifndef INNER_SAFE_ENUM
     // Gets the value for the given enum type.
@@ -639,7 +638,7 @@ int ObjectHelper::Store(lua_State * l)
 {
     auto stack = Lolua::Stack::Begin(l);
     TLuaClass* obj = stack.GetPtr<TLuaClass>();
-    ASSERT(obj);
+    assert(obj);
     Loader::StoreObject(l, obj);
     return 0;
 }
@@ -649,7 +648,7 @@ int ObjectHelper::Del(lua_State * l)
 {
     auto stack = Lolua::Stack::Begin(l);
     TLuaClass* obj = stack.GetPtr<TLuaClass>();
-    ASSERT(obj);
+    assert(obj);
     delete obj;
     return 0;
 }

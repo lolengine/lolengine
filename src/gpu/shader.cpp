@@ -13,8 +13,8 @@
 #include <lol/engine-internal.h>
 #include <lol/msg>
 #include <lol/pegtl>
-#include <../legacy/lol/base/assert.h>
 
+#include <cassert>
 #include <string>
 #include <memory>
 #include <map>
@@ -190,11 +190,11 @@ std::shared_ptr<Shader> Shader::Create(std::string const &name, std::string cons
 {
     lolfx_parser p(code);
 
-    ASSERT(has_key(p.m_programs, "vert.glsl"),
-           "no vertex shader in %s", name.c_str());
+    if (!has_key(p.m_programs, "vert.glsl"))
+        msg::error("no vertex shader in %s", name.c_str());
 
-    ASSERT(has_key(p.m_programs, "frag.glsl"),
-           "no fragment shader in %s", name.c_str());
+    if (!has_key(p.m_programs, "frag.glsl"))
+        msg::error("no fragment shader in %s", name.c_str());
 
     std::string vert = p.m_programs["vert.glsl"];
     std::string frag = p.m_programs["frag.glsl"];
@@ -806,7 +806,7 @@ ShaderVar ShaderVar::GetShaderOut(ShaderProgram program)
     switch (program.ToScalar())
     {
     case ShaderProgram::Geometry: //TODO : L O L ------------------------------
-    default: ASSERT(false); return ShaderVar();
+    default: assert(false); return ShaderVar();
     case ShaderProgram::Vertex:   return ShaderVar(ShaderVariable::InOut, ShaderVariableType::Vec4, Shader::GetProgramOutVariableLocal(program));
     case ShaderProgram::Pixel:    return ShaderVar(ShaderVariable::InOut, ShaderVariableType::Vec4, Shader::GetProgramOutVariableLocal(program));
     }
@@ -818,7 +818,7 @@ void ShaderBlock::AddVar(ShaderVar const& var)
     ShaderVariable qualifier = var.GetQualifier();
     std::string type = var.GetType();
     std::string name = Shader::GetVariablePrefix(qualifier) + var.m_name;
-    ASSERT(!has_key(m_parameters[qualifier.ToScalar()], name));
+    assert(!has_key(m_parameters[qualifier.ToScalar()], name));
     m_parameters[qualifier.ToScalar()][name] = type;
 }
 
@@ -850,8 +850,8 @@ void ShaderBlock::AddDefinitionParameters(const ShaderVariable type, const Shade
 //----
 void ShaderBlock::Build(const ShaderProgram program, std::string& call, std::string& function)
 {
-    ASSERT(m_name.length());
-    ASSERT(m_parameters[ShaderVariable::InOut].size());
+    assert(m_name.length());
+    assert(m_parameters[ShaderVariable::InOut].size());
 
     //Build call in main
     std::string call_name = std::string("Call_") + m_name;
@@ -875,8 +875,8 @@ void ShaderBlock::Build(const ShaderProgram program, std::string& call, std::str
 ShaderBuilder::ShaderBuilder(std::string const& name, std::string const& version)
     : m_name(name), m_version(version)
 {
-    ASSERT(name.length());
-    ASSERT(version.length());
+    assert(name.length());
+    assert(version.length());
 }
 
 //----
@@ -900,7 +900,7 @@ ShaderBuilder& ShaderBuilder::operator<<(const ShaderProgram program)
 //----
 ShaderBuilder& ShaderBuilder::operator<<(ShaderBlock* new_block)
 {
-    ASSERT(m_current_program != ShaderProgram::MAX);
+    assert(m_current_program != ShaderProgram::MAX);
     for (auto const block : m_blocks[m_current_program.ToScalar()])
         if (block == new_block)
             return *this;
@@ -911,7 +911,7 @@ ShaderBuilder& ShaderBuilder::operator<<(ShaderBlock* new_block)
 //----
 ShaderBuilder& ShaderBuilder::operator<<(ShaderBlock const& block)
 {
-    ASSERT(m_current_program != ShaderProgram::MAX);
+    assert(m_current_program != ShaderProgram::MAX);
     m_blocks[m_current_program.ToScalar()].push_back(new ShaderBlock(block));
     return *this;
 }
@@ -953,12 +953,13 @@ void ShaderBuilder::MergeParameters(std::map<std::string, std::string>& variable
     {
         bool has_param = has_key(merged, key.first);
 
-        //Key exists, check the type to make sure it's the same
-        ASSERT(!has_param || (has_param && merged[key.first] == variables[key.first]),
-            "has_param=%d, key=%s merged[key]=%s, variables[key]=%s\n",
-            (int)has_param, key.first.c_str(), merged[key.first].c_str(), key.second.c_str());
+        // Key exists, check the type to make sure it's the same
+        if (has_param && merged[key.first] != variables[key.first])
+            msg::error("has_param=%d, key=%s merged[key]=%s, variables[key]=%s\n",
+                       (int)has_param, key.first.c_str(), merged[key.first].c_str(),
+                       key.second.c_str());
 
-        //does not exist, had it
+        // does not exist, had it
         if (!has_param)
             merged[key.first] = key.second;
     }

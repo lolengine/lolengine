@@ -11,7 +11,7 @@
 //
 
 #include <lol/engine-internal.h>
-#include <../legacy/lol/base/assert.h>
+#include <cassert>
 
 /*
  * Image merge operations: merge, min/max, overlay, screen, multiply,
@@ -42,7 +42,7 @@ static image generic_merge(image &src1, image &src2, float alpha)
 
     typedef typename PixelType<FORMAT>::type pixel_t;
 
-    ASSERT(src1.size() == src2.size());
+    assert(src1.size() == src2.size());
     int const count = src1.size().x * src2.size().y;
 
     image dst(src1.size());

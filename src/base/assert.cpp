@@ -11,7 +11,7 @@
 //
 
 #include <lol/engine-internal.h>
-#include <../legacy/lol/base/assert.h>
+#include <lol/msg>
 
 #if HAVE_CXXABI_H
 #   include <cxxabi.h>
@@ -33,10 +33,10 @@ namespace debug
 void dump_stack()
 {
 #if __EMSCRIPTEN__
-    /* This would require demangling but we don't care yet. */
+    // This would require demangling but we don't care yet.
     msg::debug("%s\n", emscripten_run_script_string("(new Error).stack"));
 #elif HAVE_CXA_DEMANGLE && HAVE_BACKTRACE_SYMBOLS
-    /* Get current stack frames */
+    // Get current stack frames
     void *stack_ptrs[50];
     size_t size = backtrace(stack_ptrs, 50);
     char **callstack = backtrace_symbols(stack_ptrs, size);
@@ -44,8 +44,8 @@ void dump_stack()
     if (size > 1)
         msg::debug("%d functions in stack trace:\n", (int)size - 1);
 
-    /* Parse stack frames, skipping the first element (because
-     * that’s ourselves) and print information. */
+    // Parse stack frames, skipping the first element (because
+    // that’s ourselves) and print information.
     for (size_t i = 1; i < size; ++i)
     {
         char *name = 0, *offset = 0, *address = 0;
@@ -87,7 +87,7 @@ void dump_stack()
 #endif
 }
 
-} /* namespace debug */
+} // namespace debug
 
-} /* namespace lol */
+} // namespace lol
 

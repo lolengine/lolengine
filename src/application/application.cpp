@@ -11,7 +11,9 @@
 //
 
 #include <lol/engine-internal.h>
-#include <../legacy/lol/base/assert.h>
+
+#include <lol/msg>
+#include <cassert>
 
 #if HAVE_EMSCRIPTEN_H
 #   include <emscripten.h>
@@ -55,7 +57,8 @@ class null_app
 public:
     null_app(char const *, ivec2, float)
     {
-        ASSERT(false, "no display library (SDL, EGL…) available");
+        msg::error("no display library (SDL, EGL…) available");
+        assert(false);
     }
     virtual ~null_app() {}
 

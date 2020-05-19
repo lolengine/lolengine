@@ -11,8 +11,9 @@
 //
 
 #include <lol/engine-internal.h>
-#include <../legacy/lol/base/assert.h>
 #include <lol/image/movie.h>
+
+#include <lol/msg>
 
 #if LOL_USE_FFMPEG
 extern "C"
@@ -57,14 +58,14 @@ movie::movie(ivec2 size)
 {
 #if LOL_USE_FFMPEG
     m_frame = av_frame_alloc();
-    ASSERT(m_frame);
+    assert(m_frame);
 
     m_frame->format = AV_PIX_FMT_RGB8; // 3:3:2 packed for GIF
     m_frame->width = m_size.x;
     m_frame->height = m_size.y;
 
     int ret = av_frame_get_buffer(m_frame, 32);
-    ASSERT(ret >= 0);
+    assert(ret >= 0);
 #endif
 }
 

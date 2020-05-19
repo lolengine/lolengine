@@ -13,6 +13,7 @@
 #include <lol/engine-internal.h>
 
 #if __ANDROID__
+#   include <cassert>
 #   include <sys/types.h>
 #   include <android/asset_manager_jni.h>
 #endif
@@ -69,7 +70,7 @@ class FileData
     {
         m_type = (force_binary) ? (StreamType::FileBinary) : (StreamType::File);
 #if __ANDROID__
-        ASSERT(g_assets);
+        assert(g_assets);
         m_asset = AAssetManager_open(g_assets, file.c_str(), AASSET_MODE_UNKNOWN);
 #elif HAVE_STDIO_H
         /* FIXME: no modes, no error checking, no nothing */

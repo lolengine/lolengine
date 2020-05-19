@@ -11,8 +11,8 @@
 //
 
 #include <lol/engine-internal.h>
-#include <../legacy/lol/base/assert.h>
 
+#include <lol/msg> // lol::msg
 #include <memory>  // std::shared_ptr
 #include <tuple>   // std::make_tuple
 #include <cstring>

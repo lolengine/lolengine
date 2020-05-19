@@ -11,7 +11,7 @@
 //
 
 #include <lol/engine-internal.h>
-#include <../legacy/lol/base/assert.h>
+#include <lol/msg>
 
 #include "lolgl.h"
 

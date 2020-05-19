@@ -12,8 +12,8 @@
 //
 
 #include <lol/engine-internal.h>
-#include <../legacy/lol/base/assert.h>
 
+#include <cassert>
 #include <cstdio>
 #include <string>
 
@@ -260,7 +260,7 @@ bool gui::init_draw()
 {
     // Create shader
     m_shader = Shader::Create(m_builder.GetName(), m_builder.Build());
-    ASSERT(m_shader);
+    assert(m_shader);
 
     m_ortho.m_uniform = m_shader->GetUniformLocation(m_ortho.m_var.tostring());
     m_texture.m_uniform = m_shader->GetUniformLocation(m_texture.m_var.tostring());

@@ -18,6 +18,7 @@
 #include <lol/engine.h>
 #include <lol/lua.h>
 
+#include <cassert>
 #include <cstdio>
 #include <string>
 #include <map>
@@ -86,7 +87,7 @@ EasyMeshLuaObject::~EasyMeshLuaObject()
 }
 
 //-----------------------------------------------------------------------------
-EasyMeshLuaObject* EasyMeshLuaObject::New(lua_State *, int)
+EasyMeshLuaObject* EasyMeshLuaObject::New(lua_State *l, int)
 {
     LuaStack s = LuaStack::Begin(l);
     std::string str = s.Get<std::string>("");
@@ -295,7 +296,7 @@ void EasyMesh::ExecuteCmdStack(bool ExecAllStack)
                 DO_EXEC_CMD(AppendSimpleQuad, (AppendSimpleQuad, vec2, vec2, float, bool))
                 DO_EXEC_CMD(AppendCog, (AppendCog, int, float, float, float, float, float, float, float, float, bool))
         default:
-            ASSERT(0, "Unknown command pseudo bytecode");
+            assert(false);
         }
     }
     BD()->Disable(MeshBuildOperation::CommandExecution);

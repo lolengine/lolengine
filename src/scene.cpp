@@ -12,11 +12,12 @@
 //
 
 #include <lol/engine-internal.h>
-#include <../legacy/lol/base/assert.h>
 
-#include <map>
-#include <vector>
-#include <array>
+#include <lol/msg>  // lol::msg
+#include <cassert>  // assert
+#include <map>      // std::map
+#include <vector>   // std::vector
+#include <array>    // std::array
 #include <cstdlib>
 
 #if defined(_WIN32)
@@ -120,7 +121,9 @@ Scene::Scene(ivec2 size)
     m_renderer(std::make_shared<Renderer>(size))
 {
     /* TODO: FIX THAT */
-    ASSERT(!(g_used_id & ((uint64_t)1 << 63)), "Too many scenes !!!!");
+    if (g_used_id & ((uint64_t)1 << 63))
+        msg::error("too many scenes!\n");
+
     m_mask_id = g_used_id;
     g_used_id = g_used_id << 1;
 
@@ -249,7 +252,7 @@ void Scene::PopCamera(Camera *cam)
         }
     }
 
-    ASSERT(false, "trying to pop a nonexistent camera from the scene");
+    msg::error("trying to pop a nonexistent camera from the scene\n");
 }
 
 void Scene::SetTileCam(int cam_idx)
@@ -300,8 +303,8 @@ int Scene::AddPrimitiveSource(uintptr_t key, std::shared_ptr<PrimitiveSource> so
 
 void Scene::SetPrimitiveSource(int index, uintptr_t key, std::shared_ptr<PrimitiveSource> source)
 {
-    ASSERT(source);
-    ASSERT(index >= 0);
+    assert(source);
+    assert(index >= 0);
 
     // Keep reference to old source until AFTER we release the lock
     std::shared_ptr<PrimitiveSource> old;
@@ -322,7 +325,7 @@ void Scene::ReleasePrimitiveSource(int index, uintptr_t key)
     std::shared_ptr<PrimitiveSource> old;
     g_prim_mutex.lock();
     {
-        ASSERT(0 <= index && index < int(g_prim_sources[key].size()));
+        assert(0 <= index && index < int(g_prim_sources[key].size()));
         old = g_prim_sources[key][index];
         remove_at(g_prim_sources[key], index);
     }
@@ -361,8 +364,8 @@ void Scene::AddPrimitiveRenderer(uintptr_t key, std::shared_ptr<PrimitiveRendere
 
 void Scene::SetPrimitiveRenderer(int index, uintptr_t key, std::shared_ptr<PrimitiveRenderer> renderer)
 {
-    ASSERT(renderer);
-    ASSERT(index >= 0);
+    assert(renderer);
+    assert(index >= 0);
 
     if (index >= int(m_prim_renderers[key].size()))
         m_prim_renderers[key].resize(index + 1);
@@ -381,7 +384,7 @@ void Scene::ReleaseAllPrimitiveRenderers(uintptr_t key)
 
 void Scene::AddTile(TileSet *tileset, int id, vec3 pos, vec2 scale, float radians)
 {
-    ASSERT(id < tileset->GetTileCount());
+    assert(id < tileset->GetTileCount());
 
     ivec2 size = tileset->GetTileSize(id);
     mat4 model = mat4::translate(pos)
@@ -395,7 +398,7 @@ void Scene::AddTile(TileSet *tileset, int id, vec3 pos, vec2 scale, float radian
 
 void Scene::AddTile(TileSet *tileset, int id, mat4 model)
 {
-    ASSERT(id < tileset->GetTileCount());
+    assert(id < tileset->GetTileCount());
 
     Tile t;
     t.m_model = model;
@@ -445,7 +448,7 @@ void Scene::EnableDisplay()
 
 void Scene::DisableDisplay()
 {
-    ASSERT(m_display);
+    assert(m_display);
     m_display->Disable();
 }
 
