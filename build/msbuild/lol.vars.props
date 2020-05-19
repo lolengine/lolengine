@@ -13,7 +13,7 @@
     <ImguiIncludes>$(ImguiDir)</ImguiIncludes>
 
     <!-- OpenSSL -->
-    <OpenSslDir>$(ExternalDir)\openssl-1.1.1d</OpenSslDir>
+    <OpenSslDir>$(ExternalDir)\openssl-1.1.1g</OpenSslDir>
 
     <!-- cpp-httplib (depends on OpenSSL) -->
     <CppHttpDir>$(LolDir)\src/3rdparty\cpp-httplib</CppHttpDir>
