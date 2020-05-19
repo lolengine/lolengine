@@ -15,8 +15,6 @@
     src/lol/math/geometry.h
     src/lol/math/interp.h (but what is it?)
 
-    src/numeric.h
-
 
 ## headers to keep in the engine
 

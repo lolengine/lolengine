@@ -21,6 +21,9 @@
 #include <cstdio>
 #include <algorithm>
 #include <type_traits>
+#if defined __cpp_lib_int_pow2
+#include <bit>
+#endif
 
 #include <stdint.h>
 
@@ -124,6 +127,24 @@ template<typename T, typename T2 = LOL_T_FLOATING_POINT>
 [[nodiscard]] static inline T2 lerp(T a, T b, T x)
 {
     return mix(a, b, x);
+}
+
+// Round up to next power of two
+template<typename T, typename T2=LOL_T_INTEGRAL>
+[[nodiscard]] static inline T2 bit_ceil(T x)
+{
+#if defined __cpp_lib_int_pow2
+    return std::bit_ceil(x);
+#else
+    x = x - 1;
+    if constexpr (sizeof(x) > 4) x |= uint64_t(x) >> 32;
+    if constexpr (sizeof(x) > 2) x |= uint64_t(x) >> 16;
+    if constexpr (sizeof(x) > 1) x |= uint64_t(x) >> 8;
+    x |= uint64_t(x) >> 4;
+    x |= uint64_t(x) >> 2;
+    x |= uint64_t(x) >> 1;
+    return x + 1;
+#endif
 }
 
 // C++ doesn't define fabs() or fmod() for all types; we add these for
