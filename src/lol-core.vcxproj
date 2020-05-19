@@ -270,7 +270,6 @@
     <ClInclude Include="mesh\mesh.h" />
     <ClInclude Include="mesh\primitivemesh.h" />
     <ClInclude Include="messageservice.h" />
-    <ClInclude Include="numeric.h" />
     <ClInclude Include="platform.h" />
     <ClInclude Include="private\nx\nx-app.h">
       <ExcludedFromBuild Condition="'$(Platform)'!='NX64'">true</ExcludedFromBuild>

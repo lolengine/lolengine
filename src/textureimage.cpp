@@ -81,8 +81,8 @@ void TextureImage::Init(std::string const &path, image* img)
     m_data->m_texture = nullptr;
     m_data->m_image = img;
     m_data->m_image_size = m_data->m_image->size();
-    m_data->m_texture_size = ivec2(PotUp(m_data->m_image_size.x),
-                                   PotUp(m_data->m_image_size.y));
+    m_data->m_texture_size = ivec2(lol::bit_ceil(m_data->m_image_size.x),
+                                   lol::bit_ceil(m_data->m_image_size.y));
 
     m_drawgroup = tickable::group::draw::texture;
 }
@@ -153,8 +153,8 @@ void TextureImage::UpdateTexture(image* img)
 {
     m_data->m_image = img;
     m_data->m_image_size = m_data->m_image->size();
-    m_data->m_texture_size = ivec2(PotUp(m_data->m_image_size.x),
-                                   PotUp(m_data->m_image_size.y));
+    m_data->m_texture_size = ivec2(lol::bit_ceil(m_data->m_image_size.x),
+                                   lol::bit_ceil(m_data->m_image_size.y));
 }
 
 Texture * TextureImage::GetTexture()

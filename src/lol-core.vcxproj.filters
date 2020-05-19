@@ -396,7 +396,6 @@
       <Filter>mesh</Filter>
     </ClInclude>
     <ClInclude Include="messageservice.h" />
-    <ClInclude Include="numeric.h" />
     <ClInclude Include="platform.h" />
     <ClInclude Include="profiler.h" />
     <ClInclude Include="scene.h" />

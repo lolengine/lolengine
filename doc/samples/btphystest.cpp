@@ -60,6 +60,15 @@ int gNumObjects = 16;
 
 LOLFX_RESOURCE_DECLARE(front_camera_sprite);
 
+//Damp for float
+template <typename T1, typename T2, typename Tf>
+static inline T1 damp(const T1 &a, const T2 &b, const Tf &x, const Tf &dt)
+{
+    if (dt <= .0f)
+        return a;
+    return lol::lerp(a, b, dt / (dt + x));
+}
+
 BtPhysTest::BtPhysTest(bool editor)
 {
     m_init_status = 0;

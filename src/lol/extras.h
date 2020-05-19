@@ -17,8 +17,6 @@
 // --------------------------------------------------------
 //
 
-#include <lol/../numeric.h>
-
 // Static classes
 #include <lol/../platform.h>
 #include <lol/../video.h>

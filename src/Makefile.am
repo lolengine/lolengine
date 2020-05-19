@@ -12,7 +12,7 @@ liblol_core_a_SOURCES = \
     textureimage.cpp textureimage.h textureimage-private.h \
     tileset.cpp tileset.h video.cpp video.h \
     profiler.cpp profiler.h text.cpp text.h emitter.cpp emitter.h \
-    numeric.h messageservice.cpp messageservice.h \
+    messageservice.cpp messageservice.h \
     gradient.cpp gradient.h gradient.lolfx \
     platform.cpp platform.h sprite.cpp sprite.h camera.cpp camera.h \
     light.cpp light.h \
