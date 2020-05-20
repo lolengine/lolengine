@@ -51,10 +51,6 @@ au Syntax cpp
    \ syn match cOperator
    \ "\<lolunit_\(fail\|assert\|refute\)[a-z_]*\>"
 
-" Global keywords
-au Syntax cpp
-  \ syn keyword cConstant
-
 
 """
 """ LolFx language handler

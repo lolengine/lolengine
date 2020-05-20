@@ -254,8 +254,8 @@ EglApp::EglApp(char const *title, ivec2 res, float fps) :
 #else
     (void)title;
     (void)res;
-    (void)fps;
 #endif
+    (void)fps;
 }
 
 void EglApp::ShowPointer(bool show)

@@ -19,6 +19,7 @@ extern "C" {
 #include "3rdparty/lua/lauxlib.h"
 }
 
+#include <lol/msg> // lol::msg
 #include <cassert> // assert
 #include <vector>  // std::vector
 #include <string>  // std::string

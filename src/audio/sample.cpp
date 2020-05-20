@@ -96,7 +96,8 @@ sample::sample(void const *samples, size_t len)
     data->m_name = std::string("<sample>");
 
 #if defined LOL_USE_SDL_MIXER
-    data->m_chunk = Mix_QuickLoad_RAW((Uint8 *)samples, (Uint32)len);
+    // FIXME: this requires that the data is kept around; should we copy it?
+    data->m_chunk = Mix_QuickLoad_RAW((Uint8 *)const_cast<void *>(samples), (Uint32)len);
     data->m_channel = -1;
 #endif
 }

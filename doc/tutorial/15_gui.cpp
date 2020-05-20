@@ -42,7 +42,7 @@ public:
         WorldEntity::tick_game(seconds);
 
         static float f;
-        static vec3 clear_color;
+        //static vec3 clear_color;
         static char buf[512];
         ImGuiIO& io = ImGui::GetIO();
         ImGui::SetNextWindowFocus();
