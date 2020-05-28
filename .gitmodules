@@ -1,14 +1,13 @@
-# The "core" submodule is another branch of ourselves
-[submodule "core"]
-	path = lol-core
+# The “lol” header-only framework
+[submodule "lol"]
+	path = lol
 	url = ../../lolengine/lol.git
-	branch = core
+	branch = master
 
 # A very large repository with Windows binaries
 [submodule "external"]
 	path = external
 	url = ../../lolengine/ext-binaries.git
-	branch = master
 
 # Some libraries we embed in the engine
 [submodule "imgui"]

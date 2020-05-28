@@ -26,7 +26,7 @@
       <ObjectFileName>$(IntDir)/%(Directory)/</ObjectFileName>
 
       <AdditionalIncludeDirectories>
-          $(LolDir)\lol-core\include;
+          $(LolDir)\lol\include;
           $(LolDir)\src;
           $(LolDir)\src\3rdparty\bullet3\src;
           $(PegtlIncludes);
