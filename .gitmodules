@@ -7,9 +7,10 @@
 # A very large repository with Windows binaries
 [submodule "external"]
 	path = external
-	url = ../../lolengine/ext-binaries.git
+	url = ../../lolengine/binaries.git
+	branch = master
 
-# Some libraries we embed in the engine
+# A very large repository with Windows binaries
 [submodule "imgui"]
 	path = src/3rdparty/imgui
 	url = ../../lolengine/ext-imgui.git
