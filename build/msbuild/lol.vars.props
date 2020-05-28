@@ -163,8 +163,7 @@
           Project="$(LolDir)\src\private\nx\msbuild\nx.vars.props" />
 
   <PropertyGroup>
-    <BinDir Condition="Exists('$(SolutionDir)\lol')">$(SolutionDir)\binaries</BinDir>
-    <BinDir Condition="!Exists('$(SolutionDir)\lol')">$(LolDir)\binaries</BinDir>
+    <BinDir>$(SolutionDir)\binaries</BinDir>
     <OutDir>$(BinDir)\$(Platform) $(PlatformToolset) $(Configuration)\</OutDir>
     <IntDir>$(BinDir)\$(Platform) $(PlatformToolset) $(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>

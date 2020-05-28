@@ -4,7 +4,7 @@
   <!--
      - Import settings that can be overridden by the user
    -->
-  <Import Condition="Exists('$(SolutionDir)\lol\build.config')" Project="$(SolutionDir)\lol\build.config" />
+  <Import Condition="Exists('$(LolDir)\build.config')" Project="$(LolDir)\build.config" />
   <Import Condition="Exists('$(SolutionDir)\build.config')" Project="$(SolutionDir)\build.config" />
 
   <!--
