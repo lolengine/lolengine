@@ -1,16 +1,16 @@
 # The “lol” header-only framework
 [submodule "lol"]
 	path = lol
-	url = ../../lolengine/lol.git
+	url = https://github.com/lolengine/lol.git
 	branch = master
 
 # A very large repository with Windows binaries
 [submodule "external"]
 	path = external
-	url = ../../lolengine/binaries.git
+	url = https://gitea.zoy.org/lolengine/binaries.git
 	branch = master
 
-# A very large repository with Windows binaries
+# Some libraries we embed in the engine
 [submodule "imgui"]
 	path = src/3rdparty/imgui
 	url = ../../lolengine/ext-imgui.git
