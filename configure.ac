@@ -106,13 +106,20 @@ AC_ARG_ENABLE(doc,
 
 dnl  Subproject builds
 if test "${enable_subproject}" = "yes"; then
-  AC_MSG_CHECKING(for a config-lol.h file in the parent project)
-  if test -f "../config-lol.h"; then
+  AC_MSG_CHECKING(for parent project)
+  ac_lol_parent_project_dir=".."
+  # FIXME: an infinite loop is possible here
+  while test ! -f "${ac_lol_parent_project_dir}/configure"; do
+    ac_lol_parent_project_dir="${ac_lol_parent_project_dir}/.."
+  done
+  AC_MSG_RESULT(${ac_lol_parent_project_dir})
+  AC_MSG_CHECKING(for a config-lol.h file in parent project)
+  if test -f "${ac_lol_parent_project_dir}/config-lol.h"; then
     AC_MSG_RESULT(yes)
     AC_DEFINE(HAVE_CONFIG_LOL_H, 1, Define to if parent project provides config-lol.h)
     AH_BOTTOM([
 #if HAVE_CONFIG_LOL_H
-#include "../config-lol.h"
+#include "${ac_lol_parent_project_dir}/config-lol.h"
 #endif
 ])
   else

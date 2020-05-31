@@ -15,11 +15,13 @@ dnl
 # ---------------------
 AC_DEFUN([LOL_AC_SUBPROJECT], [
 
+ac_lol_subproject_dir="$1"
+AC_MSG_NOTICE([Configuring Lol Engine in ${ac_lol_subproject_dir}])
+
 dnl
 dnl  Parse build.config if present
 dnl
 
-AC_MSG_WARN([${srcdir}])
 ac_lol_configure_args=""
 if test -f ${srcdir}/build.config; then
   for x in `sed -ne 's,.*<enable_\(@<:@^>@:>@*\)>\(@<:@^<@:>@*\)</enable_@<:@^>@:>@*>.*,\1=\2,p' ${srcdir}/build.config`; do
@@ -38,10 +40,10 @@ dnl  Build and configure Lol Engine before our repository
 dnl  Ensure $lol_srcdir and $lol_builddir are properly set
 dnl
 
-ac_configure_args="${ac_configure_args} --enable-subproject ${ac_lol_configure_args} $1"
-AC_CONFIG_SUBDIRS([lol])
-AC_SUBST(lol_srcdir, '${top_srcdir}/lol')
-AC_SUBST(lol_builddir, '${top_builddir}/lol')
+ac_configure_args="${ac_configure_args} --enable-subproject ${ac_lol_configure_args}"
+AC_CONFIG_SUBDIRS($1)
+AC_SUBST(lol_srcdir, '${top_srcdir}/$1')
+AC_SUBST(lol_builddir, '${top_builddir}/$1')
 
 dnl
 dnl  Subprojects use the same macros as us
