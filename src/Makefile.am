@@ -31,7 +31,7 @@ liblol_core_headers = \
     lol/lua.h \
     \
     lol/base/all.h \
-    lol/base/enum.h lol/base/log.h \
+    lol/base/enum.h \
     \
     lol/audio/all.h \
     lol/audio/audio.h lol/audio/sample.h \
