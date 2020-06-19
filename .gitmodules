@@ -1,28 +1,42 @@
 # The “lol” header-only framework
 [submodule "lol"]
 	path = lol
-	url = https://github.com/lolengine/lol.git
+	url = https://github.com/lolengine/lol
 	branch = master
+	update = merge
 
 # A very large repository with Windows binaries
 [submodule "external"]
 	path = external
-	url = https://gitea.zoy.org/lolengine/binaries.git
+	url = https://gitea.zoy.org/lolengine/binaries
 	branch = master
+	update = merge
 
 # Some libraries we embed in the engine
 [submodule "imgui"]
 	path = src/3rdparty/imgui
-	url = ../../lolengine/ext-imgui.git
+	url = https://github.com/lolengine/ext-imgui
 	branch = master
+	update = merge
+	upstream = https://github.com/ocornut/imgui
+
 [submodule "bullet3"]
 	path = src/3rdparty/bullet3
-	url = ../../lolengine/ext-bullet3.git
+	url = https://github.com/lolengine/ext-bullet3
 	branch = lol
+	update = merge
+	upstream = https://github.com/bulletphysics/bullet3
+
 [submodule "lua"]
 	path = src/3rdparty/lua
-	url = ../../lolengine/ext-lua.git
+	url = https://github.com/lolengine/ext-lua
 	branch = lol
+	update = merge
+	upstream = https://github.com/lua/lua
+
 [submodule "cpp-httplib"]
 	path = src/3rdparty/cpp-httplib
-	url = ../../lolengine/ext-cpp-httplib.git
+	url = https://github.com/lolengine/ext-cpp-httplib
+	branch = master
+	update = merge
+	upstream = https://github.com/yhirose/cpp-httplib
