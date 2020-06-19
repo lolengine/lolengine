@@ -121,6 +121,7 @@ doc/tutorial/14_lua
 doc/tutorial/15_gui
 doc/tutorial/16_movie
 doc/tutorial/16_movie.gif
+doc/tutorial/17_net
 tools/make-font
 # Our data
 doc/doxygen.cfg

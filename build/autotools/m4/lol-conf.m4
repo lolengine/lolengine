@@ -68,7 +68,7 @@ dnl  Activate some header-only libraries
 dnl
 
 LOL_CFLAGS="$LOL_CFLAGS -I\$(lol_srcdir)/src/3rdparty/cpp-httplib"
-LOL_CFLAGS="$LOL_CFLAGS -I\$(lol_srcdir)/src/3rdparty/imgui"
+LOL_CFLAGS="$LOL_CFLAGS -I\$(lol_srcdir)/src/3rdparty/imgui -DIMGUI_USE_WCHAR32"
 
 
 dnl  Use OpenSSL?

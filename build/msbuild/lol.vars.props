@@ -11,6 +11,7 @@
     <!-- imgui -->
     <ImguiDir>$(LolDir)\src\3rdparty\imgui</ImguiDir>
     <ImguiIncludes>$(ImguiDir)</ImguiIncludes>
+    <Win32Defines>IMGUI_USE_WCHAR32;$(Win32Defines)</Win32Defines>
 
     <!-- OpenSSL -->
     <OpenSslDir>$(ExternalDir)\openssl-1.1.1g</OpenSslDir>
