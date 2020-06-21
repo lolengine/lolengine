@@ -192,7 +192,6 @@
     <ClCompile Include="profiler.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="sprite.cpp" />
-    <ClCompile Include="sys\file.cpp" />
     <ClCompile Include="sys\init.cpp" />
     <ClCompile Include="text.cpp" />
     <ClCompile Include="textureimage.cpp" />
@@ -267,7 +266,6 @@
     <ClInclude Include="lol\net\http.h" />
     <ClInclude Include="lol\public.h" />
     <ClInclude Include="lol\sys\all.h" />
-    <ClInclude Include="lol\sys\file.h" />
     <ClInclude Include="lol\sys\init.h" />
     <ClInclude Include="mesh\mesh.h" />
     <ClInclude Include="mesh\primitivemesh.h" />

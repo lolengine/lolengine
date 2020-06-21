@@ -18,6 +18,7 @@
 #include <lol/engine.h>
 #include "loldebug.h"
 
+#include <lol/file> // lol::file::write
 #include <cstdio>
 #include <string>
 
@@ -39,9 +40,6 @@ public:
     {
         WorldEntity::tick_draw(seconds, scene);
 
-        File file;
-        file.Open("13_shader_builder_export.txt", FileAccess::Write);
-        //file.Open("13_shader_builder_export.txt", FileAccess::Read);
         std::string code;
 
         ShaderBuilder builder("red_blue_green", "120");
@@ -110,9 +108,7 @@ public:
 
         code = builder.Build();
 
-        file.Write(code);
-        //code = file.ReadString();
-        file.Close();
+        file::write("13_shader_builder_export.txt", code);
 
         std::shared_ptr<Shader> shader = Shader::Create(builder.GetName(), code);
         shader = nullptr;

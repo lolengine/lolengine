@@ -11,6 +11,7 @@
 //
 
 #include <lol/engine-internal.h>
+#include <lol/file> // lol::file::write, lol::file::read
 
 #include <cctype>
 #include <string>
@@ -146,20 +147,13 @@ bool OricImageCodec::Save(std::string const &path, ResourceCodecData* data)
 
     WriteScreen(*img, result);
 
-    File f;
-    f.Open(path, FileAccess::Write);
-    f.Write(result.data(), result.size());
-    f.Close();
-
-    return true;
+    return file::write(path, result);
 }
 
 std::string OricImageCodec::ReadScreen(std::string const &name)
 {
-    File f;
-    f.Open(name, FileAccess::Read);
-    std::string data = f.ReadString();
-    f.Close();
+    std::string data;
+    file::read(name, data);
 
     /* Skip the sync bytes */
     if (data[0] != 0x16)

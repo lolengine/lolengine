@@ -200,9 +200,6 @@
     <ClCompile Include="profiler.cpp" />
     <ClCompile Include="scene.cpp" />
     <ClCompile Include="sprite.cpp" />
-    <ClCompile Include="sys\file.cpp">
-      <Filter>sys</Filter>
-    </ClCompile>
     <ClCompile Include="sys\init.cpp">
       <Filter>sys</Filter>
     </ClCompile>
@@ -381,9 +378,6 @@
       <Filter>lol</Filter>
     </ClInclude>
     <ClInclude Include="lol\sys\all.h">
-      <Filter>lol\sys</Filter>
-    </ClInclude>
-    <ClInclude Include="lol\sys\file.h">
       <Filter>lol\sys</Filter>
     </ClInclude>
     <ClInclude Include="lol\sys\init.h">

@@ -40,7 +40,7 @@ liblol_core_headers = \
     lol/engine/tickable.h \
     \
     lol/sys/all.h \
-    lol/sys/init.h lol/sys/file.h \
+    lol/sys/init.h \
     \
     lol/image/all.h \
     lol/image/image.h \
@@ -102,7 +102,7 @@ liblol_core_sources = \
     mesh/mesh.cpp mesh/mesh.h \
     mesh/primitivemesh.cpp mesh/primitivemesh.h \
     \
-    sys/init.cpp sys/file.cpp \
+    sys/init.cpp \
     \
     image/resource.cpp image/resource-private.h \
     image/image.cpp image/image-private.h image/kernel.cpp image/pixel.cpp \
