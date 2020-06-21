@@ -15,22 +15,10 @@
 
 #include <vector> // std::vector
 #include <string> // std::string
+#include <filesystem> // std::filesystem::exists
 #include <cctype>
 
-#if HAVE_UNISTD_H
-#   include <unistd.h>
-#elif _WIN32
-    // Only try direct.h if unistd.h is not present, because this
-    // header does not exist on e.g. Cygwin/MSYS2.
-#   define WIN32_LEAN_AND_MEAN
-#   include <direct.h>
-#   undef WIN32_LEAN_AND_MEAN
-#endif
-
-namespace lol
-{
-
-namespace sys
+namespace lol::sys
 {
 
 #if _WIN32
@@ -60,21 +48,7 @@ void init(int argc, char *argv[],
 #if __ANDROID__ || __EMSCRIPTEN__ || __NX__
     std::string binarydir = "";
 #else
-    std::string binarydir = ".";
-    char *cwd = nullptr;
-
-#   if HAVE_GETCWD
-    cwd = getcwd(nullptr, 0);
-#   elif HAVE__GETCWD || _WIN32
-    cwd = _getcwd(nullptr, 0);
-#   endif
-
-    if (cwd)
-    {
-        binarydir = cwd;
-        free(cwd);
-    }
-
+    std::string binarydir = std::filesystem::current_path();
     binarydir += SEPARATOR;
 
     if (argc > 0)
@@ -168,23 +142,19 @@ void add_data_dir(std::string const &dir)
     data_dir.push_back(dir);
 }
 
-std::vector<std::string> get_path_list(std::string const &file)
+std::string get_data_path(std::string const &file)
 {
-    std::vector<std::string> ret;
-
-    /* If not an absolute path, look through known data directories */
+    // If not an absolute path, look through known data directories
     if (file[0] != '/')
         for (auto const &dir : data_dir)
-            ret.push_back(dir + file);
+        {
+            auto path = dir + file;
+            std::error_code ec;
+            if (std::filesystem::exists(path, ec))
+                return path;
+        }
 
-#if !__NX__
-    ret.push_back(file);
-#endif
-
-    return ret;
+    return file;
 }
 
-} /* namespace sys */
-
-} /* namespace lol */
-
+} // namespace lol::sys

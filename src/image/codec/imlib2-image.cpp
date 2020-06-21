@@ -47,14 +47,7 @@ DECLARE_IMAGE_CODEC(Imlib2ImageCodec, 70)
 
 ResourceCodecData *Imlib2ImageCodec::Load(std::string const &path)
 {
-    Imlib_Image im = nullptr;
-
-    for (auto const &candidate : sys::get_path_list(path))
-    {
-        im = imlib_load_image(candidate.c_str());
-        if (im)
-            break;
-    }
+    Imlib_Image im = imlib_load_image(sys::get_data_path(path).c_str());
 
     if (!im)
     {

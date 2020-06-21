@@ -48,14 +48,7 @@ DECLARE_IMAGE_CODEC(SdlImageCodec, 50)
 
 ResourceCodecData* SdlImageCodec::Load(std::string const &path)
 {
-    SDL_Surface *surface = nullptr;
-
-    for (auto const &candidate : sys::get_path_list(path))
-    {
-        surface = IMG_Load(candidate.c_str());
-        if (surface)
-            break;
-    }
+    SDL_Surface *surface = IMG_Load(sys::get_data_path(path).c_str());
 
     if (!surface)
     {

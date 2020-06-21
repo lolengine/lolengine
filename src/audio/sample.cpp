@@ -76,16 +76,9 @@ sample::sample(std::string const &path)
     data->m_name = std::string("<sample> ") + path;
 
 #if defined LOL_USE_SDL_MIXER
-    for (auto candidate : sys::get_path_list(path))
-    {
-        data->m_chunk = Mix_LoadWAV(candidate.c_str());
-        if (data->m_chunk)
-            break;
-    }
+    data->m_chunk = Mix_LoadWAV(sys::get_data_path(path).c_str());
     if (!data->m_chunk)
-    {
         msg::error("could not load sample %s: %s\n", path.c_str(), Mix_GetError());
-    }
     data->m_channel = -1;
 #endif
 }

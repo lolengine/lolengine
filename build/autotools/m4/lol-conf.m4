@@ -61,6 +61,7 @@ dnl
 
 AC_CHECK_LIB(m, sin, LIBS="${LIBS} -lm")
 AC_CHECK_LIB(pthread, main, LIBS="${LIBS} -lpthread")
+AC_CHECK_LIB(stdc++fs, main, [LIBS="${LIBS} -lstdc++fs"])
 
 
 dnl

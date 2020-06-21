@@ -62,45 +62,36 @@ ResourceCodecData* GdiPlusImageCodec::Load(std::string const &path)
         return nullptr;
     }
 
-    auto pathlist = sys::get_path_list(path);
+    auto fullpath = sys::get_data_path(path);
     Gdiplus::Bitmap *bitmap = nullptr;
-    for (auto const &fullpath : pathlist)
+    size_t len;
+    len = mbstowcs(nullptr, fullpath.c_str(), 0);
+    wchar_t *wpath = new wchar_t[len + 1];
+    if (mbstowcs(wpath, fullpath.c_str(), len + 1) == (size_t)-1)
     {
-        size_t len;
-        len = mbstowcs(nullptr, fullpath.c_str(), 0);
-        wchar_t *wpath = new wchar_t[len + 1];
-        if (mbstowcs(wpath, fullpath.c_str(), len + 1) == (size_t)-1)
-        {
-            msg::error("invalid image name %s\n", fullpath.c_str());
-            delete[] wpath;
-            continue;
-        }
-
-        status = Gdiplus::Ok;
-        bitmap = Gdiplus::Bitmap::FromFile(wpath, 0);
-
-        if (bitmap)
-        {
-            status = bitmap->GetLastStatus();
-            if (status != Gdiplus::Ok)
-            {
-                if (status != Gdiplus::InvalidParameter)
-                    msg::error("error %d loading %s\n",
-                               status, fullpath.c_str());
-                delete bitmap;
-                bitmap = nullptr;
-            }
-        }
-
+        msg::error("invalid image name %s\n", fullpath.c_str());
         delete[] wpath;
-        if (bitmap)
-            break;
+        return nullptr;
     }
+
+    status = Gdiplus::Ok;
+    bitmap = Gdiplus::Bitmap::FromFile(wpath, 0);
+    delete[] wpath;
 
     if (!bitmap)
     {
         msg::error("could not load %s\n", path.c_str());
         return nullptr;
+    }
+
+    status = bitmap->GetLastStatus();
+    if (status != Gdiplus::Ok)
+    {
+        if (status != Gdiplus::InvalidParameter)
+            msg::error("error %d loading %s\n",
+                       status, fullpath.c_str());
+        delete bitmap;
+        bitmap = nullptr;
     }
 
     ivec2 size(bitmap->GetWidth(), bitmap->GetHeight());
