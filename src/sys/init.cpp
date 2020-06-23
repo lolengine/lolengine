@@ -48,8 +48,7 @@ void init(int argc, char *argv[],
 #if __ANDROID__ || __EMSCRIPTEN__ || __NX__
     std::string binarydir = "";
 #else
-    std::string binarydir = std::filesystem::current_path();
-    binarydir += SEPARATOR;
+    std::string binarydir = std::filesystem::current_path().string() + SEPARATOR;
 
     if (argc > 0)
     {
