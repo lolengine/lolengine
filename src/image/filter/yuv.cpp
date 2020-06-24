@@ -20,9 +20,9 @@
 namespace lol
 {
 
-image image::YUVToRGB() const
+old_image old_image::YUVToRGB() const
 {
-    image ret = *this;
+    old_image ret = *this;
     int count = size().x * size().y;
 
     vec4 *pixels = ret.lock<PixelFormat::RGBA_F32>();
@@ -33,9 +33,9 @@ image image::YUVToRGB() const
     return ret;
 }
 
-image image::RGBToYUV() const
+old_image old_image::RGBToYUV() const
 {
-    image ret = *this;
+    old_image ret = *this;
     int count = size().x * size().y;
 
     vec4 *pixels = ret.lock<PixelFormat::RGBA_F32>();

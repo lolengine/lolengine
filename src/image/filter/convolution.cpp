@@ -21,11 +21,11 @@
 namespace lol
 {
 
-static image SepConv(image &src, std::vector<float> const &hvec,
+static old_image SepConv(old_image &src, std::vector<float> const &hvec,
                      std::vector<float> const &vvec);
-static image NonSepConv(image &src, array2d<float> const &in_kernel);
+static old_image NonSepConv(old_image &src, old_array2d<float> const &in_kernel);
 
-image image::Convolution(array2d<float> const &in_kernel)
+old_image old_image::Convolution(old_array2d<float> const &in_kernel)
 {
     /* Find the cell with the largest value */
     ivec2 ksize = in_kernel.sizes();
@@ -83,10 +83,10 @@ image image::Convolution(array2d<float> const &in_kernel)
     }
 }
 
-image image::Sharpen(array2d<float> const &in_kernel)
+old_image old_image::Sharpen(old_array2d<float> const &in_kernel)
 {
     ivec2 ksize = in_kernel.sizes();
-    array2d<float> newkernel(ksize);
+    old_array2d<float> newkernel(ksize);
 
     for (int dy = 0; dy < ksize.y; ++dy)
         for (int dx = 0; dx < ksize.x; ++dx)
@@ -100,16 +100,16 @@ image image::Sharpen(array2d<float> const &in_kernel)
 }
 
 template<PixelFormat FORMAT, int WRAP_X, int WRAP_Y>
-static image NonSepConv(image &src, array2d<float> const &in_kernel)
+static old_image NonSepConv(old_image &src, old_array2d<float> const &in_kernel)
 {
     typedef typename PixelType<FORMAT>::type pixel_t;
 
     ivec2 const size = src.size();
     ivec2 const ksize = in_kernel.sizes();
-    image dst(size);
+    old_image dst(size);
 
-    array2d<pixel_t> const &srcp = src.lock2d<FORMAT>();
-    array2d<pixel_t> &dstp = dst.lock2d<FORMAT>();
+    old_array2d<pixel_t> const &srcp = src.lock2d<FORMAT>();
+    old_array2d<pixel_t> &dstp = dst.lock2d<FORMAT>();
 
     for (int y = 0; y < size.y; y++)
     {
@@ -149,7 +149,7 @@ static image NonSepConv(image &src, array2d<float> const &in_kernel)
     return dst;
 }
 
-static image NonSepConv(image &src, array2d<float> const &in_kernel)
+static old_image NonSepConv(old_image &src, old_array2d<float> const &in_kernel)
 {
     bool const wrap_x = src.GetWrapX() == WrapMode::Repeat;
     bool const wrap_y = src.GetWrapY() == WrapMode::Repeat;
@@ -192,19 +192,19 @@ static image NonSepConv(image &src, array2d<float> const &in_kernel)
 }
 
 template<PixelFormat FORMAT, int WRAP_X, int WRAP_Y>
-static image SepConv(image &src, std::vector<float> const &hvec,
+static old_image SepConv(old_image &src, std::vector<float> const &hvec,
                      std::vector<float> const &vvec)
 {
     typedef typename PixelType<FORMAT>::type pixel_t;
 
     ivec2 const size = src.size();
     ivec2 const ksize(int(hvec.size()), int(vvec.size()));
-    image dst(size);
+    old_image dst(size);
 
-    array2d<pixel_t> const &srcp = src.lock2d<FORMAT>();
-    array2d<pixel_t> &dstp = dst.lock2d<FORMAT>();
+    old_array2d<pixel_t> const &srcp = src.lock2d<FORMAT>();
+    old_array2d<pixel_t> &dstp = dst.lock2d<FORMAT>();
 
-    array2d<pixel_t> tmp(size);
+    old_array2d<pixel_t> tmp(size);
 
     for (int y = 0; y < size.y; y++)
     {
@@ -254,7 +254,7 @@ static image SepConv(image &src, std::vector<float> const &hvec,
     return dst;
 }
 
-static image SepConv(image &src, std::vector<float> const &hvec,
+static old_image SepConv(old_image &src, std::vector<float> const &hvec,
                      std::vector<float> const &vvec)
 {
     bool const wrap_x = src.GetWrapX() == WrapMode::Repeat;

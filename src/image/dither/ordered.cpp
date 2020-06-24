@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2004—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2004—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -19,27 +19,27 @@
 namespace lol
 {
 
-static image dither_helper(image const &img, array2d<float> const &ker,
+static old_image dither_helper(old_image const &img, old_array2d<float> const &ker,
                            float scale, float angle);
 
-image image::dither_ordered(array2d<float> const &ker) const
+old_image old_image::dither_ordered(old_array2d<float> const &ker) const
 {
     return dither_helper(*this, ker, 1.0f, 0.0f);
 }
 
-image image::dither_halftone(float radius, float angle) const
+old_image old_image::dither_halftone(float radius, float angle) const
 {
     /* Increasing the precision is necessary or the rotation will look
      * like crap. So we create a kernel PRECISION times larger, and ask
      * the ditherer to scale it by 1/PRECISION. */
     float const PRECISION = 4.f;
     int k = (int)std::round(radius * PRECISION * lol::sqrt(2.f));
-    array2d<float> ker = image::kernel::halftone(ivec2(k, k));
+    old_array2d<float> ker = old_image::kernel::halftone(ivec2(k, k));
 
     return dither_helper(*this, ker, 1.f / PRECISION, angle + F_PI / 4.f);
 }
 
-static image dither_helper(image const &img, array2d<float> const &ker,
+static old_image dither_helper(old_image const &img, old_array2d<float> const &ker,
                            float scale, float angle)
 {
     ivec2 isize = img.size();
@@ -48,7 +48,7 @@ static image dither_helper(image const &img, array2d<float> const &ker,
     float cost = lol::cos(angle);
     float sint = lol::sin(angle);
 
-    image ret = img;
+    old_image ret = img;
     float *dstp = ret.lock<PixelFormat::Y_F32>();
 
     for (int y = 0; y < isize.y; y++)

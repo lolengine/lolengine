@@ -38,7 +38,7 @@ namespace lol
 #define REGISTER_IMAGE_CODEC(name) \
     extern ResourceCodec *Register##name(); \
     { \
-        /* Insert image codecs in a sorted list */ \
+        /* Insert old_image codecs in a sorted list */ \
         ResourceCodec *codec = Register##name(); \
         size_t i = 0, prio = codec->m_priority; \
         for ( ; i < codeclist.size(); ++i) \

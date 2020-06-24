@@ -61,13 +61,13 @@ TileSet *TileSet::create(std::string const &path)
     return ret ? ret : tileset_cache.set(path, new TileSet(path));
 }
 
-TileSet *TileSet::create(std::string const &path, image* img)
+TileSet *TileSet::create(std::string const &path, old_image* img)
 {
     auto ret = tileset_cache.get(path);
     return ret ? ret : tileset_cache.set(path, new TileSet(path, img));
 }
 
-TileSet *TileSet::create(std::string const &path, image* img, std::vector<ibox2>& tiles)
+TileSet *TileSet::create(std::string const &path, old_image* img, std::vector<ibox2>& tiles)
 {
     auto ret = tileset_cache.get(path);
     if (!ret)
@@ -108,7 +108,7 @@ TileSet *TileSet::create(std::string const &path, ivec2 size, ivec2 count)
     return ret;
 }
 
-TileSet *TileSet::create(std::string const &path, image* img, ivec2 size, ivec2 count)
+TileSet *TileSet::create(std::string const &path, old_image* img, ivec2 size, ivec2 count)
 {
     auto ret = tileset_cache.get(path);
     if (!ret)
@@ -151,7 +151,7 @@ TileSet::TileSet(std::string const &path)
 {
 }
 
-TileSet::TileSet(std::string const &path, image *img)
+TileSet::TileSet(std::string const &path, old_image *img)
   : TextureImage(path, img),
     m_tileset_data(new TileSetData()),
     m_palette(nullptr)
@@ -177,7 +177,7 @@ void TileSet::Init(std::string const &path, ResourceCodecData* loaded_data)
     super::Init(path, loaded_data);
 }
 
-void TileSet::Init(std::string const &path, image* img)
+void TileSet::Init(std::string const &path, old_image* img)
 {
     super::Init(path, img);
 

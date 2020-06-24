@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2004—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2004—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -19,7 +19,7 @@
 namespace lol
 {
 
-bool image::RenderRandom(ivec2 size)
+bool old_image::RenderRandom(ivec2 size)
 {
     resize(size);
     vec4 *pixels = lock<PixelFormat::RGBA_F32>();

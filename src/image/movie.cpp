@@ -106,7 +106,7 @@ bool movie::open_file(std::string const &filename)
 #endif
 }
 
-bool movie::push_image(image &im)
+bool movie::push_image(old_image &im)
 {
 #if LOL_USE_FFMPEG
     // Make sure the encoder does not hold a reference on our

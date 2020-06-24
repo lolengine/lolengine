@@ -40,7 +40,7 @@ namespace lol
     class ResourceImageData : public ResourceCodecData
     {
     public:
-        ResourceImageData(image* img)
+        ResourceImageData(old_image* img)
         {
             m_image = img;
         }
@@ -51,14 +51,14 @@ namespace lol
                 delete m_image;
         }
 
-        image* m_image = nullptr;
+        old_image* m_image = nullptr;
     };
 
     //ResourceImageData -----------------------------------------------------------
     class ResourceTilesetData : public ResourceImageData
     {
     public:
-        ResourceTilesetData(image* img)
+        ResourceTilesetData(old_image* img)
             : ResourceImageData(img)
         { }
 

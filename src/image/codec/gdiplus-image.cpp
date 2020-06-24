@@ -108,7 +108,7 @@ ResourceCodecData* GdiPlusImageCodec::Load(std::string const &path)
     /* FIXME: GDI+ doesn't know about RGBA, only ARGB. And OpenGL doesn't
      * know about ARGB, only RGBA. So we swap bytes. We could also fix
      * this in the shader. */
-    auto data = new ResourceImageData(new image(ivec2(size)));
+    auto data = new ResourceImageData(new old_image(ivec2(size)));
     auto image = data->m_image;
     u8vec4 *pdst = image->lock<PixelFormat::RGBA_8>();
     u8vec4 *psrc = static_cast<u8vec4 *>(bdata.Scan0);

@@ -544,7 +544,7 @@ void Scene::post_render(float)
         rc.clear_depth(1.f);
         m_renderer->clear(ClearMask::Color | ClearMask::Depth);
 
-        /* Blit final image to screen */
+        /* Blit final old_image to screen */
         m_pp.blit_shader->SetUniform(m_pp.m_buffer_uni[0][0], m_renderbuffer[3]->GetTextureUniform(), 3);
         m_pp.quad_vdecl->Bind();
         m_pp.quad_vdecl->SetStream(m_pp.quad_vbo, m_pp.blit_pos_attr);

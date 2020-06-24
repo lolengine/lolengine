@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -46,7 +46,7 @@ TextureImage::TextureImage(std::string const &path)
     Init(path);
 }
 
-TextureImage::TextureImage(std::string const &path, image* img)
+TextureImage::TextureImage(std::string const &path, old_image* img)
     : m_data(GetNewData())
 {
     Init(path, img);
@@ -68,13 +68,13 @@ void TextureImage::Init(std::string const &path, ResourceCodecData* loaded_data)
     auto image_data = dynamic_cast<ResourceImageData*>(loaded_data);
     if (image_data != nullptr)
     {
-        Init(path, new image(*image_data->m_image));
+        Init(path, new old_image(*image_data->m_image));
     }
 
     delete image_data;
 }
 
-void TextureImage::Init(std::string const &path, image* img)
+void TextureImage::Init(std::string const &path, old_image* img)
 {
     m_data->m_name = "<textureimage> " + path;
 
@@ -149,7 +149,7 @@ std::string TextureImage::GetName() const
     return m_data->m_name;
 }
 
-void TextureImage::UpdateTexture(image* img)
+void TextureImage::UpdateTexture(old_image* img)
 {
     m_data->m_image = img;
     m_data->m_image_size = m_data->m_image->size();
@@ -167,12 +167,12 @@ Texture const * TextureImage::GetTexture() const
     return m_data->m_texture;
 }
 
-image * TextureImage::GetImage()
+old_image * TextureImage::GetImage()
 {
     return m_data->m_image;
 }
 
-image const * TextureImage::GetImage() const
+old_image const * TextureImage::GetImage() const
 {
     return m_data->m_image;
 }

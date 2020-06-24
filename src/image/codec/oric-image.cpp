@@ -40,7 +40,7 @@ public:
 
 private:
     static std::string ReadScreen(std::string const &name);
-    static void WriteScreen(image &image, std::vector<uint8_t> &result);
+    static void WriteScreen(old_image &old_image, std::vector<uint8_t> &result);
 };
 
 DECLARE_IMAGE_CODEC(OricImageCodec, 100)
@@ -67,7 +67,7 @@ ResourceCodecData* OricImageCodec::Load(std::string const &path)
     if (screen.length() == 0)
         return nullptr;
 
-    auto data = new ResourceImageData(new image(ivec2(WIDTH, (int)screen.length() * 6 / WIDTH)));
+    auto data = new ResourceImageData(new old_image(ivec2(WIDTH, (int)screen.length() * 6 / WIDTH)));
     auto img = data->m_image;
 
     u8vec4 *pixels = img->lock<PixelFormat::RGBA_8>();
@@ -135,7 +135,7 @@ bool OricImageCodec::Save(std::string const &path, ResourceCodecData* data)
     result.push_back(0);
 
     auto img = data_image->m_image;
-    image tmp;
+    old_image tmp;
     ivec2 size = img->size();
     if (size.x != WIDTH)
     {
@@ -467,14 +467,14 @@ static uint8_t bestmove(ivec3 const *in, u8vec2 bgfg,
     return bestcommand;
 }
 
-void OricImageCodec::WriteScreen(image &img, std::vector<uint8_t> &result)
+void OricImageCodec::WriteScreen(old_image &img, std::vector<uint8_t> &result)
 {
     ivec2 size = img.size();
     vec4 *pixels = img.lock<PixelFormat::RGBA_F32>();
 
     int stride = (size.x + 1);
 
-    array2d<ivec3> src, dst;
+    old_array2d<ivec3> src, dst;
     src.resize(size + ivec2(1));
     dst.resize(size + ivec2(1));
 

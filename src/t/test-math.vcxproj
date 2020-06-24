@@ -42,12 +42,12 @@
     <ClCompile Include="test-common.cpp" />
     <ClCompile Include="math\array2d.cpp" />
     <ClCompile Include="math\array3d.cpp" />
-    <ClCompile Include="math\arraynd.cpp" />
     <ClCompile Include="math\box.cpp" />
     <ClCompile Include="math\bigint.cpp" />
     <ClCompile Include="math\cmplx.cpp" />
     <ClCompile Include="math\half.cpp" />
     <ClCompile Include="math\matrix.cpp" />
+    <ClCompile Include="math\narray.cpp" />
     <ClCompile Include="math\noise\simplex.cpp" />
     <ClCompile Include="math\numbers.cpp" />
     <ClCompile Include="math\polynomial.cpp" />

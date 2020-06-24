@@ -63,7 +63,7 @@ static u8vec4 f32tou8(vec4 pixel)
  * Pixel-level image manipulation
  */
 
-PixelFormat image::format() const
+PixelFormat old_image::format() const
 {
     return m_data->m_format;
 }
@@ -84,7 +84,7 @@ PixelFormat image::format() const
  * x lossless conversion (u8 to float)
  * # lossy conversion (dithering and/or convert color→gray)
  */
-void image::set_format(PixelFormat fmt)
+void old_image::set_format(PixelFormat fmt)
 {
     PixelFormat old_fmt = m_data->m_format;
 
@@ -350,7 +350,7 @@ void image::set_format(PixelFormat fmt)
     }
     else
     {
-        msg::error("Unable to find image conversion from %d to %d",
+        msg::error("Unable to find old_image conversion from %d to %d",
                    (int)old_fmt, (int)fmt);
     }
 }

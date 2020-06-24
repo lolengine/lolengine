@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2004—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2004—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -24,10 +24,10 @@
 namespace lol
 {
 
-image image::Dilate()
+old_image old_image::Dilate()
 {
     ivec2 isize = size();
-    image ret(isize);
+    old_image ret(isize);
 
     if (format() == PixelFormat::Y_8 || format() == PixelFormat::Y_F32)
     {
@@ -81,10 +81,10 @@ image image::Dilate()
     return ret;
 }
 
-image image::Erode()
+old_image old_image::Erode()
 {
     ivec2 isize = size();
-    image ret(isize);
+    old_image ret(isize);
 
     if (format() == PixelFormat::Y_8 || format() == PixelFormat::Y_F32)
     {

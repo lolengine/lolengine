@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2004—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2004—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -19,9 +19,9 @@
 namespace lol
 {
 
-image image::Brightness(float val) const
+old_image old_image::Brightness(float val) const
 {
-    image ret = *this;
+    old_image ret = *this;
     int count = size().x * size().y;
 
     if (format() == PixelFormat::Y_8 || format() == PixelFormat::Y_F32)
@@ -43,9 +43,9 @@ image image::Brightness(float val) const
     return ret;
 }
 
-image image::Contrast(float val) const
+old_image old_image::Contrast(float val) const
 {
-    image ret = *this;
+    old_image ret = *this;
     int count = size().x * size().y;
 
     if (val >= 0.f)
@@ -85,9 +85,9 @@ image image::Contrast(float val) const
  * TODO: the current approach is naive; we should use the histogram in order
  * to decide how to change the contrast.
  */
-image image::AutoContrast() const
+old_image old_image::AutoContrast() const
 {
-    image ret = *this;
+    old_image ret = *this;
 
     float min_val = 1.f, max_val = 0.f;
     int count = size().x * size().y;
@@ -133,9 +133,9 @@ image image::AutoContrast() const
     return ret;
 }
 
-image image::Invert() const
+old_image old_image::Invert() const
 {
-    image ret = *this;
+    old_image ret = *this;
     int count = size().x * size().y;
 
     if (format() == PixelFormat::Y_8 || format() == PixelFormat::Y_F32)
@@ -156,9 +156,9 @@ image image::Invert() const
     return ret;
 }
 
-image image::Threshold(float val) const
+old_image old_image::Threshold(float val) const
 {
-    image ret = *this;
+    old_image ret = *this;
     int count = size().x * size().y;
 
     float *pixels = ret.lock<PixelFormat::Y_F32>();
@@ -169,9 +169,9 @@ image image::Threshold(float val) const
     return ret;
 }
 
-image image::Threshold(vec3 val) const
+old_image old_image::Threshold(vec3 val) const
 {
-    image ret = *this;
+    old_image ret = *this;
     int count = size().x * size().y;
 
     vec4 *pixels = ret.lock<PixelFormat::RGBA_F32>();

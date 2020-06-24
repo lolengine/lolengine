@@ -94,7 +94,7 @@ ResourceCodecData* AndroidImageCodec::Load(std::string const &path)
     int height = env->CallIntMethod(g_activity->clazz, mid, m_bmp);
     ivec2 size(width, height);
 
-    auto data = new ResourceImageData(new image(size));
+    auto data = new ResourceImageData(new old_image(size));
 
     // Get pixels
     m_array = env->NewIntArray(size.x * size.y);

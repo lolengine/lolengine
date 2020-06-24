@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2004—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2004—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -35,16 +35,16 @@ static int cmpfloat(void const *i1, void const *i2)
     return (a > b) - (a < b);
 }
 
-image image::Median(ivec2 ksize) const
+old_image old_image::Median(ivec2 ksize) const
 {
     ivec2 const isize = size();
-    image tmp = *this;
-    image ret(isize);
+    old_image tmp = *this;
+    old_image ret(isize);
 
     if (format() == PixelFormat::Y_8 || format() == PixelFormat::Y_F32)
     {
         ivec2 const lsize = 2 * ksize + ivec2(1);
-        array2d<float> list(lsize);
+        old_array2d<float> list(lsize);
 
         float *srcp = tmp.lock<PixelFormat::Y_F32>();
         float *dstp = ret.lock<PixelFormat::Y_F32>();
@@ -84,7 +84,7 @@ image image::Median(ivec2 ksize) const
     else
     {
         ivec2 const lsize = 2 * ksize + ivec2(1);
-        array2d<vec3> list(lsize);
+        old_array2d<vec3> list(lsize);
 
         vec4 *srcp = tmp.lock<PixelFormat::RGBA_F32>();
         vec4 *dstp = ret.lock<PixelFormat::RGBA_F32>();
@@ -152,11 +152,11 @@ image image::Median(ivec2 ksize) const
     return ret;
 }
 
-image image::Median(array2d<float> const &ker) const
+old_image old_image::Median(old_array2d<float> const &ker) const
 {
     ivec2 const isize = size();
-    image tmp = *this;
-    image ret(isize);
+    old_image tmp = *this;
+    old_image ret(isize);
 
     /* FIXME: TODO */
 #if 0
@@ -167,7 +167,7 @@ image image::Median(array2d<float> const &ker) const
 #endif
     {
         ivec2 const ksize = ker.sizes();
-        array2d<vec3> list(ksize);
+        old_array2d<vec3> list(ksize);
 
         vec4 *srcp = tmp.lock<PixelFormat::RGBA_F32>();
         vec4 *dstp = ret.lock<PixelFormat::RGBA_F32>();

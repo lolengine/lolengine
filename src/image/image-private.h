@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -44,12 +44,12 @@ public:
     virtual void *data2d() { return &m_array2d; }
     virtual void const *data2d() const { return &m_array2d; }
 
-    array2d<typename PixelType<T>::type> m_array2d;
+    old_array2d<typename PixelType<T>::type> m_array2d;
 };
 
 class image_data
 {
-    friend class image;
+    friend class old_image;
 
 public:
     image_data()

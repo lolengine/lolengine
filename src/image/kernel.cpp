@@ -19,9 +19,9 @@
 namespace lol
 {
 
-array2d<float> image::kernel::bayer(ivec2 size)
+old_array2d<float> old_image::kernel::bayer(ivec2 size)
 {
-    array2d<float> ret(size);
+    old_array2d<float> ret(size);
 
     int n = 1;
     while (n < size.x || n < size.y)
@@ -48,9 +48,9 @@ array2d<float> image::kernel::bayer(ivec2 size)
     return ret;
 }
 
-array2d<float> image::kernel::halftone(ivec2 size)
+old_array2d<float> old_image::kernel::halftone(ivec2 size)
 {
-    array2d<float> ret(size);
+    old_array2d<float> ret(size);
 
     for (int y = 0; y < size.y; y++)
         for (int x = 0; x < size.x; x++)
@@ -77,16 +77,16 @@ array2d<float> image::kernel::halftone(ivec2 size)
     return normalize(ret);
 }
 
-array2d<float> image::kernel::blue_noise(ivec2 size, ivec2 gsize)
+old_array2d<float> old_image::kernel::blue_noise(ivec2 size, ivec2 gsize)
 {
     float const epsilon = 1.f / (size.x * size.y + 1);
     gsize = lol::min(size, gsize);
 
-    array2d<float> ret(size);
-    array2d<vec2> dots(size);
+    old_array2d<float> ret(size);
+    old_array2d<vec2> dots(size);
 
     /* Create a small Gaussian kernel for filtering */
-    array2d<float> gaussian(gsize);
+    old_array2d<float> gaussian(gsize);
     for (int j = 0; j < gsize.y; ++j)
     for (int i = 0; i < gsize.x; ++i)
     {
@@ -182,7 +182,7 @@ static int cmpdot(const void *p1, const void *p2)
     return ((Dot const *)p1)->val > ((Dot const *)p2)->val;
 }
 
-array2d<float> image::kernel::normalize(array2d<float> const &kernel)
+old_array2d<float> old_image::kernel::normalize(old_array2d<float> const &kernel)
 {
     ivec2 size = kernel.sizes();
 
@@ -199,7 +199,7 @@ array2d<float> image::kernel::normalize(array2d<float> const &kernel)
     // FIXME: get rid of qsort and use proper C++ algorithms
     std::qsort(tmp.data(), size.x * size.y, sizeof(Dot), cmpdot);
 
-    array2d<float> dst(size);
+    old_array2d<float> dst(size);
 
     float const epsilon = 1.f / (size.x * size.y + 1);
     for (int n = 0; n < size.x * size.y; n++)
@@ -212,7 +212,7 @@ array2d<float> image::kernel::normalize(array2d<float> const &kernel)
     return dst;
 }
 
-array2d<float> image::kernel::ediff(EdiffAlgorithm algorithm)
+old_array2d<float> old_image::kernel::ediff(EdiffAlgorithm algorithm)
 {
     switch (algorithm)
     {
@@ -273,9 +273,9 @@ array2d<float> image::kernel::ediff(EdiffAlgorithm algorithm)
  * there is little chance that any value below 0.2 will be useful. */
 #define BLUR_EPSILON 0.2f
 
-array2d<float> image::kernel::gaussian(vec2 radius, float angle, vec2 delta)
+old_array2d<float> old_image::kernel::gaussian(vec2 radius, float angle, vec2 delta)
 {
-    array2d<float> kernel;
+    old_array2d<float> kernel;
 
     if (radius.x < BLUR_EPSILON)
         radius.x = BLUR_EPSILON;

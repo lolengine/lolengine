@@ -283,9 +283,9 @@ ivec2 Framebuffer::GetSize() const
     return m_data->m_size;
 }
 
-image Framebuffer::GetImage() const
+old_image Framebuffer::GetImage() const
 {
-    image ret(m_data->m_size);
+    old_image ret(m_data->m_size);
 
     u8vec4 *buffer = ret.lock<PixelFormat::RGBA_8>();
     glReadPixels(0, 0, m_data->m_size.x, m_data->m_size.y,

@@ -21,10 +21,10 @@ using namespace lol;
 int main(int, char **)
 {
     ivec2 const size(64);
-    auto const &kernel = image::kernel::blue_noise(size, ivec2(8));
+    auto const &kernel = old_image::kernel::blue_noise(size, ivec2(8));
 
-    image im(size.xy);
-    array2d<vec4> &data = im.lock2d<PixelFormat::RGBA_F32>();
+    old_image im(size.xy);
+    old_array2d<vec4> &data = im.lock2d<PixelFormat::RGBA_F32>();
 
     for (int j = 0; j < size.y; ++j)
     for (int i = 0; i < size.x; ++i)

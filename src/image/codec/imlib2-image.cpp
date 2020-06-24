@@ -70,7 +70,7 @@ ResourceCodecData *Imlib2ImageCodec::Load(std::string const &path)
     }
 
     ivec2 size(imlib_image_get_width(), imlib_image_get_height());
-    auto data = new ResourceImageData(new image(size));
+    auto data = new ResourceImageData(new old_image(size));
     auto image = data->m_image;
 
     u8vec4 *dstdata = image->lock<PixelFormat::RGBA_8>();

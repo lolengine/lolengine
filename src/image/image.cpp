@@ -21,33 +21,33 @@ namespace lol
 {
 
 /*
- * Public image class
+ * Public old_image class
  */
 
-image::image()
+old_image::old_image()
   : m_data(new image_data())
 {
 }
 
-image::image(std::string const &path)
+old_image::old_image(std::string const &path)
   : m_data(new image_data())
 {
     load(path);
 }
 
-image::image(ivec2 size)
+old_image::old_image(ivec2 size)
   : m_data(new image_data())
 {
     resize(size);
 }
 
-image::image (image const &other)
+old_image::old_image (old_image const &other)
   : m_data(new image_data())
 {
     Copy(other);
 }
 
-image & image::operator =(image other)
+old_image & old_image::operator =(old_image other)
 {
     /* Since the argument is passed by value, we’re assured it’s a new
      * object and we can safely swap our m_data pointers. */
@@ -55,7 +55,7 @@ image & image::operator =(image other)
     return *this;
 }
 
-image::~image()
+old_image::~old_image()
 {
     for (auto &kv : m_data->m_pixels)
         delete kv.second;
@@ -63,7 +63,7 @@ image::~image()
     delete m_data;
 }
 
-void image::Copy(uint8_t* src_pixels, ivec2 const& size, PixelFormat fmt)
+void old_image::Copy(uint8_t* src_pixels, ivec2 const& size, PixelFormat fmt)
 {
     assert(fmt != PixelFormat::Unknown);
     resize(size);
@@ -72,7 +72,7 @@ void image::Copy(uint8_t* src_pixels, ivec2 const& size, PixelFormat fmt)
             size.x * size.y * BytesPerPixel(fmt));
 }
 
-void image::Copy(image const &src)
+void old_image::Copy(old_image const &src)
 {
     ivec2 size = src.size();
     PixelFormat fmt = src.format();
@@ -87,12 +87,12 @@ void image::Copy(image const &src)
     }
 }
 
-void image::DummyFill()
+void old_image::DummyFill()
 {
     load("DUMMY");
 }
 
-bool image::load(std::string const &path)
+bool old_image::load(std::string const &path)
 {
     auto resource = ResourceLoader::Load(path);
     if (resource == nullptr)
@@ -110,20 +110,20 @@ bool image::load(std::string const &path)
     return true;
 }
 
-bool image::save(std::string const &path)
+bool old_image::save(std::string const &path)
 {
-    auto data = new ResourceImageData(new image(*this));
+    auto data = new ResourceImageData(new old_image(*this));
     auto result = ResourceLoader::Save(path, data);
     delete data;
     return result;
 }
 
-ivec2 image::size() const
+ivec2 old_image::size() const
 {
     return m_data->m_size;
 }
 
-void image::resize(ivec2 size)
+void old_image::resize(ivec2 size)
 {
     assert(size.x > 0);
     assert(size.y > 0);
@@ -140,24 +140,24 @@ void image::resize(ivec2 size)
 }
 
 /* Wrap-around mode for some operations */
-WrapMode image::GetWrapX() const
+WrapMode old_image::GetWrapX() const
 {
     return m_data->m_wrap_x;
 }
 
-WrapMode image::GetWrapY() const
+WrapMode old_image::GetWrapY() const
 {
     return m_data->m_wrap_y;
 }
 
-void image::SetWrap(WrapMode wrap_x, WrapMode wrap_y)
+void old_image::SetWrap(WrapMode wrap_x, WrapMode wrap_y)
 {
     m_data->m_wrap_x = wrap_x;
     m_data->m_wrap_y = wrap_y;
 }
 
 /* The lock() method */
-template<PixelFormat T> typename PixelType<T>::type *image::lock()
+template<PixelFormat T> typename PixelType<T>::type *old_image::lock()
 {
     set_format(T);
 
@@ -165,7 +165,7 @@ template<PixelFormat T> typename PixelType<T>::type *image::lock()
 }
 
 /* The lock2d() method */
-void *image::lock2d_helper(PixelFormat T)
+void *old_image::lock2d_helper(PixelFormat T)
 {
     set_format(T);
 
@@ -173,7 +173,7 @@ void *image::lock2d_helper(PixelFormat T)
 }
 
 template<typename T>
-void image::unlock2d(array2d<T> const &array)
+void old_image::unlock2d(old_array2d<T> const &array)
 {
     assert(has_key(m_data->m_pixels, (int)m_data->m_format));
     assert(array.data() == m_data->m_pixels[(int)m_data->m_format]->data());
@@ -181,9 +181,9 @@ void image::unlock2d(array2d<T> const &array)
 
 /* Explicit specialisations for the above templates */
 #define _T(T) \
-    template PixelType<T>::type *image::lock<T>(); \
-    template array2d<PixelType<T>::type> &image::lock2d<T>(); \
-    template void image::unlock2d(array2d<PixelType<T>::type> const &array);
+    template PixelType<T>::type *old_image::lock<T>(); \
+    template old_array2d<PixelType<T>::type> &old_image::lock2d<T>(); \
+    template void old_image::unlock2d(old_array2d<PixelType<T>::type> const &array);
 _T(PixelFormat::Y_8)
 _T(PixelFormat::RGB_8)
 _T(PixelFormat::RGBA_8)
@@ -193,14 +193,14 @@ _T(PixelFormat::RGBA_F32)
 #undef _T
 
 /* Special case for the "any" format: return the last active buffer */
-void *image::lock()
+void *old_image::lock()
 {
     assert(m_data->m_format != PixelFormat::Unknown);
 
     return m_data->m_pixels[(int)m_data->m_format]->data();
 }
 
-void image::unlock(void const *pixels)
+void old_image::unlock(void const *pixels)
 {
     assert(has_key(m_data->m_pixels, (int)m_data->m_format));
     assert(pixels == m_data->m_pixels[(int)m_data->m_format]->data());

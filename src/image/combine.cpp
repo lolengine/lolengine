@@ -36,7 +36,7 @@ enum class MergeMode
 };
 
 template<PixelFormat FORMAT, MergeMode MODE>
-static image generic_merge(image &src1, image &src2, float alpha)
+static old_image generic_merge(old_image &src1, old_image &src2, float alpha)
 {
     using std::min, std::max, std::fabs;
 
@@ -45,7 +45,7 @@ static image generic_merge(image &src1, image &src2, float alpha)
     assert(src1.size() == src2.size());
     int const count = src1.size().x * src2.size().y;
 
-    image dst(src1.size());
+    old_image dst(src1.size());
 
     pixel_t const *src1p = src1.lock<FORMAT>();
     pixel_t const *src2p = src2.lock<FORMAT>();
@@ -84,7 +84,7 @@ static image generic_merge(image &src1, image &src2, float alpha)
 }
 
 template<MergeMode MODE>
-static image generic_merge(image &src1, image &src2, float alpha)
+static old_image generic_merge(old_image &src1, old_image &src2, float alpha)
 {
     bool gray1 = src1.format() == PixelFormat::Y_8
                   || src1.format() == PixelFormat::Y_F32;
@@ -97,57 +97,57 @@ static image generic_merge(image &src1, image &src2, float alpha)
 
 }
 
-image image::Merge(image &src1, image &src2, float alpha)
+old_image old_image::Merge(old_image &src1, old_image &src2, float alpha)
 {
     return generic_merge<MergeMode::Mix>(src1, src2, alpha);
 }
 
-image image::Mean(image &src1, image &src2)
+old_image old_image::Mean(old_image &src1, old_image &src2)
 {
     return generic_merge<MergeMode::Mix>(src1, src2, 0.5f);
 }
 
-image image::Min(image &src1, image &src2)
+old_image old_image::Min(old_image &src1, old_image &src2)
 {
     return generic_merge<MergeMode::Min>(src1, src2, 0.0f);
 }
 
-image image::Max(image &src1, image &src2)
+old_image old_image::Max(old_image &src1, old_image &src2)
 {
     return generic_merge<MergeMode::Max>(src1, src2, 0.0f);
 }
 
-image image::Overlay(image &src1, image &src2)
+old_image old_image::Overlay(old_image &src1, old_image &src2)
 {
     return generic_merge<MergeMode::Overlay>(src1, src2, 0.0f);
 }
 
-image image::Screen(image &src1, image &src2)
+old_image old_image::Screen(old_image &src1, old_image &src2)
 {
     return generic_merge<MergeMode::Screen>(src1, src2, 0.0f);
 }
 
-image image::Divide(image &src1, image &src2)
+old_image old_image::Divide(old_image &src1, old_image &src2)
 {
     return generic_merge<MergeMode::Divide>(src1, src2, 0.0f);
 }
 
-image image::Multiply(image &src1, image &src2)
+old_image old_image::Multiply(old_image &src1, old_image &src2)
 {
     return generic_merge<MergeMode::Multiply>(src1, src2, 0.0f);
 }
 
-image image::Add(image &src1, image &src2)
+old_image old_image::Add(old_image &src1, old_image &src2)
 {
     return generic_merge<MergeMode::Add>(src1, src2, 0.0f);
 }
 
-image image::Sub(image &src1, image &src2)
+old_image old_image::Sub(old_image &src1, old_image &src2)
 {
     return generic_merge<MergeMode::Sub>(src1, src2, 0.0f);
 }
 
-image image::Difference(image &src1, image &src2)
+old_image old_image::Difference(old_image &src1, old_image &src2)
 {
     return generic_merge<MergeMode::Difference>(src1, src2, 0.0f);
 }

@@ -33,9 +33,9 @@ int main(int, char **)
 
     for (int i = 0; i < 256; ++i)
     {
-        lol::image im(size);
+        lol::old_image im(size);
 
-        lol::array2d<lol::u8vec3> &data = im.lock2d<lol::PixelFormat::RGB_8>();
+        lol::old_array2d<lol::u8vec3> &data = im.lock2d<lol::PixelFormat::RGB_8>();
         for (int y = 0; y < size.y; ++y)
         for (int x = 0; x < size.x; ++x)
         {

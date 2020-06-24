@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2004—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2004—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -26,12 +26,12 @@ namespace lol
 
 /* FIXME: though the algorithm is supposed to stop, we do not have a real,
  * guaranteed stop condition here. */
-image image::dither_dbs() const
+old_image old_image::dither_dbs() const
 {
     ivec2 isize = size();
 
     /* Build our human visual system kernel. */
-    array2d<float> ker;
+    old_array2d<float> ker;
     ker.resize(ivec2(NN, NN));
     float t = 0.f;
     for (int j = 0; j < NN; j++)
@@ -50,20 +50,20 @@ image image::dither_dbs() const
     /* A list of cells in our picture. If no change is done to a cell
      * for two iterations, we stop considering changes to it. */
     ivec2 const csize = (isize + ivec2(CELL - 1)) / CELL;
-    array2d<int> changelist(csize);
+    old_array2d<int> changelist(csize);
     memset(changelist.data(), 0, changelist.bytes());
 
-    image dst = *this;
+    old_image dst = *this;
     dst.set_format(PixelFormat::Y_F32);
 
-    image tmp1 = dst.Convolution(ker);
-    array2d<float> &tmp1data = tmp1.lock2d<PixelFormat::Y_F32>();
+    old_image tmp1 = dst.Convolution(ker);
+    old_array2d<float> &tmp1data = tmp1.lock2d<PixelFormat::Y_F32>();
 
     dst = dst.dither_random();
-    array2d<float> &dstdata = dst.lock2d<PixelFormat::Y_F32>();
+    old_array2d<float> &dstdata = dst.lock2d<PixelFormat::Y_F32>();
 
-    image tmp2 = dst.Convolution(ker);
-    array2d<float> &tmp2data = tmp2.lock2d<PixelFormat::Y_F32>();
+    old_image tmp2 = dst.Convolution(ker);
+    old_array2d<float> &tmp2data = tmp2.lock2d<PixelFormat::Y_F32>();
 
     for (int run = 0, last_change = 0; ; ++run)
     {
@@ -71,7 +71,7 @@ image image::dither_dbs() const
         int const cx = cell % csize.x;
         int const cy = cell / csize.x;
 
-        /* Bail out if no change was done for the last full image run */
+        /* Bail out if no change was done for the last full old_image run */
         if (run > last_change + csize.x * csize.y)
             break;
 

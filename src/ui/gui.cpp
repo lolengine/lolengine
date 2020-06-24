@@ -143,7 +143,7 @@ void gui::refresh_fonts()
     ImGuiIO& io = ImGui::GetIO();
     io.Fonts->GetTexDataAsRGBA32(&pixels, &size.x, &size.y);
 
-    image* img = new image();
+    old_image* img = new old_image();
     img->Copy(pixels, size, PixelFormat::RGBA_8);
 
     Ticker::Ref(g_gui->m_font = new TextureImage("", img));

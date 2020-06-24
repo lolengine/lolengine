@@ -30,8 +30,8 @@ int main(int, char **)
     srand(time(nullptr));
 
     /* Create an image */
-    image img(size);
-    array2d<vec4> &data = img.lock2d<PixelFormat::RGBA_F32>();
+    old_image img(size);
+    old_array2d<vec4> &data = img.lock2d<PixelFormat::RGBA_F32>();
 
     /* Declare plenty of allocators */
     simplex_noise<2> s2;

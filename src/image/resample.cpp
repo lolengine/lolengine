@@ -21,10 +21,10 @@
 namespace lol
 {
 
-static image ResizeBicubic(image &src, ivec2 size);
-static image ResizeBresenham(image &src, ivec2 size);
+static old_image ResizeBicubic(old_image &src, ivec2 size);
+static old_image ResizeBresenham(old_image &src, ivec2 size);
 
-image image::Resize(ivec2 size, ResampleAlgorithm algorithm)
+old_image old_image::Resize(ivec2 size, ResampleAlgorithm algorithm)
 {
     switch (algorithm)
     {
@@ -36,9 +36,9 @@ image image::Resize(ivec2 size, ResampleAlgorithm algorithm)
     }
 }
 
-static image ResizeBicubic(image &src, ivec2 size)
+static old_image ResizeBicubic(old_image &src, ivec2 size)
 {
-    image dst(size);
+    old_image dst(size);
     ivec2 const oldsize = src.size();
 
     vec4 const *srcp = src.lock<PixelFormat::RGBA_F32>();
@@ -138,9 +138,9 @@ static image ResizeBicubic(image &src, ivec2 size)
 /* FIXME: the algorithm does not handle alpha components properly. Resulting
  * alpha should be the mean alpha value of the neightbouring pixels, but
  * the colour components should be weighted with the alpha value. */
-static image ResizeBresenham(image &src, ivec2 size)
+static old_image ResizeBresenham(old_image &src, ivec2 size)
 {
-    image dst(size);
+    old_image dst(size);
     ivec2 const oldsize = src.size();
     float const invswsh = 1.0f / (oldsize.x * oldsize.y);
 

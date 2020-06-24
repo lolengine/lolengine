@@ -44,12 +44,12 @@ class TileSet : public TextureImage
 
 public:
     static TileSet *create(std::string const &path);
-    static TileSet *create(std::string const &path, image* img);
-    static TileSet *create(std::string const &path, image* img, std::vector<ibox2>& tiles);
+    static TileSet *create(std::string const &path, old_image* img);
+    static TileSet *create(std::string const &path, old_image* img, std::vector<ibox2>& tiles);
 
     /* Old style: path to PNG file */
     static TileSet *create(std::string const &path, ivec2 size, ivec2 count);
-    static TileSet *create(std::string const &path, image* img, ivec2 size, ivec2 count);
+    static TileSet *create(std::string const &path, old_image* img, ivec2 size, ivec2 count);
 
     static void destroy(TileSet *);
 
@@ -57,11 +57,11 @@ public:
 
 private:
     TileSet(std::string const &path);
-    TileSet(std::string const &path, image *img);
+    TileSet(std::string const &path, old_image *img);
 
 protected:
     virtual void Init(std::string const &path, ResourceCodecData* loaded_data);
-    virtual void Init(std::string const &path, image* img);
+    virtual void Init(std::string const &path, old_image* img);
 
 public:
     /* Inherited from entity */

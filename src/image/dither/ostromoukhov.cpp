@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2004—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2004—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -71,9 +71,9 @@ static inline vec3 GetDiffusion(float v)
     return ret;
 }
 
-image image::dither_ostromoukhov(ScanMode scan) const
+old_image old_image::dither_ostromoukhov(ScanMode scan) const
 {
-    image dst = *this;
+    old_image dst = *this;
 
     float *pixels = dst.lock<PixelFormat::Y_F32>();
     int w = dst.size().x;

@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2004—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2004—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -21,12 +21,12 @@
 namespace lol
 {
 
-image image::Crop(ibox2 box) const
+old_image old_image::Crop(ibox2 box) const
 {
     ivec2 const srcsize = size();
     ivec2 const dstsize = box.extent();
 
-    image dst(dstsize);
+    old_image dst(dstsize);
     PixelFormat fmt = format();
 
     if (fmt != PixelFormat::Unknown)

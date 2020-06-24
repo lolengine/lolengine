@@ -53,7 +53,7 @@ ResourceCodecData* SdlImageCodec::Load(std::string const &path)
     if (!surface)
     {
 #if !LOL_BUILD_RELEASE
-        msg::error("could not load image %s\n", path.c_str());
+        msg::error("could not load old_image %s\n", path.c_str());
 #endif
         return nullptr;
     }
@@ -68,11 +68,11 @@ ResourceCodecData* SdlImageCodec::Load(std::string const &path)
         surface = tmp;
     }
 
-    auto data = new ResourceImageData(new image(size));
-    auto image = data->m_image;
-    u8vec4 *pixel_data = image->lock<PixelFormat::RGBA_8>();
+    auto data = new ResourceImageData(new old_image(size));
+    auto old_image = data->m_image;
+    u8vec4 *pixel_data = old_image->lock<PixelFormat::RGBA_8>();
     memcpy((void *)pixel_data, surface->pixels, sizeof(*pixel_data) * size.x * size.y);
-    image->unlock(pixel_data);
+    old_image->unlock(pixel_data);
 
     SDL_FreeSurface(surface);
 
@@ -85,13 +85,13 @@ bool SdlImageCodec::Save(std::string const &path, ResourceCodecData* data)
     if (data_image == nullptr)
         return false;
 
-    auto image = data_image->m_image;
-    ivec2 size = image->size();
+    auto old_image = data_image->m_image;
+    ivec2 size = old_image->size();
     SDL_Surface *surface = Create32BppSurface(size);
 
-    u8vec4 *pixel_data = image->lock<PixelFormat::RGBA_8>();
+    u8vec4 *pixel_data = old_image->lock<PixelFormat::RGBA_8>();
     memcpy(surface->pixels, pixel_data, 4 * size.x * size.y);
-    image->unlock(pixel_data);
+    old_image->unlock(pixel_data);
 
     int ret = SDL_SaveBMP(surface, path.c_str());
     SDL_FreeSurface(surface);

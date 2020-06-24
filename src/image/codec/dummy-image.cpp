@@ -43,9 +43,9 @@ ResourceCodecData* DummyImageCodec::Load(std::string const &path)
     if (path == "DUMMY")
         return nullptr;
 
-    auto data = new ResourceImageData(new image(ivec2(256)));
-    auto image = data->m_image;
-    u8vec4 *pixels = image->lock<PixelFormat::RGBA_8>(), *tmp = pixels;
+    auto data = new ResourceImageData(new old_image(ivec2(256)));
+    auto old_image = data->m_image;
+    u8vec4 *pixels = old_image->lock<PixelFormat::RGBA_8>(), *tmp = pixels;
     for (int j = 0; j < 256; j++)
         for (int i = 0; i < 256; i++)
         {
@@ -55,7 +55,7 @@ ResourceCodecData* DummyImageCodec::Load(std::string const &path)
             tmp->a = (((i >> 4) ^ (j >> 4)) & 1) * 0xff;
             ++tmp;
         }
-    image->unlock(pixels);
+    old_image->unlock(pixels);
 
     return data;
 }

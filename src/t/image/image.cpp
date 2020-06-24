@@ -25,7 +25,7 @@ lolunit_declare_fixture(image_test)
 {
     lolunit_declare_test(open_image)
     {
-        image img("data/gradient.png");
+        old_image img("data/gradient.png");
 
         ivec2 isize = img.size();
         lolunit_assert_equal(isize.x, 256);

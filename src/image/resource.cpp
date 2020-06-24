@@ -56,7 +56,7 @@ static bool RegisterAllCodecs(std::vector<ResourceCodec *> &codeclist)
 }
 
 /*
-* Our static image loader
+* Our static old_image loader
 */
 
 static class StaticResourceLoader
@@ -87,14 +87,14 @@ ResourceCodecData* ResourceLoader::Load(std::string const &path)
         auto data = codec->Load(path);
         if (data != nullptr)
         {
-            msg::debug("image::load: codec %s succesfully loaded %s.\n",
+            msg::debug("old_image::load: codec %s succesfully loaded %s.\n",
                        codec->GetName().c_str(), path.c_str());
             return data;
         }
     }
 
     //Log error, because we shouldn't be here
-    msg::error("image::load: last codec %s, error loading resource %s.\n",
+    msg::error("old_image::load: last codec %s, error loading resource %s.\n",
                last_codec->GetName().c_str(), path.c_str());
     return nullptr;
 }
@@ -107,14 +107,14 @@ bool ResourceLoader::Save(std::string const &path, ResourceCodecData* data)
         last_codec = codec;
         if (codec->Save(path, data))
         {
-            msg::debug("image::save: codec %s succesfully saved %s.\n",
+            msg::debug("old_image::save: codec %s succesfully saved %s.\n",
                       codec->GetName().c_str(), path.c_str());
             return true;
         }
     }
 
     //Log error, because we shouldn't be here
-    msg::error("image::save: last codec %s, error saving resource %s.\n",
+    msg::error("old_image::save: last codec %s, error saving resource %s.\n",
                last_codec->GetName().c_str(), path.c_str());
     return false;
 }

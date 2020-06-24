@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -41,13 +41,13 @@ protected:
 
 public:
     TextureImage(std::string const &path);
-    TextureImage(std::string const &path, image* img);
+    TextureImage(std::string const &path, old_image* img);
     virtual ~TextureImage();
 
 protected:
     void Init(std::string const &path);
     virtual void Init(std::string const &path, ResourceCodecData* loaded_data);
-    virtual void Init(std::string const &path, image* img);
+    virtual void Init(std::string const &path, old_image* img);
 
 protected:
     virtual void tick_draw(float seconds, Scene &scene);
@@ -56,11 +56,11 @@ public:
     /* Inherited from entity */
     virtual std::string GetName() const;
 
-    void UpdateTexture(image* img);
+    void UpdateTexture(old_image* img);
     Texture * GetTexture();
     Texture const * GetTexture() const;
-    image * GetImage();
-    image const * GetImage() const;
+    old_image * GetImage();
+    old_image const * GetImage() const;
     ivec2 GetImageSize() const;
     ivec2 GetTextureSize() const;
     void Bind();

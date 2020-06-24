@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2004—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2004—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -19,9 +19,9 @@
 namespace lol
 {
 
-image image::dither_random() const
+old_image old_image::dither_random() const
 {
-    image dst = *this;
+    old_image dst = *this;
 
     float *pixels = dst.lock<PixelFormat::Y_F32>();
     int count = size().x * size().y;

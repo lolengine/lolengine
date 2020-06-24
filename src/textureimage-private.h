@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2018 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -34,7 +34,7 @@ public:
     /* Pixels, then texture coordinates */
     ivec2 m_image_size, m_texture_size;
 
-    image *m_image = nullptr;
+    old_image *m_image = nullptr;
     Texture *m_texture = nullptr;
 };
 
