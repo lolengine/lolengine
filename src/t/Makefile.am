@@ -27,16 +27,14 @@ endif
 endif
 
 test_base_SOURCES = test-common.cpp \
-    base/avl_tree.cpp base/array.cpp base/enum.cpp base/map.cpp \
-    base/string.cpp base/types.cpp
+    base/avl_tree.cpp base/array.cpp base/enum.cpp base/map.cpp base/array2d.cpp base/array3d.cpp \
+    base/narray.cpp base/string.cpp base/types.cpp
 test_base_DEPENDENCIES = @LOL_DEPS@
 
 test_math_SOURCES = test-common.cpp \
-    math/array2d.cpp math/array3d.cpp math/narray.cpp math/box.cpp \
-    math/cmplx.cpp math/half.cpp math/matrix.cpp math/quat.cpp \
-    math/rand.cpp math/real.cpp math/rotation.cpp math/trig.cpp \
-    math/vector.cpp math/polynomial.cpp math/noise/simplex.cpp \
-    math/bigint.cpp math/sqt.cpp math/numbers.cpp
+    math/box.cpp math/cmplx.cpp math/half.cpp math/matrix.cpp math/quat.cpp math/rand.cpp \
+    math/real.cpp math/rotation.cpp math/trig.cpp math/vector.cpp math/polynomial.cpp \
+    math/noise/simplex.cpp math/bigint.cpp math/sqt.cpp math/numbers.cpp
 test_math_DEPENDENCIES = @LOL_DEPS@
 
 test_sys_SOURCES = test-common.cpp \

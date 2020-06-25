@@ -44,6 +44,75 @@ lolunit_declare_fixture(array3d_test)
         lolunit_assert_equal(b(9, 9, 9), 8);
     }
 
+    lolunit_declare_test(array3d_layout)
+    {
+        array3d<int> a(3, 2, 2);
+
+        // Check that the first element points to the array data
+        lolunit_assert_equal(&a(0, 0, 0), a.data());
+
+        // Check that the layout is row-major
+        for (int i = 0; i < 12; ++i)
+            a.data()[i] = i;
+
+        lolunit_assert_equal(a(0, 0, 0), 0);
+        lolunit_assert_equal(a(1, 0, 0), 1);
+        lolunit_assert_equal(a(2, 0, 0), 2);
+        lolunit_assert_equal(a(0, 1, 0), 3);
+        lolunit_assert_equal(a(1, 1, 0), 4);
+        lolunit_assert_equal(a(2, 1, 0), 5);
+        lolunit_assert_equal(a(0, 0, 1), 6);
+        lolunit_assert_equal(a(1, 0, 1), 7);
+        lolunit_assert_equal(a(2, 0, 1), 8);
+        lolunit_assert_equal(a(0, 1, 1), 9);
+        lolunit_assert_equal(a(1, 1, 1), 10);
+        lolunit_assert_equal(a(2, 1, 1), 11);
+    }
+
+    lolunit_declare_test(array3d_resize)
+    {
+        array3d<int> a;
+        array3d<int> b(11, 12, 13);
+        array3d<int> c(ivec3(11, 12, 13));
+
+        a.resize(11, 12, 13);
+        b.resize(ivec3(10, 10, 10));
+        c.clear();
+
+        lolunit_assert_equal(a.size(), 11 * 12 * 13);
+        lolunit_assert_equal(a.bytes(), 11 * 12 * 13 * sizeof(int));
+        lolunit_assert_equal(a.sizes()[0], 11);
+        lolunit_assert_equal(a.sizes()[1], 12);
+        lolunit_assert_equal(a.sizes()[2], 13);
+    }
+
+    lolunit_declare_test(array3d_data)
+    {
+        array3d<int> a(3, 4, 5);
+        auto const &d = a;
+
+        lolunit_assert_equal(a.data(), d.data());
+
+        a[0] = 12;
+        lolunit_assert_equal(a[0], d[0]);
+        lolunit_assert_equal(a(0, 0, 0), d(0, 0, 0));
+        lolunit_assert_equal(a(ivec3(0, 0, 0)), d(ivec3(0, 0, 0)));
+    }
+
+    lolunit_declare_test(array3d_views)
+    {
+        array3d<int> a(5, 4, 3);
+        array3d_view<int> b(a);
+
+        lolunit_assert_equal(a.data(), b.data());
+
+        a(3, 2, 1) = 42;
+        lolunit_assert_equal(b(3, 2, 1), 42);
+
+        b(4, 3, 2) = 12;
+        lolunit_assert_equal(a(4, 3, 2), 12);
+    }
+
 #if 0
     lolunit_declare_test(array3d_init)
     {

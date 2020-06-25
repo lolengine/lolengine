@@ -63,6 +63,49 @@ lolunit_declare_fixture(array2d_test)
         lolunit_assert_equal(a(2, 1), 5);
     }
 
+    lolunit_declare_test(array2d_resize)
+    {
+        array2d<int> a;
+        array2d<int> b(11, 12);
+        array2d<int> c(ivec2(11, 12));
+
+        a.resize(11, 12);
+        b.resize(ivec2(10, 10));
+        c.clear();
+
+        lolunit_assert_equal(a.size(), 11 * 12);
+        lolunit_assert_equal(a.bytes(), 11 * 12 * sizeof(int));
+        lolunit_assert_equal(a.sizes()[0], 11);
+        lolunit_assert_equal(a.sizes()[1], 12);
+    }
+
+    lolunit_declare_test(array2d_data)
+    {
+        array2d<int> a(3, 5);
+        auto const &d = a;
+
+        lolunit_assert_equal(a.data(), d.data());
+
+        a[0] = 12;
+        lolunit_assert_equal(a[0], d[0]);
+        lolunit_assert_equal(a(0, 0), d(0, 0));
+        lolunit_assert_equal(a(ivec2(0, 0)), d(ivec2(0, 0)));
+    }
+
+    lolunit_declare_test(array2d_views)
+    {
+        array2d<int> a(5, 3);
+        array2d_view<int> b(a);
+
+        lolunit_assert_equal(a.data(), b.data());
+
+        a(3, 1) = 42;
+        lolunit_assert_equal(b(3, 1), 42);
+
+        b(4, 2) = 12;
+        lolunit_assert_equal(a(4, 2), 12);
+    }
+
  #if 0
     lolunit_declare_test(array2d_init)
     {

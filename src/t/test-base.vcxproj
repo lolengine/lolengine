@@ -41,8 +41,11 @@
   <ItemGroup>
     <ClCompile Include="test-common.cpp" />
     <ClCompile Include="base\array.cpp" />
+    <ClCompile Include="base\array2d.cpp" />
+    <ClCompile Include="base\array3d.cpp" />
     <ClCompile Include="base\enum.cpp" />
     <ClCompile Include="base\map.cpp" />
+    <ClCompile Include="base\narray.cpp" />
     <ClCompile Include="base\string.cpp" />
     <ClCompile Include="base\types.cpp" />
   </ItemGroup>
