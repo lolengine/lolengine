@@ -92,10 +92,10 @@ lolunit_declare_fixture(array2d_test)
         lolunit_assert_equal(a(ivec2(0, 0)), d(ivec2(0, 0)));
     }
 
-    lolunit_declare_test(array2d_views)
+    lolunit_declare_test(array2d_spans)
     {
         array2d<int> a(5, 3);
-        array2d_view<int> b(a);
+        auto b = a.span();
 
         lolunit_assert_equal(a.data(), b.data());
 
@@ -104,6 +104,13 @@ lolunit_declare_fixture(array2d_test)
 
         b(4, 2) = 12;
         lolunit_assert_equal(a(4, 2), 12);
+
+        // Create a const span2d
+        auto const &c = a;
+        auto d = c.span();
+
+        lolunit_assert_equal(d(3, 1), 42);
+        lolunit_assert_equal(d(4, 2), 12);
     }
 
     lolunit_declare_test(array2d_iterator)
