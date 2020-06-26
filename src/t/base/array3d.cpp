@@ -53,7 +53,7 @@ lolunit_declare_fixture(array3d_test)
 
         // Check that the layout is row-major
         for (int i = 0; i < 12; ++i)
-            a.data()[i] = i;
+            a[i] = i;
 
         lolunit_assert_equal(a(0, 0, 0), 0);
         lolunit_assert_equal(a(1, 0, 0), 1);
@@ -111,6 +111,24 @@ lolunit_declare_fixture(array3d_test)
 
         b(4, 3, 2) = 12;
         lolunit_assert_equal(a(4, 3, 2), 12);
+    }
+
+    lolunit_declare_test(array3d_iterator)
+    {
+        array3d<int> a(2, 2, 2);
+        for (int i = 0; i < 8; ++i)
+            a[i] = i;
+
+        int n = 0;
+        int sum = 0;
+        for (auto &i : a)
+        {
+            ++n;
+            sum = sum * 10 + i;
+        }
+
+        lolunit_assert_equal(n, 8);
+        lolunit_assert_equal(sum, 1234567);
     }
 
 #if 0
