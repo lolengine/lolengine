@@ -22,9 +22,6 @@
     #define glDeleteVertexArrays glDeleteVertexArraysOES
 #endif
 
-// FIXME: fine-tune this define
-#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
-
 namespace lol
 {
 
@@ -40,7 +37,9 @@ class VertexBufferData
 
     size_t m_size;
 
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     GLuint m_vbo;
+#endif
     uint8_t *m_memory;
 };
 
@@ -78,18 +77,24 @@ VertexDeclaration::VertexDeclaration(VertexStreamBase const &s1,
     if (&s11 != &VertexStreamBase::Empty) AddStream(s11);
     if (&s12 != &VertexStreamBase::Empty) AddStream(s12);
 
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glGenVertexArrays(1, &m_vao);
+#endif
 }
 
 VertexDeclaration::~VertexDeclaration()
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glDeleteVertexArrays(1, &m_vao);
+#endif
 }
 
 void VertexDeclaration::Bind()
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     /* FIXME: Nothing to do? */
     glBindVertexArray(m_vao);
+#endif
 }
 
 void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
@@ -97,7 +102,8 @@ void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
     if (count <= 0)
         return;
 
-    /* FIXME: this has nothing to do here! */
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
+    // FIXME: this has nothing to do here!
     switch (type.ToScalar())
     {
     case MeshPrimitive::Triangles:
@@ -116,6 +122,7 @@ void VertexDeclaration::DrawElements(MeshPrimitive type, int skip, int count)
         glDrawArrays(GL_LINES, skip, count);
         break;
     }
+#endif
 }
 
 void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int count, const short* skip, short typeSize)
@@ -123,9 +130,10 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int count, const
     if (count <= 0)
         return;
 
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     uint32_t elementType = typeSize == 2 ? GL_UNSIGNED_SHORT : GL_UNSIGNED_INT;
 
-    /* FIXME: this has nothing to do here! */
+    // FIXME: this has nothing to do here!
     switch (type.ToScalar())
     {
     case MeshPrimitive::Triangles:
@@ -144,10 +152,12 @@ void VertexDeclaration::DrawIndexedElements(MeshPrimitive type, int count, const
         glDrawElements(GL_LINES, count, elementType, skip);
         break;
     }
+#endif
 }
 
 void VertexDeclaration::Unbind()
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     for (int i = 0; i < m_count; i++)
     {
         if (m_streams[i].reg >= 0)
@@ -161,6 +171,7 @@ void VertexDeclaration::Unbind()
     }
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
+#endif
 }
 
 void VertexDeclaration::SetStream(std::shared_ptr<VertexBuffer> vb,
@@ -188,7 +199,9 @@ void VertexDeclaration::SetStream(std::shared_ptr<VertexBuffer> vb, ShaderAttrib
     if (!vb->m_data->m_size)
         return;
 
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glBindBuffer(GL_ARRAY_BUFFER, vb->m_data->m_vbo);
+#endif
 
     for (int n = 0; n < 12 && attribs[n].m_flags != (uint64_t)0 - 1; n++)
     {
@@ -227,6 +240,7 @@ void VertexDeclaration::SetStream(std::shared_ptr<VertexBuffer> vb, ShaderAttrib
         m_streams[attr_index].reg = reg;
 
         /* Finally, we need to retrieve the type of the data */
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
 #if !defined GL_DOUBLE
 #   define GL_DOUBLE 0
 #endif
@@ -255,9 +269,11 @@ void VertexDeclaration::SetStream(std::shared_ptr<VertexBuffer> vb, ShaderAttrib
         int type_index = m_streams[attr_index].stream_type;
         if (type_index < 0 || type_index >= (int)(sizeof(tlut) / sizeof(*tlut)))
             type_index = 0;
+#endif
 
         if (reg != 0xffffffffu)
         {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
             glEnableVertexAttribArray((GLint)reg);
             if (tlut[type_index].type == GL_FLOAT
                  || tlut[type_index].type == GL_DOUBLE
@@ -284,6 +300,7 @@ void VertexDeclaration::SetStream(std::shared_ptr<VertexBuffer> vb, ShaderAttrib
                                        tlut[type_index].type,
                                        stride, (GLvoid const *)(uintptr_t)offset);
             }
+#endif
 #endif
         }
     }
@@ -358,7 +375,9 @@ VertexBuffer::VertexBuffer(size_t size)
     if (!size)
         return;
 
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glGenBuffers(1, &m_data->m_vbo);
+#endif
     m_data->m_memory = new uint8_t[size];
 }
 
@@ -366,7 +385,9 @@ VertexBuffer::~VertexBuffer()
 {
     if (m_data->m_size)
     {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
         glDeleteBuffers(1, &m_data->m_vbo);
+#endif
         delete[] m_data->m_memory;
     }
     delete m_data;
@@ -392,13 +413,12 @@ void VertexBuffer::unlock()
     if (!m_data->m_size)
         return;
 
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glBindBuffer(GL_ARRAY_BUFFER, m_data->m_vbo);
     glBufferData(GL_ARRAY_BUFFER, m_data->m_size, m_data->m_memory,
                  GL_STATIC_DRAW);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+#endif
 }
 
-} /* namespace lol */
-
-#endif
-
+} // namespace lol

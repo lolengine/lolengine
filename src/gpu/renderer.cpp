@@ -23,10 +23,9 @@
 #   undef far
 #endif
 
-// FIXME: fine-tune this define
 #if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
-
 #include "lolgl.h"
+#endif
 
 namespace lol
 {
@@ -128,6 +127,7 @@ Renderer::~Renderer()
 
 void Renderer::clear(ClearMask mask)
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     GLbitfield m = 0;
     if (mask & ClearMask::Color)
         m |= GL_COLOR_BUFFER_BIT;
@@ -136,6 +136,7 @@ void Renderer::clear(ClearMask mask)
     if (mask & ClearMask::Stencil)
         m |= GL_STENCIL_BUFFER_BIT;
     glClear(m);
+#endif
 }
 
 /*
@@ -147,7 +148,9 @@ void Renderer::viewport(ibox2 bounds)
     if (m_data->m_viewport == bounds)
         return;
 
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glViewport(bounds.aa.x, bounds.aa.y, bounds.bb.x, bounds.bb.y);
+#endif
 
     m_data->m_viewport = bounds;
 }
@@ -178,7 +181,9 @@ void Renderer::clear_color(vec4 c)
     if (m_data->m_clear_color == c)
         return;
 
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glClearColor(c.r, c.g, c.b, c.a);
+#endif
 
     m_data->m_clear_color = c;
 }
@@ -199,7 +204,7 @@ void Renderer::clear_depth(float depth)
 
 #if defined HAVE_GLES_2X
     glClearDepthf(depth);
-#else
+#elif defined LOL_USE_GLEW || defined HAVE_GL_2X
     glClearDepth(depth);
 #endif
 
@@ -278,6 +283,7 @@ void Renderer::SetBlendEquation(BlendEquation rgb, BlendEquation alpha)
     if (m_data->m_blend_rgb == rgb && m_data->m_blend_alpha == alpha)
         return;
 
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     GLenum s1[2] = { GL_FUNC_ADD, GL_FUNC_ADD };
     BlendEquation s2[2] = { rgb, alpha };
 
@@ -306,6 +312,7 @@ void Renderer::SetBlendEquation(BlendEquation rgb, BlendEquation alpha)
     }
 
     glBlendEquationSeparate(s1[0], s1[1]);
+#endif
 
     m_data->m_blend_rgb = rgb;
     m_data->m_blend_alpha = alpha;
@@ -330,6 +337,7 @@ void Renderer::SetBlendFunc(BlendFunc src, BlendFunc dst)
     if (m_data->m_blend_src == src && m_data->m_blend_dst == dst)
         return;
 
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     GLenum s1[2] = { GL_ONE, GL_ZERO };
     BlendFunc s2[2] = { src, dst };
 
@@ -379,6 +387,7 @@ void Renderer::SetBlendFunc(BlendFunc src, BlendFunc dst)
         glEnable(GL_BLEND);
         glBlendFunc(s1[0], s1[1]);
     }
+#endif
 
     m_data->m_blend_src = src;
     m_data->m_blend_dst = dst;
@@ -403,6 +412,7 @@ void Renderer::SetDepthFunc(DepthFunc func)
     if (m_data->m_depth_func == func)
         return;
 
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     switch (func)
     {
         case DepthFunc::Disabled:
@@ -429,6 +439,7 @@ void Renderer::SetDepthFunc(DepthFunc func)
         glDisable(GL_DEPTH_TEST);
     else
         glEnable(GL_DEPTH_TEST);
+#endif
 
     m_data->m_depth_func = func;
 }
@@ -447,10 +458,12 @@ void Renderer::SetDepthMask(DepthMask mask)
     if (m_data->m_depth_mask == mask)
         return;
 
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     if (mask == DepthMask::Disabled)
         glDepthMask(GL_FALSE);
     else
         glDepthMask(GL_TRUE);
+#endif
 
     m_data->m_depth_mask = mask;
 }
@@ -469,6 +482,7 @@ void Renderer::SetCullMode(CullMode mode)
     if (m_data->m_cull_mode == mode)
         return;
 
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     switch (mode)
     {
     case CullMode::Disabled:
@@ -485,6 +499,7 @@ void Renderer::SetCullMode(CullMode mode)
         glFrontFace(GL_CCW);
         break;
     }
+#endif
 
     m_data->m_cull_mode = mode;
 }
@@ -537,10 +552,12 @@ void Renderer::SetScissorMode(ScissorMode mode)
     if (m_data->m_scissor_mode == mode)
         return;
 
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     if (mode == ScissorMode::Enabled)
         glEnable(GL_SCISSOR_TEST);
     else
         glDisable(GL_SCISSOR_TEST);
+#endif
 
     m_data->m_scissor_mode = mode;
 }
@@ -550,8 +567,10 @@ void Renderer::SetScissorRect(vec4 rect)
     m_data->m_scissor_rect = rect;
     if (m_data->m_scissor_mode == ScissorMode::Enabled)
     {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
         glScissor((int)rect.x, (int)(Video::GetSize().y - rect.w), (int)(rect.z - rect.x), (int)(rect.w - rect.y));
         //glScissor((int)rect.x, (int)rect.y, (int)(rect.z - rect.x), (int)(rect.w - rect.y));
+#endif
     }
 }
 
@@ -565,7 +584,4 @@ vec4 Renderer::GetScissorRect() const
     return m_data->m_scissor_rect;
 }
 
-} /* namespace lol */
-
-#endif
-
+} // namespace lol

@@ -14,8 +14,8 @@
 
 // FIXME: fine-tune this define
 #if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
-
 #include "lolgl.h"
+#endif
 
 namespace lol
 {
@@ -30,7 +30,9 @@ class IndexBufferData
     friend class IndexBuffer;
 
     size_t m_size;
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     GLuint m_ibo;
+#endif
     uint8_t *m_memory;
 };
 
@@ -45,7 +47,9 @@ IndexBuffer::IndexBuffer(size_t size)
     m_data->m_size = size;
     if (!size)
         return;
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glGenBuffers(1, &m_data->m_ibo);
+#endif
     m_data->m_memory = new uint8_t[size];
 }
 
@@ -53,7 +57,9 @@ IndexBuffer::~IndexBuffer()
 {
     if (m_data->m_size)
     {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
         glDeleteBuffers(1, &m_data->m_ibo);
+#endif
         delete[] m_data->m_memory;
     }
     delete m_data;
@@ -78,9 +84,11 @@ void IndexBuffer::unlock()
     if (!m_data->m_size)
         return;
 
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_data->m_ibo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_data->m_size, m_data->m_memory,
                  GL_STATIC_DRAW);
+#endif
 }
 
 void IndexBuffer::Bind()
@@ -88,10 +96,12 @@ void IndexBuffer::Bind()
     if (!m_data->m_size)
         return;
 
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_data->m_ibo);
     /* XXX: not necessary because we kept track of the size */
     //int size;
     //glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &size);
+#endif
 }
 
 void IndexBuffer::Unbind()
@@ -99,10 +109,9 @@ void IndexBuffer::Unbind()
     if (!m_data->m_size)
         return;
 
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+#endif
 }
 
-} /* namespace lol */
-
-#endif
-
+} // namespace lol

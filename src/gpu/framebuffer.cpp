@@ -17,8 +17,8 @@
 
 // FIXME: fine-tune this define
 #if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
-
 #include "lolgl.h"
+#endif
 
 namespace lol
 {
@@ -36,7 +36,9 @@ class FramebufferData
     ivec2 m_size;
     bool m_bound;
 
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     GLuint m_fbo, m_texture, m_depth;
+#endif
 };
 
 //
@@ -46,6 +48,7 @@ class FramebufferData
 
 uint32_t FramebufferFormat::GetFormat()
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     switch (m_format)
     {
 #if defined HAVE_GLES_2X
@@ -122,10 +125,14 @@ uint32_t FramebufferFormat::GetFormat()
         assert(false);
         return 0;
     }
+#else
+    return 0;
+#endif
 }
 
 uint32_t FramebufferFormat::GetFormatOrder()
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     switch (m_format)
     {
 #if defined HAVE_GLES_2X
@@ -164,6 +171,9 @@ uint32_t FramebufferFormat::GetFormatOrder()
         assert(false);
         return 0;
     }
+#else
+    return 0;
+#endif
 }
 
 //
@@ -176,6 +186,7 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
 {
     m_data->m_size = size;
     m_data->m_bound = false;
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
 #if defined GL_VERSION_4_2
     GLenum internal_format = fbo_format.GetFormat();
     GLenum depth = GL_DEPTH_COMPONENT16; /* for WebGL */
@@ -254,10 +265,12 @@ Framebuffer::Framebuffer(ivec2 size, FramebufferFormat fbo_format)
 #else
     glBindFramebufferOES(GL_FRAMEBUFFER_OES, 0);
 #endif
+#endif // defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
 }
 
 Framebuffer::~Framebuffer()
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
 #if defined GL_VERSION_1_1 || defined GL_ES_VERSION_2_0
     glDeleteFramebuffers(1, &m_data->m_fbo);
 #else
@@ -268,13 +281,16 @@ Framebuffer::~Framebuffer()
     if (m_data->m_depth != GL_INVALID_ENUM)
         glDeleteRenderbuffers(1, &m_data->m_depth);
 #endif
+#endif // defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     delete m_data;
 }
 
 TextureUniform Framebuffer::GetTextureUniform() const
 {
     TextureUniform ret;
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     ret.m_flags = m_data->m_texture;
+#endif
     return ret;
 }
 
@@ -288,8 +304,10 @@ old_image Framebuffer::GetImage() const
     old_image ret(m_data->m_size);
 
     u8vec4 *buffer = ret.lock<PixelFormat::RGBA_8>();
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glReadPixels(0, 0, m_data->m_size.x, m_data->m_size.y,
                  GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+#endif
     ret.unlock(buffer);
 
     return ret;
@@ -302,7 +320,7 @@ void Framebuffer::Bind()
 
 #if defined GL_VERSION_1_1 || defined GL_ES_VERSION_2_0
     glBindFramebuffer(GL_FRAMEBUFFER, m_data->m_fbo);
-#else
+#elif defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glBindFramebufferOES(GL_FRAMEBUFFER_OES, m_data->m_fbo);
 #endif
 
@@ -322,7 +340,7 @@ void Framebuffer::Unbind()
 
 #if defined GL_VERSION_1_1 || defined GL_ES_VERSION_2_0
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-#else
+#elif defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glBindFramebufferOES(GL_FRAMEBUFFER_OES, 0);
 #endif
 
@@ -331,7 +349,4 @@ void Framebuffer::Unbind()
     m_data->m_bound = false;
 }
 
-} /* namespace lol */
-
-#endif
-
+} // namespace lol

@@ -1,7 +1,7 @@
 dnl
 dnl  Lol Engine
 dnl
-dnl  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+dnl  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 dnl
 dnl  Lol Engine is free software. It comes without any warranty, to
 dnl  the extent permitted by applicable law. You can redistribute it
@@ -92,6 +92,7 @@ fi
 if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
   PKG_CHECK_MODULES(GL, gl,
    [ac_cv_my_have_gl="yes"
+    ac_cv_my_stop_looking_for_gl="yes"
     AC_DEFINE(HAVE_GL_2X, 1, Define to 1 if GL 2.x is available)],
    [:])
 fi

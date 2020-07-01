@@ -25,6 +25,8 @@
 
 #include "engine/entity.h"
 
+#include "lolgl.h"
+
 /* External declaration for LolFx files. */
 #define LOLFX_RESOURCE_DECLARE(name) \
     extern "C" char const *lolfx_resource_##name
@@ -467,5 +469,4 @@ public:
     std::string Build();
 };
 
-} /* namespace lol */
-
+} // namespace lol

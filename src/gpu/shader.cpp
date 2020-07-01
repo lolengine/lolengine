@@ -30,9 +30,6 @@
 
 #include "lolgl.h"
 
-// FIXME: fine-tune this define
-#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
-
 namespace lol
 {
 
@@ -83,9 +80,11 @@ class ShaderData
 private:
     std::string m_name;
 
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     GLuint prog_id, vert_id, frag_id;
     // Benlitz: using a simple array could be faster since there is never more than a few attribute locations to store
     std::map<uint64_t, GLint> attrib_locations;
+#endif
     std::map<uint64_t, bool> attrib_errors;
     size_t vert_crc, frag_crc;
 
@@ -221,6 +220,7 @@ Shader::Shader(std::string const &name,
 {
     data->m_name = name;
 
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     char errbuf[4096];
     std::string shader_code;
     GLchar const *gl_code;
@@ -355,11 +355,16 @@ Shader::Shader(std::string const &name,
     }
 
     delete[] name_buffer;
+#endif
 }
 
 int Shader::GetAttribCount() const
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     return (int)data->attrib_locations.size();
+#else
+    return 0;
+#endif
 }
 
 ShaderAttrib Shader::GetAttribLocation(VertexUsage usage, int index) const
@@ -368,6 +373,7 @@ ShaderAttrib Shader::GetAttribLocation(VertexUsage usage, int index) const
     ret.m_flags = (uint64_t)(uint16_t)usage.ToScalar() << 16;
     ret.m_flags |= (uint64_t)(uint16_t)index;
 
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     GLint l = -1;
 
     if (!try_get(data->attrib_locations, ret.m_flags, l))
@@ -381,6 +387,7 @@ ShaderAttrib Shader::GetAttribLocation(VertexUsage usage, int index) const
         }
     }
     ret.m_flags |= (uint64_t)(uint32_t)l << 32;
+#endif
     return ret;
 }
 
@@ -391,8 +398,10 @@ ShaderUniform Shader::GetUniformLocation(std::string const& uni) const
 ShaderUniform Shader::GetUniformLocation(char const *uni) const
 {
     ShaderUniform ret;
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     ret.frag = (uintptr_t)glGetUniformLocation(data->prog_id, uni);
     ret.vert = 0;
+#endif
     return ret;
 }
 
@@ -402,63 +411,87 @@ ShaderUniform Shader::GetUniformLocation(char const *uni) const
 
 void Shader::SetUniform(ShaderUniform const &uni, int i)
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glUniform1i((GLint)uni.frag, i);
+#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, ivec2 const &v)
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glUniform2i((GLint)uni.frag, v.x, v.y);
+#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, ivec3 const &v)
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glUniform3i((GLint)uni.frag, v.x, v.y, v.z);
+#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, ivec4 const &v)
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glUniform4i((GLint)uni.frag, v.x, v.y, v.z, v.w);
+#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, float f)
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glUniform1f((GLint)uni.frag, f);
+#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, vec2 const &v)
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glUniform2fv((GLint)uni.frag, 1, &v[0]);
+#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, vec3 const &v)
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glUniform3fv((GLint)uni.frag, 1, &v[0]);
+#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, vec4 const &v)
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glUniform4fv((GLint)uni.frag, 1, &v[0]);
+#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, mat2 const &m)
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glUniformMatrix2fv((GLint)uni.frag, 1, GL_FALSE, &m[0][0]);
+#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, mat3 const &m)
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glUniformMatrix3fv((GLint)uni.frag, 1, GL_FALSE, &m[0][0]);
+#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, mat4 const &m)
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glUniformMatrix4fv((GLint)uni.frag, 1, GL_FALSE, &m[0][0]);
+#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, TextureUniform tex, int index)
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glActiveTexture(GL_TEXTURE0 + index);
     glBindTexture(GL_TEXTURE_2D, (int)tex.m_flags);
+#endif
     SetUniform(uni, index);
 }
 
@@ -468,42 +501,56 @@ void Shader::SetUniform(ShaderUniform const &uni, TextureUniform tex, int index)
 
 void Shader::SetUniform(ShaderUniform const &uni, std::vector<float> const &v)
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glUniform1fv((GLint)uni.frag, (GLsizei)v.size(), &v[0]);
+#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, std::vector<vec2> const &v)
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glUniform2fv((GLint)uni.frag, (GLsizei)v.size(), &v[0][0]);
+#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, std::vector<vec3> const &v)
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glUniform3fv((GLint)uni.frag, (GLsizei)v.size(), &v[0][0]);
+#endif
 }
 
 void Shader::SetUniform(ShaderUniform const &uni, std::vector<vec4> const &v)
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glUniform4fv((GLint)uni.frag, (GLsizei)v.size(), &v[0][0]);
+#endif
 }
 
 void Shader::Bind() const
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glUseProgram(data->prog_id);
+#endif
 }
 
 void Shader::Unbind() const
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     /* FIXME: untested */
     glUseProgram(0);
+#endif
 }
 
 Shader::~Shader()
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glDetachShader(data->prog_id, data->vert_id);
     glDetachShader(data->prog_id, data->frag_id);
     glDeleteShader(data->vert_id);
     glDeleteShader(data->frag_id);
     glDeleteProgram(data->prog_id);
+#endif
 }
 
 /* Try to detect shader compiler features */
@@ -516,7 +563,7 @@ int ShaderData::GetVersion()
 #if defined HAVE_GLES_2X
         /* GLES 2.x supports #version 100, that's all. */
         return 100;
-#else
+#elif defined LOL_USE_GLEW || defined HAVE_GL_2X
         char buf[4096];
         GLsizei len;
 
@@ -1055,7 +1102,4 @@ std::string ShaderBuilder::Build()
     return code;
 }
 
-} /* namespace lol */
-
-#endif
-
+} // namespace lol

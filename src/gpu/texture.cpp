@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -13,9 +13,6 @@
 #include <lol/engine-internal.h>
 
 #include "lolgl.h"
-
-// FIXME: fine-tune this define
-#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
 
 namespace lol
 {
@@ -32,9 +29,11 @@ class TextureData
     ivec2 m_size;
     PixelFormat m_format;
 
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     GLuint m_texture;
     GLint m_internal_format;
     GLenum m_gl_format, m_gl_type;
+#endif
     int m_bytes_per_elem;
 };
 
@@ -53,6 +52,7 @@ Texture::Texture(ivec2 size, PixelFormat format)
     m_data->m_size = size;
     m_data->m_format = format;
 
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     static struct
     {
         GLint internal_format;
@@ -91,35 +91,45 @@ Texture::Texture(ivec2 size, PixelFormat format)
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+#endif
 }
 
 TextureUniform Texture::GetTextureUniform() const
 {
     TextureUniform ret;
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     ret.m_flags = m_data->m_texture;
+#endif
     return ret;
 }
 
 void Texture::Bind()
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glBindTexture(GL_TEXTURE_2D, m_data->m_texture);
+#endif
 }
 
 void Texture::SetData(void *data)
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glTexImage2D(GL_TEXTURE_2D, 0, m_data->m_internal_format,
                  m_data->m_size.x, m_data->m_size.y, 0,
                  m_data->m_gl_format, m_data->m_gl_type, data);
+#endif
 }
 
 void Texture::SetSubData(ivec2 origin, ivec2 size, void *data)
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glTexSubImage2D(GL_TEXTURE_2D, 0, origin.x, origin.y, size.x, size.y,
                     m_data->m_gl_format, m_data->m_gl_type, data);
+#endif
 }
 
 void Texture::SetMagFiltering(TextureMagFilter filter)
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glBindTexture(GL_TEXTURE_2D, m_data->m_texture);
     GLenum gl_filter;
     switch (filter)
@@ -133,10 +143,12 @@ void Texture::SetMagFiltering(TextureMagFilter filter)
             break;
     }
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, gl_filter);
+#endif
 }
 
 void Texture::SetMinFiltering(TextureMinFilter filter)
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glBindTexture(GL_TEXTURE_2D, m_data->m_texture);
     GLenum gl_filter;
     switch (filter)
@@ -162,21 +174,23 @@ void Texture::SetMinFiltering(TextureMinFilter filter)
             break;
     }
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, gl_filter);
+#endif
 }
 
 void Texture::GenerateMipmaps()
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glBindTexture(GL_TEXTURE_2D, m_data->m_texture);
     glGenerateMipmap(GL_TEXTURE_2D);
+#endif
 }
 
 Texture::~Texture()
 {
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
     glDeleteTextures(1, &m_data->m_texture);
+#endif
     delete m_data;
 }
 
-} /* namespace lol */
-
-#endif
-
+} // namespace lol
