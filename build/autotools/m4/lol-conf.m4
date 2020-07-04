@@ -250,15 +250,14 @@ AC_DEFUN([LOL_AC_FINI], [
 dnl  How to use the Lol Engine outside this tree
 LOL_CFLAGS="$LOL_CFLAGS $SDL_CFLAGS $GL_CFLAGS $EGL_CFLAGS $LIBPNG_CFLAGS"
 LOL_LIBS="$LOL_LIBS $SDL_LIBS $GL_LIBS $EGL_LIBS $LIBPNG_LIBS $D3D_LIBS"
-LOL_DEPS="${LOL_DEPS} \$(lol_builddir)/src/liblol-core.a"
-LOL_LUA_DEPS="${LOL_LUA_DEPS} \$(lol_builddir)/src/3rdparty/liblol-lua.a"
+LOL_DEPS="${LOL_DEPS} \$(lol_builddir)/src/liblol-core.la"
+LOL_LUA_DEPS="${LOL_LUA_DEPS} \$(lol_builddir)/src/3rdparty/liblol-lua.la"
 
 dnl  How to use the Lol Engine inside this tree
 AM_CPPFLAGS="${AM_CPPFLAGS} -I\$(lol_srcdir)/lol/include"
 AM_CPPFLAGS="${AM_CPPFLAGS} -I\$(lol_srcdir)/src"
 AM_CPPFLAGS="${AM_CPPFLAGS} -DLOL_CONFIG_SOURCESUBDIR=\\\"\$(subdir)\\\""
 AM_CPPFLAGS="${AM_CPPFLAGS} ${LOL_CFLAGS}"
-AM_LDFLAGS="${AM_LDFLAGS} ${LOL_DEPS}"
 AM_LDFLAGS="${AM_LDFLAGS} ${LOL_LIBS}"
 
 dnl  Extra flags

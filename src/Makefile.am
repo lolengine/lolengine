@@ -1,13 +1,14 @@
 
 include $(top_srcdir)/build/autotools/common.am
 
-SUBDIRS = 3rdparty data . t
+SUBDIRS = . 3rdparty data t
 
-noinst_LIBRARIES = liblol-core.a
+# Convenience library; needs to be marked noinst
+noinst_LTLIBRARIES = liblol-core.la
 
 EXTRA_DIST += lol-core.vcxproj lol-core.vcxproj.filters
 
-liblol_core_a_SOURCES = \
+liblol_core_la_SOURCES = \
     lolgl.h scene.cpp scene.h font.cpp font.h \
     textureimage.cpp textureimage.h textureimage-private.h \
     tileset.cpp tileset.h video.cpp video.h \
@@ -24,7 +25,7 @@ liblol_core_a_SOURCES = \
     $(sdl_sources) \
     $(d3d9_sources) \
     $(android_sources)
-liblol_core_a_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/3rdparty/lua/src
+liblol_core_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/3rdparty/lua/src
 
 liblol_core_headers = \
     lol/engine-internal.h lol/engine.h lol/public.h lol/extras.h \

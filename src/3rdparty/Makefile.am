@@ -1,15 +1,15 @@
 
 include $(top_srcdir)/build/autotools/common.am
 
-noinst_LIBRARIES = liblol-lua.a
+noinst_LTLIBRARIES = liblol-lua.la
 
 # Only remove flags that were actually set, because we don't know
 # what the compiler actually accepts.
 disable_cflags_lua = $(filter $(AM_CPPFLAGS:-W%=-Wno-%), \
     -Wno-cast-qual)
 
-liblol_lua_a_SOURCES = $(lua_sources)
-liblol_lua_a_CPPFLAGS = $(AM_CPPFLAGS) -DLUA_ANSI $(disable_cflags_lua)
+liblol_lua_la_SOURCES = $(lua_sources)
+liblol_lua_la_CPPFLAGS = $(AM_CPPFLAGS) -DLUA_ANSI $(disable_cflags_lua)
 
 include lol-lua.am
 
