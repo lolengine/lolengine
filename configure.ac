@@ -30,11 +30,10 @@ AC_PROG_CXX
 AC_PROG_CXXCPP
 AC_PROG_RANLIB
 
-LOL_AC_INIT()
+LT_INIT([win32-dll])
+LT_LANG([C++])
 
-AC_LIBTOOL_WIN32_DLL
-AM_PROG_LIBTOOL
-AC_LIBTOOL_CXX
+LOL_AC_INIT()
 
 dnl Ensure an error is thrown if pkg-config M4 files are not found.
 m4_pattern_allow([^PKG_CONFIG_LIBDIR$])

@@ -29,25 +29,25 @@ endif
 test_base_SOURCES = test-common.cpp \
     base/avl_tree.cpp base/array.cpp base/enum.cpp base/map.cpp base/array2d.cpp base/array3d.cpp \
     base/narray.cpp base/string.cpp base/types.cpp
-test_base_DEPENDENCIES = @LOL_DEPS@
+test_base_LDFLAGS = @LOL_DEPS@
 
 test_math_SOURCES = test-common.cpp \
     math/box.cpp math/cmplx.cpp math/half.cpp math/matrix.cpp math/quat.cpp math/rand.cpp \
     math/real.cpp math/rotation.cpp math/trig.cpp math/vector.cpp math/polynomial.cpp \
     math/noise/simplex.cpp math/bigint.cpp math/sqt.cpp math/numbers.cpp
-test_math_DEPENDENCIES = @LOL_DEPS@
+test_math_LDFLAGS = @LOL_DEPS@
 
 test_sys_SOURCES = test-common.cpp \
     sys/thread.cpp sys/timer.cpp
-test_sys_DEPENDENCIES = @LOL_DEPS@
+test_sys_LDFLAGS = @LOL_DEPS@
 
 test_image_SOURCES = test-common.cpp \
     image/color.cpp image/image.cpp
-test_image_DEPENDENCIES = @LOL_DEPS@
+test_image_LDFLAGS = @LOL_DEPS@
 
 test_entity_SOURCES = test-common.cpp \
     entity/camera.cpp
-test_entity_DEPENDENCIES = @LOL_DEPS@
+test_entity_LDFLAGS = @LOL_DEPS@
 
 EXTRA_DIST += data/gradient.png
 

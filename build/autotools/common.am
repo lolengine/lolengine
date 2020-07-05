@@ -56,6 +56,16 @@ SUFFIXES += .lolfx
 	> $@.lolfx.cpp && \
 	$(CXXCOMPILE) -xc++ -c $@.lolfx.cpp -o $@ && \
 	exit=0 || exit=1; rm -f $@.lolfx.cpp ; exit "$$exit"
+.lolfx.lo:
+	$(lolfx_gen)
+	$(AM_V_at)(echo "char const *"; \
+         echo "lolfx_resource_$(basename $(filter %.lolfx, $^))" | $(SED) 's/[^a-zA-Z0-9_]/_/g'; \
+	 echo "="; \
+	 $(SED) 's/"/\\"/g' $(filter %.lolfx, $^) | $(SED) 's/\([^\r]*\).*/"\1\\n"/'; \
+	 echo ";") \
+	> $@.lolfx.cpp && \
+	$(LIBTOOL) --tag=CXX --mode=compile $(CXX) -c $@.lolfx.cpp -o $@ && \
+	exit=0 || exit=1; rm -f $@.lolfx.cpp ; exit "$$exit"
 
 # Disable on the fly compilation because emscripten doesn't support it
 #	| $(CXXCOMPILE) -xc++ -c - -o $@

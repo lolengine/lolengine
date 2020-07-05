@@ -7,5 +7,5 @@ endif
 
 sample_SOURCES = sample.cpp
 sample_CPPFLAGS = $(AM_CPPFLAGS)
-sample_DEPENDENCIES = @LOL_DEPS@
+sample_LDFLAGS = $(AM_LDFLAGS) @LOL_DEPS@
 

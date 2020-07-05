@@ -26,6 +26,7 @@ liblol_core_la_SOURCES = \
     $(d3d9_sources) \
     $(android_sources)
 liblol_core_la_CPPFLAGS = $(AM_CPPFLAGS) -I$(srcdir)/3rdparty/lua/src
+liblol_core_la_LDFLAGS = $(AM_LDFLAGS)
 
 liblol_core_headers = \
     lol/engine-internal.h lol/engine.h lol/public.h lol/extras.h \

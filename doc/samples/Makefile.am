@@ -17,12 +17,12 @@ endif
 
 bluenoise_SOURCES = bluenoise.cpp
 bluenoise_CPPFLAGS = $(AM_CPPFLAGS)
-bluenoise_DEPENDENCIES = @LOL_DEPS@
+bluenoise_LDFLAGS = @LOL_DEPS@
 
 benchsuite_SOURCES = benchsuite.cpp \
     benchmark/vector.cpp benchmark/half.cpp benchmark/real.cpp
 benchsuite_CPPFLAGS = $(AM_CPPFLAGS)
-benchsuite_DEPENDENCIES = @LOL_DEPS@
+benchsuite_LDFLAGS = @LOL_DEPS@
 
 btphystest_SOURCES = \
     btphystest.cpp btphystest.h physicobject.h \
@@ -34,8 +34,7 @@ btphystest_SOURCES = \
     \
     front_camera_sprite.lolfx
 btphystest_CPPFLAGS = $(AM_CPPFLAGS)
-btphystest_DEPENDENCIES = @LOL_DEPS@
-btphystest_LDFLAGS = $(AM_LDFLAGS)
+btphystest_LDFLAGS = $(AM_LDFLAGS) @LOL_DEPS@
 if LOL_USE_EMSCRIPTEN
 btphystest_LDFLAGS += \
     --preload-file data/CatsSheet.png \
@@ -44,5 +43,5 @@ endif
 
 simplex_SOURCES = simplex.cpp
 simplex_CPPFLAGS = $(AM_CPPFLAGS)
-simplex_DEPENDENCIES = @LOL_DEPS@
+simplex_LDFLAGS = @LOL_DEPS@
 
