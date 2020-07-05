@@ -14,7 +14,7 @@ liblol_core_la_SOURCES = \
     tileset.cpp tileset.h video.cpp video.h \
     profiler.cpp profiler.h text.cpp text.h emitter.cpp emitter.h \
     messageservice.cpp messageservice.h \
-    gradient.cpp gradient.h gradient.lolfx \
+    gradient.cpp gradient.h gpu/grad.lolfx \
     platform.cpp platform.h sprite.cpp sprite.h camera.cpp camera.h \
     light.cpp light.h \
     \
