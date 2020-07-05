@@ -14,7 +14,7 @@
 
 #include <memory>
 
-LOLFX_RESOURCE_DECLARE(grad);
+LOLFX_RESOURCE_DECLARE(gpu_grad);
 
 namespace lol
 {
@@ -71,7 +71,7 @@ void Gradient::tick_draw(float seconds, Scene &scene)
 
     if (!data->shader)
     {
-        data->shader = Shader::Create(LOLFX_RESOURCE_NAME(grad));
+        data->shader = Shader::Create(LOLFX_RESOURCE_NAME(gpu_grad));
 
         data->m_vbo = std::make_shared<VertexBuffer>(sizeof(vertex));
         data->m_cbo = std::make_shared<VertexBuffer>(sizeof(colors));
