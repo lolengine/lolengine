@@ -12,10 +12,11 @@
 
 #pragma once
 
-#include <string>
-#include <vector>
-#include <unordered_set>
-#include <memory>
+#include <string>        // std::string
+#include <vector>        // std::vector
+#include <unordered_set> // std::unordered_set
+#include <deque>         // std::deque
+#include <memory>        // std::shared_ptr
 
 namespace lol
 {
@@ -195,6 +196,11 @@ public:
     static std::shared_ptr<class device::mouse> mouse() { return get()->m_mouse; }
     static std::shared_ptr<class device::joystick> joystick(int n);
 
+    // Drag and drop
+    static bool has_dnd() { return get()->m_dnd.size() != 0; }
+    static std::string get_dnd() { auto ret = get()->m_dnd.back(); get()->m_dnd.pop_back(); return ret; }
+    static void push_dnd(std::string s) { get()->m_dnd.push_front(s); }
+
     static std::vector<key> const &all_keys();
     static std::string const &key_to_name(key k);
     static key name_to_key(std::string const &name);
@@ -207,6 +213,7 @@ private:
     std::shared_ptr<device::keyboard> m_keyboard;
     std::shared_ptr<device::mouse> m_mouse;
     std::map<int, std::shared_ptr<device::joystick>> m_joysticks;
+    std::deque<std::string> m_dnd;
 };
 
 //

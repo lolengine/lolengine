@@ -207,6 +207,11 @@ void SdlInput::tick(float seconds)
             }
             break;
 
+        case SDL_DROPFILE:
+            input::push_dnd(event.drop.file);
+            SDL_free(event.drop.file);
+            break;
+
         //case SDL_TEXTEDITING: //TODO: handle that?
         case SDL_TEXTINPUT:
             keyboard->internal_add_text(event.text.text);

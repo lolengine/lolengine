@@ -81,6 +81,9 @@ sdl::app_display::app_display(char const *title, ivec2 res)
     }
     SDL_GetWindowSize(m_window, &res.x, &res.y);
 
+    // Enable drag-and-drop
+    SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
+
     m_glcontext = SDL_GL_CreateContext(m_window);
     SDL_GL_MakeCurrent(m_window, m_glcontext);
     msg::info("created GL context: %s\n", glGetString(GL_VERSION));
