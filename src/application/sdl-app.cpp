@@ -53,7 +53,7 @@ sdl::app_display::app_display(char const *title, ivec2 res)
     // This seems to fix a bug we used to have at context swap. Maybe remove one day.
     SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
 
-#if !defined __EMSCRIPTEN__
+#if !defined __EMSCRIPTEN__ && !defined HAVE_GLES_2X
     // Ask for GL 3.2 at least
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);

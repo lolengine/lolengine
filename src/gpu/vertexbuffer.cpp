@@ -16,7 +16,7 @@
 #include "lolgl.h"
 
 // FIXME: can we make this more generic?
-#if defined __EMSCRIPTEN__
+#if defined __EMSCRIPTEN__ || defined HAVE_GLES_2X
     #define glGenVertexArrays glGenVertexArraysOES
     #define glBindVertexArray glBindVertexArrayOES
     #define glDeleteVertexArrays glDeleteVertexArraysOES
