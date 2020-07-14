@@ -44,7 +44,7 @@ namespace lol
 
 std::vector<Scene*> Scene::g_scenes;
 
-static std::vector<SceneDisplay*> g_scene_displays;
+static std::vector<ApplicationDisplay*> g_scene_displays;
 
 static inline void gpu_marker(char const *message)
 {
@@ -57,44 +57,8 @@ static inline void gpu_marker(char const *message)
 }
 
 //
-// Public SceneDisplay class
+// Primitive implementation class
 //
-
-void SceneDisplay::Add(SceneDisplay* display)
-{
-    g_scene_displays.push_back(display);
-}
-
-size_t SceneDisplay::GetCount()
-{
-    return g_scene_displays.size();
-}
-
-SceneDisplay* SceneDisplay::GetDisplay(int index)
-{
-    return g_scene_displays[index];
-}
-
-void SceneDisplay::DestroyAll()
-{
-    for (SceneDisplay* display : g_scene_displays)
-        delete display;
-    g_scene_displays.clear();
-}
-
-void SceneDisplay::Enable()
-{
-    // TODO: PROFILER STUFF
-}
-
-void SceneDisplay::Disable()
-{
-    // TODO: PROFILER STUFF
-}
-
-/*
- * Primitive implementation class
- */
 
 void PrimitiveSource::Render(Scene &)
 {
@@ -177,6 +141,16 @@ Scene::~Scene()
     /* FIXME: also, make sure we do not add code to Reset() that will
      * reallocate stuff */
     Reset();
+}
+
+void Scene::add_display(ApplicationDisplay* display)
+{
+    g_scene_displays.push_back(display);
+}
+
+ApplicationDisplay *Scene::get_display(int index)
+{
+    return g_scene_displays[index];
 }
 
 void Scene::AddNew(ivec2 size)
@@ -433,26 +407,17 @@ std::vector<Light *> const &Scene::GetLights()
     return m_tile_api.m_lights;
 }
 
-void Scene::SetDisplay(SceneDisplay* display)
-{
-    m_display = display;
-}
-
-void Scene::EnableDisplay()
-{
-    // If no display has been set, use the default one
-    if (!m_display)
-        SetDisplay(SceneDisplay::GetDisplay());
-    m_display->Enable();
-}
-
-void Scene::DisableDisplay()
-{
-    assert(m_display);
-    m_display->Disable();
-}
-
 static bool do_pp = true;
+
+void Scene::start_frame()
+{
+    get_display(0)->start_frame();
+}
+
+void Scene::end_frame()
+{
+    get_display(0)->end_frame();
+}
 
 void Scene::pre_render(float)
 {

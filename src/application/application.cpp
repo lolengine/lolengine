@@ -47,9 +47,6 @@ protected:
     ivec2 resolution() const { return ivec2(0); }
     void set_resolution(ivec2) {}
     void SetPosition(ivec2) {}
-
-    void Enable() {}
-    void Disable() {}
 };
 
 class null_app
@@ -66,7 +63,6 @@ public:
     void Tick() {}
 };
 
-//-----------------------------------------------------------------------------
 class ApplicationDisplayData
 {
     friend class ApplicationDisplay;
@@ -84,7 +80,7 @@ protected:
 #elif LOL_USE_SDL
     sdl::app_display display;
 #elif HAVE_GLES_2X
-    /* FIXME: this macro is only deactivated if we include "lolgl.h" */
+    // FIXME: this macro is only deactivated if we include "lolgl.h"
     //NOT HANDLED YET
 #else
     null_display display;
@@ -108,33 +104,24 @@ ivec2 ApplicationDisplay::resolution() const
 
 void ApplicationDisplay::set_resolution(ivec2 res)
 {
-    super::set_resolution(res);
-
     data->display.set_resolution(res);
 }
 
 void ApplicationDisplay::SetPosition(ivec2 position)
 {
-    super::SetPosition(position);
-
     data->display.SetPosition(position);
 }
 
-void ApplicationDisplay::Enable()
+void ApplicationDisplay::start_frame()
 {
-    super::Enable();
-
-    data->display.Enable();
+    data->display.start_frame();
 }
 
-void ApplicationDisplay::Disable()
+void ApplicationDisplay::end_frame()
 {
-    data->display.Disable();
-
-    super::Disable();
+    data->display.end_frame();
 }
 
-//-----------------------------------------------------------------------------
 class ApplicationData
 {
     friend class Application;
@@ -150,7 +137,7 @@ class ApplicationData
 #elif LOL_USE_SDL
     sdl::app app;
 #elif HAVE_GLES_2X
-    /* FIXME: this macro is only deactivated if we include "lolgl.h" */
+    // FIXME: this macro is only deactivated if we include "lolgl.h"
     EglApp app;
 #else
     null_app app;
@@ -166,16 +153,16 @@ static void AppCallback()
 }
 #endif
 
-/*
- * Public Application class
- */
+//
+// Public Application class
+//
 
 Application::Application(char const *name, ivec2 res, float framerate)
 {
     ticker::setup(framerate);
 
     auto app_display = new ApplicationDisplay(name, res);
-    SceneDisplay::Add(app_display);
+    Scene::add_display(app_display);
     data = new ApplicationData(name, app_display->resolution(), framerate);
 }
 
@@ -211,5 +198,4 @@ Application::~Application()
     delete data;
 }
 
-} /* namespace lol */
-
+} // namespace lol

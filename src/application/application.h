@@ -18,33 +18,30 @@
 namespace lol
 {
 
-//-----------------------------------------------------------------------------
 class ApplicationDisplayData;
 
-class ApplicationDisplay : public SceneDisplay
+class ApplicationDisplay
 {
-    typedef SceneDisplay super;
     friend class Scene;
 
 public:
     ApplicationDisplay(char const *name, ivec2 resolution);
     virtual ~ApplicationDisplay();
 
-    /* pos/size/... methods */
+    virtual void start_frame();
+    virtual void end_frame();
+
+    // pos/size/... methods
     virtual void set_resolution(ivec2 resolution);
     virtual ivec2 resolution() const;
 
     virtual void SetPosition(ivec2 position);
 
-protected:
-    virtual void Enable();
-    virtual void Disable();
-
 private:
     ApplicationDisplayData *data;
 };
 
-//-----------------------------------------------------------------------------
+
 class ApplicationData;
 
 class Application
@@ -63,5 +60,5 @@ private:
     ApplicationData *data;
 };
 
-} /* namespace lol */
+} // namespace lol
 

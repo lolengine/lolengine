@@ -22,6 +22,7 @@
 #include <cstring> // memset
 #include <tuple>   // std::tuple
 #include <vector>  // std::vector
+#include <array>   // std::array
 
 namespace lol
 {

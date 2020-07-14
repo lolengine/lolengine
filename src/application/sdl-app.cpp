@@ -50,6 +50,10 @@ sdl::app_display::app_display(char const *title, ivec2 res)
         }
     }
 
+    msg::debug("found %d displays\n", SDL_GetNumVideoDisplays());
+    for (int i = 0; i < SDL_GetNumVideoDisplays(); ++i)
+        msg::debug("%d: %s\n", i, SDL_GetDisplayName(i));
+
     // This seems to fix a bug we used to have at context swap. Maybe remove one day.
     SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
 
@@ -127,7 +131,7 @@ void sdl::app_display::SetPosition(ivec2 position)
 #endif
 }
 
-void sdl::app_display::Enable()
+void sdl::app_display::start_frame()
 {
 #if LOL_USE_SDL
     //TODO: Should we do that: ?
@@ -135,28 +139,17 @@ void sdl::app_display::Enable()
 #endif
 }
 
-void sdl::app_display::Disable()
+void sdl::app_display::end_frame()
 {
 #if LOL_USE_SDL
     SDL_GL_SwapWindow(m_window);
 #endif
 }
 
-#if LOL_USE_SDL
-int SceneDisplay::GetPhysicalCount()
-{
-    return SDL_GetNumVideoDisplays();
-}
+//
+// Public sdl::app class
+//
 
-const char* SceneDisplay::GetPhysicalName(int index)
-{
-    return SDL_GetDisplayName(index);
-}
-#endif
-
-/*
- * Public sdl::app class
- */
 sdl::app::app(char const *title, ivec2 res, float fps)
 {
     (void)title;

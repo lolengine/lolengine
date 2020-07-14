@@ -398,8 +398,8 @@ void ticker_data::DrawThreadTick()
     {
         Scene& scene = Scene::GetScene(idx);
 
-        /* Enable display */
-        scene.EnableDisplay();
+        // Enable display
+        scene.start_frame();
 
         scene.pre_render(data->deltatime);
 
@@ -444,8 +444,8 @@ void ticker_data::DrawThreadTick()
 
         scene.post_render(data->deltatime);
 
-        /* Disable display */
-        scene.DisableDisplay();
+        // Disable display
+        scene.end_frame();
     }
 
     Profiler::Stop(Profiler::STAT_TICK_DRAW);

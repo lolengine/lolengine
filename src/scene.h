@@ -21,6 +21,7 @@
 #include "light.h"
 #include "camera.h"
 #include "mesh/mesh.h"
+#include "application/application.h"
 
 #include <lol/gpu/renderer.h>
 #include <lol/gpu/framebuffer.h>
@@ -72,35 +73,6 @@ private:
     bool m_fire_and_forget = false;
 };
 
-class SceneDisplay
-{
-    friend class Scene;
-
-public:
-    SceneDisplay() { }
-    virtual ~SceneDisplay() { }
-
-    /* pos/size/... methods */
-    virtual void set_resolution(ivec2) { }
-    virtual ivec2 resolution() const { return ivec2(0); }
-
-    virtual void SetPosition(ivec2) { }
-
-    /* TODO: Should that be there or in Video ? */
-    static void Add(SceneDisplay* display);
-    static size_t GetCount();
-    static SceneDisplay* GetDisplay(int index = 0);
-    static void DestroyAll();
-
-    /* Implement these in the platform section */
-    static int GetPhysicalCount();
-    static const char* GetPhysicalName(int index = 0);
-
-//protected:
-    virtual void Enable();
-    virtual void Disable();
-};
-
 class Scene
 {
     friend class Video;
@@ -119,6 +91,10 @@ private:
     static void DestroyAll();
 public:
     static size_t GetCount();
+
+    static void add_display(ApplicationDisplay* display);
+    static ApplicationDisplay* get_display(int index = 0);
+
     static bool IsReady(int index = 0);
     static Scene& GetScene(int index = 0);
 
@@ -241,12 +217,10 @@ public:
     void AddLight(Light *light);
     std::vector<Light *> const &GetLights();
 
-    /* === Render stuff === */
-    void SetDisplay(SceneDisplay* display);
-    void EnableDisplay();
-    void DisableDisplay();
-
     void resize(ivec2 size);
+
+    void start_frame();
+    void end_frame();
 
     void pre_render(float seconds);
     void render(float seconds);
@@ -270,11 +244,7 @@ private:
     static uint64_t g_used_id;
     uint64_t m_mask_id = 0;
 
-    /* Scene display: if none has been set to the scene,
-     * the default one created by the app will be used */
-    SceneDisplay* m_display = nullptr;
-
-    /** Render buffers: where to render to. */
+    // Render buffers: where to render to.
     std::shared_ptr<Framebuffer> m_renderbuffer[4];
 
     struct postprocess

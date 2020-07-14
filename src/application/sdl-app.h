@@ -27,10 +27,7 @@
 #   endif
 #endif
 
-namespace lol
-{
-
-namespace sdl
+namespace lol::sdl
 {
 
 class app
@@ -57,8 +54,8 @@ protected:
 
     void SetPosition(ivec2 position);
 
-    void Enable();
-    void Disable();
+    void start_frame();
+    void end_frame();
 
 private:
 #if LOL_USE_SDL
@@ -67,7 +64,4 @@ private:
 #endif
 };
 
-} /* namespace sdl */
-
-} /* namespace lol */
-
+} // namespace lol::sdl
