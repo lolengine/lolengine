@@ -2,9 +2,9 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="LolMacros">
     <LolDir>$(SolutionDir)</LolDir>
-    <LolDir Condition="Exists('$(SolutionDir)\lol')">$(SolutionDir)\lol</LolDir>
-    <LolDir Condition="Exists('$(SolutionDir)\lolengine')">$(SolutionDir)\lolengine</LolDir>
-    <LolDir Condition="Exists('$(SolutionDir)\src\3rdparty\lolengine')">$(SolutionDir)\src\3rdparty\lolengine</LolDir>
+    <LolDir Condition="Exists('$(SolutionDir)\lol\lol.sln')">$(SolutionDir)\lol</LolDir>
+    <LolDir Condition="Exists('$(SolutionDir)\lolengine\lol.sln')">$(SolutionDir)\lolengine</LolDir>
+    <LolDir Condition="Exists('$(SolutionDir)\src\3rdparty\lolengine\lol.sln')">$(SolutionDir)\src\3rdparty\lolengine</LolDir>
   </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|NX64">
