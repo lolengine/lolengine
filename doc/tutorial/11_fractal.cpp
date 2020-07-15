@@ -572,14 +572,13 @@ int main(int argc, char **argv)
     ivec2 window_size(640, 480);
 
     sys::init(argc, argv);
-    Application app("Tutorial 11: Fractal", window_size, 60.0f);
+    app app("Tutorial 11: Fractal", window_size, 60.0f);
 
     new DebugFps(5, 5);
     new Fractal(window_size);
     //new DebugRecord("fractalol.ogm", 60.0f);
 
-    app.Run();
+    app.run();
 
     return EXIT_SUCCESS;
 }
-

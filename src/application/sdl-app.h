@@ -19,6 +19,8 @@
 
 #include <lol/vector>
 
+#include "application/application.h"
+
 #if LOL_USE_SDL
 #   if HAVE_SDL2_SDL_H
 #      include <SDL2/SDL.h>
@@ -30,32 +32,30 @@
 namespace lol::sdl
 {
 
-class app
+class app_data : public lol::app::data
 {
 public:
-    app(char const *title, ivec2 res, float fps);
-    virtual ~app();
+    app_data(char const *title, ivec2 res, float fps);
+    virtual ~app_data();
 
-    void ShowPointer(bool show);
-    void Tick();
+    virtual void show_pointer(bool show);
+    virtual void tick();
 };
 
-class app_display
+class app_display : public lol::app::display
 {
-    friend class lol::ApplicationDisplay;
-
 public:
     app_display(char const *title, ivec2 resolution);
     virtual ~app_display();
 
 protected:
+    void start_frame();
+    void end_frame();
+
     virtual void set_resolution(ivec2 resolution);
     virtual ivec2 resolution() const;
 
-    void SetPosition(ivec2 position);
-
-    void start_frame();
-    void end_frame();
+    void set_position(ivec2 position);
 
 private:
 #if LOL_USE_SDL

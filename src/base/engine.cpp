@@ -1,4 +1,4 @@
-﻿//
+//
 //  Lol Engine
 //
 //  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
@@ -10,17 +10,21 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
-#pragma once
+#include <lol/engine-internal.h>
 
-//
-// The main header (for internal engine use only)
-// ----------------------------------------------
-//
+#include "lolgl.h"
 
-// Include this as early as possible
-#if HAVE_CONFIG_H
-#   include "config.h"
+namespace lol::engine
+{
+
+bool has_opengl()
+{
+#if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
+    return true;
+#else
+    return false;
 #endif
+}
 
-#include "engine.h"
+} // namespace lol::engine
 

@@ -137,10 +137,9 @@ int main(int argc, char **argv)
 {
     sys::init(argc, argv);
 
-    Application app("Tutorial 08: Framebuffer Object", ivec2(512, 512), 60.0f);
+    app app("Tutorial 08: Framebuffer Object", ivec2(512, 512), 60.0f);
     new FBO();
-    app.Run();
+    app.run();
 
     return EXIT_SUCCESS;
 }
-

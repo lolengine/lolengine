@@ -34,168 +34,70 @@
 namespace lol
 {
 
-class null_display
-{
-    friend class ApplicationDisplayData;
-    friend class ApplicationDisplay;
-
-public:
-    null_display(char const *, ivec2) {}
-    virtual ~null_display() {}
-
-protected:
-    ivec2 resolution() const { return ivec2(0); }
-    void set_resolution(ivec2) {}
-    void SetPosition(ivec2) {}
-};
-
-class null_app
-{
-public:
-    null_app(char const *, ivec2, float)
-    {
-        msg::error("no display library (SDL, EGL…) available");
-        assert(false);
-    }
-    virtual ~null_app() {}
-
-    void ShowPointer(bool) {}
-    void Tick() {}
-};
-
-class ApplicationDisplayData
-{
-    friend class ApplicationDisplay;
-
-    ApplicationDisplayData(char const *name, ivec2 res)
-        : display(name, res)
-    { }
-
-protected:
-#if __ANDROID__
-    // TODO: implement this
-    null_display display;
-#elif __NX__
-    nx::app_display display;
-#elif LOL_USE_SDL
-    sdl::app_display display;
-#elif HAVE_GLES_2X
-    // FIXME: this macro is only deactivated if we include "lolgl.h"
-    //NOT HANDLED YET
-#else
-    null_display display;
-#endif
-};
-
-ApplicationDisplay::ApplicationDisplay(char const *name, ivec2 res)
-{
-    data = new ApplicationDisplayData(name, res);
-}
-
-ApplicationDisplay::~ApplicationDisplay()
-{
-    delete data;
-}
-
-ivec2 ApplicationDisplay::resolution() const
-{
-    return data->display.resolution();
-}
-
-void ApplicationDisplay::set_resolution(ivec2 res)
-{
-    data->display.set_resolution(res);
-}
-
-void ApplicationDisplay::SetPosition(ivec2 position)
-{
-    data->display.SetPosition(position);
-}
-
-void ApplicationDisplay::start_frame()
-{
-    data->display.start_frame();
-}
-
-void ApplicationDisplay::end_frame()
-{
-    data->display.end_frame();
-}
-
-class ApplicationData
-{
-    friend class Application;
-
-    ApplicationData(char const *name, ivec2 res, float framerate)
-        : app(name, res, framerate)
-    { }
-
-#if __ANDROID__
-    AndroidApp app;
-#elif __NX__
-    nx::app app;
-#elif LOL_USE_SDL
-    sdl::app app;
-#elif HAVE_GLES_2X
-    // FIXME: this macro is only deactivated if we include "lolgl.h"
-    EglApp app;
-#else
-    null_app app;
-#endif
-};
-
 #if __EMSCRIPTEN__
-static Application *g_app;
-
-static void AppCallback()
-{
-    g_app->Tick();
-}
+static app *g_app;
+static void AppCallback() { g_app->Tick(); }
 #endif
 
 //
-// Public Application class
+// Public app class
 //
 
-Application::Application(char const *name, ivec2 res, float framerate)
+app::app(char const *name, ivec2 res, float framerate)
 {
     ticker::setup(framerate);
 
-    auto app_display = new ApplicationDisplay(name, res);
-    Scene::add_display(app_display);
-    data = new ApplicationData(name, app_display->resolution(), framerate);
+    // FIXME: this should probably be a call to e.g. nx::app::init() which
+    // creates the proper shared pointers.
+
+#if __ANDROID__
+    // TODO: implement m_display
+    m_data = std::make_shared<AndroidAppData>(name, res, framerate);
+#elif __NX__
+    m_display = std::make_shared<nx::app_display>(name, res);
+    m_data = std::make_shared<nx::app_data>(name, m_display->resolution(), framerate);
+#elif LOL_USE_SDL
+    m_display = std::make_shared<sdl::app_display>(name, res);
+    m_data = std::make_shared<sdl::app_data>(name, m_display->resolution(), framerate);
+#elif HAVE_GLES_2X
+    // FIXME: this macro is only deactivated if we include "lolgl.h"
+    //NOT HANDLED YET
+    m_data = std::make_shared<EglAppData>(name, res, framerate);
+#endif
+    Scene::add_display(m_display);
 }
 
-bool Application::MustTick()
+app::~app()
 {
-    return !Ticker::Finished();
+    ticker::teardown();
 }
 
-void Application::Tick()
+bool app::must_tick()
 {
-    data->app.Tick();
+    return !ticker::Finished();
 }
 
-void Application::Run()
+void app::tick()
+{
+    if (m_data)
+        m_data->tick();
+}
+
+void app::run()
 {
 #if __EMSCRIPTEN__
     g_app = this;
     emscripten_set_main_loop(AppCallback, 0, 1);
 #else
-    while (MustTick())
-        Tick();
+    while (must_tick())
+        tick();
 #endif
 }
 
-void Application::ShowPointer(bool show)
+void app::show_pointer(bool show)
 {
-    data->app.ShowPointer(show);
-}
-
-Application::~Application()
-{
-    ticker::teardown();
-    delete data;
+    if (m_data)
+        m_data->show_pointer(show);
 }
 
 } // namespace lol

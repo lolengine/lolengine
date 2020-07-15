@@ -1,64 +1,70 @@
 //
-// Lol Engine
+//  Lol Engine
 //
-// Copyright: (c) 2010-2011 Sam Hocevar <sam@hocevar.net>
-//   This program is free software; you can redistribute it and/or
-//   modify it under the terms of the Do What The Fuck You Want To
-//   Public License, Version 2, as published by Sam Hocevar. See
-//   http://www.wtfpl.net/ for more details.
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
+//
+//  Lol Engine is free software. It comes without any warranty, to
+//  the extent permitted by applicable law. You can redistribute it
+//  and/or modify it under the terms of the Do What the Fuck You Want
+//  to Public License, Version 2, as published by the WTFPL Task Force.
+//  See http://www.wtfpl.net/ for more details.
 //
 
 #pragma once
 
+#include <memory> // std::shared_ptr
+
 //
-// The Application class
-// ---------------------
+// The app class
+// —————————————
 //
 
 namespace lol
 {
 
-class ApplicationDisplayData;
-
-class ApplicationDisplay
-{
-    friend class Scene;
-
-public:
-    ApplicationDisplay(char const *name, ivec2 resolution);
-    virtual ~ApplicationDisplay();
-
-    virtual void start_frame();
-    virtual void end_frame();
-
-    // pos/size/... methods
-    virtual void set_resolution(ivec2 resolution);
-    virtual ivec2 resolution() const;
-
-    virtual void SetPosition(ivec2 position);
-
-private:
-    ApplicationDisplayData *data;
-};
-
-
-class ApplicationData;
-
-class Application
+class app
 {
 public:
-    Application(char const *name, ivec2 resolution, float framerate);
-    ~Application();
+    app(char const *name, ivec2 resolution, float framerate);
+    ~app();
 
-    bool MustTick();
-    void Tick();
-    void Run();
+    bool must_tick();
+    void tick();
+    void run();
 
-    void ShowPointer(bool show);
+    // UI interface
+    void show_pointer(bool show);
+
+    // Display interface
+    class display
+    {
+    public:
+        virtual ~display() {}
+
+        virtual void start_frame() {}
+        virtual void end_frame() {}
+
+        // pos/size/... methods
+        virtual void set_resolution(ivec2 resolution) {}
+        virtual ivec2 resolution() const { return ivec2(0); }
+
+        virtual void set_position(ivec2 position) {}
+    };
+
+    // Internal data
+    class data
+    {
+    public:
+        data() {}
+        virtual ~data() {}
+
+        virtual void show_pointer(bool show) {}
+        virtual void tick() {}
+    };
 
 private:
-    ApplicationData *data;
+    std::shared_ptr<display> m_display;
+    std::shared_ptr<data> m_data;
 };
 
 } // namespace lol
-

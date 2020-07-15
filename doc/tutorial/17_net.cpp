@@ -55,9 +55,9 @@ int main(int argc, char **argv)
 {
     lol::sys::init(argc, argv);
 
-    lol::Application app("Tutorial 17: HTTP", lol::ivec2(800, 600), 60.0f);
+    lol::app app("Tutorial 17: HTTP", lol::ivec2(800, 600), 60.0f);
     new demo();
-    app.Run();
+    app.run();
 
     return 0;
 }

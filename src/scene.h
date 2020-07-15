@@ -79,8 +79,8 @@ private:
 public:
     static size_t GetCount();
 
-    static void add_display(ApplicationDisplay* display);
-    static ApplicationDisplay* get_display(int index = 0);
+    static void add_display(std::shared_ptr<app::display> display);
+    static std::shared_ptr<app::display> get_display(int index = 0);
 
     static bool IsReady(int index = 0);
     static Scene& GetScene(int index = 0);

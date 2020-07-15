@@ -19,23 +19,19 @@
 
 #include <lol/vector>
 
-namespace lol
+#include "application/application.h"
+
+namespace lol::egl
 {
 
-class EglAppData;
-
-class EglApp
+class app_data : public app::data
 {
 public:
-    EglApp(char const *title, ivec2 res, float fps);
-    virtual ~EglApp();
+    app_data(char const *title, ivec2 res, float fps);
+    virtual ~app_data();
 
-    void ShowPointer(bool show);
-    void Tick();
-
-private:
-    EglAppData *data;
+    void show_pointer(bool show);
+    void tick();
 };
 
-} /* namespace lol */
-
+} // namespace lol

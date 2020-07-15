@@ -223,11 +223,11 @@ int main(int argc, char **argv)
 {
     sys::init(argc, argv);
 
-    Application app("Tutorial 14: Lolua Demo", ivec2(800, 600), 60.0f);
+    app app("Tutorial 14: Lolua Demo", ivec2(800, 600), 60.0f);
 
     new LoluaDemo();
 
-    app.Run();
+    app.run();
     return EXIT_SUCCESS;
 }
 

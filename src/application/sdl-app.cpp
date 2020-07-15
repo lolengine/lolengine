@@ -54,23 +54,29 @@ sdl::app_display::app_display(char const *title, ivec2 res)
     for (int i = 0; i < SDL_GetNumVideoDisplays(); ++i)
         msg::debug("%d: %s\n", i, SDL_GetDisplayName(i));
 
-    // This seems to fix a bug we used to have at context swap. Maybe remove one day.
-    SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
+    int flags = SDL_WINDOW_RESIZABLE;
+
+    if (engine::has_opengl())
+    {
+        flags |= SDL_WINDOW_OPENGL;
+
+        // This seems to fix a bug we used to have at context swap. Maybe remove one day.
+        SDL_GL_SetAttribute(SDL_GL_SHARE_WITH_CURRENT_CONTEXT, 1);
 
 #if !defined __EMSCRIPTEN__ && !defined HAVE_GLES_2X
-    // Ask for GL 3.2 at least
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+        // Ask for GL 3.2 at least
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 #if __APPLE__
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 #endif
 
 #if LOL_BUILD_DEBUG
-    SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
 #endif
 #endif
+    }
 
-    int flags = SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE;
     if (window_size == ivec2(0))
         flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
     msg::debug("initialising main window\n");
@@ -88,12 +94,15 @@ sdl::app_display::app_display(char const *title, ivec2 res)
     // Enable drag-and-drop
     SDL_EventState(SDL_DROPFILE, SDL_ENABLE);
 
-    m_glcontext = SDL_GL_CreateContext(m_window);
-    SDL_GL_MakeCurrent(m_window, m_glcontext);
-    msg::info("created GL context: %s\n", glGetString(GL_VERSION));
+    if (engine::has_opengl())
+    {
+        m_glcontext = SDL_GL_CreateContext(m_window);
+        SDL_GL_MakeCurrent(m_window, m_glcontext);
+        msg::info("created GL context: %s\n", glGetString(GL_VERSION));
 
-    /* Initialise everything */
-    Video::Setup(res); //TODO ?? Should it be here ?
+        // Initialise everything
+        Video::Setup(res); //TODO ?? Should it be here ?
+    }
 #endif
 }
 
@@ -102,7 +111,9 @@ sdl::app_display::~app_display()
 #if LOL_USE_SDL
     if (m_window)
     {
-        SDL_GL_DeleteContext(m_glcontext);
+        if (engine::has_opengl())
+            SDL_GL_DeleteContext(m_glcontext);
+
         SDL_DestroyWindow(m_window);
     }
 #endif
@@ -124,7 +135,7 @@ void sdl::app_display::set_resolution(ivec2 resolution)
 #endif
 }
 
-void sdl::app_display::SetPosition(ivec2 position)
+void sdl::app_display::set_position(ivec2 position)
 {
 #if LOL_USE_SDL
     SDL_SetWindowPosition(m_window, position.x, position.y);
@@ -135,14 +146,16 @@ void sdl::app_display::start_frame()
 {
 #if LOL_USE_SDL
     //TODO: Should we do that: ?
-    SDL_GL_MakeCurrent(m_window, m_glcontext);
+    if (engine::has_opengl())
+        SDL_GL_MakeCurrent(m_window, m_glcontext);
 #endif
 }
 
 void sdl::app_display::end_frame()
 {
 #if LOL_USE_SDL
-    SDL_GL_SwapWindow(m_window);
+    if (engine::has_opengl())
+        SDL_GL_SwapWindow(m_window);
 #endif
 }
 
@@ -150,7 +163,7 @@ void sdl::app_display::end_frame()
 // Public sdl::app class
 //
 
-sdl::app::app(char const *title, ivec2 res, float fps)
+sdl::app_data::app_data(char const *title, ivec2 res, float fps)
 {
     (void)title;
 #if LOL_USE_SDL
@@ -170,25 +183,24 @@ sdl::app::app(char const *title, ivec2 res, float fps)
 #endif
 }
 
-void sdl::app::ShowPointer(bool show)
-{
-#if LOL_USE_SDL
-    SDL_ShowCursor(show ? 1 : 0);
-#endif
-}
-
-void sdl::app::Tick()
-{
-    /* Tick the renderer, show the frame and clamp to desired framerate. */
-    Ticker::tick_draw();
-}
-
-sdl::app::~app()
+sdl::app_data::~app_data()
 {
 #if LOL_USE_SDL
     SDL_Quit();
 #endif
 }
 
-} /* namespace lol */
+void sdl::app_data::show_pointer(bool show)
+{
+#if LOL_USE_SDL
+    SDL_ShowCursor(show ? 1 : 0);
+#endif
+}
 
+void sdl::app_data::tick()
+{
+    // Tick the renderer, show the frame and clamp to desired framerate.
+    ticker::tick_draw();
+}
+
+} // namespace lol

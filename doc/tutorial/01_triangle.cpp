@@ -77,12 +77,11 @@ int main(int argc, char **argv)
 {
     sys::init(argc, argv);
 
-    Application app("Tutorial 1: Triangle", ivec2(640, 480), 60.0f);
+    app app("Tutorial 1: Triangle", ivec2(640, 480), 60.0f);
 
     new DebugFps(5, 5);
     new Triangle();
 
-    app.Run();
+    app.run();
     return EXIT_SUCCESS;
 }
-

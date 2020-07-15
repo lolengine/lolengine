@@ -119,11 +119,10 @@ int main(int argc, char **argv)
 {
     sys::init(argc, argv);
 
-    Application app("Tutorial 4: Texture", ivec2(1280, 720), 60.0f);
+    app app("Tutorial 4: Texture", ivec2(1280, 720), 60.0f);
 
     new TextureDemo();
 
-    app.Run();
+    app.run();
     return EXIT_SUCCESS;
 }
-

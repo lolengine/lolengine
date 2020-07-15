@@ -43,7 +43,7 @@ namespace lol
 
 class EglAppData
 {
-    friend class EglApp;
+    friend class app_data;
 
 private:
 #if defined LOL_USE_EGL && !defined __ANDROID__
@@ -61,11 +61,10 @@ private:
 };
 
 /*
- * Public EglApp class
+ * Public app_data class
  */
 
-EglApp::EglApp(char const *title, ivec2 res, float fps) :
-    data(new EglAppData())
+egl::app_data::app_data(char const *title, ivec2 res, float fps)
 {
 #if defined LOL_USE_EGL && !defined __ANDROID__
 #   if defined HAVE_BCM_HOST_H
@@ -258,13 +257,13 @@ EglApp::EglApp(char const *title, ivec2 res, float fps) :
     (void)fps;
 }
 
-void EglApp::ShowPointer(bool show)
+void egl::app_data::show_pointer(bool show)
 {
     /* FIXME: unimplemented (do we have a mouse pointer anyway? */
     (void)show;
 }
 
-void EglApp::Tick()
+void egl::app_data::tick()
 {
     /* Tick the renderer, show the frame and clamp to desired framerate. */
     ticker::tick_draw();
@@ -273,7 +272,7 @@ void EglApp::Tick()
 #endif
 }
 
-EglApp::~EglApp()
+egl::app_data::~app_data()
 {
 #if defined LOL_USE_EGL && !defined __ANDROID__
     eglDestroyContext(data->egl_dpy, data->egl_ctx);
@@ -286,7 +285,6 @@ EglApp::~EglApp()
     XCloseDisplay(data->dpy);
 #   endif
 #endif
-    delete data;
 }
 
 } /* namespace lol */

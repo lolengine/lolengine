@@ -1,8 +1,8 @@
 //
 //  Lol Engine — Shader builder tutorial
 //
-//  Copyright © 2002—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
-//            © 2012—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2012—2020 Sam Hocevar <sam@hocevar.net>
+//            © 2002—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -121,11 +121,10 @@ int main(int argc, char **argv)
 {
     sys::init(argc, argv);
 
-    Application app("Tutorial 13: Shader Builder", ivec2(1280, 720), 60.0f);
+    app app("Tutorial 13: Shader Builder", ivec2(1280, 720), 60.0f);
 
     new ShaderBuilderDemo();
 
-    app.Run();
+    app.run();
     return EXIT_SUCCESS;
 }
-

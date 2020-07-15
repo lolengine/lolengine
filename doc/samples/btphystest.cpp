@@ -758,12 +758,11 @@ int main(int argc, char **argv)
 {
     sys::init(argc, argv);
 
-    Application app("BtPhysTest", ivec2(1280, 960), 60.0f);
+    app app("BtPhysTest", ivec2(1280, 960), 60.0f);
 
     new BtPhysTest(argc > 1);
-    app.ShowPointer(false);
-
-    app.Run();
+    app.show_pointer(false);
+    app.run();
 
     return EXIT_SUCCESS;
 }

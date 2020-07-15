@@ -102,10 +102,9 @@ int main(int argc, char **argv)
 {
     sys::init(argc, argv);
 
-    Application app("Tutorial 6: Sprite", ivec2(640, 480), 60.0f);
+    app app("Tutorial 6: Sprite", ivec2(640, 480), 60.0f);
     new SpriteTutorial();
-    app.Run();
+    app.run();
 
     return EXIT_SUCCESS;
 }
-

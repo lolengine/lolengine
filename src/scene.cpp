@@ -44,7 +44,7 @@ namespace lol
 
 std::vector<Scene*> Scene::g_scenes;
 
-static std::vector<ApplicationDisplay*> g_scene_displays;
+static std::vector<std::shared_ptr<app::display>> g_scene_displays;
 
 static inline void gpu_marker(char const *message)
 {
@@ -137,12 +137,12 @@ Scene::~Scene()
     Reset();
 }
 
-void Scene::add_display(ApplicationDisplay* display)
+void Scene::add_display(std::shared_ptr<app::display> display)
 {
     g_scene_displays.push_back(display);
 }
 
-ApplicationDisplay *Scene::get_display(int index)
+std::shared_ptr<app::display> Scene::get_display(int index)
 {
     return g_scene_displays[index];
 }

@@ -169,10 +169,9 @@ int main(int argc, char **argv)
 {
     sys::init(argc, argv);
 
-    Application app("Tutorial 5: EasyMesh", ivec2(960, 600), 60.0f);
+    app app("Tutorial 5: EasyMesh", ivec2(960, 600), 60.0f);
     new EasyMeshTutorial();
-    app.Run();
+    app.run();
 
     return EXIT_SUCCESS;
 }
-
