@@ -33,7 +33,7 @@ PrimitiveMesh::~PrimitiveMesh()
 {
 }
 
-void PrimitiveMesh::Render(Scene& scene, std::shared_ptr<PrimitiveSource> primitive)
+void PrimitiveMesh::Render(Scene& scene)
 {
     /* TODO: this should be the main entry for rendering of all
     * primitives found in the scene graph. When we have one. */
@@ -41,9 +41,6 @@ void PrimitiveMesh::Render(Scene& scene, std::shared_ptr<PrimitiveSource> primit
     std::shared_ptr<Shader> shader;
     ShaderUniform u_model, u_modelview, u_normalmat, uni_tex, uni_texsize;
     ShaderAttrib a_pos, a_tex;
-
-    /* FIXME: ignored for now */
-    (void)primitive;
 
     {
         /* If this primitive uses a new shader, update attributes */
@@ -100,5 +97,4 @@ void PrimitiveMesh::Render(Scene& scene, std::shared_ptr<PrimitiveSource> primit
     }
 }
 
-} /* namespace lol */
-
+} // namespace lol

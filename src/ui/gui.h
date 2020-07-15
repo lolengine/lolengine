@@ -95,8 +95,8 @@ protected:
     {
     public:
         primitive() { }
-        virtual void Render(Scene& scene, std::shared_ptr<PrimitiveSource> primitive);
+        virtual void Render(Scene& scene);
     };
 };
 
-} /* namespace lol */
+} // namespace lol

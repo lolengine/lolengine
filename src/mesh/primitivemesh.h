@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -27,12 +27,11 @@ class PrimitiveMesh : public PrimitiveRenderer
 public:
     PrimitiveMesh(std::shared_ptr<SubMesh> submesh, mat4 const &matrix);
     virtual ~PrimitiveMesh();
-    virtual void Render(Scene& scene, std::shared_ptr<PrimitiveSource> primitive);
+    virtual void Render(Scene& scene);
 
 private:
     std::shared_ptr<SubMesh> m_submesh;
     mat4 m_matrix;
 };
 
-} /* namespace lol */
-
+} // namespace lol

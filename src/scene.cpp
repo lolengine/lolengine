@@ -60,11 +60,7 @@ static inline void gpu_marker(char const *message)
 // Primitive implementation class
 //
 
-void PrimitiveSource::Render(Scene &)
-{
-}
-
-void PrimitiveRenderer::Render(Scene &, std::shared_ptr<PrimitiveSource>)
+void PrimitiveRenderer::Render(Scene &)
 {
 }
 
@@ -73,8 +69,6 @@ void PrimitiveRenderer::Render(Scene &, std::shared_ptr<PrimitiveSource>)
  */
 
 uint64_t Scene::g_used_id = 1;
-mutex Scene::g_prim_mutex;
-std::map<uintptr_t, std::vector<std::shared_ptr<PrimitiveSource>>> Scene::g_prim_sources;
 
 /*
  * Public Scene class
@@ -246,79 +240,6 @@ void Scene::Reset()
 
     m_tile_api.m_bufs.clear();
     m_tile_api.m_lights.clear();
-}
-
-//
-// Primitive source stuff
-//
-
-int Scene::HasPrimitiveSource(uintptr_t key)
-{
-    int count;
-    g_prim_mutex.lock();
-    {
-        count = int(g_prim_sources[key].size());
-    }
-    g_prim_mutex.unlock();
-    return count;
-}
-
-int Scene::AddPrimitiveSource(uintptr_t key, std::shared_ptr<PrimitiveSource> source)
-{
-    int count;
-    g_prim_mutex.lock();
-    {
-        count = int(g_prim_sources[key].size());
-        g_prim_sources[key].push_back(source);
-    }
-    g_prim_mutex.unlock();
-    return count;
-}
-
-void Scene::SetPrimitiveSource(int index, uintptr_t key, std::shared_ptr<PrimitiveSource> source)
-{
-    assert(source);
-    assert(index >= 0);
-
-    // Keep reference to old source until AFTER we release the lock
-    std::shared_ptr<PrimitiveSource> old;
-
-    g_prim_mutex.lock();
-    {
-        if (index < int(g_prim_sources[key].size()))
-            old = g_prim_sources[key][index];
-        else
-            g_prim_sources[key].resize(index + 1);
-        g_prim_sources[key][index] = source;
-    }
-    g_prim_mutex.unlock();
-}
-
-void Scene::ReleasePrimitiveSource(int index, uintptr_t key)
-{
-    std::shared_ptr<PrimitiveSource> old;
-    g_prim_mutex.lock();
-    {
-        assert(0 <= index && index < int(g_prim_sources[key].size()));
-        old = g_prim_sources[key][index];
-        remove_at(g_prim_sources[key], index);
-    }
-    g_prim_mutex.unlock();
-}
-
-void Scene::ReleaseAllPrimitiveSources(uintptr_t key)
-{
-    // Delete oldies AFTER having released the lock
-    std::vector<std::shared_ptr<PrimitiveSource>> oldies;
-
-    g_prim_mutex.lock();
-    {
-        oldies.reserve(g_prim_sources[key].size());
-        for (auto source : g_prim_sources[key])
-            oldies.push_back(source);
-        g_prim_sources[key].clear();
-    }
-    g_prim_mutex.unlock();
 }
 
 //
@@ -541,10 +462,7 @@ void Scene::render_primitives()
         for (size_t idx = 0; idx < m_prim_renderers[key].size(); ++idx)
         {
             /* TODO: Not sure if thread compliant */
-            std::shared_ptr<PrimitiveSource> source;
-            if (idx < g_prim_sources[key].size())
-                source = g_prim_sources[key][idx];
-            m_prim_renderers[key][idx]->Render(*this, source);
+            m_prim_renderers[key][idx]->Render(*this);
         }
     }
 }

@@ -291,9 +291,9 @@ bool gui::release_draw()
     return true;
 }
 
-void gui::primitive::Render(Scene& scene, std::shared_ptr<PrimitiveSource> prim)
+void gui::primitive::Render(Scene& scene)
 {
-    (void)scene; (void)prim;
+    (void)scene;
 
     ImGui::Render();
     ImGui::EndFrame();
@@ -430,4 +430,3 @@ void gui::render_draw_lists(ImDrawData* draw_data)
 
     m_shader->Unbind();
 }
-

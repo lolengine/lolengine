@@ -36,22 +36,9 @@
 namespace lol
 {
 
-//-----------------------------------------------------------------------------
-class PrimitiveSource
-{
-    friend class Scene;
-
-public:
-    PrimitiveSource() { }
-    virtual ~PrimitiveSource() { }
-    virtual void Render(Scene& scene);
-
-private:
-};
-
-/*
- * A quick and dirty Tile structure for 2D blits
- */
+//
+// A quick and dirty Tile structure for 2D blits
+//
 
 struct Tile
 {
@@ -67,7 +54,7 @@ class PrimitiveRenderer
 public:
     PrimitiveRenderer() { }
     virtual ~PrimitiveRenderer() { }
-    virtual void Render(Scene& scene, std::shared_ptr<PrimitiveSource> primitive);
+    virtual void Render(Scene& scene);
 
 private:
     bool m_fire_and_forget = false;
@@ -113,51 +100,11 @@ public:
 
     std::shared_ptr<Renderer> get_renderer() { return m_renderer; }
 
+    // FIXME: this PrimitiveRenderer stuff was never really finished; maybe remove it?
+
     /* ============================== */
 #   define _KEY_IDX (uintptr_t)key /* TOUKY: I don't like that. hash should be fixed to handle these custom stuff */
     /* ============================== */
-private:
-    int HasPrimitiveSource(uintptr_t key);
-    int AddPrimitiveSource(uintptr_t key, std::shared_ptr<class PrimitiveSource> source);
-    void SetPrimitiveSource(int index, uintptr_t key, std::shared_ptr<class PrimitiveSource> source);
-    void ReleasePrimitiveSource(int index, uintptr_t key);
-    void ReleaseAllPrimitiveSources(uintptr_t key);
-public:
-    /* === Primitive source stuff === */
-    /* Returns the number of primitive source set to the given entity */
-    template <typename T>
-    int HasPrimitiveSource(T* key)
-    {
-        return HasPrimitiveSource(_KEY_IDX);
-    }
-    /* Add a primitive sources linked to the given entity
-     * Returns the slot number */
-    template <typename T>
-    int AddPrimitiveSource(T* key, std::shared_ptr<class PrimitiveSource> source)
-    {
-        return AddPrimitiveSource(_KEY_IDX, source);
-    }
-    /* Update the primitive source at index linked to the given entity
-     * Deletes the old one
-     * The slot is kept even if source == nullptr */
-    template <typename T>
-    void SetPrimitiveSource(int index, T* key, std::shared_ptr<class PrimitiveSource> source)
-    {
-        SetPrimitiveSource(index, _KEY_IDX, source);
-    }
-    /* Remove primitive source at index set to the given entity */
-    template <typename T>
-    void ReleasePrimitiveSource(int index, T* key)
-    {
-        ReleasePrimitiveSource(index, _KEY_IDX);
-    }
-    /* Remove all primitive source set to the given entity */
-    template <typename T>
-    void ReleaseAllPrimitiveSources(T* key)
-    {
-        ReleaseAllPrimitiveSources(_KEY_IDX);
-    }
-
 private:
     int HasPrimitiveRenderer(uintptr_t key);
 
@@ -265,8 +212,6 @@ private:
      * - Marked Fire&Forget
      * - Scene is destroyed */
     std::map<uintptr_t, std::vector<std::shared_ptr<PrimitiveRenderer>>> m_prim_renderers;
-    static std::map<uintptr_t, std::vector<std::shared_ptr<PrimitiveSource>>> g_prim_sources;
-    static mutex g_prim_mutex;
 
     Camera *m_default_cam;
     std::vector<Camera *> m_camera_stack;
