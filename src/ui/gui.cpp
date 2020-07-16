@@ -207,7 +207,7 @@ void gui::tick_game(float seconds)
     }
 
     // Setup display size (every frame to accommodate for window resizing)
-    auto video_size = vec2(Video::GetSize());
+    auto video_size = vec2(video::size());
     io.DisplaySize = video_size;
 
     // Setup time step
@@ -321,7 +321,7 @@ void gui::render_draw_lists(ImDrawData* draw_data)
     if (draw_data == nullptr)
         return;
 
-    vec2 size = vec2(Video::GetSize());
+    vec2 size = vec2(video::size());
     float alpha = 1.f;
     mat4 ortho = mat4::ortho(size.x * alpha, size.y * alpha, -1000.f, 1000.f)
         * mat4::lookat(vec3::axis_z, vec3::zero, vec3::axis_y)

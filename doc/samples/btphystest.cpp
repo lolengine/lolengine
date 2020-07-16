@@ -94,14 +94,14 @@ void BtPhysTest::InitApp()
     m_camera->SetView(vec3(70.f, 50.f, 0.f),
                       vec3(0.f, 0.f, 0.f),
                       vec3(0, 1, 0));
-    m_camera->SetProjection(radians(60.f), .1f, 1000.f, (float)Video::GetSize().x, (float)Video::GetSize().y / (float)Video::GetSize().x);
+    m_camera->SetProjection(radians(60.f), .1f, 1000.f, (float)video::size().x, (float)video::size().y / (float)video::size().x);
     m_target_timer = TARGET_TIMER;
     m_cam_target = -1;
 #else
     m_camera->SetView(vec3(50.f, 50.f, 0.f),
                       vec3(0.f, 0.f, 0.f),
                       vec3(0, 1, 0));
-    m_camera->SetProjection(radians(45.f), .1f, 1000.f, (float)Video::GetSize().x, (float)Video::GetSize().y / (float)Video::GetSize().x);
+    m_camera->SetProjection(radians(45.f), .1f, 1000.f, (float)video::size().x, (float)video::size().y / (float)video::size().x);
 #endif
     Scene& scene = Scene::GetScene();
     scene.PushCamera(m_camera);
@@ -758,11 +758,11 @@ int main(int argc, char **argv)
 {
     sys::init(argc, argv);
 
-    app app("BtPhysTest", ivec2(1280, 960), 60.0f);
+    auto app = app::init("BtPhysTest", ivec2(1280, 960), 60.0f);
 
     new BtPhysTest(argc > 1);
-    app.show_pointer(false);
-    app.run();
+    app->show_pointer(false);
+    app->run();
 
     return EXIT_SUCCESS;
 }

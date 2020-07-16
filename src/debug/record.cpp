@@ -68,7 +68,7 @@ void DebugRecord::tick_draw(float seconds, Scene &scene)
 {
     entity::tick_draw(seconds, scene);
 
-    ivec2 size = Video::GetSize();
+    ivec2 size = video::size();
 
     if (m_data->m_size != size)
     {
@@ -88,7 +88,7 @@ void DebugRecord::tick_draw(float seconds, Scene &scene)
     if (m_data->m_sequence)
     {
         uint32_t *buffer = new uint32_t[size.x * size.y];
-        Video::Capture(buffer);
+        video::capture(buffer);
         pipi_feed_sequence(m_data->m_sequence, (uint8_t *)buffer,
                            size.x, size.y);
         delete[] buffer;

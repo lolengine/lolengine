@@ -34,12 +34,12 @@ namespace lol
 /*
 * Public sdl::app_display class
 */
-sdl::app_display::app_display(char const *title, ivec2 res)
+sdl::app::app(char const *title, ivec2 res)
 {
 #if LOL_USE_SDL
     ivec2 window_size = res;
 
-    /* Initialise SDL */
+    // Initialise SDL
     if (!SDL_WasInit(0))
     {
         msg::debug("initialising SDL\n");
@@ -101,12 +101,22 @@ sdl::app_display::app_display(char const *title, ivec2 res)
         msg::info("created GL context: %s\n", glGetString(GL_VERSION));
 
         // Initialise everything
-        Video::Setup(res); //TODO ?? Should it be here ?
+        video::init(res); //TODO ?? Should it be here ?
     }
+
+#if defined LOL_USE_XINPUT
+    /* Prefer D3d9 for joysticks on Windows, because the X360 pads are not
+     * advertised with the proper number of axes. */
+    new D3d9Input();
+#endif
+
+    new SdlInput(res.x, res.y);
+
+    audio::init();
 #endif
 }
 
-sdl::app_display::~app_display()
+sdl::app::~app()
 {
 #if LOL_USE_SDL
     if (m_window)
@@ -116,10 +126,17 @@ sdl::app_display::~app_display()
 
         SDL_DestroyWindow(m_window);
     }
+
+    SDL_Quit();
 #endif
 }
 
-ivec2 sdl::app_display::resolution() const
+std::shared_ptr<app::display> sdl::app::get_display()
+{
+    return shared_from_this();
+}
+
+ivec2 sdl::app::resolution() const
 {
     ivec2 ret(0);
 #if LOL_USE_SDL
@@ -128,21 +145,21 @@ ivec2 sdl::app_display::resolution() const
     return ret;
 }
 
-void sdl::app_display::set_resolution(ivec2 resolution)
+void sdl::app::set_resolution(ivec2 resolution)
 {
 #if LOL_USE_SDL
     SDL_SetWindowSize(m_window, resolution.x, resolution.y);
 #endif
 }
 
-void sdl::app_display::set_position(ivec2 position)
+void sdl::app::set_position(ivec2 position)
 {
 #if LOL_USE_SDL
     SDL_SetWindowPosition(m_window, position.x, position.y);
 #endif
 }
 
-void sdl::app_display::start_frame()
+void sdl::app::start_frame()
 {
 #if LOL_USE_SDL
     //TODO: Should we do that: ?
@@ -151,7 +168,7 @@ void sdl::app_display::start_frame()
 #endif
 }
 
-void sdl::app_display::end_frame()
+void sdl::app::end_frame()
 {
 #if LOL_USE_SDL
     if (engine::has_opengl())
@@ -159,45 +176,14 @@ void sdl::app_display::end_frame()
 #endif
 }
 
-//
-// Public sdl::app class
-//
-
-sdl::app_data::app_data(char const *title, ivec2 res, float fps)
-{
-    (void)title;
-#if LOL_USE_SDL
-    ivec2 window_size = res;
-    ivec2 screen_size = res;
-
-    audio::init();
-
-    /* Autoreleased objects */
-#if defined LOL_USE_XINPUT
-    /* Prefer D3d9 for joysticks on Windows, because the X360 pads are not
-     * advertised with the proper number of axes. */
-    new D3d9Input();
-#endif
-
-    new SdlInput(screen_size.x, screen_size.y);
-#endif
-}
-
-sdl::app_data::~app_data()
-{
-#if LOL_USE_SDL
-    SDL_Quit();
-#endif
-}
-
-void sdl::app_data::show_pointer(bool show)
+void sdl::app::show_pointer(bool show)
 {
 #if LOL_USE_SDL
     SDL_ShowCursor(show ? 1 : 0);
 #endif
 }
 
-void sdl::app_data::tick()
+void sdl::app::tick()
 {
     // Tick the renderer, show the frame and clamp to desired framerate.
     ticker::tick_draw();

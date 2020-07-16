@@ -121,10 +121,10 @@ int main(int argc, char **argv)
 {
     sys::init(argc, argv);
 
-    app app("Tutorial 13: Shader Builder", ivec2(1280, 720), 60.0f);
+    auto app = app::init("Tutorial 13: Shader Builder", ivec2(1280, 720), 60.0f);
 
     new ShaderBuilderDemo();
 
-    app.run();
+    app->run();
     return EXIT_SUCCESS;
 }

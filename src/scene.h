@@ -62,7 +62,7 @@ private:
 
 class Scene
 {
-    friend class Video;
+    friend class video;
 
 private:
     static std::vector<Scene*> g_scenes;

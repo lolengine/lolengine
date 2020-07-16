@@ -169,9 +169,9 @@ int main(int argc, char **argv)
 {
     sys::init(argc, argv);
 
-    app app("Tutorial 5: EasyMesh", ivec2(960, 600), 60.0f);
+    auto app = app::init("Tutorial 5: EasyMesh", ivec2(960, 600), 60.0f);
     new EasyMeshTutorial();
-    app.run();
+    app->run();
 
     return EXIT_SUCCESS;
 }

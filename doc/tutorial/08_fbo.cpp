@@ -67,7 +67,7 @@ public:
         m_vbo->set_data(vertices.data(), vertices.size() * sizeof(vertices[0]));
 
         // Create the back buffer and clear it
-        m_backbuffer = std::make_shared<Framebuffer>(Video::GetSize());
+        m_backbuffer = std::make_shared<Framebuffer>(video::size());
         m_backbuffer->Bind();
         {
             Scene& scene = Scene::GetScene();
@@ -137,9 +137,9 @@ int main(int argc, char **argv)
 {
     sys::init(argc, argv);
 
-    app app("Tutorial 08: Framebuffer Object", ivec2(512, 512), 60.0f);
+    auto app = app::init("Tutorial 08: Framebuffer Object", ivec2(512, 512), 60.0f);
     new FBO();
-    app.run();
+    app->run();
 
     return EXIT_SUCCESS;
 }

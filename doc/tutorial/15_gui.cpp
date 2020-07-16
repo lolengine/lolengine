@@ -98,11 +98,11 @@ int main(int argc, char **argv)
 {
     sys::init(argc, argv);
 
-    app app("Tutorial 15: ImGui", ivec2(800, 600), 60.0f);
+    auto app = app::init("Tutorial 15: ImGui", ivec2(800, 600), 60.0f);
 
     new LolImGuiDemo();
 
-    app.run();
+    app->run();
     return EXIT_SUCCESS;
 }
 

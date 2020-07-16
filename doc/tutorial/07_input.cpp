@@ -207,12 +207,12 @@ int main(int argc, char **argv)
 {
     sys::init(argc, argv);
 
-    app app("Tutorial 7: Input", ivec2(640, 480), 60.0f);
+    auto app = app::init("Tutorial 7: Input", ivec2(640, 480), 60.0f);
 
     new DebugFps(5, 5);
     new InputTutorial();
 
-    app.run();
+    app->run();
 
     return EXIT_SUCCESS;
 }

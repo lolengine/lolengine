@@ -85,10 +85,10 @@ int main(int argc, char **argv)
 {
     sys::init(argc, argv);
 
-    app app("Tutorial 3: Noise", ivec2(1280, 720), 60.0f);
+    auto app = app::init("Tutorial 3: Noise", ivec2(1280, 720), 60.0f);
 
     new NoiseDemo();
 
-    app.run();
+    app->run();
     return EXIT_SUCCESS;
 }

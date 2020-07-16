@@ -568,7 +568,7 @@ void Renderer::SetScissorRect(vec4 rect)
     if (m_data->m_scissor_mode == ScissorMode::Enabled)
     {
 #if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLES_2X
-        glScissor((int)rect.x, (int)(Video::GetSize().y - rect.w), (int)(rect.z - rect.x), (int)(rect.w - rect.y));
+        glScissor((int)rect.x, (int)(video::size().y - rect.w), (int)(rect.z - rect.x), (int)(rect.w - rect.y));
         //glScissor((int)rect.x, (int)rect.y, (int)(rect.z - rect.x), (int)(rect.w - rect.y));
 #endif
     }

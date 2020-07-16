@@ -13,20 +13,6 @@
 #include <lol/engine-internal.h>
 #include <lol/msg>
 
-#if defined LOL_USE_EGL && !defined __ANDROID__
-#   if defined HAVE_BCM_HOST_H
-#       include <bcm_host.h>
-#   else
-#       include <X11/Xlib.h>
-#       include <X11/Xatom.h>
-#       include <X11/Xutil.h>
-#   endif
-#   if defined HAVE_EGL_EGL_H
-#       include <EGL/egl.h>
-#       include <EGL/eglext.h>
-#   endif
-#endif
-
 #if LOL_USE_SDL
 #   include "ui/sdl-input.h"
 #endif
@@ -37,79 +23,56 @@
 namespace lol
 {
 
-/*
- * EGL App implementation class
- */
+//
+// Public app class
+//
 
-class EglAppData
-{
-    friend class app_data;
-
-private:
-#if defined LOL_USE_EGL && !defined __ANDROID__
-    EGLDisplay egl_dpy;
-    EGLContext egl_ctx;
-    EGLSurface egl_surf;
-    uvec2 screen_size;
-#   if defined HAVE_BCM_HOST_H
-    EGL_DISPMANX_WINDOW_T nativewindow;
-#   else
-    Display *dpy;
-    Window win;
-#   endif
-#endif
-};
-
-/*
- * Public app_data class
- */
-
-egl::app_data::app_data(char const *title, ivec2 res, float fps)
+egl::app::app(char const *title, ivec2 res)
 {
 #if defined LOL_USE_EGL && !defined __ANDROID__
 #   if defined HAVE_BCM_HOST_H
     bcm_host_init();
 
-    data->egl_dpy = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    m_egl_dpy = eglGetDisplay(EGL_DEFAULT_DISPLAY);
 #   else
-    data->dpy = XOpenDisplay(nullptr);
-    if (data->dpy == nullptr)
+    m_dpy = XOpenDisplay(nullptr);
+    if (m_dpy == nullptr)
     {
         msg::error("cannot connect to X server\n");
         exit(EXIT_FAILURE);
     }
 
-    Window root = DefaultRootWindow(data->dpy);
+    Window root = DefaultRootWindow(m_dpy);
 
     XSetWindowAttributes swa;
     swa.event_mask = ExposureMask | PointerMotionMask | KeyPressMask;
 
-    data->win = XCreateWindow(data->dpy, root, 0, 0, res.x, res.y, 0,
-                              CopyFromParent, InputOutput,
-                              CopyFromParent, CWEventMask, &swa);
+    m_win = XCreateWindow(m_dpy, root, 0, 0, res.x, res.y, 0,
+                          CopyFromParent, InputOutput,
+                          CopyFromParent, CWEventMask, &swa);
 
     XSetWindowAttributes xattr;
 
     xattr.override_redirect = False;
-    XChangeWindowAttributes(data->dpy, data->win, CWOverrideRedirect, &xattr);
+    XChangeWindowAttributes(m_dpy, m_win, CWOverrideRedirect, &xattr);
 
     XWMHints hints;
     hints.flags = InputHint;
     hints.input = True;
-    XSetWMHints(data->dpy, data->win, &hints);
+    XSetWMHints(m_dpy, m_win, &hints);
 
-    XMapWindow(data->dpy, data->win);
-    XStoreName(data->dpy, data->win, title);
+    XMapWindow(m_dpy, m_win);
+    XStoreName(m_dpy, m_win, title);
 
-    data->egl_dpy = eglGetDisplay((EGLNativeDisplayType)data->dpy);
+    m_egl_dpy = eglGetDisplay((EGLNativeDisplayType)m_dpy);
 #   endif
-    if (data->egl_dpy == EGL_NO_DISPLAY)
+    if (m_egl_dpy == EGL_NO_DISPLAY)
     {
         msg::error("cannot get EGL display\n");
         exit(EXIT_FAILURE);
     }
 
-    if (!eglInitialize(data->egl_dpy, nullptr, nullptr))
+    if (!eglInitialize(m_egl_dpy, nullptr, nullptr))
     {
         msg::error("cannot initialize EGL\n");
         exit(EXIT_FAILURE);
@@ -131,7 +94,7 @@ egl::app_data::app_data(char const *title, ivec2 res, float fps)
 
     EGLConfig ecfg;
     EGLint num_config;
-    if (!eglChooseConfig(data->egl_dpy, attr, &ecfg, 1, &num_config))
+    if (!eglChooseConfig(m_egl_dpy, attr, &ecfg, 1, &num_config))
     {
         msg::error("cannot choose EGL config (%i)\n", eglGetError());
         exit(EXIT_FAILURE);
@@ -156,17 +119,17 @@ egl::app_data::app_data(char const *title, ivec2 res, float fps)
     VC_RECT_T dst_rect;
     VC_RECT_T src_rect;
 
-    graphics_get_display_size(0 /* LCD */, &data->screen_size.x, &data->screen_size.y);
+    graphics_get_display_size(0 /* LCD */, &m_screen_size.x, &m_screen_size.y);
 
     dst_rect.x = 0;
     dst_rect.y = 0;
-    dst_rect.width = data->screen_size.x;
-    dst_rect.height = data->screen_size.y;
+    dst_rect.width = m_screen_size.x;
+    dst_rect.height = m_screen_size.y;
 
     src_rect.x = 0;
     src_rect.y = 0;
-    src_rect.width = data->screen_size.x << 16;
-    src_rect.height = data->screen_size.y << 16;
+    src_rect.width = m_screen_size.x << 16;
+    src_rect.height = m_screen_size.y << 16;
 
     dispman_display = vc_dispmanx_display_open(0 /* LCD */);
     dispman_update = vc_dispmanx_update_start(0);
@@ -175,19 +138,19 @@ egl::app_data::app_data(char const *title, ivec2 res, float fps)
         0/*layer*/, &dst_rect, 0/*src*/, &src_rect, DISPMANX_PROTECTION_NONE,
         0 /*alpha*/, 0/*clamp*/, (DISPMANX_TRANSFORM_T)0/*transform*/);
 
-    data->nativewindow.element = dispman_element;
-    data->nativewindow.width = data->screen_size.x;
-    data->nativewindow.height = data->screen_size.y;
+    m_nativewindow.element = dispman_element;
+    m_nativewindow.width = m_screen_size.x;
+    m_nativewindow.height = m_screen_size.y;
     vc_dispmanx_update_submit_sync(dispman_update);
 
-    data->egl_surf = eglCreateWindowSurface(data->egl_dpy, ecfg,
-                                            &data->nativewindow, nullptr);
+    m_egl_surf = eglCreateWindowSurface(m_egl_dpy, ecfg,
+                                        &m_nativewindow, nullptr);
 #   else
-    data->egl_surf = eglCreateWindowSurface(data->egl_dpy, ecfg,
-                                            (EGLNativeWindowType)data->win,
-                                            nullptr);
+    m_egl_surf = eglCreateWindowSurface(m_egl_dpy, ecfg,
+                                        (EGLNativeWindowType)m_win,
+                                        nullptr);
 #   endif
-    if (data->egl_surf == EGL_NO_SURFACE)
+    if (m_egl_surf == EGL_NO_SURFACE)
     {
         switch (eglGetError())
         {
@@ -227,65 +190,69 @@ egl::app_data::app_data(char const *title, ivec2 res, float fps)
 #endif
         EGL_NONE
     };
-    data->egl_ctx = eglCreateContext(data->egl_dpy, ecfg,
-                                     EGL_NO_CONTEXT, ctxattr);
-    if (data->egl_ctx == EGL_NO_CONTEXT)
+    m_egl_ctx = eglCreateContext(m_egl_dpy, ecfg,
+                                 EGL_NO_CONTEXT, ctxattr);
+    if (m_egl_ctx == EGL_NO_CONTEXT)
     {
         msg::error("cannot create EGL context (%i)\n", eglGetError());
         exit(EXIT_FAILURE);
     }
 
-    eglMakeCurrent(data->egl_dpy, data->egl_surf,
-                   data->egl_surf, data->egl_ctx);
+    eglMakeCurrent(m_egl_dpy, m_egl_surf,
+                   m_egl_surf, m_egl_ctx);
 
 #   if !defined HAVE_BCM_HOST_H
     XWindowAttributes gwa;
-    XGetWindowAttributes(data->dpy, data->win, &gwa);
-    data->screen_size = uvec2(gwa.width, gwa.height);
+    XGetWindowAttributes(m_dpy, m_win, &gwa);
+    m_screen_size = uvec2(gwa.width, gwa.height);
 #   endif
 
 #   if LOL_USE_SDL
-    new SdlInput(data->screen_size.x, data->screen_size.y);
+    new SdlInput(m_screen_size.x, m_screen_size.y);
 #   endif
 
-    Video::Setup((ivec2)data->screen_size);
+    video::init((ivec2)m_screen_size);
     audio::init();
 #else
     (void)title;
     (void)res;
 #endif
-    (void)fps;
 }
 
-void egl::app_data::show_pointer(bool show)
+egl::app::~app()
+{
+#if defined LOL_USE_EGL && !defined __ANDROID__
+    eglDestroyContext(m_egl_dpy, m_egl_ctx);
+    eglDestroySurface(m_egl_dpy, m_egl_surf);
+    eglTerminate(m_egl_dpy);
+#   if defined HAVE_BCM_HOST_H
+    /* FIXME */
+#   else
+    XDestroyWindow(m_dpy, m_win);
+    XCloseDisplay(m_dpy);
+#   endif
+#endif
+}
+
+std::shared_ptr<app::display> egl::app::get_display()
+{
+    return shared_from_this();
+}
+
+void egl::app::show_pointer(bool show)
 {
     /* FIXME: unimplemented (do we have a mouse pointer anyway? */
     (void)show;
 }
 
-void egl::app_data::tick()
+void egl::app::tick()
 {
     /* Tick the renderer, show the frame and clamp to desired framerate. */
     ticker::tick_draw();
 #if defined LOL_USE_EGL && !defined __ANDROID__
-    eglSwapBuffers(data->egl_dpy, data->egl_surf);
+    eglSwapBuffers(m_egl_dpy, m_egl_surf);
 #endif
 }
 
-egl::app_data::~app_data()
-{
-#if defined LOL_USE_EGL && !defined __ANDROID__
-    eglDestroyContext(data->egl_dpy, data->egl_ctx);
-    eglDestroySurface(data->egl_dpy, data->egl_surf);
-    eglTerminate(data->egl_dpy);
-#   if defined HAVE_BCM_HOST_H
-    /* FIXME */
-#   else
-    XDestroyWindow(data->dpy, data->win);
-    XCloseDisplay(data->dpy);
-#   endif
-#endif
-}
-
-} /* namespace lol */
+} // namespace lol
 

@@ -35,7 +35,7 @@ namespace lol
 {
 
 #if __EMSCRIPTEN__
-static app *g_app;
+static std::shared_ptr<app> g_app;
 static void AppCallback() { g_app->Tick(); }
 #endif
 
@@ -43,28 +43,24 @@ static void AppCallback() { g_app->Tick(); }
 // Public app class
 //
 
-app::app(char const *name, ivec2 res, float framerate)
+std::shared_ptr<app> app::init(char const *name, ivec2 res, float framerate)
 {
     ticker::setup(framerate);
 
-    // FIXME: this should probably be a call to e.g. nx::app::init() which
-    // creates the proper shared pointers.
-
 #if __ANDROID__
-    // TODO: implement m_display
-    m_data = std::make_shared<AndroidAppData>(name, res, framerate);
+    auto ret = std::make_shared<android::app>(name, res);
 #elif __NX__
-    m_display = std::make_shared<nx::app_display>(name, res);
-    m_data = std::make_shared<nx::app_data>(name, m_display->resolution(), framerate);
+    auto ret = std::make_shared<nx::app>(name, res);
 #elif LOL_USE_SDL
-    m_display = std::make_shared<sdl::app_display>(name, res);
-    m_data = std::make_shared<sdl::app_data>(name, m_display->resolution(), framerate);
+    auto ret = std::make_shared<sdl::app>(name, res);
 #elif HAVE_GLES_2X
     // FIXME: this macro is only deactivated if we include "lolgl.h"
     //NOT HANDLED YET
-    m_data = std::make_shared<EglAppData>(name, res, framerate);
+    auto ret = std::make_shared<egl::app>(name, res);
 #endif
-    Scene::add_display(m_display);
+
+    Scene::add_display(ret->get_display());
+    return ret;
 }
 
 app::~app()
@@ -77,27 +73,16 @@ bool app::must_tick()
     return !ticker::Finished();
 }
 
-void app::tick()
-{
-    if (m_data)
-        m_data->tick();
-}
-
 void app::run()
 {
 #if __EMSCRIPTEN__
+    // FIXME: convert this to a local lambda
     g_app = this;
     emscripten_set_main_loop(AppCallback, 0, 1);
 #else
     while (must_tick())
         tick();
 #endif
-}
-
-void app::show_pointer(bool show)
-{
-    if (m_data)
-        m_data->show_pointer(show);
 }
 
 } // namespace lol

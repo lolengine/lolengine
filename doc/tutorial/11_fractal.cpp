@@ -47,7 +47,7 @@ public:
 
         /* Window size decides the world aspect ratio. For instance, 640×480
          * will be mapped to (-0.66,-0.5) - (0.66,0.5). */
-        m_window_size = Video::GetSize();
+        m_window_size = video::size();
         if (m_window_size.y < m_window_size.x)
             m_window2world = 0.5 / m_window_size.y;
         else
@@ -572,13 +572,13 @@ int main(int argc, char **argv)
     ivec2 window_size(640, 480);
 
     sys::init(argc, argv);
-    app app("Tutorial 11: Fractal", window_size, 60.0f);
+    auto app = app::init("Tutorial 11: Fractal", window_size, 60.0f);
 
     new DebugFps(5, 5);
     new Fractal(window_size);
     //new DebugRecord("fractalol.ogm", 60.0f);
 
-    app.run();
+    app->run();
 
     return EXIT_SUCCESS;
 }

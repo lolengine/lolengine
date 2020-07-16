@@ -25,15 +25,10 @@ namespace lol
 class app
 {
 public:
-    app(char const *name, ivec2 resolution, float framerate);
-    ~app();
+    static std::shared_ptr<app> init(char const *name, ivec2 res, float framerate);
 
     bool must_tick();
-    void tick();
     void run();
-
-    // UI interface
-    void show_pointer(bool show);
 
     // Display interface
     class display
@@ -51,20 +46,13 @@ public:
         virtual void set_position(ivec2 position) {}
     };
 
-    // Internal data
-    class data
-    {
-    public:
-        data() {}
-        virtual ~data() {}
+    // App interface
+    virtual void tick() {}
+    virtual void show_pointer(bool show) {}
+    virtual std::shared_ptr<display> get_display() = 0;
 
-        virtual void show_pointer(bool show) {}
-        virtual void tick() {}
-    };
-
-private:
-    std::shared_ptr<display> m_display;
-    std::shared_ptr<data> m_data;
+protected:
+    virtual ~app();
 };
 
 } // namespace lol

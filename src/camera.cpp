@@ -31,7 +31,7 @@ Camera::Camera()
     m_drawgroup = tickable::group::draw::camera;
 
     //Arbitrary values when scene renderer is not ready.
-    ivec2 screen_size = (Scene::GetCount()) ? (Video::GetSize()) : (ivec2(800, 600));
+    ivec2 screen_size = (Scene::GetCount()) ? (video::size()) : (ivec2(800, 600));
     m_fov = radians(45.f);
     m_near = -1000.f;
     m_far = 1000.f;

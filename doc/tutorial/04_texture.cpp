@@ -119,10 +119,10 @@ int main(int argc, char **argv)
 {
     sys::init(argc, argv);
 
-    app app("Tutorial 4: Texture", ivec2(1280, 720), 60.0f);
+    auto app = app::init("Tutorial 4: Texture", ivec2(1280, 720), 60.0f);
 
     new TextureDemo();
 
-    app.run();
+    app->run();
     return EXIT_SUCCESS;
 }

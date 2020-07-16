@@ -97,7 +97,7 @@ public:
             {
                 m_fbos.push_back(fbo
                 {
-                    std::make_shared<Framebuffer>(Video::GetSize()),
+                    std::make_shared<Framebuffer>(video::size()),
                     0,
                     std::vector<ShaderUniform>(),
                     std::vector<ShaderAttrib>(),
@@ -138,7 +138,7 @@ public:
                 m_fbos.back().framebuffer->Unbind();
             }
 
-            temp_buffer = std::make_shared<Framebuffer>(Video::GetSize());
+            temp_buffer = std::make_shared<Framebuffer>(video::size());
             temp_buffer->Bind();
             {
                 render_context rc(scene.get_renderer());
@@ -402,10 +402,10 @@ int main(int argc, char **argv)
 {
     sys::init(argc, argv);
 
-    app app("Tutorial 12: Jump Flooding Algorithm & Voronoi", ivec2(512, 512), 60.0f);
+    auto app = app::init("Tutorial 12: Jump Flooding Algorithm & Voronoi", ivec2(512, 512), 60.0f);
 
     new Voronoi();
 
-    app.run();
+    app->run();
     return EXIT_SUCCESS;
 }

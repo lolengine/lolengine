@@ -150,7 +150,7 @@ int lol::AndroidAppData::CreateDisplay()
 
     /* Launch our renderer */
     msg::debug("Java layer initialising renderer (%dx%d)", w, h);
-    Video::Setup(ivec2(w, h));
+    video::init(ivec2(w, h));
 
     return 0;
 }
@@ -204,7 +204,7 @@ int32_t lol::AndroidAppData::HandleInput(AInputEvent* event)
         /* FIXME: we flip the Y axis here, but is it the right place? */
         ivec2 pos(AMotionEvent_getX(event, 0),
                   AMotionEvent_getY(event, 0));
-        pos *= m_wanted_resolution / Video::GetSize();
+        pos *= m_wanted_resolution / video::size();
         pos.y = m_wanted_resolution.y - 1 - pos.y;
         // FIXME: bring this back
         //mouse->internal_set_cursor(0, vec2(pos) / vec2(m_wanted_resolution), pos);

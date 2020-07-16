@@ -39,7 +39,7 @@ namespace lol
 {
 
 /*
- * The global g_scenes object, initialised by Video::Init
+ * The global g_scenes object, initialised by video::init
  */
 
 std::vector<Scene*> Scene::g_scenes;

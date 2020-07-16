@@ -181,12 +181,12 @@ int main(int argc, char **argv)
 {
     sys::init(argc, argv);
 
-    app app("Tutorial 2: Cube", ivec2(640, 480), 60.0f);
+    auto app = app::init("Tutorial 2: Cube", ivec2(640, 480), 60.0f);
 
     new DebugFps(5, 5);
     new Cube();
 
-    app.run();
+    app->run();
 
     return EXIT_SUCCESS;
 }

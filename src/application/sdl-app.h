@@ -32,30 +32,27 @@
 namespace lol::sdl
 {
 
-class app_data : public lol::app::data
+// Application is its own display
+class app : public lol::app, public lol::app::display, std::enable_shared_from_this<app>
 {
 public:
-    app_data(char const *title, ivec2 res, float fps);
-    virtual ~app_data();
+    app(char const *title, ivec2 resolution);
+    virtual ~app();
 
+    // App interface
     virtual void show_pointer(bool show);
     virtual void tick();
-};
-
-class app_display : public lol::app::display
-{
-public:
-    app_display(char const *title, ivec2 resolution);
-    virtual ~app_display();
+    virtual std::shared_ptr<display> get_display();
 
 protected:
-    void start_frame();
-    void end_frame();
+    // Display interface
+    virtual void start_frame();
+    virtual void end_frame();
 
     virtual void set_resolution(ivec2 resolution);
     virtual ivec2 resolution() const;
 
-    void set_position(ivec2 position);
+    virtual void set_position(ivec2 position);
 
 private:
 #if LOL_USE_SDL

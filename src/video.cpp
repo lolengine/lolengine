@@ -27,7 +27,7 @@ namespace lol
 
 class VideoData
 {
-    friend class Video;
+    friend class video;
 
 private:
     static DebugRenderMode render_mode;
@@ -39,7 +39,7 @@ DebugRenderMode VideoData::render_mode = DebugRenderMode::Default;
  * Public Video class
  */
 
-void Video::Setup(ivec2 size)
+void video::init(ivec2 size)
 {
     Scene::AddNew(size);
 
@@ -47,7 +47,7 @@ void Video::Setup(ivec2 size)
     SetDebugRenderMode(DebugRenderMode::Default);
 }
 
-void Video::SetDebugRenderMode(DebugRenderMode d)
+void video::SetDebugRenderMode(DebugRenderMode d)
 {
     switch(d)
     {
@@ -80,17 +80,17 @@ void Video::SetDebugRenderMode(DebugRenderMode d)
     VideoData::render_mode = d;
 }
 
-DebugRenderMode Video::GetDebugRenderMode()
+DebugRenderMode video::GetDebugRenderMode()
 {
     return VideoData::render_mode;
 }
 
-void Video::Destroy()
+void video::release()
 {
     Scene::DestroyAll();
 }
 
-void Video::Capture(uint32_t *buffer)
+void video::capture(uint32_t *buffer)
 {
 #if defined LOL_USE_GLEW || defined HAVE_GL_2X || defined HAVE_GLEX_2X
     GLint v[4];
@@ -120,12 +120,12 @@ void Video::Capture(uint32_t *buffer)
 #endif
 }
 
-void Video::Resize(ivec2 size)
+void video::resize(ivec2 size)
 {
     Scene::GetScene(0).resize(size);
 }
 
-ivec2 Video::GetSize()
+ivec2 video::size()
 {
     return Scene::GetScene(0).get_renderer()->viewport().extent();
 }

@@ -123,7 +123,7 @@ public:
     ~GpuEasyMeshData();
     //---
     void AddGpuData(std::shared_ptr<GpuShaderData> gpudata, std::shared_ptr<class EasyMesh> src_mesh);
-    void RenderMeshData(mat4 const &model, int render_mode=Video::GetDebugRenderMode());
+    void RenderMeshData(mat4 const &model, int render_mode = video::GetDebugRenderMode());
     bool HasData(int render_mode) { return (0 <= render_mode && render_mode < m_gpudata.count() && !!m_gpudata[render_mode]); }
 
 private:

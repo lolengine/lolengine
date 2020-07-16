@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -13,8 +13,8 @@
 #pragma once
 
 //
-// The Video interface
-// -------------------
+// The video interface
+// ———————————————————
 // Helper GL functions to set up the scene.
 //
 
@@ -45,19 +45,18 @@ struct DebugRenderMode
     inline operator Value() { return m_value; }
 };
 
-class Video
+class video
 {
 public:
-    static void Setup(ivec2 size);
-    static void Destroy();
+    static void init(ivec2 size);
+    static void release();
 
-    static void Resize(ivec2 size);
-    static ivec2 GetSize();
+    static void resize(ivec2 size);
+    static ivec2 size();
 
     static void SetDebugRenderMode(DebugRenderMode d);
     static DebugRenderMode GetDebugRenderMode();
-    static void Capture(uint32_t *buffer);
+    static void capture(uint32_t *buffer);
 };
 
-} /* namespace lol */
-
+} // namespace lol

@@ -248,7 +248,7 @@ void SdlInput::tick(float seconds)
                     mouse->internal_set_button(input::button::BTN_Focus, false);
                     break;
                 case SDL_WINDOWEVENT_RESIZED:
-                    Video::Resize(ivec2(event.window.data1, event.window.data2));
+                    video::resize(ivec2(event.window.data1, event.window.data2));
                     break;
             }
             break;
@@ -273,11 +273,11 @@ void SdlInput::tick(float seconds)
     ivec2 window_size;
     // FIXME: get actual window size
     //SDL_GetWindowSize(m_window, &window_size.x, &window_size.y);
-    window_size = Video::GetSize();
+    window_size = video::size();
 
     ivec2 mouse_pos(-1, -1);
     SDL_GetMouseState(&mouse_pos.x, &mouse_pos.y);
-    mouse_pos.y = Video::GetSize().y - 1 - mouse_pos.y;
+    mouse_pos.y = video::size().y - 1 - mouse_pos.y;
 
     if (mouse->capture() != m_mousecapture)
     {
