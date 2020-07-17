@@ -33,7 +33,9 @@ namespace lol::sdl
 {
 
 // Application is its own display
-class app : public lol::app, public lol::app::display, std::enable_shared_from_this<app>
+class app : public lol::app,
+            public lol::app::display,
+            public std::enable_shared_from_this<app>
 {
 public:
     app(char const *title, ivec2 resolution);
