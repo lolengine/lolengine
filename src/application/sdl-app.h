@@ -44,7 +44,7 @@ public:
     // App interface
     virtual void show_pointer(bool show);
     virtual void tick();
-    virtual std::shared_ptr<display> get_display();
+    virtual std::shared_ptr<lol::app::display> get_display();
 
 protected:
     // Display interface

@@ -49,7 +49,7 @@ public:
 
     virtual void tick();
     virtual void show_pointer(bool show);
-    virtual std::shared_ptr<display> get_display();
+    virtual std::shared_ptr<lol::app::display> get_display();
 
 #if defined LOL_USE_EGL && !defined __ANDROID__
 private:

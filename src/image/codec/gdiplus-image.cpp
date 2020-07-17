@@ -91,7 +91,7 @@ ResourceCodecData* GdiPlusImageCodec::Load(std::string const &path)
             msg::error("error %d loading %s\n",
                        status, fullpath.c_str());
         delete bitmap;
-        bitmap = nullptr;
+        return nullptr;
     }
 
     ivec2 size(bitmap->GetWidth(), bitmap->GetHeight());

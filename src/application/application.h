@@ -40,15 +40,15 @@ public:
         virtual void end_frame() {}
 
         // pos/size/... methods
-        virtual void set_resolution(ivec2 resolution) {}
+        virtual void set_resolution(ivec2) {}
         virtual ivec2 resolution() const { return ivec2(0); }
 
-        virtual void set_position(ivec2 position) {}
+        virtual void set_position(ivec2) {}
     };
 
     // App interface
     virtual void tick() {}
-    virtual void show_pointer(bool show) {}
+    virtual void show_pointer(bool) {}
     virtual std::shared_ptr<display> get_display() = 0;
 
 protected:
