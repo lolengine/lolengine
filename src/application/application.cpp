@@ -59,7 +59,9 @@ std::shared_ptr<app> app::init(char const *name, ivec2 res, float framerate)
     auto ret = std::make_shared<egl::app>(name, res);
 #endif
 
-    Scene::add_display(ret->get_display());
+    if (engine::has_opengl())
+        Scene::add_display(ret->get_display());
+
     return ret;
 }
 

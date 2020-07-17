@@ -58,7 +58,8 @@ protected:
 
 private:
 #if LOL_USE_SDL
-    SDL_Window *m_window;
+    SDL_Window *m_window = nullptr;
+    SDL_Renderer *m_renderer = nullptr;
     SDL_GLContext m_glcontext;
 #endif
 };

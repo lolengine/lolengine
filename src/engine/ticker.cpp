@@ -285,15 +285,16 @@ void ticker_data::GameThreadTick()
     {
         entity *e = data->DEPRECATED_m_todolist.back();
 
-        //If the entity has no mask, default it
-        if (e->m_scene_mask == 0)
+        // If the entity has no mask, default it
+        // FIXME: what is this?
+        if (engine::has_opengl() && e->m_scene_mask == 0)
         {
             Scene::GetScene().Link(e);
         }
 
         data->DEPRECATED_m_todolist.pop_back();
         data->DEPRECATED_m_list[(int)e->m_gamegroup].push_back(e);
-        if (e->m_drawgroup != tickable::group::draw::none)
+        if (engine::has_opengl() && e->m_drawgroup != tickable::group::draw::none)
         {
             if (data->DEPRECATED_m_scenes[(int)e->m_drawgroup].size() < Scene::GetCount())
                 data->DEPRECATED_m_scenes[(int)e->m_drawgroup].resize(Scene::GetCount());
@@ -393,8 +394,8 @@ void ticker_data::DrawThreadTick()
         }
     }
 
-    /* Render each scene one after the other */
-    for (size_t idx = 0; idx < Scene::GetCount() && !data->m_quit /* Stop as soon as required */; ++idx)
+    // Render each scene one after the other
+    for (size_t idx = 0; engine::has_opengl() && idx < Scene::GetCount() && !data->m_quit /* Stop as soon as required */; ++idx)
     {
         Scene& scene = Scene::GetScene(idx);
 
@@ -514,7 +515,7 @@ void ticker_data::collect_garbage()
             remove_at(DEPRECATED_m_list[g], i);
 
             // Draw group specific logic
-            if (g >= (int)tickable::group::game::end)
+            if (engine::has_opengl() && g >= (int)tickable::group::game::end)
             {
                 int removal_count = 0;
                 for (size_t j = 0; j < Scene::GetCount(); j++)

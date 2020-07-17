@@ -37,8 +37,6 @@ namespace lol
 sdl::app::app(char const *title, ivec2 res)
 {
 #if LOL_USE_SDL
-    ivec2 window_size = res;
-
     // Initialise SDL
     if (!SDL_WasInit(0))
     {
@@ -55,6 +53,9 @@ sdl::app::app(char const *title, ivec2 res)
         msg::debug("%d: %s\n", i, SDL_GetDisplayName(i));
 
     int flags = SDL_WINDOW_RESIZABLE;
+
+    if (res == ivec2(0))
+        flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 
     if (engine::has_opengl())
     {
@@ -77,12 +78,10 @@ sdl::app::app(char const *title, ivec2 res)
 #endif
     }
 
-    if (window_size == ivec2(0))
-        flags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
     msg::debug("initialising main window\n");
     m_window = SDL_CreateWindow(title,
         SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
-        window_size.x, window_size.y, flags);
+        res.x, res.y, flags);
     if (!m_window)
     {
         msg::error("cannot create rendering window: %s\n", SDL_GetError());
@@ -102,6 +101,10 @@ sdl::app::app(char const *title, ivec2 res)
 
         // Initialise everything
         video::init(res); //TODO ?? Should it be here ?
+    }
+    else
+    {
+        m_renderer = SDL_CreateSoftwareRenderer(SDL_GetWindowSurface(m_window));
     }
 
 #if defined LOL_USE_XINPUT
