@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010–2023 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -81,8 +81,8 @@ void TextureImage::Init(std::string const &path, old_image* img)
     m_data->m_texture = nullptr;
     m_data->m_image = img;
     m_data->m_image_size = m_data->m_image->size();
-    m_data->m_texture_size = ivec2(lol::bit_ceil(m_data->m_image_size.x),
-                                   lol::bit_ceil(m_data->m_image_size.y));
+    m_data->m_texture_size = ivec2(lol::bit_ceil(unsigned(m_data->m_image_size.x)),
+                                   lol::bit_ceil(unsigned(m_data->m_image_size.y)));
 
     m_drawgroup = tickable::group::draw::texture;
 }
@@ -153,8 +153,8 @@ void TextureImage::UpdateTexture(old_image* img)
 {
     m_data->m_image = img;
     m_data->m_image_size = m_data->m_image->size();
-    m_data->m_texture_size = ivec2(lol::bit_ceil(m_data->m_image_size.x),
-                                   lol::bit_ceil(m_data->m_image_size.y));
+    m_data->m_texture_size = ivec2(lol::bit_ceil(unsigned(m_data->m_image_size.x)),
+                                   lol::bit_ceil(unsigned(m_data->m_image_size.y)));
 }
 
 Texture * TextureImage::GetTexture()
