@@ -1,7 +1,7 @@
 dnl
 dnl  Lol Engine
 dnl
-dnl  Copyright © 2010—2016 Sam Hocevar <sam@hocevar.net>
+dnl  Copyright © 2010–2023 Sam Hocevar <sam@hocevar.net>
 dnl
 dnl  Lol Engine is free software. It comes without any warranty, to
 dnl  the extent permitted by applicable law. You can redistribute it
@@ -17,7 +17,7 @@ AC_DEFUN([LOL_TRY_CFLAGS],
     [AC_MSG_CHECKING([if $CC supports $1 flags])
     save_CFLAGS="$CFLAGS"
     CFLAGS="$1 -Werror"
-    AC_TRY_COMPILE([],[],[ac_cv_try_cflags_ok=yes],[ac_cv_try_cflags_ok=no])
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([],[])],[ac_cv_try_cflags_ok=yes],[ac_cv_try_cflags_ok=no])
     CFLAGS="$save_CFLAGS"
     AC_MSG_RESULT([$ac_cv_try_cflags_ok])
     if test x"$ac_cv_try_cflags_ok" = x"yes"; then
@@ -33,7 +33,7 @@ AC_DEFUN([LOL_TRY_CXXFLAGS],
     AC_LANG_PUSH(C++)
     save_CXXFLAGS="$CXXFLAGS"
     CXXFLAGS="$1 -Werror"
-    AC_TRY_COMPILE([],[],[ac_cv_try_cxxflags_ok=yes],[ac_cv_try_cxxflags_ok=no])
+    AC_COMPILE_IFELSE([AC_LANG_PROGRAM([],[])],[ac_cv_try_cxxflags_ok=yes],[ac_cv_try_cxxflags_ok=no])
     CXXFLAGS="$save_CXXFLAGS"
     AC_MSG_RESULT([$ac_cv_try_cxxflags_ok])
     if test x"$ac_cv_try_cxxflags_ok" = x"yes"; then
@@ -49,7 +49,7 @@ AC_DEFUN([LOL_TRY_LDFLAGS],
     [AC_MSG_CHECKING([if $CC supports $1 flags])
     save_LDFLAGS="$LDFLAGS"
     LDFLAGS="$1 -Werror"
-    AC_TRY_LINK([],[],[ac_cv_try_ldflags_ok=yes],[ac_cv_try_ldflags_ok=no])
+    AC_LINK_IFELSE([AC_LANG_PROGRAM([],[])],[ac_cv_try_ldflags_ok=yes],[ac_cv_try_ldflags_ok=no])
     LDFLAGS="$save_LDFLAGS"
     AC_MSG_RESULT([$ac_cv_try_ldflags_ok])
     if test x"$ac_cv_try_ldflags_ok" = x"yes"; then

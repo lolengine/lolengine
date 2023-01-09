@@ -1,7 +1,7 @@
 dnl
 dnl  Lol Engine
 dnl
-dnl  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
+dnl  Copyright © 2010–2023 Sam Hocevar <sam@hocevar.net>
 dnl
 dnl  Lol Engine is free software. It comes without any warranty, to
 dnl  the extent permitted by applicable law. You can redistribute it
@@ -29,7 +29,8 @@ CXXFLAGS="${CXXFLAGS} ${version_flag}"
 
 AC_LANG_PUSH(C++)
 AC_MSG_CHECKING(for C++11 enum class support)
-AC_TRY_LINK([], [enum class Foo : int { Bar, Baz };],
+AC_LINK_IFELSE(
+ [AC_LANG_PROGRAM([], [enum class Foo : int { Bar, Baz };])],
  [AC_MSG_RESULT(yes)],
  [AC_MSG_RESULT(no)
   AC_MSG_ERROR([[C++ compiler does not support C++11 enum classes]])])
@@ -45,7 +46,8 @@ AC_DEFUN([LOL_AC_CHECK], [
 dnl  Check that the C++ compiler really works
 AC_LANG_PUSH(C++)
 AC_MSG_CHECKING(for a fully working C++ compiler)
-AC_TRY_LINK([], [],
+AC_LINK_IFELSE(
+ [AC_LANG_PROGRAM([], [])],
  [AC_MSG_RESULT(yes)],
  [AC_MSG_RESULT(no)
   AC_MSG_ERROR([[C++ compiler cannot link executables]])])

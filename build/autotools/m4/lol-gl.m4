@@ -1,7 +1,7 @@
 dnl
 dnl  Lol Engine
 dnl
-dnl  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
+dnl  Copyright © 2010–2023 Sam Hocevar <sam@hocevar.net>
 dnl
 dnl  Lol Engine is free software. It comes without any warranty, to
 dnl  the extent permitted by applicable law. You can redistribute it
@@ -36,7 +36,8 @@ if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
   LIBS_save="$LIBS"
   LIBS="$LIBS -Wl,-framework -Wl,OpenGL"
   AC_MSG_CHECKING(for -framework OpenGL)
-  AC_TRY_LINK([], [],
+  AC_LINK_IFELSE(
+   [AC_LANG_PROGRAM([], [])],
    [AC_MSG_RESULT(yes)
     ac_cv_my_have_gl="yes"
     GL_LIBS="${GL_LIBS} -framework OpenGL"
@@ -50,7 +51,8 @@ if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
   LIBS_save="$LIBS"
   LIBS="$LIBS -Wl,-framework -Wl,OpenGLES"
   AC_MSG_CHECKING(for -framework OpenGLES)
-  AC_TRY_LINK([], [],
+  AC_LINK_IFELSE(
+   [AC_LANG_PROGRAM([], [])],
    [AC_MSG_RESULT(yes)
     ac_cv_my_have_gl="yes"
     GL_LIBS="${GL_LIBS} -framework OpenGLES"
@@ -109,8 +111,10 @@ if test "x${ac_cv_my_stop_looking_for_gl}" = "xno"; then
    [LIBS_save="$LIBS"
     LIBS="$LIBS -lopengl32"
     AC_MSG_CHECKING(for glLoadIdentity in -lopengl32)
-    AC_TRY_LINK([#include <GL/gl.h>],
-     [glLoadIdentity();],
+    AC_LINK_IFELSE(
+     [AC_LANG_PROGRAM(
+       [#include <GL/gl.h>],
+       [glLoadIdentity();])],
      [ac_cv_my_have_gl="yes"
       AC_DEFINE(HAVE_GL_2X, 1, Define to 1 if GL 2.x is available) # FIXME: hack
       AC_MSG_RESULT(yes)
@@ -129,9 +133,10 @@ AC_CHECK_HEADER(GL/glew.h,
  [LIBS_save="${LIBS}"
   LIBS="${LIBS} -lglew32s ${GL_LIBS}"
   AC_MSG_CHECKING(for glewInit in -lglew32s)
-  AC_TRY_LINK(
-   [#include <GL/glew.h>],
-   [glewInit();],
+  AC_LINK_IFELSE(
+   [AC_LANG_PROGRAM(
+     [#include <GL/glew.h>],
+     [glewInit();])],
    [ac_cv_my_have_glew="yes"
     GL_LIBS="-lglew32s ${GL_LIBS}"
     AC_MSG_RESULT(yes)],

@@ -1,7 +1,7 @@
 dnl
 dnl  Lol Engine
 dnl
-dnl  Copyright © 2010—2017 Sam Hocevar <sam@hocevar.net>
+dnl  Copyright © 2010–2023 Sam Hocevar <sam@hocevar.net>
 dnl
 dnl  Lol Engine is free software. It comes without any warranty, to
 dnl  the extent permitted by applicable law. You can redistribute it
@@ -10,10 +10,10 @@ dnl  to Public License, Version 2, as published by the WTFPL Task Force.
 dnl  See http://www.wtfpl.net/ for more details.
 dnl
 
-AC_INIT(lolengine, 0.0)
-AC_PREREQ(2.50)
+AC_INIT([lolengine], [0.0])
+AC_PREREQ(2.69)
 AC_CONFIG_AUX_DIR(.auto)
-AC_CANONICAL_SYSTEM
+AC_CANONICAL_TARGET
 AM_INIT_AUTOMAKE([subdir-objects no-define tar-ustar silent-rules])
 dnl AM_MAINTAINER_MODE
 
@@ -28,7 +28,6 @@ AM_PROG_CC_C_O
 AC_PROG_CPP
 AC_PROG_CXX
 AC_PROG_CXXCPP
-AC_PROG_RANLIB
 
 LT_INIT([win32-dll])
 LT_LANG([C++])
@@ -221,9 +220,10 @@ AC_SUBST(LOL_USE_DOT)
 
 dnl  GCC-specific symbol demangling
 AC_LANG_PUSH(C++)
-AC_TRY_LINK(
- [#include <cxxabi.h>],
- [abi::__cxa_demangle(NULL, 0, 0, NULL);],
+AC_LINK_IFELSE(
+ [AC_LANG_PROGRAM(
+   [#include <cxxabi.h>],
+   [abi::__cxa_demangle(NULL, 0, 0, NULL);])],
  [AC_DEFINE(HAVE_CXA_DEMANGLE, 1, Define to 1 if abi::__cxa_demangle is available)])
 AC_LANG_POP(C++)
 
@@ -259,7 +259,7 @@ AM_CONDITIONAL(BUILD_SAMPLES, test "${enable_samples}" != "no" -a "${enable_subp
 
 LOL_AC_FINI()
 
-AC_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS([config.h])
 
 AC_CONFIG_FILES(
  [Makefile

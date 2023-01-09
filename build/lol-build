@@ -206,7 +206,7 @@ configure()
             CXXFLAGS="$CXXFLAGS -m64"
             ;;
         web-*)
-            # Force cross-compilation because AC_TRY_LINK is going to check
+            # Force cross-compilation because AC_LINK_IFELSE is going to check
             # whether our binaries have the executable bit set.
             HOSTFLAGS=--host=none
             BUILDFLAGS=--build=`$top_srcdir/.auto/config.guess`
