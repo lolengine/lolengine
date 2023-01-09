@@ -1,8 +1,8 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2017—2020 Sam Hocevar <sam@hocevar.net>
-//            © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//  Copyright © 2017–2023 Sam Hocevar <sam@hocevar.net>
+//            © 2009–2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -67,8 +67,7 @@ protected:
     static void static_set_clipboard(void *data, const char* text);
     static const char* static_get_clipboard(void *data);
 
-    static void static_render_draw_lists(ImDrawData* draw_data);
-    void render_draw_lists(ImDrawData* draw_data);
+    void render_draw_lists();
 
     struct Uniform
     {

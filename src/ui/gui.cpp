@@ -1,8 +1,8 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2017—2020 Sam Hocevar <sam@hocevar.net>
-//            © 2009—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//  Copyright © 2017–2023 Sam Hocevar <sam@hocevar.net>
+//            © 2009–2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -174,7 +174,6 @@ bool gui::init_game()
     io.KeyMap[ImGuiKey_Y]           = (int)input::key::SC_Y;
     io.KeyMap[ImGuiKey_Z]           = (int)input::key::SC_Z;
 
-    io.RenderDrawListsFn = static_render_draw_lists;
     io.SetClipboardTextFn = static_set_clipboard;
     io.GetClipboardTextFn = static_get_clipboard;
     io.ClipboardUserData = &m_clipboard;
@@ -296,6 +295,7 @@ void gui::primitive::Render(Scene& scene)
     (void)scene;
 
     ImGui::Render();
+    g_gui->render_draw_lists();
     ImGui::EndFrame();
 }
 
@@ -306,18 +306,9 @@ void gui::primitive::Render(Scene& scene)
 //static float        g_MouseWheel = 0.0f;
 //static GLuint       g_FontTexture = 0;
 
-//-------------------------------------------------------------------------
-// This is the main rendering function that you have to implement and provide to ImGui (via setting up 'RenderDrawListsFn' in the ImGuiIO structure)
-// If text or lines are blurry when integrating ImGui in your engine:
-// - in your Render function, try translating your projection matrix by (0.5f,0.5f) or (0.375f,0.375f)
-//-------------------------------------------------------------------------
-void gui::static_render_draw_lists(ImDrawData* draw_data)
+void gui::render_draw_lists()
 {
-    g_gui->render_draw_lists(draw_data);
-}
-
-void gui::render_draw_lists(ImDrawData* draw_data)
-{
+    auto draw_data = ImGui::GetDrawData();
     if (draw_data == nullptr)
         return;
 

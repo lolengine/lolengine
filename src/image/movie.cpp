@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine
 //
-//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010–2023 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -23,6 +23,7 @@ extern "C"
 #   include <libavutil/mathematics.h>
 #   include <libavutil/timestamp.h>
 #   include <libavformat/avformat.h>
+#   include <libavcodec/avcodec.h>
 #   include <libswscale/swscale.h>
 #   include <libswresample/swresample.h>
 }
@@ -131,24 +132,26 @@ bool movie::push_image(old_image &im)
 
     while (ret >= 0)
     {
-        AVPacket pkt;
-        memset(&pkt, 0, sizeof(pkt));
-        av_init_packet(&pkt);
-
-        ret = avcodec_receive_packet(m_avcodec, &pkt);
+        AVPacket *pkt = av_packet_alloc();
+        ret = avcodec_receive_packet(m_avcodec, pkt);
         if (ret == AVERROR(EAGAIN) || ret == AVERROR_EOF)
+        {
+            av_packet_free(&pkt);
             return true;
+        }
         if (ret < 0)
         {
             msg::error("cannot retrieve video packet: %s\n", ERROR_TO_STRING(ret));
+            av_packet_free(&pkt);
             return false;
         }
 
-        pkt.stream_index = m_stream->index;
-        ret = av_interleaved_write_frame(m_avformat, &pkt);
+        pkt->stream_index = m_stream->index;
+        ret = av_interleaved_write_frame(m_avformat, pkt);
         if (ret < 0)
         {
             msg::error("cannot write video frame: %s\n", ERROR_TO_STRING(ret));
+            av_packet_free(&pkt);
             return false;
         }
     }
@@ -178,7 +181,7 @@ void movie::close()
 bool movie::open_codec()
 {
 #if LOL_USE_FFMPEG
-    AVCodec *codec = avcodec_find_encoder(m_avformat->oformat->video_codec);
+    AVCodec const *codec = avcodec_find_encoder(m_avformat->oformat->video_codec);
     if (!codec)
     {
         msg::error("no encoder found for %s\n", avcodec_get_name(m_avformat->oformat->video_codec));

@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010–2023 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -92,7 +92,7 @@ public:
     {
         // This regex is copied from cpp-httplib
         const static std::regex re(
-            R"(^(?:([^:/?#]+):)?(?://([^/?#]*))?([^?#]*(?:\?[^#]*)?)(?:#.*)?)");
+            R"(^((?:[^:/?#]+:)?(?://[^/?#]*)?)([^?#]*(?:\?[^#]*)?)(?:#.*)?)");
 
         std::smatch m;
         if (!std::regex_match(url, m, re))
@@ -101,21 +101,18 @@ public:
             return;
         }
 
-        auto scheme = m[1].str();
-        auto host = m[2].str();
-        auto path = m[3].str();
+        auto scheme_and_host = m[1].str();
+        auto path = m[2].str();
 
-#ifdef CPPHTTPLIB_OPENSSL_SUPPORT
-        if (scheme == "https")
-            m_client = std::make_unique<httplib::SSLClient>(host);
-        else
-#endif
-        m_client = std::make_shared<httplib::Client>(host);
+        m_client = std::make_shared<httplib::Client>(scheme_and_host);
         m_client->set_follow_location(true);
+#ifdef CPPHTTPLIB_OPENSSL_SUPPORT
+        m_client->enable_server_certificate_verification(false);
+#endif
 
         m_thread = new lol::thread([this, path](thread *)
         {
-            auto res = m_client->Get(path.c_str());
+            auto res = m_client->Get(path);
             if (res && res->status == 200)
             {
                 m_result = std::move(res->body);
