@@ -1,7 +1,7 @@
 dnl
 dnl  Lol Engine
 dnl
-dnl  Copyright © 2010–2023 Sam Hocevar <sam@hocevar.net>
+dnl  Copyright © 2010–2024 Sam Hocevar <sam@hocevar.net>
 dnl
 dnl  Lol Engine is free software. It comes without any warranty, to
 dnl  the extent permitted by applicable law. You can redistribute it
@@ -24,6 +24,7 @@ LOL_TRY_CXXFLAGS(-std=c++0x, [version_flag='-std=c++0x'])
 LOL_TRY_CXXFLAGS(-std=c++11, [version_flag='-std=c++11'])
 LOL_TRY_CXXFLAGS(-std=c++14, [version_flag='-std=c++14'])
 LOL_TRY_CXXFLAGS(-std=c++17, [version_flag='-std=c++17'])
+LOL_TRY_CXXFLAGS(-std=c++20, [version_flag='-std=c++20'])
 AM_CXXFLAGS="${AM_CXXFLAGS} ${version_flag}"
 CXXFLAGS="${CXXFLAGS} ${version_flag}"
 
@@ -63,7 +64,6 @@ dnl
 
 AC_CHECK_LIB(m, sin, LIBS="${LIBS} -lm")
 AC_CHECK_LIB(pthread, main, LIBS="${LIBS} -lpthread")
-AC_CHECK_LIB(stdc++fs, main, [LIBS="${LIBS} -lstdc++fs"])
 
 
 dnl
