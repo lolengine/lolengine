@@ -25,19 +25,6 @@ namespace lol
 
 lolunit_declare_fixture(string_test)
 {
-    lolunit_declare_test(string_format)
-    {
-        std::string s1 = "3a";
-        std::string s2 = format("%d%x", 3, 10);
-
-        lolunit_assert(s1 == s2);
-
-        std::string s3 = "abc 3";
-        std::string s4 = format("abc %d", 3);
-
-        lolunit_assert(s3 == s4);
-    }
-
     lolunit_declare_test(starts_ends_with)
     {
         std::string s = "lolilol";

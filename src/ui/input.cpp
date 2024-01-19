@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2017—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2017–2024 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -12,6 +12,7 @@
 
 #include <lol/engine-internal.h>
 
+#include <format>
 #include <string>
 #include <map>
 #include <memory>
@@ -95,7 +96,7 @@ std::shared_ptr<input::device::joystick> input::joystick(int n)
     auto &joysticks = get()->m_joysticks;
 
     if (joysticks.find(n) == joysticks.end())
-        joysticks[n] = std::make_shared<input::device::joystick>(format("joystick %d", n));
+        joysticks[n] = std::make_shared<input::device::joystick>(std::format("joystick {}", n));
 
     return joysticks[n];
 }

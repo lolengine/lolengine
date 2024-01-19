@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2019 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010–2024 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -12,9 +12,7 @@
 
 #include <lol/engine-internal.h>
 
-#include <cstdio>
-#include <cstdlib> /* free() */
-#include <cstring> /* strdup() */
+#include <format> // std::format
 
 namespace lol
 {
@@ -60,7 +58,7 @@ void Text::SetText(std::string const &text)
 
 void Text::SetInt(int val)
 {
-    data->m_text = format("%i", val);
+    data->m_text = std::format("{}", val);
 }
 
 void Text::SetPos(vec3 pos)

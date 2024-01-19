@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010–2024 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -11,6 +11,8 @@
 //
 
 #include <lol/engine-internal.h>
+
+#include <format>
 
 #if LOL_USE_SDL
 #   if HAVE_SDL2_SDL_H
@@ -87,9 +89,9 @@ SdlInput::SdlInput(int screen_w, int screen_h)
 
         auto stick = input::joystick(i);
         for (int j = 0; j < SDL_JoystickNumAxes(sdlstick); ++j)
-            stick->internal_add_axis((input::axis)(j + 1), format("Axis%d", j + 1).c_str());
+            stick->internal_add_axis((input::axis)(j + 1), std::format("Axis{}", j + 1).c_str());
         for (int j = 0; j < SDL_JoystickNumButtons(sdlstick); ++j)
-            stick->internal_add_button((input::button)(j + 1), format("Button%d", j + 1).c_str());
+            stick->internal_add_button((input::button)(j + 1), std::format("Button{}", j + 1).c_str());
 
         m_joysticks.push_back(std::make_tuple(sdlstick, stick));
     }

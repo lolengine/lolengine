@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Input tutorial
 //
-//  Copyright © 2011—2020 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2011–2024 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -15,6 +15,7 @@
 #endif
 
 #include <lol/engine.h>
+#include <format>
 #include "loldebug.h"
 
 using namespace lol;
@@ -77,9 +78,9 @@ public:
                     m_yaw_angle += seconds * 0.2f;
             }
 
-            m_text->SetText(lol::format(
-                "cursor: (%0.3f,%0.3f) - pixel (%d,%d)\n"
-                "  move: (%0.3f,%0.3f) - pixel (%d,%d)",
+            m_text->SetText(std::format(
+                "cursor: ({:0.3f},{:0.3f}) - pixel ({},{})\n"
+                "  move: ({:0.3f},{:0.3f}) - pixel ({},{})",
                 mouse->axis(input::axis::X), mouse->axis(input::axis::Y),
                 (int)mouse->axis(input::axis::ScreenX),
                 (int)mouse->axis(input::axis::ScreenY),
