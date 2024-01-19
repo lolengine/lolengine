@@ -1,8 +1,8 @@
 //
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
-//            © 2014—2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
+//  Copyright © 2010–2024 Sam Hocevar <sam@hocevar.net>
+//            © 2014–2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -16,6 +16,7 @@
 #endif
 
 #include <lol/unit_test>
+#include <lol/format>
 #include <lol/utils>
 
 #include <string>
@@ -28,12 +29,12 @@ lolunit_declare_fixture(string_test)
     lolunit_declare_test(string_format)
     {
         std::string s1 = "3a";
-        std::string s2 = format("%d%x", 3, 10);
+        std::string s2 = std::format("{:d}{:x}", 3, 10);
 
         lolunit_assert(s1 == s2);
 
         std::string s3 = "abc 3";
-        std::string s4 = format("abc %d", 3);
+        std::string s4 = std::format("abc {}", 3);
 
         lolunit_assert(s3 == s4);
     }
