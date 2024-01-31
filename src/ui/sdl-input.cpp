@@ -12,7 +12,7 @@
 
 #include <lol/engine-internal.h>
 
-#include <format>
+#include <lol/format>
 
 #if LOL_USE_SDL
 #   if HAVE_SDL2_SDL_H

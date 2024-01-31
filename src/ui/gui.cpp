@@ -15,7 +15,7 @@
 
 #include <cassert>
 #include <cstdio>
-#include <format>
+#include <lol/format>
 #include <string>
 
 //

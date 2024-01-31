@@ -14,7 +14,7 @@
 #   include "config.h"
 #endif
 
-#include <format>
+#include <lol/format>
 #include <lol/unit_test>
 #include <lol/half>
 #include <lol/vector>    // for the sizeof(f16vec2) etc. tests

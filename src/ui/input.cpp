@@ -12,7 +12,7 @@
 
 #include <lol/engine-internal.h>
 
-#include <format>
+#include <lol/format>
 #include <string>
 #include <map>
 #include <memory>

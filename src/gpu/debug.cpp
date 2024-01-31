@@ -10,8 +10,8 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
-#include <format>
 #include <lol/engine-internal.h>
+#include <lol/format>
 #include <lol/msg>
 
 #include "lolgl.h"
