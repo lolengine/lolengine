@@ -15,7 +15,9 @@
 
 #include <vector> // std::vector
 #include <string> // std::string
+#if !__ANDROID__ && !__EMSCRIPTEN__ && !__NX__
 #include <filesystem> // std::filesystem::exists
+#endif
 #include <cctype>
 
 namespace lol::sys
@@ -149,8 +151,10 @@ std::string get_data_path(std::string const &file)
         {
             auto path = dir + file;
             std::error_code ec;
+#if !__NX__
             if (std::filesystem::exists(path, ec))
                 return path;
+#endif
         }
 
     return file;

@@ -50,7 +50,8 @@ std::shared_ptr<app> app::init(char const *name, ivec2 res, float framerate)
 #if __ANDROID__
     auto ret = std::make_shared<android::app>(name, res);
 #elif __NX__
-    auto ret = std::make_shared<nx::app>(name, res);
+    std::shared_ptr<app> ret;
+    //auto ret = std::make_shared<nx::app>(name, res);
 #elif LOL_USE_SDL
     auto ret = std::make_shared<sdl::app>(name, res);
 #elif HAVE_GLES_2X
@@ -59,8 +60,10 @@ std::shared_ptr<app> app::init(char const *name, ivec2 res, float framerate)
     auto ret = std::make_shared<egl::app>(name, res);
 #endif
 
+#if !__NX__
     if (engine::has_opengl())
         Scene::add_display(ret->get_display());
+#endif
 
     return ret;
 }
