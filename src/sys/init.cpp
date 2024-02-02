@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010–2024 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -15,8 +15,10 @@
 
 #include <vector> // std::vector
 #include <string> // std::string
-#include <filesystem> // std::filesystem::exists
 #include <cctype>
+#if !__ANDROID__ && !__EMSCRIPTEN__ && !__NX__
+#   include <filesystem> // std::filesystem::exists
+#endif
 
 namespace lol::sys
 {
@@ -148,9 +150,11 @@ std::string get_data_path(std::string const &file)
         for (auto const &dir : data_dir)
         {
             auto path = dir + file;
+#if !__ANDROID__ && !__EMSCRIPTEN__ && !__NX__
             std::error_code ec;
             if (std::filesystem::exists(path, ec))
                 return path;
+#endif
         }
 
     return file;

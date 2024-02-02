@@ -26,7 +26,9 @@
 #   define FAR
 #endif
 
-#if __EMSCRIPTEN__
+#if __NX__
+    // not implemented
+#elif __EMSCRIPTEN__
 #   include <emscripten/fetch.h>
 #else
 #   include <httplib.h>
@@ -48,7 +50,13 @@ namespace http
 class client_impl
 {
 public:
-#if __EMSCRIPTEN__
+#if __NX__
+    void get(std::string const &url)
+    {
+        msg::error("downloading %s failed: not implemented\n", url);
+        m_status = status::error;
+    }
+#elif __EMSCRIPTEN__
     ~client_impl()
     {
         emscripten_fetch_close(m_fetch);

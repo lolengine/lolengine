@@ -65,8 +65,6 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <PreprocessorDefinitions>LUA_ANSI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <!-- disable the -std=c++17 flag on NX64 -->
-      <AdditionalOptions Condition="'$(Platform)'=='NX64'"></AdditionalOptions>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
