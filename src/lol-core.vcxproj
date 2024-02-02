@@ -2,9 +2,9 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="LolMacros">
     <LolDir>$(SolutionDir)</LolDir>
-    <LolDir Condition="Exists('$(SolutionDir)\lol\lol.sln')">$(SolutionDir)\lol</LolDir>
-    <LolDir Condition="Exists('$(SolutionDir)\lolengine\lol.sln')">$(SolutionDir)\lolengine</LolDir>
-    <LolDir Condition="Exists('$(SolutionDir)\src\3rdparty\lolengine\lol.sln')">$(SolutionDir)\src\3rdparty\lolengine</LolDir>
+    <LolDir Condition="Exists('$(SolutionDir)\lol\lolengine.sln')">$(SolutionDir)\lol</LolDir>
+    <LolDir Condition="Exists('$(SolutionDir)\lolengine\lolengine.sln')">$(SolutionDir)\lolengine</LolDir>
+    <LolDir Condition="Exists('$(SolutionDir)\src\3rdparty\lolengine\lolengine.sln')">$(SolutionDir)\src\3rdparty\lolengine</LolDir>
   </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|NX64">
@@ -95,261 +95,17 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="3rdparty\imgui\imgui.cpp" />
-    <ClCompile Include="3rdparty\imgui\imgui_demo.cpp" />
-    <ClCompile Include="3rdparty\imgui\imgui_draw.cpp" />
-    <ClCompile Include="3rdparty\imgui\imgui_tables.cpp" />
-    <ClCompile Include="3rdparty\imgui\imgui_widgets.cpp" />
-    <ClCompile Include="application\application.cpp" />
-    <ClCompile Include="application\egl-app.cpp" />
-    <ClCompile Include="application\sdl-app.cpp">
-      <ExcludedFromBuild Condition="'$(enable_sdl)'=='no'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="audio\audio.cpp" />
-    <ClCompile Include="audio\sample.cpp" />
-    <ClCompile Include="camera.cpp" />
-    <ClCompile Include="base\assert.cpp" />
-    <ClCompile Include="base\engine.cpp" />
-    <ClCompile Include="base\log.cpp" />
-    <ClCompile Include="debug\fps.cpp" />
-    <ClCompile Include="debug\lines.cpp" />
-    <ClCompile Include="debug\record.cpp" />
-    <ClCompile Include="debug\stats.cpp" />
-    <ClCompile Include="easymesh\csgbsp.cpp" />
-    <ClCompile Include="easymesh\easymesh.cpp" />
-    <ClCompile Include="easymesh\easymeshbuild.cpp" />
-    <ClCompile Include="easymesh\easymeshcsg.cpp" />
-    <ClCompile Include="easymesh\easymeshcursor.cpp" />
-    <ClCompile Include="easymesh\easymeshinternal.cpp" />
-    <ClCompile Include="easymesh\easymeshlua.cpp" />
-    <ClCompile Include="easymesh\easymeshprimitive.cpp" />
-    <ClCompile Include="easymesh\easymeshrender.cpp" />
-    <ClCompile Include="easymesh\easymeshtransform.cpp" />
-    <ClCompile Include="engine\entity.cpp" />
-    <ClCompile Include="engine\tickable.cpp" />
-    <ClCompile Include="engine\ticker.cpp" />
-    <ClCompile Include="engine\world.cpp" />
-    <ClCompile Include="engine\worldentity.cpp" />
-    <ClCompile Include="emitter.cpp" />
-    <ClCompile Include="font.cpp" />
-    <ClCompile Include="gpu\debug.cpp" />
-    <ClCompile Include="gpu\framebuffer.cpp" />
-    <ClCompile Include="gpu\indexbuffer.cpp" />
-    <ClCompile Include="gpu\lolfx.cpp" />
-    <ClCompile Include="gpu\rendercontext.cpp" />
-    <ClCompile Include="gpu\renderer.cpp" />
-    <ClCompile Include="gpu\shader.cpp" />
-    <ClCompile Include="gpu\texture.cpp" />
-    <ClCompile Include="gpu\vertexbuffer.cpp" />
-    <ClCompile Include="gradient.cpp" />
-    <ClCompile Include="image\codec\android-image.cpp">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="image\codec\dummy-image.cpp" />
-    <ClCompile Include="image\codec\gdiplus-image.cpp" />
-    <ClCompile Include="image\codec\ios-image.cpp">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="image\codec\oric-image.cpp" />
-    <ClCompile Include="image\codec\sdl-image.cpp" />
-    <ClCompile Include="image\filter\colors.cpp" />
-    <ClCompile Include="image\filter\convolution.cpp" />
-    <ClCompile Include="image\filter\dilate.cpp" />
-    <ClCompile Include="image\filter\median.cpp" />
-    <ClCompile Include="image\filter\yuv.cpp" />
-    <ClCompile Include="image\dither\dbs.cpp" />
-    <ClCompile Include="image\dither\ediff.cpp" />
-    <ClCompile Include="image\dither\ordered.cpp" />
-    <ClCompile Include="image\dither\ostromoukhov.cpp" />
-    <ClCompile Include="image\dither\random.cpp" />
-    <ClCompile Include="image\crop.cpp" />
-    <ClCompile Include="image\combine.cpp" />
-    <ClCompile Include="image\image.cpp" />
-    <ClCompile Include="image\kernel.cpp" />
-    <ClCompile Include="image\movie.cpp" />
-    <ClCompile Include="image\noise.cpp" />
-    <ClCompile Include="image\pixel.cpp" />
-    <ClCompile Include="image\resample.cpp" />
-    <ClCompile Include="image\resource.cpp" />
-    <ClCompile Include="light.cpp" />
-    <ClCompile Include="lolua\baselua.cpp" />
-    <ClCompile Include="math\geometry.cpp" />
-    <ClCompile Include="mesh\mesh.cpp" />
-    <ClCompile Include="mesh\primitivemesh.cpp" />
-    <ClCompile Include="messageservice.cpp" />
     <ClCompile Include="net\http.cpp" />
-    <ClCompile Include="platform.cpp" />
-    <ClCompile Include="profiler.cpp" />
-    <ClCompile Include="scene.cpp" />
-    <ClCompile Include="sprite.cpp" />
-    <ClCompile Include="sys\init.cpp" />
-    <ClCompile Include="text.cpp" />
-    <ClCompile Include="textureimage.cpp" />
-    <ClCompile Include="tileset.cpp" />
-    <ClCompile Include="ui\d3d9-input.cpp" />
-    <ClCompile Include="ui\gui.cpp" />
-    <ClCompile Include="ui\input.cpp" />
-    <ClCompile Include="ui\sdl-input.cpp">
-      <ExcludedFromBuild Condition="'$(enable_sdl)'=='no'">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="video.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="application\application.h" />
-    <ClInclude Include="application\egl-app.h" />
-    <ClInclude Include="application\sdl-app.h">
-      <ExcludedFromBuild Condition="'$(enable_sdl)'=='no'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="camera.h" />
-    <ClInclude Include="commandstack.h" />
-    <ClInclude Include="debug\fps.h" />
-    <ClInclude Include="debug\record.h" />
-    <ClInclude Include="debug\stats.h" />
-    <ClInclude Include="easymesh\csgbsp.h" />
-    <ClInclude Include="easymesh\easyarray.h" />
-    <ClInclude Include="easymesh\easymesh.h" />
-    <ClInclude Include="easymesh\easymeshbuild.h" />
-    <ClInclude Include="easymesh\easymeshlua.h" />
-    <ClInclude Include="easymesh\easymeshrender.h" />
-    <ClInclude Include="emitter.h" />
-    <ClInclude Include="engine\entity.h" />
-    <ClInclude Include="engine\ticker.h" />
-    <ClInclude Include="engine\worldentity.h" />
-    <ClInclude Include="engine\world.h" />
-    <ClInclude Include="font.h" />
-    <ClInclude Include="gradient.h" />
-    <ClInclude Include="image\image-private.h" />
-    <ClInclude Include="image\resource-private.h" />
-    <ClInclude Include="light.h" />
-    <ClInclude Include="loldebug.h" />
-    <ClInclude Include="lolgl.h" />
-    <ClInclude Include="lolua\baselua.h" />
-    <ClInclude Include="lol\audio\all.h" />
-    <ClInclude Include="lol\audio\audio.h" />
-    <ClInclude Include="lol\audio\sample.h" />
-    <ClInclude Include="lol\base\all.h" />
-    <ClInclude Include="lol\base\enum.h" />
-    <ClInclude Include="lol\base\log.h" />
-    <ClInclude Include="lol\debug\all.h" />
-    <ClInclude Include="lol\debug\lines.h" />
-    <ClInclude Include="lol\engine\all.h" />
-    <ClInclude Include="lol\engine\tickable.h" />
-    <ClInclude Include="lol\engine.h" />
-    <ClInclude Include="lol\engine-internal.h" />
-    <ClInclude Include="lol\extras.h" />
-    <ClInclude Include="lol\gpu\all.h" />
-    <ClInclude Include="lol\gpu\debug.h" />
-    <ClInclude Include="lol\gpu\framebuffer.h" />
-    <ClInclude Include="lol\gpu\indexbuffer.h" />
-    <ClInclude Include="lol\gpu\lolfx.h" />
-    <ClInclude Include="lol\gpu\rendercontext.h" />
-    <ClInclude Include="lol\gpu\renderer.h" />
-    <ClInclude Include="lol\gpu\shader.h" />
-    <ClInclude Include="lol\gpu\texture.h" />
-    <ClInclude Include="lol\gpu\vertexbuffer.h" />
-    <ClInclude Include="lol\image\all.h" />
-    <ClInclude Include="lol\image\image.h" />
-    <ClInclude Include="lol\image\movie.h" />
-    <ClInclude Include="lol\image\resource.h" />
-    <ClInclude Include="lol\lua.h" />
-    <ClInclude Include="lol\net\all.h" />
-    <ClInclude Include="lol\net\http.h" />
-    <ClInclude Include="lol\public.h" />
-    <ClInclude Include="lol\sys\all.h" />
-    <ClInclude Include="lol\sys\init.h" />
-    <ClInclude Include="mesh\mesh.h" />
-    <ClInclude Include="mesh\primitivemesh.h" />
-    <ClInclude Include="messageservice.h" />
-    <ClInclude Include="platform.h" />
-    <ClInclude Include="profiler.h" />
-    <ClInclude Include="scene.h" />
-    <ClInclude Include="sprite.h" />
-    <ClInclude Include="text.h" />
-    <ClInclude Include="textureimage-private.h" />
-    <ClInclude Include="textureimage.h" />
-    <ClInclude Include="tileset.h" />
-    <ClInclude Include="ui\buttons.inc" />
-    <ClInclude Include="ui\d3d9-input.h" />
-    <ClInclude Include="ui\gui.h" />
-    <ClInclude Include="ui\input.h" />
-    <ClInclude Include="ui\keys.inc" />
-    <ClInclude Include="ui\sdl-input.h">
-      <ExcludedFromBuild Condition="'$(enable_sdl)'=='no'">true</ExcludedFromBuild>
-    </ClInclude>
-    <ClInclude Include="video.h" />
+    <ClInclude Include="include\lol\engine\net" />
+    <ClInclude Include="include\lol\engine\private\net\http.h" />
   </ItemGroup>
   <ItemGroup>
-    <LolFxCompile Include="easymesh\shiny.lolfx" />
-    <LolFxCompile Include="easymesh\shinydebuglighting.lolfx" />
-    <LolFxCompile Include="easymesh\shinydebugnormal.lolfx" />
-    <LolFxCompile Include="easymesh\shinydebugUV.lolfx" />
-    <LolFxCompile Include="easymesh\shinydebugwireframe.lolfx" />
-    <LolFxCompile Include="easymesh\shinyflat.lolfx" />
-    <LolFxCompile Include="easymesh\shiny_SK.lolfx" />
-    <LolFxCompile Include="gpu\blit.lolfx" />
-    <LolFxCompile Include="gpu\default-material.lolfx" />
-    <LolFxCompile Include="gpu\empty-material.lolfx" />
-    <LolFxCompile Include="gpu\grad.lolfx" />
-    <LolFxCompile Include="gpu\line.lolfx" />
-    <LolFxCompile Include="gpu\palette.lolfx" />
-    <LolFxCompile Include="gpu\postprocess.lolfx" />
-    <LolFxCompile Include="gpu\test-material.lolfx" />
-    <LolFxCompile Include="gpu\tile.lolfx" />
-  </ItemGroup>
-  <ItemGroup>
-    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlLibDir)\SDL2.dll">
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
-    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlImageLibDir)\libjpeg-9.dll">
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
-    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlImageLibDir)\libpng16-16.dll">
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
-    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlImageLibDir)\libtiff-5.dll">
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
-    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlImageLibDir)\libwebp-7.dll">
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
-    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlImageLibDir)\SDL2_image.dll">
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
-    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlImageLibDir)\zlib1.dll">
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
-    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlMixerLibDir)\libFLAC-8.dll">
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
-    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlMixerLibDir)\libmodplug-1.dll">
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
-    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlMixerLibDir)\libmpg123-0.dll">
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
-    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlMixerLibDir)\libogg-0.dll">
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
-    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlMixerLibDir)\libopus-0.dll">
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
-    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlMixerLibDir)\libopusfile-0.dll">
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
-    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlMixerLibDir)\libvorbis-0.dll">
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
-    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlMixerLibDir)\libvorbisfile-3.dll">
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
-    <CopyFileToFolders Condition="'$(enable_sdl)'!='no'" Include="$(SdlMixerLibDir)\SDL2_mixer.dll">
-      <FileType>Document</FileType>
-    </CopyFileToFolders>
     <None Include="Makefile.am">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </None>
   </ItemGroup>
-  <Import Project="$(LolDir)\build\msbuild\lol-bullet.props" />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(LolDir)\build\msbuild\lolfx.targets" />

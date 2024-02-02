@@ -27,8 +27,7 @@
 
       <AdditionalIncludeDirectories>
           $(LolDir)\lol\include;
-          $(LolDir)\src;
-          $(LolDir)\src\3rdparty\bullet3\src;
+          $(LolDir)\src\include;
           $(PegtlIncludes);
           $(ImguiIncludes);
           $(BtPhysIncludes);

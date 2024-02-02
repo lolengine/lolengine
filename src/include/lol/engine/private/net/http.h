@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010–2024 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -13,14 +13,9 @@
 #pragma once
 
 #include <memory>
+#include <string>
 
-namespace lol
-{
-
-namespace net
-{
-
-namespace http
+namespace lol::net::http
 {
 
 enum class status : uint8_t
@@ -30,8 +25,6 @@ enum class status : uint8_t
     success = 2,
     error   = 3,
 };
-
-class client_impl;
 
 class client
 {
@@ -46,17 +39,12 @@ public:
     void reset();
 
     // Get current URL, status (may be pending), and result
-    status get_status() const;
-    std::string const & get_url() const;
-    std::string const & get_result() const;
+    status status() const;
+    std::string const & url() const;
+    std::string const & result() const;
 
 private:
-    std::unique_ptr<client_impl> impl;
+    std::unique_ptr<class client_impl> impl;
 };
 
-} // namespace http
-
-} // namespace net
-
-} // namespace lol
-
+} // namespace lol::net::http
