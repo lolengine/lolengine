@@ -2,9 +2,6 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="LolMacros">
     <LolDir>$(SolutionDir)</LolDir>
-    <LolDir Condition="Exists('$(SolutionDir)\lol\lolengine.sln')">$(SolutionDir)\lol</LolDir>
-    <LolDir Condition="Exists('$(SolutionDir)\lolengine\lolengine.sln')">$(SolutionDir)\lolengine</LolDir>
-    <LolDir Condition="Exists('$(SolutionDir)\src\3rdparty\lolengine\lolengine.sln')">$(SolutionDir)\src\3rdparty\lolengine</LolDir>
   </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|NX64">
@@ -40,9 +37,13 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="window.cpp" />
+  </ItemGroup>
+  <Import Project="$(LolDir)\build\msbuild\lol-core.props" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{9E62F2FE-3408-4EAE-8238-FD84238CEEDA}</ProjectGuid>
-    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <ProjectGuid>{C57C9F9F-8EAE-4265-A210-B0CAA717A3A0}</ProjectGuid>
+    <ConfigurationType>Application</ConfigurationType>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
   <Import Project="$(LolDir)\build\msbuild\lol.config.props" />
@@ -55,27 +56,7 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <Import Project="$(LolDir)\build\msbuild\lol.rules.props" />
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions);LOL_INPUT_V2</PreprocessorDefinitions>
-    </ClCompile>
-  </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="net\http.cpp" />
-    <ClCompile Include="sys\init.cpp" />
-    <ClCompile Include="sys\main.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\lol\engine\net" />
-    <ClInclude Include="include\lol\engine\private\net\http.h" />
-    <ClInclude Include="include\lol\engine\private\sys\init.h" />
-    <ClInclude Include="include\lol\engine\sys" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Makefile.am">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </None>
-  </ItemGroup>
+  <ItemDefinitionGroup />
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(LolDir)\build\msbuild\lolfx.targets" />

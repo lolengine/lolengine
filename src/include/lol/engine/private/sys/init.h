@@ -20,6 +20,14 @@
 #include <string> // std::string
 
 //
+// Override main() on platforms and systems that require it
+//
+
+#if LOL_USE_KINC && !KINC_NO_MAIN
+#   define main lol_kinc_kickstart
+#endif
+
+//
 // Module-specific macros. These can be overridden by the build process,
 // typically with compiler command-line flags.
 //
@@ -45,9 +53,13 @@ namespace lol::sys
 {
 
 extern void init(int argc, char *argv[],
+                 std::string const &name, int width, int height,
                  std::string const &projectdir = LOL_CONFIG_PROJECTDIR,
                  std::string const &solutiondir = LOL_CONFIG_SOLUTIONDIR,
                  std::string const &sourcesubdir = LOL_CONFIG_SOURCESUBDIR);
+
+extern void run();
+extern void stop();
 
 extern void add_data_dir(std::string const &dir);
 extern std::string get_data_path(std::string const &file);

@@ -29,6 +29,7 @@ liblol_core_headers = \
 liblol_core_sources = \
     net/http.cpp \
     \
-    sys/init.cpp
+    sys/init.cpp \
+    sys/main.cpp
 
 include 3rdparty/lol-imgui.am

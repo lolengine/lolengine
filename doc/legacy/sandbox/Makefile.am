@@ -1,7 +1,7 @@
 
 include $(top_srcdir)/build/autotools/common.am
 
-if BUILD_SAMPLES
+if BUILD_LEGACY
 bin_PROGRAMS = sample
 endif
 

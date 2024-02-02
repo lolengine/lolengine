@@ -1,0 +1,74 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+
+  <PropertyGroup Label="UserMacros">
+    <KincIncludes>
+      $(KINC_SDK_PATH)\Sources
+    </KincIncludes>
+    <KincDefines>
+      LOL_USE_KINC;
+      KORE_G1;
+      KORE_G2;
+      KORE_G3;
+      KORE_A1;
+      KORE_A2;
+      KORE_LZ4X;
+      KORE_G4;
+      KORE_G5;
+    </KincDefines>
+  </PropertyGroup>
+
+  <PropertyGroup Label="UserMacros" Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">
+    <KincIncludes>
+      $(KincIncludes);
+      $(KINC_SDK_PATH)\Backends\System\Windows\Sources;
+      $(KINC_SDK_PATH)\Backends\System\Microsoft\Sources;
+      $(KINC_SDK_PATH)\Backends\System\Windows\Libraries\DirectShow\BaseClasses;
+      $(KINC_SDK_PATH)\Backends\Graphics4\Direct3D11\Sources;
+      $(KINC_SDK_PATH)\Backends\Audio2\WASAPI\Sources;
+      $(KINC_SDK_PATH)\Backends\Graphics5\G5onG4\Sources;
+    </KincIncludes>
+    <KincDefines>
+      $(KincDefines);
+      KORE_DIRECT3D;
+      KORE_DIRECT3D11;
+      KORE_G5ONG4;
+      KINC_NO_MAIN;
+    </KincDefines>
+    <KincDeps>
+      winhttp.lib;
+      d3d11.lib;
+      dxguid.lib;
+      dinput8.lib;
+      strmiids.lib;
+      winmm.lib;
+      wbemuuid.lib;
+    </KincDeps>
+  </PropertyGroup>
+
+  <PropertyGroup Label="UserMacros" Condition="'$(Platform)'=='NX32' Or '$(Platform)'=='NX64'">
+    <KincIncludes>
+      $(KincIncludes);
+      $(KINC_SDK_PATH)\Backends\Graphics4\G4onG5\Sources;
+      $(KINC_SDK_PATH)\..\Backends\Switch\Sources;
+    </KincIncludes>
+    <KincDefines>
+      $(KincDefines);
+      KORE_G4ONG5;
+      KORE_SWITCH;
+      KORE_CONSOLE;
+    </KincDefines>
+    <KincDeps>
+      libnn_profiler.a;
+    </KincDeps>
+  </PropertyGroup>
+
+  <ItemGroup Label="UserMacros">
+    <BuildMacro Include="KincDeps"><Value>$(KincDeps)</Value></BuildMacro>
+    <BuildMacro Include="KincLibs"><Value>$(KincLibs)</Value></BuildMacro>
+    <BuildMacro Include="KincDefines"><Value>$(KincDefines)</Value></BuildMacro>
+    <BuildMacro Include="KincIncludes"><Value>$(KincIncludes)</Value></BuildMacro>
+  </ItemGroup>
+
+</Project>

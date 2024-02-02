@@ -6,7 +6,7 @@ SUBDIRS = math sandbox
 bench: benchsuite$(EXEEXT)
 	./benchsuite$(EXEEXT)
 
-if BUILD_SAMPLES
+if BUILD_LEGACY
 noinst_PROGRAMS = bluenoise benchsuite simplex
 if LOL_USE_GL
 if LOL_USE_BULLET

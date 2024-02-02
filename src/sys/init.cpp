@@ -20,6 +20,8 @@
 #   include <filesystem> // std::filesystem::exists
 #endif
 
+#include <kinc/system.h>
+
 namespace lol::sys
 {
 
@@ -32,11 +34,16 @@ namespace lol::sys
 static std::vector<std::string> data_dir;
 
 void init(int argc, char *argv[],
+          std::string const &name, int width, int height,
           std::string const &projectdir,
           std::string const &solutiondir,
           std::string const &sourcesubdir)
 {
     using namespace std;
+
+#if LOL_USE_KINC
+    kinc_init(name.c_str(), width, height, nullptr, nullptr);
+#endif
 
     msg::debug("project dir: “%s”\n", projectdir.c_str());
     msg::debug("solution dir: “%s”\n", solutiondir.c_str());
@@ -132,6 +139,20 @@ void init(int argc, char *argv[],
     for (int i = 0; i < int(data_dir.size()); ++i)
         msg::debug("data dir %d/%d: “%s”\n", i + 1, int(data_dir.size()),
                    data_dir[i].c_str());
+}
+
+void run()
+{
+#if LOL_USE_KINC
+    kinc_start();
+#endif
+}
+
+void stop()
+{
+#if LOL_USE_KINC
+    kinc_stop();
+#endif
 }
 
 //

@@ -96,8 +96,10 @@ AC_ARG_ENABLE(tools,
   [  --enable-tools          build miscellaneous tools (default yes)])
 AC_ARG_ENABLE(tutorial,
   [  --enable-tutorial       build tutorial applications (default yes)])
-AC_ARG_ENABLE(samples,
-  [  --enable-samples        build sample applications (default yes)])
+AC_ARG_ENABLE(examples,
+  [  --enable-examples       build example applications (default yes)])
+AC_ARG_ENABLE(legacy,
+  [  --enable-legacy         build legacy sample applications (default yes)])
 AC_ARG_ENABLE(doc,
   [  --enable-doc            build documentation (needs doxygen and LaTeX)])
 
@@ -254,7 +256,8 @@ dnl  Optional features
 AM_CONDITIONAL(BUILD_TEST, test "${enable_test}" != "no" -a "${enable_subproject}" != "yes")
 AM_CONDITIONAL(BUILD_TOOLS, test "${enable_tools}" != "no" -a "${enable_subproject}" != "yes")
 AM_CONDITIONAL(BUILD_TUTORIAL, test "${enable_tutorial}" != "no" -a "${enable_subproject}" != "yes")
-AM_CONDITIONAL(BUILD_SAMPLES, test "${enable_samples}" != "no" -a "${enable_subproject}" != "yes")
+AM_CONDITIONAL(BUILD_EXAMPLES, test "${enable_examples}" != "no" -a "${enable_subproject}" != "yes")
+AM_CONDITIONAL(BUILD_LEGACY, test "${enable_legacy}" != "no" -a "${enable_subproject}" != "yes")
 
 
 LOL_AC_FINI()
@@ -272,9 +275,10 @@ AC_CONFIG_FILES(
   binaries/Makefile
   doc/Makefile
   doc/doxygen.cfg
-  doc/samples/Makefile
-  doc/samples/math/Makefile
-  doc/samples/sandbox/Makefile
+  doc/examples/Makefile
+  doc/legacy/Makefile
+  doc/legacy/math/Makefile
+  doc/legacy/sandbox/Makefile
   doc/tutorial/Makefile
   tools/Makefile
   tools/vimlol/Makefile

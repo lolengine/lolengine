@@ -54,7 +54,7 @@ public:
 #if __NX__
     void get(std::string const &url)
     {
-        msg::error("downloading %s failed: not implemented\n", url);
+        msg::error("downloading %s failed: not implemented\n", url.c_str());
         m_status = status::error;
     }
 #elif __EMSCRIPTEN__

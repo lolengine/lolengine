@@ -7,6 +7,9 @@
     <ClCompile Include="sys\init.cpp">
       <Filter>sys</Filter>
     </ClCompile>
+    <ClCompile Include="sys\main.cpp">
+      <Filter>sys</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\lol\engine\private\net\http.h">

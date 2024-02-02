@@ -91,6 +91,9 @@
     <Win32Defines>LOL_USE_SDL_MIXER;LOL_USE_SDL_IMAGE;$(Win32Defines)</Win32Defines>
   </PropertyGroup>
 
+  <!-- Kinc -->
+  <Import Condition="'$(enable_kinc)'!='no'" Project="lol-kinc.vars.props" />
+
   <!-- FFmpeg -->
   <PropertyGroup Condition="'$(enable_ffmpeg)'!='no'" Label="UserMacros">
     <FfmpegDir>$(ExternalDir)\ffmpeg-20190130</FfmpegDir>
