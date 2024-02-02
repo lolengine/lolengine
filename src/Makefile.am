@@ -19,27 +19,16 @@ liblol_core_la_SOURCES = \
 liblol_core_la_CPPFLAGS = $(AM_CPPFLAGS)
 liblol_core_la_LDFLAGS = $(AM_LDFLAGS)
 
-liblol_core_headers =
+liblol_core_headers = \
+    src/include/lol/engine/net \
+    src/include/lol/engine/sys \
+    \
+    src/include/lol/engine/private/net/http.h \
+    src/include/lol/engine/private/sys/init.h
 
 liblol_core_sources = \
-    base/assert.cpp base/engine.cpp base/log.cpp \
+    net/http.cpp \
     \
-    audio/audio.cpp \
-    \
-    sys/init.cpp \
-    \
-    image/resource.cpp image/resource-private.h \
-    image/image.cpp image/image-private.h image/kernel.cpp image/pixel.cpp \
-    image/crop.cpp image/resample.cpp image/noise.cpp image/combine.cpp \
-    image/codec/gdiplus-image.cpp image/codec/imlib2-image.cpp \
-    image/codec/sdl-image.cpp image/codec/ios-image.cpp \
-    image/codec/oric-image.cpp image/codec/dummy-image.cpp \
-    image/dither/random.cpp image/dither/ediff.cpp image/dither/dbs.cpp \
-    image/dither/ostromoukhov.cpp image/dither/ordered.cpp \
-    image/filter/convolution.cpp image/filter/colors.cpp \
-    image/filter/dilate.cpp image/filter/median.cpp image/filter/yuv.cpp \
-    image/movie.cpp \
-    \
-    net/http.cpp
+    sys/init.cpp
 
 include 3rdparty/lol-imgui.am

@@ -96,10 +96,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="net\http.cpp" />
+    <ClCompile Include="sys\init.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\lol\engine\net" />
     <ClInclude Include="include\lol\engine\private\net\http.h" />
+    <ClInclude Include="include\lol\engine\private\sys\init.h" />
+    <ClInclude Include="include\lol\engine\sys" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Makefile.am">

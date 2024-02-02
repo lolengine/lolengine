@@ -10,7 +10,7 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
-#include <lol/engine-internal.h>
+#include <lol/engine/sys>
 #include <lol/msg>
 
 #include <vector> // std::vector
@@ -42,10 +42,10 @@ void init(int argc, char *argv[],
     msg::debug("solution dir: “%s”\n", solutiondir.c_str());
     msg::debug("source subdir: “%s”\n", sourcesubdir.c_str());
 
-    /*
-     * Retrieve binary directory, defaulting to no directory on Android
-     * and emscripten, and the current directory on other platforms.
-     */
+    //
+    // Retrieve binary directory, defaulting to no directory on Android
+    // and emscripten, and the current directory on other platforms.
+    //
 
 #if __ANDROID__ || __EMSCRIPTEN__ || __NX__
     std::string binarydir = "";
@@ -62,14 +62,14 @@ void init(int argc, char *argv[],
 
     bool got_rootdir = false;
 
-    /*
-     * If project dir and solution dir are set, add them to data; also
-     * add current directory in case we were launched from another place.
-     */
+    //
+    // If project dir and solution dir are set, add them to data; also
+    // add current directory in case we were launched from another place.
+    //
 
     if (!got_rootdir && projectdir.length() && solutiondir.length())
     {
-        /* This data dir is for standalone executables */
+        // This data dir is for standalone executables
         std::string rootdir = binarydir;
 #if !__NX__
         if (rootdir.length() && rootdir.back() != SEPARATOR)
@@ -77,21 +77,21 @@ void init(int argc, char *argv[],
         add_data_dir(rootdir);
 #endif
 
-        /* This data dir is for engine stuff */
+        // This data dir is for engine stuff
         rootdir = solutiondir;
         if (rootdir.length() && rootdir.back() != SEPARATOR)
             rootdir += SEPARATOR;
-        rootdir += "../src/"; /* FIXME: use SEPARATOR? */
+        rootdir += "../src/"; // FIXME: use SEPARATOR?
         add_data_dir(rootdir);
 
-        /* This data dir is for submodule support stuff */
+        // This data dir is for submodule support stuff
         rootdir = solutiondir;
         if (rootdir.length() && rootdir.back() != SEPARATOR)
             rootdir += SEPARATOR;
-        rootdir += "./lol/src/"; /* FIXME: use SEPARATOR? */
+        rootdir += "./lol/src/"; // FIXME: use SEPARATOR?
         add_data_dir(rootdir);
 
-        /* This data dir is for project-specific stuff */
+        // This data dir is for project-specific stuff
         rootdir = projectdir;
         if (rootdir.length() && rootdir.back() != SEPARATOR)
             rootdir += SEPARATOR;
@@ -100,14 +100,14 @@ void init(int argc, char *argv[],
         got_rootdir = true;
     }
 
-    /*
-     * If no project dir, use the executable location as the starting point
-     * to guess the data dir.
-     */
+    //
+    // If no project dir, use the executable location as the starting point
+    // to guess the data dir.
+    //
     if (!got_rootdir)
     {
-        /* First climb back the hierarchy to get to the engine root and
-         * add a data dir for engine stuff. */
+        // First climb back the hierarchy to get to the engine root and
+        // add a data dir for engine stuff.
         std::string rootdir = binarydir;
         if (rootdir.length() && rootdir.back() != SEPARATOR)
             rootdir += SEPARATOR;
@@ -121,7 +121,7 @@ void init(int argc, char *argv[],
         rootdir += "src/";
         add_data_dir(rootdir);
 
-        /* This data dir is for project-specific stuff */
+        // This data dir is for project-specific stuff
         rootdir = binarydir;
         add_data_dir(rootdir);
 
@@ -134,9 +134,9 @@ void init(int argc, char *argv[],
                    data_dir[i].c_str());
 }
 
-/*
- * Data directory handling
- */
+//
+// Data directory handling
+//
 
 void add_data_dir(std::string const &dir)
 {

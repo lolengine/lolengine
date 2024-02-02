@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010–2024 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -19,13 +19,10 @@
 
 #include <string> // std::string
 
-namespace lol
-{
-
-/*
- * Module-specific macros. These can be overridden by the build process,
- * typically with compiler command-line flags.
- */
+//
+// Module-specific macros. These can be overridden by the build process,
+// typically with compiler command-line flags.
+//
 
 #if !defined LOL_CONFIG_PROJECTDIR
 #   define LOL_CONFIG_PROJECTDIR ""
@@ -39,12 +36,12 @@ namespace lol
 #   define LOL_CONFIG_SOURCESUBDIR ""
 #endif
 
-/*
- * System namespace. The platform-specific stuff in there makes the API
- * not as clean as the rest of the framework.
- */
+//
+// System namespace. The platform-specific stuff in there makes the API
+// not as clean as the rest of the framework.
+//
 
-namespace sys
+namespace lol::sys
 {
 
 extern void init(int argc, char *argv[],
@@ -55,7 +52,4 @@ extern void init(int argc, char *argv[],
 extern void add_data_dir(std::string const &dir);
 extern std::string get_data_path(std::string const &file);
 
-} /* namespace sys */
-
-} /* namespace lol */
-
+} // namespace lol::sys

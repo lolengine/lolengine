@@ -4,13 +4,22 @@
     <ClCompile Include="net\http.cpp">
       <Filter>net</Filter>
     </ClCompile>
+    <ClCompile Include="sys\init.cpp">
+      <Filter>sys</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\lol\engine\private\net\http.h">
-      <Filter>lol\private\net</Filter>
+      <Filter>lol\engine\private\net</Filter>
+    </ClInclude>
+    <ClInclude Include="include\lol\engine\private\sys\init.h">
+      <Filter>lol\engine\private\sys</Filter>
     </ClInclude>
     <ClInclude Include="include\lol\engine\net">
-      <Filter>lol</Filter>
+      <Filter>lol\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="include\lol\engine\sys">
+      <Filter>lol\engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -26,11 +35,20 @@
     <Filter Include="net">
       <UniqueIdentifier>{0db6de04-6778-43ed-81c6-0ac49c0481f4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="lol\private">
+    <Filter Include="lol\engine">
+      <UniqueIdentifier>{35a2d521-3163-4f70-9d89-7a126106747e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lol\engine\private">
       <UniqueIdentifier>{d6f32a69-7475-4270-9d5b-775cd2c43517}</UniqueIdentifier>
     </Filter>
-    <Filter Include="lol\private\net">
+    <Filter Include="lol\engine\private\net">
       <UniqueIdentifier>{59f31039-b311-4ebf-a900-e0f7567eb636}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="lol\engine\private\sys">
+      <UniqueIdentifier>{9f7a0c33-3dd7-40d2-906a-0dfb34a472fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sys">
+      <UniqueIdentifier>{26a736fb-5b33-4b65-9991-01c0976d2206}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>
