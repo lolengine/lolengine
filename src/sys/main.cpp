@@ -12,6 +12,7 @@
 
 // One of these wrappers will be overridden by the user’s version, the
 // others will just be NOPs.
+#if LOL_USE_KINC && !KINC_NO_MAIN
 int lol_kinc_kickstart(void) __attribute__((weak));
 int lol_kinc_kickstart(int argc, char **argv) __attribute__((weak));
 int lol_kinc_kickstart(int argc, char **argv, char **envp) __attribute__((weak));
@@ -20,7 +21,6 @@ int lol_kinc_kickstart(void) { return 0; }
 int lol_kinc_kickstart(int, char **) { return 0; }
 int lol_kinc_kickstart(int, char **, char **) { return 0; }
 
-#if LOL_USE_KINC && !KINC_NO_MAIN
 extern "C" int kickstart(int argc, char **argv)
 {
     char *env[] = { nullptr };
