@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)glsl.xml" />
+    <AvailableItemName Include="GLSLShader">
+      <Targets>GLSL</Targets>
+    </AvailableItemName>
+  </ItemGroup>
+
+  <Target Name="GLSL" Condition="'@(GLSLShader)'!=''" BeforeTargets="ClCompile">
+    <Message Importance="High" Text="Compiling GLSL shaders" />
+    <ItemGroup>
+      <GLSLShader>
+        <Command Condition="'$(Platform)'=='x64'">
+          "$(KINC_SDK_PATH)\Tools\windows_x64\krafix.exe" d3d11 "%(FullPath)" "$(ProjectDir)%(Filename)" "$(OutDir)\." windows --quiet
+        </Command>
+        <Command Condition="'$(Platform)'=='NX64'">
+          "$(KINC_SDK_PATH)\..\Backends\Switch\krafix\krafix-switch.exe" switch "%(FullPath)" "$(ProjectDir)%(Filename)" "$(OutDir)\." switch --quiet
+        </Command>
+        <Outputs>$(ProjectDir)%(Filename);%(GLSLShader.Outputs)</Outputs>
+      </GLSLShader>
+    </ItemGroup>
+    <CustomBuild Sources="@(GLSLShader)" MinimalRebuildFromTracking="true" TrackerLogDirectory="$(TLogLocation)" />
+  </Target>
+
+</Project>

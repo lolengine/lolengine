@@ -15,6 +15,8 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(LolDir)\build\msbuild\lolfx.targets" />
+    <Import Condition="'$(enable_kinc)'!='no'"
+            Project="$(LolDir)\build\msbuild\kinc.targets" />
   </ImportGroup>
 
 </Project>

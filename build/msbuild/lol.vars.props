@@ -92,7 +92,7 @@
   </PropertyGroup>
 
   <!-- Kinc -->
-  <Import Condition="'$(enable_kinc)'!='no'" Project="lol-kinc.vars.props" />
+  <Import Condition="'$(enable_kinc)'!='no'" Project="kinc.vars.props" />
 
   <!-- FFmpeg -->
   <PropertyGroup Condition="'$(enable_ffmpeg)'!='no'" Label="UserMacros">
