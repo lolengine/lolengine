@@ -13,7 +13,7 @@
 #include <lol/engine/sys>
 #include <lol/msg>
 
-#include <algorithm> // std::erase_if
+#include <algorithm> // std::remove_if
 #include <cctype>
 #if !defined _LIBCPP_HAS_NO_FILESYSTEM_LIBRARY
 #   include <filesystem> // std::filesystem::exists
@@ -120,7 +120,9 @@ void init(int argc, char *argv[],
 
     // Call all the registered callbacks and remove the ones that return false
     kinc_set_update_callback([](void *){
-        std::erase_if(g_callbacks, [](auto fn) { return !fn(); });
+        // FIXME: this will be std::erase_if in C++20
+        g_callbacks.erase(std::remove_if(g_callbacks.begin(), g_callbacks.end(),
+                          [](auto fn) { return !fn(); }), g_callbacks.end());
     } , nullptr);
 #endif
 }
