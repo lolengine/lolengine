@@ -10,16 +10,21 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
-#include <lol/engine/sys>
-#include <lol/msg>
-
 #include <algorithm> // std::remove_if
-#include <cctype>
+//#include <cctype>
 #if !defined _LIBCPP_HAS_NO_FILESYSTEM_LIBRARY
 #   include <filesystem> // std::filesystem::exists
 #endif
+#include <lol/engine/sys> // lol::sys
+#include <lol/msg> // lol::msg
 #include <string> // std::string
 #include <vector> // std::vector
+
+#if _WIN32
+#   define WIN32_LEAN_AND_MEAN
+#   include <windows.h>
+#   undef WIN32_LEAN_AND_MEAN
+#endif
 
 #include <kinc/system.h>
 
@@ -124,6 +129,18 @@ void init(int argc, char *argv[],
         g_callbacks.erase(std::remove_if(g_callbacks.begin(), g_callbacks.end(),
                           [](auto fn) { return !fn(); }), g_callbacks.end());
     } , nullptr);
+#endif
+
+#if _WIN32
+   // If we have no console but a debugger is attached, register a logging function
+   if (GetConsoleWindow() == 0 && IsDebuggerPresent())
+   {
+       lol::msg::set_output([](std::string const& s) -> bool
+       {
+           OutputDebugStringA(s.c_str());
+           return false;
+       });
+   }
 #endif
 }
 
