@@ -1,192 +1,74 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="lapi.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="lauxlib.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="lbaselib.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="lcode.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="lcorolib.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="lctype.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="ldblib.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="ldebug.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="ldo.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="ldump.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="lfunc.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="lgc.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="linit.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="liolib.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="llex.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="lmathlib.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="lmem.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="loadlib.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="lobject.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="lopcodes.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="loslib.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="lparser.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="lstate.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="lstring.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="lstrlib.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="ltable.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="ltablib.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="ltm.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="lundump.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="lutf8lib.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="lvm.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
-    <ClCompile Include="lzio.c">
-      <Filter>upstream</Filter>
-    </ClCompile>
+    <ClCompile Include="lua/lapi.c" />
+    <ClCompile Include="lua/lauxlib.c" />
+    <ClCompile Include="lua/lbaselib.c" />
+    <ClCompile Include="lua/lcode.c" />
+    <ClCompile Include="lua/lcorolib.c" />
+    <ClCompile Include="lua/lctype.c" />
+    <ClCompile Include="lua/ldblib.c" />
+    <ClCompile Include="lua/ldebug.c" />
+    <ClCompile Include="lua/ldo.c" />
+    <ClCompile Include="lua/ldump.c" />
+    <ClCompile Include="lua/lfunc.c" />
+    <ClCompile Include="lua/lgc.c" />
+    <ClCompile Include="lua/linit.c" />
+    <ClCompile Include="lua/liolib.c" />
+    <ClCompile Include="lua/llex.c" />
+    <ClCompile Include="lua/lmathlib.c" />
+    <ClCompile Include="lua/lmem.c" />
+    <ClCompile Include="lua/loadlib.c" />
+    <ClCompile Include="lua/lobject.c" />
+    <ClCompile Include="lua/lopcodes.c" />
+    <ClCompile Include="lua/loslib.c" />
+    <ClCompile Include="lua/lparser.c" />
+    <ClCompile Include="lua/lstate.c" />
+    <ClCompile Include="lua/lstring.c" />
+    <ClCompile Include="lua/lstrlib.c" />
+    <ClCompile Include="lua/ltable.c" />
+    <ClCompile Include="lua/ltablib.c" />
+    <ClCompile Include="lua/ltm.c" />
+    <ClCompile Include="lua/lundump.c" />
+    <ClCompile Include="lua/lutf8lib.c" />
+    <ClCompile Include="lua/lvm.c" />
+    <ClCompile Include="lua/lzio.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="lapi.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="lauxlib.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="lcode.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="lctype.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="ldebug.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="ldo.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="lfunc.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="lgc.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="ljumptab.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="llex.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="llimits.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="lmem.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="lobject.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="lopcodes.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="lopnames.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="lparser.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="lprefix.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="lstate.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="lstring.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="ltable.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="ltm.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="lua.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="luaconf.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="lualib.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="lundump.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="lutf8lib.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="lvm.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
-    <ClInclude Include="lzio.h">
-      <Filter>upstream</Filter>
-    </ClInclude>
+    <ClInclude Include="lua/lapi.h" />
+    <ClInclude Include="lua/lauxlib.h" />
+    <ClInclude Include="lua/lcode.h" />
+    <ClInclude Include="lua/lctype.h" />
+    <ClInclude Include="lua/ldebug.h" />
+    <ClInclude Include="lua/ldo.h" />
+    <ClInclude Include="lua/lfunc.h" />
+    <ClInclude Include="lua/lgc.h" />
+    <ClInclude Include="lua/ljumptab.h" />
+    <ClInclude Include="lua/llex.h" />
+    <ClInclude Include="lua/llimits.h" />
+    <ClInclude Include="lua/lmem.h" />
+    <ClInclude Include="lua/lobject.h" />
+    <ClInclude Include="lua/lopcodes.h" />
+    <ClInclude Include="lua/lopnames.h" />
+    <ClInclude Include="lua/lparser.h" />
+    <ClInclude Include="lua/lprefix.h" />
+    <ClInclude Include="lua/lstate.h" />
+    <ClInclude Include="lua/lstring.h" />
+    <ClInclude Include="lua/ltable.h" />
+    <ClInclude Include="lua/ltm.h" />
+    <ClInclude Include="lua/luaconf.h" />
+    <ClInclude Include="lua/lua.h" />
+    <ClInclude Include="lua/lualib.h" />
+    <ClInclude Include="lua/lundump.h" />
+    <ClInclude Include="lua/lvm.h" />
+    <ClInclude Include="lua/lzio.h" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="upstream">
       <UniqueIdentifier>{6fed84e3-30c6-4d41-8fd3-f3a43bc169a4}</UniqueIdentifier>
     </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Makefile.am" />
   </ItemGroup>
 </Project>
