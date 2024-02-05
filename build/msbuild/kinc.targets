@@ -16,9 +16,9 @@
       <GLSLShader>
         <Command>
           @echo %(Filename)%(Extension)
-          $(ShaderCompiler) $(ShaderProfile) "%(FullPath)" "$(ProjectDir)%(Filename)" "$(OutDir)\." $(ShaderPlatform) --quiet
+          $(ShaderCompiler) $(ShaderProfile) "%(FullPath)" "$(OutDir)%(Filename)" "$(IntDir)\." $(ShaderPlatform) --quiet
         </Command>
-        <Outputs>$(ProjectDir)%(Filename);%(GLSLShader.Outputs)</Outputs>
+        <Outputs>$(OutDir)%(Filename);%(GLSLShader.Outputs)</Outputs>
       </GLSLShader>
     </ItemGroup>
     <CustomBuild Sources="@(GLSLShader)" MinimalRebuildFromTracking="true" TrackerLogDirectory="$(TLogLocation)" />
