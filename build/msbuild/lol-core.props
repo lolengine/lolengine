@@ -10,6 +10,7 @@
   <ItemGroup Condition="'$(enable_kinc)'!='no'">
     <ClCompile Include="$(KINC_SDK_PATH)/Sources/kinc/**/*.cpp" />
     <ClCompile Include="$(KINC_SDK_PATH)/Sources/kinc/**/*.c" />
+    <GLSLShader Include="$(KINC_SDK_PATH)/GLSLShaders/**/*.glsl" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(enable_kinc)'!='no' And '$(Platform)'=='x64'">

@@ -8,18 +8,14 @@
     </KincIncludes>
     <KincDefines>
       LOL_USE_KINC;
-      KORE_G1;
-      KORE_G2;
-      KORE_G3;
-      KORE_A1;
-      KORE_A2;
-      KORE_LZ4X;
-      KORE_G4;
-      KORE_G5;
+      KORE_G1;KORE_G2;KORE_G3;KORE_A1;KORE_A2;KORE_LZ4X;KORE_G4;KORE_G5;
     </KincDefines>
   </PropertyGroup>
 
   <PropertyGroup Label="UserMacros" Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">
+    <ShaderCompiler>$(KINC_SDK_PATH)\Tools\windows_x64\krafix.exe</ShaderCompiler>
+    <ShaderPlatform>windows</ShaderPlatform>
+    <ShaderProfile>d3d11</ShaderProfile>
     <KincIncludes>
       $(KincIncludes);
       $(KINC_SDK_PATH)\Backends\System\Windows\Sources;
@@ -31,23 +27,17 @@
     </KincIncludes>
     <KincDefines>
       $(KincDefines);
-      KORE_DIRECT3D;
-      KORE_DIRECT3D11;
-      KORE_G5ONG4;
-      KINC_NO_MAIN;
+      KORE_DIRECT3D;KORE_DIRECT3D11;KORE_G5ONG4;KINC_NO_MAIN;
     </KincDefines>
     <KincDeps>
-      winhttp.lib;
-      d3d11.lib;
-      dxguid.lib;
-      dinput8.lib;
-      strmiids.lib;
-      winmm.lib;
-      wbemuuid.lib;
+      winhttp.lib;d3d11.lib;dxguid.lib;dinput8.lib;strmiids.lib;winmm.lib;wbemuuid.lib;
     </KincDeps>
   </PropertyGroup>
 
   <PropertyGroup Label="UserMacros" Condition="'$(Platform)'=='NX32' Or '$(Platform)'=='NX64'">
+    <ShaderCompiler>$(KINC_SDK_PATH)\..\Backends\Switch\krafix\krafix-switch.exe</ShaderCompiler>
+    <ShaderPlatform>switch</ShaderPlatform>
+    <ShaderProfile>switch</ShaderProfile>
     <KincIncludes>
       $(KincIncludes);
       $(KINC_SDK_PATH)\Backends\Graphics4\G4onG5\Sources;
@@ -55,13 +45,23 @@
     </KincIncludes>
     <KincDefines>
       $(KincDefines);
-      KORE_G4ONG5;
-      KORE_SWITCH;
-      KORE_CONSOLE;
+      KORE_G4ONG5;KORE_SWITCH;KORE_CONSOLE;
     </KincDefines>
     <KincDeps>
       libnn_profiler.a;
     </KincDeps>
+  </PropertyGroup>
+
+  <PropertyGroup Label="UserMacros" Condition="'$(Platform)'=='ORBIS'">
+    <ShaderCompiler>$(KINC_SDK_PATH)\..\Backends\PlayStation4\krafix\krafix-ps4.exe</ShaderCompiler>
+    <ShaderPlatform>ps4</ShaderPlatform>
+    <ShaderProfile>ps4</ShaderProfile>
+  </PropertyGroup>
+
+  <PropertyGroup Label="UserMacros" Condition="'$(Platform)'=='Prospero'">
+    <ShaderCompiler>$(KINC_SDK_PATH)\..\Backends\PlayStation5\krafix\krafix-ps5.exe</ShaderCompiler>
+    <ShaderPlatform>ps5</ShaderPlatform>
+    <ShaderProfile>ps5</ShaderProfile>
   </PropertyGroup>
 
   <ItemGroup Label="UserMacros">

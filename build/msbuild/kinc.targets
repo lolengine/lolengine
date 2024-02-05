@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
   <ItemGroup>
     <PropertyPageSchema Include="$(MSBuildThisFileDirectory)glsl.xml" />
     <AvailableItemName Include="GLSLShader">
@@ -8,14 +9,14 @@
   </ItemGroup>
 
   <Target Name="GLSL" Condition="'@(GLSLShader)'!=''" BeforeTargets="ClCompile">
-    <Message Importance="High" Text="Compiling GLSL shaders" />
+    <Error Condition="'$(ShaderCompiler)'==''" Text="No shader compiler set for $(Platform)" />
+    <Error Condition="'$(ShaderProfile)' ==''" Text="No shader profile set for $(Platform)" />
+    <Error Condition="'$(ShaderPlatform)'==''" Text="No shader platform set for $(Platform)" />
     <ItemGroup>
       <GLSLShader>
-        <Command Condition="'$(Platform)'=='x64'">
-          "$(KINC_SDK_PATH)\Tools\windows_x64\krafix.exe" d3d11 "%(FullPath)" "$(ProjectDir)%(Filename)" "$(OutDir)\." windows --quiet
-        </Command>
-        <Command Condition="'$(Platform)'=='NX64'">
-          "$(KINC_SDK_PATH)\..\Backends\Switch\krafix\krafix-switch.exe" switch "%(FullPath)" "$(ProjectDir)%(Filename)" "$(OutDir)\." switch --quiet
+        <Command>
+          @echo %(Filename)%(Extension)
+          $(ShaderCompiler) $(ShaderProfile) "%(FullPath)" "$(ProjectDir)%(Filename)" "$(OutDir)\." $(ShaderPlatform) --quiet
         </Command>
         <Outputs>$(ProjectDir)%(Filename);%(GLSLShader.Outputs)</Outputs>
       </GLSLShader>

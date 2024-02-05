@@ -167,9 +167,9 @@
           Project="$(LolDir)\src\private\nx\msbuild\nx.vars.props" />
 
   <PropertyGroup>
-    <BinDir>$(SolutionDir)\binaries</BinDir>
-    <OutDir>$(BinDir)\$(Platform) $(PlatformToolset) $(Configuration)\</OutDir>
-    <IntDir>$(BinDir)\$(Platform) $(PlatformToolset) $(Configuration)\$(ProjectName)\</IntDir>
+    <BinDir>$(SolutionDir)binaries\</BinDir>
+    <OutDir>$(BinDir)$(Platform.ToLower())-$(PlatformToolset.ToLower())-$(Configuration.ToLower())\</OutDir>
+    <IntDir>$(BinDir)$(Platform.ToLower())-$(PlatformToolset.ToLower())-$(Configuration.ToLower())\$(ProjectName)\</IntDir>
   </PropertyGroup>
 
 </Project>
