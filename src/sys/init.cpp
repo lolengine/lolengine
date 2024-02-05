@@ -13,12 +13,13 @@
 #include <lol/engine/sys>
 #include <lol/msg>
 
-#include <vector> // std::vector
-#include <string> // std::string
+#include <algorithm> // std::erase_if
 #include <cctype>
 #if !defined _LIBCPP_HAS_NO_FILESYSTEM_LIBRARY
 #   include <filesystem> // std::filesystem::exists
 #endif
+#include <string> // std::string
+#include <vector> // std::vector
 
 #include <kinc/system.h>
 
@@ -29,6 +30,8 @@ namespace lol::sys
 static std::vector<std::filesystem::path> data_dir;
 #endif
 
+static std::vector<std::function<int()>> g_callbacks;
+
 void init(int argc, char *argv[],
           std::string const &name, int width, int height,
           std::string const &projectdir,
@@ -36,10 +39,6 @@ void init(int argc, char *argv[],
           std::string const &sourcesubdir)
 {
     using namespace std;
-
-#if LOL_USE_KINC
-    kinc_init(name.c_str(), width, height, nullptr, nullptr);
-#endif
 
 #if !defined _LIBCPP_HAS_NO_FILESYSTEM_LIBRARY
     msg::debug("project dir: “%s”\n", std::filesystem::path(projectdir).generic_string().c_str());
@@ -115,6 +114,20 @@ void init(int argc, char *argv[],
         msg::debug("data dir %d/%d: “%s”\n", i + 1, int(data_dir.size()),
                    data_dir[i].generic_string().c_str());
 #endif
+
+#if LOL_USE_KINC
+    kinc_init(name.c_str(), width, height, nullptr, nullptr);
+
+    // Call all the registered callbacks and remove the ones that return false
+    kinc_set_update_callback([](void *){
+        std::erase_if(g_callbacks, [](auto fn) { return !fn(); });
+    } , nullptr);
+#endif
+}
+
+void add_callback(std::function<bool()> fn)
+{
+    g_callbacks.push_back(fn);
 }
 
 void run()

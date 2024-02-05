@@ -17,6 +17,7 @@
 // -------------------------------
 //
 
+#include <functional> // std::function
 #include <string> // std::string
 
 //
@@ -52,13 +53,20 @@
 namespace lol::sys
 {
 
+// Initialise the system and automatically create a window.
 extern void init(int argc, char *argv[],
                  std::string const &name, int width, int height,
                  std::string const &projectdir = LOL_CONFIG_PROJECTDIR,
                  std::string const &solutiondir = LOL_CONFIG_SOLUTIONDIR,
                  std::string const &sourcesubdir = LOL_CONFIG_SOURCESUBDIR);
 
+// Register an update callback. The callback can return false to automatically unregister.
+extern void add_callback(std::function<bool()>);
+
+// Run the main loop.
 extern void run();
+
+// Stop the main loop.
 extern void stop();
 
 extern void add_data_dir(std::string const &dir);
