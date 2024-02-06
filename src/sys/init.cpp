@@ -26,6 +26,7 @@
 #   undef WIN32_LEAN_AND_MEAN
 #endif
 
+#include <kinc/graphics4/graphics.h>
 #include <kinc/system.h>
 
 namespace lol::sys
@@ -125,9 +126,15 @@ void init(int argc, char *argv[],
 
     // Call all the registered callbacks and remove the ones that return false
     kinc_set_update_callback([](void *){
+        kinc_g4_begin(0);
+        kinc_g4_clear(KINC_G4_CLEAR_COLOR, 0xFF000000, 0.0f, 0);
+
         // FIXME: this will be std::erase_if in C++20
         g_callbacks.erase(std::remove_if(g_callbacks.begin(), g_callbacks.end(),
                           [](auto fn) { return !fn(); }), g_callbacks.end());
+
+        kinc_g4_end(0);
+        kinc_g4_swap_buffers();
     } , nullptr);
 #endif
 
