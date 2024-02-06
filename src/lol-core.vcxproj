@@ -69,6 +69,7 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="audio\audio.cpp" />
     <ClCompile Include="net\http.cpp" />
     <ClCompile Include="sys\init.cpp" />
     <ClCompile Include="sys\main.cpp" />

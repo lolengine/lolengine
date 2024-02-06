@@ -12,6 +12,12 @@
 
 #pragma once
 
+//
+// The audio interface
+// -------------------
+// Helper functions to set up the audio device.
+//
+
 #include <functional>
 
 namespace lol::audio

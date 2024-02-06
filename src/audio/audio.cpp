@@ -10,14 +10,17 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
-#include <lol/engine-internal.h>
-#include <lol/msg>
-
 #include <array>
-#include <unordered_set>
 #include <functional>
+#include <lol/engine/audio>
+#include <lol/msg>
+#include <memory>
+#include <unordered_map>
+#include <unordered_set>
 
-#if LOL_USE_SDL_MIXER
+#if LOL_USE_KINC
+#   include <kinc/audio2/audio.h>
+#elif LOL_USE_SDL_MIXER
 #   if HAVE_SDL2_SDL_H
 #       include <SDL2/SDL.h>
 #       include <SDL2/SDL_mixer.h>
@@ -26,6 +29,92 @@
 #       include <SDL_mixer.h>
 #   endif
 #endif
+
+#if LOL_USE_KINC
+
+namespace lol::audio
+{
+
+struct streamer
+{
+    std::function<void(void *, size_t)> callback;
+    format format;
+    int frequency;
+    int channels;
+};
+
+std::unordered_map<int, std::shared_ptr<streamer>> g_streamers;
+
+static void play_audio(kinc_a2_buffer_t *buffer, size_t samples)
+{
+    size_t const out_rate = buffer->format.samples_per_second;
+    size_t const out_channels = buffer->format.channels;
+    size_t const out_frames = samples / out_channels;
+    size_t const in_rate = 22050;
+    size_t const in_frames = out_frames * in_rate / out_rate + 1;
+
+    // Mix all channels into a float buffer
+    std::vector<float> z8_buffer(in_frames + 1);
+    std::vector<int16_t> tmp(in_frames);
+    for (auto &s : g_streamers)
+    {
+        s.second->callback(tmp.data(), in_frames);
+        for (size_t i = 0; i < in_frames; ++i)
+            z8_buffer[i] += tmp[i] / 32767.f;
+    }
+
+    for (size_t i = 0; i < out_frames; ++i)
+    {
+        auto frame = (float *)(buffer->data + buffer->write_location);
+        // Linear interpolation
+        float s0 = z8_buffer[i * in_rate / out_rate];
+        float s1 = z8_buffer[i * in_rate / out_rate + 1];
+        float s = s0 + (s1 - s0) * float(i * in_rate % out_rate) / out_rate;
+        // clip so that we never go outside -1..1 range
+        s = std::max(-1.0f, std::min(1.0f, s));
+        // Output frame samples
+        for (size_t ch = 0; ch < out_channels; ++ch)
+            frame[ch] = s;
+        buffer->write_location = (buffer->write_location + out_channels * sizeof(*frame)) % buffer->data_size;
+    }
+}
+
+void init()
+{
+    kinc_a2_init();
+    kinc_a2_set_callback([](kinc_a2_buffer_t *buffer, int samples, void *userdata)
+    {
+        play_audio(buffer, size_t(samples));
+    }, nullptr);
+}
+
+void shutdown()
+{
+    kinc_a2_set_callback(nullptr, nullptr);
+}
+
+int start(std::function<void(void *, size_t)> f,
+          format format, int frequency, int channels)
+{
+    auto s = std::make_shared<streamer>();
+    s->callback = f;
+    s->format = format;
+    s->frequency = frequency;
+    s->channels = channels;
+
+    static int idx = 0;
+    g_streamers[idx] = s;
+    return idx++;
+}
+
+void stop(int stream)
+{
+    g_streamers.erase(stream);
+}
+
+} // namespace lol::audio
+
+#else
 
 // Buffer size, in samples (https://wiki.libsdl.org/SDL_AudioSpec)
 // “[…] refers to the size of the audio buffer in sample frames. A sample frame
@@ -245,3 +334,4 @@ void audio::stop_streaming(int) {}
 
 } /* namespace lol */
 
+#endif

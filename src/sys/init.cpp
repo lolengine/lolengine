@@ -11,10 +11,10 @@
 //
 
 #include <algorithm> // std::remove_if
-//#include <cctype>
 #if !defined _LIBCPP_HAS_NO_FILESYSTEM_LIBRARY
 #   include <filesystem> // std::filesystem::exists
 #endif
+#include <lol/engine/audio> // lol::audio
 #include <lol/engine/sys> // lol::sys
 #include <lol/msg> // lol::msg
 #include <string> // std::string
@@ -138,6 +138,8 @@ void init(int argc, char *argv[],
     } , nullptr);
 #endif
 
+    lol::audio::init();
+
 #if _WIN32
    // If we have no console but a debugger is attached, register a logging function
    if (GetConsoleWindow() == 0 && IsDebuggerPresent())
@@ -161,6 +163,8 @@ void run()
 #if LOL_USE_KINC
     kinc_start();
 #endif
+
+    lol::audio::shutdown();
 }
 
 void stop()
