@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010–2024 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -17,15 +17,21 @@
 // -------------------------------
 //
 
+#include <functional> // std::function
 #include <string> // std::string
 
-namespace lol
-{
+//
+// Override main() on platforms and systems that require it
+//
 
-/*
- * Module-specific macros. These can be overridden by the build process,
- * typically with compiler command-line flags.
- */
+#if LOL_USE_KINC && !KINC_NO_MAIN
+#   define main lol_kinc_kickstart
+#endif
+
+//
+// Module-specific macros. These can be overridden by the build process,
+// typically with compiler command-line flags.
+//
 
 #if !defined LOL_CONFIG_PROJECTDIR
 #   define LOL_CONFIG_PROJECTDIR ""
@@ -39,23 +45,31 @@ namespace lol
 #   define LOL_CONFIG_SOURCESUBDIR ""
 #endif
 
-/*
- * System namespace. The platform-specific stuff in there makes the API
- * not as clean as the rest of the framework.
- */
+//
+// System namespace. The platform-specific stuff in there makes the API
+// not as clean as the rest of the framework.
+//
 
-namespace sys
+namespace lol::sys
 {
 
+// Initialise the system and automatically create a window.
 extern void init(int argc, char *argv[],
+                 std::string const &name, int width, int height,
                  std::string const &projectdir = LOL_CONFIG_PROJECTDIR,
                  std::string const &solutiondir = LOL_CONFIG_SOLUTIONDIR,
                  std::string const &sourcesubdir = LOL_CONFIG_SOURCESUBDIR);
 
+// Register an update callback. The callback can return false to automatically unregister.
+extern void add_callback(std::function<bool()>);
+
+// Run the main loop.
+extern void run();
+
+// Stop the main loop.
+extern void stop();
+
 extern void add_data_dir(std::string const &dir);
 extern std::string get_data_path(std::string const &file);
 
-} /* namespace sys */
-
-} /* namespace lol */
-
+} // namespace lol::sys

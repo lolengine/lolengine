@@ -12,6 +12,10 @@
       <Configuration>Debug</Configuration>
       <Platform>ORBIS</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Prospero">
+      <Configuration>Debug</Configuration>
+      <Platform>Prospero</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
@@ -28,6 +32,10 @@
       <Configuration>Release</Configuration>
       <Platform>ORBIS</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Prospero">
+      <Configuration>Release</Configuration>
+      <Platform>Prospero</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
@@ -37,32 +45,14 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="benchmark\half.cpp" />
-    <ClCompile Include="benchmark\real.cpp" />
-    <ClCompile Include="benchmark\vector.cpp" />
-    <ClCompile Include="benchsuite.cpp" />
-  </ItemGroup>
-  <Import Project="$(LolDir)\build\msbuild\lol-core.props" />
-  <Import Project="$(LolDir)\build\msbuild\lol-bullet.props" />
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{B1E10086-A1DA-401A-834D-969C9DBB5CC1}</ProjectGuid>
+    <ProjectGuid>{C57C9F9F-8EAE-4265-A210-B0CAA717A3A0}</ProjectGuid>
     <ConfigurationType>Application</ConfigurationType>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
-  <Import Project="$(LolDir)\build\msbuild\lol.config.props" />
-  <ImportGroup Label="ExtensionSettings">
-    <Import Project="$(LolDir)\build\msbuild\lolfx.props" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(LolDir)\build\msbuild\lol.vars.props" />
-  </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
-  <Import Project="$(LolDir)\build\msbuild\lol.rules.props" />
-  <ItemDefinitionGroup />
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-    <Import Project="$(LolDir)\build\msbuild\lolfx.targets" />
-  </ImportGroup>
+  <Import Project="$(LolDir)\build\msbuild\lol.props" />
+  <ItemGroup>
+    <ClCompile Include="window.cpp" />
+  </ItemGroup>
+  <Import Project="$(LolDir)\build\msbuild\lol-core.props" />
 </Project>

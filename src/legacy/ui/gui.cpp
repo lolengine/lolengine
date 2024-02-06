@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2017–2023 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2017–2024 Sam Hocevar <sam@hocevar.net>
 //            © 2009–2015 Benjamin “Touky” Huet <huet.benjamin@gmail.com>
 //
 //  Lol Engine is free software. It comes without any warranty, to
@@ -15,6 +15,7 @@
 
 #include <cassert>
 #include <cstdio>
+#include <lol/format>
 #include <string>
 
 //
@@ -63,24 +64,24 @@ gui::gui(ImFontAtlas *shared_font_atlas)
         << out_vertex << m_ortho << in_position
         << pass_texcoord << in_texcoord
         << pass_color << in_color;
-    imgui_vertex.SetMainCode(lol::format(
-        "%s = .5 * %s * vec4(%s, -1.0, 1.0);\n" "%s = %s;\n" "%s = %s;\n",
-        out_vertex.tostring().c_str(),
-        m_ortho.tostring().c_str(),
-        in_position.tostring().c_str(),
-        pass_texcoord.tostring().c_str(),
-        in_texcoord.tostring().c_str(),
-        pass_color.tostring().c_str(),
-        in_color.tostring().c_str()));
+    imgui_vertex.SetMainCode(std::format(
+        "{} = .5 * {} * vec4({}, -1.0, 1.0);\n" "{} = {};\n" "{} = {};\n",
+        out_vertex.tostring(),
+        m_ortho.tostring(),
+        in_position.tostring(),
+        pass_texcoord.tostring(),
+        in_texcoord.tostring(),
+        pass_color.tostring(),
+        in_color.tostring()));
 
     ShaderBlock imgui_pixel("imgui_pixel");
     imgui_pixel << m_texture << pass_texcoord << pass_color << out_pixel;
-    imgui_pixel.SetMainCode(lol::format(
-        "vec4 col = %s * texture2D(%s, %s);\n" "if (col.a == 0.0) discard;\n" "%s = col;\n",
-        pass_color.tostring().c_str(),
-        m_texture.tostring().c_str(),
-        pass_texcoord.tostring().c_str(),
-        out_pixel.tostring().c_str()));
+    imgui_pixel.SetMainCode(std::format(
+        "vec4 col = {} * texture2D({}, {});\n" "if (col.a == 0.0) discard;\n" "{} = col;\n",
+        pass_color.tostring(),
+        m_texture.tostring(),
+        pass_texcoord.tostring(),
+        out_pixel.tostring()));
 
     m_builder << ShaderProgram::Vertex << imgui_vertex
               << ShaderProgram::Pixel << imgui_pixel;

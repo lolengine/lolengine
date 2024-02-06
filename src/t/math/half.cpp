@@ -1,7 +1,7 @@
 //
 //  Lol Engine — Unit tests
 //
-//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010–2024 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -14,6 +14,7 @@
 #   include "config.h"
 #endif
 
+#include <lol/format>
 #include <lol/unit_test>
 #include <lol/half>
 #include <lol/vector>    // for the sizeof(f16vec2) etc. tests
@@ -82,7 +83,7 @@ lolunit_declare_fixture(half_test)
             if (p1.f == p2.f)
                 continue;
 
-            lolunit_set_context(lol::format("%04x %04x", p1.x, p2.x));
+            lolunit_set_context(std::format("{:04x} {:04x}", p1.x, p2.x));
 
             half a = half::frombits(p1.x);
             half b = half::frombits(p2.x);

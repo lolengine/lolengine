@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010–2023 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010–2024 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -10,7 +10,7 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
-#include <lol/engine-internal.h>
+#include <lol/engine/net>
 #include <lol/msg>
 
 #if LOL_USE_OPENSSL
@@ -26,9 +26,12 @@
 #   define FAR
 #endif
 
-#if __EMSCRIPTEN__
+#if __NX__
+    // not implemented
+#elif __EMSCRIPTEN__
 #   include <emscripten/fetch.h>
 #else
+#   include <lol/thread>
 #   include <httplib.h>
 #endif
 
@@ -48,7 +51,13 @@ namespace http
 class client_impl
 {
 public:
-#if __EMSCRIPTEN__
+#if __NX__
+    void get(std::string const &url)
+    {
+        msg::error("downloading %s failed: not implemented\n", url.c_str());
+        m_status = status::error;
+    }
+#elif __EMSCRIPTEN__
     ~client_impl()
     {
         emscripten_fetch_close(m_fetch);
@@ -159,17 +168,17 @@ void client::reset()
     impl->m_result.assign("");
 }
 
-status client::get_status() const
+status client::status() const
 {
     return impl->m_status;
 }
 
-std::string const & client::get_url() const
+std::string const & client::url() const
 {
     return impl->m_url;
 }
 
-std::string const & client::get_result() const
+std::string const & client::result() const
 {
     return impl->m_result;
 }
@@ -179,4 +188,3 @@ std::string const & client::get_result() const
 } // namespace net
 
 } // namespace lol
-

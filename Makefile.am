@@ -10,7 +10,7 @@ DIST_SUBDIRS = $(SUBDIRS) binaries
 
 EXTRA_DIST += $(lol_files) bootstrap COPYING TODO \
               .gitignore .gitattributes .gitmodules \
-              .travis.yml lol.sln build.config
+              .travis.yml lolengine.sln build.config
 AUTOMAKE_OPTIONS = dist-bzip2
 ACLOCAL_AMFLAGS = -I build/autotools/m4
 

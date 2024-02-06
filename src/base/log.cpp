@@ -24,8 +24,6 @@
 #if __ANDROID__
 #   include <android/log.h>
 #   include <unistd.h> /* for gettid() */
-#elif __NX__
-#   include "../private/nx/nx-log.h"
 #else
 #   include <cstdarg>
 #endif

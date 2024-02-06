@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <ItemGroup>
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)glsl.xml" />
+    <AvailableItemName Include="GLSLShader">
+      <Targets>GLSL</Targets>
+    </AvailableItemName>
+  </ItemGroup>
+
+  <Target Name="GLSL" Condition="'@(GLSLShader)'!=''" BeforeTargets="ClCompile">
+    <Error Condition="'$(ShaderCompiler)'==''" Text="No shader compiler set for $(Platform)" />
+    <Error Condition="'$(ShaderProfile)' ==''" Text="No shader profile set for $(Platform)" />
+    <Error Condition="'$(ShaderPlatform)'==''" Text="No shader platform set for $(Platform)" />
+    <ItemGroup>
+      <GLSLShader>
+        <Command>
+          @echo %(Filename)%(Extension)
+          $(ShaderCompiler) $(ShaderProfile) "%(FullPath)" "$(OutDir)%(Filename)" "$(IntDir)\." $(ShaderPlatform) --quiet
+        </Command>
+        <Outputs>$(OutDir)%(Filename);%(GLSLShader.Outputs)</Outputs>
+      </GLSLShader>
+    </ItemGroup>
+    <CustomBuild Sources="@(GLSLShader)" MinimalRebuildFromTracking="true" TrackerLogDirectory="$(TLogLocation)" />
+  </Target>
+
+</Project>

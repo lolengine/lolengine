@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010–2024 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -11,6 +11,7 @@
 //
 
 #include <lol/engine-internal.h>
+#include <lol/format>
 #include <lol/msg>
 
 #include "lolgl.h"
@@ -67,11 +68,11 @@ static void attr_stdcall
     {
     default:
         if (gl_dbg_source_to_str.count(source) == 1)
-            error += lol::format(" %s", gl_dbg_source_to_str[source]);
+            error += std::format(" {}", gl_dbg_source_to_str[source]);
         if (gl_dbg_type_to_str.count(type) == 1)
-            error += lol::format(" %s", gl_dbg_type_to_str[type]);
+            error += std::format(" {}", gl_dbg_type_to_str[type]);
         if (gl_dbg_severity_to_str.count(severity) == 1)
-            error += lol::format(" (%s)", gl_dbg_severity_to_str[severity]);
+            error += std::format(" ({})", gl_dbg_severity_to_str[severity]);
         msg::debug("GL%s [id:%x]: %s\n", error.c_str(), id, message);
         break;
     // Some debug messages are just annoying informational messages

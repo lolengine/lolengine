@@ -67,14 +67,18 @@ build/visualstudio/*.log
 build/visualstudio/*.XGD
 # Emscripten cruft
 a.out*
-doc/samples/*.html
-doc/samples/*.wasm
-doc/samples/*.wasm.*
-doc/samples/*.js
-doc/samples/*/*.html
-doc/samples/*/*.wasm
-doc/samples/*/*.wasm.*
-doc/samples/*/*.js
+doc/examples/*.html
+doc/examples/*.wasm
+doc/examples/*.wasm.*
+doc/examples/*.js
+doc/legacy/*.html
+doc/legacy/*.wasm
+doc/legacy/*.wasm.*
+doc/legacy/*.js
+doc/legacy/*/*.html
+doc/legacy/*/*.wasm
+doc/legacy/*/*.wasm.*
+doc/legacy/*/*.js
 doc/tutorial/*.html
 doc/tutorial/*.wasm
 doc/tutorial/*.wasm.*
@@ -98,13 +102,13 @@ _ReSharper.*
 src/private
 # Our binaries
 demos/lol.js/lol.js
-doc/samples/benchsuite
-doc/samples/bluenoise
-doc/samples/btphystest
-doc/samples/sandbox/sample
-doc/samples/math/pi
-doc/samples/math/poly
-doc/samples/simplex
+doc/legacy/benchsuite
+doc/legacy/bluenoise
+doc/legacy/btphystest
+doc/legacy/sandbox/sample
+doc/legacy/math/pi
+doc/legacy/math/poly
+doc/legacy/simplex
 doc/tutorial/01_triangle
 doc/tutorial/02_cube
 doc/tutorial/03_noise

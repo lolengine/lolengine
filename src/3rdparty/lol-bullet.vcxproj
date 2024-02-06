@@ -2,9 +2,9 @@
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup Label="LolMacros">
     <LolDir>$(SolutionDir)</LolDir>
-    <LolDir Condition="Exists('$(SolutionDir)\lol\lol.sln')">$(SolutionDir)\lol</LolDir>
-    <LolDir Condition="Exists('$(SolutionDir)\lolengine\lol.sln')">$(SolutionDir)\lolengine</LolDir>
-    <LolDir Condition="Exists('$(SolutionDir)\src\3rdparty\lolengine\lol.sln')">$(SolutionDir)\src\3rdparty\lolengine</LolDir>
+    <LolDir Condition="Exists('$(SolutionDir)\lol\lolengine.sln')">$(SolutionDir)\lol</LolDir>
+    <LolDir Condition="Exists('$(SolutionDir)\lolengine\lolengine.sln')">$(SolutionDir)\lolengine</LolDir>
+    <LolDir Condition="Exists('$(SolutionDir)\src\3rdparty\lolengine\lolengine.sln')">$(SolutionDir)\src\3rdparty\lolengine</LolDir>
   </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|NX64">
@@ -14,6 +14,10 @@
     <ProjectConfiguration Include="Debug|ORBIS">
       <Configuration>Debug</Configuration>
       <Platform>ORBIS</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Prospero">
+      <Configuration>Debug</Configuration>
+      <Platform>Prospero</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
@@ -30,6 +34,10 @@
     <ProjectConfiguration Include="Release|ORBIS">
       <Configuration>Release</Configuration>
       <Platform>ORBIS</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Prospero">
+      <Configuration>Release</Configuration>
+      <Platform>Prospero</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
