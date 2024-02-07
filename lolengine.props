@@ -81,33 +81,35 @@
     </ProjectReference>
   </ItemGroup>
 
-  <ItemGroup Condition="'$(ProjectName)'!='lolengine' and '$(enable_kinc)'!='no'">
-    <ClCompile Include="$(KINC_SDK_PATH)/Sources/kinc/**/*.cpp" />
-    <ClCompile Include="$(KINC_SDK_PATH)/Sources/kinc/**/*.c" />
-    <GLSLShader Include="$(KINC_SDK_PATH)/GLSLShaders/**/*.glsl" />
-  </ItemGroup>
+  <Target Name="KincCompile" AfterTargets="BuildGenerateSources" Condition="'$(ProjectName)'!='lolengine'">
+    <ItemGroup Condition="'$(enable_kinc)'!='no'">
+      <ClCompile Include="$(KINC_SDK_PATH)/Sources/kinc/**/*.cpp" />
+      <ClCompile Include="$(KINC_SDK_PATH)/Sources/kinc/**/*.c" />
+      <GLSLShader Include="$(KINC_SDK_PATH)/GLSLShaders/**/*.glsl" />
+    </ItemGroup>
 
-  <ItemGroup Condition="'$(ProjectName)'!='lolengine' and '$(enable_kinc)'!='no' and '$(Platform)'=='x64'">
-    <ClCompile Include="$(KINC_SDK_PATH)/Backends/Audio2/WASAPI/Sources/kinc/backend/**/*.cpp" />
-    <ClCompile Include="$(KINC_SDK_PATH)/Backends/Audio2/WASAPI/Sources/kinc/backend/**/*.c" />
-    <ClCompile Include="$(KINC_SDK_PATH)/Backends/Graphics4/Direct3D11/Sources/kinc/backend/**/*.cpp" />
-    <ClCompile Include="$(KINC_SDK_PATH)/Backends/Graphics4/Direct3D11/Sources/kinc/backend/**/*.c" />
-    <ClCompile Include="$(KINC_SDK_PATH)/Backends/Graphics5/G5onG4/Sources/kinc/backend/**/*.cpp" />
-    <ClCompile Include="$(KINC_SDK_PATH)/Backends/Graphics5/G5onG4/Sources/kinc/backend/**/*.c" />
-    <ClCompile Include="$(KINC_SDK_PATH)/Backends/System/Microsoft/Sources/kinc/backend/**/*.cpp" />
-    <ClCompile Include="$(KINC_SDK_PATH)/Backends/System/Microsoft/Sources/kinc/backend/**/*.c" />
-    <ClCompile Include="$(KINC_SDK_PATH)/Backends/System/Windows/Sources/kinc/backend/**/*.cpp" />
-    <ClCompile Include="$(KINC_SDK_PATH)/Backends/System/Windows/Sources/kinc/backend/**/*.c" />
-    <ClCompile Include="$(KINC_SDK_PATH)/Backends/System/Windows/Libraries/DirectShow/BaseClasses/**/*.cpp" />
-    <ClCompile Include="$(KINC_SDK_PATH)/Backends/System/Windows/Libraries/DirectShow/BaseClasses/**/*.c" />
-  </ItemGroup>
+    <ItemGroup Condition="'$(enable_kinc)'!='no' and '$(Platform)'=='x64'">
+      <ClCompile Include="$(KINC_SDK_PATH)/Backends/Audio2/WASAPI/Sources/kinc/backend/**/*.cpp" />
+      <ClCompile Include="$(KINC_SDK_PATH)/Backends/Audio2/WASAPI/Sources/kinc/backend/**/*.c" />
+      <ClCompile Include="$(KINC_SDK_PATH)/Backends/Graphics4/Direct3D11/Sources/kinc/backend/**/*.cpp" />
+      <ClCompile Include="$(KINC_SDK_PATH)/Backends/Graphics4/Direct3D11/Sources/kinc/backend/**/*.c" />
+      <ClCompile Include="$(KINC_SDK_PATH)/Backends/Graphics5/G5onG4/Sources/kinc/backend/**/*.cpp" />
+      <ClCompile Include="$(KINC_SDK_PATH)/Backends/Graphics5/G5onG4/Sources/kinc/backend/**/*.c" />
+      <ClCompile Include="$(KINC_SDK_PATH)/Backends/System/Microsoft/Sources/kinc/backend/**/*.cpp" />
+      <ClCompile Include="$(KINC_SDK_PATH)/Backends/System/Microsoft/Sources/kinc/backend/**/*.c" />
+      <ClCompile Include="$(KINC_SDK_PATH)/Backends/System/Windows/Sources/kinc/backend/**/*.cpp" />
+      <ClCompile Include="$(KINC_SDK_PATH)/Backends/System/Windows/Sources/kinc/backend/**/*.c" />
+      <ClCompile Include="$(KINC_SDK_PATH)/Backends/System/Windows/Libraries/DirectShow/BaseClasses/**/*.cpp" />
+      <ClCompile Include="$(KINC_SDK_PATH)/Backends/System/Windows/Libraries/DirectShow/BaseClasses/**/*.c" />
+    </ItemGroup>
 
-  <ItemGroup Condition="'$(ProjectName)'!='lolengine' and '$(enable_kinc)'!='no' and '$(Platform)'=='NX64'">
-    <ClCompile Include="$(KINC_SDK_PATH)/Backends/Graphics4/G4onG5/Sources/kinc/backend/**/*.cpp" />
-    <ClCompile Include="$(KINC_SDK_PATH)/Backends/Graphics4/G4onG5/Sources/kinc/backend/**/*.c" />
-    <ClCompile Include="$(KINC_SDK_PATH)/../Backends/Switch/Sources/kinc/backend/**/*.cpp" />
-    <ClCompile Include="$(KINC_SDK_PATH)/../Backends/Switch/Sources/kinc/backend/**/*.c" />
-  </ItemGroup>
+    <ItemGroup Condition="'$(enable_kinc)'!='no' and '$(Platform)'=='NX64'">
+      <ClCompile Include="$(KINC_SDK_PATH)/Backends/Graphics4/G4onG5/Sources/kinc/backend/**/*.cpp" />
+      <ClCompile Include="$(KINC_SDK_PATH)/Backends/Graphics4/G4onG5/Sources/kinc/backend/**/*.c" />
+      <ClCompile Include="$(KINC_SDK_PATH)/../Backends/Switch/Sources/kinc/backend/**/*.cpp" />
+      <ClCompile Include="$(KINC_SDK_PATH)/../Backends/Switch/Sources/kinc/backend/**/*.c" />
+    </ItemGroup>
+  </Target>
 
   <!--
      - Sanity checks
