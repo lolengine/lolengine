@@ -82,12 +82,12 @@
    -->
 
   <ItemGroup>
-    <ProjectReference Include="$(LolEngineDir)src/lolengine.vcxproj" Condition="'$(ProjectName)'!='lolengine'">
+    <ProjectReference Include="$(LolEngineDir)src/lolengine.vcxproj" Condition="'$(ConfigurationType)'!='StaticLibrary'">
       <Project>{9e62f2fe-3408-4eae-8238-fd84238ceeda}</Project>
     </ProjectReference>
   </ItemGroup>
 
-  <Target Name="KincCompile" AfterTargets="BuildGenerateSources" Condition="'$(ProjectName)'!='lolengine'">
+  <Target Name="KincCompile" AfterTargets="BuildGenerateSources" Condition="'$(ConfigurationType)'!='StaticLibrary'">
     <ItemGroup Condition="'$(enable_kinc)'!='no'">
       <ClCompile Include="$(KINC_SDK_PATH)/Sources/kinc/**/*.cpp" />
       <ClCompile Include="$(KINC_SDK_PATH)/Sources/kinc/**/*.c" />
