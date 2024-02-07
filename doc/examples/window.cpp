@@ -14,9 +14,9 @@
 #   include "config.h"
 #endif
 
+#include <cmath>
 #include <kinc/graphics4/graphics.h>
 #include <lol/engine/sys>
-#include <cmath>
 
 int main(int argc, char **argv)
 {
@@ -28,10 +28,7 @@ int main(int argc, char **argv)
     // Update routine: clear the background color
     lol::sys::add_callback([&frame]() {
         uint32_t alpha = uint32_t(127.0f + 127.0f * std::cos(++frame * 0.1f));
-        kinc_g4_begin(0);
         kinc_g4_clear(KINC_G4_CLEAR_COLOR, 0x800000 | alpha * 0x0101, 0.f, 0);
-        kinc_g4_end(0);
-        kinc_g4_swap_buffers();
         return true;
     });
 
