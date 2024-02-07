@@ -19,4 +19,4 @@ The following packages are required on Linux:
 
 That code is private, it needs to be activated manually:
 
-    git clone https://github.com/samhocevar/lol-nx.git src/private/nx
+    git clone https://github.com/samhocevar/lol-switch

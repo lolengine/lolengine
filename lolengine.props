@@ -1,8 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+  <!--
+     - lolengine.props
+     - 
+     - This file should be referenced by any project that uses Lol Engine
+   -->
+
+  <PropertyGroup>
+    <LolEngineDir>$(MsBuildThisFileDirectory)</LolEngineDir>
+  </PropertyGroup>
+
+  <!--
+     - 
+   -->
+
+  <Import Project="$(LolEngineDir)build\msbuild\lol.config.props" />
+
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props"
+            Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="$(LolEngineDir)build\msbuild\lol.vars.props" />
+  </ImportGroup>
+
+  <PropertyGroup Label="UserMacros" />
+  <Import Project="$(LolEngineDir)build\msbuild\lol.rules.props" />
+
+  <ItemDefinitionGroup />
+
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+    <Import Condition="'$(enable_kinc)'!='no'"
+            Project="$(LolEngineDir)build\msbuild\kinc.targets" />
+  </ImportGroup>
+
   <ItemGroup>
-    <ProjectReference Include="$(LolDir)\src\lol-core.vcxproj">
+    <ProjectReference Include="$(LolEngineDir)src/lolengine.vcxproj" Condition="'$(ProjectName)'!='lolengine'">
       <Project>{9e62f2fe-3408-4eae-8238-fd84238ceeda}</Project>
     </ProjectReference>
   </ItemGroup>
@@ -34,5 +67,33 @@
     <ClCompile Include="$(KINC_SDK_PATH)/../Backends/Switch/Sources/kinc/backend/**/*.cpp" />
     <ClCompile Include="$(KINC_SDK_PATH)/../Backends/Switch/Sources/kinc/backend/**/*.c" />
   </ItemGroup>
+
+  <!--
+     - Sanity checks
+   -->
+
+  <PropertyGroup>
+    <!-- Ensure our sanity checks are executed first, before anything else that was inserted. -->
+    <PrepareForBuildDependsOn>LolEngineSanityChecks;$(PrepareForBuildDependsOn)</PrepareForBuildDependsOn>
+  </PropertyGroup>
+
+  <Target Name="LolEngineSanityChecks">
+
+    <Error Condition="!Exists('$(LolEngineDir)')"
+           Text="Lol Engine directory '$(LolEngineDir)' was not found" />
+
+    <Error Condition="'$(KINC_SDK_PATH)'==''"
+           Text="KINC_SDK_PATH is not set" />
+
+    <Error Condition="!Exists('$(KINC_SDK_PATH)/make')"
+           Text="KINC_SDK_PATH is set, but '$(KINC_SDK_PATH)/make' was not found" />
+
+    <Error Condition="('$(Platform)'=='NX64' Or '$(Platform)'=='NX32') And !Exists('$(LolEngineDir)lol-switch')"
+           Text="platform '$(Platform)' selected, but '$(LolEngineDir)lol-switch' was not found" />
+
+    <Error Condition="('$(Platform)'=='ORBIS' Or '$(Platform)'=='Prospero') And !Exists('$(LolEngineDir)lol-playstation')"
+           Text="platform '$(Platform)' selected, but '$(LolEngineDir)lol-playstation' was not found" />
+
+  </Target>
 
 </Project>

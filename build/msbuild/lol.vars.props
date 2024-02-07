@@ -3,13 +3,13 @@
   <ImportGroup Label="PropertySheets" />
 
   <PropertyGroup Label="UserMacros">
-    <ExternalDir>$(LolDir)\external</ExternalDir>
+    <ExternalDir>$(LolEngineDir)\external</ExternalDir>
 
     <PlatformCode Condition="'$(Platform)'=='Win32'">i686</PlatformCode>
     <PlatformCode Condition="'$(Platform)'=='x64'">x86_64</PlatformCode>
 
     <!-- imgui -->
-    <ImguiDir>$(LolDir)\src\3rdparty\imgui</ImguiDir>
+    <ImguiDir>$(LolEngineDir)\src\3rdparty\imgui</ImguiDir>
     <ImguiIncludes>$(ImguiDir)</ImguiIncludes>
     <Win32Defines>IMGUI_USE_WCHAR32;$(Win32Defines)</Win32Defines>
 
@@ -17,7 +17,7 @@
     <OpenSslDir>$(ExternalDir)\openssl-1.1.1g</OpenSslDir>
 
     <!-- cpp-httplib (depends on OpenSSL) -->
-    <CppHttpDir>$(LolDir)\src/3rdparty\cpp-httplib</CppHttpDir>
+    <CppHttpDir>$(LolEngineDir)\src/3rdparty\cpp-httplib</CppHttpDir>
     <CppHttpIncludes>$(CppHttpDir);$(OpenSslDir)\include</CppHttpIncludes>
     <CppHttpLibs>$(OpenSslDir)\lib\$(PlatformCode)-msvc</CppHttpLibs>
     <CppHttpDeps>libssl.lib;libcrypto.lib;crypt32.lib</CppHttpDeps>
@@ -163,8 +163,8 @@
   <!--
      - Secret stuff for platforms under NDA
    -->
-  <Import Condition="Exists('$(LolDir)\src\private\nx\msbuild\nx.vars.props')"
-          Project="$(LolDir)\src\private\nx\msbuild\nx.vars.props" />
+  <Import Condition="Exists('$(LolEngineDir)\src\private\nx\msbuild\nx.vars.props')"
+          Project="$(LolEngineDir)\src\private\nx\msbuild\nx.vars.props" />
 
   <PropertyGroup>
     <BinDir>$(SolutionDir)binaries\</BinDir>

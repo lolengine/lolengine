@@ -4,9 +4,9 @@
   <!--
      - Import settings that can be overridden by the user
    -->
-  <Import Condition="Exists('$(LolDir)\build.config')"
-          Project="$(LolDir)\build.config" />
-  <Import Condition="Exists('$(SolutionDir)\build.config') And ('$(SolutionDir)' != '$(LolDir)')"
+  <Import Condition="Exists('$(LolEngineDir)\build.config')"
+          Project="$(LolEngineDir)\build.config" />
+  <Import Condition="Exists('$(SolutionDir)\build.config') And ('$(SolutionDir)' != '$(LolEngineDir)')"
           Project="$(SolutionDir)\build.config" />
 
   <!--
@@ -52,8 +52,8 @@
   <!--
      - Secret stuff for platforms under NDA
    -->
-  <Import Condition="Exists('$(LolDir)\src\private\nx\msbuild\nx.config.props')"
-          Project="$(LolDir)\src\private\nx\msbuild\nx.config.props" />
+  <Import Condition="Exists('$(LolEngineDir)lol-switch\msbuild\nx.config.props')"
+          Project="$(LolEngineDir)lol-switch\msbuild\nx.config.props" />
 
   <!--
      - Import final settings from Visual Studio

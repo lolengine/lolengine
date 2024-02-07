@@ -8,8 +8,8 @@
   <!--
      - Secret stuff for platforms under NDA
    -->
-  <Import Condition="Exists('$(LolDir)\src\private\nx\msbuild\nx.rules.props')"
-          Project="$(LolDir)\src\private\nx\msbuild\nx.rules.props" />
+  <Import Condition="Exists('$(LolEngineDir)\src\private\nx\msbuild\nx.rules.props')"
+          Project="$(LolEngineDir)\src\private\nx\msbuild\nx.rules.props" />
 
   <ItemDefinitionGroup>
     <ClCompile>
@@ -26,8 +26,8 @@
       <ObjectFileName>$(IntDir)/%(Directory)/</ObjectFileName>
 
       <AdditionalIncludeDirectories>
-          $(LolDir)\lol\include;
-          $(LolDir)\src\include;
+          $(LolEngineDir)\lol\include;
+          $(LolEngineDir)\src\include;
           $(KincIncludes);
           $(PegtlIncludes);
           $(ImguiIncludes);

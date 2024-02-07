@@ -1,8 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup Label="LolMacros">
-    <LolDir>$(SolutionDir)</LolDir>
-  </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|NX64">
       <Configuration>Debug</Configuration>
@@ -45,6 +42,8 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <Import Project="$(SolutionDir)lolengine.props" />
+  <Import Project="$(SolutionDir)build\msbuild\lol-bullet.props" />
   <ItemGroup>
     <ClCompile Include="test-common.cpp" />
     <ClCompile Include="math\box.cpp" />
@@ -63,26 +62,9 @@
     <ClCompile Include="math\trig.cpp" />
     <ClCompile Include="math\vector.cpp" />
   </ItemGroup>
-  <Import Project="$(LolDir)\build\msbuild\lol-core.props" />
-  <Import Project="$(LolDir)\build\msbuild\lol-bullet.props" />
   <PropertyGroup Label="Globals">
     <ProjectGuid>{962d4e25-45d3-4ace-8c02-69fa3713abd4}</ProjectGuid>
     <ConfigurationType>Application</ConfigurationType>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
-  <Import Project="$(LolDir)\build\msbuild\lol.config.props" />
-  <ImportGroup Label="ExtensionSettings">
-    <Import Project="$(LolDir)\build\msbuild\lolfx.props" />
-  </ImportGroup>
-  <ImportGroup Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(LolDir)\build\msbuild\lol.vars.props" />
-  </ImportGroup>
-  <PropertyGroup Label="UserMacros" />
-  <Import Project="$(LolDir)\build\msbuild\lol.rules.props" />
-  <ItemDefinitionGroup />
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
-  <ImportGroup Label="ExtensionTargets">
-    <Import Project="$(LolDir)\build\msbuild\lolfx.targets" />
-  </ImportGroup>
 </Project>

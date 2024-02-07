@@ -99,7 +99,7 @@ _ReSharper.*
 !external/*/*/*/*/*/*
 !external/*/*/*/*/*/*/*
 # Our private repositories
-src/private
+lol-switch
 # Our binaries
 demos/lol.js/lol.js
 doc/legacy/benchsuite

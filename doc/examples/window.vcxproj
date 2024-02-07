@@ -1,8 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup Label="LolMacros">
-    <LolDir>$(SolutionDir)</LolDir>
-  </PropertyGroup>
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|NX64">
       <Configuration>Debug</Configuration>
@@ -50,9 +47,8 @@
     <ConfigurationType>Application</ConfigurationType>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
-  <Import Project="$(LolDir)\build\msbuild\lol.props" />
+  <Import Project="$(SolutionDir)lolengine.props" />
   <ItemGroup>
     <ClCompile Include="window.cpp" />
   </ItemGroup>
-  <Import Project="$(LolDir)\build\msbuild\lol-core.props" />
 </Project>
