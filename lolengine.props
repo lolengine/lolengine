@@ -12,27 +12,68 @@
   </PropertyGroup>
 
   <!--
-     - 
+     - Build configuration
    -->
 
-  <Import Project="$(LolEngineDir)build\msbuild\lol.config.props" />
+  <!-- Settings that can be defined by the user in a build.config file -->
+  <Import Condition="exists('$(LolEngineDir)build.config')"
+          Project="$(LolEngineDir)build.config" />
+  <Import Condition="exists('$(SolutionDir)build.config') and '$(SolutionDir)'!='$(LolEngineDir)'"
+          Project="$(SolutionDir)build.config" />
+
+  <!-- NDA platforms -->
+  <Import Project="$(LolEngineDir)lol-switch/msbuild/config.props"
+          Condition="exists('$(LolEngineDir)lol-switch/msbuild/config.props')" />
+  <Import Project="$(LolEngineDir)lol-playstation/msbuild/config.props"
+          Condition="exists('$(LolEngineDir)lol-playstation/msbuild/config.props')" />
+
+  <Import Project="$(LolEngineDir)build/msbuild/config.props" />
+
+  <!--
+     - Build variables
+   -->
 
   <ImportGroup Label="PropertySheets">
-    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props"
-            Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="$(LolEngineDir)build\msbuild\lol.vars.props" />
+
+    <Import Project="$(UserRootDir)Microsoft.Cpp.$(Platform).user.props"
+            Condition="exists('$(UserRootDir)Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+
+    <!-- NDA platforms -->
+    <Import Project="$(LolEngineDir)lol-switch/msbuild/vars.props"
+            Condition="exists('$(LolEngineDir)lol-switch/msbuild/vars.props')" />
+    <Import Project="$(LolEngineDir)lol-playstation/msbuild/vars.props"
+            Condition="exists('$(LolEngineDir)lol-playstation/msbuild/vars.props')" />
+
+    <Import Project="$(LolEngineDir)build/msbuild/kinc.vars.props"
+            Condition="'$(enable_kinc)'!='no'" />
+
+    <Import Project="$(LolEngineDir)build/msbuild/vars.props" />
   </ImportGroup>
 
   <PropertyGroup Label="UserMacros" />
-  <Import Project="$(LolEngineDir)build\msbuild\lol.rules.props" />
+
+  <!--
+     - Build rules
+   -->
+
+  <Import Project="$(LolEngineDir)build/msbuild/rules.props" />
 
   <ItemDefinitionGroup />
 
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <!--
+     - Target definitions
+   -->
+
+  <Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
+
   <ImportGroup Label="ExtensionTargets">
     <Import Condition="'$(enable_kinc)'!='no'"
-            Project="$(LolEngineDir)build\msbuild\kinc.targets" />
+            Project="$(LolEngineDir)build/msbuild/kinc.targets" />
   </ImportGroup>
+
+  <!--
+     - Lol Engine dependency
+   -->
 
   <ItemGroup>
     <ProjectReference Include="$(LolEngineDir)src/lolengine.vcxproj" Condition="'$(ProjectName)'!='lolengine'">
@@ -40,13 +81,13 @@
     </ProjectReference>
   </ItemGroup>
 
-  <ItemGroup Condition="'$(enable_kinc)'!='no'">
+  <ItemGroup Condition="'$(ProjectName)'!='lolengine' and '$(enable_kinc)'!='no'">
     <ClCompile Include="$(KINC_SDK_PATH)/Sources/kinc/**/*.cpp" />
     <ClCompile Include="$(KINC_SDK_PATH)/Sources/kinc/**/*.c" />
     <GLSLShader Include="$(KINC_SDK_PATH)/GLSLShaders/**/*.glsl" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(enable_kinc)'!='no' And '$(Platform)'=='x64'">
+  <ItemGroup Condition="'$(ProjectName)'!='lolengine' and '$(enable_kinc)'!='no' and '$(Platform)'=='x64'">
     <ClCompile Include="$(KINC_SDK_PATH)/Backends/Audio2/WASAPI/Sources/kinc/backend/**/*.cpp" />
     <ClCompile Include="$(KINC_SDK_PATH)/Backends/Audio2/WASAPI/Sources/kinc/backend/**/*.c" />
     <ClCompile Include="$(KINC_SDK_PATH)/Backends/Graphics4/Direct3D11/Sources/kinc/backend/**/*.cpp" />
@@ -61,7 +102,7 @@
     <ClCompile Include="$(KINC_SDK_PATH)/Backends/System/Windows/Libraries/DirectShow/BaseClasses/**/*.c" />
   </ItemGroup>
 
-  <ItemGroup Condition="'$(enable_kinc)'!='no' And '$(Platform)'=='NX64'">
+  <ItemGroup Condition="'$(ProjectName)'!='lolengine' and '$(enable_kinc)'!='no' and '$(Platform)'=='NX64'">
     <ClCompile Include="$(KINC_SDK_PATH)/Backends/Graphics4/G4onG5/Sources/kinc/backend/**/*.cpp" />
     <ClCompile Include="$(KINC_SDK_PATH)/Backends/Graphics4/G4onG5/Sources/kinc/backend/**/*.c" />
     <ClCompile Include="$(KINC_SDK_PATH)/../Backends/Switch/Sources/kinc/backend/**/*.cpp" />
@@ -79,19 +120,19 @@
 
   <Target Name="LolEngineSanityChecks">
 
-    <Error Condition="!Exists('$(LolEngineDir)')"
+    <Error Condition="!exists('$(LolEngineDir)')"
            Text="Lol Engine directory '$(LolEngineDir)' was not found" />
 
     <Error Condition="'$(KINC_SDK_PATH)'==''"
            Text="KINC_SDK_PATH is not set" />
 
-    <Error Condition="!Exists('$(KINC_SDK_PATH)/make')"
+    <Error Condition="!exists('$(KINC_SDK_PATH)/make')"
            Text="KINC_SDK_PATH is set, but '$(KINC_SDK_PATH)/make' was not found" />
 
-    <Error Condition="('$(Platform)'=='NX64' Or '$(Platform)'=='NX32') And !Exists('$(LolEngineDir)lol-switch')"
+    <Error Condition="('$(Platform)'=='NX64' or '$(Platform)'=='NX32') and !exists('$(LolEngineDir)lol-switch')"
            Text="platform '$(Platform)' selected, but '$(LolEngineDir)lol-switch' was not found" />
 
-    <Error Condition="('$(Platform)'=='ORBIS' Or '$(Platform)'=='Prospero') And !Exists('$(LolEngineDir)lol-playstation')"
+    <Error Condition="('$(Platform)'=='ORBIS' or '$(Platform)'=='Prospero') and !exists('$(LolEngineDir)lol-playstation')"
            Text="platform '$(Platform)' selected, but '$(LolEngineDir)lol-playstation' was not found" />
 
   </Target>

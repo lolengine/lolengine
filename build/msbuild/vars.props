@@ -91,9 +91,6 @@
     <Win32Defines>LOL_USE_SDL_MIXER;LOL_USE_SDL_IMAGE;$(Win32Defines)</Win32Defines>
   </PropertyGroup>
 
-  <!-- Kinc -->
-  <Import Condition="'$(enable_kinc)'!='no'" Project="kinc.vars.props" />
-
   <!-- FFmpeg -->
   <PropertyGroup Condition="'$(enable_ffmpeg)'!='no'" Label="UserMacros">
     <FfmpegDir>$(ExternalDir)\ffmpeg-20190130</FfmpegDir>
@@ -159,12 +156,6 @@
     <BuildMacro Include="OrbisLibs"><Value>$(OrbisLibs)</Value></BuildMacro>
     <BuildMacro Include="OrbisDefines"><Value>$(OrbisDefines)</Value></BuildMacro>
   </ItemGroup>
-
-  <!--
-     - Secret stuff for platforms under NDA
-   -->
-  <Import Condition="Exists('$(LolEngineDir)\src\private\nx\msbuild\nx.vars.props')"
-          Project="$(LolEngineDir)\src\private\nx\msbuild\nx.vars.props" />
 
   <PropertyGroup>
     <BinDir>$(SolutionDir)binaries\</BinDir>

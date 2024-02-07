@@ -2,14 +2,6 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <!--
-     - Import settings that can be overridden by the user
-   -->
-  <Import Condition="Exists('$(LolEngineDir)\build.config')"
-          Project="$(LolEngineDir)\build.config" />
-  <Import Condition="Exists('$(SolutionDir)\build.config') And ('$(SolutionDir)' != '$(LolEngineDir)')"
-          Project="$(SolutionDir)\build.config" />
-
-  <!--
      - Import defaults settings from Visual Studio
    -->
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -48,12 +40,6 @@
   <PropertyGroup Condition="'$(Platform)'=='x64'" Label="Configuration">
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
-
-  <!--
-     - Secret stuff for platforms under NDA
-   -->
-  <Import Condition="Exists('$(LolEngineDir)lol-switch\msbuild\nx.config.props')"
-          Project="$(LolEngineDir)lol-switch\msbuild\nx.config.props" />
 
   <!--
      - Import final settings from Visual Studio
