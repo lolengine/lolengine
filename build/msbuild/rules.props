@@ -5,12 +5,6 @@
     <LinkIncremental Condition="'$(Configuration)'=='Release'">false</LinkIncremental>
   </PropertyGroup>
 
-  <!--
-     - Secret stuff for platforms under NDA
-   -->
-  <Import Condition="Exists('$(LolEngineDir)\src\private\nx\msbuild\nx.rules.props')"
-          Project="$(LolEngineDir)\src\private\nx\msbuild\nx.rules.props" />
-
   <ItemDefinitionGroup>
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
