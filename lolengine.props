@@ -90,30 +90,35 @@
   <Target Name="KincCompile" AfterTargets="BuildGenerateSources" Condition="'$(ConfigurationType)'!='StaticLibrary'">
     <ItemGroup Condition="'$(enable_kinc)'!='no'">
       <ClCompile Include="$(KINC_SDK_PATH)/Sources/kinc/**/*.cpp" />
-      <ClCompile Include="$(KINC_SDK_PATH)/Sources/kinc/**/*.c" />
+      <ClCompile Include="$(KINC_SDK_PATH)/Backends/Audio2/WASAPI/Sources/kinc/backend/**/*.cpp;
+                          $(KINC_SDK_PATH)/Backends/Graphics4/Direct3D11/Sources/kinc/backend/**/*.cpp;
+                          $(KINC_SDK_PATH)/Backends/Graphics5/G5onG4/Sources/kinc/backend/**/*.cpp;
+                          $(KINC_SDK_PATH)/Backends/System/Microsoft/Sources/kinc/backend/**/*.cpp;
+                          $(KINC_SDK_PATH)/Backends/System/Windows/Sources/kinc/backend/**/*.cpp;
+                          $(KINC_SDK_PATH)/Backends/System/Windows/Libraries/DirectShow/BaseClasses/**/*.cpp"
+                 Condition="'$(Platform)'=='x64'" />
+      <ClCompile Include="$(KINC_SDK_PATH)/Backends/Graphics4/G4onG5/Sources/kinc/backend/**/*.cpp;
+                          $(KINC_SDK_PATH)/../Backends/Switch/Sources/kinc/backend/**/*.cpp"
+                 Condition="'$(Platform)'=='NX64'" />
+
+      <!-- The C files are first added to a temporary list so that we can modify AdditionalOptions
+         - when compiling them. This is because of an annoying NDK limitation. -->
+      <KincCFiles Include="$(KINC_SDK_PATH)/Sources/kinc/**/*.c" />
+      <KincCFiles Include="$(KINC_SDK_PATH)/Backends/Audio2/WASAPI/Sources/kinc/backend/**/*.c;
+                           $(KINC_SDK_PATH)/Backends/Graphics4/Direct3D11/Sources/kinc/backend/**/*.c;
+                           $(KINC_SDK_PATH)/Backends/Graphics5/G5onG4/Sources/kinc/backend/**/*.c;
+                           $(KINC_SDK_PATH)/Backends/System/Microsoft/Sources/kinc/backend/**/*.c;
+                           $(KINC_SDK_PATH)/Backends/System/Windows/Sources/kinc/backend/**/*.c;
+                           $(KINC_SDK_PATH)/Backends/System/Windows/Libraries/DirectShow/BaseClasses/**/*.c"
+                  Condition="'$(Platform)'=='x64'" />
+      <KincCFiles Include="$(KINC_SDK_PATH)/Backends/Graphics4/G4onG5/Sources/kinc/backend/**/*.c;
+                           $(KINC_SDK_PATH)/../Backends/Switch/Sources/kinc/backend/**/*.c"
+                  Condition="'$(Platform)'=='NX64'" />
+      <ClCompile Include="@(KincCFiles)">
+        <AdditionalOptions>%(ClCompile.AdditionalOptions) %(ClCompile.AdditionalOptionsForC)</AdditionalOptions>
+      </ClCompile>
+
       <GLSLShader Include="$(KINC_SDK_PATH)/GLSLShaders/**/*.glsl" />
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(enable_kinc)'!='no' and '$(Platform)'=='x64'">
-      <ClCompile Include="$(KINC_SDK_PATH)/Backends/Audio2/WASAPI/Sources/kinc/backend/**/*.cpp" />
-      <ClCompile Include="$(KINC_SDK_PATH)/Backends/Audio2/WASAPI/Sources/kinc/backend/**/*.c" />
-      <ClCompile Include="$(KINC_SDK_PATH)/Backends/Graphics4/Direct3D11/Sources/kinc/backend/**/*.cpp" />
-      <ClCompile Include="$(KINC_SDK_PATH)/Backends/Graphics4/Direct3D11/Sources/kinc/backend/**/*.c" />
-      <ClCompile Include="$(KINC_SDK_PATH)/Backends/Graphics5/G5onG4/Sources/kinc/backend/**/*.cpp" />
-      <ClCompile Include="$(KINC_SDK_PATH)/Backends/Graphics5/G5onG4/Sources/kinc/backend/**/*.c" />
-      <ClCompile Include="$(KINC_SDK_PATH)/Backends/System/Microsoft/Sources/kinc/backend/**/*.cpp" />
-      <ClCompile Include="$(KINC_SDK_PATH)/Backends/System/Microsoft/Sources/kinc/backend/**/*.c" />
-      <ClCompile Include="$(KINC_SDK_PATH)/Backends/System/Windows/Sources/kinc/backend/**/*.cpp" />
-      <ClCompile Include="$(KINC_SDK_PATH)/Backends/System/Windows/Sources/kinc/backend/**/*.c" />
-      <ClCompile Include="$(KINC_SDK_PATH)/Backends/System/Windows/Libraries/DirectShow/BaseClasses/**/*.cpp" />
-      <ClCompile Include="$(KINC_SDK_PATH)/Backends/System/Windows/Libraries/DirectShow/BaseClasses/**/*.c" />
-    </ItemGroup>
-
-    <ItemGroup Condition="'$(enable_kinc)'!='no' and '$(Platform)'=='NX64'">
-      <ClCompile Include="$(KINC_SDK_PATH)/Backends/Graphics4/G4onG5/Sources/kinc/backend/**/*.cpp" />
-      <ClCompile Include="$(KINC_SDK_PATH)/Backends/Graphics4/G4onG5/Sources/kinc/backend/**/*.c" />
-      <ClCompile Include="$(KINC_SDK_PATH)/../Backends/Switch/Sources/kinc/backend/**/*.cpp" />
-      <ClCompile Include="$(KINC_SDK_PATH)/../Backends/Switch/Sources/kinc/backend/**/*.c" />
     </ItemGroup>
   </Target>
 
