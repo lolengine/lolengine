@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine
 //
-//  Copyright © 2010—2020 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010–2024 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -16,11 +16,11 @@
 #include <lol/msg>
 #include <memory>
 #include <unordered_map>
-#include <unordered_set>
 
 #if LOL_USE_KINC
 #   include <kinc/audio2/audio.h>
 #elif LOL_USE_SDL_MIXER
+#   include <unordered_set>
 #   if HAVE_SDL2_SDL_H
 #       include <SDL2/SDL.h>
 #       include <SDL2/SDL_mixer.h>
@@ -35,56 +35,33 @@
 namespace lol::audio
 {
 
-struct streamer
-{
-    std::function<void(void *, size_t)> callback;
-    format format;
-    int frequency;
-    int channels;
-};
+std::shared_ptr<mixer<float>> g_mixer;
 
-std::unordered_map<int, std::shared_ptr<streamer>> g_streamers;
-
-static void play_audio(kinc_a2_buffer_t *buffer, size_t samples)
-{
-    size_t const out_rate = buffer->format.samples_per_second;
-    size_t const out_channels = buffer->format.channels;
-    size_t const out_frames = samples / out_channels;
-    size_t const in_rate = 22050;
-    size_t const in_frames = out_frames * in_rate / out_rate + 1;
-
-    // Mix all channels into a float buffer
-    std::vector<float> z8_buffer(in_frames + 1);
-    std::vector<int16_t> tmp(in_frames);
-    for (auto &s : g_streamers)
-    {
-        s.second->callback(tmp.data(), in_frames);
-        for (size_t i = 0; i < in_frames; ++i)
-            z8_buffer[i] += tmp[i] / 32767.f;
-    }
-
-    for (size_t i = 0; i < out_frames; ++i)
-    {
-        auto frame = (float *)(buffer->data + buffer->write_location);
-        // Linear interpolation
-        float s0 = z8_buffer[i * in_rate / out_rate];
-        float s1 = z8_buffer[i * in_rate / out_rate + 1];
-        float s = s0 + (s1 - s0) * float(i * in_rate % out_rate) / out_rate;
-        // clip so that we never go outside -1..1 range
-        s = std::max(-1.0f, std::min(1.0f, s));
-        // Output frame samples
-        for (size_t ch = 0; ch < out_channels; ++ch)
-            frame[ch] = s;
-        buffer->write_location = (buffer->write_location + out_channels * sizeof(*frame)) % buffer->data_size;
-    }
-}
+// FIXME: this could be removed by inserting this in g_mixer
+std::unordered_map<int, std::shared_ptr<stream<float>>> g_streams;
 
 void init()
 {
+    g_mixer = std::make_shared<mixer<float>>(2, 48000);
+
     kinc_a2_init();
     kinc_a2_set_callback([](kinc_a2_buffer_t *buffer, int samples, void *userdata)
     {
-        play_audio(buffer, size_t(samples));
+        size_t const frame_size = 2 * sizeof(float);
+        size_t todo = size_t(samples) / 2;
+        size_t remaining = (buffer->data_size - buffer->write_location) / frame_size;
+
+        if (todo >= remaining)
+        {
+            todo -= g_mixer->get(reinterpret_cast<float *>(buffer->data + buffer->write_location), remaining);
+            buffer->write_location = 0;
+        }
+
+        if (todo > 0)
+        {
+            g_mixer->get(reinterpret_cast<float *>(buffer->data + buffer->write_location), todo);
+            buffer->write_location += int(todo * frame_size);
+        }
     }, nullptr);
 }
 
@@ -93,23 +70,20 @@ void shutdown()
     kinc_a2_set_callback(nullptr, nullptr);
 }
 
-int start(std::function<void(void *, size_t)> f,
-          format format, int frequency, int channels)
+template<>
+int start_stream(std::shared_ptr<stream<float>> s)
 {
-    auto s = std::make_shared<streamer>();
-    s->callback = f;
-    s->format = format;
-    s->frequency = frequency;
-    s->channels = channels;
-
     static int idx = 0;
-    g_streamers[idx] = s;
+    g_streams[idx] = s;
+    g_mixer->add(s);
     return idx++;
 }
 
-void stop(int stream)
+void stop_stream(int id)
 {
-    g_streamers.erase(stream);
+    auto s = g_streams[id];
+    g_streams.erase(id);
+    g_mixer->remove(s);
 }
 
 } // namespace lol::audio
@@ -308,12 +282,12 @@ int audio::start_streaming(std::function<void(void *, int)> const &f,
 
 void audio::stop_streaming(int track)
 {
-    for (auto streamer : g_streamers)
+    for (auto s : g_streamers)
     {
-        if (streamer->m_track == track)
+        if (s->m_track == track)
         {
             Mix_HaltChannel(track);
-            g_streamers.erase(streamer);
+            g_streamers.erase(s);
             break;
         }
     }

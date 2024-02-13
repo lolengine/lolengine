@@ -14,36 +14,30 @@
 
 //
 // The audio interface
-// -------------------
+// ———————————————————
 // Helper functions to set up the audio device.
 //
 
 #include <functional>
+#include <lol/audio/stream>
+#include <unordered_map>
 
 namespace lol::audio
 {
 
-enum class format : uint8_t
-{
-    unknown = 0,
-    // 8-bit, unsigned or signed
-    uint8, sint8,
-    // 16-bit, unsigned or signed, little endian or big endian
-    uint16le, uint16be,
-    sint16le, sint16be,
-    // 24-bit signed, little endian
-    sint24le,
-    // 32-bit signed, little endian or big endian
-    sint32le, sint32be,
-    // 32-bit floats, little endian or big endian
-    float32le, float32be,
-};
-
 void init();
 void shutdown();
 
-int start(std::function<void(void *, size_t)> f,
-          format format, int frequency, int channels);
-void stop(int stream);
+template<typename S, typename T = S::sample_type>
+inline int start_stream(std::shared_ptr<S> s0)
+{
+    std::shared_ptr<stream<float>> s = make_adapter<float>(s0, 2, 48000);
+    return start_stream(s);
+}
+
+template<>
+int start_stream(std::shared_ptr<stream<float>> stream);
+
+void stop_stream(int id);
 
 } // namespace lol
