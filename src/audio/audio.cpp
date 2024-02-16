@@ -45,23 +45,19 @@ void init()
     g_mixer = std::make_shared<mixer<float>>(2, 48000);
 
     kinc_a2_init();
-    kinc_a2_set_callback([](kinc_a2_buffer_t *buffer, int samples, void *userdata)
+    kinc_a2_set_callback([](kinc_a2_buffer_t* buffer, uint32_t samples, void* userdata)
     {
-        size_t const channels = 2;
-        size_t const frame_size = sizeof(float) * channels;
-        size_t todo = size_t(samples) / channels;
-        size_t remaining = (buffer->data_size - buffer->write_location) / frame_size;
+        size_t channel_count = g_mixer->channels();
 
-        if (todo >= remaining)
-        {
-            todo -= g_mixer->get(reinterpret_cast<float *>(buffer->data + buffer->write_location), remaining);
-            buffer->write_location = 0;
-        }
+        std::vector<float> tmp(samples * channel_count);
+        g_mixer->get(tmp.data(), samples);
 
-        if (todo > 0)
+        for (size_t n = 0; n < samples; ++n)
         {
-            g_mixer->get(reinterpret_cast<float *>(buffer->data + buffer->write_location), todo);
-            buffer->write_location += int(todo * frame_size);
+            for (size_t ch = 0; ch < channel_count; ++ch)
+                buffer->channels[ch][buffer->write_location] = tmp[n * channel_count + ch];
+
+            buffer->write_location = (buffer->write_location + 1) % buffer->data_size;
         }
     }, nullptr);
 }
