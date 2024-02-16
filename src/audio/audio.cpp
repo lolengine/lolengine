@@ -47,8 +47,9 @@ void init()
     kinc_a2_init();
     kinc_a2_set_callback([](kinc_a2_buffer_t *buffer, int samples, void *userdata)
     {
-        size_t const frame_size = 2 * sizeof(float);
-        size_t todo = size_t(samples) / 2;
+        size_t const channels = 2;
+        size_t const frame_size = sizeof(float) * channels;
+        size_t todo = size_t(samples) / channels;
         size_t remaining = (buffer->data_size - buffer->write_location) / frame_size;
 
         if (todo >= remaining)
