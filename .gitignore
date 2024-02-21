@@ -100,6 +100,7 @@ _ReSharper.*
 !external/*/*/*/*/*/*/*
 # Our private repositories
 lol-switch
+lol-playstation
 # Our binaries
 demos/lol.js/lol.js
 doc/legacy/benchsuite

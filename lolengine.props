@@ -100,6 +100,10 @@
       <ClCompile Include="$(KINC_SDK_PATH)/Backends/Graphics4/G4onG5/Sources/kinc/backend/**/*.cpp;
                           $(KINC_SDK_PATH)/../Backends/Switch/Sources/kinc/backend/**/*.cpp"
                  Condition="'$(Platform)'=='NX64'" />
+      <ClCompile Include="$(KINC_SDK_PATH)/Backends/Graphics4/G4onG5/Sources/kinc/backend/**/*.cpp;
+                          $(KINC_SDK_PATH)/../Backends/PlayStation5/Sources/kinc/backend/**/*.cpp;
+                          $(KINC_SDK_PATH)/../Backends/PlayStation5/Sources/tlsf/**/*.cpp"
+                 Condition="'$(Platform)'=='Prospero'" />
 
       <!-- The C files are first added to a temporary list so that we can modify AdditionalOptions
          - when compiling them. This is because of an annoying NDK limitation. -->
@@ -114,6 +118,14 @@
       <KincCFiles Include="$(KINC_SDK_PATH)/Backends/Graphics4/G4onG5/Sources/kinc/backend/**/*.c;
                            $(KINC_SDK_PATH)/../Backends/Switch/Sources/kinc/backend/**/*.c"
                   Condition="'$(Platform)'=='NX64'" />
+      <KincCFiles Include="$(KINC_SDK_PATH)/Backends/Graphics4/G4onG5/Sources/kinc/backend/**/*.c;
+                           $(KINC_SDK_PATH)/../Backends/PlayStation4/Sources/kinc/backend/**/*.c;
+                           $(KINC_SDK_PATH)/../Backends/PlayStation4/Sources/tlsf/**/*.c"
+                  Condition="'$(Platform)'=='ORBIS'" />
+      <KincCFiles Include="$(KINC_SDK_PATH)/Backends/Graphics4/G4onG5/Sources/kinc/backend/**/*.c;
+                           $(KINC_SDK_PATH)/../Backends/PlayStation5/Sources/kinc/backend/**/*.c;
+                           $(KINC_SDK_PATH)/../Backends/PlayStation5/Sources/tlsf/**/*.c"
+                  Condition="'$(Platform)'=='Prospero'" />
       <ClCompile Include="@(KincCFiles)">
         <AdditionalOptions>%(ClCompile.AdditionalOptions) %(ClCompile.AdditionalOptionsForC)</AdditionalOptions>
       </ClCompile>

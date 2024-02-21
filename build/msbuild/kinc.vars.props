@@ -56,12 +56,36 @@
     <ShaderCompiler>$(KINC_SDK_PATH)\..\Backends\PlayStation4\krafix\krafix-ps4.exe</ShaderCompiler>
     <ShaderPlatform>ps4</ShaderPlatform>
     <ShaderProfile>ps4</ShaderProfile>
+    <KincIncludes>
+      $(KincIncludes);
+      $(KINC_SDK_PATH)\Backends\Graphics4\G4onG5\Sources;
+      $(KINC_SDK_PATH)\..\Backends\PlayStation4\Sources;
+    </KincIncludes>
+    <KincDefines>
+      $(KincDefines);
+      KORE_G4ONG5;KORE_PLAYSTATION_4;KORE_PS4;KORE_SONY;KORE_CONSOLE;
+    </KincDefines>
+    <KincDeps>
+      -lSceAgc;-lSceAgcCore;-lSceAgcGpuAddress;-lSceAgcDriver_stub_weak;-lSceAgc_stub_weak;-lSceNpGameIntent_stub_weak;-lSceSaveDataDialog_stub_weak;-lSceCommonDialog_stub_weak;-lSceNpUniversalDataSystem_stub_weak;-lSceSysmodule_stub_weak;-lSceSystemService_stub_weak;-lSceSaveData_stub_weak;-lSceAudioOut_stub_weak;-lSceVideoOut_stub_weak;-lScePad_stub_weak;-lSceUserService_stub_weak
+    </KincDeps>
   </PropertyGroup>
 
   <PropertyGroup Label="UserMacros" Condition="'$(Platform)'=='Prospero'">
     <ShaderCompiler>$(KINC_SDK_PATH)\..\Backends\PlayStation5\krafix\krafix-ps5.exe</ShaderCompiler>
     <ShaderPlatform>ps5</ShaderPlatform>
     <ShaderProfile>ps5</ShaderProfile>
+    <KincIncludes>
+      $(KincIncludes);
+      $(KINC_SDK_PATH)\Backends\Graphics4\G4onG5\Sources;
+      $(KINC_SDK_PATH)\..\Backends\PlayStation5\Sources;
+    </KincIncludes>
+    <KincDefines>
+      $(KincDefines);
+      KORE_G4ONG5;KORE_PLAYSTATION_5;KORE_PS5;KORE_SONY;KORE_CONSOLE;
+    </KincDefines>
+    <KincDeps>
+      -lSceAgc;-lSceAgcCore;-lSceAgcGpuAddress;-lSceAgcDriver_stub_weak;-lSceAgc_stub_weak;-lSceNpGameIntent_stub_weak;-lSceSaveDataDialog_stub_weak;-lSceCommonDialog_stub_weak;-lSceNpUniversalDataSystem_stub_weak;-lSceSysmodule_stub_weak;-lSceSystemService_stub_weak;-lSceSaveData_stub_weak;-lSceAudioOut_stub_weak;-lSceVideoOut_stub_weak;-lScePad_stub_weak;-lSceUserService_stub_weak
+    </KincDeps>
   </PropertyGroup>
 
   <ItemGroup Label="UserMacros">

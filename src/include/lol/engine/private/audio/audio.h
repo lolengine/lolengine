@@ -28,7 +28,7 @@ namespace lol::audio
 void init();
 void shutdown();
 
-template<typename S, typename T = S::sample_type>
+template<typename S, typename T = typename S::sample_type>
 inline int start_stream(std::shared_ptr<S> s0)
 {
     std::shared_ptr<stream<float>> s = make_adapter<float>(s0, 2, 48000);
