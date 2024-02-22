@@ -15,6 +15,7 @@
 #include <lol/engine/audio>
 #include <lol/msg>
 #include <memory>
+#include <mutex>
 #include <unordered_map>
 
 #if LOL_USE_KINC
@@ -24,7 +25,8 @@
 namespace lol::audio
 {
 
-std::shared_ptr<mixer<float>> g_mixer;
+static std::shared_ptr<mixer<float>> g_mixer;
+static std::mutex g_mutex;
 
 // FIXME: this could be removed by inserting this in g_mixer
 std::unordered_map<int, std::shared_ptr<stream<float>>> g_streams;
@@ -37,10 +39,16 @@ void init()
     kinc_a2_init();
     kinc_a2_set_callback([](kinc_a2_buffer_t* buffer, uint32_t samples, void* userdata)
     {
-        size_t channel_count = g_mixer->channels();
+        size_t channel_count;
+        std::vector<float> tmp;
 
-        std::vector<float> tmp(samples * channel_count);
-        g_mixer->get(tmp.data(), samples);
+        {
+            std::unique_lock<std::mutex> lock(g_mutex);
+
+            channel_count = g_mixer->channels();
+            tmp.resize(samples * channel_count);
+            g_mixer->get(tmp.data(), samples);
+        }
 
         for (size_t n = 0; n < samples; ++n)
         {
@@ -64,6 +72,7 @@ template<>
 int start_stream(std::shared_ptr<stream<float>> s)
 {
     static int idx = 0;
+    std::unique_lock<std::mutex> lock(g_mutex);
     g_streams[idx] = s;
     g_mixer->add(s);
     return idx++;
@@ -71,6 +80,7 @@ int start_stream(std::shared_ptr<stream<float>> s)
 
 void stop_stream(int id)
 {
+    std::unique_lock<std::mutex> lock(g_mutex);
     auto s = g_streams[id];
     g_streams.erase(id);
     g_mixer->remove(s);
