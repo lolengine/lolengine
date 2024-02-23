@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ProjectSchemaDefinitions xmlns="clr-namespace:Microsoft.Build.Framework.XamlTypes;assembly=Microsoft.Build.Framework" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib" xmlns:transformCallback="Microsoft.Cpp.Dev10.ConvertPropertyCallback">
+  <Rule Name="LolEmbed" PageTemplate="tool" DisplayName="Lol Embed Build Rule v0.0" Order="200">
+    <Rule.DataSource>
+      <DataSource Persistence="ProjectFile" ItemType="LolEmbed" />
+    </Rule.DataSource>
+    <Rule.Categories>
+      <Category Name="General">
+        <Category.DisplayName>
+          <sys:String>General</sys:String>
+        </Category.DisplayName>
+      </Category>
+      <Category Name="Command Line" Subtype="CommandLine">
+        <Category.DisplayName>
+          <sys:String>Command Line</sys:String>
+        </Category.DisplayName>
+      </Category>
+    </Rule.Categories>
+    <StringListProperty Name="Inputs" Category="Command Line" IsRequired="true" Switch=" ">
+      <StringListProperty.DataSource>
+        <DataSource Persistence="ProjectFile" ItemType="LolEmbed" SourceType="Item" />
+      </StringListProperty.DataSource>
+    </StringListProperty>
+    <StringListProperty Name="IntDir" Category="Command Line" IsRequired="true" Switch=" ">
+      <StringListProperty.DataSource>
+        <DataSource Persistence="ProjectFile" ItemType="LolEmbed" SourceType="Item" />
+      </StringListProperty.DataSource>
+    </StringListProperty>
+    <StringListProperty Name="FileName" Category="Command Line" IsRequired="true" Switch=" ">
+    </StringListProperty>
+    <StringProperty Name="Outputs" Category="Command Line" IsRequired="true" Switch=" " />
+    <StringProperty Name="CommandLineTemplate" DisplayName="Command Line" Visible="False" IncludeInCommandLine="False" />
+  </Rule>
+  <ItemType Name="LolEmbed" DisplayName="Lol Embed Build Rule v0.0" />
+  <ContentType Name="LolEmbed" DisplayName="Lol Embed Build Rule v0.0" ItemType="LolEmbed" />
+</ProjectSchemaDefinitions>

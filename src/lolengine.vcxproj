@@ -66,6 +66,10 @@
     <ClInclude Include="include\lol\engine\sys" />
   </ItemGroup>
   <ItemGroup>
+    <LolEmbed Include="data\black.png" />
+    <LolEmbed Include="data\font\ascii.png" />
+  </ItemGroup>
+  <ItemGroup>
     <None Include="Makefile.am">
       <ExcludedFromBuild>true</ExcludedFromBuild>
     </None>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml" />
+    <AvailableItemName Include="LolEmbed">
+      <Targets>LolEmbed</Targets>
+    </AvailableItemName>
+  </ItemGroup>
+
+  <PropertyGroup>
+    <ComputeCompileInputsTargets>
+      $(ComputeCompileInputsTargets);
+      ComputeLolEmbedOutput;
+    </ComputeCompileInputsTargets>
+  </PropertyGroup>
+
+  <UsingTask TaskName="LolEmbed" TaskFactory="XamlTaskFactory" AssemblyName="Microsoft.Build.Tasks.v4.0">
+    <Task>$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml</Task>
+  </UsingTask>
+
+  <Target
+    Name="LolEmbed"
+    BeforeTargets="$(LolEmbedBeforeTargets)"
+    AfterTargets="$(LolEmbedAfterTargets)"
+    Condition="'@(LolEmbed)'!=''"
+    DependsOnTargets="$(LolEmbedDependsOn);ComputeLolEmbedOutput"
+    Outputs="@(LolEmbed-&gt;Metadata('CompileOut')-&gt;Distinct())"
+    Inputs="@(LolEmbed);%(LolEmbed.AdditionalDependencies);$(MSBuildProjectFile)">
+    <ItemGroup
+      Condition="'@(SelectedFiles)'!=''">
+      <LolEmbed
+        Remove="@(LolEmbed)"
+        Condition="'%(Identity)'!='@(SelectedFiles)'" />
+    </ItemGroup>
+    <ItemGroup>
+      <LolEmbed_tlog
+        Include="%(LolEmbed.Outputs)"
+        Condition="'%(LolEmbed.Outputs)'!='' and '%(LolEmbed.ExcludedFromBuild)'!='true'">
+        <Source>@(LolEmbed, '|')</Source>
+      </LolEmbed_tlog>
+    </ItemGroup>
+    <Message
+      Importance="High"
+      Text="%(LolEmbed.ExecutionDescription)" />
+    <WriteLinesToFile
+      Condition="'@(LolEmbed_tlog)'!='' and '%(LolEmbed_tlog.ExcludedFromBuild)'!='true'"
+      File="$(IntDir)$(ProjectName).write.1.tlog"
+      Lines="^%(LolEmbed_tlog.Source);@(LolEmbed_tlog-&gt;'%(Fullpath)')" />
+    <ItemGroup>
+      <LolEmbed>
+      </LolEmbed>
+    </ItemGroup>
+    <LolEmbed
+      Condition="'@(LolEmbed)'!='' and '%(LolEmbed.ExcludedFromBuild)'!='true'"
+      CommandLineTemplate="%(LolEmbed.CommandLineTemplate)"
+      Outputs="%(LolEmbed.Outputs)"
+      IntDir="$(IntDir)"
+      FileName="%(FileName)"
+      Inputs="@(LolEmbed)" />
+  </Target>
+
+  <Target Name="ComputeLolEmbedOutput" Condition="'@(LolEmbed)'!=''">
+    <ItemGroup>
+      <ClCompile Include="@(LolEmbed->Metadata('CompileOut')->Distinct()->ClearMetadata())" Condition="'%(LolEmbed.ExcludedFromBuild)'!='true'">
+        <CompileAs>CompileAsC</CompileAs>
+      </ClCompile>
+      <ClCompile Include="%(LolEmbed.Outputs)" />
+    </ItemGroup>
+    <ItemGroup>
+      <LolEmbed>
+        <CompileOut>$(IntDir)\%(FileName).lolres.cpp</CompileOut>
+      </LolEmbed>
+    </ItemGroup>
+  </Target>
+
+</Project>

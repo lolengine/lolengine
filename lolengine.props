@@ -48,6 +48,7 @@
             Condition="'$(enable_kinc)'!='no'" />
 
     <Import Project="$(LolEngineDir)build/msbuild/vars.props" />
+    <Import Project="$(LolEngineDir)build/msbuild/embed.props" />
   </ImportGroup>
 
   <PropertyGroup Label="UserMacros" />
@@ -73,6 +74,7 @@
   <Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
 
   <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(LolEngineDir)build/msbuild/embed.targets" />
     <Import Condition="'$(enable_kinc)'!='no'"
             Project="$(LolEngineDir)build/msbuild/kinc.targets" />
   </ImportGroup>
