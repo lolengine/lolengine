@@ -53,7 +53,7 @@ void init()
         for (size_t n = 0; n < samples; ++n)
         {
             for (size_t ch = 0; ch < channel_count; ++ch)
-                buffer->channels[ch][buffer->write_location] = tmp[n * channel_count + ch];
+                buffer->channels[ch][buffer->write_location] = lol::audio::sample::softclip(tmp[n * channel_count + ch]);
 
             buffer->write_location = (buffer->write_location + 1) % buffer->data_size;
         }
