@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup Condition="'$(LolEmbedBeforeTargets)'=='' and '$(LolEmbedAfterTargets)'==''">
-    <LolEmbedBeforeTargets>Midl</LolEmbedBeforeTargets>
-    <LolEmbedAfterTargets>CustomBuild</LolEmbedAfterTargets>
-  </PropertyGroup>
+
+  <!-- Use the system Powershell executable if none was provided. -->
   <PropertyGroup>
-    <LolEmbedDependsOn>_SelectedFiles;$(LolEmbedDependsOn)</LolEmbedDependsOn>
     <PowerShellExe Condition="'$(PowerShellExe)'==''">%WINDIR%\System32\WindowsPowerShell\v1.0\powershell.exe</PowerShellExe>
   </PropertyGroup>
+
+  <!-- Use ItemDefinitionGroup to add the “CommandLineTemplate” metadata
+     - to all LolEmbed items. -->
   <ItemDefinitionGroup>
     <LolEmbed>
       <!-- Technique for embedding powershell found at https://gist.github.com/fearthecowboy/9e06ad9d92c5d939582147a35c049693 -->
@@ -38,9 +38,11 @@ char const * ${name}_path = "$in";
 } // extern "C"
 "@
 [System.IO.File]::WriteAllText($out, $code, [System.Text.Encoding]::UTF8)
-        ]]></CommandLineTemplate>
+        ]]><!-- An empty line is required here for the above script to work -->
+      </CommandLineTemplate>
       <Outputs>$(IntDir)%(FileName)%(Extension).cpp</Outputs>
       <ExecutionDescription>%(FileName)%(Extension)</ExecutionDescription>
     </LolEmbed>
   </ItemDefinitionGroup>
+
 </Project>

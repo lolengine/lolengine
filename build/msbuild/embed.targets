@@ -1,37 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- Things that work:
+     -   - removing a generated .cpp file works (properly rebuilt)
+     -   - modifying a generated .cpp file works (properly rebuilt)
+     - Things that do not work (FIXME):
+     -   - modifying an embeded resource doesn’t work in the IDE (but works with MSBuild)
+     -   - @(SelectedFiles) doesn’t work yet (compiling a single file from the IDE)
+     -   - cleaning up is not implemented yet
+     - Documentation:
+     -   - MSBuild targets (VS2022): https://learn.microsoft.com/en-us/visualstudio/msbuild/msbuild-targets?view=vs-2022
+     -   - an interesting SO answer: https://stackoverflow.com/a/55895543/111461
+   -->
+
+  <!-- Import the custom build rule -->
   <ItemGroup>
     <PropertyPageSchema Include="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml" />
-    <AvailableItemName Include="LolEmbed">
-      <Targets>LolEmbed</Targets>
-    </AvailableItemName>
   </ItemGroup>
-
-  <PropertyGroup>
-    <ComputeCompileInputsTargets>
-      $(ComputeCompileInputsTargets);
-      ComputeLolEmbedOutput;
-    </ComputeCompileInputsTargets>
-  </PropertyGroup>
 
   <UsingTask TaskName="LolEmbed" TaskFactory="XamlTaskFactory" AssemblyName="Microsoft.Build.Tasks.v4.0">
     <Task>$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml</Task>
   </UsingTask>
 
-  <Target
-    Name="LolEmbed"
-    BeforeTargets="$(LolEmbedBeforeTargets)"
-    AfterTargets="$(LolEmbedAfterTargets)"
-    Condition="'@(LolEmbed)'!=''"
-    DependsOnTargets="$(LolEmbedDependsOn);ComputeLolEmbedOutput"
-    Outputs="@(LolEmbed-&gt;Metadata('CompileOut')-&gt;Distinct())"
-    Inputs="@(LolEmbed);%(LolEmbed.AdditionalDependencies);$(MSBuildProjectFile)">
-    <ItemGroup
-      Condition="'@(SelectedFiles)'!=''">
-      <LolEmbed
-        Remove="@(LolEmbed)"
-        Condition="'%(Identity)'!='@(SelectedFiles)'" />
+  <!-- Tell the rest of the build system that our target creates compile inputs -->
+  <PropertyGroup>
+    <ComputeCompileInputsTargets>LolEmbed;$(ComputeCompileInputsTargets)</ComputeCompileInputsTargets>
+  </PropertyGroup>
+
+  <!-- Define a new target for embedded files, active only if there are LolEmbed items.
+     - Make sure we run before “ClCompile” since we generate C++ files.
+     - Also make sure we run after _SelectedFiles in case there are selected files in the IDE. -->
+  <Target Name="LolEmbed" Condition="'@(LolEmbed)'!=''"
+          BeforeTargets="ClCompile" DependsOnTargets="_SelectedFiles"
+          Inputs="@(LolEmbed)" Outputs="@(LolEmbed-&gt;'$(IntDir)%(Filename)%(Extension).cpp')">
+
+    <!-- If files are selected, do not compile the other ones. -->
+    <ItemGroup Condition="'@(SelectedFiles)'!=''">
+      <LolEmbed Remove="@(LolEmbed)" Condition="'%(Identity)'!='@(SelectedFiles)'" />
     </ItemGroup>
+
     <ItemGroup>
       <LolEmbed_tlog
         Include="%(LolEmbed.Outputs)"
@@ -39,38 +46,29 @@
         <Source>@(LolEmbed, '|')</Source>
       </LolEmbed_tlog>
     </ItemGroup>
-    <Message
-      Importance="High"
-      Text="%(LolEmbed.ExecutionDescription)" />
-    <WriteLinesToFile
-      Condition="'@(LolEmbed_tlog)'!='' and '%(LolEmbed_tlog.ExcludedFromBuild)'!='true'"
-      File="$(IntDir)$(ProjectName).write.1.tlog"
-      Lines="^%(LolEmbed_tlog.Source);@(LolEmbed_tlog-&gt;'%(Fullpath)')" />
-    <ItemGroup>
-      <LolEmbed>
-      </LolEmbed>
-    </ItemGroup>
-    <LolEmbed
-      Condition="'@(LolEmbed)'!='' and '%(LolEmbed.ExcludedFromBuild)'!='true'"
-      CommandLineTemplate="%(LolEmbed.CommandLineTemplate)"
-      Outputs="%(LolEmbed.Outputs)"
-      IntDir="$(IntDir)"
-      FileName="%(FileName)"
-      Inputs="@(LolEmbed)" />
-  </Target>
 
-  <Target Name="ComputeLolEmbedOutput" Condition="'@(LolEmbed)'!=''">
+    <Message Importance="High" Text="%(LolEmbed.ExecutionDescription) [embedded] -&gt; %(LolEmbed.Outputs)" />
+
+    <WriteLinesToFile Condition="'@(LolEmbed_tlog)'!='' and '%(LolEmbed_tlog.ExcludedFromBuild)'!='true'"
+                      File="$(IntDir)$(ProjectName).write.1.tlog"
+                      Lines="^%(LolEmbed_tlog.Source);@(LolEmbed_tlog-&gt;'%(Fullpath)')" />
+
+    <!-- Compare input and output file date to decide whether to run the task -->
+    <PropertyGroup>
+      <SourceFileDate>$([System.DateTime]::Parse('%(LolEmbed.ModifiedTime)').Ticks)</SourceFileDate>
+      <GeneratedFileDate Condition="!exists(%(LolEmbed.Outputs.Identity))">0</GeneratedFileDate>  
+      <GeneratedFileDate Condition="exists(%(LolEmbed.Outputs.Identity))">$([System.DateTime]::Parse('%(LolEmbed.Outputs.ModifiedTime)').Ticks)</GeneratedFileDate>  
+    </PropertyGroup>
+
+    <!-- Execute the actual LolEmbed task -->
+    <LolEmbed Condition="'@(LolEmbed)'!='' and $(SourceFileDate)>$(GeneratedFileDate)"
+              CommandLineTemplate="%(LolEmbed.CommandLineTemplate)"
+              Inputs="@(LolEmbed)" Outputs="%(LolEmbed.Outputs)" IntDir="$(IntDir)" FileName="%(FileName)" />
+
     <ItemGroup>
-      <ClCompile Include="@(LolEmbed->Metadata('CompileOut')->Distinct()->ClearMetadata())" Condition="'%(LolEmbed.ExcludedFromBuild)'!='true'">
-        <CompileAs>CompileAsC</CompileAs>
-      </ClCompile>
       <ClCompile Include="%(LolEmbed.Outputs)" />
     </ItemGroup>
-    <ItemGroup>
-      <LolEmbed>
-        <CompileOut>$(IntDir)\%(FileName).lolres.cpp</CompileOut>
-      </LolEmbed>
-    </ItemGroup>
+
   </Target>
 
 </Project>
