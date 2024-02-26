@@ -28,15 +28,21 @@ namespace lol::audio
 void init();
 void shutdown();
 
+// Declare generic start_stream
 template<typename S, typename T = typename S::sample_type>
-inline int start_stream(std::shared_ptr<S> s0)
+int start_stream(std::shared_ptr<S> s0);
+
+// Declare specialised start_stream (implemented in .cpp)
+template<>
+extern int start_stream(std::shared_ptr<stream<float>> stream);
+
+// Definition for all the non-specialised start_stream
+template<typename S, typename T>
+static inline int start_stream(std::shared_ptr<S> s0)
 {
     std::shared_ptr<stream<float>> s = make_adapter<float>(s0, 2, 48000);
     return start_stream(s);
 }
-
-template<>
-int start_stream(std::shared_ptr<stream<float>> stream);
 
 void stop_stream(int id);
 
