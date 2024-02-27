@@ -41,7 +41,6 @@
 
       <AdditionalPreprocessorDefinitions>
           $(KincDefines);
-          NOMINMAX;
           _CRT_SECURE_NO_WARNINGS;
           B3_USE_CLEW;
           LUA_ANSI;
