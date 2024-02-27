@@ -32,7 +32,7 @@
      - Also make sure we run after _SelectedFiles in case there are selected files in the IDE. -->
   <Target Name="LolEmbed" Condition="'@(LolEmbed)'!=''"
           BeforeTargets="ClCompile" DependsOnTargets="_SelectedFiles"
-          Inputs="@(LolEmbed)" Outputs="@(LolEmbed-&gt;'$(IntDir)%(Filename)%(Extension).cpp')">
+          Inputs="@(LolEmbed)" Outputs="@(LolEmbed-&gt;'%(Outputs)')">
 
     <!-- If files are selected, do not compile the other ones. -->
     <ItemGroup Condition="'@(SelectedFiles)'!=''">
