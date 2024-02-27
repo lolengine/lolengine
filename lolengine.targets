@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!--
+     - lolengine.targets
+     - 
+     - This file should be referenced by any project that uses Lol Engine
+   -->
+
+  <PropertyGroup>
+    <LolEngineDir Condition="'$(LolEngineDir)'==''">$(MsBuildThisFileDirectory)</LolEngineDir>
+    <_LolEngineTargetsIncluded>true</_LolEngineTargetsIncluded>
+  </PropertyGroup>
+
+  <Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
+
+  <ImportGroup Label="ExtensionTargets">
+    <Import Project="$(LolEngineDir)build/msbuild/embed.targets" />
+    <Import Condition="'$(enable_kinc)'!='no'"
+            Project="$(LolEngineDir)build/msbuild/kinc.targets" />
+  </ImportGroup>
+
+</Project>

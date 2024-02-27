@@ -9,17 +9,17 @@
 
   <PropertyGroup>
     <LolEngineDir>$(MsBuildThisFileDirectory)</LolEngineDir>
+    <_LolEnginePropsIncluded>true</_LolEnginePropsIncluded>
   </PropertyGroup>
 
   <!--
      - Build configuration
    -->
 
-  <!-- Settings that can be defined by the user in a build.config file -->
-  <Import Condition="exists('$(LolEngineDir)build.config')"
-          Project="$(LolEngineDir)build.config" />
-  <Import Condition="exists('$(SolutionDir)build.config') and '$(SolutionDir)'!='$(LolEngineDir)'"
-          Project="$(SolutionDir)build.config" />
+  <!-- Import defaults settings from Visual Studio -->
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+
+  <Import Project="$(LolEngineDir)build/msbuild/config.props" />
 
   <!-- NDA platforms -->
   <Import Project="$(LolEngineDir)lol-switch/msbuild/config.props"
@@ -27,7 +27,14 @@
   <Import Project="$(LolEngineDir)lol-playstation/msbuild/config.props"
           Condition="exists('$(LolEngineDir)lol-playstation/msbuild/config.props')" />
 
-  <Import Project="$(LolEngineDir)build/msbuild/config.props" />
+  <!-- Override settings with the user’s build.config file -->
+  <Import Condition="exists('$(LolEngineDir)build.config')"
+          Project="$(LolEngineDir)build.config" />
+  <Import Condition="exists('$(SolutionDir)build.config') and '$(SolutionDir)'!='$(LolEngineDir)'"
+          Project="$(SolutionDir)build.config" />
+
+  <!-- Final settings from Visual Studio -->
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
 
   <!--
      - Build variables
@@ -57,7 +64,7 @@
      - Build rules
    -->
 
-    <!-- NDA platforms -->
+  <!-- NDA platforms -->
   <Import Condition="Exists('$(LolEngineDir)lol-switch/msbuild/rules.props')"
           Project="$(LolEngineDir)lol-switch/msbuild/rules.props" />
   <Import Condition="Exists('$(LolEngineDir)lol-playstation/msbuild/rules.props')"
@@ -66,18 +73,6 @@
   <Import Project="$(LolEngineDir)build/msbuild/rules.props" />
 
   <ItemDefinitionGroup />
-
-  <!--
-     - Target definitions
-   -->
-
-  <Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
-
-  <ImportGroup Label="ExtensionTargets">
-    <Import Project="$(LolEngineDir)build/msbuild/embed.targets" />
-    <Import Condition="'$(enable_kinc)'!='no'"
-            Project="$(LolEngineDir)build/msbuild/kinc.targets" />
-  </ImportGroup>
 
   <!--
      - Lol Engine dependency
@@ -139,6 +134,10 @@
   <!--
      - Sanity checks
    -->
+
+  <Target Name="Build">
+    <Error Text="This project includes $(MsBuildThisFileName).props but not $(MsBuildThisFileName).targets" />
+  </Target>
 
   <PropertyGroup>
     <!-- Ensure our sanity checks are executed first, before anything else that was inserted. -->

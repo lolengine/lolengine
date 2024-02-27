@@ -2,10 +2,10 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <!-- Things that work:
+     -   - modifying an embeded resource works (properly rebuilt)
      -   - removing a generated .cpp file works (properly rebuilt)
      -   - modifying a generated .cpp file works (properly rebuilt)
      - Things that do not work (FIXME):
-     -   - modifying an embeded resource doesn’t work in the IDE (but works with MSBuild)
      -   - @(SelectedFiles) doesn’t work yet (compiling a single file from the IDE)
      -   - cleaning up is not implemented yet
      - Documentation:
@@ -47,13 +47,17 @@
       </LolEmbed_tlog>
     </ItemGroup>
 
-    <Message Importance="High" Text="%(LolEmbed.ExecutionDescription) [embedded] -&gt; %(LolEmbed.Outputs)" />
+    <Message Importance="High" Text="%(LolEmbed.ExecutionDescription) [embedded]" />
 
     <WriteLinesToFile Condition="'@(LolEmbed_tlog)'!='' and '%(LolEmbed_tlog.ExcludedFromBuild)'!='true'"
                       File="$(IntDir)$(ProjectName).write.1.tlog"
                       Lines="^%(LolEmbed_tlog.Source);@(LolEmbed_tlog-&gt;'%(Fullpath)')" />
 
-    <!-- Compare input and output file date to decide whether to run the task -->
+    <!-- Compare input and output file date to decide whether to run the task.
+       - This is not actually used, but may be necessary if the number of inputs
+       - and outputs changes one day:
+       - Condition="'@(LolEmbed)'!='' and $(SourceFileDate)>$(GeneratedFileDate)"
+     -->
     <PropertyGroup>
       <SourceFileDate>$([System.DateTime]::Parse('%(LolEmbed.ModifiedTime)').Ticks)</SourceFileDate>
       <GeneratedFileDate Condition="!exists(%(LolEmbed.Outputs.Identity))">0</GeneratedFileDate>  
@@ -61,7 +65,7 @@
     </PropertyGroup>
 
     <!-- Execute the actual LolEmbed task -->
-    <LolEmbed Condition="'@(LolEmbed)'!='' and $(SourceFileDate)>$(GeneratedFileDate)"
+    <LolEmbed Condition="'@(LolEmbed)'!=''"
               CommandLineTemplate="%(LolEmbed.CommandLineTemplate)"
               Inputs="@(LolEmbed)" Outputs="%(LolEmbed.Outputs)" IntDir="$(IntDir)" FileName="%(FileName)" />
 
@@ -70,5 +74,15 @@
     </ItemGroup>
 
   </Target>
+
+  <!-- Tell Visual Studio’s fast up-to-date check (FUTDC) that embedded files need to
+     - be considered when computing the up-to-date status. XXX: the leading semicolon
+     - has to be there, for a completely unknown reason, otherwise VS2022 will always
+     - treat the items as up-to-date.
+     - It is also important that this happens _after_ the item definitions, because I
+     - could not find a target that was executed in time for FUTDC to use it. -->
+  <ItemGroup>
+    <UpToDateCheckInput Include=";@(LolEmbed)" />
+  </ItemGroup>
 
 </Project>

@@ -47,7 +47,6 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
-  <Import Project="../../lolengine.props" />
   <PropertyGroup Label="Configuration">
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -63,6 +62,7 @@
       <PreprocessorDefinitions>LUA_ANSI;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
+  <Import Project="../../lolengine.props" />
   <ItemGroup>
     <ClCompile Include="lua/lapi.c" />
     <ClCompile Include="lua/lauxlib.c" />
@@ -126,9 +126,5 @@
     <ClInclude Include="lua/lvm.h" />
     <ClInclude Include="lua/lzio.h" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Makefile.am">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </None>
-  </ItemGroup>
+  <Import Project="../../lolengine.targets" />
 </Project>

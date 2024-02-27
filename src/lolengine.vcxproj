@@ -47,12 +47,12 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
-  <Import Project="../lolengine.props" />
   <ItemDefinitionGroup>
     <ClCompile>
       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions);LOL_INPUT_V2</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
+  <Import Project="../lolengine.props" />
   <ItemGroup>
     <ClCompile Include="audio\audio.cpp" />
     <ClCompile Include="net\http.cpp" />
@@ -69,9 +69,5 @@
     <LolEmbed Include="data\black.png" />
     <LolEmbed Include="data\font\ascii.png" />
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Makefile.am">
-      <ExcludedFromBuild>true</ExcludedFromBuild>
-    </None>
-  </ItemGroup>
+  <Import Project="../lolengine.targets" />
 </Project>

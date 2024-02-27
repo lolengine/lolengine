@@ -67,8 +67,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <!-- For Microsoft tools -->
       <Optimization>MaxSpeed</Optimization>
-      <!-- For PlayStation tools -->
-      <OptimizationLevel>Level2</OptimizationLevel>
 
       <RuntimeLibrary Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>

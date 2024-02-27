@@ -10,12 +10,14 @@
      - to all LolEmbed items. -->
   <ItemDefinitionGroup>
     <LolEmbed>
+      <Outputs>$(IntDir)%(FileName)%(Extension).cpp</Outputs>
+      <ExecutionDescription>%(FileName)%(Extension)</ExecutionDescription>
       <!-- Technique for embedding powershell found at https://gist.github.com/fearthecowboy/9e06ad9d92c5d939582147a35c049693 -->
       <CommandLineTemplate><![CDATA[
 # 2>nul || type %~df0 | $(PowerShellExe) -noninteractive -& exit %errorlevel% || #
 
 $in = "%(RelativeDir)%(Filename)%(Extension)".replace('\', '/')
-$out = "$(IntDir)%(Filename)%(Extension).cpp"
+$out = "%(Outputs)"
 $name = "lol_resource_$in" -replace ('[^A-Za-z0-9_]', '_')
 $data = (format-hex "%(Fullpath)" | foreach-object { "0x" + ($_ -split " {2,}")[1].replace(" ", ", 0x") }) -join ",`n    "
 
@@ -35,13 +37,11 @@ uint8_t $name[] {
 size_t ${name}_size = sizeof($name);
 char const * ${name}_path = "$in";
 `
-} // extern "C"
+} // extern "C"`n
 "@
 [System.IO.File]::WriteAllText($out, $code, [System.Text.Encoding]::UTF8)
         ]]><!-- An empty line is required here for the above script to work -->
       </CommandLineTemplate>
-      <Outputs>$(IntDir)%(FileName)%(Extension).cpp</Outputs>
-      <ExecutionDescription>%(FileName)%(Extension)</ExecutionDescription>
     </LolEmbed>
   </ItemDefinitionGroup>
 

@@ -47,7 +47,6 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
-  <Import Project="../../lolengine.props" />
   <PropertyGroup Label="Configuration">
     <CharacterSet>MultiByte</CharacterSet>
   </PropertyGroup>
@@ -63,6 +62,7 @@
       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
+  <Import Project="../../lolengine.props" />
   <ItemGroup>
     <!--<ClCompile Include="bullet3/src/btBulletCollisionAll.cpp" />-->
     <ClInclude Include="bullet3/src/btBulletCollisionCommon.h" />
@@ -746,4 +746,5 @@
     <ClCompile Include="bullet3/src/clew/clew.c" />
     <ClInclude Include="bullet3/src/clew/clew.h" />
   </ItemGroup>
+  <Import Project="../../lolengine.targets" />
 </Project>
