@@ -2,10 +2,10 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <!-- Things that work:
-     -   - modifying an embeded resource works (properly rebuilt)
      -   - removing a generated .cpp file works (properly rebuilt)
      -   - modifying a generated .cpp file works (properly rebuilt)
      - Things that do not work (FIXME):
+     -   - modifying an embeded resource does not work (FUTDC is confused)
      -   - @(SelectedFiles) doesn’t work yet (compiling a single file from the IDE)
      -   - cleaning up is not implemented yet
      - Documentation:
@@ -13,14 +13,10 @@
      -   - an interesting SO answer: https://stackoverflow.com/a/55895543/111461
    -->
 
-  <!-- Import the custom build rule -->
+  <!-- Tell the IDE how to display LolEmbed files -->
   <ItemGroup>
     <PropertyPageSchema Include="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml" />
   </ItemGroup>
-
-  <UsingTask TaskName="LolEmbed" TaskFactory="XamlTaskFactory" AssemblyName="Microsoft.Build.Tasks.v4.0">
-    <Task>$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml</Task>
-  </UsingTask>
 
   <!-- Tell the rest of the build system that our target creates compile inputs -->
   <PropertyGroup>
@@ -47,8 +43,6 @@
       </LolEmbed_tlog>
     </ItemGroup>
 
-    <Message Importance="High" Text="%(LolEmbed.ExecutionDescription) [embedded]" />
-
     <WriteLinesToFile Condition="'@(LolEmbed_tlog)'!='' and '%(LolEmbed_tlog.ExcludedFromBuild)'!='true'"
                       File="$(IntDir)$(ProjectName).write.1.tlog"
                       Lines="^%(LolEmbed_tlog.Source);@(LolEmbed_tlog-&gt;'%(Fullpath)')" />
@@ -65,9 +59,9 @@
     </PropertyGroup>
 
     <!-- Execute the actual LolEmbed task -->
-    <LolEmbed Condition="'@(LolEmbed)'!=''"
-              CommandLineTemplate="%(LolEmbed.CommandLineTemplate)"
-              Inputs="@(LolEmbed)" Outputs="%(LolEmbed.Outputs)" IntDir="$(IntDir)" FileName="%(FileName)" />
+    <LolEmbedTask Inputs="%(LolEmbed.Identity)" IntDir="$(IntDir)" />
+
+    <Message Importance="High" Text="%(LolEmbed.ExecutionDescription)" />
 
     <ItemGroup>
       <ClCompile Include="%(LolEmbed.Outputs)" />
@@ -80,7 +74,7 @@
      - has to be there, for a completely unknown reason, otherwise VS2022 will always
      - treat the items as up-to-date.
      - It is also important that this happens _after_ the item definitions, because I
-     - could not find a target that was executed in time for FUTDC to use it. -->
+     - could not find a target that gets executed in time for FUTDC to use it. -->
   <ItemGroup>
     <UpToDateCheckInput Include=";@(LolEmbed)" />
   </ItemGroup>
