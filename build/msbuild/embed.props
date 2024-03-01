@@ -15,8 +15,7 @@
              AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
     <ParameterGroup>
       <Inputs ParameterType="Microsoft.Build.Framework.ITaskItem" Required="true" />
-      <IntDir Required="true" />
-      <Outputs Output="true" />
+      <Outputs ParameterType="Microsoft.Build.Framework.ITaskItem" Required="true" />
     </ParameterGroup>
     <Task>
       <Using Namespace="System.IO" />
@@ -25,7 +24,6 @@
         <![CDATA[
           var filename = Inputs.GetMetadata("Filename") + Inputs.GetMetadata("Extension");
           var src = Inputs.GetMetadata("RelativeDir").Replace("\\", "/") + filename;
-          var dst = IntDir + filename + ".cpp";
           var cppname = "lol_resource_" + Regex.Replace(src, "[^A-Za-z0-9_]", "_");
 
           // Read input file and format it as hex bytes
@@ -57,8 +55,7 @@ char const * {cppname}_path = ""{src}"";
                    .Replace("{src}", src)
                    .Replace("{data}", data);
 
-          File.WriteAllText(dst, cpp);
-          Outputs = dst;
+          File.WriteAllText(Outputs.ItemSpec, cpp);
           Inputs.SetMetadata("ExecutionDescription", filename + " [embedded]");
         ]]>
       </Code>
