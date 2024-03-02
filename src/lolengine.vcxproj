@@ -1,58 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|NX64">
-      <Configuration>Debug</Configuration>
-      <Platform>NX64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|ORBIS">
-      <Configuration>Debug</Configuration>
-      <Platform>ORBIS</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|Prospero">
-      <Configuration>Debug</Configuration>
-      <Platform>Prospero</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|NX64">
-      <Configuration>Release</Configuration>
-      <Platform>NX64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|ORBIS">
-      <Configuration>Release</Configuration>
-      <Platform>ORBIS</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Prospero">
-      <Configuration>Release</Configuration>
-      <Platform>Prospero</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|x64">
-      <Configuration>Release</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-  </ItemGroup>
+  <Import Project="../lolengine.config" />
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9E62F2FE-3408-4EAE-8238-FD84238CEEDA}</ProjectGuid>
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
+  <Import Project="../lolengine.props" />
   <ItemDefinitionGroup>
     <ClCompile>
       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions);LOL_INPUT_V2</PreprocessorDefinitions>
     </ClCompile>
   </ItemDefinitionGroup>
-  <Import Project="../lolengine.props" />
   <ItemGroup>
     <ClCompile Include="audio\audio.cpp" />
     <ClCompile Include="net\http.cpp" />
