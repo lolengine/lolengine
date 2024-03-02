@@ -4,9 +4,10 @@
   <!-- Use ItemDefinitionGroup to add metadata to all LolEmbed items. -->
   <ItemDefinitionGroup>
     <LolEmbed>
-      <Outputs>$(IntDir)%(FileName)%(Extension).cpp</Outputs>
+      <TmpFile>$(IntDir)embedded\%(FileName)%(Extension).cpp</TmpFile>
+      <ObjFileName>$(IntDir)embedded\%(FileName)%(Extension).obj</ObjFileName>
       <UpToDateCheckInput>True</UpToDateCheckInput>
-      <ExecutionDescription>%(FileName)%(Extension) [embedded]</ExecutionDescription>
+      <ExecutionDescription>%(FileName)%(Extension) -> %(FileName)%(Extension).cpp [embedded]</ExecutionDescription>
     </LolEmbed>
   </ItemDefinitionGroup>
 
@@ -15,7 +16,7 @@
              AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
     <ParameterGroup>
       <Inputs ParameterType="Microsoft.Build.Framework.ITaskItem" Required="true" />
-      <Outputs ParameterType="Microsoft.Build.Framework.ITaskItem" Required="true" />
+      <TmpFile ParameterType="Microsoft.Build.Framework.ITaskItem" Required="true" />
     </ParameterGroup>
     <Task>
       <Using Namespace="System.IO" />
@@ -55,7 +56,8 @@ char const * {cppname}_path = ""{src}"";
                    .Replace("{src}", src)
                    .Replace("{data}", data);
 
-          File.WriteAllText(Outputs.ItemSpec, cpp);
+          Directory.CreateDirectory(Path.GetDirectoryName(TmpFile.ItemSpec));
+          File.WriteAllText(TmpFile.ItemSpec, cpp);
           Inputs.SetMetadata("ExecutionDescription", filename + " [embedded]");
         ]]>
       </Code>

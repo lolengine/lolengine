@@ -5,6 +5,23 @@
     <LinkIncremental Condition="'$(Configuration)'=='Release'">false</LinkIncremental>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- Use MakeRelative() so that <ObjectFileName> can use %(RelativeDir) -->
+    <BinDir>$([MSBuild]::MakeRelative("$(ProjectDir)","$(SolutionDir)"))binaries\</BinDir>
+    <OutDir>$(BinDir)$(Platform.ToLower())-$(PlatformToolset.ToLower())-$(Configuration.ToLower())\</OutDir>
+    <IntDir>$(OutDir)obj\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <!-- Protect against source files in different directories having the same name.
+         - FIXME: we would like to use $(IntDir)%(RelativeDir) here but this is subject
+         - to directory escaping if ClCompile items are outside the project directory,
+         - e.g. with Kinc, or even LolEmbed items. -->
+      <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
   <ItemDefinitionGroup>
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -15,9 +32,6 @@
       <!-- Always multiprocessor, never minimal rebuild -->
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild>
-
-      <!-- We should use %(RelativeDir) here but for some reason it's an _absolute_ dir. WTF. -->
-      <ObjectFileName>$(IntDir)/%(Directory)/</ObjectFileName>
 
       <AdditionalIncludeDirectories>
           $(LolEngineDir)\lol\include;

@@ -29,7 +29,7 @@
      - Also make sure we run after _SelectedFiles in case there are selected files in the IDE. -->
   <Target Name="LolEmbed" Condition="'@(LolEmbed)'!=''"
           BeforeTargets="ClCompile" DependsOnTargets="_SelectedFiles"
-          Inputs="@(LolEmbed)" Outputs="@(LolEmbed-&gt;'%(Outputs)')">
+          Inputs="@(LolEmbed)" Outputs="@(LolEmbed-&gt;'%(TmpFile)')">
 
     <!-- If files are selected, do not compile the other ones. -->
     <ItemGroup Condition="'@(SelectedFiles)'!=''">
@@ -38,8 +38,8 @@
 
     <ItemGroup>
       <LolEmbed_tlog
-        Include="%(LolEmbed.Outputs)"
-        Condition="'%(LolEmbed.Outputs)'!='' and '%(LolEmbed.ExcludedFromBuild)'!='true'">
+        Include="%(LolEmbed.TmpFile)"
+        Condition="'%(LolEmbed.TmpFile)'!='' and '%(LolEmbed.ExcludedFromBuild)'!='true'">
         <Source>@(LolEmbed, '|')</Source>
       </LolEmbed_tlog>
     </ItemGroup>
@@ -53,19 +53,24 @@
        - and outputs changes one day:
        - Condition="'@(LolEmbed)'!='' and $(SourceFileDate)>$(GeneratedFileDate)"
      -->
-    <PropertyGroup>
+    <PropertyGroup Condition="'@(LolEmbed)'!=''">
       <SourceFileDate>$([System.DateTime]::Parse('%(LolEmbed.ModifiedTime)').Ticks)</SourceFileDate>
-      <GeneratedFileDate Condition="!exists(%(LolEmbed.Outputs.Identity))">0</GeneratedFileDate>  
-      <GeneratedFileDate Condition="exists(%(LolEmbed.Outputs.Identity))">$([System.DateTime]::Parse('%(LolEmbed.Outputs.ModifiedTime)').Ticks)</GeneratedFileDate>  
+      <GeneratedFileDate Condition="!exists(%(LolEmbed.TmpFile.Identity))">0</GeneratedFileDate>
+      <GeneratedFileDate Condition="exists(%(LolEmbed.TmpFile.Identity))">$([System.DateTime]::Parse('%(LolEmbed.TmpFile.ModifiedTime)').Ticks)</GeneratedFileDate>
     </PropertyGroup>
 
     <!-- Execute the actual LolEmbed task -->
-    <LolEmbedTask Inputs="%(LolEmbed.Identity)" Outputs="%(LolEmbed.Outputs)" />
+    <LolEmbedTask Inputs="%(LolEmbed.Identity)" TmpFile="%(LolEmbed.TmpFile)" />
 
-    <Message Importance="High" Text="%(LolEmbed.ExecutionDescription) -> %(LolEmbed.Outputs)" />
+    <Message Importance="High" Text="%(LolEmbed.ExecutionDescription)" />
 
+    <!-- Add generated files to the ClCompile item group, and make sure to tweak
+       - ObjectFileName, otherwise we risk creating .obj files outside the intermediate
+       - file directory because of ".." in paths. -->
     <ItemGroup>
-      <ClCompile Include="%(LolEmbed.Outputs)" />
+      <ClCompile Include="%(LolEmbed.TmpFile)">
+        <ObjectFileName>%(LolEmbed.ObjFileName)</ObjectFileName>
+      </ClCompile>
     </ItemGroup>
 
   </Target>

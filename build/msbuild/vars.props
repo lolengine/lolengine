@@ -157,10 +157,4 @@
     <BuildMacro Include="OrbisDefines"><Value>$(OrbisDefines)</Value></BuildMacro>
   </ItemGroup>
 
-  <PropertyGroup>
-    <BinDir>$(SolutionDir)binaries\</BinDir>
-    <OutDir>$(BinDir)$(Platform.ToLower())-$(PlatformToolset.ToLower())-$(Configuration.ToLower())\</OutDir>
-    <IntDir>$(BinDir)$(Platform.ToLower())-$(PlatformToolset.ToLower())-$(Configuration.ToLower())\$(ProjectName)\</IntDir>
-  </PropertyGroup>
-
 </Project>
