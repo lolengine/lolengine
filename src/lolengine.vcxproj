@@ -19,10 +19,15 @@
     <ClCompile Include="sys\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\lol\engine\audio" />
     <ClInclude Include="include\lol\engine\net" />
+    <ClInclude Include="include\lol\engine\sys" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\lol\engine\private\audio\audio.h" />
     <ClInclude Include="include\lol\engine\private\net\http.h" />
     <ClInclude Include="include\lol\engine\private\sys\init.h" />
-    <ClInclude Include="include\lol\engine\sys" />
+    <ClInclude Include="include\lol\engine\private\sys\registry.ipp" />
   </ItemGroup>
   <ItemGroup>
     <LolEmbed Include="data\black.png" />

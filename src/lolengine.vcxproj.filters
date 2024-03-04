@@ -10,6 +10,9 @@
     <ClCompile Include="sys\main.cpp">
       <Filter>sys</Filter>
     </ClCompile>
+    <ClCompile Include="audio\audio.cpp">
+      <Filter>audio</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\lol\engine\private\net\http.h">
@@ -24,9 +27,15 @@
     <ClInclude Include="include\lol\engine\sys">
       <Filter>lol\engine</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Makefile.am" />
+    <ClInclude Include="include\lol\engine\audio">
+      <Filter>lol\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="include\lol\engine\private\audio\audio.h">
+      <Filter>lol\engine\private\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="include\lol\engine\private\sys\registry.ipp">
+      <Filter>lol\engine\private\sys</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="...">
@@ -53,5 +62,15 @@
     <Filter Include="sys">
       <UniqueIdentifier>{26a736fb-5b33-4b65-9991-01c0976d2206}</UniqueIdentifier>
     </Filter>
+    <Filter Include="lol\engine\private\audio">
+      <UniqueIdentifier>{0b56d1e3-bb08-4d91-831d-dbad4ca9de13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="audio">
+      <UniqueIdentifier>{2d3e8807-09ec-40e7-9e32-a09ccbde3786}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <LolEmbed Include="data\black.png" />
+    <LolEmbed Include="data\font\ascii.png" />
   </ItemGroup>
 </Project>
