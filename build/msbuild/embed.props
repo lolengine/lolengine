@@ -64,4 +64,32 @@ char const * {cppname}_path = ""{src}"";
     </Task>
   </UsingTask>
 
+  <!-- Define a task that writes the LolEmbed registry cpp file -->
+  <UsingTask TaskName="LolEmbedRegistryTask" TaskFactory="CodeTaskFactory"
+             AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <RegistryFile ParameterType="Microsoft.Build.Framework.ITaskItem" Required="true" />
+      <Items ParameterType="Microsoft.Build.Framework.ITaskItem[]" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Text.RegularExpressions" />
+      <Code Type="Fragment" Language="cs">
+        <![CDATA[
+          var cpp = "#include \"lol/engine/private/sys/registry.ipp\"\n";
+          foreach (var item in Items)
+          {
+              var filename = item.GetMetadata("Filename") + item.GetMetadata("Extension");
+              var src = item.GetMetadata("RelativeDir").Replace("\\", "/") + filename;
+              var cppname = "lol_resource_" + Regex.Replace(src, "[^A-Za-z0-9_]", "_");
+              cpp += "LOL_EMBED_REGISTER(" + cppname + ");\n";
+          }
+
+          Directory.CreateDirectory(Path.GetDirectoryName(RegistryFile.ItemSpec));
+          File.WriteAllText(RegistryFile.ItemSpec, cpp);
+        ]]>
+      </Code>
+    </Task>
+  </UsingTask>
+
 </Project>

@@ -19,9 +19,9 @@
     <PropertyPageSchema Include="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml" />
   </ItemGroup>
 
-  <!-- Tell the rest of the build system that our target creates compile inputs -->
+  <!-- Tell the rest of the build system that our targets create compile inputs -->
   <PropertyGroup>
-    <ComputeCompileInputsTargets>LolEmbed;$(ComputeCompileInputsTargets)</ComputeCompileInputsTargets>
+    <ComputeCompileInputsTargets>LolEmbed;BuildLolEmbedRegistry;$(ComputeCompileInputsTargets)</ComputeCompileInputsTargets>
   </PropertyGroup>
 
   <!-- Define a new target for embedded files, active only if there are LolEmbed items.
@@ -86,5 +86,39 @@
   <ItemGroup>
     <UpToDateCheckInput Include=";@(LolEmbed)" />
   </ItemGroup>
+
+  <!-- Create a registry in the form of a .cpp file that references all embeds. -->
+  <PropertyGroup>
+    <LolEmbedRegistry>$(IntDir)embedded_registry</LolEmbedRegistry>
+  </PropertyGroup>
+
+  <Target Name="BuildLolEmbedRegistry" BeforeTargets="ClCompile" DependsOnTargets="LolEmbed"
+          Outputs="$(LolEmbedRegistry).manifest;$(LolEmbedRegistry).cpp">
+
+    <ReadLinesFromFile File="$(LolEmbedRegistry).manifest">
+      <Output TaskParameter="Lines" ItemName="OldLolEmbed"/>
+    </ReadLinesFromFile>
+
+    <LolEmbedRegistryTask Condition="'@(OldLolEmbed)'!='@(LolEmbed)' or !exists('$(LolEmbedRegistry).cpp')"
+                          RegistryFile="$(LolEmbedRegistry).cpp" Items="@(Lolembed)" />
+
+    <Message Condition="'@(OldLolEmbed)'!='@(LolEmbed)' or !exists('$(LolEmbedRegistry).cpp')"
+             Text="Creating $(LolEmbedRegistry).cpp" />
+
+    <WriteLinesToFile Condition="'@(OldLolEmbed)'!='@(LolEmbed)' or !exists('$(LolEmbedRegistry).manifest')"
+                      File="$(LolEmbedRegistry).manifest" Lines="@(Lolembed)" Overwrite="true" />
+
+    <ItemGroup>
+      <ClCompile Include="$(LolEmbedRegistry).cpp">
+        <ObjectFileName>$(LolEmbedRegistry).obj</ObjectFileName>
+      </ClCompile>
+    </ItemGroup>
+
+  </Target>
+
+  <!-- Ensure the registry source file is cleaned up -->
+  <Target Name="CleanLolEmbedRegistry" AfterTargets="Clean">
+    <Delete Files="$(LolEmbedRegistry).manifest;$(LolEmbedRegistry).cpp" />
+  </Target>
 
 </Project>
