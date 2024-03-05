@@ -88,7 +88,7 @@
     <ItemGroup Condition="'$(enable_kinc)'!='no'">
       <KincDirs Include="Sources/kinc" />
 
-      <KincDirs Condition="'$(Platform)'=='x64'"
+      <KincDirs Condition="'$(Platform)'=='x64' or '$(Platform)'=='Win32'"
                 Include="Backends/Audio2/WASAPI/Sources/kinc/backend;
                          Backends/Graphics4/Direct3D11/Sources/kinc/backend;
                          Backends/Graphics5/G5onG4/Sources/kinc/backend;
