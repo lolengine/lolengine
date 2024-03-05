@@ -29,7 +29,7 @@
      - Also make sure we run after _SelectedFiles in case there are selected files in the IDE. -->
   <Target Name="LolEmbed" Condition="'@(LolEmbed)'!=''"
           BeforeTargets="ClCompile" DependsOnTargets="_SelectedFiles"
-          Inputs="@(LolEmbed)" Outputs="@(LolEmbed-&gt;'%(TmpFile)')">
+          Inputs="@(LolEmbed)" Outputs="@(LolEmbed-&gt;'%(CppFileName)')">
 
     <!-- If files are selected, do not compile the other ones. -->
     <ItemGroup Condition="'@(SelectedFiles)'!=''">
@@ -38,8 +38,8 @@
 
     <ItemGroup>
       <LolEmbed_tlog
-        Include="%(LolEmbed.TmpFile)"
-        Condition="'%(LolEmbed.TmpFile)'!='' and '%(LolEmbed.ExcludedFromBuild)'!='true'">
+        Include="%(LolEmbed.CppFileName)"
+        Condition="'%(LolEmbed.CppFileName)'!='' and '%(LolEmbed.ExcludedFromBuild)'!='true'">
         <Source>@(LolEmbed, '|')</Source>
       </LolEmbed_tlog>
     </ItemGroup>
@@ -55,12 +55,12 @@
      -->
     <PropertyGroup Condition="'@(LolEmbed)'!=''">
       <SourceFileDate>$([System.DateTime]::Parse('%(LolEmbed.ModifiedTime)').Ticks)</SourceFileDate>
-      <GeneratedFileDate Condition="!exists(%(LolEmbed.TmpFile.Identity))">0</GeneratedFileDate>
-      <GeneratedFileDate Condition="exists(%(LolEmbed.TmpFile.Identity))">$([System.DateTime]::Parse('%(LolEmbed.TmpFile.ModifiedTime)').Ticks)</GeneratedFileDate>
+      <GeneratedFileDate Condition="!exists(%(LolEmbed.CppFileName.Identity))">0</GeneratedFileDate>
+      <GeneratedFileDate Condition="exists(%(LolEmbed.CppFileName.Identity))">$([System.DateTime]::Parse('%(LolEmbed.CppFileName.ModifiedTime)').Ticks)</GeneratedFileDate>
     </PropertyGroup>
 
     <!-- Execute the actual LolEmbed task -->
-    <LolEmbedTask Inputs="%(LolEmbed.Identity)" TmpFile="%(LolEmbed.TmpFile)" />
+    <LolEmbedTask Inputs="%(LolEmbed.Identity)" CppFileName="%(LolEmbed.CppFileName)" />
 
     <Message Importance="High" Text="%(LolEmbed.ExecutionDescription)" />
 
@@ -68,7 +68,7 @@
        - ObjectFileName, otherwise we risk creating .obj files outside the intermediate
        - file directory because of ".." in paths. -->
     <ItemGroup>
-      <ClCompile Include="%(LolEmbed.TmpFile)">
+      <ClCompile Include="%(LolEmbed.CppFileName)">
         <ObjectFileName>%(LolEmbed.ObjFileName)</ObjectFileName>
       </ClCompile>
     </ItemGroup>
@@ -93,24 +93,24 @@
   </PropertyGroup>
 
   <Target Name="BuildLolEmbedRegistry" BeforeTargets="ClCompile" DependsOnTargets="LolEmbed"
-          Outputs="$(LolEmbedRegistry).manifest;$(LolEmbedRegistry).cpp">
+          Outputs="$(LolEmbedRegistry).manifest;$(LolEmbedRegistry).g.cpp">
 
     <ReadLinesFromFile File="$(LolEmbedRegistry).manifest">
       <Output TaskParameter="Lines" ItemName="OldLolEmbed"/>
     </ReadLinesFromFile>
 
-    <LolEmbedRegistryTask Condition="'@(OldLolEmbed)'!='@(LolEmbed)' or !exists('$(LolEmbedRegistry).cpp')"
-                          RegistryFile="$(LolEmbedRegistry).cpp" Items="@(Lolembed)" />
+    <LolEmbedRegistryTask Condition="'@(OldLolEmbed)'!='@(LolEmbed)' or !exists('$(LolEmbedRegistry).g.cpp')"
+                          RegistryFile="$(LolEmbedRegistry).g.cpp" Items="@(Lolembed)" />
 
-    <Message Condition="'@(OldLolEmbed)'!='@(LolEmbed)' or !exists('$(LolEmbedRegistry).cpp')"
-             Text="Creating $(LolEmbedRegistry).cpp" />
+    <Message Condition="'@(OldLolEmbed)'!='@(LolEmbed)' or !exists('$(LolEmbedRegistry).g.cpp')"
+             Importance="High" Text="Creating $(LolEmbedRegistry).g.cpp" />
 
     <WriteLinesToFile Condition="'@(OldLolEmbed)'!='@(LolEmbed)' or !exists('$(LolEmbedRegistry).manifest')"
                       File="$(LolEmbedRegistry).manifest" Lines="@(Lolembed)" Overwrite="true" />
 
     <ItemGroup>
-      <ClCompile Include="$(LolEmbedRegistry).cpp">
-        <ObjectFileName>$(LolEmbedRegistry).obj</ObjectFileName>
+      <ClCompile Include="$(LolEmbedRegistry).g.cpp">
+        <ObjectFileName>$(LolEmbedRegistry).g.obj</ObjectFileName>
       </ClCompile>
     </ItemGroup>
 
@@ -118,7 +118,7 @@
 
   <!-- Ensure the registry source file is cleaned up -->
   <Target Name="CleanLolEmbedRegistry" AfterTargets="Clean">
-    <Delete Files="$(LolEmbedRegistry).manifest;$(LolEmbedRegistry).cpp" />
+    <Delete Files="$(LolEmbedRegistry).manifest;$(LolEmbedRegistry).g.cpp" />
   </Target>
 
 </Project>
