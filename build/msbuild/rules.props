@@ -10,6 +10,14 @@
     <BinDir>$([MSBuild]::MakeRelative("$(ProjectDir)","$(SolutionDir)"))binaries\</BinDir>
     <OutDir>$(BinDir)$(Platform.ToLower())-$(PlatformToolset.ToLower())-$(Configuration.ToLower())\</OutDir>
     <IntDir>$(OutDir)obj\$(ProjectName)\</IntDir>
+    <ObjectExt Condition="'$(ObjectExt)'==''">.obj</ObjectExt>
+  </PropertyGroup>
+
+  <!-- The linker flag to export a symbol and force it to be pulled from a static
+     - library even if it is not referenced in the code.
+   -->
+  <PropertyGroup>
+    <ExportSymbolLinkerFlag Condition="'$(ExportSymbolLinkerFlag)'==''">/EXPORT:</ExportSymbolLinkerFlag>
   </PropertyGroup>
 
   <ItemDefinitionGroup>

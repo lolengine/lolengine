@@ -140,7 +140,7 @@
 
     <ItemGroup>
       <ClCompile Include="$(LolEmbedRegistry).g.cpp" Condition="'@(LolEmbed)'!=''">
-        <ObjectFileName>$(LolEmbedRegistry).g.obj</ObjectFileName>
+        <ObjectFileName>$(LolEmbedRegistry).g$(ObjectExt)</ObjectFileName>
       </ClCompile>
     </ItemGroup>
 
@@ -153,14 +153,15 @@
 
 
   <!--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-     - LolGatherStaticInitializers target
+     - GatherLolStaticInitializers/LinkLolStaticInitializers targets
      -
      - List all static initializers, including those of referenced projects, and put the
      - result in the @(LolStaticInitializers) item group. Also return the result as a task
      - output so that referencing projects can use it!
      -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-->
 
-  <Target Name="LolGatherStaticInitializers" BeforeTargets="ClCompile" Outputs="@(LolStaticInitializers)">
+  <Target Name="GatherLolStaticInitializers" BeforeTargets="PrepareForBuild"
+          Outputs="@(LolStaticInitializers)">
 
     <!-- Static initializer from the LolEmbed registry -->
     <ItemGroup Condition="'$(ConfigurationType)'=='StaticLibrary' and '@(LolEmbed)'!=''">
@@ -168,14 +169,23 @@
     </ItemGroup>
 
     <!-- Static initializers from all referenced projects -->
-    <MSBuild Projects="@(ProjectReference)" Targets="LolGatherStaticInitializers" SkipNonexistentTargets="false">
+    <MSBuild Projects="@(ProjectReference)" Targets="GatherLolStaticInitializers" SkipNonexistentTargets="false">
       <Output TaskParameter="TargetOutputs" ItemName="_ReferencedStaticInitializers" />
     </MSBuild>
 
+    <!-- Create the LolStaticInitializers item group for later use -->
     <ItemGroup>
       <LolStaticInitializers Include="@(_ReferencedStaticInitializers)" />
     </ItemGroup>
+  </Target>
 
+  <Target Name="LinkLolStaticInitializers" BeforeTargets="Link" DependsOnTargets="GatherLolStaticInitializers"
+          Condition="'@(LolStaticInitializers)'!=''">
+    <ItemGroup>
+      <Link>
+        <AdditionalOptions>%(Link.AdditionalOptions) @(LolStaticInitializers-&gt;'$(ExportSymbolLinkerFlag)%(Identity)', ' ')</AdditionalOptions>
+      </Link>
+    </ItemGroup>
   </Target>
 
 </Project>

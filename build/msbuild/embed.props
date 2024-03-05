@@ -12,7 +12,7 @@
   <ItemDefinitionGroup>
     <LolEmbed>
       <CppFileName>$(IntDir)embedded\%(FileName)%(Extension).g.cpp</CppFileName>
-      <ObjFileName>$(IntDir)embedded\%(FileName)%(Extension).g.obj</ObjFileName>
+      <ObjFileName>$(IntDir)embedded\%(FileName)%(Extension).g$(ObjectExt)</ObjFileName>
       <UpToDateCheckInput>True</UpToDateCheckInput>
       <ExecutionDescription>%(FileName)%(Extension) -> %(FileName)%(Extension).g.cpp [embedded]</ExecutionDescription>
     </LolEmbed>
