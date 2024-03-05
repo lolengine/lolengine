@@ -8,11 +8,20 @@
      -   - modifying an embeded resource confuses FUTDC
      - Things that do not work (FIXME):
      -   - @(SelectedFiles) doesn’t work yet (compiling a single file from the IDE)
-     -   - cleaning up is not implemented yet
+     -   - cleaning up is not fully implemented yet
+     -   - updating the .props file does not cause the registry file to be updated
      - Documentation:
      -   - MSBuild targets (VS2022): https://learn.microsoft.com/en-us/visualstudio/msbuild/msbuild-targets?view=vs-2022
      -   - an interesting SO answer: https://stackoverflow.com/a/55895543/111461
    -->
+
+  <!--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+     - LolEmbed target
+     -
+     - For each <LolEmbed> item defined in the project, create a .g.cpp file with a
+     - hexadecimal dump of the file contents that will get compiled into a .g.obj
+     - file and linked into the final binary.
+     -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-->
 
   <!-- Tell the IDE how to display LolEmbed files -->
   <ItemGroup>
@@ -26,7 +35,8 @@
 
   <!-- Define a new target for embedded files, active only if there are LolEmbed items.
      - Make sure we run before “ClCompile” since we generate C++ files.
-     - Also make sure we run after _SelectedFiles in case there are selected files in the IDE. -->
+     - Also make sure we run after _SelectedFiles in case there are selected files in the IDE.
+   -->
   <Target Name="LolEmbed" Condition="'@(LolEmbed)'!=''"
           BeforeTargets="ClCompile" DependsOnTargets="_SelectedFiles"
           Inputs="@(LolEmbed)" Outputs="@(LolEmbed-&gt;'%(CppFileName)')">
@@ -66,7 +76,8 @@
 
     <!-- Add generated files to the ClCompile item group, and make sure to tweak
        - ObjectFileName, otherwise we risk creating .obj files outside the intermediate
-       - file directory because of ".." in paths. -->
+       - file directory because of ".." in paths.
+     -->
     <ItemGroup>
       <ClCompile Include="%(LolEmbed.CppFileName)">
         <ObjectFileName>%(LolEmbed.ObjFileName)</ObjectFileName>
@@ -82,16 +93,35 @@
      - It is also important that this happens _after_ the item definitions, because I
      - could not find a target that gets executed in time for FUTDC to use it.
      - FIXME: this does not always work; most of the time FUTDC says that everything
-     - is up-to-date even though we just touched a file. -->
+     - is up-to-date even though we just touched a file.
+   -->
   <ItemGroup>
     <UpToDateCheckInput Include=";@(LolEmbed)" />
   </ItemGroup>
 
-  <!-- Create a registry in the form of a .cpp file that references all embeds. -->
+
+  <!--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+     - BuildLolEmbedRegistry target
+     -
+     - Create a global .g.cpp file with auto registration magic for all the embedded
+     - items, and add just one symbol that will help with static initialization in the
+     - case where the target is a static library.
+     -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-->
+
   <PropertyGroup>
     <LolEmbedRegistry>$(IntDir)embedded_registry</LolEmbedRegistry>
+    <LolEmbedStaticInitializer>lol_embed_static_init_$(ProjectName.Replace('-', ''))</LolEmbedStaticInitializer>
+    <!-- Tell the rest of the build system that our targets create compile inputs. -->
+    <ComputeCompileInputsTargets>BuildLolEmbedRegistry;$(ComputeCompileInputsTargets)</ComputeCompileInputsTargets>
   </PropertyGroup>
 
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>%(PreprocessorDefinitions);LOL_EMBED_STATIC_INITIALIZER=$(LolEmbedStaticInitializer)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+
+  <!-- Create a registry in the form of a .cpp file that references all embeds. -->
   <Target Name="BuildLolEmbedRegistry" BeforeTargets="ClCompile" DependsOnTargets="LolEmbed"
           Outputs="$(LolEmbedRegistry).manifest;$(LolEmbedRegistry).g.cpp">
 
@@ -109,7 +139,7 @@
                       File="$(LolEmbedRegistry).manifest" Lines="@(Lolembed)" Overwrite="true" />
 
     <ItemGroup>
-      <ClCompile Include="$(LolEmbedRegistry).g.cpp">
+      <ClCompile Include="$(LolEmbedRegistry).g.cpp" Condition="'@(LolEmbed)'!=''">
         <ObjectFileName>$(LolEmbedRegistry).g.obj</ObjectFileName>
       </ClCompile>
     </ItemGroup>
@@ -119,6 +149,33 @@
   <!-- Ensure the registry source file is cleaned up -->
   <Target Name="CleanLolEmbedRegistry" AfterTargets="Clean">
     <Delete Files="$(LolEmbedRegistry).manifest;$(LolEmbedRegistry).g.cpp" />
+  </Target>
+
+
+  <!--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+     - LolGatherStaticInitializers target
+     -
+     - List all static initializers, including those of referenced projects, and put the
+     - result in the @(LolStaticInitializers) item group. Also return the result as a task
+     - output so that referencing projects can use it!
+     -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-->
+
+  <Target Name="LolGatherStaticInitializers" BeforeTargets="ClCompile" Outputs="@(LolStaticInitializers)">
+
+    <!-- Static initializer from the LolEmbed registry -->
+    <ItemGroup Condition="'$(ConfigurationType)'=='StaticLibrary' and '@(LolEmbed)'!=''">
+      <LolStaticInitializers Include="$(LolEmbedStaticInitializer)" />
+    </ItemGroup>
+
+    <!-- Static initializers from all referenced projects -->
+    <MSBuild Projects="@(ProjectReference)" Targets="LolGatherStaticInitializers" SkipNonexistentTargets="false">
+      <Output TaskParameter="TargetOutputs" ItemName="_ReferencedStaticInitializers" />
+    </MSBuild>
+
+    <ItemGroup>
+      <LolStaticInitializers Include="@(_ReferencedStaticInitializers)" />
+    </ItemGroup>
+
   </Target>
 
 </Project>

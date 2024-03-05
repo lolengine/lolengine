@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
-  <!-- Use ItemDefinitionGroup to add metadata to all LolEmbed items. -->
+  <!--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+     - LolEmbedTask task
+     -
+     - For each input item, create a C++ file declaring a byte array initialised to the
+     - item contents, and add the C++ file to the list of compilation sources.
+     -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-->
+
+  <!-- Use ItemDefinitionGroup to add default metadata to all LolEmbed items. -->
   <ItemDefinitionGroup>
     <LolEmbed>
       <CppFileName>$(IntDir)embedded\%(FileName)%(Extension).g.cpp</CppFileName>
@@ -11,7 +18,6 @@
     </LolEmbed>
   </ItemDefinitionGroup>
 
-  <!-- Define a task that transforms LolEmbed files into cpp files -->
   <UsingTask TaskName="LolEmbedTask" TaskFactory="CodeTaskFactory"
              AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
     <ParameterGroup>
@@ -63,7 +69,17 @@ char const * {cppname}_path = ""{src}"";
     </Task>
   </UsingTask>
 
-  <!-- Define a task that writes the LolEmbed registry cpp file -->
+
+  <!--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+     - LolEmbedRegistryTask task
+     -
+     - Create a C++ file referencing the list of generated LolEmbed items, with a
+     - special unused symbol that will force the linker to reference embedded items
+     - by just referencing it. This is necessary when compiling to a static library
+     - because if a symbol is not directly referenced, it will never be linked into
+     - the final binary.
+     -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-->
+
   <UsingTask TaskName="LolEmbedRegistryTask" TaskFactory="CodeTaskFactory"
              AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
     <ParameterGroup>
@@ -74,7 +90,8 @@ char const * {cppname}_path = ""{src}"";
       <Using Namespace="System.IO" />
       <Using Namespace="System.Text.RegularExpressions" />
       <Code Type="Fragment" Language="cs"><![CDATA[
-          var cpp = "#include \"lol/engine/private/sys/registry.ipp\"\r\n";
+          var cpp = "#define LOL_EMBED_REGISTRY_IMPL\r\n"
+                  + "#include \"lol/engine/private/sys/registry.ipp\"\r\n";
           foreach (var item in Items)
           {
               var filename = item.GetMetadata("Filename") + item.GetMetadata("Extension");
