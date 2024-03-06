@@ -152,6 +152,12 @@
     <Error Condition="('$(Platform)'=='ORBIS' or '$(Platform)'=='Prospero') and !exists('$(LolEngineDir)lol-playstation/msbuild/config.props')"
            Text="platform '$(Platform)' selected, but '$(LolEngineDir)lol-playstation/msbuild/config.props' was not found" />
 
+    <Error Condition="('$(Platform)'=='Gaming.Xbox.XboxOne.x64' or '$(Platform)'=='Gaming.Xbox.Scarlett.x64') and !exists('$(LolEngineDir)lol-xbox')"
+           Text="platform '$(Platform)' selected, but '$(LolEngineDir)lol-xbox' was not found" />
+
+    <Error Condition="('$(Platform)'=='Gaming.Xbox.XboxOne.x64' or '$(Platform)'=='Gaming.Xbox.Scarlett.x64') and !exists('$(LolEngineDir)lol-xbox/msbuild/config.props')"
+           Text="platform '$(Platform)' selected, but '$(LolEngineDir)lol-xbox/msbuild/config.props' was not found" />
+
   </Target>
 
 </Project>

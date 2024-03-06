@@ -4,14 +4,14 @@
   <!--
      - Default settings for Debug configurations
    -->
-  <PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <UseDebugLibraries>true</UseDebugLibraries>
   </PropertyGroup>
 
   <!--
      - Default settings for Release configurations
    -->
-  <PropertyGroup Condition="'$(Configuration)'=='Release'" Label="Configuration">
+  <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
   </PropertyGroup>
@@ -19,7 +19,7 @@
   <!--
      - Default settings for any configuration
    -->
-  <PropertyGroup Label="Configuration">
+  <PropertyGroup>
     <CharacterSet>MultiByte</CharacterSet>
     <UseOfMfc>false</UseOfMfc>
     <ExceptionHandling>false</ExceptionHandling>
@@ -27,12 +27,9 @@
   </PropertyGroup>
 
   <!--
-     - Select the platform toolset depending on the platform
+     - Pick a platform toolset if the platform did not define one
    -->
-  <PropertyGroup Condition="'$(Platform)'=='Win32'" Label="Configuration">
-    <PlatformToolset>v143</PlatformToolset>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Platform)'=='x64'" Label="Configuration">
+  <PropertyGroup Condition="'$(PlatformToolset)'==''">
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
 
