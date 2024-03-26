@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+  <!-- Declare configurable project features (graphics backend etc.) -->
+  <ItemGroup>
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)features.xml">
+      <Context>Project</Context>
+    </PropertyPageSchema>
+    <AvailableItemName Include="BuildFeatures"/>
+  </ItemGroup>
+
+  <!-- Declare shader compilation rules -->
   <ItemGroup>
     <PropertyPageSchema Include="$(MSBuildThisFileDirectory)glsl.xml" />
     <AvailableItemName Include="GLSLShader">
