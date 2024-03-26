@@ -10,7 +10,16 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
-#pragma once
+#include <lol/engine/sys> // lol::sys::resource
 
-#include "private/sys/init.h"
-#include "private/sys/resource.h"
+namespace lol::sys
+{
+
+std::unordered_map<std::string, resource> &resource::catalog()
+{
+    // This is not a global variable because of static initialisation order
+    static std::unordered_map<std::string, resource> ret;
+    return ret;
+}
+
+} // namespace lol::sys
