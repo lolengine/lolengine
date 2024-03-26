@@ -28,14 +28,17 @@ struct resource
 {
     resource() = default;
 
-    resource(std::string const &path, void const *data, size_t size)
-      : data(static_cast<uint8_t const *>(data), size)
+    resource(std::string const &path, void const *data, size_t size, uint32_t flags)
+      : m_data(static_cast<uint8_t const *>(data), size),
+        m_flags(flags)
     {
         catalog()[path] = *this;
     }
 
 protected:
-    std::span<uint8_t const> data;
+    std::span<uint8_t const> m_data;
+
+    uint32_t m_flags;
 
     static std::unordered_map<std::string, struct resource> &catalog();
 };

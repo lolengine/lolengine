@@ -33,7 +33,7 @@
   <ItemGroup>
     <LolEmbed Include="data\black.png" />
     <LolEmbed Include="data\font\ascii.png" />
-    <LolEmbed Include="data\token.txt" />
+    <LolEmbed Include="data\token.txt" Compression="gzip" />
   </ItemGroup>
   <Import Project="../lolengine.targets" />
 </Project>

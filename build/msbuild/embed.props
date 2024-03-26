@@ -32,6 +32,8 @@
           var filename = Inputs.GetMetadata("Filename") + Inputs.GetMetadata("Extension");
           var src = Inputs.GetMetadata("RelativeDir").Replace("\\", "/") + filename;
           var cppname = "lol_resource_" + Regex.Replace(src, "[^A-Za-z0-9_]", "_");
+          var flags = (Inputs.GetMetadata("Compression") == "gzip" ? 1 : 0);
+          var path = Inputs.GetMetadata("ResourcePath") ?? src;
 
           // Read input file and format it as hex bytes with cheap wrapping
           var bytes = File.ReadAllBytes(Inputs.ItemSpec);
@@ -53,13 +55,15 @@ uint8_t {cppname}[] {
 };
 
 size_t {cppname}_size = sizeof({cppname});
-char const * {cppname}_path = ""{src}"";
+char const * {cppname}_path = ""{path}"";
+uint32_t {cppname}_flags = {flags};
 
 } // extern ""C""
 ";
           // This is C# 4.0 so no string interpolation…
           cpp = cpp.Replace("{cppname}", cppname)
-                   .Replace("{src}", src)
+                   .Replace("{path}", path)
+                   .Replace("{flags}", flags.ToString())
                    .Replace("{data}", data);
 
           Directory.CreateDirectory(Path.GetDirectoryName(CppFileName.ItemSpec));

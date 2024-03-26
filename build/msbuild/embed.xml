@@ -1,43 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ProjectSchemaDefinitions xmlns="clr-namespace:Microsoft.Build.Framework.XamlTypes;assembly=Microsoft.Build.Framework" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib" xmlns:transformCallback="Microsoft.Cpp.Dev10.ConvertPropertyCallback">
-  <Rule Name="LolEmbed" PageTemplate="tool" DisplayName="Lol Engine embedded resource" Order="200">
+<ProjectSchemaDefinitions
+    xmlns="clr-namespace:Microsoft.Build.Framework.XamlTypes;assembly=Microsoft.Build.Framework"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:transformCallback="Microsoft.Cpp.Dev10.ConvertPropertyCallback">
+
+  <Rule Name="LolEmbed" PageTemplate="tool" DisplayName="LolEngine Embed" Order="200">
+
+    <!-- Default datasource for all properties -->
     <Rule.DataSource>
-      <DataSource Persistence="ProjectFile" ItemType="LolEmbed" />
+      <DataSource Persistence="ProjectFile" ItemType="LolEmbed" SourceType="Item"
+                  HasConfigurationCondition="false" />
     </Rule.DataSource>
 
+    <!-- Nothing here, we use the default category (General) -->
     <Rule.Categories>
-      <Category Name="General">
-        <Category.DisplayName>
-          <sys:String>General</sys:String>
-        </Category.DisplayName>
-      </Category>
-      <Category Name="Command Line" Subtype="CommandLine">
-        <Category.DisplayName>
-          <sys:String>Command Line</sys:String>
-        </Category.DisplayName>
-      </Category>
     </Rule.Categories>
 
-    <StringListProperty Name="Inputs" Category="Command Line" IsRequired="true" Switch=" ">
-      <StringListProperty.DataSource>
-        <DataSource Persistence="ProjectFile" ItemType="LolEmbed" SourceType="Item" />
-      </StringListProperty.DataSource>
-    </StringListProperty>
+    <EnumProperty Name="Compression"
+                  Description="Embedded resource bytestream compression"
+                  IsRequired="true" Default="none" Switch="compression">
+      <EnumValue Name="none" DisplayName="None" />
+      <EnumValue Name="gzip" DisplayName="GZip" />
+    </EnumProperty>
 
-    <StringListProperty Name="IntDir" Category="Command Line" IsRequired="true" Switch=" ">
-      <StringListProperty.DataSource>
-        <DataSource Persistence="ProjectFile" ItemType="LolEmbed" SourceType="Item" />
-      </StringListProperty.DataSource>
-    </StringListProperty>
-
-    <StringListProperty Name="FileName" Category="Command Line" IsRequired="true" Switch=" ">
-    </StringListProperty>
-
-    <StringProperty Name="Outputs" Category="Command Line" IsRequired="true" Switch=" " />
-
-    <StringProperty Name="CommandLineTemplate" DisplayName="Command Line" Visible="False" IncludeInCommandLine="False" />
+    <StringProperty Name="ResourcePath" DisplayName="Resource Path"
+                    Description="Override internal path of the resource"
+                    IsRequired="true" Switch="path" />
 
   </Rule>
-  <ItemType Name="LolEmbed" DisplayName="Lol Engine embedded resource" />
-  <ContentType Name="LolEmbed" DisplayName="Lol Engine embedded resource" ItemType="LolEmbed" />
+  <ItemType Name="LolEmbed" DisplayName="LolEngine Embed" />
+  <ContentType Name="LolEmbed" DisplayName="LolEngine Embed" ItemType="LolEmbed" />
 </ProjectSchemaDefinitions>

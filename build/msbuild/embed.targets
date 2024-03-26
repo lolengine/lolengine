@@ -10,6 +10,7 @@
      -   - @(SelectedFiles) doesn’t work yet (compiling a single file from the IDE)
      -   - cleaning up is not fully implemented yet
      -   - updating the .props file does not cause the registry file to be updated
+     -   - changing an embedded item’s metadata does not cause the LolEmbed target to be rebuilt
      - Documentation:
      -   - MSBuild targets (VS2022): https://learn.microsoft.com/en-us/visualstudio/msbuild/msbuild-targets?view=vs-2022
      -   - an interesting SO answer: https://stackoverflow.com/a/55895543/111461
@@ -74,7 +75,7 @@
 
     <Message Importance="High" Text="%(LolEmbed.ExecutionDescription)" />
 
-    <!-- Add generated files to the ClCompile item group, and make sure to tweak
+    <!-- Add generated files to the ClCompile item group, and make sure to override
        - ObjectFileName, otherwise we risk creating .obj files outside the intermediate
        - file directory because of ".." in paths.
      -->

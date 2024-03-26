@@ -20,7 +20,8 @@
     extern "C" uint8_t *name; \
     extern "C" size_t name##_size; \
     extern "C" char const *name##_path; \
-    static auto name##_token = lol::sys::resource(name##_path, name, name##_size)
+    extern "C" uint32_t name##_flags; \
+    static auto name##_token = lol::sys::resource(name##_path, name, name##_size, name##_flags)
 
 // Applications must reference this variable so that embedded resources
 // get linked into the final binary.
