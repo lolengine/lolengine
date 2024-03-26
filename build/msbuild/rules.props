@@ -7,7 +7,7 @@
 
   <PropertyGroup>
     <!-- Use MakeRelative() so that <ObjectFileName> can use %(RelativeDir) -->
-    <BinDir>$([MSBuild]::MakeRelative("$(ProjectDir)","$(SolutionDir)"))binaries\</BinDir>
+    <BinDir>$([MSBuild]::MakeRelative("$(ProjectDir)","$(SolutionDir)binaries\"))</BinDir>
     <OutDir>$(BinDir)$(Platform.ToLower())-$(PlatformToolset.ToLower())-$(Configuration.ToLower())\</OutDir>
     <IntDir>$(OutDir)obj\$(ProjectName)\</IntDir>
     <ObjectExt Condition="'$(ObjectExt)'==''">.obj</ObjectExt>
