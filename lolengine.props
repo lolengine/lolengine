@@ -53,7 +53,8 @@
 
     <Import Project="$(LolEngineDir)build/msbuild/kinc.vars.props"
             Condition="'$(enable_kinc)'!='no'" />
-
+    <Import Project="$(LolEngineDir)build/msbuild/steam.vars.props"
+            Condition="'$(enable_steam)'!='no'" />
     <Import Project="$(LolEngineDir)build/msbuild/vars.props" />
     <Import Project="$(LolEngineDir)build/msbuild/embed.props" />
   </ImportGroup>

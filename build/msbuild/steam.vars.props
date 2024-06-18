@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+
+  <PropertyGroup Label="UserMacros" Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">
+    <SteamIncludes>
+      $(STEAM_SDK_PATH)\public
+    </SteamIncludes>
+    <SteamDefines>
+      LOL_USE_STEAM;
+    </SteamDefines>
+  </PropertyGroup>
+
+  <PropertyGroup Label="UserMacros" Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">
+    <SteamIncludes>
+      $(SteamIncludes);
+    </SteamIncludes>
+    <SteamDefines>
+      $(SteamDefines);
+    </SteamDefines>
+    <SteamDeps>
+      $(STEAM_SDK_PATH)/redistributable_bin/win64/steam_api64.lib;
+    </SteamDeps>
+    <SteamLibs>
+      $(STEAM_SDK_PATH)/redistributable_bin/win64/steam_api64.dll;
+    </SteamLibs>
+  </PropertyGroup>
+
+  <ItemGroup Label="UserMacros">
+    <BuildMacro Include="SteamDeps"><Value>$(SteamDeps)</Value></BuildMacro>
+    <BuildMacro Include="SteamLibs"><Value>$(SteamLibs)</Value></BuildMacro>
+    <BuildMacro Include="SteamDefines"><Value>$(SteamDefines)</Value></BuildMacro>
+    <BuildMacro Include="SteamIncludes"><Value>$(SteamIncludes)</Value></BuildMacro>
+  </ItemGroup>
+
+</Project>
