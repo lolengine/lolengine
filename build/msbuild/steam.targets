@@ -3,6 +3,7 @@
 
   <Target Name="AfterBuild">
     <Copy SourceFiles="$(STEAM_SDK_PATH)\redistributable_bin\win64\steam_api64.dll" DestinationFolder="$(OutDir)" ContinueOnError="true" />
+    <WriteLinesToFile File="$(OutDir)steam_appid.txt" Lines="$(steamappID)" Overwrite="True"/>
   </Target>
 
 </Project>

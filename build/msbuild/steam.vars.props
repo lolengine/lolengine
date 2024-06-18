@@ -7,7 +7,7 @@
       $(STEAM_SDK_PATH)\public
     </SteamIncludes>
     <SteamDefines>
-      LOL_USE_STEAM;
+      LOL_USE_STEAM;STEAMAPPID=$(steamappID);
     </SteamDefines>
   </PropertyGroup>
 
