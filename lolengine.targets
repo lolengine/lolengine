@@ -18,6 +18,8 @@
     <Import Project="$(LolEngineDir)build/msbuild/embed.targets" />
     <Import Condition="'$(enable_kinc)'!='no'"
             Project="$(LolEngineDir)build/msbuild/kinc.targets" />
+    <Import Condition="'$(enable_steam)'!='no'"
+            Project="$(LolEngineDir)build/msbuild/steam.targets" />        
   </ImportGroup>
 
 </Project>

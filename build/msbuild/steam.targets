@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Target Name="AfterBuild">
+    <Copy SourceFiles="$(STEAM_SDK_PATH)\redistributable_bin\win64\steam_api64.dll" DestinationFolder="$(OutDir)" ContinueOnError="true" />
+  </Target>
+
+</Project>
