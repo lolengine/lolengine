@@ -2,27 +2,51 @@
     "configurations": [
         {
             "name": "Mac",
-            "includePath": ["/usr/include"],
-            "browse" : {
-                "limitSymbolsToIncludedHeaders" : true,
-                "databaseFilename" : ""
-            }
+            "includePath": [
+                "/usr/include"
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            },
+            "macFrameworkPath": [
+                "/System/Library/Frameworks",
+                "/Library/Frameworks"
+            ],
+            "intelliSenseMode": "macos-clang-x64",
+            "compilerPath": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\Hostx64\\x64\\cl.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++17"
         },
         {
             "name": "Linux",
-            "includePath": ["/usr/include"],
-            "browse" : {
-                "limitSymbolsToIncludedHeaders" : true,
-                "databaseFilename" : ""
-            }
+            "includePath": [
+                "/usr/include"
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            },
+            "intelliSenseMode": "linux-gcc-x64",
+            "compilerPath": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\Hostx64\\x64\\cl.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++17"
         },
         {
             "name": "Win32",
-            "includePath": ["c:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/include", "src"],
-            "browse" : {
-                "limitSymbolsToIncludedHeaders" : true,
-                "databaseFilename" : ""
-            }
+            "includePath": [
+                "c:/Program Files (x86)/Microsoft Visual Studio 14.0/VC/include",
+                "src"
+            ],
+            "browse": {
+                "limitSymbolsToIncludedHeaders": true,
+                "databaseFilename": ""
+            },
+            "intelliSenseMode": "windows-msvc-x64",
+            "compilerPath": "C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\Community\\VC\\Tools\\MSVC\\14.29.30133\\bin\\Hostx64\\x64\\cl.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++17"
         }
-    ]
+    ],
+    "version": 4
 }
