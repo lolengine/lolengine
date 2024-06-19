@@ -50,11 +50,12 @@
             Condition="exists('$(LolEngineDir)lol-switch/msbuild/vars.props')" />
     <Import Project="$(LolEngineDir)lol-playstation/msbuild/vars.props"
             Condition="exists('$(LolEngineDir)lol-playstation/msbuild/vars.props')" />
-
+    <!-- Kinc  -->
     <Import Project="$(LolEngineDir)build/msbuild/kinc.vars.props"
             Condition="'$(enable_kinc)'!='no'" />
+    <!-- Steam  -->
     <Import Project="$(LolEngineDir)build/msbuild/steam.vars.props"
-            Condition="'$(enable_steam)'!='no'" />
+            Condition="'$(enable_steam)'=='yes'" />
     <Import Project="$(LolEngineDir)build/msbuild/vars.props" />
     <Import Project="$(LolEngineDir)build/msbuild/embed.props" />
   </ImportGroup>
