@@ -7,7 +7,7 @@
       $(STEAM_SDK_PATH)\public
     </SteamIncludes>
     <SteamDefines>
-      LOL_USE_STEAM;STEAMAPPID=$(steamappID);
+      LOL_USE_STEAM;STEAMAPPID=$(steamappID);KINC_USE_STEAM;
     </SteamDefines>
   </PropertyGroup>
 
@@ -24,6 +24,26 @@
     <SteamLibs>
       $(STEAM_SDK_PATH)/redistributable_bin/win64/steam_api64.dll;
     </SteamLibs>
+
+
+    <KincIncludes>
+      $(KincIncludes);
+      $(SteamIncludes);
+    </KincIncludes>
+    <KincDefines>
+      $(KincDefines);
+      $(SteamDefines);
+      KINC_USE_STEAM;
+    </KincDefines>
+    <KincDeps>
+      $(KincDeps);
+      $(SteamDeps);
+    </KincDeps>
+    <KincLibs>
+      $(KincLibs);
+      $(SteamLibs);
+    </KincLibs>
+
   </PropertyGroup>
 
   <ItemGroup Label="UserMacros">
@@ -31,6 +51,11 @@
     <BuildMacro Include="SteamLibs"><Value>$(SteamLibs)</Value></BuildMacro>
     <BuildMacro Include="SteamDefines"><Value>$(SteamDefines)</Value></BuildMacro>
     <BuildMacro Include="SteamIncludes"><Value>$(SteamIncludes)</Value></BuildMacro>
+
+    <BuildMacro Include="KincDeps"><Value>$(KincDeps)</Value></BuildMacro>
+    <BuildMacro Include="KincLibs"><Value>$(KincLibs)</Value></BuildMacro>
+    <BuildMacro Include="KincDefines"><Value>$(KincDefines)</Value></BuildMacro>
+    <BuildMacro Include="KincIncludes"><Value>$(KincIncludes)</Value></BuildMacro>
   </ItemGroup>
 
 </Project>
