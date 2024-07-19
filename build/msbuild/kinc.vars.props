@@ -35,7 +35,7 @@
   </PropertyGroup>
 
   <PropertyGroup Label="UserMacros" Condition="'$(Platform)'=='NX32' Or '$(Platform)'=='NX64'">
-    <ShaderCompiler>$(KINC_SDK_PATH)\..\Backends\Switch\krafix\krafix-switch.exe</ShaderCompiler>
+    <ShaderCompiler>$(KINC_SDK_PATH)\..\Backends\Switch\Tools\krafix-switch.exe</ShaderCompiler>
     <ShaderPlatform>switch</ShaderPlatform>
     <ShaderProfile>switch</ShaderProfile>
     <KincIncludes>
