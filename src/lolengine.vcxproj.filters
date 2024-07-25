@@ -13,6 +13,9 @@
     <ClCompile Include="audio\audio.cpp">
       <Filter>audio</Filter>
     </ClCompile>
+    <ClCompile Include="sys\resource.cpp">
+      <Filter>sys</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\lol\engine\private\net\http.h">
@@ -72,5 +75,6 @@
   <ItemGroup>
     <LolEmbed Include="data\black.png" />
     <LolEmbed Include="data\font\ascii.png" />
+    <LolEmbed Include="data\token.txt" />
   </ItemGroup>
 </Project>

@@ -10,40 +10,19 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
-#include <span>
-#include <string>
-#include <unordered_map>
+#include <lol/engine/sys> // lol::sys::resource
 
 #if !defined LOL_EMBED_STATIC_INITIALIZER
-#   error "LOL_EMBED_STATIC_INITIALIZER is not defined; please check your build system"
+#   error "LOL_EMBED_STATIC_INITIALIZER is not defined; please check the build system"
 #endif
 
 #define LOL_EMBED_REGISTER(name) \
     extern "C" uint8_t *name; \
     extern "C" size_t name##_size; \
     extern "C" char const *name##_path; \
-    static auto name##_token = lol::registry::registry[name##_path] = lol::registry::resource(name, name##_size)
+    extern "C" uint32_t name##_flags; \
+    static auto name##_token = lol::sys::resource(name##_path, name, name##_size, name##_flags)
 
-#if defined LOL_EMBED_REGISTRY_IMPL
+// Applications must reference this variable so that embedded resources
+// get linked into the final binary.
 extern "C" { int LOL_EMBED_STATIC_INITIALIZER = 0xdeadbeef; }
-#else
-extern "C" { extern int LOL_EMBED_STATIC_INITIALIZER; }
-#endif
-
-namespace lol::registry
-{
-
-static std::unordered_map<std::string, struct resource> registry;
-
-struct resource
-{
-    resource() = default;
-
-    resource(uint8_t const *data, size_t size)
-      : data(data, size)
-    {}
-
-    std::span<uint8_t const> data;
-};
-
-};

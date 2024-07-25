@@ -8,7 +8,7 @@
     </KincIncludes>
     <KincDefines>
       LOL_USE_KINC;
-      KORE_G1;KORE_G2;KORE_G3;KORE_A1;KORE_A2;KORE_LZ4X;KORE_G4;KORE_G5;
+      KINC_G1;KINC_G2;KINC_G3;KINC_A1;KINC_A2;KINC_LZ4X;KINC_G4;KINC_G5;
     </KincDefines>
   </PropertyGroup>
 
@@ -27,7 +27,7 @@
     </KincIncludes>
     <KincDefines>
       $(KincDefines);
-      KORE_DIRECT3D;KORE_DIRECT3D11;KORE_G5ONG4;KINC_NO_MAIN;
+      KINC_DIRECT3D;KINC_DIRECT3D11;KINC_G5ONG4;KINC_NO_MAIN;
     </KincDefines>
     <KincDeps>
       winhttp.lib;d3d11.lib;dxguid.lib;dinput8.lib;strmiids.lib;winmm.lib;wbemuuid.lib;
@@ -45,7 +45,7 @@
     </KincIncludes>
     <KincDefines>
       $(KincDefines);
-      KORE_G4ONG5;KORE_SWITCH;KORE_CONSOLE;
+      KINC_G4ONG5;KINC_SWITCH;KINC_CONSOLE;
     </KincDefines>
     <KincDeps>
       libnn_profiler.a;
@@ -63,7 +63,7 @@
     </KincIncludes>
     <KincDefines>
       $(KincDefines);
-      KORE_G4ONG5;KORE_PLAYSTATION_4;KORE_PS4;KORE_SONY;KORE_CONSOLE;
+      KINC_G4ONG5;KINC_PLAYSTATION_4;KINC_PS4;KINC_SONY;KINC_CONSOLE;
     </KincDefines>
     <KincDeps>
       -lSceAgc;-lSceAgcCore;-lSceAgcGpuAddress;-lSceAgcDriver_stub_weak;-lSceAgc_stub_weak;-lSceNpGameIntent_stub_weak;-lSceSaveDataDialog_stub_weak;-lSceCommonDialog_stub_weak;-lSceNpUniversalDataSystem_stub_weak;-lSceSysmodule_stub_weak;-lSceSystemService_stub_weak;-lSceSaveData_stub_weak;-lSceAudioOut_stub_weak;-lSceVideoOut_stub_weak;-lScePad_stub_weak;-lSceUserService_stub_weak
@@ -81,7 +81,7 @@
     </KincIncludes>
     <KincDefines>
       $(KincDefines);
-      KORE_G4ONG5;KORE_PLAYSTATION_5;KORE_PS5;KORE_SONY;KORE_CONSOLE;
+      KINC_G4ONG5;KINC_PLAYSTATION_5;KINC_PS5;KINC_SONY;KINC_CONSOLE;
     </KincDefines>
     <KincDeps>
       -lSceAgc;-lSceAgcCore;-lSceAgcGpuAddress;-lSceAgcDriver_stub_weak;-lSceAgc_stub_weak;-lSceNpGameIntent_stub_weak;-lSceSaveDataDialog_stub_weak;-lSceCommonDialog_stub_weak;-lSceNpUniversalDataSystem_stub_weak;-lSceSysmodule_stub_weak;-lSceSystemService_stub_weak;-lSceSaveData_stub_weak;-lSceAudioOut_stub_weak;-lSceVideoOut_stub_weak;-lScePad_stub_weak;-lSceUserService_stub_weak

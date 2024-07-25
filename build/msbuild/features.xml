@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ProjectSchemaDefinitions
+    xmlns="clr-namespace:Microsoft.Build.Framework.XamlTypes;assembly=Microsoft.Build.Framework"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:transformCallback="Microsoft.Cpp.Dev10.ConvertPropertyCallback">
+
+  <Rule Name="LolFeatures" PageTemplate="tool" DisplayName="Engine Features" Order="1" SwitchPrefix="">
+
+    <Rule.DataSource>
+      <DataSource Persistence="UserFile" ItemType="" Label="LolFeatures" HasConfigurationCondition="false" />
+    </Rule.DataSource>
+
+    <Rule.Categories>
+      <Category Name="General" DisplayName="General"/>
+      <Category Name="Kinc" DisplayName="Kinc"/>
+    </Rule.Categories>
+
+    <StringProperty Name="BuildFeaturesOutputDir"
+                    DisplayName="Output Directory"
+                    Description="Directory where generated files are created."
+                    Subtype="folder"
+                    Category="General"
+                    Switch="- -output-dir">
+      <StringProperty.DataSource>
+        <DataSource Persistence="ProjectFile" ItemType="" Label="LolFeatures" HasConfigurationCondition="true" />
+      </StringProperty.DataSource>
+    </StringProperty>
+
+    <!-- Audio backend (-a flag for kmake) -->
+    <EnumProperty Name="KincAudio" DisplayName="Audio Backend" Description="Choose the audio API to use"
+                  Default="default" Category="Kinc">
+      <EnumValue Name="default" DisplayName="Default" />
+      <EnumValue Name="directsound" DisplayName="DirectSound" />
+      <EnumValue Name="wasapi" DisplayName="WASAPI" />
+      <EnumProperty.DataSource>
+        <DataSource HasConfigurationCondition="true" />
+      </EnumProperty.DataSource>
+    </EnumProperty>
+
+    <!-- Graphics backend (-g flag for kmake) -->
+    <EnumProperty Name="KincGraphics" DisplayName="Graphics Backend" Description="Choose the graphics API to use"
+                  Default="default" Category="Kinc">
+      <EnumValue Name="default" DisplayName="Default" />
+      <EnumValue Name="direct3d9" DisplayName="Direct3D 9" />
+      <EnumValue Name="direct3d11" DisplayName="Direct3D 11" />
+      <EnumValue Name="direct3d12" DisplayName="Direct3D 12" />
+      <EnumValue Name="opengl1" DisplayName="OpenGL 1" />
+      <EnumValue Name="opengl" DisplayName="OpenGL" />
+      <EnumValue Name="vulkan" DisplayName="Vulkan" />
+      <EnumProperty.DataSource>
+        <DataSource HasConfigurationCondition="true" />
+      </EnumProperty.DataSource>
+    </EnumProperty>
+
+    <!-- VR API (- -vr flag for kmake) -->
+    <EnumProperty Name="KincVR" DisplayName="VR Device" Description="Choose the VR device API to use"
+                  Default="none" Category="Kinc">
+      <EnumValue Name="none" DisplayName="None (default)" />
+      <EnumValue Name="oculus" DisplayName="Oculus" />
+      <EnumValue Name="steamvr" DisplayName="Steam VR" />
+      <EnumProperty.DataSource>
+        <DataSource HasConfigurationCondition="true" />
+      </EnumProperty.DataSource>
+    </EnumProperty>
+
+    <!-- BUGFIX: With Visual Studio 2017 we need to have at least one property with a configuration condition otherwise our
+         property page will not show up -->
+    <StringProperty Name="Dummy" Visible="false">
+      <StringProperty.DataSource>
+        <DataSource Persistence="ProjectFile" ItemType="LolFeatures" Label="Workaround" HasConfigurationCondition="true"/>
+      </StringProperty.DataSource>
+    </StringProperty>
+
+  </Rule>
+
+</ProjectSchemaDefinitions>
