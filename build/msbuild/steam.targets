@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-
-  <Target Name="AfterBuild" Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">
-    <Copy SourceFiles="$(STEAM_SDK_PATH)\redistributable_bin\win64\steam_api64.dll" DestinationFolder="$(OutDir)" ContinueOnError="true" />
-    <WriteLinesToFile File="$(OutDir)steam_appid.txt" Lines="$(steamappID)" Overwrite="True"/>
-  </Target>
-
-</Project>

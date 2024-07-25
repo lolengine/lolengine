@@ -33,4 +33,10 @@
     <CustomBuild Sources="@(GLSLShader)" MinimalRebuildFromTracking="true" TrackerLogDirectory="$(TLogLocation)" />
   </Target>
 
+  <!-- Steam AppId support -->
+  <Target Name="AfterBuild" Condition="'$(KincUseSteamworks)'!='no' and ('$(Platform)'=='Win32' or '$(Platform)'=='x64')">
+    <Copy SourceFiles="$(STEAM_SDK_PATH)\redistributable_bin\win64\steam_api64.dll" DestinationFolder="$(OutDir)" ContinueOnError="true" />
+    <WriteLinesToFile File="$(OutDir)steam_appid.txt" Lines="$(KincSteamAppId)" Overwrite="True"/>
+  </Target>
+
 </Project>

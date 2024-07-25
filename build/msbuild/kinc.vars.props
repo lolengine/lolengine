@@ -34,6 +34,25 @@
     </KincDeps>
   </PropertyGroup>
 
+  <PropertyGroup Label="UserMacros" Condition="'$(KincUseSteamworks)'!='no' and ('$(Platform)'=='Win32' or '$(Platform)'=='x64')">
+    <KincIncludes>
+      $(KincIncludes);
+      $(STEAM_SDK_PATH)\public;
+    </KincIncludes>
+    <KincDefines>
+      $(KincDefines);
+      KINC_USE_STEAM;STEAMAPPID=$(KincSteamAppId);
+    </KincDefines>
+    <KincDeps>
+      $(KincDeps);
+      $(STEAM_SDK_PATH)\redistributable_bin\win64\steam_api64.lib;
+    </KincDeps>
+    <KincLibs>
+      $(KincLibs);
+      $(STEAM_SDK_PATH)\redistributable_bin\win64\steam_api64.dll;
+    </KincLibs>
+  </PropertyGroup>
+
   <PropertyGroup Label="UserMacros" Condition="'$(Platform)'=='NX32' Or '$(Platform)'=='NX64'">
     <ShaderCompiler>$(KINC_SDK_PATH)\..\Backends\Switch\Tools\krafix-switch.exe</ShaderCompiler>
     <ShaderPlatform>switch</ShaderPlatform>
