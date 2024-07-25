@@ -33,7 +33,8 @@
           var src = Inputs.GetMetadata("RelativeDir").Replace("\\", "/") + filename;
           var cppname = "lol_resource_" + Regex.Replace(src, "[^A-Za-z0-9_]", "_");
           var flags = (Inputs.GetMetadata("Compression") == "gzip" ? 1 : 0);
-          var path = Inputs.GetMetadata("ResourcePath") ?? src;
+          var path = Inputs.GetMetadata("ResourcePath");
+          path = string.IsNullOrEmpty(path) ? src : path;
 
           // Read input file and format it as hex bytes with cheap wrapping
           var bytes = File.ReadAllBytes(Inputs.ItemSpec);
