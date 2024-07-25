@@ -95,6 +95,9 @@
                          Backends/System/Windows/Sources/kinc/backend;
                          Backends/System/Windows/Libraries/DirectShow/BaseClasses" />
 
+      <KincDirs Condition="'$(KincUseSteamworks)'=='true' and '$(Platform)'=='x64' or '$(Platform)'=='Win32'"
+                Include="Backends/Service/Steam/Sources/kinc/backend" />
+
       <KincDirs Condition="'$(Platform)'=='NX64'"
                 Include="Backends/Graphics4/G4onG5/Sources/kinc/backend;
                          ../Backends/Switch/Sources/kinc/backend" />

@@ -34,9 +34,10 @@
     </KincDeps>
   </PropertyGroup>
 
-  <PropertyGroup Label="UserMacros" Condition="'$(KincUseSteamworks)'!='no' and ('$(Platform)'=='Win32' or '$(Platform)'=='x64')">
+  <PropertyGroup Label="UserMacros" Condition="'$(KincUseSteamworks)'=='true' and ('$(Platform)'=='Win32' or '$(Platform)'=='x64')">
     <KincIncludes>
       $(KincIncludes);
+      $(KINC_SDK_PATH)\Backends\Service\Steam\Sources;
       $(STEAM_SDK_PATH)\public;
     </KincIncludes>
     <KincDefines>
