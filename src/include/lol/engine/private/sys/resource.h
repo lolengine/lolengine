@@ -35,6 +35,15 @@ struct resource
         catalog()[path] = *this;
     }
 
+    static bool get(std::string const &path, std::string &data)
+    {
+        auto ret = catalog().find(path);
+        if (ret == catalog().end())
+            return false;
+        data.assign((char *)ret->second.m_data.data(), ret->second.m_data.size());
+        return true;
+    }
+
 protected:
     std::span<uint8_t const> m_data;
 
