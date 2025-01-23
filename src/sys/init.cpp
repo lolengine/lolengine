@@ -11,7 +11,7 @@
 //
 
 #include <algorithm> // std::remove_if
-#if !defined _LIBCPP_HAS_NO_FILESYSTEM_LIBRARY
+#if !defined _LIBCPP_HAS_NO_FILESYSTEM_LIBRARY && !defined _LIBCPP_AVAILABILITY_HAS_NO_FILESYSTEM_LIBRARY
 #   include <filesystem> // std::filesystem::exists
 #endif
 #include <lol/engine/audio> // lol::audio
@@ -32,7 +32,7 @@
 namespace lol::sys
 {
 
-#if !defined _LIBCPP_HAS_NO_FILESYSTEM_LIBRARY
+#if !defined _LIBCPP_HAS_NO_FILESYSTEM_LIBRARY && !defined _LIBCPP_AVAILABILITY_HAS_NO_FILESYSTEM_LIBRARY
 static std::vector<std::filesystem::path> data_dir;
 #endif
 
@@ -46,7 +46,7 @@ void init(int argc, char *argv[],
 {
     using namespace std;
 
-#if !defined _LIBCPP_HAS_NO_FILESYSTEM_LIBRARY
+#if !defined _LIBCPP_HAS_NO_FILESYSTEM_LIBRARY && !defined _LIBCPP_AVAILABILITY_HAS_NO_FILESYSTEM_LIBRARY
     msg::debug("project dir: “%s”\n", std::filesystem::path(projectdir).generic_string().c_str());
     msg::debug("solution dir: “%s”\n", std::filesystem::path(solutiondir).generic_string().c_str());
     msg::debug("source subdir: “%s”\n", std::filesystem::path(sourcesubdir).generic_string().c_str());
@@ -180,14 +180,14 @@ void stop()
 
 void add_data_dir(std::string const &dir)
 {
-#if !defined _LIBCPP_HAS_NO_FILESYSTEM_LIBRARY
+#if !defined _LIBCPP_HAS_NO_FILESYSTEM_LIBRARY && !defined _LIBCPP_AVAILABILITY_HAS_NO_FILESYSTEM_LIBRARY
     data_dir.push_back(dir);
 #endif
 }
 
 std::string get_data_path(std::string const &file)
 {
-#if !defined _LIBCPP_HAS_NO_FILESYSTEM_LIBRARY
+#if !defined _LIBCPP_HAS_NO_FILESYSTEM_LIBRARY && !defined _LIBCPP_AVAILABILITY_HAS_NO_FILESYSTEM_LIBRARY
     // If not an absolute path, look through known data directories
     if (file[0] != '/')
         for (auto const &dir : data_dir)
