@@ -101,6 +101,7 @@ _ReSharper.*
 # Our private repositories
 lol-switch
 lol-playstation
+lol-xbox
 # Our binaries
 demos/lol.js/lol.js
 doc/legacy/benchsuite

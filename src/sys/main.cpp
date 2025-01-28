@@ -10,9 +10,18 @@
 //  See http://www.wtfpl.net/ for more details.
 //
 
+#if LOL_USE_KINC && !KINC_NO_MAIN
+#   if defined(_GAMING_XBOX)
+int lol_kinc_kickstart(int, char**);
+
+extern "C" int kickstart(int argc, char** argv)
+{
+    return lol_kinc_kickstart(argc, argv);
+}
+
+#   else
 // One of these wrappers will be overridden by the user’s version, the
 // others will just be NOPs.
-#if LOL_USE_KINC && !KINC_NO_MAIN
 int lol_kinc_kickstart(void) __attribute__((weak));
 int lol_kinc_kickstart(int argc, char **argv) __attribute__((weak));
 int lol_kinc_kickstart(int argc, char **argv, char **envp) __attribute__((weak));
@@ -28,4 +37,6 @@ extern "C" int kickstart(int argc, char **argv)
          | lol_kinc_kickstart(argc, argv)
          | lol_kinc_kickstart(argc, argv, env);
 }
+
+#   endif
 #endif

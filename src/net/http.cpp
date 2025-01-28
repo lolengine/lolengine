@@ -26,8 +26,8 @@
 #   define FAR
 #endif
 
-#if __NX__ || __SCE__
-    // not implemented
+#if __NX__ || __SCE__ || _GAMING_XBOX
+    // not implemented (yet)
 #elif __EMSCRIPTEN__
 #   include <emscripten/fetch.h>
 #else
@@ -51,7 +51,7 @@ namespace http
 class client_impl
 {
 public:
-#if __NX__ || __SCE__
+#if __NX__ || __SCE__ || _GAMING_XBOX
     void get(std::string const &url)
     {
         msg::error("downloading %s failed: not implemented\n", url.c_str());

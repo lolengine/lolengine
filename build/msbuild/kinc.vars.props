@@ -54,6 +54,44 @@
     </KincLibs>
   </PropertyGroup>
 
+  <PropertyGroup Label="UserMacros" Condition="'$(Platform)'=='Gaming.Xbox.XboxOne.x64'">
+    <ShaderCompiler>$(KINC_SDK_PATH)\..\Backends\Xbox\Tools\krafix-xboxone.exe</ShaderCompiler>
+    <ShaderPlatform>xboxone</ShaderPlatform>
+    <ShaderProfile>xboxone</ShaderProfile>
+    <KincIncludes>
+      $(KincIncludes);
+      $(KINC_SDK_PATH)\Backends\System\Microsoft\Sources;
+      $(KINC_SDK_PATH)\Backends\Graphics4\G4onG5\Sources;
+      $(KINC_SDK_PATH)\Backends\Graphics5\Direct3D12\Sources;
+      $(KINC_SDK_PATH)\..\Backends\Xbox\Sources;
+    </KincIncludes>
+    <KincDefines>
+      $(KincDefines);
+      KINC_DIRECT3D;KINC_DIRECT3D12;KINC_DXC;KINC_DIRECT3D_HAS_NO_SWAPCHAIN;KINC_G4ONG5;KINC_XBOX_ONE;KINC_CONSOLE;
+    </KincDefines>
+    <KincDeps>
+    </KincDeps>
+  </PropertyGroup>
+
+  <PropertyGroup Label="UserMacros" Condition="'$(Platform)'=='Gaming.Xbox.Scarlett.x64'">
+    <ShaderCompiler>$(KINC_SDK_PATH)\..\Backends\Xbox\Tools\krafix-xboxseries.exe</ShaderCompiler>
+    <ShaderPlatform>xboxseries</ShaderPlatform>
+    <ShaderProfile>xboxseries</ShaderProfile>
+    <KincIncludes>
+      $(KincIncludes);
+      $(KINC_SDK_PATH)\Backends\System\Microsoft\Sources;
+      $(KINC_SDK_PATH)\Backends\Graphics4\G4onG5\Sources;
+      $(KINC_SDK_PATH)\Backends\Graphics5\Direct3D12\Sources;
+      $(KINC_SDK_PATH)\..\Backends\Xbox\Sources;
+    </KincIncludes>
+    <KincDefines>
+      $(KincDefines);
+      KINC_DIRECT3D;KINC_DIRECT3D12;KINC_DXC;KINC_DIRECT3D_HAS_NO_SWAPCHAIN;KINC_G4ONG5;KINC_XBOX_SERIES;KINC_CONSOLE;
+    </KincDefines>
+    <KincDeps>
+    </KincDeps>
+  </PropertyGroup>
+
   <PropertyGroup Label="UserMacros" Condition="'$(Platform)'=='NX32' Or '$(Platform)'=='NX64'">
     <ShaderCompiler>$(KINC_SDK_PATH)\..\Backends\Switch\Tools\krafix-switch.exe</ShaderCompiler>
     <ShaderPlatform>switch</ShaderPlatform>

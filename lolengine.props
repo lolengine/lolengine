@@ -26,6 +26,8 @@
           Condition="exists('$(LolEngineDir)lol-switch/msbuild/config.props')" />
   <Import Project="$(LolEngineDir)lol-playstation/msbuild/config.props"
           Condition="exists('$(LolEngineDir)lol-playstation/msbuild/config.props')" />
+  <Import Project="$(LolEngineDir)lol-xbox/msbuild/config.props"
+          Condition="exists('$(LolEngineDir)lol-xbox/msbuild/config.props')" />
 
   <!-- Override settings with the user’s build.config file -->
   <Import Condition="exists('$(LolEngineDir)build.config')"
@@ -50,6 +52,8 @@
             Condition="exists('$(LolEngineDir)lol-switch/msbuild/vars.props')" />
     <Import Project="$(LolEngineDir)lol-playstation/msbuild/vars.props"
             Condition="exists('$(LolEngineDir)lol-playstation/msbuild/vars.props')" />
+    <Import Project="$(LolEngineDir)lol-xbox/msbuild/vars.props"
+            Condition="exists('$(LolEngineDir)lol-xbox/msbuild/vars.props')" />
     <!-- Kinc  -->
     <Import Project="$(LolEngineDir)build/msbuild/kinc.vars.props"
             Condition="'$(enable_kinc)'!='no'" />
@@ -68,6 +72,8 @@
           Project="$(LolEngineDir)lol-switch/msbuild/rules.props" />
   <Import Condition="Exists('$(LolEngineDir)lol-playstation/msbuild/rules.props')"
           Project="$(LolEngineDir)lol-playstation/msbuild/rules.props" />
+  <Import Condition="Exists('$(LolEngineDir)lol-xbox/msbuild/rules.props')"
+          Project="$(LolEngineDir)lol-xbox/msbuild/rules.props" />
 
   <Import Project="$(LolEngineDir)build/msbuild/rules.props" />
 
@@ -97,6 +103,13 @@
 
       <KincDirs Condition="'$(KincUseSteamworks)'=='true' and ('$(Platform)'=='x64' or '$(Platform)'=='Win32')"
                 Include="Backends/Service/Steam/Sources/kinc/backend" />
+
+      <KincDirs Condition="'$(Platform)'=='Gaming.Xbox.XboxOne.x64' or '$(Platform)'=='Gaming.Xbox.Scarlett.x64'"
+                Include="Backends/Audio2/WASAPI/Sources/kinc/backend;
+                         Backends/Graphics4/G4onG5/Sources/kinc/backend;
+                         Backends/Graphics5/Direct3D12/Sources/kinc/backend;
+                         Backends/System/Microsoft/Sources/kinc/backend;
+                         ../Backends/Xbox/Sources/kinc/backend" />
 
       <KincDirs Condition="'$(Platform)'=='NX64'"
                 Include="Backends/Graphics4/G4onG5/Sources/kinc/backend;
