@@ -93,7 +93,7 @@
     <ItemGroup Condition="'$(enable_kinc)'!='no'">
       <KincDirs Include="Sources/kinc" />
 
-      <KincDirs Condition="'$(Platform)'=='x64' or '$(Platform)'=='Win32'"
+      <KincDirs Condition="'$(Platform)'=='x64' or '$(Platform)'=='Win32' or '$(Platform)'=='ARM64'"
                 Include="Backends/Audio2/WASAPI/Sources/kinc/backend;
                          Backends/Graphics4/Direct3D11/Sources/kinc/backend;
                          Backends/Graphics5/G5onG4/Sources/kinc/backend;
@@ -101,7 +101,7 @@
                          Backends/System/Windows/Sources/kinc/backend;
                          Backends/System/Windows/Libraries/DirectShow/BaseClasses" />
 
-      <KincDirs Condition="'$(KincUseSteamworks)'=='true' and ('$(Platform)'=='x64' or '$(Platform)'=='Win32')"
+      <KincDirs Condition="'$(KincUseSteamworks)'=='true' and ('$(Platform)'=='x64' or '$(Platform)'=='Win32' or '$(Platform)'=='ARM64')"
                 Include="Backends/Service/Steam/Sources/kinc/backend" />
 
       <KincDirs Condition="'$(Platform)'=='Gaming.Xbox.XboxOne.x64' or '$(Platform)'=='Gaming.Xbox.Scarlett.x64'"

@@ -20,8 +20,8 @@
     <CppHttpDir>$(LolEngineDir)\src/3rdparty\cpp-httplib</CppHttpDir>
     <CppHttpIncludes>$(CppHttpDir);$(OpenSslDir)\include</CppHttpIncludes>
     <CppHttpLibs>$(OpenSslDir)\lib\$(PlatformCode)-msvc</CppHttpLibs>
-    <CppHttpDeps>libssl.lib;libcrypto.lib;crypt32.lib</CppHttpDeps>
-    <Win32Defines>CPPHTTPLIB_OPENSSL_SUPPORT;$(Win32Defines)</Win32Defines>
+    <CppHttpDeps Condition="'$(Platform)'!='ARM64'">libssl.lib;libcrypto.lib;crypt32.lib</CppHttpDeps>
+    <Win32Defines Condition="'$(Platform)'!='ARM64'">CPPHTTPLIB_OPENSSL_SUPPORT;$(Win32Defines)</Win32Defines>
 
     <!-- GTK+ & GtkGl -->
     <GtkDir>$(ExternalDir)\gtk-2.22.1</GtkDir>
@@ -68,13 +68,13 @@
   </PropertyGroup>
 
   <!-- OpenGL & GLEW -->
-  <PropertyGroup Condition="'$(enable_gl)'!='no'" Label="UserMacros">
+  <!--<PropertyGroup Condition="'$(enable_gl)'!='no'" Label="UserMacros">
     <GlewDir>$(ExternalDir)\glew-2.1.0</GlewDir>
     <GlIncludes>$(GlewDir)\include</GlIncludes>
     <GlLibs>$(GlewDir)\lib\$(PlatformCode)-w64-mingw32</GlLibs>
     <GlDeps>opengl32.lib;glew32s.lib</GlDeps>
     <Win32Defines>HAVE_GL_2X;LOL_USE_GLEW;GLEW_STATIC;$(Win32Defines)</Win32Defines>
-  </PropertyGroup>
+  </PropertyGroup>-->
 
   <!-- SDL -->
   <PropertyGroup Condition="'$(enable_sdl)'!='no'" Label="UserMacros">

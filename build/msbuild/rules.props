@@ -52,7 +52,7 @@
           %(AdditionalIncludeDirectories)
       </AdditionalIncludeDirectories>
 
-      <AdditionalIncludeDirectories Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">
+      <AdditionalIncludeDirectories Condition="'$(Platform)'=='Win32' or '$(Platform)'=='x64' or '$(Platform)'=='ARM64'">
           $(SdlIncludes);
           $(CppHttpIncludes);
           $(FfmpegIncludes);
@@ -76,6 +76,7 @@
 
       <PreprocessorDefinitions Condition="'$(Platform)'=='Win32'">WIN32;$(Win32Defines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Platform)'=='x64'">WIN32;$(Win32Defines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Platform)'=='ARM64'">WIN32;$(Win32Defines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Platform)'=='Orbis'">$(OrbisDefines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
 
@@ -87,7 +88,7 @@
     <ClCompile Condition="'$(Configuration)'=='Debug'">
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <Optimization>Disabled</Optimization>
-      <RuntimeLibrary Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(Platform)'=='Win32' or '$(Platform)'=='x64' or '$(Platform)'=='ARM64'">MultiThreadedDebugDLL</RuntimeLibrary>
       <PreprocessorDefinitions>_DEBUG;LOL_BUILD_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <ClCompile Condition="'$(Configuration)'=='Release'">
@@ -95,16 +96,16 @@
       <!-- For Microsoft tools -->
       <Optimization>MaxSpeed</Optimization>
 
-      <RuntimeLibrary Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">MultiThreadedDLL</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(Platform)'=='Win32' or '$(Platform)'=='x64' or '$(Platform)'=='ARM64'">MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <PreprocessorDefinitions>NDEBUG;LOL_BUILD_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
 
-    <Link Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">
+    <Link Condition="'$(Platform)'=='Win32' or '$(Platform)'=='x64' or '$(Platform)'=='ARM64'">
       <!-- FIXME: not for the static library! -->
-      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;$(SdlDeps);$(KincDeps);$(FfmpegDeps);$(AssimpDeps);$(LibGccDeps);$(GdiDeps);$(XinputDeps);$(GlDeps);$(CppHttpDeps);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;$(SdlDeps);$(FfmpegDeps);$(AssimpDeps);$(LibGccDeps);$(GdiDeps);$(XinputDeps);$(GlDeps);$(CppHttpDeps);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(LibGccLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalLibraryDirectories>$(SdlLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalLibraryDirectories>$(CppHttpLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -133,7 +134,7 @@
     </Link>
 
     <!-- Post-build hook to run commands -->
-    <PostBuildEvent Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">
+    <PostBuildEvent Condition="'$(Platform)'=='Win32' or '$(Platform)'=='x64' or '$(Platform)'=='ARM64'">
       <Command Condition="'$(enable_sdl)'!='no'">
         rem do nothing
       </Command>

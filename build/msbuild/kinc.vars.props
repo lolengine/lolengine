@@ -12,7 +12,7 @@
     </KincDefines>
   </PropertyGroup>
 
-  <PropertyGroup Label="UserMacros" Condition="'$(Platform)'=='Win32' Or '$(Platform)'=='x64'">
+  <PropertyGroup Label="UserMacros" Condition="'$(Platform)'=='Win32' or '$(Platform)'=='x64' or '$(Platform)'=='ARM64'">
     <ShaderCompiler>$(KINC_SDK_PATH)\Tools\windows_x64\krafix.exe</ShaderCompiler>
     <ShaderPlatform>windows</ShaderPlatform>
     <ShaderProfile>d3d11</ShaderProfile>
@@ -25,33 +25,26 @@
       $(KINC_SDK_PATH)\Backends\Audio2\WASAPI\Sources;
       $(KINC_SDK_PATH)\Backends\Graphics5\G5onG4\Sources;
     </KincIncludes>
-    <KincDefines>
-      $(KincDefines);
-      KINC_DIRECT3D;KINC_DIRECT3D11;KINC_G5ONG4;KINC_NO_MAIN;
-    </KincDefines>
-    <KincDeps>
-      winhttp.lib;d3d11.lib;dxguid.lib;dinput8.lib;strmiids.lib;winmm.lib;wbemuuid.lib;
-    </KincDeps>
-  </PropertyGroup>
-
-  <PropertyGroup Label="UserMacros" Condition="'$(KincUseSteamworks)'=='true' and ('$(Platform)'=='Win32' or '$(Platform)'=='x64')">
-    <KincIncludes>
+    <KincIncludes Condition="'$(KincUseSteamworks)'=='true'">
       $(KincIncludes);
       $(KINC_SDK_PATH)\Backends\Service\Steam\Sources;
       $(STEAM_SDK_PATH)\public;
     </KincIncludes>
     <KincDefines>
       $(KincDefines);
+      KINC_DIRECT3D;KINC_DIRECT3D11;KINC_G5ONG4;KINC_NO_MAIN;
+    </KincDefines>
+    <KincDefines Condition="'$(KincUseSteamworks)'=='true'">
+      $(KincDefines);
       KINC_USE_STEAM;STEAMAPPID=$(KincSteamAppId);
     </KincDefines>
     <KincDeps>
+      winhttp.lib;d3d11.lib;dxguid.lib;dinput8.lib;strmiids.lib;winmm.lib;wbemuuid.lib;
+    </KincDeps>
+    <KincDeps Condition="'$(KincUseSteamworks)'=='true'">
       $(KincDeps);
       $(STEAM_SDK_PATH)\redistributable_bin\win64\steam_api64.lib;
     </KincDeps>
-    <KincLibs>
-      $(KincLibs);
-      $(STEAM_SDK_PATH)\redistributable_bin\win64\steam_api64.dll;
-    </KincLibs>
   </PropertyGroup>
 
   <PropertyGroup Label="UserMacros" Condition="'$(Platform)'=='Gaming.Xbox.XboxOne.x64'">
@@ -105,9 +98,7 @@
       $(KincDefines);
       KINC_G4ONG5;KINC_SWITCH;KINC_CONSOLE;
     </KincDefines>
-    <KincDeps>
-      libnn_profiler.a;
-    </KincDeps>
+    <KincDeps>$(KincDeps);-lnn_profiler;</KincDeps>
   </PropertyGroup>
 
   <PropertyGroup Label="UserMacros" Condition="'$(Platform)'=='ORBIS'">
