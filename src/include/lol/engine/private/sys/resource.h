@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010–2024 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010–2025 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -17,7 +17,7 @@
 // ————————————————————
 //
 
-#include <span>
+#include <lol/std/span> // std::span
 #include <string>
 #include <unordered_map> // std::unordered_map
 

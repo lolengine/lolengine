@@ -78,6 +78,12 @@
       <PreprocessorDefinitions Condition="'$(Platform)'=='x64'">WIN32;$(Win32Defines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions Condition="'$(Platform)'=='Orbis'">$(OrbisDefines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+
+    <Link>
+      <AdditionalLibraryDirectories>$(KincLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(KincDeps);%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+
     <ClCompile Condition="'$(Configuration)'=='Debug'">
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <Optimization>Disabled</Optimization>

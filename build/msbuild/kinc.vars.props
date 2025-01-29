@@ -111,7 +111,7 @@
   </PropertyGroup>
 
   <PropertyGroup Label="UserMacros" Condition="'$(Platform)'=='ORBIS'">
-    <ShaderCompiler>$(KINC_SDK_PATH)\..\Backends\PlayStation4\krafix\krafix-ps4.exe</ShaderCompiler>
+    <ShaderCompiler>$(KINC_SDK_PATH)\..\Backends\PlayStation4\Tools\krafix-ps4.exe</ShaderCompiler>
     <ShaderPlatform>ps4</ShaderPlatform>
     <ShaderProfile>ps4</ShaderProfile>
     <KincIncludes>
@@ -124,12 +124,16 @@
       KINC_G4ONG5;KINC_PLAYSTATION_4;KINC_PS4;KINC_SONY;KINC_CONSOLE;
     </KincDefines>
     <KincDeps>
-      -lSceAgc;-lSceAgcCore;-lSceAgcGpuAddress;-lSceAgcDriver_stub_weak;-lSceAgc_stub_weak;-lSceNpGameIntent_stub_weak;-lSceSaveDataDialog_stub_weak;-lSceCommonDialog_stub_weak;-lSceNpUniversalDataSystem_stub_weak;-lSceSysmodule_stub_weak;-lSceSystemService_stub_weak;-lSceSaveData_stub_weak;-lSceAudioOut_stub_weak;-lSceVideoOut_stub_weak;-lScePad_stub_weak;-lSceUserService_stub_weak
+      -lSceGnm;-lSceGnmx;-lSceSaveDataDialog_stub_weak;-lSceCommonDialog_stub_weak;-lSceSysmodule_stub_weak;-lSceNpTrophy_stub_weak;-lSceSystemService_stub_weak;-lSceSaveData_stub_weak;-lSceShaderBinary;-lSceAudioOut_stub_weak;-lSceVideoOut_stub_weak;-lSceGpuAddress;-lSceGnmDriver_stub_weak;-lScePad_stub_weak;-lSceUserService_stub_weak
     </KincDeps>
+    <KincLibs>
+      $(KincLibs);
+      $(KINC_SDK_PATH)/../Backends/PlayStation4/Libraries;
+    </KincLibs>
   </PropertyGroup>
 
   <PropertyGroup Label="UserMacros" Condition="'$(Platform)'=='Prospero'">
-    <ShaderCompiler>$(KINC_SDK_PATH)\..\Backends\PlayStation5\krafix\krafix-ps5.exe</ShaderCompiler>
+    <ShaderCompiler>$(KINC_SDK_PATH)\..\Backends\PlayStation5\Tools\krafix-ps5.exe</ShaderCompiler>
     <ShaderPlatform>ps5</ShaderPlatform>
     <ShaderProfile>ps5</ShaderProfile>
     <KincIncludes>
