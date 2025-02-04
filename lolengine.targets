@@ -15,9 +15,10 @@
   <Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
 
   <ImportGroup Label="ExtensionTargets">
-    <Import Project="$(LolEngineDir)build/msbuild/embed.targets" />
-    <Import Condition="'$(enable_kinc)'!='no'"
-            Project="$(LolEngineDir)build/msbuild/kinc.targets" />
+    <Import Project="$(LolEngineDir)msbuild/embed/registry.targets" />
+    <Import Project="$(LolEngineDir)msbuild/features.targets" />
+    <Import Project="$(LolEngineDir)msbuild/kinc/code.targets" />
+    <Import Project="$(LolEngineDir)msbuild/kinc/shaders.targets" />
   </ImportGroup>
 
 </Project>

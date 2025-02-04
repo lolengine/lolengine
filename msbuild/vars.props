@@ -58,13 +58,6 @@
     <XinputLibs Condition="'$(Platform)'=='x64'">$(DXSDK_DIR)\Lib\x64</XinputLibs>
     <XinputDeps>xinput.lib</XinputDeps>
     <Win32Defines>LOL_USE_XINPUT;$(Win32Defines)</Win32Defines>
-
-    <!-- Windows-specific -->
-    <Win32Defines>HAVE_STDIO_H;$(Win32Defines)</Win32Defines>
-
-    <!-- PS4-specific -->
-    <OrbisDefines>HAVE_STDIO_H;
-                  $(OrbisDefines)</OrbisDefines>
   </PropertyGroup>
 
   <!-- OpenGL & GLEW -->
@@ -103,58 +96,5 @@
   <PropertyGroup />
 
   <ItemDefinitionGroup />
-
-  <ItemGroup>
-    <BuildMacro Include="ExternalDir"><Value>$(ExternalDir)</Value></BuildMacro>
-    <BuildMacro Include="PlatformCode"><Value>$(PlatformCode)</Value></BuildMacro>
-  </ItemGroup>
-  <ItemGroup>
-    <BuildMacro Include="PegtlDir"><Value>$(PegtlDir)</Value></BuildMacro>
-    <BuildMacro Include="PegtlIncludes"><Value>$(PegtlIncludes)</Value></BuildMacro>
-    <BuildMacro Include="CppHttpDir"><Value>$(CppHttpDir)</Value></BuildMacro>
-    <BuildMacro Include="CppHttpIncludes"><Value>$(CppHttpIncludes)</Value></BuildMacro>
-    <BuildMacro Include="ImguiDir"><Value>$(ImguiDir)</Value></BuildMacro>
-    <BuildMacro Include="ImguiIncludes"><Value>$(ImguiIncludes)</Value></BuildMacro>
-    <BuildMacro Include="LibGccDir"><Value>$(LibGccDir)</Value></BuildMacro>
-    <BuildMacro Include="LibGccLibs"><Value>$(LibGccLibs)</Value></BuildMacro>
-    <BuildMacro Include="LibGccDeps"><Value>$(LibGccDeps)</Value></BuildMacro>
-    <BuildMacro Include="SdlDir"><Value>$(SdlDir)</Value></BuildMacro>
-    <BuildMacro Include="SdlImageDir"><Value>$(SdlImageDir)</Value></BuildMacro>
-    <BuildMacro Include="SdlMixerDir"><Value>$(SdlMixerDir)</Value></BuildMacro>
-    <BuildMacro Include="SdlIncludes"><Value>$(SdlIncludes)</Value></BuildMacro>
-    <BuildMacro Include="SdlLibs"><Value>$(SdlLibs)</Value></BuildMacro>
-    <BuildMacro Include="SdlDeps"><Value>$(SdlDeps)</Value></BuildMacro>
-    <BuildMacro Include="BtPhysDir"><Value>$(BtPhysDir)</Value></BuildMacro>
-    <BuildMacro Include="BtPhysIncludes"><Value>$(BtPhysIncludes)</Value></BuildMacro>
-    <BuildMacro Include="GtkDir"><Value>$(GtkDir)</Value></BuildMacro>
-    <BuildMacro Include="GtkGlDir"><Value>$(GtkGlDir)</Value></BuildMacro>
-    <BuildMacro Include="GtkIncludes"><Value>$(GtkIncludes)</Value></BuildMacro>
-    <BuildMacro Include="GtkLibs"><Value>$(GtkLibs)</Value></BuildMacro>
-    <BuildMacro Include="GtkDeps"><Value>$(GtkDeps)</Value></BuildMacro>
-    <BuildMacro Include="FfmpegDir"><Value>$(FfmpegDir)</Value></BuildMacro>
-    <BuildMacro Include="FfmpegIncludes"><Value>$(FfmpegIncludes)</Value></BuildMacro>
-    <BuildMacro Include="FfmpegLibs"><Value>$(FfmpegLibs)</Value></BuildMacro>
-    <BuildMacro Include="FfmpegDeps"><Value>$(FfmpegDeps)</Value></BuildMacro>
-    <BuildMacro Include="AssimpDir"><Value>$(AssimpDir)</Value></BuildMacro>
-    <BuildMacro Include="AssimpIncludes"><Value>$(AssimpIncludes)</Value></BuildMacro>
-    <BuildMacro Include="AssimpLibs"><Value>$(AssimpLibs)</Value></BuildMacro>
-    <BuildMacro Include="AssimpDeps"><Value>$(AssimpDeps)</Value></BuildMacro>
-    <BuildMacro Include="CacaDir"><Value>$(CacaDir)</Value></BuildMacro>
-    <BuildMacro Include="CacaIncludes"><Value>$(CacaIncludes)</Value></BuildMacro>
-    <BuildMacro Include="CacaLibs"><Value>$(CacaLibs)</Value></BuildMacro>
-    <BuildMacro Include="CacaDeps"><Value>$(CacaDeps)</Value></BuildMacro>
-    <BuildMacro Include="GdiDeps"><Value>$(GdiDeps)</Value></BuildMacro>
-    <BuildMacro Include="GlewDir"><Value>$(GlewDir)</Value></BuildMacro>
-    <BuildMacro Include="GlIncludes"><Value>$(GlIncludes)</Value></BuildMacro>
-    <BuildMacro Include="GlLibs"><Value>$(GlLibs)</Value></BuildMacro>
-    <BuildMacro Include="GlDeps"><Value>$(GlDeps)</Value></BuildMacro>
-    <BuildMacro Include="XinputIncludes"><Value>$(XinputIncludes)</Value></BuildMacro>
-    <BuildMacro Include="XinputLibs"><Value>$(XinputLibs)</Value></BuildMacro>
-    <BuildMacro Include="XinputDeps"><Value>$(XinputDeps)</Value></BuildMacro>
-    <BuildMacro Include="Win32Defines"><Value>$(Win32Defines)</Value></BuildMacro>
-    <BuildMacro Include="OrbisDeps"><Value>$(OrbisDeps)</Value></BuildMacro>
-    <BuildMacro Include="OrbisLibs"><Value>$(OrbisLibs)</Value></BuildMacro>
-    <BuildMacro Include="OrbisDefines"><Value>$(OrbisDefines)</Value></BuildMacro>
-  </ItemGroup>
 
 </Project>

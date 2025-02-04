@@ -19,7 +19,8 @@
   <!-- Import defaults settings from Visual Studio -->
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
 
-  <Import Project="$(LolEngineDir)build/msbuild/config.props" />
+  <!-- Set reasonable defaults for most common configuration properties -->
+  <Import Project="$(LolEngineDir)msbuild/config.props" />
 
   <!-- NDA platforms -->
   <Import Project="$(LolEngineDir)lol-switch/msbuild/config.props"
@@ -54,14 +55,20 @@
             Condition="exists('$(LolEngineDir)lol-playstation/msbuild/vars.props')" />
     <Import Project="$(LolEngineDir)lol-xbox/msbuild/vars.props"
             Condition="exists('$(LolEngineDir)lol-xbox/msbuild/vars.props')" />
-    <!-- Kinc  -->
-    <Import Project="$(LolEngineDir)build/msbuild/kinc.vars.props"
-            Condition="'$(enable_kinc)'!='no'" />
-    <Import Project="$(LolEngineDir)build/msbuild/vars.props" />
-    <Import Project="$(LolEngineDir)build/msbuild/embed.props" />
+
+    <Import Project="$(LolEngineDir)msbuild/kinc/vars.props" />
+    <Import Project="$(LolEngineDir)msbuild/vars.props" />
   </ImportGroup>
 
   <PropertyGroup Label="UserMacros" />
+
+  <!--
+     - Build tasks
+   -->
+
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(LolEngineDir)msbuild/embed/task.props" />
+  </ImportGroup>
 
   <!--
      - Build rules
@@ -75,7 +82,7 @@
   <Import Condition="Exists('$(LolEngineDir)lol-xbox/msbuild/rules.props')"
           Project="$(LolEngineDir)lol-xbox/msbuild/rules.props" />
 
-  <Import Project="$(LolEngineDir)build/msbuild/rules.props" />
+  <Import Project="$(LolEngineDir)msbuild/rules.props" />
 
   <ItemDefinitionGroup />
 
@@ -88,48 +95,6 @@
       <Project>{9e62f2fe-3408-4eae-8238-fd84238ceeda}</Project>
     </ProjectReference>
   </ItemGroup>
-
-  <Target Name="KincCompile" AfterTargets="BuildGenerateSources" Condition="'$(ConfigurationType)'!='StaticLibrary'">
-    <ItemGroup Condition="'$(enable_kinc)'!='no'">
-      <KincDirs Include="Sources/kinc" />
-
-      <KincDirs Condition="'$(Platform)'=='x64' or '$(Platform)'=='Win32' or '$(Platform)'=='ARM64'"
-                Include="Backends/Audio2/WASAPI/Sources/kinc/backend;
-                         Backends/Graphics4/Direct3D11/Sources/kinc/backend;
-                         Backends/Graphics5/G5onG4/Sources/kinc/backend;
-                         Backends/System/Microsoft/Sources/kinc/backend;
-                         Backends/System/Windows/Sources/kinc/backend;
-                         Backends/System/Windows/Libraries/DirectShow/BaseClasses" />
-
-      <KincDirs Condition="'$(KincUseSteamworks)'=='true' and ('$(Platform)'=='x64' or '$(Platform)'=='Win32' or '$(Platform)'=='ARM64')"
-                Include="Backends/Service/Steam/Sources/kinc/backend" />
-
-      <KincDirs Condition="'$(Platform)'=='Gaming.Xbox.XboxOne.x64' or '$(Platform)'=='Gaming.Xbox.Scarlett.x64'"
-                Include="Backends/Audio2/WASAPI/Sources/kinc/backend;
-                         Backends/Graphics4/G4onG5/Sources/kinc/backend;
-                         Backends/Graphics5/Direct3D12/Sources/kinc/backend;
-                         Backends/System/Microsoft/Sources/kinc/backend;
-                         ../Backends/Xbox/Sources/kinc/backend" />
-
-      <KincDirs Condition="'$(Platform)'=='NX64'"
-                Include="Backends/Graphics4/G4onG5/Sources/kinc/backend;
-                         ../Backends/Switch/Sources/kinc/backend" />
-
-      <KincDirs Condition="'$(Platform)'=='ORBIS'"
-                Include="Backends/Graphics4/G4onG5/Sources/kinc/backend;
-                         ../Backends/PlayStation4/Sources/kinc/backend;
-                         ../Backends/PlayStation4/Sources/tlsf" />
-
-      <KincDirs Condition="'$(Platform)'=='Prospero'"
-                Include="Backends/Graphics4/G4onG5/Sources/kinc/backend;
-                         ../Backends/PlayStation5/Sources/kinc/backend;
-                         ../Backends/PlayStation5/Sources/tlsf" />
-
-      <ClCompile Include="$(KINC_SDK_PATH)/%(KincDirs.Identity)/**/*.c" />
-      <ClCompile Include="$(KINC_SDK_PATH)/%(KincDirs.Identity)/**/*.cpp" />
-      <GLSLShader Include="$(KINC_SDK_PATH)/GLSLShaders/**/*.glsl" />
-    </ItemGroup>
-  </Target>
 
   <!--
      - Sanity checks

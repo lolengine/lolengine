@@ -26,7 +26,7 @@
 
   <!-- Tell the IDE how to display LolEmbed files -->
   <ItemGroup>
-    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)$(MSBuildThisFileName).xml" />
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)registry.xml" />
   </ItemGroup>
 
   <!-- Tell the rest of the build system that our targets create compile inputs -->
