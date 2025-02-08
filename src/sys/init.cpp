@@ -20,7 +20,7 @@
 #include <string> // std::string
 #include <vector> // std::vector
 
-#if _WIN32 && !_GAMING_XBOX
+#if _WIN32
 #   define WIN32_LEAN_AND_MEAN
 #   include <windows.h>
 #   undef WIN32_LEAN_AND_MEAN
@@ -140,16 +140,19 @@ void init(int argc, char *argv[],
 
     lol::audio::init();
 
-#if _WIN32 && !_GAMING_XBOX
-   // If we have no console but a debugger is attached, register a logging function
-   if (GetConsoleWindow() == 0 && IsDebuggerPresent())
-   {
-       lol::msg::set_output([](std::string const& s) -> bool
-       {
-           OutputDebugStringA(s.c_str());
-           return false;
-       });
-   }
+#if _WIN32
+    // If we have no console but a debugger is attached, register a logging function
+    if (IsDebuggerPresent())
+#if !_GAMING_XBOX
+    if (GetConsoleWindow())
+#endif
+    {
+        lol::msg::set_output([](std::string const& s) -> bool
+        {
+            OutputDebugStringA(s.c_str());
+            return false;
+        });
+    }
 #endif
 }
 
