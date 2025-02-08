@@ -9,7 +9,7 @@
 [submodule "external"]
 	path = external
 	url = https://gitea.zoy.org/lolengine/binaries
-	branch = master
+	branch = main
 	update = checkout
 
 # Some libraries we embed in the engine

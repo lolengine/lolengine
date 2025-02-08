@@ -7,7 +7,9 @@
 
     <PlatformCode Condition="'$(Platform)'=='Win32'">i686</PlatformCode>
     <PlatformCode Condition="'$(Platform)'=='x64'">x86_64</PlatformCode>
+  </PropertyGroup>
 
+  <PropertyGroup Label="UserMacros">
     <!-- imgui -->
     <ImguiDir>$(LolEngineDir)\src\3rdparty\imgui</ImguiDir>
     <ImguiIncludes>$(ImguiDir)</ImguiIncludes>
@@ -23,51 +25,10 @@
     <CppHttpDeps Condition="'$(Platform)'!='ARM64'">libssl.lib;libcrypto.lib;crypt32.lib</CppHttpDeps>
     <Win32Defines Condition="'$(Platform)'!='ARM64'">CPPHTTPLIB_OPENSSL_SUPPORT;$(Win32Defines)</Win32Defines>
 
-    <!-- GTK+ & GtkGl -->
-    <GtkDir>$(ExternalDir)\gtk-2.22.1</GtkDir>
-    <GtkGlDir>$(ExternalDir)\gtkglarea-2.0.1</GtkGlDir>
-    <GtkIncludes>$(GtkDir)\lib\glib-2.0\include;$(GtkDir)\lib\gtk-2.0\include;$(GtkDir)\include\glib-2.0;$(GtkDir)\include\gtk-2.0;$(GtkDir)\include\cairo;$(GtkDir)\include\pango-1.0;$(GtkDir)\include\gdk-pixbuf-2.0;$(GtkDir)\include\atk-1.0;$(GtkGlDir)\include</GtkIncludes>
-    <GtkLibs>$(GtkDir)\lib;$(GtkDir)\bin;$(GtkGlDir)\lib</GtkLibs>
-    <GtkDeps>gobject-2.0.lib;gthread-2.0.lib;glib-2.0.lib;gdk-win32-2.0.lib;gtk-win32-2.0.lib;gtkgl-2.0.lib</GtkDeps>
-
-    <!-- Assimp -->
-<!--
-    <AssimpDir>$(ExternalDir)\assimp-3.1.1</AssimpDir>
-    <AssimpIncludes>$(AssimpDir)\include</AssimpIncludes>
-    <AssimpLibs Condition="'$(Platform)'=='Win32'">$(AssimpDir)\lib\win32</AssimpLibs>
-    <AssimpLibs Condition="'$(Platform)'=='x64'">$(AssimpDir)\lib\x64</AssimpLibs>
-    <AssimpDeps Condition="'$(Configuration)'=='Release'">zlibstatic.lib;assimp.lib</AssimpDeps>
-    <AssimpDeps Condition="'$(Configuration)'=='Debug'">zlibstatic.lib;assimp.lib</AssimpDeps>
-    <Win32Defines>LOL_USE_ASSIMP;$(Win32Defines)</Win32Defines>
--->
-
-    <!-- libcaca -->
-    <CacaDir>$(ExternalDir)\libcaca-0.99.beta18</CacaDir>
-    <CacaIncludes>$(CacaDir)\include</CacaIncludes>
-    <CacaLibs>$(CacaDir)\lib\$(PlatformCode)-w64-mingw32</CacaLibs>
-    <CacaDeps>caca.lib</CacaDeps>
-    <Win32Defines>CACA_STATIC;$(Win32Defines)</Win32Defines>
-
     <!-- GDI+ -->
     <GdiDeps>Gdiplus.lib</GdiDeps>
     <Win32Defines>LOL_USE_GDIPLUS;$(Win32Defines)</Win32Defines>
-
-    <!-- Xinput -->
-    <XinputIncludes>$(DXSDK_DIR)\Include</XinputIncludes>
-    <XinputLibs Condition="'$(Platform)'=='Win32'">$(DXSDK_DIR)\Lib\x86</XinputLibs>
-    <XinputLibs Condition="'$(Platform)'=='x64'">$(DXSDK_DIR)\Lib\x64</XinputLibs>
-    <XinputDeps>xinput.lib</XinputDeps>
-    <Win32Defines>LOL_USE_XINPUT;$(Win32Defines)</Win32Defines>
   </PropertyGroup>
-
-  <!-- OpenGL & GLEW -->
-  <!--<PropertyGroup Condition="'$(enable_gl)'!='no'" Label="UserMacros">
-    <GlewDir>$(ExternalDir)\glew-2.1.0</GlewDir>
-    <GlIncludes>$(GlewDir)\include</GlIncludes>
-    <GlLibs>$(GlewDir)\lib\$(PlatformCode)-w64-mingw32</GlLibs>
-    <GlDeps>opengl32.lib;glew32s.lib</GlDeps>
-    <Win32Defines>HAVE_GL_2X;LOL_USE_GLEW;GLEW_STATIC;$(Win32Defines)</Win32Defines>
-  </PropertyGroup>-->
 
   <!-- SDL -->
   <PropertyGroup Condition="'$(enable_sdl)'!='no'" Label="UserMacros">
@@ -92,9 +53,5 @@
     <FfmpegDeps>swscale.lib;avformat.lib;avcodec.lib;swresample.lib;avutil.lib;ws2_32.lib;secur32.lib;bcrypt.lib</FfmpegDeps>
     <Win32Defines>LOL_USE_FFMPEG;$(Win32Defines)</Win32Defines>
   </PropertyGroup>
-
-  <PropertyGroup />
-
-  <ItemDefinitionGroup />
 
 </Project>
