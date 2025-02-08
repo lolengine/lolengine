@@ -12,6 +12,13 @@
     <_LolEnginePropsIncluded>true</_LolEnginePropsIncluded>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- GetPathOfFileAbove() does not support searching for a subpath, but GetDirectoryNameOfFileAbove() does. -->
+    <LolPlayStationDir>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), lol-playstation/msbuild/config.props))</LolPlayStationDir>
+    <LolSwitchDir>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), lol-switch/msbuild/config.props))</LolSwitchDir>
+    <LolXboxDir>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), lol-xbox/msbuild/config.props))</LolXboxDir>
+  </PropertyGroup>
+
   <!--
      - Build configuration
    -->
@@ -23,12 +30,12 @@
   <Import Project="$(LolEngineDir)msbuild/config.props" />
 
   <!-- NDA platforms -->
-  <Import Project="$(LolEngineDir)lol-switch/msbuild/config.props"
-          Condition="exists('$(LolEngineDir)lol-switch/msbuild/config.props')" />
-  <Import Project="$(LolEngineDir)lol-playstation/msbuild/config.props"
-          Condition="exists('$(LolEngineDir)lol-playstation/msbuild/config.props')" />
-  <Import Project="$(LolEngineDir)lol-xbox/msbuild/config.props"
-          Condition="exists('$(LolEngineDir)lol-xbox/msbuild/config.props')" />
+  <Import Project="$(LolSwitchDir)/lol-switch/msbuild/config.props"
+          Condition="exists('$(LolSwitchDir)/lol-switch/msbuild/config.props')" />
+  <Import Project="$(LolPlayStationDir)/lol-playstation/msbuild/config.props"
+          Condition="exists('$(LolPlayStationDir)/lol-playstation/msbuild/config.props')" />
+  <Import Project="$(LolXboxDir)/lol-xbox/msbuild/config.props"
+          Condition="exists('$(LolXboxDir)/lol-xbox/msbuild/config.props')" />
 
   <!-- Override settings with the user’s build.config file -->
   <Import Condition="exists('$(LolEngineDir)build.config')"
@@ -49,12 +56,12 @@
             Condition="exists('$(UserRootDir)Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
 
     <!-- NDA platforms -->
-    <Import Project="$(LolEngineDir)lol-switch/msbuild/vars.props"
-            Condition="exists('$(LolEngineDir)lol-switch/msbuild/vars.props')" />
-    <Import Project="$(LolEngineDir)lol-playstation/msbuild/vars.props"
-            Condition="exists('$(LolEngineDir)lol-playstation/msbuild/vars.props')" />
-    <Import Project="$(LolEngineDir)lol-xbox/msbuild/vars.props"
-            Condition="exists('$(LolEngineDir)lol-xbox/msbuild/vars.props')" />
+    <Import Project="$(LolSwitchDir)/lol-switch/msbuild/vars.props"
+            Condition="exists('$(LolSwitchDir)/lol-switch/msbuild/vars.props')" />
+    <Import Project="$(LolPlayStationDir)/lol-playstation/msbuild/vars.props"
+            Condition="exists('$(LolPlayStationDir)/lol-playstation/msbuild/vars.props')" />
+    <Import Project="$(LolXboxDir)/lol-xbox/msbuild/vars.props"
+            Condition="exists('$(LolXboxDir)/lol-xbox/msbuild/vars.props')" />
 
     <Import Project="$(LolEngineDir)msbuild/kinc/vars.props" />
     <Import Project="$(LolEngineDir)msbuild/vars.props" />
@@ -75,12 +82,12 @@
    -->
 
   <!-- NDA platforms -->
-  <Import Condition="Exists('$(LolEngineDir)lol-switch/msbuild/rules.props')"
-          Project="$(LolEngineDir)lol-switch/msbuild/rules.props" />
-  <Import Condition="Exists('$(LolEngineDir)lol-playstation/msbuild/rules.props')"
-          Project="$(LolEngineDir)lol-playstation/msbuild/rules.props" />
-  <Import Condition="Exists('$(LolEngineDir)lol-xbox/msbuild/rules.props')"
-          Project="$(LolEngineDir)lol-xbox/msbuild/rules.props" />
+  <Import Condition="Exists('$(LolSwitchDir)/lol-switch/msbuild/rules.props')"
+          Project="$(LolSwitchDir)/lol-switch/msbuild/rules.props" />
+  <Import Condition="Exists('$(LolPlayStationDir)/lol-playstation/msbuild/rules.props')"
+          Project="$(LolPlayStationDir)/lol-playstation/msbuild/rules.props" />
+  <Import Condition="Exists('$(LolXboxDir)/lol-xbox/msbuild/rules.props')"
+          Project="$(LolXboxDir)/lol-xbox/msbuild/rules.props" />
 
   <Import Project="$(LolEngineDir)msbuild/rules.props" />
 
@@ -120,23 +127,23 @@
     <Error Condition="!exists('$(KINC_SDK_PATH)/make')"
            Text="KINC_SDK_PATH is set, but '$(KINC_SDK_PATH)/make' was not found" />
 
-    <Error Condition="('$(Platform)'=='NX64' or '$(Platform)'=='NX32') and !exists('$(LolEngineDir)lol-switch')"
-           Text="platform '$(Platform)' selected, but '$(LolEngineDir)lol-switch' was not found" />
+    <Error Condition="('$(Platform)'=='NX64' or '$(Platform)'=='NX32') and !exists('$(LolSwitchDir)/lol-switch')"
+           Text="platform '$(Platform)' selected, but '$(LolSwitchDir)/lol-switch' was not found" />
 
-    <Error Condition="('$(Platform)'=='NX64' or '$(Platform)'=='NX32') and !exists('$(LolEngineDir)lol-switch/msbuild/config.props')"
-           Text="platform '$(Platform)' selected, but '$(LolEngineDir)lol-switch/msbuild/config.props' was not found" />
+    <Error Condition="('$(Platform)'=='NX64' or '$(Platform)'=='NX32') and !exists('$(LolSwitchDir)/lol-switch/msbuild/config.props')"
+           Text="platform '$(Platform)' selected, but '$(LolSwitchDir)/lol-switch/msbuild/config.props' was not found" />
 
-    <Error Condition="('$(Platform)'=='ORBIS' or '$(Platform)'=='Prospero') and !exists('$(LolEngineDir)lol-playstation')"
-           Text="platform '$(Platform)' selected, but '$(LolEngineDir)lol-playstation' was not found" />
+    <Error Condition="('$(Platform)'=='ORBIS' or '$(Platform)'=='Prospero') and !exists('$(LolPlayStationDir)/lol-playstation')"
+           Text="platform '$(Platform)' selected, but '$(LolPlayStationDir)/lol-playstation' was not found" />
 
-    <Error Condition="('$(Platform)'=='ORBIS' or '$(Platform)'=='Prospero') and !exists('$(LolEngineDir)lol-playstation/msbuild/config.props')"
-           Text="platform '$(Platform)' selected, but '$(LolEngineDir)lol-playstation/msbuild/config.props' was not found" />
+    <Error Condition="('$(Platform)'=='ORBIS' or '$(Platform)'=='Prospero') and !exists('$(LolPlayStationDir)/lol-playstation/msbuild/config.props')"
+           Text="platform '$(Platform)' selected, but '$(LolPlayStationDir)/lol-playstation/msbuild/config.props' was not found" />
 
-    <Error Condition="('$(Platform)'=='Gaming.Xbox.XboxOne.x64' or '$(Platform)'=='Gaming.Xbox.Scarlett.x64') and !exists('$(LolEngineDir)lol-xbox')"
-           Text="platform '$(Platform)' selected, but '$(LolEngineDir)lol-xbox' was not found" />
+    <Error Condition="('$(Platform)'=='Gaming.Xbox.XboxOne.x64' or '$(Platform)'=='Gaming.Xbox.Scarlett.x64') and !exists('$(LolXboxDir)/lol-xbox')"
+           Text="platform '$(Platform)' selected, but '$(LolXboxDir)/lol-xbox' was not found" />
 
-    <Error Condition="('$(Platform)'=='Gaming.Xbox.XboxOne.x64' or '$(Platform)'=='Gaming.Xbox.Scarlett.x64') and !exists('$(LolEngineDir)lol-xbox/msbuild/config.props')"
-           Text="platform '$(Platform)' selected, but '$(LolEngineDir)lol-xbox/msbuild/config.props' was not found" />
+    <Error Condition="('$(Platform)'=='Gaming.Xbox.XboxOne.x64' or '$(Platform)'=='Gaming.Xbox.Scarlett.x64') and !exists('$(LolXboxDir)/lol-xbox/msbuild/config.props')"
+           Text="platform '$(Platform)' selected, but '$(LolXboxDir)/lol-xbox/msbuild/config.props' was not found" />
 
   </Target>
 
