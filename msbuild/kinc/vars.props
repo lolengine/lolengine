@@ -8,7 +8,7 @@
 
   <PropertyGroup>
     <KincSources>
-      Sources/kinc;
+      $(KINC_SDK_PATH)/Sources/kinc;
       $(KincSources)
     </KincSources>
     <KincIncludes>
@@ -31,12 +31,12 @@
     <ShaderPlatform>windows</ShaderPlatform>
     <ShaderProfile>d3d11</ShaderProfile>
     <KincSources>
-      Backends/Audio2/WASAPI/Sources/kinc/backend;
-      Backends/Graphics4/Direct3D11/Sources/kinc/backend;
-      Backends/Graphics5/G5onG4/Sources/kinc/backend;
-      Backends/System/Microsoft/Sources/kinc/backend;
-      Backends/System/Windows/Libraries/DirectShow/BaseClasses;
-      Backends/System/Windows/Sources/kinc/backend;
+      $(KINC_SDK_PATH)/Backends/Audio2/WASAPI/Sources/kinc/backend;
+      $(KINC_SDK_PATH)/Backends/Graphics4/Direct3D11/Sources/kinc/backend;
+      $(KINC_SDK_PATH)/Backends/Graphics5/G5onG4/Sources/kinc/backend;
+      $(KINC_SDK_PATH)/Backends/System/Microsoft/Sources/kinc/backend;
+      $(KINC_SDK_PATH)/Backends/System/Windows/Libraries/DirectShow/BaseClasses;
+      $(KINC_SDK_PATH)/Backends/System/Windows/Sources/kinc/backend;
       $(KincSources)
     </KincSources>
     <KincIncludes>
@@ -64,7 +64,7 @@
 
   <PropertyGroup Condition="'$(KincUseSteamworks)'=='true' and '$(Platform)'=='x64'">
     <KincSources>
-      Backends/Service/Steam/Sources/kinc/backend;
+      $(KINC_SDK_PATH)/Backends/Service/Steam/Sources/kinc/backend;
       $(KincSources)
     </KincSources>
     <KincIncludes>

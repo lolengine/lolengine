@@ -9,8 +9,8 @@
           Condition="'$(ConfigurationType)'!='StaticLibrary' and '$(enable_kinc)'!='no'">
     <ItemGroup>
       <KincDirs Include="$(KincSources)" />
-      <ClCompile Include="$(KINC_SDK_PATH)/%(KincDirs.Identity)/**/*.c" />
-      <ClCompile Include="$(KINC_SDK_PATH)/%(KincDirs.Identity)/**/*.cpp" />
+      <ClCompile Include="%(KincDirs.Identity)/**/*.c" />
+      <ClCompile Include="%(KincDirs.Identity)/**/*.cpp" />
       <GLSLShader Include="$(KINC_SDK_PATH)/GLSLShaders/**/*.glsl" />
     </ItemGroup>
   </Target>
