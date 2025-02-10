@@ -105,6 +105,9 @@
     <Error Condition="'$(LolNdaPlatform)'!='' and !exists('$(LolNdaDirectory)/msbuild/config.props')"
            Text="NDA platform '$(Platform)' selected, but '$(LolNdaDirectory)/msbuild/config.props' was not found; is the 'lol-$(LolNdaPlatform)' repository up-to-date?" />
 
+    <Error Condition="'$(KincNdaDirectory)'!='' and !exists('$(KincNdaDirectory)/kincfile.js')"
+           Text="NDA platform '$(Platform)' selected, but '$(KincNdaDirectory)/kincfile.js' was not found; are the 'lol-$(LolNdaPlatform)' submodules up-to-date?" />
+
     <Error Condition="'$(ShaderPlatform)'==''"
            Text="No shader platform defined for '$(Platform)'; are you missing Lol Engine platform support?" />
 
