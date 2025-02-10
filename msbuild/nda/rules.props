@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <Import Project="$(LolSwitchDir)/lol-switch/msbuild/rules.props"
+          Condition="exists('$(LolSwitchDir)/lol-switch/msbuild/rules.props')" />
+
+  <Import Project="$(LolPlayStationDir)/lol-playstation/msbuild/rules.props"
+          Condition="exists('$(LolPlayStationDir)/lol-playstation/msbuild/rules.props')" />
+
+  <Import Project="$(LolXboxDir)/lol-xbox/msbuild/rules.props"
+          Condition="exists('$(LolXboxDir)/lol-xbox/msbuild/rules.props')" />
+
+</Project>
