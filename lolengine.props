@@ -21,9 +21,7 @@
 
   <!-- Set reasonable defaults for most common configuration properties -->
   <Import Project="$(LolEngineDir)msbuild/config.props" />
-
-  <!-- NDA platforms -->
-  <Import Project="$(LolEngineDir)msbuild/nda/config.props" />
+  <Import Project="$(LolEngineDir)msbuild/nda.props" />
 
   <!-- Override settings with the user’s build.config file -->
   <Import Condition="exists('$(LolEngineDir)build.config')"
@@ -43,7 +41,7 @@
     <Import Project="$(UserRootDir)Microsoft.Cpp.$(Platform).user.props"
             Condition="exists('$(UserRootDir)Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
 
-    <Import Project="$(LolEngineDir)msbuild/nda/vars.props" />
+    <Import Project="$(LolNdaDirectory)/msbuild/vars.props" Condition="'$(LolNdaDirectory)'!=''" />
     <Import Project="$(LolEngineDir)msbuild/kinc/vars.props" />
     <Import Project="$(LolEngineDir)msbuild/vars.props" />
   </ImportGroup>
@@ -62,7 +60,7 @@
      - Build rules
    -->
 
-  <Import Project="$(LolEngineDir)msbuild/nda/rules.props" />
+  <Import Project="$(LolNdaDirectory)/msbuild/rules.props" Condition="'$(LolNdaDirectory)'!=''" />
   <Import Project="$(LolEngineDir)msbuild/rules.props" />
 
   <ItemDefinitionGroup />
@@ -100,6 +98,12 @@
 
     <Error Condition="!exists('$(KINC_SDK_PATH)/make')"
            Text="KINC_SDK_PATH is set, but '$(KINC_SDK_PATH)/make' was not found; is the repository up to date?" />
+
+    <Error Condition="'$(LolNdaPlatform)'!='' and '$(LolNdaDirectory)'==''"
+           Text="NDA platform '$(Platform)' selected, but 'lol-$(LolNdaPlatform)' was not found" />
+
+    <Error Condition="'$(LolNdaPlatform)'!='' and !exists('$(LolNdaDirectory)/msbuild/config.props')"
+           Text="NDA platform '$(Platform)' selected, but '$(LolNdaDirectory)/msbuild/config.props' was not found; is the 'lol-$(LolNdaPlatform)' repository up-to-date?" />
 
     <Error Condition="'$(ShaderPlatform)'==''"
            Text="No shader platform defined for '$(Platform)'; are you missing Lol Engine platform support?" />

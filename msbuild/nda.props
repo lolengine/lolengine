@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!-- List of NDA platforms that we support and their codename -->
+  <PropertyGroup>
+    <LolNdaPlatform Condition="'$(Platform)'=='ORBIS'">playstation</LolNdaPlatform>
+    <LolNdaPlatform Condition="'$(Platform)'=='Prospero'">playstation</LolNdaPlatform>
+    <LolNdaPlatform Condition="'$(Platform)'=='NX64'">switch</LolNdaPlatform>
+    <LolNdaPlatform Condition="'$(Platform)'=='Gaming.Xbox.XboxOne.x64'">xbox</LolNdaPlatform>
+    <LolNdaPlatform Condition="'$(Platform)'=='Gaming.Xbox.Scarlett.x64'">xbox</LolNdaPlatform>
+  </PropertyGroup>
+
+  <!-- Autodetect support for NDA platforms in the parent directory hierarchy using
+     - GetDirectoryNameOfFileAbove(). It is not possible to use GetPathOfFileAbove()
+     - because it does not support subpaths. -->
+  <PropertyGroup>
+    <_Temp>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), lol-$(LolNdaPlatform)/msbuild/config.props))</_Temp>
+    <LolNdaDirectory Condition="'$(_Temp)'!=''">$(_Temp)/lol-$(LolNdaPlatform)</LolNdaDirectory>
+    <_Temp></_Temp>
+  </PropertyGroup>
+
+  <Import Project="$(LolNdaDirectory)/msbuild/config.props" Condition="'$(LolNdaDirectory)'!=''" />
+
+</Project>

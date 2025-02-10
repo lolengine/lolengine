@@ -21,4 +21,9 @@
     <Import Project="$(LolEngineDir)msbuild/kinc/shaders.targets" />
   </ImportGroup>
 
+  <!-- Re-add our sanity checks first, in case Microsoft.Cpp.targets meddled with the task priorities. -->
+  <PropertyGroup>
+    <PrepareForBuildDependsOn>LolEngineSanityChecks;$(PrepareForBuildDependsOn)</PrepareForBuildDependsOn>
+  </PropertyGroup>
+
 </Project>
