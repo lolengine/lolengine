@@ -1,7 +1,7 @@
 //
-//  Lol Engine — Window example
+//  Lol Engine — Empty example
 //
-//  Copyright © 2012–2024 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2012–2025 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -15,8 +15,8 @@
 #endif
 
 #include <cmath>
-#include <kinc/graphics4/graphics.h>
 #include <lol/engine/sys>
+#include <kinc/graphics4/graphics.h>
 
 int main(int argc, char **argv)
 {

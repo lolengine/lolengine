@@ -20,20 +20,6 @@
 	update = checkout
 	upstream = https://github.com/ocornut/imgui
 
-[submodule "bullet3"]
-	path = src/3rdparty/bullet3
-	url = https://github.com/lolengine/ext-bullet3
-	branch = lol
-	update = checkout
-	upstream = https://github.com/bulletphysics/bullet3
-
-[submodule "lua"]
-	path = src/3rdparty/lua
-	url = https://github.com/lolengine/ext-lua
-	branch = lol
-	update = checkout
-	upstream = https://github.com/lua/lua
-
 [submodule "cpp-httplib"]
 	path = src/3rdparty/cpp-httplib
 	url = https://github.com/lolengine/ext-cpp-httplib

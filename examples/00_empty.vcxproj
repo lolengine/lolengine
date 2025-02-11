@@ -1,14 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="../../lolengine.config" />
+  <Import Project="../lolengine.config" />
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C57C9F9F-8EAE-4265-A210-B0CAA717A3A0}</ProjectGuid>
     <ConfigurationType>Application</ConfigurationType>
-    <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
-  <Import Project="../../lolengine.props" />
+  <Import Project="../lolengine.props" />
   <ItemGroup>
-    <ClCompile Include="window.cpp" />
+    <ClCompile Include="00_empty.cpp" />
   </ItemGroup>
-  <Import Project="../../lolengine.targets" />
+  <Import Project="../lolengine.targets" />
 </Project>

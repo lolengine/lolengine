@@ -9,6 +9,13 @@
   </PropertyGroup>
 
   <!--
+     - Default settings for Windows
+   -->
+  <PropertyGroup Condition="$(PlatformIsWindows)">
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+
+  <!--
      - Default settings for Debug configurations
    -->
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">

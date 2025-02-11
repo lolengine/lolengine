@@ -1,56 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup Label="ProjectConfigurations">
-    <ProjectConfiguration Include="Debug|NX64">
-      <Configuration>Debug</Configuration>
-      <Platform>NX64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|ORBIS">
-      <Configuration>Debug</Configuration>
-      <Platform>ORBIS</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|Prospero">
-      <Configuration>Debug</Configuration>
-      <Platform>Prospero</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|Win32">
-      <Configuration>Debug</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Debug|x64">
-      <Configuration>Debug</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|NX64">
-      <Configuration>Release</Configuration>
-      <Platform>NX64</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|ORBIS">
-      <Configuration>Release</Configuration>
-      <Platform>ORBIS</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Prospero">
-      <Configuration>Release</Configuration>
-      <Platform>Prospero</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|Win32">
-      <Configuration>Release</Configuration>
-      <Platform>Win32</Platform>
-    </ProjectConfiguration>
-    <ProjectConfiguration Include="Release|x64">
-      <Configuration>Release</Configuration>
-      <Platform>x64</Platform>
-    </ProjectConfiguration>
-  </ItemGroup>
-  <Import Project="$(SolutionDir)lolengine.props" />
-  <Import Project="$(SolutionDir)build\msbuild\lol-bullet.props" />
-  <ItemGroup>
-    <ClCompile Include="test-common.cpp" />
-    <ClCompile Include="sys\thread.cpp" />
-  </ItemGroup>
+  <Import Project="../../lolengine.config" />
   <PropertyGroup Label="Globals">
     <ProjectGuid>{1782f849-b6e1-466d-9f02-a751f3f8712c}</ProjectGuid>
     <ConfigurationType>Application</ConfigurationType>
-    <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
+  <Import Project="../../lolengine.props" />
+  <ItemGroup>
+    <ClCompile Include="test-common.cpp" />
+    <ClCompile Include="sys/thread.cpp" />
+  </ItemGroup>
+  <Import Project="../../lolengine.targets" />
 </Project>
