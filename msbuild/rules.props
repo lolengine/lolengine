@@ -95,8 +95,12 @@
       <AdditionalLibraryDirectories>$(SdlLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalLibraryDirectories>$(CppHttpLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalLibraryDirectories>$(FfmpegLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <SubSystem Condition="'$(enable_sdl)'!='no'">Windows</SubSystem>
-      <SubSystem Condition="'$(enable_sdl)'=='no'">Console</SubSystem>
+
+      <!-- Use Windows subsystem if a GUI library is used -->
+      <SubSystem>Console</SubSystem>
+      <SubSystem Condition="'$(enable_sdl)'=='yes'">Windows</SubSystem>
+      <SubSystem Condition="'$(enable_kinc)'=='yes'">Windows</SubSystem>
+
     </Link>
     <Link Condition="'$(Configuration)'=='Release'">
       <EnableCOMDATFolding>true</EnableCOMDATFolding>

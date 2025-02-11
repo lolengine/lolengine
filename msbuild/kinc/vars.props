@@ -49,11 +49,11 @@
       $(KincIncludes)
     </KincIncludes>
     <KincDefines>
-      KINC_DIRECT3D;KINC_DIRECT3D11;KINC_G5ONG4;KINC_NO_MAIN;
+      KINC_DIRECT3D;KINC_DIRECT3D11;KINC_G5ONG4;
       $(KincDefines)
     </KincDefines>
     <KincDeps>
-      winhttp.lib;d3d11.lib;dxguid.lib;dinput8.lib;strmiids.lib;winmm.lib;wbemuuid.lib;
+      winhttp.lib;d3d11.lib;dxguid.lib;dinput8.lib;strmiids.lib;winmm.lib;wbemuuid.lib;ws2_32.lib;
       $(KincDeps)
     </KincDeps>
   </PropertyGroup>

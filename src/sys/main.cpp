@@ -11,7 +11,7 @@
 //
 
 #if LOL_USE_KINC && !KINC_NO_MAIN
-#   if defined(_GAMING_XBOX)
+#   if _WIN32
 int lol_kinc_kickstart(int, char**);
 
 extern "C" int kickstart(int argc, char** argv)
