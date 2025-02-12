@@ -32,7 +32,7 @@
           var cppfilename = Inputs.GetMetadata("CppFilename");
           var src = Inputs.GetMetadata("RelativeDir").Replace("\\", "/") + filename;
           var cppname = "lol_resource_" + Regex.Replace(src, "[^A-Za-z0-9_]", "_");
-          var flags = (Inputs.GetMetadata("Compression") == "gzip" ? 1 : 0);
+          var flags = (Inputs.GetMetadata("Compression") == "gzip" ? 0x0002 : 0x0000);
           var path = Inputs.GetMetadata("ResourcePath");
           path = string.IsNullOrEmpty(path) ? src : path;
 
