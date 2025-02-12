@@ -5,14 +5,19 @@
      - Declare shader compilation rules
    -->
 
+  <!-- Tell the IDE how to display GLSL shader files -->
   <ItemGroup>
     <PropertyPageSchema Include="$(MSBuildThisFileDirectory)glsl.xml" />
+  </ItemGroup>
+
+  <!-- Show GLSL shaders in the solution explorer -->
+  <ItemGroup>
     <AvailableItemName Include="GLSLShader">
       <Targets>GLSL</Targets>
     </AvailableItemName>
   </ItemGroup>
 
-  <Target Name="GLSL" Condition="'@(GLSLShader)'!=''" BeforeTargets="ClCompile">
+  <Target Name="GLSL" Condition="'@(GLSLShader)'!=''" BeforeTargets="LolEmbed">
     <Error Condition="'$(ShaderCompiler)'==''" Text="No shader compiler set for $(Platform)" />
     <Error Condition="'$(ShaderProfile)' ==''" Text="No shader profile set for $(Platform)" />
     <Error Condition="'$(ShaderPlatform)'==''" Text="No shader platform set for $(Platform)" />
@@ -26,6 +31,13 @@
       </GLSLShader>
     </ItemGroup>
     <CustomBuild Sources="@(GLSLShader)" MinimalRebuildFromTracking="true" TrackerLogDirectory="$(TLogLocation)" />
+  </Target>
+
+  <!-- Add generated shaders to the LolEmbed item group for embedding -->
+  <Target Name="AddGLSLToLolEmbed" Condition="'@(GLSLShader)'!=''" BeforeTargets="GatherLolStaticInitializers">
+    <ItemGroup>
+      <LolEmbed Include="$(OutDir)%(GLSLShader.Filename)" ResourcePath="%(GLSLShader.Filename)" />
+    </ItemGroup>
   </Target>
 
 </Project>

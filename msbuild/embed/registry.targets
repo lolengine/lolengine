@@ -29,6 +29,13 @@
     <PropertyPageSchema Include="$(MSBuildThisFileDirectory)registry.xml" />
   </ItemGroup>
 
+  <!-- Show LolEmbed files in the solution explorer -->
+  <ItemGroup>
+    <AvailableItemName Include="LolEmbed">
+      <Targets>LolEmbed</Targets>
+    </AvailableItemName>
+  </ItemGroup>
+
   <!-- Tell the rest of the build system that our targets create compile inputs -->
   <PropertyGroup>
     <ComputeCompileInputsTargets>LolEmbed;BuildLolEmbedRegistry;$(ComputeCompileInputsTargets)</ComputeCompileInputsTargets>
@@ -70,8 +77,11 @@
       <GeneratedFileDate Condition="exists(%(LolEmbed.CppFileName.Identity))">$([System.DateTime]::Parse('%(LolEmbed.CppFileName.ModifiedTime)').Ticks)</GeneratedFileDate>
     </PropertyGroup>
 
-    <!-- Execute the actual LolEmbed task -->
-    <LolEmbedTask Inputs="%(LolEmbed.Identity)" CppFileName="%(LolEmbed.CppFileName)" />
+    <!-- Execute the actual LolEmbed task — the Condition part is a hack to ensure
+       - that the task is executed once for each input instead of only one time on
+       - the whole list.
+     -->
+    <LolEmbedTask Inputs="@(LolEmbed)" Condition="'%(LolEmbed.Identity)'!=''" />
 
     <Message Importance="High" Text="%(LolEmbed.ExecutionDescription)" />
 
