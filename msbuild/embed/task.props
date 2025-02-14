@@ -11,6 +11,7 @@
   <!-- Use ItemDefinitionGroup to add default metadata to all LolEmbed items. -->
   <ItemDefinitionGroup>
     <LolEmbed>
+      <Compression>none</Compression>
       <CppFileName>$(IntDir)embedded\%(FileName)%(Extension).g.cpp</CppFileName>
       <ObjFileName>$(IntDir)embedded\%(FileName)%(Extension).g$(ObjectExt)</ObjFileName>
       <UpToDateCheckInput>True</UpToDateCheckInput>

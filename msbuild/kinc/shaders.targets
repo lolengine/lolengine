@@ -18,25 +18,34 @@
   </ItemGroup>
 
   <Target Name="GLSL" Condition="'@(GLSLShader)'!=''" BeforeTargets="LolEmbed">
+
+    <!-- Platform support sanity checks -->
     <Error Condition="'$(ShaderCompiler)'==''" Text="No shader compiler set for $(Platform)" />
     <Error Condition="'$(ShaderProfile)' ==''" Text="No shader profile set for $(Platform)" />
     <Error Condition="'$(ShaderPlatform)'==''" Text="No shader platform set for $(Platform)" />
+
+    <!-- Ensure target directories exist -->
+    <MakeDir Directories="$(IntDir)%(GLSLShader.Directory);$(TLogLocation)" />
+
+    <!-- Compile shaders -->
     <ItemGroup>
       <GLSLShader>
         <Command>
           @echo %(Filename)%(Extension)
-          $(ShaderCompiler) $(ShaderProfile) "%(FullPath)" "$(OutDir)%(Filename)" "$(IntDir)\." $(ShaderPlatform) --quiet
+          $(ShaderCompiler) $(ShaderProfile) "%(FullPath)" "$(IntDir)%(Directory)%(Filename)" "$(IntDir)\." $(ShaderPlatform) --quiet
         </Command>
-        <Outputs>$(OutDir)%(Filename);%(GLSLShader.Outputs)</Outputs>
+        <Outputs>$(IntDir)%(Directory)%(Filename);%(GLSLShader.Outputs)</Outputs>
       </GLSLShader>
     </ItemGroup>
     <CustomBuild Sources="@(GLSLShader)" MinimalRebuildFromTracking="true" TrackerLogDirectory="$(TLogLocation)" />
+
   </Target>
 
   <!-- Add generated shaders to the LolEmbed item group for embedding -->
   <Target Name="AddGLSLToLolEmbed" Condition="'@(GLSLShader)'!=''" BeforeTargets="GatherLolStaticInitializers">
     <ItemGroup>
-      <LolEmbed Include="$(OutDir)%(GLSLShader.Filename)" ResourcePath="%(GLSLShader.Filename)" />
+      <LolEmbed Include="$(IntDir)%(GLSLShader.Directory)%(GLSLShader.Filename)"
+                ResourcePath="%(GLSLShader.Filename)" Compression="gzip" />
     </ItemGroup>
   </Target>
 

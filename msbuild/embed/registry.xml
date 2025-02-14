@@ -5,7 +5,7 @@
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:transformCallback="Microsoft.Cpp.Dev10.ConvertPropertyCallback">
 
-  <Rule Name="LolEmbed" PageTemplate="tool" DisplayName="LolEngine Embed" Order="200">
+  <Rule Name="LolEmbed" PageTemplate="tool" DisplayName="LolEngine Embedded" Order="200">
 
     <!-- Default datasource for all properties -->
     <Rule.DataSource>
@@ -29,6 +29,6 @@
                     IsRequired="true" Switch="path" />
 
   </Rule>
-  <ItemType Name="LolEmbed" DisplayName="LolEngine Embed" />
-  <ContentType Name="LolEmbed" DisplayName="LolEngine Embed" ItemType="LolEmbed" />
+  <ItemType Name="LolEmbed" DisplayName="LolEngine Embedded" />
+  <ContentType Name="LolEmbed" DisplayName="LolEngine Embedded" ItemType="LolEmbed" />
 </ProjectSchemaDefinitions>
