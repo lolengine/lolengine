@@ -5,39 +5,7 @@
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:transformCallback="Microsoft.Cpp.Dev10.ConvertPropertyCallback">
 
-  <Rule Name="LolLocalFeatures" PageTemplate="tool" DisplayName="Engine Features" Order="1" SwitchPrefix="">
-
-    <Rule.DataSource>
-      <DataSource Persistence="UserFile" ItemType="" Label="LolFeatures" HasConfigurationCondition="false" />
-    </Rule.DataSource>
-
-    <Rule.Categories>
-      <Category Name="General" DisplayName="General"/>
-      <Category Name="Kinc" DisplayName="Kinc"/>
-    </Rule.Categories>
-
-    <!-- BUGFIX: With Visual Studio 2017 we need to have at least one property with a configuration condition otherwise our
-         property page will not show up -->
-    <StringProperty Name="_Dummy" Visible="false">
-      <StringProperty.DataSource>
-        <DataSource Persistence="ProjectFile" ItemType="LolFeatures" Label="Workaround" HasConfigurationCondition="true"/>
-      </StringProperty.DataSource>
-    </StringProperty>
-
-    <StringProperty Name="BuildFeaturesOutputDir"
-                    DisplayName="Output Directory"
-                    Description="Directory where generated files are created."
-                    Subtype="folder"
-                    Category="General"
-                    Switch="- -output-dir">
-      <StringProperty.DataSource>
-        <DataSource Persistence="UserFile" ItemType="" Label="LolFeatures" HasConfigurationCondition="false" />
-      </StringProperty.DataSource>
-    </StringProperty>
-
-  </Rule>
-
-  <Rule Name="LolProjectFeatures" PageTemplate="tool" DisplayName="Engine Features" Order="1" SwitchPrefix="">
+  <Rule Name="LolEngineFeatures" PageTemplate="Generic" DisplayName="Engine Features" Order="1" SwitchPrefix="">
 
     <Rule.DataSource>
       <DataSource Persistence="ProjectFile" ItemType="" Label="Globals" HasConfigurationCondition="false" />
@@ -53,6 +21,20 @@
     <StringProperty Name="_Dummy" Visible="false">
       <StringProperty.DataSource>
         <DataSource Persistence="ProjectFile" ItemType="LolFeatures" Label="Workaround" HasConfigurationCondition="true"/>
+      </StringProperty.DataSource>
+    </StringProperty>
+
+    <!--
+       - Local settings
+     -->
+    <StringProperty Name="BuildFeaturesOutputDir"
+                    DisplayName="Output Directory"
+                    Description="Directory where generated files are created."
+                    Subtype="folder"
+                    Category="General"
+                    Switch="- -output-dir">
+      <StringProperty.DataSource>
+        <DataSource Persistence="UserFile" ItemType="" Label="LolFeatures" HasConfigurationCondition="false" />
       </StringProperty.DataSource>
     </StringProperty>
 
