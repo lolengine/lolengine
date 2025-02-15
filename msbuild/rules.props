@@ -13,32 +13,42 @@
     <ObjectExt Condition="'$(ObjectExt)'==''">.obj</ObjectExt>
   </PropertyGroup>
 
-  <!-- The linker flag to export a symbol and force it to be pulled from a static
-     - library even if it is not referenced in the code.
+
+  <!--
+     - Set fallbacks for undefined properties
    -->
+
   <PropertyGroup>
+    <LolPackageVersion Condition="'$(LolPackageVersion)'==''">0.0</LolPackageVersion>
+
+    <!-- The linker flag to export a symbol and force it to be pulled from a static
+       - library even if it is not referenced in the code. -->
     <ExportSymbolLinkerFlag Condition="'$(ExportSymbolLinkerFlag)'==''">/EXPORT:</ExportSymbolLinkerFlag>
   </PropertyGroup>
 
+
+  <!--
+     - Set item definitions: macros, compiler and linker flags, etc.
+   -->
+
   <ItemDefinitionGroup>
+
     <ClCompile>
+      <!-- Set a reasonably high warning level -->
+      <WarningLevel>Level3</WarningLevel>
+
       <!-- Protect against source files in different directories having the same name.
          - FIXME: we would like to use $(IntDir)%(RelativeDir) here but this is subject
          - to directory escaping if ClCompile items are outside the project directory,
          - e.g. with Kinc, or even LolEmbed items. -->
       <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
-    </ClCompile>
-  </ItemDefinitionGroup>
-
-  <ItemDefinitionGroup>
-    <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
 
       <!-- Use latest version of the C++ draft -->
       <LanguageStandard>stdcpplatest</LanguageStandard>
 
-      <!-- Always multiprocessor, never minimal rebuild -->
+      <!-- Always multiprocessor, always generate debug info, never minimal rebuild -->
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
       <MinimalRebuild>false</MinimalRebuild>
 
       <AdditionalIncludeDirectories>
@@ -46,8 +56,7 @@
           $(LolEngineDir)\src\include;
           $(PegtlIncludes);
           $(ImguiIncludes);
-          $(BtPhysIncludes);
-          $(GlIncludes);
+          %(AdditionalIncludeDirectories)
       </AdditionalIncludeDirectories>
 
       <AdditionalIncludeDirectories Condition="$(PlatformIsWindows)">
@@ -58,38 +67,47 @@
       </AdditionalIncludeDirectories>
 
       <PreprocessorDefinitions>
-          _CRT_SECURE_NO_WARNINGS;
-          B3_USE_CLEW;
+          PACKAGE_VERSION="$(LolPackageVersion)";
           LUA_ANSI;
           %(PreprocessorDefinitions)
       </PreprocessorDefinitions>
 
+      <!-- Debug, release, etc. macros -->
+      <PreprocessorDefinitions Condition="'$(Configuration)'=='Debug'">_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions Condition="'$(Configuration)'=='Release'">NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+
       <!-- Trim trailing backslashes and escape them for C++ -->
       <PreprocessorDefinitions>LOL_CONFIG_PROJECTDIR="$(ProjectDir.Trim('\').Replace('\','/'))";%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessorDefinitions>LOL_CONFIG_SOLUTIONDIR="$(SolutionDir.Trim('\').Replace('\','/'))";%(PreprocessorDefinitions)</PreprocessorDefinitions>
-
-      <PreprocessorDefinitions Condition="$(PlatformIsWindows)">WIN32;$(Win32Defines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
 
     <ClCompile Condition="'$(Configuration)'=='Debug'">
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <Optimization>Disabled</Optimization>
-      <RuntimeLibrary Condition="$(PlatformIsWindows)">MultiThreadedDebugDLL</RuntimeLibrary>
-      <PreprocessorDefinitions>_DEBUG;LOL_BUILD_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
+
     <ClCompile Condition="'$(Configuration)'=='Release'">
-      <GenerateDebugInformation>true</GenerateDebugInformation>
       <!-- For Microsoft tools -->
       <Optimization>MaxSpeed</Optimization>
-
-      <RuntimeLibrary Condition="$(PlatformIsWindows)">MultiThreadedDLL</RuntimeLibrary>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
-      <PreprocessorDefinitions>NDEBUG;LOL_BUILD_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
 
-    <Link Condition="$(PlatformIsWindows)">
+    <Link Condition="'$(Configuration)'=='Release'">
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+
+
+  <ItemDefinitionGroup Condition="$(PlatformIsWindows)">
+    <ClCompile>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;$(Win32Defines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary Condition="'$(Configuration)'=='Debug'">MultiThreadedDebugDLL</RuntimeLibrary>
+      <RuntimeLibrary Condition="'$(Configuration)'=='Release'">MultiThreadedDLL</RuntimeLibrary>
+    </ClCompile>
+
+    <Link>
       <!-- FIXME: not for the static library! -->
       <AdditionalDependencies>kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;$(SdlDeps);$(FfmpegDeps);$(GdiDeps);$(CppHttpDeps);%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(SdlLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -100,11 +118,6 @@
       <SubSystem>Console</SubSystem>
       <SubSystem Condition="'$(enable_sdl)'=='yes'">Windows</SubSystem>
       <SubSystem Condition="'$(enable_kinc)'=='yes'">Windows</SubSystem>
-
-    </Link>
-    <Link Condition="'$(Configuration)'=='Release'">
-      <EnableCOMDATFolding>true</EnableCOMDATFolding>
-      <OptimizeReferences>true</OptimizeReferences>
     </Link>
   </ItemDefinitionGroup>
 
