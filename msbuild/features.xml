@@ -28,7 +28,7 @@
        - Global settings
      -->
     <StringProperty Name="LolPackageVersion" DisplayName="Package Version" Category="General"
-                    Description="The current version of the package" \>
+                    Description="The current version of the package" />
 
     <!--
        - Local settings
