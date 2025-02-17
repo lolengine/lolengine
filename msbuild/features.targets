@@ -7,8 +7,6 @@
 
   <ItemGroup>
     <PropertyPageSchema Include="$(MSBuildThisFileDirectory)features.xml" Context="Project" />
-    <PropertyPageSchema Include="$(LolNdaDirectory)/msbuild/features.xml" Context="Project"
-                        Condition="'$(LolNdaDirectory)'!='' and exists('$(LolNdaDirectory)/msbuild/features.xml')" />
   </ItemGroup>
 
 </Project>

@@ -41,7 +41,9 @@
     <Import Project="$(UserRootDir)Microsoft.Cpp.$(Platform).user.props"
             Condition="exists('$(UserRootDir)Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
 
-    <Import Project="$(LolNdaDirectory)/msbuild/vars.props" Condition="'$(LolNdaDirectory)'!=''" />
+    <Import Project="$(LolNdaDirectory)/msbuild/vars.props"
+            Condition="'$(LolNdaDirectory)'!='' and exists('$(LolNdaDirectory)/msbuild/vars.props')" />
+
     <Import Project="$(LolEngineDir)msbuild/kinc/vars.props" />
     <Import Project="$(LolEngineDir)msbuild/vars.props" />
   </ImportGroup>
@@ -60,7 +62,8 @@
      - Build rules
    -->
 
-  <Import Project="$(LolNdaDirectory)/msbuild/rules.props" Condition="'$(LolNdaDirectory)'!=''" />
+  <Import Project="$(LolNdaDirectory)/msbuild/rules.props"
+          Condition="'$(LolNdaDirectory)'!='' and exists('$(LolNdaDirectory)/msbuild/rules.props')" />
   <Import Project="$(LolEngineDir)msbuild/rules.props" />
 
   <ItemDefinitionGroup />
