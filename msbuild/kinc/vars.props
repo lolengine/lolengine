@@ -62,7 +62,7 @@
      - Kinc Steamworks support
    -->
 
-  <PropertyGroup Condition="'$(KincUseSteamworks)'=='true' and '$(Platform)'=='x64'">
+  <PropertyGroup Condition="'$(LolSteamSupport)'=='true' and '$(Platform)'=='x64'">
     <KincSources>
       $(KINC_SDK_PATH)/Backends/Service/Steam/Sources/kinc/backend;
       $(KincSources)
@@ -73,7 +73,7 @@
       $(KincIncludes)
     </KincIncludes>
     <KincDefines>
-      KINC_USE_STEAM;STEAMAPPID=$(KincSteamAppId);
+      KINC_USE_STEAM;STEAMAPPID=$(LolSteamAppId);
       $(KincDefines)
     </KincDefines>
     <KincDeps>

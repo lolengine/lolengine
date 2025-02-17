@@ -5,7 +5,7 @@
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:transformCallback="Microsoft.Cpp.Dev10.ConvertPropertyCallback">
 
-  <Rule Name="LolEngineFeatures" PageTemplate="Generic" DisplayName="Engine Features" Order="1" SwitchPrefix="">
+  <Rule Name="LolEngineFeatures" PageTemplate="tool" DisplayName="Lol Engine" Order="1" SwitchPrefix="">
 
     <Rule.DataSource>
       <DataSource Persistence="ProjectFile" ItemType="" Label="Globals" HasConfigurationCondition="false" />
@@ -14,6 +14,8 @@
     <Rule.Categories>
       <Category Name="General" DisplayName="General"/>
       <Category Name="Kinc" DisplayName="Kinc"/>
+      <Category Name="Steam" DisplayName="Steam Platform"/>
+      <Category Name="Itch" DisplayName="Itch.io Platform"/>
     </Rule.Categories>
 
     <!-- BUGFIX: With Visual Studio 2017 we need to have at least one property with a configuration condition otherwise our
@@ -45,7 +47,7 @@
     </StringProperty>
 
     <!--
-       - Backends
+       - Kinc Backends
      -->
 
     <!-- Audio backend (-a flag for kmake) -->
@@ -90,14 +92,27 @@
      -->
 
     <!-- Steamworks support -->
-    <BoolProperty Name="KincUseSteamworks" DisplayName="Use Steamworks SDK" Description="Enable Steamworks support (Windows and Linux only)"
-                  Default="false" Category="Kinc">
-    </BoolProperty>
+    <BoolProperty Name="LolSteamSupport" DisplayName="Target Steam" Description="Enable Steamworks support (Windows and Linux only)"
+                  Default="false" Category="Steam" />
 
-    <StringProperty Name="KincSteamAppId" DisplayName="Steam App ID" Description="Steam App ID"
-                    Default="" Category="Kinc">
-    </StringProperty>
+    <StringProperty Name="LolSteamAppId" DisplayName="Steam Application Id" Description="Steam Application ID"
+                    Default="" Category="Steam" />
 
+    <StringProperty Name="LolSteamDepotId" DisplayName="Steam Depot Id" Description="Steam Depot ID"
+                    Default="" Category="Steam" />
+
+    <!--
+       - Itch.io
+     -->
+
+    <BoolProperty Name="LolItchSupport" DisplayName="Target Itch.io" Description="Build a package for the Itch.io platform (Windows and Linux only)"
+                  Default="false" Category="Itch" />
+
+    <StringProperty Name="LolItchAppId" DisplayName="Itch.io Application Id" Description="Itch.io Application Id"
+                    Default="" Category="Itch" />
+
+    <StringProperty Name="LolItchVersion" DisplayName="Itch.io Version" Description="Itch.io Version"
+                    Default="" Category="Itch" />
   </Rule>
 
 </ProjectSchemaDefinitions>
