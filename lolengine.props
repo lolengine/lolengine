@@ -115,6 +115,9 @@
     <Error Condition="'$(LolNdaPlatform)'!='' and !exists('$(LolNdaDirectory)/msbuild/config.props')"
            Text="NDA platform '$(Platform)' selected, but '$(LolNdaDirectory)/msbuild/config.props' was not found; is the 'lol-$(LolNdaPlatform)' repository up-to-date?" />
 
+    <Error Condition="'$(LolNdaPlatform)'!='' and '$(KoreNdaDirectory)'==''"
+           Text="NDA platform '$(Platform)' selected, but '$(LolNdaDirectory)/msbuild/config.props' did not define %24(KoreNdaDirectory); is the 'lol-$(LolNdaPlatform)' repository up-to-date?" />
+
     <Error Condition="'$(KoreNdaDirectory)'!='' and !exists('$(KoreNdaDirectory)/kincfile.js')"
            Text="NDA platform '$(Platform)' selected, but '$(KoreNdaDirectory)/kincfile.js' was not found; are the 'lol-$(LolNdaPlatform)' submodules up-to-date?" />
 
