@@ -1,7 +1,7 @@
 //
 //  Lol Engine
 //
-//  Copyright © 2010–2024 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010–2025 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -121,7 +121,7 @@ void init(int argc, char *argv[],
                    data_dir[i].generic_string().c_str());
 #endif
 
-#if LOL_USE_KINC
+#if LOL_USE_KORE
     kinc_init(name.c_str(), width, height, nullptr, nullptr);
 
     // Call all the registered callbacks and remove the ones that return false
@@ -163,7 +163,7 @@ void add_callback(std::function<bool()> fn)
 
 void run()
 {
-#if LOL_USE_KINC
+#if LOL_USE_KORE
     kinc_start();
 #endif
 
@@ -172,7 +172,7 @@ void run()
 
 void stop()
 {
-#if LOL_USE_KINC
+#if LOL_USE_KORE
     kinc_stop();
 #endif
 }

@@ -17,8 +17,8 @@
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(LolEngineDir)msbuild/embed/registry.targets" />
     <Import Project="$(LolEngineDir)msbuild/features.targets" />
-    <Import Project="$(LolEngineDir)msbuild/kinc/code.targets" />
-    <Import Project="$(LolEngineDir)msbuild/kinc/shaders.targets" />
+    <Import Project="$(LolEngineDir)msbuild/kore/code.targets" />
+    <Import Project="$(LolEngineDir)msbuild/kore/shaders.targets" />
     <Import Project="$(LolNdaDirectory)/msbuild/platform.targets"
             Condition="'$(LolNdaDirectory)'!='' and exists('$(LolNdaDirectory)/msbuild/platform.targets')" />
   </ImportGroup>

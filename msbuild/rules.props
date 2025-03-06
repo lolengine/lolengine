@@ -40,7 +40,7 @@
       <!-- Protect against source files in different directories having the same name.
          - FIXME: we would like to use $(IntDir)%(RelativeDir) here but this is subject
          - to directory escaping if ClCompile items are outside the project directory,
-         - e.g. with Kinc, or even LolEmbed items. -->
+         - e.g. with Kore, or even LolEmbed items. -->
       <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
 
       <!-- Use latest version of the C++ draft -->
@@ -121,21 +121,21 @@
       <!-- Use Windows subsystem if a GUI library is used -->
       <SubSystem>Console</SubSystem>
       <SubSystem Condition="'$(enable_sdl)'=='yes'">Windows</SubSystem>
-      <SubSystem Condition="'$(enable_kinc)'=='yes'">Windows</SubSystem>
+      <SubSystem Condition="'$(enable_kore)'=='yes'">Windows</SubSystem>
     </Link>
   </ItemDefinitionGroup>
 
   <!--
-     - Compile and link with Kinc if enabled
+     - Compile and link with Kore if enabled
    -->
-  <ItemDefinitionGroup Condition="'$(enable_kinc)'!='no'">
+  <ItemDefinitionGroup Condition="'$(enable_kore)'!='no'">
     <ClCompile>
-      <AdditionalIncludeDirectories>$(KincIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>$(KincDefines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(KoreIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>$(KoreDefines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalLibraryDirectories>$(KincLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(KincDeps);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(KoreLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>$(KoreDeps);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
 

@@ -1,0 +1,94 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ImportGroup Label="PropertySheets" />
+
+  <!--
+     - Define Kore main directory
+   -->
+
+  <PropertyGroup>
+    <KoreDirectory Condition="'$(KoreDirectory)'==''">$(KORE_SDK_PATH)</KoreDirectory>
+    <KoreDirectory Condition="'$(KoreDirectory)'==''">$(KINC_SDK_PATH)</KoreDirectory>
+  </PropertyGroup>
+
+  <!--
+     - Common Kore variables
+   -->
+
+  <PropertyGroup>
+    <KoreSources>
+      $(KoreDirectory)/Sources/kinc;
+      $(KoreSources)
+    </KoreSources>
+    <KoreIncludes>
+      $(KoreDirectory)/Sources;
+      $(KoreIncludes)
+    </KoreIncludes>
+    <KoreDefines>
+      LOL_USE_KORE;
+      KINC_G1;KINC_G2;KINC_G3;KINC_A1;KINC_A2;KINC_LZ4X;KINC_G4;KINC_G5;
+      $(KoreDefines)
+    </KoreDefines>
+  </PropertyGroup>
+
+  <!--
+     - Kore variables for the Windows platform
+   -->
+
+  <PropertyGroup Condition="$(PlatformIsWindows)">
+    <ShaderCompiler>$(KoreDirectory)/Tools/windows_x64/krafix.exe</ShaderCompiler>
+    <ShaderPlatform>windows</ShaderPlatform>
+    <ShaderProfile>d3d11</ShaderProfile>
+    <KoreSources>
+      $(KoreDirectory)/Backends/Audio2/WASAPI/Sources/kinc/backend;
+      $(KoreDirectory)/Backends/Graphics4/Direct3D11/Sources/kinc/backend;
+      $(KoreDirectory)/Backends/Graphics5/G5onG4/Sources/kinc/backend;
+      $(KoreDirectory)/Backends/System/Microsoft/Sources/kinc/backend;
+      $(KoreDirectory)/Backends/System/Windows/Libraries/DirectShow/BaseClasses;
+      $(KoreDirectory)/Backends/System/Windows/Sources/kinc/backend;
+      $(KoreSources)
+    </KoreSources>
+    <KoreIncludes>
+      $(KoreDirectory)/Backends/Audio2/WASAPI/Sources;
+      $(KoreDirectory)/Backends/Graphics4/Direct3D11/Sources;
+      $(KoreDirectory)/Backends/Graphics5/G5onG4/Sources;
+      $(KoreDirectory)/Backends/System/Microsoft/Sources;
+      $(KoreDirectory)/Backends/System/Windows/Libraries/DirectShow/BaseClasses;
+      $(KoreDirectory)/Backends/System/Windows/Sources;
+      $(KoreIncludes)
+    </KoreIncludes>
+    <KoreDefines>
+      KINC_DIRECT3D;KINC_DIRECT3D11;KINC_G5ONG4;
+      $(KoreDefines)
+    </KoreDefines>
+    <KoreDeps>
+      winhttp.lib;d3d11.lib;dxguid.lib;dinput8.lib;strmiids.lib;winmm.lib;wbemuuid.lib;ws2_32.lib;
+      $(KoreDeps)
+    </KoreDeps>
+  </PropertyGroup>
+
+  <!--
+     - Kore Steamworks support
+   -->
+
+  <PropertyGroup Condition="'$(LolSteamSupport)'=='true' and '$(Platform)'=='x64'">
+    <KoreSources>
+      $(KoreDirectory)/Backends/Service/Steam/Sources/kinc/backend;
+      $(KoreSources)
+    </KoreSources>
+    <KoreIncludes>
+      $(KoreDirectory)/Backends/Service/Steam/Sources;
+      $(STEAM_SDK_PATH)/public;
+      $(KoreIncludes)
+    </KoreIncludes>
+    <KoreDefines>
+      KINC_USE_STEAM;STEAMAPPID=$(LolSteamAppId);
+      $(KoreDefines)
+    </KoreDefines>
+    <KoreDeps>
+      $(STEAM_SDK_PATH)/redistributable_bin/win64/steam_api64.lib;
+      $(KoreDeps)
+    </KoreDeps>
+  </PropertyGroup>
+
+</Project>

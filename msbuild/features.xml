@@ -13,7 +13,7 @@
 
     <Rule.Categories>
       <Category Name="General" DisplayName="General"/>
-      <Category Name="Kinc" DisplayName="Kinc"/>
+      <Category Name="Kore" DisplayName="Kore"/>
       <Category Name="Steam" DisplayName="Steam Platform"/>
       <Category Name="Itch" DisplayName="Itch.io Platform"/>
     </Rule.Categories>
@@ -47,12 +47,12 @@
     </StringProperty>
 
     <!--
-       - Kinc Backends
+       - Kore Backends
      -->
 
     <!-- Audio backend (-a flag for kmake) -->
-    <EnumProperty Name="KincAudio" DisplayName="Audio Backend" Description="Choose the audio API to use"
-                  Default="default" Category="Kinc">
+    <EnumProperty Name="KoreAudio" DisplayName="Audio Backend" Description="Choose the audio API to use"
+                  Default="default" Category="Kore">
       <EnumValue Name="default" DisplayName="Default" />
       <EnumValue Name="directsound" DisplayName="DirectSound (Windows only)" />
       <EnumValue Name="wasapi" DisplayName="WASAPI (Windows only)" />
@@ -62,8 +62,8 @@
     </EnumProperty>
 
     <!-- Graphics backend (-g flag for kmake) -->
-    <EnumProperty Name="KincGraphics" DisplayName="Graphics Backend" Description="Choose the graphics API to use"
-                  Default="default" Category="Kinc">
+    <EnumProperty Name="KoreGraphics" DisplayName="Graphics Backend" Description="Choose the graphics API to use"
+                  Default="default" Category="Kore">
       <EnumValue Name="default" DisplayName="Default" />
       <EnumValue Name="direct3d9" DisplayName="Direct3D 9 (Windows only)" />
       <EnumValue Name="direct3d11" DisplayName="Direct3D 11 (Windows only)" />
@@ -77,8 +77,8 @@
     </EnumProperty>
 
     <!-- VR API (- -vr flag for kmake) -->
-    <EnumProperty Name="KincVR" DisplayName="VR Device" Description="Choose the VR device API to use"
-                  Default="none" Category="Kinc">
+    <EnumProperty Name="KoreVR" DisplayName="VR Device" Description="Choose the VR device API to use"
+                  Default="none" Category="Kore">
       <EnumValue Name="none" DisplayName="None (default)" />
       <EnumValue Name="oculus" DisplayName="Oculus" />
       <EnumValue Name="steamvr" DisplayName="Steam VR" />

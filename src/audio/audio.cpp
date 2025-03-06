@@ -1,7 +1,7 @@
 ﻿//
 //  Lol Engine
 //
-//  Copyright © 2010–2024 Sam Hocevar <sam@hocevar.net>
+//  Copyright © 2010–2025 Sam Hocevar <sam@hocevar.net>
 //
 //  Lol Engine is free software. It comes without any warranty, to
 //  the extent permitted by applicable law. You can redistribute it
@@ -18,7 +18,7 @@
 #include <mutex>
 #include <unordered_map>
 
-#if LOL_USE_KINC
+#if LOL_USE_KORE
 #   include <kinc/audio2/audio.h>
 #endif
 
@@ -35,7 +35,7 @@ void init()
 {
     g_mixer = std::make_shared<mixer<float>>(2, 48000);
 
-#if LOL_USE_KINC
+#if LOL_USE_KORE
     kinc_a2_init();
     kinc_a2_set_callback([](kinc_a2_buffer_t* buffer, uint32_t samples, void* userdata)
     {
@@ -63,7 +63,7 @@ void init()
 
 void shutdown()
 {
-#if LOL_USE_KINC
+#if LOL_USE_KORE
     kinc_a2_set_callback(nullptr, nullptr);
 #endif
 }

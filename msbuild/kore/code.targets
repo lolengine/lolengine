@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!--
+     - Automatically build Kore with the target application if enabled
+   -->
+
+  <Target Name="KoreCompile" AfterTargets="BuildGenerateSources"
+          Condition="'$(ConfigurationType)'!='StaticLibrary' and '$(enable_kore)'!='no'">
+    <ItemGroup>
+      <KoreDirs Include="$(KoreSources)" />
+      <ClCompile Include="%(KoreDirs.Identity)/**/*.c" />
+      <ClCompile Include="%(KoreDirs.Identity)/**/*.cpp" />
+      <GLSLShader Include="$(KoreDirectory)/GLSLShaders/**/*.glsl" />
+    </ItemGroup>
+  </Target>
+
+  <!-- Steam AppId support (FIXME: should be somewhere else) -->
+  <Target Name="KoreCopy" AfterTargets="AfterBuild" Condition="'$(LolSteamSupport)'=='true' and '$(Platform)'=='x64'">
+    <Copy SourceFiles="$(STEAM_SDK_PATH)\redistributable_bin\win64\steam_api64.dll" DestinationFolder="$(OutDir)" ContinueOnError="true" />
+    <WriteLinesToFile File="$(OutDir)steam_appid.txt" Lines="$(LolSteamAppId)" Overwrite="True"/>
+  </Target>
+
+</Project>
