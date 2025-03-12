@@ -26,3 +26,6 @@
 	branch = master
 	update = checkout
 	upstream = https://github.com/yhirose/cpp-httplib
+[submodule "qoa"]
+	path = src/3rdparty/qoa
+	url = https://github.com/phoboslab/qoa

@@ -13,6 +13,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="audio/audio.cpp" />
+    <ClCompile Include="audio/qoa-impl.c" />
+    <ClCompile Include="audio/qoa.cpp" />
     <ClCompile Include="net/http.cpp" />
     <ClCompile Include="sys/init.cpp" />
     <ClCompile Include="sys/main.cpp" />
@@ -25,6 +27,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include/lol/engine/private/audio/audio.h" />
+    <ClInclude Include="include/lol/engine/private/audio/qoa.h" />
     <ClInclude Include="include/lol/engine/private/net/http.h" />
     <ClInclude Include="include/lol/engine/private/sys/init.h" />
     <ClInclude Include="include/lol/engine/private/sys/registry.ipp" />
