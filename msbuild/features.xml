@@ -12,17 +12,16 @@
     </Rule.DataSource>
 
     <Rule.Categories>
-      <Category Name="General" DisplayName="General"/>
-      <Category Name="Kore" DisplayName="Kore"/>
-      <Category Name="Steam" DisplayName="Steam Platform"/>
-      <Category Name="Itch" DisplayName="Itch.io Platform"/>
+      <Category Name="General" DisplayName="General" />
+      <Category Name="Kore" DisplayName="Kore" />
+      <Category Name="Publishing" DisplayName="Publishing" />
     </Rule.Categories>
 
     <!-- BUGFIX: With Visual Studio 2017 we need to have at least one property with a configuration condition otherwise our
          property page will not show up -->
     <StringProperty Name="_Dummy" Visible="false">
       <StringProperty.DataSource>
-        <DataSource Persistence="ProjectFile" ItemType="LolFeatures" Label="Workaround" HasConfigurationCondition="true"/>
+        <DataSource Persistence="ProjectFile" ItemType="" Label="Workaround" HasConfigurationCondition="true" />
       </StringProperty.DataSource>
     </StringProperty>
 
@@ -87,32 +86,6 @@
       </EnumProperty.DataSource>
     </EnumProperty>
 
-    <!--
-       - Steamworks
-     -->
-
-    <!-- Steamworks support -->
-    <BoolProperty Name="LolSteamSupport" DisplayName="Target Steam" Description="Enable Steamworks support (Windows and Linux only)"
-                  Default="false" Category="Steam" />
-
-    <StringProperty Name="LolSteamAppId" DisplayName="Steam Application Id" Description="Steam Application ID"
-                    Default="" Category="Steam" />
-
-    <StringProperty Name="LolSteamDepotId" DisplayName="Steam Depot Id" Description="Steam Depot ID"
-                    Default="" Category="Steam" />
-
-    <!--
-       - Itch.io
-     -->
-
-    <BoolProperty Name="LolItchSupport" DisplayName="Target Itch.io" Description="Build a package for the Itch.io platform (Windows and Linux only)"
-                  Default="false" Category="Itch" />
-
-    <StringProperty Name="LolItchAppId" DisplayName="Itch.io Application Id" Description="Itch.io Application Id"
-                    Default="" Category="Itch" />
-
-    <StringProperty Name="LolItchVersion" DisplayName="Itch.io Version" Description="Itch.io Version"
-                    Default="" Category="Itch" />
   </Rule>
 
 </ProjectSchemaDefinitions>

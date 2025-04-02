@@ -9,4 +9,13 @@
     <PropertyPageSchema Include="$(MSBuildThisFileDirectory)features.xml" Context="Project" />
   </ItemGroup>
 
+  <ItemGroup Condition="$(PlatformIsWindows)">
+
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)features-windows.xml" Context="Project" />
+
+    <PropertyPageSchema Include="$(MSBuildThisFileDirectory)features-$(LolWindowsPublishingPlatform).xml" Context="Project"
+                        Condition="exists('$(MSBuildThisFileDirectory)features-$(LolWindowsPublishingPlatform).xml')" />
+
+  </ItemGroup>
+
 </Project>

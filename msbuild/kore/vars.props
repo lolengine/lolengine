@@ -71,7 +71,7 @@
      - Kore Steamworks support
    -->
 
-  <PropertyGroup Condition="'$(LolSteamSupport)'=='true' and '$(Platform)'=='x64'">
+  <PropertyGroup Condition="'$(LolWindowsPublishingPlatform)'=='steam' and '$(Platform)'=='x64'">
     <KoreSources>
       $(KoreDirectory)/Backends/Service/Steam/Sources/kinc/backend;
       $(KoreSources)

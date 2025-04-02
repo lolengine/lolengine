@@ -30,6 +30,15 @@
     <Win32Defines>LOL_USE_GDIPLUS;$(Win32Defines)</Win32Defines>
   </PropertyGroup>
 
+  <!-- GDK for Windows Store apps.
+     - https://learn.microsoft.com/fr-fr/gaming/gdk/_content/gc/tools-pc/visualstudio/gr-vs-templates
+   -->
+  <PropertyGroup Condition="'$(LolWindowsPublishingPlatform)'=='msstore' and '$(Platform)'=='x64'">
+    <ExecutablePath>$(GameDK)bin;$(ExecutablePath)</ExecutablePath>
+    <IncludePath>$(GDKPCEditionPath)GameKit\Include;$(Console_SdkIncludeRoot);$(IncludePath);</IncludePath>
+    <LibraryPath>$(GDKPCEditionPath)GameKit\lib\amd64;$(Console_SdkLibPath);$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+
   <!-- SDL -->
   <PropertyGroup Condition="'$(enable_sdl)'!='no'" Label="UserMacros">
     <SdlDir>$(ExternalDir)\sdl-2.0.9</SdlDir>

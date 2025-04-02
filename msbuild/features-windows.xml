@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ProjectSchemaDefinitions
+    xmlns="clr-namespace:Microsoft.Build.Framework.XamlTypes;assembly=Microsoft.Build.Framework"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:transformCallback="Microsoft.Cpp.Dev10.ConvertPropertyCallback">
+
+  <Rule Name="LolEngineFeatures" OverrideMode="Extend">
+
+    <!--
+       - Packaging and Publishing
+     -->
+
+    <!-- Publishing platform (not saved to .vcxproj) -->
+    <EnumProperty Name="LolWindowsPublishingPlatform" DisplayName="Publishing Platform" Description="The target platform to publish to"
+                  Default="none" Category="General">
+      <EnumValue Name="none" DisplayName="None" />
+      <EnumValue Name="itchio" DisplayName="Itch.io" />
+      <EnumValue Name="msstore" DisplayName="Microsoft Store" />
+      <EnumValue Name="steam" DisplayName="Steamworks" />
+      <EnumProperty.DataSource>
+        <DataSource Persistence="UserFile" ItemType="" Label="LolFeatures" HasConfigurationCondition="false" />
+      </EnumProperty.DataSource>
+    </EnumProperty>
+
+  </Rule>
+
+</ProjectSchemaDefinitions>

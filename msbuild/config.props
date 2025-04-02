@@ -13,6 +13,7 @@
    -->
   <PropertyGroup Condition="$(PlatformIsWindows)">
     <Keyword>Win32Proj</Keyword>
+    <GDKPCEditionPath>$(GRDKLatest)</GDKPCEditionPath>
   </PropertyGroup>
 
   <!--

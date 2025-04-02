@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ProjectSchemaDefinitions
+    xmlns="clr-namespace:Microsoft.Build.Framework.XamlTypes;assembly=Microsoft.Build.Framework"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:transformCallback="Microsoft.Cpp.Dev10.ConvertPropertyCallback">
+
+  <Rule Name="LolEngineFeatures" OverrideMode="Extend">
+
+    <StringProperty Name="LolSteamAppId" DisplayName="Steam Application Id" Description="Steam Application ID"
+                    Default="" Category="Publishing" />
+
+    <StringProperty Name="LolSteamDepotId" DisplayName="Steam Depot Id" Description="Steam Depot ID"
+                    Default="" Category="Publishing" />
+
+  </Rule>
+
+</ProjectSchemaDefinitions>

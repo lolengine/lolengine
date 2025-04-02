@@ -27,3 +27,7 @@
 *.vcxproj text eol=crlf
 *.resx    text eol=crlf
 
+# This is Windows-specific but we don’t need to enforce CRLF
+*.props   text
+*.targets text
+*.xml     text

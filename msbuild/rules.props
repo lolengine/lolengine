@@ -125,6 +125,18 @@
     </Link>
   </ItemDefinitionGroup>
 
+  <!-- GDK for Windows Store apps.
+     - https://learn.microsoft.com/fr-fr/gaming/gdk/_content/gc/tools-pc/visualstudio/gr-vs-templates
+   -->
+  <ItemDefinitionGroup Condition="'$(LolWindowsPublishingPlatform)'=='msstore' and '$(Platform)'=='x64'">
+    <ClCompile>
+      <PreprocessorDefinitions>_GAMING_DESKTOP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>xgameruntime.lib;gameinput.lib;d3d12.lib;dxgi.lib;dxguid.lib;uuid.lib;kernel32.lib;user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+
   <!--
      - Compile and link with Kore if enabled
    -->

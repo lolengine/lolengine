@@ -16,10 +16,10 @@
      - Build configuration
    -->
 
-  <!-- Import defaults settings from Visual Studio -->
+  <!-- Default settings from Visual Studio -->
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
 
-  <!-- Set reasonable defaults for most common configuration properties -->
+  <!-- Default settings from Lol Engine -->
   <Import Project="$(LolEngineDir)msbuild/kore/config.props" />
   <Import Project="$(LolEngineDir)msbuild/config.props" />
   <Import Project="$(LolEngineDir)msbuild/nda.props" />
@@ -32,6 +32,14 @@
 
   <!-- Final settings from Visual Studio -->
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+
+  <!--
+     - Extensions
+   -->
+
+  <ImportGroup Label="ExtensionSettings">
+    <Import Project="$(LolEngineDir)msbuild/extensions.props" />
+  </ImportGroup>
 
   <!--
      - Build variables
@@ -84,7 +92,7 @@
    -->
 
   <Target Name="Build">
-    <Error Text="This project includes $(MsBuildThisFileName).props but not $(MsBuildThisFileName).targets" />
+    <Error Text="Project $(ProjectName) includes $(MsBuildThisFileName).props but not $(MsBuildThisFileName).targets" />
   </Target>
 
   <PropertyGroup>
@@ -129,6 +137,19 @@
 
     <Error Condition="!exists('$(ShaderCompiler)')"
            Text="shader compiler '$(ShaderCompiler)' could not be found; are submodules up to date?" />
+
+    <Error Condition="'$(LolWindowsPublishingPlatform)'=='steam' and '$(Platform)'=='x64' and '$(STEAM_SDK_PATH)'==''"
+           Text="Steam support is enabled, but STEAM_SDK_PATH is not set" />
+
+    <Error Condition="'$(LolWindowsPublishingPlatform)'=='steam' and '$(Platform)'=='x64' and '$(LolSteamAppId)'==''"
+           Text="Steam support is enabled, but %24(LolSteamAppId) is not set" />
+
+    <Error Condition="'$(LolWindowsPublishingPlatform)'=='steam' and '$(Platform)'=='x64'
+               and !exists('$(STEAM_SDK_PATH)/public/steam/isteamuser.h')"
+           Text="Steam support is enabled, but $(STEAM_SDK_PATH)/public/steam/isteamuser.h was not found" />
+
+    <Error Condition="'$(LolWindowsPublishingPlatform)'=='msstore' and '$(Platform)'=='x64' and '$(GDKPCEditionPath)'==''"
+           Text="Microsoft Store support is enabled, but %24(GDKPCEditionPath) is not set" />
 
   </Target>
 
