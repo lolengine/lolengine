@@ -12,7 +12,6 @@
 
 #include <lol/engine/audio>
 #include <memory>
-#include <vector>
 
 #include "../3rdparty/qoa/qoa.h"
 
@@ -26,48 +25,48 @@ class qoa_decoder : public stream<int16_t>
 public:
     qoa_decoder(uint8_t const *data, size_t size)
       : stream<int16_t>(1, 0),
-        m_sample_pos(0)
+        m_frame_count(0),
+        m_frame_pos(0)
     {
         qoa_desc qoa;
         if (auto qoa_data = qoa_decode(data, (int)size, &qoa); qoa_data)
         {
             m_channels = qoa.channels;
             m_frequency = qoa.samplerate;
-            // This is possibly a large memory copy but we accept the overhead; the other way
-            // to do this would be to duplicate the qoa_decode() code and I don’t like that.
-            m_samples.assign(qoa_data, qoa_data + qoa.samples * qoa.channels);
-            // Should be QOA_FREE() for consistency but it is private to the implementation.
-            free(qoa_data);
+            // Should use QOA_FREE() instead of free() but it is private to the implementation.
+            m_qoa_data = std::shared_ptr<int16_t>(qoa_data, [](int16_t *p) { free(p); });
+            m_frame_count = qoa.samples;
         }
     }
 
     virtual size_t get(int16_t *buf, size_t frames) override
     {
-        size_t samples = std::min(frames * m_channels, m_samples.size() - m_sample_pos);
-        std::copy_n(std::next(m_samples.begin(), m_sample_pos), samples, buf);
-        m_sample_pos += samples;
-        return samples / m_channels;
+        size_t todo = std::min(frames, m_frame_count - m_frame_pos);
+        std::copy_n(m_qoa_data.get() + m_frame_pos * m_channels, todo * m_channels, buf);
+        m_frame_pos += todo;
+        return todo;
     }
 
     virtual std::optional<size_t> size() const override
     {
-        return m_samples.size() / m_channels;
+        return m_frame_count;
     }
 
     virtual std::optional<size_t> pos() const override
     {
-        return m_sample_pos / m_channels;
+        return m_frame_pos;
     }
 
     virtual bool seek(size_t pos) override
     {
-        m_sample_pos = std::min(pos * m_channels, m_samples.size());
+        m_frame_pos = std::min(pos, m_frame_count);
         return true;
     }
 
 protected:
-    std::vector<int16_t> m_samples;
-    size_t m_sample_pos;
+    std::shared_ptr<int16_t> m_qoa_data;
+    size_t m_frame_count;
+    size_t m_frame_pos;
 };
 
 std::shared_ptr<stream<int16_t>> make_qoa_decoder(uint8_t const *data, size_t size)
