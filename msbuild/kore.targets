@@ -2,7 +2,7 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <!--
-     - Automatically build Kore with the target application if enabled
+     - Automatically build Kore together with the target application if enabled
    -->
 
   <Target Name="KoreCompile" AfterTargets="BuildGenerateSources"
@@ -16,7 +16,7 @@
   </Target>
 
   <!-- Steam AppId support (FIXME: should be somewhere else) -->
-  <Target Name="KoreCopy" AfterTargets="AfterBuild" Condition="'$(LolWindowsPublishingPlatform)'=='steam' and '$(Platform)'=='x64'">
+  <Target Name="KoreCopy" AfterTargets="AfterBuild" Condition="'$(ConfigurationType)'=='Application' and '$(LolWindowsPublishingPlatform)'=='steam' and '$(Platform)'=='x64'">
     <Copy SourceFiles="$(STEAM_SDK_PATH)\redistributable_bin\win64\steam_api64.dll" DestinationFolder="$(OutDir)" ContinueOnError="true" />
     <WriteLinesToFile File="$(OutDir)steam_appid.txt" Lines="$(LolSteamAppId)" Overwrite="True"/>
   </Target>

@@ -8,7 +8,7 @@
   <Rule Name="LolEngineFeatures" PageTemplate="tool" DisplayName="Lol Engine" Order="1" SwitchPrefix="">
 
     <Rule.DataSource>
-      <DataSource Persistence="ProjectFile" ItemType="" Label="Globals" HasConfigurationCondition="false" />
+      <DataSource Persistence="ProjectFile" ItemType="" Label="Globals" HasConfigurationCondition="false" SourceOfDefaultValue="AfterContext" />
     </Rule.DataSource>
 
     <Rule.Categories>

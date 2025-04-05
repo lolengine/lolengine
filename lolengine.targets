@@ -12,12 +12,13 @@
     <_LolEngineTargetsIncluded>true</_LolEngineTargetsIncluded>
   </PropertyGroup>
 
+  <!-- Import default targets; this is also when the .vcxproj.user file is loaded a second time. -->
   <Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
 
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(LolEngineDir)msbuild/embed/registry.targets" />
     <Import Project="$(LolEngineDir)msbuild/features.targets" />
-    <Import Project="$(LolEngineDir)msbuild/kore/code.targets" />
+    <Import Project="$(LolEngineDir)msbuild/kore.targets" />
     <Import Project="$(LolEngineDir)msbuild/kore/shaders.targets" />
     <Import Project="$(LolNdaDirectory)/msbuild/platform.targets"
             Condition="'$(LolNdaDirectory)'!='' and exists('$(LolNdaDirectory)/msbuild/platform.targets')" />

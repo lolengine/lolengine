@@ -1,18 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <PropertyGroup>
-    <LinkIncremental Condition="'$(Configuration)'=='Debug'">true</LinkIncremental>
-    <LinkIncremental Condition="'$(Configuration)'=='Release'">false</LinkIncremental>
-  </PropertyGroup>
-
-  <PropertyGroup>
-    <!-- Use MakeRelative() so that <ObjectFileName> can use %(RelativeDir) -->
-    <BinDir>$([MSBuild]::MakeRelative("$(ProjectDir)","$(SolutionDir)binaries\"))</BinDir>
-    <OutDir>$(BinDir)$(Platform.ToLower())-$(PlatformToolset.ToLower())-$(Configuration.ToLower())\</OutDir>
-    <IntDir>$(OutDir)obj\$(ProjectName)\</IntDir>
-    <ObjectExt Condition="'$(ObjectExt)'==''">.obj</ObjectExt>
-  </PropertyGroup>
-
 
   <!--
      - Set fallbacks for undefined properties
@@ -20,10 +7,62 @@
 
   <PropertyGroup>
     <LolPackageVersion Condition="'$(LolPackageVersion)'==''">0.0</LolPackageVersion>
+    <LolWindowsPublishingPlatform Condition="'$(LolWindowsPublishingPlatform)'==''"></LolWindowsPublishingPlatform>
 
     <!-- The linker flag to export a symbol and force it to be pulled from a static
        - library even if it is not referenced in the code. -->
     <ExportSymbolLinkerFlag Condition="'$(ExportSymbolLinkerFlag)'==''">/EXPORT:</ExportSymbolLinkerFlag>
+
+    <ObjectExt Condition="'$(ObjectExt)'==''">.obj</ObjectExt>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <LinkIncremental Condition="'$(Configuration)'=='Debug'">true</LinkIncremental>
+    <LinkIncremental Condition="'$(Configuration)'=='Release'">false</LinkIncremental>
+  </PropertyGroup>
+
+
+  <!-- Define output and intermediate directories. -->
+  <PropertyGroup>
+
+    <!-- Use MakeRelative() so that <ObjectFileName> can use %(RelativeDir) -->
+    <_BinDir>$([MSBuild]::MakeRelative("$(ProjectDir)","$(SolutionDir)binaries\"))</_BinDir>
+
+    <!-- Flavour is the configuration (debug|release) but also any additional modifier (e.g. msstore|steam|itchio) -->
+    <_Project>$(ProjectName.ToLower())</_Project>
+    <_Platform>$(Platform.ToLower())</_Platform>
+    <_Flavour>$(Configuration.ToLower())</_Flavour>
+    <_Flavour Condition="'$(ConfigurationType)'=='Application' and '$(LolWindowsPublishingPlatform)'!='' and '$(Platform)'=='x64'">$(LolWindowsPublishingPlatform)-$(_Flavour)</_Flavour>
+
+    <!-- Define IntDir as <bindir>/<project>/<platform>/<flavour>/ -->
+    <IntDir>$(_BinDir)obj\$(_Project)\$(_Platform)\$(_Flavour)\</IntDir>
+
+    <!-- Define OutDir as <bindir>/<project>/<platform>/<flavour>/ for most projects, but for
+       - final projects (applications) we flatten the hierarchy to avoid excessive subdirectories. -->
+    <OutDir Condition="'$(ConfigurationType)'!='Application'">$(_BinDir)$(_Project)\$(_Platform)\$(_Flavour)\</OutDir>
+    <OutDir Condition="'$(ConfigurationType)'=='Application'">$(_BinDir)$(_Project)-$(_Platform)-$(_Flavour)\</OutDir>
+  </PropertyGroup>
+
+
+  <!-- GDK for Windows Store apps. We do this very late because we need the .vcxproj.user file
+     - to have been included for $(LolWindowsPublishingPlatform) to be defined.
+     - https://learn.microsoft.com/fr-fr/gaming/gdk/_content/gc/tools-pc/visualstudio/gr-vs-templates
+   -->
+
+  <ImportGroup Condition="'$(ConfigurationType)'=='Application' and '$(LolWindowsPublishingPlatform)'=='msstore' and '$(Platform)'=='x64'">
+    <Import Project="$(GDKPCEditionPath)ExtensionLibraries\Xbox.Services.API.C\ExtensionLibrary.props" />
+    <Import Project="$(GDKPCEditionPath)ExtensionLibraries\Xbox.XCurl.API\ExtensionLibrary.props" />
+    <Import Project="$(GDKPCEditionPath)ExtensionLibraries\Xbox.LibHttpClient\ExtensionLibrary.props" />
+    <Import Project="$(GDKPCEditionPath)ExtensionLibraries\Xbox.Game.Chat.2.Cpp.API\ExtensionLibrary.props" />
+    <Import Project="$(GDKPCEditionPath)ExtensionLibraries\PlayFab.Multiplayer.Cpp\ExtensionLibrary.props" />
+    <Import Project="$(GDKPCEditionPath)ExtensionLibraries\PlayFab.Party.Cpp\ExtensionLibrary.props" />
+    <Import Project="$(GDKPCEditionPath)ExtensionLibraries\PlayFab.PartyXboxLive.Cpp\ExtensionLibrary.props" />
+  </ImportGroup>
+
+  <PropertyGroup Condition="'$(ConfigurationType)'=='Application' and '$(LolWindowsPublishingPlatform)'=='msstore' and '$(Platform)'=='x64'">
+    <ExecutablePath>$(GameDK)bin;$(ExecutablePath)</ExecutablePath>
+    <IncludePath>$(GDKPCEditionPath)GameKit\Include;$(Console_SdkIncludeRoot);$(IncludePath);</IncludePath>
+    <LibraryPath>$(GDKPCEditionPath)GameKit\lib\amd64;$(Console_SdkLibPath);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
 
 
@@ -125,31 +164,18 @@
     </Link>
   </ItemDefinitionGroup>
 
+
   <!-- GDK for Windows Store apps.
-     - https://learn.microsoft.com/fr-fr/gaming/gdk/_content/gc/tools-pc/visualstudio/gr-vs-templates
-   -->
-  <ItemDefinitionGroup Condition="'$(LolWindowsPublishingPlatform)'=='msstore' and '$(Platform)'=='x64'">
+     - https://learn.microsoft.com/fr-fr/gaming/gdk/_content/gc/tools-pc/visualstudio/gr-vs-templates -->
+  <ItemDefinitionGroup Condition="'$(ConfigurationType)'=='Application' and '$(LolWindowsPublishingPlatform)'=='msstore' and '$(Platform)'=='x64'">
     <ClCompile>
       <PreprocessorDefinitions>_GAMING_DESKTOP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>xgameruntime.lib;gameinput.lib;d3d12.lib;dxgi.lib;dxguid.lib;uuid.lib;kernel32.lib;user32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>xgameruntime.lib;gameinput.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
 
-  <!--
-     - Compile and link with Kore if enabled
-   -->
-  <ItemDefinitionGroup Condition="'$(enable_kore)'!='no'">
-    <ClCompile>
-      <AdditionalIncludeDirectories>$(KoreIncludes);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>$(KoreDefines);%(PreprocessorDefinitions)</PreprocessorDefinitions>
-    </ClCompile>
-    <Link>
-      <AdditionalLibraryDirectories>$(KoreLibs);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>$(KoreDeps);%(AdditionalDependencies)</AdditionalDependencies>
-    </Link>
-  </ItemDefinitionGroup>
 
   <!--
      - Post-build hook to run commands

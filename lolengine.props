@@ -19,9 +19,17 @@
   <!-- Default settings from Visual Studio -->
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
 
+  <!-- User settings -->
+  <ImportGroup Condition="Exists('$(MSBuildProjectFullPath).user')">
+      <!-- This will cause an MSB4011 warning later when Microsoft.Cpp.Default.targets is loaded, but we have no choice… -->
+      <Import Project="$(MSBuildProjectFullPath).user" Condition="'$(BuildingInsideVisualStudio)'=='true'"/>
+      <!-- Fortunately when building with MSBuild we can trick it! -->
+      <Import Project="\\?\$(MSBuildProjectFullPath).user" Condition="'$(BuildingInsideVisualStudio)'!='true'"/>
+  </ImportGroup>
+
   <!-- Default settings from Lol Engine -->
-  <Import Project="$(LolEngineDir)msbuild/kore/config.props" />
   <Import Project="$(LolEngineDir)msbuild/config.props" />
+  <Import Project="$(LolEngineDir)msbuild/kore.props" />
   <Import Project="$(LolEngineDir)msbuild/nda.props" />
 
   <!-- Override settings with the user’s build.config file -->
@@ -34,14 +42,6 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
 
   <!--
-     - Extensions
-   -->
-
-  <ImportGroup Label="ExtensionSettings">
-    <Import Project="$(LolEngineDir)msbuild/extensions.props" />
-  </ImportGroup>
-
-  <!--
      - Build variables
    -->
 
@@ -50,10 +50,6 @@
     <Import Project="$(UserRootDir)Microsoft.Cpp.$(Platform).user.props"
             Condition="exists('$(UserRootDir)Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
 
-    <Import Project="$(LolNdaDirectory)/msbuild/vars.props"
-            Condition="'$(LolNdaDirectory)'!='' and exists('$(LolNdaDirectory)/msbuild/vars.props')" />
-
-    <Import Project="$(LolEngineDir)msbuild/kore/vars.props" />
     <Import Project="$(LolEngineDir)msbuild/vars.props" />
   </ImportGroup>
 
@@ -118,16 +114,16 @@
            Text="project $(ProjectName) configured for Kore but '$(KoreDirectory)/make' was not found; is the repository up to date?" />
 
     <Error Condition="'$(LolNdaPlatform)'!='' and '$(LolNdaDirectory)'==''"
-           Text="NDA platform '$(Platform)' selected, but 'lol-$(LolNdaPlatform)' was not found" />
+           Text="NDA platform '$(Platform)' selected, but repository '$(LolNdaRepository)' was not found" />
 
     <Error Condition="'$(LolNdaPlatform)'!='' and !exists('$(LolNdaDirectory)/msbuild/config.props')"
-           Text="NDA platform '$(Platform)' selected, but '$(LolNdaDirectory)/msbuild/config.props' was not found; is the 'lol-$(LolNdaPlatform)' repository up-to-date?" />
+           Text="NDA platform '$(Platform)' selected, but '$(LolNdaDirectory)/msbuild/config.props' was not found; is the '$(LolNdaRepository)' repository up-to-date?" />
 
     <Error Condition="'$(LolNdaPlatform)'!='' and '$(KoreNdaDirectory)'==''"
-           Text="NDA platform '$(Platform)' selected, but '$(LolNdaDirectory)/msbuild/config.props' did not define %24(KoreNdaDirectory); is the 'lol-$(LolNdaPlatform)' repository up-to-date?" />
+           Text="NDA platform '$(Platform)' selected, but '$(LolNdaDirectory)/msbuild/config.props' did not define %24(KoreNdaDirectory); is the '$(LolNdaRepository)' repository up-to-date?" />
 
     <Error Condition="'$(KoreNdaDirectory)'!='' and !exists('$(KoreNdaDirectory)/kincfile.js')"
-           Text="NDA platform '$(Platform)' selected, but '$(KoreNdaDirectory)/kincfile.js' was not found; are the 'lol-$(LolNdaPlatform)' submodules up-to-date?" />
+           Text="NDA platform '$(Platform)' selected, but '$(KoreNdaDirectory)/kincfile.js' was not found; are the '$(LolNdaDirectory)' submodules up-to-date?" />
 
     <Error Condition="'$(ShaderPlatform)'==''"
            Text="no shader platform defined for '$(Platform)'; are you missing Lol Engine platform support?" />
@@ -141,8 +137,10 @@
     <Error Condition="'$(LolWindowsPublishingPlatform)'=='steam' and '$(Platform)'=='x64' and '$(STEAM_SDK_PATH)'==''"
            Text="Steam support is enabled, but STEAM_SDK_PATH is not set" />
 
+<!--
     <Error Condition="'$(LolWindowsPublishingPlatform)'=='steam' and '$(Platform)'=='x64' and '$(LolSteamAppId)'==''"
            Text="Steam support is enabled, but %24(LolSteamAppId) is not set" />
+-->
 
     <Error Condition="'$(LolWindowsPublishingPlatform)'=='steam' and '$(Platform)'=='x64'
                and !exists('$(STEAM_SDK_PATH)/public/steam/isteamuser.h')"

@@ -14,8 +14,9 @@
      - GetDirectoryNameOfFileAbove(). It is not possible to use GetPathOfFileAbove()
      - because it does not support subpaths. -->
   <PropertyGroup>
-    <_Temp>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), lol-$(LolNdaPlatform)/msbuild/config.props))</_Temp>
-    <LolNdaDirectory Condition="'$(_Temp)'!=''">$(_Temp)/lol-$(LolNdaPlatform)</LolNdaDirectory>
+    <LolNdaRepository>lol-$(LolNdaPlatform)</LolNdaRepository>
+    <_Temp>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), $(LolNdaRepository)/msbuild/config.props))</_Temp>
+    <LolNdaDirectory Condition="'$(_Temp)'!=''">$(_Temp)/$(LolNdaRepository)</LolNdaDirectory>
     <_Temp></_Temp>
   </PropertyGroup>
 
