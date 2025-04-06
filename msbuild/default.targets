@@ -2,18 +2,13 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <!--
-     - lolengine.targets
-     - 
-     - This file should be referenced by any project that uses Lol Engine
+     - defaults.targets
    -->
 
   <PropertyGroup>
     <LolEngineDir Condition="'$(LolEngineDir)'==''">$(MsBuildThisFileDirectory)</LolEngineDir>
     <_LolEngineTargetsIncluded>true</_LolEngineTargetsIncluded>
   </PropertyGroup>
-
-  <!-- Import default targets; this is also when the .vcxproj.user file is loaded a second time. -->
-  <Import Project="$(VCTargetsPath)Microsoft.Cpp.targets" />
 
   <ImportGroup Label="ExtensionTargets">
     <Import Project="$(LolEngineDir)msbuild/embed/registry.targets" />

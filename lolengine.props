@@ -1,154 +1,84 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
   <!--
      - lolengine.props
-     - 
+     -
      - This file should be referenced by any project that uses Lol Engine
    -->
 
-  <PropertyGroup>
-    <LolEngineDir>$(MsBuildThisFileDirectory)</LolEngineDir>
-    <_LolEnginePropsIncluded>true</_LolEnginePropsIncluded>
-  </PropertyGroup>
-
-  <!--
-     - Build configuration
-   -->
-
-  <!-- Default settings from Visual Studio -->
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-
-  <!-- User settings -->
-  <ImportGroup Condition="Exists('$(MSBuildProjectFullPath).user')">
-      <!-- This will cause an MSB4011 warning later when Microsoft.Cpp.Default.targets is loaded, but we have no choice… -->
-      <Import Project="$(MSBuildProjectFullPath).user" Condition="'$(BuildingInsideVisualStudio)'=='true'"/>
-      <!-- Fortunately when building with MSBuild we can trick it! -->
-      <Import Project="\\?\$(MSBuildProjectFullPath).user" Condition="'$(BuildingInsideVisualStudio)'!='true'"/>
-  </ImportGroup>
-
-  <!-- Default settings from Lol Engine -->
-  <Import Project="$(LolEngineDir)msbuild/config.props" />
-  <Import Project="$(LolEngineDir)msbuild/kore.props" />
-  <Import Project="$(LolEngineDir)msbuild/nda.props" />
-
-  <!-- Override settings with the user’s build.config file -->
-  <Import Condition="exists('$(LolEngineDir)build.config')"
-          Project="$(LolEngineDir)build.config" />
-  <Import Condition="exists('$(SolutionDir)build.config') and '$(SolutionDir)'!='$(LolEngineDir)'"
-          Project="$(SolutionDir)build.config" />
-
-  <!-- Final settings from Visual Studio -->
-  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
-
-  <!--
-     - Build variables
-   -->
-
-  <ImportGroup Label="PropertySheets">
-
-    <Import Project="$(UserRootDir)Microsoft.Cpp.$(Platform).user.props"
-            Condition="exists('$(UserRootDir)Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-
-    <Import Project="$(LolEngineDir)msbuild/vars.props" />
-  </ImportGroup>
-
-  <PropertyGroup Label="UserMacros" />
-
-  <!--
-     - Build tasks
-   -->
-
-  <ImportGroup Label="PropertySheets">
-    <Import Project="$(LolEngineDir)msbuild/embed/task.props" />
-  </ImportGroup>
-
-  <!--
-     - Build rules
-   -->
-
-  <Import Project="$(LolNdaDirectory)/msbuild/rules.props"
-          Condition="'$(LolNdaDirectory)'!='' and exists('$(LolNdaDirectory)/msbuild/rules.props')" />
-  <Import Project="$(LolEngineDir)msbuild/rules.props" />
-
-  <ItemDefinitionGroup />
-
-  <!--
-     - Lol Engine dependency
-   -->
-
-  <ItemGroup>
-    <ProjectReference Include="$(LolEngineDir)src/lolengine.vcxproj" Condition="'$(ConfigurationType)'!='StaticLibrary'">
-      <Project>{9e62f2fe-3408-4eae-8238-fd84238ceeda}</Project>
-    </ProjectReference>
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|ARM64">
+      <Configuration>Debug</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Gaming.Xbox.Scarlett.x64">
+      <Configuration>Debug</Configuration>
+      <Platform>Gaming.Xbox.Scarlett.x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Gaming.Xbox.XboxOne.x64">
+      <Configuration>Debug</Configuration>
+      <Platform>Gaming.Xbox.XboxOne.x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|NX64">
+      <Configuration>Debug</Configuration>
+      <Platform>NX64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|ORBIS">
+      <Configuration>Debug</Configuration>
+      <Platform>ORBIS</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Prospero">
+      <Configuration>Debug</Configuration>
+      <Platform>Prospero</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ARM64">
+      <Configuration>Release</Configuration>
+      <Platform>ARM64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Gaming.Xbox.Scarlett.x64">
+      <Configuration>Release</Configuration>
+      <Platform>Gaming.Xbox.Scarlett.x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Gaming.Xbox.XboxOne.x64">
+      <Configuration>Release</Configuration>
+      <Platform>Gaming.Xbox.XboxOne.x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|NX64">
+      <Configuration>Release</Configuration>
+      <Platform>NX64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|ORBIS">
+      <Configuration>Release</Configuration>
+      <Platform>ORBIS</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Prospero">
+      <Configuration>Release</Configuration>
+      <Platform>Prospero</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
   </ItemGroup>
 
-  <!--
-     - Sanity checks
-   -->
-
-  <Target Name="Build">
-    <Error Text="Project $(ProjectName) includes $(MsBuildThisFileName).props but not $(MsBuildThisFileName).targets" />
-  </Target>
-
   <PropertyGroup>
-    <!-- Ensure our sanity checks are executed first, before anything else that was inserted. -->
-    <PrepareForBuildDependsOn>LolEngineSanityChecks;$(PrepareForBuildDependsOn)</PrepareForBuildDependsOn>
+    <LolEngineDir>$(MsBuildThisFileDirectory)</LolEngineDir>
+    <ForceImportAfterCppDefaultProps>$(LolEngineDir)/msbuild/default.props</ForceImportAfterCppDefaultProps>
+    <ForceImportAfterCppProps>$(LolEngineDir)/msbuild/vars.props</ForceImportAfterCppProps>
+    <ForceImportAfterCppTargets>$(LolEngineDir)/msbuild/default.targets</ForceImportAfterCppTargets>
   </PropertyGroup>
-
-  <Target Name="LolEngineSanityChecks">
-
-    <Error Condition="!exists('$(LolEngineDir)')"
-           Text="Lol Engine directory '$(LolEngineDir)' was not found; are submodules up to date?" />
-
-    <Warning Condition="'$(enable_kore)'!='no'
-                 and '$(KINC_SDK_PATH)'!='' and '$(KORE_SDK_PATH)'==''"
-             Text="KINC_SDK_PATH is set; please use KORE_SDK_PATH instead" />
-
-    <Error Condition="'$(enable_kore)'!='no'
-               and '$(KINC_SDK_PATH)'=='' and '$(KORE_SDK_PATH)'=='' and '$(KoreDirectory)'==''"
-           Text="KORE_SDK_PATH is not set" />
-
-    <Error Condition="'$(enable_kore)'!='no'
-               and !exists('$(KoreDirectory)/make')"
-           Text="project $(ProjectName) configured for Kore but '$(KoreDirectory)/make' was not found; is the repository up to date?" />
-
-    <Error Condition="'$(LolNdaPlatform)'!='' and '$(LolNdaDirectory)'==''"
-           Text="NDA platform '$(Platform)' selected, but repository '$(LolNdaRepository)' was not found" />
-
-    <Error Condition="'$(LolNdaPlatform)'!='' and !exists('$(LolNdaDirectory)/msbuild/config.props')"
-           Text="NDA platform '$(Platform)' selected, but '$(LolNdaDirectory)/msbuild/config.props' was not found; is the '$(LolNdaRepository)' repository up-to-date?" />
-
-    <Error Condition="'$(LolNdaPlatform)'!='' and '$(KoreNdaDirectory)'==''"
-           Text="NDA platform '$(Platform)' selected, but '$(LolNdaDirectory)/msbuild/config.props' did not define %24(KoreNdaDirectory); is the '$(LolNdaRepository)' repository up-to-date?" />
-
-    <Error Condition="'$(KoreNdaDirectory)'!='' and !exists('$(KoreNdaDirectory)/kincfile.js')"
-           Text="NDA platform '$(Platform)' selected, but '$(KoreNdaDirectory)/kincfile.js' was not found; are the '$(LolNdaDirectory)' submodules up-to-date?" />
-
-    <Error Condition="'$(ShaderPlatform)'==''"
-           Text="no shader platform defined for '$(Platform)'; are you missing Lol Engine platform support?" />
-
-    <Error Condition="'$(ShaderCompiler)'==''"
-           Text="no shader compiler defined for '$(Platform)'; are you missing Lol Engine platform support?" />
-
-    <Error Condition="!exists('$(ShaderCompiler)')"
-           Text="shader compiler '$(ShaderCompiler)' could not be found; are submodules up to date?" />
-
-    <Error Condition="'$(LolWindowsPublishingPlatform)'=='steam' and '$(Platform)'=='x64' and '$(STEAM_SDK_PATH)'==''"
-           Text="Steam support is enabled, but STEAM_SDK_PATH is not set" />
-
-<!--
-    <Error Condition="'$(LolWindowsPublishingPlatform)'=='steam' and '$(Platform)'=='x64' and '$(LolSteamAppId)'==''"
-           Text="Steam support is enabled, but %24(LolSteamAppId) is not set" />
--->
-
-    <Error Condition="'$(LolWindowsPublishingPlatform)'=='steam' and '$(Platform)'=='x64'
-               and !exists('$(STEAM_SDK_PATH)/public/steam/isteamuser.h')"
-           Text="Steam support is enabled, but $(STEAM_SDK_PATH)/public/steam/isteamuser.h was not found" />
-
-    <Error Condition="'$(LolWindowsPublishingPlatform)'=='msstore' and '$(Platform)'=='x64' and '$(GDKPCEditionPath)'==''"
-           Text="Microsoft Store support is enabled, but %24(GDKPCEditionPath) is not set" />
-
-  </Target>
 
 </Project>

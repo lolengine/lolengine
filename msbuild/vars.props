@@ -1,6 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+  <ImportGroup Label="PropertySheets">
+
+    <Import Project="$(UserRootDir)Microsoft.Cpp.$(Platform).user.props"
+            Condition="exists('$(UserRootDir)Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+
+  </ImportGroup>
+
+  <!--
+     - Build variables
+   -->
+
   <PropertyGroup Label="UserMacros">
     <ExternalDir>$(LolEngineDir)\external</ExternalDir>
 
@@ -52,5 +63,101 @@
     <FfmpegDeps>swscale.lib;avformat.lib;avcodec.lib;swresample.lib;avutil.lib;ws2_32.lib;secur32.lib;bcrypt.lib</FfmpegDeps>
     <Win32Defines>LOL_USE_FFMPEG;$(Win32Defines)</Win32Defines>
   </PropertyGroup>
+
+  <!--
+     - Build tasks
+   -->
+
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(LolEngineDir)msbuild/embed/task.props" />
+  </ImportGroup>
+
+  <!--
+     - Build rules
+   -->
+
+  <Import Project="$(LolNdaDirectory)/msbuild/rules.props"
+          Condition="'$(LolNdaDirectory)'!='' and exists('$(LolNdaDirectory)/msbuild/rules.props')" />
+  <Import Project="$(LolEngineDir)msbuild/rules.props" />
+
+  <ItemDefinitionGroup />
+
+  <!--
+     - Lol Engine dependency
+   -->
+
+  <ItemGroup>
+    <ProjectReference Include="$(LolEngineDir)src/lolengine.vcxproj" Condition="'$(ConfigurationType)'!='StaticLibrary'">
+      <Project>{9e62f2fe-3408-4eae-8238-fd84238ceeda}</Project>
+    </ProjectReference>
+  </ItemGroup>
+
+  <!--
+     - Sanity checks
+   -->
+
+  <Target Name="Build">
+    <Error Text="Project $(ProjectName) includes $(MsBuildThisFileName).props but not $(MsBuildThisFileName).targets" />
+  </Target>
+
+  <PropertyGroup>
+    <!-- Ensure our sanity checks are executed first, before anything else that was inserted. -->
+    <PrepareForBuildDependsOn>LolEngineSanityChecks;$(PrepareForBuildDependsOn)</PrepareForBuildDependsOn>
+  </PropertyGroup>
+
+  <Target Name="LolEngineSanityChecks">
+
+    <Error Condition="!exists('$(LolEngineDir)')"
+           Text="Lol Engine directory '$(LolEngineDir)' was not found; are submodules up to date?" />
+
+    <Warning Condition="'$(enable_kore)'!='no'
+                 and '$(KINC_SDK_PATH)'!='' and '$(KORE_SDK_PATH)'==''"
+             Text="KINC_SDK_PATH is set; please use KORE_SDK_PATH instead" />
+
+    <Error Condition="'$(enable_kore)'!='no'
+               and '$(KINC_SDK_PATH)'=='' and '$(KORE_SDK_PATH)'=='' and '$(KoreDirectory)'==''"
+           Text="KORE_SDK_PATH is not set" />
+
+    <Error Condition="'$(enable_kore)'!='no'
+               and !exists('$(KoreDirectory)/make')"
+           Text="project $(ProjectName) configured for Kore but '$(KoreDirectory)/make' was not found; is the repository up to date?" />
+
+    <Error Condition="'$(LolNdaPlatform)'!='' and '$(LolNdaDirectory)'==''"
+           Text="NDA platform '$(Platform)' selected, but repository '$(LolNdaRepository)' was not found" />
+
+    <Error Condition="'$(LolNdaPlatform)'!='' and !exists('$(LolNdaDirectory)/msbuild/config.props')"
+           Text="NDA platform '$(Platform)' selected, but '$(LolNdaDirectory)/msbuild/config.props' was not found; is the '$(LolNdaRepository)' repository up-to-date?" />
+
+    <Error Condition="'$(LolNdaPlatform)'!='' and '$(KoreNdaDirectory)'==''"
+           Text="NDA platform '$(Platform)' selected, but '$(LolNdaDirectory)/msbuild/config.props' did not define %24(KoreNdaDirectory); is the '$(LolNdaRepository)' repository up-to-date?" />
+
+    <Error Condition="'$(KoreNdaDirectory)'!='' and !exists('$(KoreNdaDirectory)/kincfile.js')"
+           Text="NDA platform '$(Platform)' selected, but '$(KoreNdaDirectory)/kincfile.js' was not found; are the '$(LolNdaDirectory)' submodules up-to-date?" />
+
+    <Error Condition="'$(ShaderPlatform)'==''"
+           Text="no shader platform defined for '$(Platform)'; are you missing Lol Engine platform support?" />
+
+    <Error Condition="'$(ShaderCompiler)'==''"
+           Text="no shader compiler defined for '$(Platform)'; are you missing Lol Engine platform support?" />
+
+    <Error Condition="!exists('$(ShaderCompiler)')"
+           Text="shader compiler '$(ShaderCompiler)' could not be found; are submodules up to date?" />
+
+    <Error Condition="'$(LolWindowsPublishingPlatform)'=='steam' and '$(Platform)'=='x64' and '$(STEAM_SDK_PATH)'==''"
+           Text="Steam support is enabled, but STEAM_SDK_PATH is not set" />
+
+<!--
+    <Error Condition="'$(LolWindowsPublishingPlatform)'=='steam' and '$(Platform)'=='x64' and '$(LolSteamAppId)'==''"
+           Text="Steam support is enabled, but %24(LolSteamAppId) is not set" />
+-->
+
+    <Error Condition="'$(LolWindowsPublishingPlatform)'=='steam' and '$(Platform)'=='x64'
+               and !exists('$(STEAM_SDK_PATH)/public/steam/isteamuser.h')"
+           Text="Steam support is enabled, but $(STEAM_SDK_PATH)/public/steam/isteamuser.h was not found" />
+
+    <Error Condition="'$(LolWindowsPublishingPlatform)'=='msstore' and '$(Platform)'=='x64' and '$(GDKPCEditionPath)'==''"
+           Text="Microsoft Store support is enabled, but %24(GDKPCEditionPath) is not set" />
+
+  </Target>
 
 </Project>

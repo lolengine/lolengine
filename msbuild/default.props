@@ -1,6 +1,21 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
 
+  <!--
+     - Build configuration
+   -->
+
+  <!-- Import user settings as early as possible -->
+  <ImportGroup Condition="Exists('$(MSBuildProjectFullPath).user')">
+      <!-- This will cause an MSB4011 warning later when Microsoft.Cpp.Default.targets is loaded, but we have no choice… -->
+      <Import Project="$(MSBuildProjectFullPath).user" Condition="'$(BuildingInsideVisualStudio)'=='true'"/>
+      <!-- Fortunately when building with MSBuild we can trick it! -->
+      <Import Project="\\?\$(MSBuildProjectFullPath).user" Condition="'$(BuildingInsideVisualStudio)'!='true'"/>
+  </ImportGroup>
+
+  <!--
+     - Convenience properties
+   -->
   <PropertyGroup>
     <PlatformIsWindows Condition="'$(Platform)'=='ARM64'">true</PlatformIsWindows>
     <PlatformIsWindows Condition="'$(Platform)'=='Win32'">true</PlatformIsWindows>
@@ -47,5 +62,14 @@
   <PropertyGroup Condition="'$(PlatformToolset)'==''">
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
+
+  <Import Project="$(LolEngineDir)msbuild/kore.props" />
+  <Import Project="$(LolEngineDir)msbuild/nda.props" />
+
+  <!-- Override settings with the user’s build.config file -->
+  <Import Condition="exists('$(LolEngineDir)build.config')"
+          Project="$(LolEngineDir)build.config" />
+  <Import Condition="exists('$(SolutionDir)build.config') and '$(SolutionDir)'!='$(LolEngineDir)'"
+          Project="$(SolutionDir)build.config" />
 
 </Project>

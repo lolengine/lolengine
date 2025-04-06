@@ -1,11 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="../lolengine.config" />
+  <Import Project="../lolengine.props" />
   <PropertyGroup Label="Globals">
     <ProjectGuid>{9E62F2FE-3408-4EAE-8238-FD84238CEEDA}</ProjectGuid>
     <ConfigurationType>StaticLibrary</ConfigurationType>
   </PropertyGroup>
-  <Import Project="../lolengine.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ItemDefinitionGroup>
     <ClCompile>
       <PreprocessorDefinitions>_LIB;%(PreprocessorDefinitions);LOL_INPUT_V2</PreprocessorDefinitions>
@@ -37,5 +38,5 @@
     <LolEmbed Include="data/font/ascii.png" />
     <LolEmbed Include="data/token.txt" />
   </ItemGroup>
-  <Import Project="../lolengine.targets" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>

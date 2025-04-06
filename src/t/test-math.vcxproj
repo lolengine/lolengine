@@ -1,11 +1,12 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="../../lolengine.config" />
+  <Import Project="../../lolengine.props" />
   <PropertyGroup Label="Globals">
     <ProjectGuid>{962d4e25-45d3-4ace-8c02-69fa3713abd4}</ProjectGuid>
     <ConfigurationType>Application</ConfigurationType>
   </PropertyGroup>
-  <Import Project="../../lolengine.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ItemGroup>
     <ClCompile Include="test-common.cpp" />
     <ClCompile Include="math/box.cpp" />
@@ -24,5 +25,5 @@
     <ClCompile Include="math/trig.cpp" />
     <ClCompile Include="math/vector.cpp" />
   </ItemGroup>
-  <Import Project="../../lolengine.targets" />
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
 </Project>
