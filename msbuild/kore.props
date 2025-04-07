@@ -90,8 +90,7 @@
      - Kore support for NDA platforms
    -->
 
-  <Import Project="$(LolNdaDirectory)/msbuild/kore.props"
-          Condition="'$(LolNdaDirectory)'!='' and exists('$(LolNdaDirectory)/msbuild/kore.props')" />
+  <Import Project="$(LolNdaKoreProps)" Condition="'$(LolNdaKorePropsFound)'=='true'" />
 
   <!--
      - Compile and link with Kore if enabled
@@ -127,7 +126,7 @@
            Text="project $(ProjectName) configured for Kore but '$(KoreDirectory)/make' was not found; is the repository up to date?" />
 
     <Error Condition="'$(LolNdaPlatform)'!='' and '$(KoreNdaDirectory)'==''"
-           Text="NDA platform '$(Platform)' selected, but '$(LolNdaDirectory)/msbuild/config.props' did not define %24(KoreNdaDirectory); is the '$(LolNdaRepository)' repository up-to-date?" />
+           Text="NDA platform '$(Platform)' selected, but '$(LolNdaPlatformProps)' did not define %24(KoreNdaDirectory); is the '$(LolNdaRepository)' repository up-to-date?" />
 
     <Error Condition="'$(KoreNdaDirectory)'!='' and !exists('$(KoreNdaDirectory)/kincfile.js')"
            Text="NDA platform '$(Platform)' selected, but '$(KoreNdaDirectory)/kincfile.js' was not found; are the '$(LolNdaDirectory)' submodules up-to-date?" />

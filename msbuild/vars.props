@@ -65,20 +65,13 @@
   </PropertyGroup>
 
   <!--
-     - Build tasks
+     - Build tasks and rules
    -->
 
   <ImportGroup Label="PropertySheets">
     <Import Project="$(LolEngineDir)msbuild/embed/task.props" />
+    <Import Project="$(LolEngineDir)msbuild/rules.props" />
   </ImportGroup>
-
-  <!--
-     - Build rules
-   -->
-
-  <Import Project="$(LolNdaDirectory)/msbuild/rules.props"
-          Condition="'$(LolNdaDirectory)'!='' and exists('$(LolNdaDirectory)/msbuild/rules.props')" />
-  <Import Project="$(LolEngineDir)msbuild/rules.props" />
 
   <ItemDefinitionGroup />
 

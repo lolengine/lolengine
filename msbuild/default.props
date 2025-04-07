@@ -65,6 +65,8 @@
   </PropertyGroup>
 
   <Import Project="$(LolEngineDir)msbuild/nda.props" />
+
+  <!-- Needs to be imported after nda.props -->
   <Import Project="$(LolEngineDir)msbuild/kore.props" />
 
   <!-- Override settings with the user’s build.config file -->

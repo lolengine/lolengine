@@ -16,14 +16,20 @@
      - because it does not support subpaths. -->
   <PropertyGroup>
     <LolNdaRepository>lol-$(LolNdaPlatform)</LolNdaRepository>
-    <_Temp>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), $(LolNdaRepository)/msbuild/config.props))</_Temp>
+    <_Temp>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), $(LolNdaRepository)/msbuild/platform.props))</_Temp>
     <LolNdaDirectory Condition="'$(_Temp)'!=''">$(_Temp)/$(LolNdaRepository)</LolNdaDirectory>
 
-    <LolNdaConfigProps>$(LolNdaDirectory)/msbuild/config.props</LolNdaConfigProps>
-    <LolNdaConfigPropsFound Condition="exists('$(LolNdaConfigProps)')">true</LolNdaConfigPropsFound>
+    <LolNdaPlatformProps>$(LolNdaDirectory)/msbuild/platform.props</LolNdaPlatformProps>
+    <LolNdaPlatformPropsFound>$([System.IO.File]::Exists($(LolNdaPlatformProps)))</LolNdaPlatformPropsFound>
+
+    <LolNdaKoreProps>$(LolNdaDirectory)/msbuild/kore.props</LolNdaKoreProps>
+    <LolNdaKorePropsFound>$([System.IO.File]::Exists($(LolNdaKoreProps)))</LolNdaKorePropsFound>
+
+    <LolNdaPlatformTargets>$(LolNdaDirectory)/msbuild/platform.targets</LolNdaPlatformTargets>
+    <LolNdaPlatformTargetsFound>$([System.IO.File]::Exists($(LolNdaPlatformTargets)))</LolNdaPlatformTargetsFound>
   </PropertyGroup>
 
-  <Import Project="$(LolNdaConfigProps)" Condition="$(LolNdaConfigPropsFound)" />
+  <Import Project="$(LolNdaPlatformProps)" Condition="'$(LolNdaPlatformPropsFound)'=='true'" />
 
   <!--
      - Sanity checks
@@ -34,8 +40,8 @@
     <Error Condition="'$(LolNdaPlatform)'!='' and '$(LolNdaDirectory)'==''"
            Text="NDA platform $(LolNdaPlatform) selected but support repository $(LolNdaRepository) was not found" />
 
-    <Error Condition="'$(LolNdaPlatform)'!='' and !$(LolNdaConfigPropsFound)"
-           Text="NDA platform '$(Platform)' selected, but '$(LolNdaConfigProps)' was not found; is the '$(LolNdaRepository)' repository up-to-date?" />
+    <Error Condition="'$(LolNdaPlatform)'!='' and !$(LolNdaPlatformPropsFound)"
+           Text="NDA platform '$(Platform)' selected, but '$(LolNdaPlatformProps)' was not found; is the '$(LolNdaRepository)' repository up-to-date?" />
 
   </Target>
 

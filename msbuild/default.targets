@@ -15,8 +15,7 @@
     <Import Project="$(LolEngineDir)msbuild/features.targets" />
     <Import Project="$(LolEngineDir)msbuild/kore.targets" />
     <Import Project="$(LolEngineDir)msbuild/kore/shaders.targets" />
-    <Import Project="$(LolNdaDirectory)/msbuild/platform.targets"
-            Condition="'$(LolNdaDirectory)'!='' and exists('$(LolNdaDirectory)/msbuild/platform.targets')" />
+    <Import Project="$(LolNdaPlatformTargets)" Condition="'$(LolNdaPlatformTargetsFound)'=='true'" />
   </ImportGroup>
 
   <!-- Re-add our sanity checks first, in case Microsoft.Cpp.targets meddled with the task priorities. -->
