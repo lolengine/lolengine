@@ -111,4 +111,36 @@
     </Link>
   </ItemDefinitionGroup>
 
+  <!--
+     - Sanity checks
+   -->
+
+  <Target Name="LolKoreSanityChecks" BeforeTargets="LolEngineSanityChecks" Condition="'$(enable_kore)'!='no'">
+
+    <Warning Condition="'$(KINC_SDK_PATH)'!='' and '$(KORE_SDK_PATH)'==''"
+             Text="KINC_SDK_PATH is set; please use KORE_SDK_PATH instead" />
+
+    <Error Condition="'$(KINC_SDK_PATH)'=='' and '$(KORE_SDK_PATH)'=='' and '$(KoreDirectory)'==''"
+           Text="KORE_SDK_PATH is not set" />
+
+    <Error Condition="!exists('$(KoreDirectory)/make')"
+           Text="project $(ProjectName) configured for Kore but '$(KoreDirectory)/make' was not found; is the repository up to date?" />
+
+    <Error Condition="'$(LolNdaPlatform)'!='' and '$(KoreNdaDirectory)'==''"
+           Text="NDA platform '$(Platform)' selected, but '$(LolNdaDirectory)/msbuild/config.props' did not define %24(KoreNdaDirectory); is the '$(LolNdaRepository)' repository up-to-date?" />
+
+    <Error Condition="'$(KoreNdaDirectory)'!='' and !exists('$(KoreNdaDirectory)/kincfile.js')"
+           Text="NDA platform '$(Platform)' selected, but '$(KoreNdaDirectory)/kincfile.js' was not found; are the '$(LolNdaDirectory)' submodules up-to-date?" />
+
+    <Error Condition="'$(ShaderPlatform)'==''"
+           Text="no shader platform defined for '$(Platform)'; are you missing Lol Engine platform support?" />
+
+    <Error Condition="'$(ShaderCompiler)'==''"
+           Text="no shader compiler defined for '$(Platform)'; are you missing Lol Engine platform support?" />
+
+    <Error Condition="!exists('$(ShaderCompiler)')"
+           Text="shader compiler '$(ShaderCompiler)' could not be found; are submodules up to date?" />
+
+  </Target>
+
 </Project>

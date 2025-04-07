@@ -5,7 +5,8 @@
      - Build configuration
    -->
 
-  <!-- Import user settings as early as possible -->
+  <!-- Import user settings as early as possible because they may contain properties that
+     - will affect the build, for instance the publishing platform. -->
   <ImportGroup Condition="Exists('$(MSBuildProjectFullPath).user')">
       <!-- This will cause an MSB4011 warning later when Microsoft.Cpp.Default.targets is loaded, but we have no choice… -->
       <Import Project="$(MSBuildProjectFullPath).user" Condition="'$(BuildingInsideVisualStudio)'=='true'"/>
@@ -63,8 +64,8 @@
     <PlatformToolset>v143</PlatformToolset>
   </PropertyGroup>
 
-  <Import Project="$(LolEngineDir)msbuild/kore.props" />
   <Import Project="$(LolEngineDir)msbuild/nda.props" />
+  <Import Project="$(LolEngineDir)msbuild/kore.props" />
 
   <!-- Override settings with the user’s build.config file -->
   <Import Condition="exists('$(LolEngineDir)build.config')"

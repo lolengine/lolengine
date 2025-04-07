@@ -3,6 +3,7 @@
 
   <!-- List of NDA platforms that we support and their codename -->
   <PropertyGroup>
+    <LolNdaPlatform />
     <LolNdaPlatform Condition="'$(Platform)'=='ORBIS'">playstation</LolNdaPlatform>
     <LolNdaPlatform Condition="'$(Platform)'=='Prospero'">playstation</LolNdaPlatform>
     <LolNdaPlatform Condition="'$(Platform)'=='NX64'">switch</LolNdaPlatform>
@@ -17,9 +18,25 @@
     <LolNdaRepository>lol-$(LolNdaPlatform)</LolNdaRepository>
     <_Temp>$([MSBuild]::GetDirectoryNameOfFileAbove($(MSBuildThisFileDirectory), $(LolNdaRepository)/msbuild/config.props))</_Temp>
     <LolNdaDirectory Condition="'$(_Temp)'!=''">$(_Temp)/$(LolNdaRepository)</LolNdaDirectory>
-    <_Temp></_Temp>
+
+    <LolNdaConfigProps>$(LolNdaDirectory)/msbuild/config.props</LolNdaConfigProps>
+    <LolNdaConfigPropsFound Condition="exists('$(LolNdaConfigProps)')">true</LolNdaConfigPropsFound>
   </PropertyGroup>
 
-  <Import Project="$(LolNdaDirectory)/msbuild/config.props" Condition="'$(LolNdaDirectory)'!=''" />
+  <Import Project="$(LolNdaConfigProps)" Condition="$(LolNdaConfigPropsFound)" />
+
+  <!--
+     - Sanity checks
+   -->
+
+  <Target Name="LolNdaSanityChecks" BeforeTargets="LolEngineSanityChecks">
+
+    <Error Condition="'$(LolNdaPlatform)'!='' and '$(LolNdaDirectory)'==''"
+           Text="NDA platform $(LolNdaPlatform) selected but support repository $(LolNdaRepository) was not found" />
+
+    <Error Condition="'$(LolNdaPlatform)'!='' and !$(LolNdaConfigPropsFound)"
+           Text="NDA platform '$(Platform)' selected, but '$(LolNdaConfigProps)' was not found; is the '$(LolNdaRepository)' repository up-to-date?" />
+
+  </Target>
 
 </Project>
