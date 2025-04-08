@@ -48,6 +48,14 @@
           data = data.Replace("{LolXboxMSAAppId}", "$(LolXboxMSAAppId)");
           data = data.Replace("{LolXboxStoreId}", "$(LolXboxStoreId)");
           data = data.Replace("{TargetName}", "$(TargetName)");
+          if("$(Platform)"=="x64")
+          {
+          data = data.Replace("{PlatformName}", "PC" );
+          }
+          else
+          {
+          data = data.Replace("{PlatformName}", "Scarlett");
+          }
           data = data.Replace("{LolXboxDisplayName}", "$(LolXboxDisplayName)");
           data = data.Replace("{LolXboxPublisherName}", "$(LolXboxPublisherName)");
           data = data.Replace("{ProjectName}", "$(ProjectName)");
@@ -97,7 +105,7 @@
           SourceFiles="$(FinalizeGameConfigSource)"
           DestinationFiles="$(OutDir)MicrosoftGame.Config" />
 
-    <Message Importance="High" Text="Running Packaging command" />
+    <Message Importance="High" Text="Running Packaging command using $(MGCToolExe)" />
     <MakeDir Directories="$(OutDir)PackagedVersion"/>
     <Exec Command="&quot;$(MGCToolExe.Replace('\','\\'))&quot; pack /$(LolXboxEncryptionLevel) $(SECRETLEKB) /f $(OutDir)authoring/layout.xml /d $(OutDir) /pd $(OutDir)PackagedVersion "/>
   </Target>

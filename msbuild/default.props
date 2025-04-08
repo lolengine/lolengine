@@ -36,6 +36,7 @@
   <PropertyGroup Condition="$(PlatformIsWindows)">
     <Keyword>Win32Proj</Keyword>
     <GDKPCEditionPath>$(GRDKLatest)</GDKPCEditionPath>
+    <MGCToolExe>$(GRDKLatest)../../bin/makepkg.exe</MGCToolExe>
   </PropertyGroup>
 
   <!--
