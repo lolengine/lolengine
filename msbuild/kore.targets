@@ -21,4 +21,77 @@
     <WriteLinesToFile File="$(OutDir)steam_appid.txt" Lines="$(LolSteamAppId)" Overwrite="True"/>
   </Target>
 
+
+  <!-- MSSTORE Task to create the Gameconfig file -->
+  <UsingTask TaskName="LolXboxCreateGameConfig" TaskFactory="CodeTaskFactory"
+             AssemblyFile="$(MSBuildToolsPath)\Microsoft.Build.Tasks.Core.dll">
+    <ParameterGroup>
+      <Input ParameterType="Microsoft.Build.Framework.ITaskItem" Required="true" />
+      <Output ParameterType="Microsoft.Build.Framework.ITaskItem" Required="true" />
+    </ParameterGroup>
+    <Task>
+      <Using Namespace="System.IO" />
+      <Using Namespace="System.Text.RegularExpressions" />
+      <Code Type="Fragment" Language="cs"><![CDATA[
+          var data = File.ReadAllText(Input.ItemSpec).Replace("\r\n", "\n");
+          data = data.Replace("{LolXboxIdentityName}", "$(LolXboxIdentityName)");
+          data = data.Replace("{LolXboxAppVersion}", "$(LolXboxAppVersion)");
+          data = data.Replace("{LolXboxPublisherId}", "$(LolXboxPublisherId)");      
+          data = data.Replace("{LolXboxTitleId}", "$(LolXboxTitleId)");
+          data = data.Replace("{LolXboxMSAAppId}", "$(LolXboxMSAAppId)");
+          data = data.Replace("{LolXboxStoreId}", "$(LolXboxStoreId)");
+          data = data.Replace("{TargetName}", "$(TargetName)");
+          data = data.Replace("{LolXboxDisplayName}", "$(LolXboxDisplayName)");
+          data = data.Replace("{LolXboxPublisherName}", "$(LolXboxPublisherName)");
+          data = data.Replace("{ProjectName}", "$(ProjectName)");
+          //data = data.Replace("{LolXboxAuthoringFolder}", "$(LolXboxAuthoringFolder)");
+          File.WriteAllText(Output.ItemSpec, data.Replace("\n", "\r\n"));
+
+          var filename = Output.GetMetadata("Filename") + Output.GetMetadata("Extension");
+          Input.SetMetadata("ExecutionDescription", filename + " [generated]");
+      ]]></Code>
+    </Task>
+  </UsingTask>
+
+  <PropertyGroup>
+    <ComputeCompileInputsTargets>LolXboxCreateConfig;$(ComputeCompileInputsTargets)</ComputeCompileInputsTargets>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(ConfigurationType)'=='Application' and '$(LolXboxIdentityName)'!='' and '$(LolWindowsPublishingPlatform)'=='msstore' and '$(Platform)'=='x64'">
+    <LolXboxGameConfigTemplate>$(KoreDirectory)/Backends/Service/MSStore/authoring/MicrosoftGame.Config</LolXboxGameConfigTemplate>
+    <FinalizeGameConfigSource>$(OutDir)$(ProjectName).MicrosoftGame.Config</FinalizeGameConfigSource>
+  </PropertyGroup>
+
+<Target Name="LolXboxCreateConfig" AfterTargets="AssignProjectConfiguration"
+          Inputs="$(LolXboxGameConfigTemplate)" Outputs="$(FinalizeGameConfigSource)" Condition="'$(FinalizeGameConfigSource)'!=''">
+    <LolXboxCreateGameConfig Input="$(LolXboxGameConfigTemplate)" Output="$(FinalizeGameConfigSource)" />
+    <Message Importance="High" Text="Generating $(FinalizeGameConfigSource)" />
+    <ItemGroup>
+      <MGCCompile Include="$(FinalizeGameConfigSource)" FileType="Document" />
+    </ItemGroup>
+  </Target>
+
+ <Target Name="CopyAuthoringFiles" AfterTargets="Link" Condition="Exists('$(LolXboxAuthoringFolder)') and $(LolXboxPackageProject) == true  and $(SECRETLEKB) != '' and '$(LolWindowsPublishingPlatform)'=='msstore' and '$(Platform)'=='x64'">
+   <!-- authoring files -->
+    <ItemGroup>
+        <XboxAuthoringFiles Include="$(ProjectDir)/$(LolXboxAuthoringFolder)/**/*.*"/>
+    </ItemGroup>
+    <Message Text="%(XboxAuthoringFiles.FullPath)"/>
+    <Message Importance="High" Text="Copying authoring files from $(ProjectDir)$(LolXboxAuthoringFolder)" />
+    <Copy
+      SourceFiles="@(XboxAuthoringFiles)"
+      DestinationFolder="$(OutDir)/authoring/%(RecursiveDir)"
+    />
+    <Copy Condition="!Exists('$(OutDir)MicrosoftGame.Config')"
+      SourceFiles="$(FinalizeGameConfigSource)"
+      DestinationFiles="$(OutDir)MicrosoftGame.Config"
+    />
+  </Target>
+
+  <Target Name="CreatePackage" AfterTargets="CopyAuthoringFiles" Condition="$(LolXboxPackageProject) == true and $(SECRETLEKB) != '' and '$(LolWindowsPublishingPlatform)'=='msstore' and '$(Platform)'=='x64'">
+    <Message Importance="High" Text="Running Packaging command" />
+    <MakeDir Directories="$(OutDir)PackagedVersion"/>
+    <Exec Command="&quot;$(MGCToolExe.Replace('\','\\'))&quot; pack /$(LolXboxEncryptionLevel) $(SECRETLEKB) /f $(OutDir)authoring/layout.xml /d $(OutDir) /pd $(OutDir)PackagedVersion "/>
+  </Target>
+
 </Project>
