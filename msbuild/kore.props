@@ -62,6 +62,34 @@
     </KoreDeps>
   </PropertyGroup>
 
+  <PropertyGroup Condition="$(PlatformIsLinux)">
+    <ShaderCompiler>$(KoreDirectory)/Tools/windows_x64/krafix.exe</ShaderCompiler>
+    <ShaderPlatform>linux</ShaderPlatform>
+    <ShaderProfile>glsl</ShaderProfile>
+    <KoreSources>
+      $(KoreDirectory)/Backends/Graphics4/OpenGL/Sources/kinc/backend;
+      $(KoreDirectory)/Backends/Graphics5/G5onG4/Sources/kinc/backend;
+      $(KoreDirectory)/Backends/System/Linux/Sources/kinc/backend;
+      $(KoreDirectory)/Backends/System/POSIX/Sources/kinc/backend;
+      $(KoreSources)
+    </KoreSources>
+    <KoreIncludes>
+      $(KoreDirectory)/Backends/Graphics4/OpenGL/Sources;
+      $(KoreDirectory)/Backends/Graphics5/G5onG4/Sources;
+      $(KoreDirectory)/Backends/System/Linux/Sources;
+      $(KoreDirectory)/Backends/System/POSIX/Sources;
+      $(KoreIncludes)
+    </KoreIncludes>
+    <KoreDefines>
+      KINC_NO_WAYLAND;KINC_OPENGL;KINC_EGL;KINC_G5ONG4;
+      $(KoreDefines)
+    </KoreDefines>
+    <KoreDeps>
+      asound;dl;udev;GL;EGL;
+      $(KoreDeps)
+    </KoreDeps>
+  </PropertyGroup>
+
   <!--
      - Kore Steamworks support
    -->

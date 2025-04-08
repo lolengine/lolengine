@@ -25,22 +25,28 @@
   <!-- Define output and intermediate directories. -->
   <PropertyGroup>
 
-    <!-- Use MakeRelative() so that <ObjectFileName> can use %(RelativeDir) -->
-    <_BinDir>$([MSBuild]::MakeRelative("$(ProjectDir)","$(SolutionDir)binaries\"))</_BinDir>
+    <!-- We would like to use MakeRelative() here so that <ObjectFileName> can use %(RelativeDir),
+       - but this would cause problems with out-of-tree sources or generated sources, so it’s not
+       - a very good idea.
+       - Another problem seems to be that relative path here will cause WSL2 file copies to fail
+       - on a Linux build. -->
+    <!--<_BinDir>$([MSBuild]::MakeRelative("$(ProjectDir)","$(SolutionDir)binaries\"))</_BinDir>-->
+    <_BinDir>$(SolutionDir)binaries\</_BinDir>
 
     <!-- Flavour is the configuration (debug|release) but also any additional modifier (e.g. msstore|steam|itchio) -->
     <_Project>$(ProjectName.ToLower())</_Project>
     <_Platform>$(Platform.ToLower())</_Platform>
+    <_Platform Condition="'$(PlatformIsLinux)'">linux-$(_Platform)</_Platform>
     <_Flavour>$(Configuration.ToLower())</_Flavour>
     <_Flavour Condition="'$(ConfigurationType)'=='Application' and '$(LolWindowsPublishingPlatform)'!='' and '$(Platform)'=='x64'">$(LolWindowsPublishingPlatform)-$(_Flavour)</_Flavour>
 
-    <!-- Define IntDir as <bindir>/<project>/<platform>/<flavour>/ -->
+    <!-- Define IntDir as <bindir>/obj/<project>/<platform>/<flavour>/ -->
     <IntDir>$(_BinDir)obj\$(_Project)\$(_Platform)\$(_Flavour)\</IntDir>
 
     <!-- Define OutDir as <bindir>/<project>/<platform>/<flavour>/ for most projects, but for
        - final projects (applications) we flatten the hierarchy to avoid excessive subdirectories. -->
-    <OutDir Condition="'$(ConfigurationType)'!='Application'">$(_BinDir)$(_Project)\$(_Platform)\$(_Flavour)\</OutDir>
-    <OutDir Condition="'$(ConfigurationType)'=='Application'">$(_BinDir)$(_Project)-$(_Platform)-$(_Flavour)\</OutDir>
+    <OutDir Condition="'$(ConfigurationType)'=='StaticLibrary'">$(_BinDir)bin\$(_Project)\$(_Platform)\$(_Flavour)\</OutDir>
+    <OutDir Condition="'$(ConfigurationType)'!='StaticLibrary'">$(_BinDir)$(_Project)-$(_Platform)-$(_Flavour)\</OutDir>
   </PropertyGroup>
 
 
@@ -80,10 +86,14 @@
          - FIXME: we would like to use $(IntDir)%(RelativeDir) here but this is subject
          - to directory escaping if ClCompile items are outside the project directory,
          - e.g. with Kore, or even LolEmbed items. -->
-      <ObjectFileName>$(IntDir)%(Directory)</ObjectFileName>
+      <ObjectFileName>$(IntDir)%(Directory)%(filename)$(ObjectExt)</ObjectFileName>
 
       <!-- Use latest version of the C++ draft -->
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard Condition="!$(PlatformIsLinux)">stdcpplatest</LanguageStandard>
+      <CppLanguageStandard Condition="$(PlatformIsLinux)">c++20</CppLanguageStandard>
+
+      <!-- Use gnu99 for C so we can still use alloca() -->
+      <CLanguageStandard Condition="$(PlatformIsLinux)">gnu99</CLanguageStandard>
 
       <!-- Always multiprocessor, always generate debug info, never minimal rebuild -->
       <MultiProcessorCompilation>true</MultiProcessorCompilation>

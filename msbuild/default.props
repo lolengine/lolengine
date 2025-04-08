@@ -18,9 +18,15 @@
      - Convenience properties
    -->
   <PropertyGroup>
+    <PlatformIsLinux />
+    <PlatformIsLinux Condition="'$(ApplicationType)'=='Linux'">true</PlatformIsLinux>
+    <PlatformIsLinux Condition="'$(PlatformIsLinux)'==''">false</PlatformIsLinux>
+
+    <PlatformIsWindows />
     <PlatformIsWindows Condition="'$(Platform)'=='ARM64'">true</PlatformIsWindows>
     <PlatformIsWindows Condition="'$(Platform)'=='Win32'">true</PlatformIsWindows>
     <PlatformIsWindows Condition="'$(Platform)'=='x64'">true</PlatformIsWindows>
+    <PlatformIsWindows Condition="'$(ApplicationType)'=='Linux'">false</PlatformIsWindows>
     <PlatformIsWindows Condition="'$(PlatformIsWindows)'==''">false</PlatformIsWindows>
   </PropertyGroup>
 

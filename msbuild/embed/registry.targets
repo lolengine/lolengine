@@ -162,6 +162,18 @@
     <Delete Files="$(LolEmbedRegistry).manifest;$(LolEmbedRegistry).g.cpp" />
   </Target>
 
+  <!-- Ensure generated sources are copied when doing remote compilation -->
+  <Target Name="_AddLolEmbedToCopiedSources"
+          BeforeTargets="_ConsolidateSourcesToCopy" DependsOnTargets="LolEmbed;BuildLolEmbedRegistry"
+          Condition="'@(LolEmbed)'!='' and $(PlatformIsLinux)">
+    <Message Importance="Normal" Text="Marking LolEmbed generated files for copy." />
+    <ItemGroup>
+      <!-- FIXME: the paths here cause the files to be properly copied, but the compiler
+         - commandline is wrong and tries to access the source file in another location. -->
+      <SourcesToCopyRemotely Include="%(LolEmbed.CppFileName)" />
+      <SourcesToCopyRemotely Include="$(LolEmbedRegistry).g.cpp" />
+    </ItemGroup>
+  </Target>
 
   <!--=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
      - GatherLolStaticInitializers/LinkLolStaticInitializers targets
