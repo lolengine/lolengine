@@ -115,6 +115,28 @@
   </PropertyGroup>
 
   <!--
+     - Kore msstore support
+   -->
+
+  <PropertyGroup Condition="'$(ConfigurationType)'=='Application' and '$(LolWindowsPublishingPlatform)'=='msstore' and '$(Platform)'=='x64'">
+    <KoreSources>
+      $(KoreDirectory)/Backends/Service/MSStore/Sources/kinc/backend;
+      $(KoreSources)
+    </KoreSources>
+    <KoreIncludes>
+      $(KoreDirectory)/Backends/Service/MSStore/Sources;
+      $(KoreIncludes)
+    </KoreIncludes>
+    <KoreDefines>
+      KINC_USE_MSSTORE;
+      $(KoreDefines)
+    </KoreDefines>
+    <KoreDeps>
+      $(KoreDeps)
+    </KoreDeps>
+  </PropertyGroup>
+
+  <!--
      - Kore support for NDA platforms
    -->
 
