@@ -23,4 +23,7 @@
     <PrepareForBuildDependsOn>LolEngineSanityChecks;$(PrepareForBuildDependsOn)</PrepareForBuildDependsOn>
   </PropertyGroup>
 
+  <!-- Disable this project if the special property $(ProjectToBuild) is defined -->
+  <Import Project="$(LolEngineDir)msbuild/disable.targets" Condition="'$(ProjectToBuild)'!='' and '$(ProjectToBuild)'!='$(ProjectName)'" />
+
 </Project>
