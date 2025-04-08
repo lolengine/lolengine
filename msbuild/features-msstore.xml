@@ -7,7 +7,47 @@
 
   <Rule Name="LolEngineFeatures" OverrideMode="Extend">
 
-    <!-- MS Store properties -->
+    <Rule.Categories>
+      <Category Name="LolXbox" DisplayName="Microsoft Store / Xbox" />
+    </Rule.Categories>
+
+    <StringProperty Name="LolXboxDisplayName" DisplayName="Display Name"
+                    Default="Example Game" Category="LolXbox" />
+
+    <StringProperty Name="LolXboxIdentityName" DisplayName="Identity name"
+                    Default="" Category="LolXbox" />
+
+    <StringProperty Name="LolXboxStoreId" DisplayName="Store Id"
+                    Default="" Category="LolXbox" />
+
+    <StringProperty Name="LolXboxMSAAppId" DisplayName="MSA App Id"
+                    Default="0000000000000000" Category="LolXbox" />
+
+    <StringProperty Name="LolXboxTitleId" DisplayName="Title ID"
+                    Default="FFFFFFFF" Category="LolXbox" />
+
+    <StringProperty Name="LolXboxPublisherName" DisplayName="Publisher Name"
+                    Default="Example Publisher" Category="LolXbox" />
+
+    <StringProperty Name="LolXboxPublisherId" DisplayName="Publisher ID"
+                    Description="Find this value in Partner Center under the Package/Identity/Publisher row"
+                    Default="" Category="LolXbox" />
+
+    <StringProperty Name="LolXboxAppVersion" DisplayName="app version"
+                    Description="4 digit version in X.X.X.X format"
+                    Default="1.0.0.0" Category="LolXbox" />
+
+    <StringProperty Name="LolXboxAuthoringFolder" DisplayName="Project Xbox Authoring folder"
+                    Description="Location of this project authoring folder, containing packaging graphical resources"
+                    Default="" Category="LolXbox" />
+
+    <BoolProperty Name="LolXboxPackageProject" DisplayName="Generate Packaged Project"
+                  Description="wether to generate a Packaged project"
+                  Default="false" Category="LolXbox" />
+
+    <StringProperty Name="LolXboxEncryptionLevel" DisplayName="Package Encryption level"
+                    Description="l (submission encryption) lt (test encryption) lk (submission or test encryption)"
+                    Default="lk" Category="LolXbox" />
 
   </Rule>
 

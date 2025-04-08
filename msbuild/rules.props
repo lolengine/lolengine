@@ -71,6 +71,10 @@
     <LibraryPath>$(GDKPCEditionPath)GameKit\lib\amd64;$(Console_SdkLibPath);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(ConfigurationType)'=='Application' and '$(LolWindowsPublishingPlatform)'=='msstore' and '$(Platform)'=='x64'">
+    <PublishForXbox Condition="'$(LolXboxIdentityName)'!=''">true</PublishForXbox>
+  </PropertyGroup>
+
 
   <!--
      - Set item definitions: macros, compiler and linker flags, etc.

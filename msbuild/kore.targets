@@ -15,12 +15,19 @@
     </ItemGroup>
   </Target>
 
-  <!-- Steam AppId support (FIXME: should be somewhere else) -->
+  <!--
+     - Steam AppId support (FIXME: should be somewhere else)
+   -->
+
   <Target Name="KoreCopy" AfterTargets="AfterBuild" Condition="'$(ConfigurationType)'=='Application' and '$(LolWindowsPublishingPlatform)'=='steam' and '$(Platform)'=='x64'">
     <Copy SourceFiles="$(STEAM_SDK_PATH)\redistributable_bin\win64\steam_api64.dll" DestinationFolder="$(OutDir)" ContinueOnError="true" />
     <WriteLinesToFile File="$(OutDir)steam_appid.txt" Lines="$(LolSteamAppId)" Overwrite="True"/>
   </Target>
 
+
+  <!--
+     - Microsoft Store support
+   -->
 
   <!-- MSSTORE Task to create the Gameconfig file -->
   <UsingTask TaskName="LolXboxCreateGameConfig" TaskFactory="CodeTaskFactory"
@@ -53,17 +60,18 @@
     </Task>
   </UsingTask>
 
-  <PropertyGroup>
-    <ComputeCompileInputsTargets>LolXboxCreateConfig;$(ComputeCompileInputsTargets)</ComputeCompileInputsTargets>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(ConfigurationType)'=='Application' and '$(LolXboxIdentityName)'!='' and '$(LolWindowsPublishingPlatform)'=='msstore' and '$(Platform)'=='x64'">
-    <LolXboxGameConfigTemplate>$(KoreDirectory)/Backends/Service/MSStore/authoring/MicrosoftGame.Config</LolXboxGameConfigTemplate>
+  <PropertyGroup Condition="'$(PublishForXbox)'=='true'">
+    <ComputeCompileInputsTargets>_LolCreateXboxConfig;$(ComputeCompileInputsTargets)</ComputeCompileInputsTargets>
+    <LolXboxGameConfigTemplate>$(LolEngineDir)/authoring/microsoftgame.template.config</LolXboxGameConfigTemplate>
     <FinalizeGameConfigSource>$(OutDir)$(ProjectName).MicrosoftGame.Config</FinalizeGameConfigSource>
+    <!-- FIXME: find a better name and place for this property -->
   </PropertyGroup>
 
-<Target Name="LolXboxCreateConfig" AfterTargets="AssignProjectConfiguration"
-          Inputs="$(LolXboxGameConfigTemplate)" Outputs="$(FinalizeGameConfigSource)" Condition="'$(FinalizeGameConfigSource)'!=''">
+  <!-- Target to create the Gameconfig file.
+     - Depends on PrepareForBuild because the final output directory must exist. -->
+  <Target Name="_LolCreateXboxConfig" AfterTargets="AssignProjectConfiguration" DependsOnTargets="PrepareForBuild"
+          Inputs="$(LolXboxGameConfigTemplate)" Outputs="$(FinalizeGameConfigSource)"
+          Condition="'$(PublishForXbox)'=='true'">
     <LolXboxCreateGameConfig Input="$(LolXboxGameConfigTemplate)" Output="$(FinalizeGameConfigSource)" />
     <Message Importance="High" Text="Generating $(FinalizeGameConfigSource)" />
     <ItemGroup>
@@ -71,24 +79,24 @@
     </ItemGroup>
   </Target>
 
- <Target Name="CopyAuthoringFiles" AfterTargets="Link" Condition="Exists('$(LolXboxAuthoringFolder)') and $(LolXboxPackageProject) == true  and $(SECRETLEKB) != '' and '$(LolWindowsPublishingPlatform)'=='msstore' and '$(Platform)'=='x64'">
-   <!-- authoring files -->
+  <Target Name="_LolPackageXboxProject" AfterTargets="Link"
+          Condition="Exists('$(LolXboxAuthoringFolder)') and '$(LolXboxPackageProject)'=='true' and '$(PublishForXbox)'=='true' and $(SECRETLEKB) != ''">
+
+    <!-- Copy authoring files -->
     <ItemGroup>
-        <XboxAuthoringFiles Include="$(ProjectDir)/$(LolXboxAuthoringFolder)/**/*.*"/>
+      <XboxAuthoringFiles Include="$(ProjectDir)/$(LolXboxAuthoringFolder)/**/*.*"/>
     </ItemGroup>
+
     <Message Text="%(XboxAuthoringFiles.FullPath)"/>
     <Message Importance="High" Text="Copying authoring files from $(ProjectDir)$(LolXboxAuthoringFolder)" />
-    <Copy
-      SourceFiles="@(XboxAuthoringFiles)"
-      DestinationFolder="$(OutDir)/authoring/%(RecursiveDir)"
-    />
-    <Copy Condition="!Exists('$(OutDir)MicrosoftGame.Config')"
-      SourceFiles="$(FinalizeGameConfigSource)"
-      DestinationFiles="$(OutDir)MicrosoftGame.Config"
-    />
-  </Target>
 
-  <Target Name="CreatePackage" AfterTargets="CopyAuthoringFiles" Condition="$(LolXboxPackageProject) == true and $(SECRETLEKB) != '' and '$(LolWindowsPublishingPlatform)'=='msstore' and '$(Platform)'=='x64'">
+    <Copy SourceFiles="@(XboxAuthoringFiles)"
+          DestinationFolder="$(OutDir)/authoring/%(RecursiveDir)" />
+
+    <Copy Condition="!Exists('$(OutDir)MicrosoftGame.Config')"
+          SourceFiles="$(FinalizeGameConfigSource)"
+          DestinationFiles="$(OutDir)MicrosoftGame.Config" />
+
     <Message Importance="High" Text="Running Packaging command" />
     <MakeDir Directories="$(OutDir)PackagedVersion"/>
     <Exec Command="&quot;$(MGCToolExe.Replace('\','\\'))&quot; pack /$(LolXboxEncryptionLevel) $(SECRETLEKB) /f $(OutDir)authoring/layout.xml /d $(OutDir) /pd $(OutDir)PackagedVersion "/>
