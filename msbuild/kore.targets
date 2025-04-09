@@ -51,15 +51,16 @@
           if("$(Platform)"=="x64")
           {
           data = data.Replace("{PlatformName}", "PC" );
+          data = data.Replace("{AdditionalDeps}", "<DesktopRegistration><DependencyList><KnownDependency Name='VC14'/></DependencyList></DesktopRegistration>");
           }
           else
           {
           data = data.Replace("{PlatformName}", "Scarlett");
+          data = data.Replace("{AdditionalDeps}", "");
           }
           data = data.Replace("{LolXboxDisplayName}", "$(LolXboxDisplayName)");
           data = data.Replace("{LolXboxPublisherName}", "$(LolXboxPublisherName)");
           data = data.Replace("{ProjectName}", "$(ProjectName)");
-          //data = data.Replace("{LolXboxAuthoringFolder}", "$(LolXboxAuthoringFolder)");
           File.WriteAllText(Output.ItemSpec, data.Replace("\n", "\r\n"));
 
           var filename = Output.GetMetadata("Filename") + Output.GetMetadata("Extension");
