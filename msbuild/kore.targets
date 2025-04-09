@@ -37,31 +37,45 @@
       <Output ParameterType="Microsoft.Build.Framework.ITaskItem" Required="true" />
     </ParameterGroup>
     <Task>
-      <Using Namespace="System.IO" />
-      <Using Namespace="System.Text.RegularExpressions" />
+      <Reference Include="System.Xml" />
+      <Reference Include="System.Xml.Linq" />
+      <Using Namespace="System.Xml.Linq" />
       <Code Type="Fragment" Language="cs"><![CDATA[
-          var data = File.ReadAllText(Input.ItemSpec).Replace("\r\n", "\n");
-          data = data.Replace("{LolXboxIdentityName}", "$(LolXboxIdentityName)");
-          data = data.Replace("{LolXboxAppVersion}", "$(LolXboxAppVersion)");
-          data = data.Replace("{LolXboxPublisherId}", "$(LolXboxPublisherId)");      
-          data = data.Replace("{LolXboxTitleId}", "$(LolXboxTitleId)");
-          data = data.Replace("{LolXboxMSAAppId}", "$(LolXboxMSAAppId)");
-          data = data.Replace("{LolXboxStoreId}", "$(LolXboxStoreId)");
-          data = data.Replace("{TargetName}", "$(TargetName)");
-          if("$(Platform)"=="x64")
+          var doc = XDocument.Load(Input.ItemSpec);
+
+          var game = doc.Element("Game");
+          game.Element("TitleId").Value = "$(LolXboxTitleId)";
+          game.Element("MSAAppId").Value = "$(LolXboxMSAAppId)";
+          game.Element("StoreId").Value = "$(LolXboxStoreId)";
+
+          var id = game.Element("Identity");
+          id.Attribute("Name").Value = "$(LolXboxIdentityName)";
+          id.Attribute("Publisher").Value = "CN=$(LolXboxPublisherId)";
+          id.Attribute("Version").Value = "$(LolXboxAppVersion)";
+
+          var exe = game.Element("ExecutableList").Element("Executable");
+          exe.Attribute("Name").Value = "$(TargetName).exe";
+
+          if ("$(Platform)" == "x64")
           {
-          data = data.Replace("{PlatformName}", "PC" );
-          data = data.Replace("{AdditionalDeps}", "<DesktopRegistration><DependencyList><KnownDependency Name='VC14'/></DependencyList></DesktopRegistration>");
+              exe.Attribute("TargetDeviceFamily").Value = "PC";
+
+              game.Add(new XElement("DesktopRegistration",
+                           new XElement("DependencyList",
+                               new XElement("KnownDependency",
+                                   new XAttribute("Name", "VC14")))));
           }
           else
           {
-          data = data.Replace("{PlatformName}", "Scarlett");
-          data = data.Replace("{AdditionalDeps}", "");
+              exe.Attribute("TargetDeviceFamily").Value = "Scarlett";
           }
-          data = data.Replace("{LolXboxDisplayName}", "$(LolXboxDisplayName)");
-          data = data.Replace("{LolXboxPublisherName}", "$(LolXboxPublisherName)");
-          data = data.Replace("{ProjectName}", "$(ProjectName)");
-          File.WriteAllText(Output.ItemSpec, data.Replace("\n", "\r\n"));
+
+          var vis = game.Element("ShellVisuals");
+          vis.Attribute("Description").Value = "$(ProjectName)";
+          vis.Attribute("DefaultDisplayName").Value = "$(LolXboxDisplayName)";
+          vis.Attribute("PublisherDisplayName").Value = "$(LolXboxPublisherName)";
+
+          doc.Save(Output.ItemSpec);
 
           var filename = Output.GetMetadata("Filename") + Output.GetMetadata("Extension");
           Input.SetMetadata("ExecutionDescription", filename + " [generated]");
@@ -90,6 +104,10 @@
 
   <Target Name="_LolPackageXboxProject" AfterTargets="Link"
           Condition="Exists('$(LolXboxAuthoringFolder)') and '$(LolXboxPackageProject)'=='true' and '$(PublishForXbox)'=='true' and $(SECRETLEKB) != ''">
+
+    <PropertyGroup>
+      <MGCToolExe>$(GRDKLatest)../../bin/makepkg.exe</MGCToolExe>
+    </PropertyGroup>
 
     <!-- Copy authoring files -->
     <ItemGroup>
